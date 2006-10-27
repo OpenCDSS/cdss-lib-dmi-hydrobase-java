@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="externals/RTi_142.jar"/>
-	<classpathentry kind="lib" path="externals/CWRAT_142.jar"/>
-	<classpathentry kind="lib" path="externals/StateMod_142.jar"/>
 	<classpathentry kind="lib" path="externals/xerces.jar"/>
+	<classpathentry kind="lib" path="externals/CWRAT/CWRAT_142.jar"/>
+	<classpathentry kind="lib" path="externals/RTi_Common/RTi_142.jar"/>
+	<classpathentry kind="lib" path="externals/StateMod/StateMod_142.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
