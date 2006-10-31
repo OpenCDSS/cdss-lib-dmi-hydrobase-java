@@ -95,7 +95,7 @@
     <property name="xerces" 	  
     		value="${ext.dir}${sep}xerces.jar" />
 	<property name="RTi_jar"	  
-			value="${ext.dir}${sep}RTi_Common${sep}RTi_142.jar" />
+			value="${ext.dir}${sep}RTi_Common${sep}RTi_Common_142.jar" />
 	<property name="StateMod_jar" 
 			value="${ext.dir}${sep}StateMod${sep}StateMod_142.jar" />
 	<property name="CWRAT_jar"	  
