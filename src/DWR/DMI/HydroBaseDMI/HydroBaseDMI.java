@@ -748,6 +748,9 @@
 //					setSecure(false) to prevent password
 //					information from being printed in debug
 //					messages.
+// 2006-10-30	SAM, RTi		Add code to read CASS livestock
+//					statistics.
+//					Add code to read CUPopulation.
 // ----------------------------------------------------------------------------
 // EndHeader
 
@@ -988,9 +991,12 @@ public final static long VERSION_UNKNOWN  = 0L;
 private final int __S_AGRICULTURAL_CASS_CROP_STATS = 20;
 private final int __S_AGRICULTURAL_CASS_CROP_STATS_DISTINCT = 21;
 
+private final int __S_AGRICULTURAL_CASS_LIVESTOCK_STATS = 24;
+private final int __S_AGRICULTURAL_CASS_LIVESTOCK_STATS_DISTINCT = 25;
+
 // agricultural_NASS_crop_statistics
-private final int __S_AGRICULTURAL_NASS_CROP_STATS = 23;
-private final int __S_AGRICULTURAL_NASS_CROP_STATS_DISTINCT = 24;
+private final int __S_AGRICULTURAL_NASS_CROP_STATS = 29;
+private final int __S_AGRICULTURAL_NASS_CROP_STATS_DISTINCT = 30;
 
 // annual_amt
 private final int __S_ANNUAL_AMT = 40;
@@ -1057,6 +1063,10 @@ private final int __S_CG_CU_MOD_HARGREAVES_FOR_METHOD_DESC = 423;
 // cu_penman_monteith
 private final int __S_CG_CU_PENMAN_MONTEITH = 441;
 private final int __S_CG_CU_PENMAN_MONTEITH_FOR_METHOD_DESC = 443;
+
+// CUPopulation
+private final int __S_CUPOPULATION = 461;
+private final int __S_CUPOPULATION_DISTINCT = 462;
 
 // daily_amt
 private final int __S_DAILY_AMT = 480;
@@ -8916,6 +8926,166 @@ throws Exception {
 }
 
 /**
+Read the HydroBase agricultural_CASS_livestock_stats table.<p>
+This method is used by:<ul>
+<li>readTimeSeries()</li>
+</ul>
+<b>Stored Procedures</b><p>
+This method uses the following views:<p><ul>
+<li>vw_CDSS_AgriculturalCASSLivestockStats_Distinct</li>
+<li>vw_CDSS_AgriculturalCASSLivestockStats</li></ul><p>
+@param panel the panel with the query constraints.  If null, it will not be 
+used.
+@param county The county for the query - specify null or blank to ignore.
+@param commodity The commodity for the query - specify null or blank to ignore.
+@param type The livestock type for the query - specify null or blank to ignore.
+@param req_date1 If not null, specify the start date for the query.  Will be
+ignored for distinct queries.
+@param req_date2 If not null, specify the end date for the query.  Will be
+ignored for distinct queries.
+@param distinct if set to true, then only data for distinct
+state/county/commodity/type records will be returned.
+@return a Vector of HydroBase_Agstats.
+@throws Exception if an error occurs.
+*/
+public Vector readAgriculturalCASSLivestockStatsList(InputFilter_JPanel panel,
+String county, String commodity, String type, DateTime req_date1, 
+DateTime req_date2, boolean distinct) 
+throws Exception {
+	if (__useSP) {
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
+			panel, null);
+
+		String[] triplet = null;
+		if (county != null && county.length() > 0) {
+			triplet = new String[3];
+			triplet[0] = "county";
+			triplet[1] = "MA";
+			triplet[2] = county;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+
+		if (commodity != null && commodity.length() > 0) {
+			triplet = new String[3];
+			triplet[0] = "commodity";
+			triplet[1] = "MA";
+			triplet[2] = commodity;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+
+		if (type != null && type.length() > 0) {
+			triplet = new String[3];
+			triplet[0] = "type";
+			triplet[1] = "MA";
+			triplet[2] = type;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+
+		if (!distinct && req_date1 != null) {
+			triplet = new String[3];
+			triplet[0] = "cal_year";
+			triplet[1] = "GE";
+			triplet[2] = "" + req_date1.getYear();
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+
+		if (!distinct && req_date2 != null) {
+			triplet = new String[3];
+			triplet[0] = "cal_year";
+			triplet[1] = "LE";
+			triplet[2] = "" + req_date2.getYear();
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+
+		if (distinct) {
+			HydroBase_GUI_Util.fillSPParameters(parameters, 
+				getViewNumber(
+				"vw_CDSS_AgriculturalCASSLivestockStats_Distinct"), 
+				2, null);
+			ResultSet rs = runSPFlex(parameters);
+			Vector v = toAgriculturalCASSLivestockStatsSPList(rs,
+				true);
+			closeResultSet(rs, __lastStatement);
+			return v;					
+		}
+		else {
+			HydroBase_GUI_Util.fillSPParameters(parameters, 
+				getViewNumber(
+				"vw_CDSS_AgriculturalCASSLivestockStats"), 
+				1, null);
+			ResultSet rs = runSPFlex(parameters);
+			Vector v = toAgriculturalCASSLivestockStatsSPList(rs,
+				false);
+			closeResultSet(rs, __lastStatement);
+			return v;					
+		}		
+	}
+	else {
+		DMISelectStatement q = new DMISelectStatement(this);
+		int queryType = __S_AGRICULTURAL_CASS_LIVESTOCK_STATS;
+		if (distinct) {
+			buildSQL(q, queryType =
+				__S_AGRICULTURAL_CASS_LIVESTOCK_STATS_DISTINCT);
+			q.selectDistinct(true);
+		}
+		else {
+			buildSQL(q, 
+				queryType =
+				__S_AGRICULTURAL_CASS_LIVESTOCK_STATS);
+		}
+		Vector wheres 
+			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
+			this, panel);		
+		if (wheres != null) {
+			// Use what was given...
+			q.addWhereClauses(wheres);
+		}
+		if ((county != null) && (county.length() != 0)) {
+			q.addWhereClause(
+				"agricultural_CASS_livestock_stats.county = '" +
+				county + "'");
+		}
+		if ((commodity != null) && (commodity.length() != 0)) {
+			q.addWhereClause(
+				"agricultural_CASS_livestock_stats.commodity = '"+
+				commodity + "'");
+		}
+		if ((type != null) && (type.length() != 0)) {
+			q.addWhereClause(
+				"agricultural_CASS_livestock_stats.type = '" +
+				type + "'");
+		} 
+		if (!distinct && req_date1 != null) {
+			q.addWhereClause(	
+				"agricultural_CASS_livestock_stats.cal_year >=" +
+				req_date1.getYear());
+		}
+		if (!distinct && req_date2 != null) {
+			q.addWhereClause(
+				"agricultural_CASS_livestock_stats.cal_year <=" +
+				req_date2.getYear());
+		}
+		// Default...
+		q.addOrderByClause("agricultural_CASS_livestock_stats.st");
+		q.addOrderByClause(
+			"agricultural_CASS_livestock_stats.county");
+		q.addOrderByClause(
+			"agricultural_CASS_livestock_stats.commodity");
+		q.addOrderByClause(
+			"agricultural_CASS_livestock_stats.practice");
+		if (!distinct) {
+			q.addOrderByClause(
+			       "agricultural_CASS_livestock_stats.cal_year");
+		}
+		
+		ResultSet rs = dmiSelect(q);
+		Vector v = toAgriculturalCASSLivestockStatsList(rs, distinct);
+		closeResultSet(rs);
+		return v;
+	}
+}
+
+/**
 Read the HydroBase agricultural_NASS_crop_stats table.<p>
 This method is used by:<ul>
 <li>readTimeSeries()</li>
@@ -8924,7 +9094,7 @@ The where clauses and order by clauses are all dependent on the variables passed
 in to the method.<p>
 <b>Stored Procedures</b><p>
 This method uses the following views:<p><ul>
-<li>vw_CDSS_AgriculturalNASSCropStatsDistinct</li>
+<li>vw_CDSS_AgriculturalNASSCropStats_Distinct</li>
 <li>vw_CDSS_AgriculturalNASSCropStats</li></ul><p>
 @param panel the panel with the query constraints.  If null, it will not be 
 used.
@@ -8984,7 +9154,7 @@ throws Exception {
 		if (distinct) {
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
 				getViewNumber(
-				"vw_CDSS_AgriculturalNASSCropStatsDistinct"), 
+				"vw_CDSS_AgriculturalNASSCropStats_Distinct"), 
 				4, null);
 			ResultSet rs = runSPFlex(parameters);
 			Vector v = toAgriculturalNASSCropStatsSPList(rs, true);
@@ -10184,6 +10354,99 @@ throws Exception {
 		closeResultSet(rs);
 	}
 	return v;
+}
+
+/**
+Read the HydroBase CUPopulation table/view.<p>
+This method is used by:<ul>
+<li>readTimeSeries()</li>
+</ul>
+<b>Stored Procedures</b><p>
+This method uses the following views:<p><ul>
+<li>vw_CDSS_CUPopulation_Distinct</li>
+<li>vw_CDSS_CUPopulation</li></ul><p>
+@param panel the panel with the query constraints.  If null, it will not be 
+used.
+@param area_type The area type for the query - specify null or blank to ignore.
+@param area_name The area name for the query - specify null or blank to ignore.
+@param pop_type The population type for the query - specify null or blank to
+ignore.
+@param req_date1 If not null, specify the start date for the query.  Will be
+ignored for distinct queries.
+@param req_date2 If not null, specify the end date for the query.  Will be
+ignored for distinct queries.
+@param distinct if set to true, then only data for distinct
+area_type/area_name/pop_type records will be returned.
+@return a Vector of HydroBase_CUPopulation.
+@throws Exception if an error occurs.
+*/
+public Vector readCUPopulationList(InputFilter_JPanel panel,
+String area_type, String area_name, String pop_type, DateTime req_date1, 
+DateTime req_date2, boolean distinct) 
+throws Exception {
+	if ( !__useSP) {
+		String routine = "HydroBaseDMI.readCUPopulationList";
+		Message.printWarning ( 2, routine,
+		"Only stored procedures are supported for CUPopulation." );
+		throw new Exception (
+		"Stored procedures must be used for CUPopulation" );
+	}
+	String[] parameters =HydroBase_GUI_Util.getSPFlexParameters(panel,null);
+
+	String[] triplet = null;
+	if ( area_type != null && area_type.length() > 0) {
+		triplet = new String[3];
+		triplet[0] = "area_type";
+		triplet[1] = "MA";
+		triplet[2] = area_type;
+		HydroBase_GUI_Util.addTriplet(parameters, triplet);
+	}
+	if ( area_name != null && area_name.length() > 0) {
+		triplet = new String[3];
+		triplet[0] = "area_name";
+		triplet[1] = "MA";
+		triplet[2] = area_name;
+		HydroBase_GUI_Util.addTriplet(parameters, triplet);
+	}
+	if ( pop_type != null && pop_type.length() > 0) {
+		triplet = new String[3];
+		triplet[0] = "pop_type";
+		triplet[1] = "MA";
+		triplet[2] = pop_type;
+		HydroBase_GUI_Util.addTriplet(parameters, triplet);
+	}
+	if (!distinct && req_date1 != null) {
+		triplet = new String[3];
+		triplet[0] = "cal_year";
+		triplet[1] = "GE";
+		triplet[2] = "" + req_date1.getYear();
+		HydroBase_GUI_Util.addTriplet(parameters, triplet);
+	}
+	if (!distinct && req_date2 != null) {
+		triplet = new String[3];
+		triplet[0] = "cal_year";
+		triplet[1] = "LE";
+		triplet[2] = "" + req_date2.getYear();
+		HydroBase_GUI_Util.addTriplet(parameters, triplet);
+	}
+
+	if (distinct) {
+		HydroBase_GUI_Util.fillSPParameters(parameters, 
+			getViewNumber(
+			"vw_CDSS_CUPopulation_Distinct"), 2, null);
+		ResultSet rs = runSPFlex(parameters);
+		Vector v = toCUPopulationList(rs, true);
+		closeResultSet(rs, __lastStatement);
+		return v;					
+	}
+	else {	HydroBase_GUI_Util.fillSPParameters(parameters, 
+			getViewNumber(
+			"vw_CDSS_CUPopulation"), 1, null);
+		ResultSet rs = runSPFlex(parameters);
+		Vector v = toCUPopulationList(rs, false);
+		closeResultSet(rs, __lastStatement);
+		return v;					
+	}		
 }
 
 /**
@@ -15476,6 +15739,10 @@ throws Exception, NoDataFoundException
 	String sub_data_type = "";			// Sub-data type.
 	String agstats_commodity = "";			// Agstats commodity
 	String agstats_practice = "";			// Agstats practice
+	String agstats_type = "";			// Agstats type
+	String cupop_area_type = "";			//CUPopulation area type
+	String cupop_area_name = "";			//CUPopulation area name
+	String cupop_pop_type = "";			//CUPopulation pop. type
 	Vector sheet_names = null;			// Vector of sheet_name
 							// needed to get list
 							// of wis_num for data
@@ -15732,11 +15999,11 @@ throws Exception, NoDataFoundException
 		ts.setIdentifier(tsident_string);
 		ts.setDescription(well.getWell_name());
 	}
-	// XJTSX
 	else if (	HydroBase_Util.
 			isAgriculturalCASSCropStatsTimeSeriesDataType(this,
 			data_type)) {
-		// The sub-datatype has the comodity and practice
+		// The sub-datatype has the comodity and practice, separated
+		// by an underscore
 		agstats_commodity = StringUtil.getToken (
 			sub_data_type, "_", 0, 0);
 		agstats_practice = StringUtil.getToken (
@@ -15744,6 +16011,19 @@ throws Exception, NoDataFoundException
 		ts.setIdentifier ( tsident_string);
 		ts.setDescription ( tsident.getLocation() + "," +
 			agstats_commodity + "," + agstats_practice); 
+	}
+	else if (	HydroBase_Util.
+			isAgriculturalCASSLivestockStatsTimeSeriesDataType(this,
+			data_type)) {
+		// The sub-datatype has the comodity and type, separated
+		// by an underscore
+		agstats_commodity = StringUtil.getToken (
+			sub_data_type, "_", 0, 0);
+		agstats_type = StringUtil.getToken (
+			sub_data_type, "_", 0, 1);
+		ts.setIdentifier ( tsident_string);
+		ts.setDescription ( tsident.getLocation() + "," +
+			agstats_commodity + "," + agstats_type); 
 	}
 	else if (	HydroBase_Util.
 			isAgriculturalNASSCropStatsTimeSeriesDataType(this,
@@ -15754,6 +16034,18 @@ throws Exception, NoDataFoundException
 		ts.setIdentifier ( tsident_string);
 		ts.setDescription ( tsident.getLocation() + "," +
 			agstats_commodity); 
+	}
+	else if (	HydroBase_Util.
+			isCUPopulationTimeSeriesDataType(this, data_type)) {
+		// The location has the area type and name.
+		cupop_area_type = StringUtil.getToken (
+			tsident.getLocation(), "-", 0, 0 );
+		cupop_area_name = StringUtil.getToken (
+			tsident.getLocation(), "-", 0, 1 );
+		// The sub-datatype has the population type.
+		cupop_pop_type = sub_data_type;
+		ts.setIdentifier ( tsident_string);
+		ts.setDescription ( cupop_area_name + "," + cupop_pop_type ); 
 	}
 	else if (HydroBase_Util.isIrrigSummaryTimeSeriesDataType(this,
 			data_type)) {
@@ -16209,6 +16501,38 @@ throws Exception, NoDataFoundException
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase frost_dates");
 		v = readFrostDatesList (mt_meas_num, req_date1, req_date2);
+	}
+	else if ((interval_base == TimeInterval.YEAR) &&
+		data_type.equalsIgnoreCase("HumanPopulation")) {
+		// CU Population...
+		ts.setInputName (
+			"HydroBase CUPopulation.population");
+		ts.setDataUnits (
+			HydroBase_Util.getTimeSeriesDataUnits (
+			this, data_type, interval ));
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		v = readCUPopulationList (
+			(InputFilter_JPanel)null,	// panel 
+			cupop_area_type,		//literal "County", etc.
+			cupop_area_name,
+			cupop_pop_type,
+			req_date1, req_date2, false);
+	}
+	else if ((interval_base == TimeInterval.YEAR) &&
+		data_type.equalsIgnoreCase("LivestockHead")) {
+		// CASS agstats...
+		ts.setInputName (
+			"HydroBase agricultural_CASS_livestock_stats.head");
+		ts.setDataUnits (
+			HydroBase_Util.getTimeSeriesDataUnits (
+			this, data_type, interval ));
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		v = readAgriculturalCASSLivestockStatsList (
+			(InputFilter_JPanel)null,	// panel 
+			tsident.getLocation(),	// County
+			agstats_commodity,
+			agstats_type,
+			req_date1, req_date2, false);
 	}
 	else if ((interval_base == TimeInterval.MONTH) &&
 		data_type.equalsIgnoreCase("NaturalFlow")) {
@@ -16831,6 +17155,32 @@ throws Exception, NoDataFoundException
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		data = (HydroBase_FrostDates)v.elementAt(size - 1);
+		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
+		data_date2.setYear ( data.getCal_year());
+	}
+	else if ((interval_base == TimeInterval.YEAR) &&
+		(data_type.equalsIgnoreCase("HumanPopulation") ) ) {
+		// Get the first and last dates...
+		HydroBase_CUPopulation data =
+			(HydroBase_CUPopulation)v.elementAt(0);
+		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
+		data_date1.setYear ( data.getCal_year());
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		data = (HydroBase_CUPopulation)v.elementAt(size-1);
+		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
+		data_date2.setYear ( data.getCal_year());
+	}
+	else if ((interval_base == TimeInterval.YEAR) &&
+		(data_type.equalsIgnoreCase("LivestockHead") ) ) {
+		// Get the first and last dates...
+		HydroBase_AgriculturalCASSLivestockStats data =
+			(HydroBase_AgriculturalCASSLivestockStats)
+			v.elementAt(0);
+		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
+		data_date1.setYear ( data.getCal_year());
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		data = (HydroBase_AgriculturalCASSLivestockStats)
+			v.elementAt(size-1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
@@ -17809,6 +18159,33 @@ throws Exception, NoDataFoundException
 				ts.setDataValue ( date,
 				(double)TimeUtil.dayOfYear(
 				new DateTime(date2)));
+			}
+		}
+	}
+	else if ((interval_base == TimeInterval.YEAR) &&
+		data_type.equalsIgnoreCase("HumanPopulation")) {
+		HydroBase_CUPopulation data;
+		for ( int i = 0; i < size; i++) {
+			// Loop through and assign the data...
+			data = (HydroBase_CUPopulation)v.elementAt(i);
+			date.setYear ( data.getCal_year());
+			value = (double)data.getPopulation();
+			if (!DMIUtil.isMissing(value)) {
+				ts.setDataValue ( date, value);
+			}
+		}
+	}
+	else if ((interval_base == TimeInterval.YEAR) &&
+		data_type.equalsIgnoreCase("LivestockHead")) {
+		HydroBase_AgriculturalCASSLivestockStats data;
+		for ( int i = 0; i < size; i++) {
+			// Loop through and assign the data...
+			data = (HydroBase_AgriculturalCASSLivestockStats)
+				v.elementAt(i);
+			date.setYear ( data.getCal_year());
+			value = (double)data.getHead();
+			if (!DMIUtil.isMissing(value)) {
+				ts.setDataValue ( date, value);
 			}
 		}
 	}
@@ -22019,7 +22396,9 @@ private void setupViewNumbersHashtable() {
 
 	__viewNumbers = new Hashtable();
 	__viewNumbers.put("vw_CDSS_AgriculturalCASSCropStats", "1");
-	__viewNumbers.put("vw_CDSS_AgriculturalCASSCropStatsDistinct", "2");
+	__viewNumbers.put("vw_CDSS_AgriculturalCASSCropStats_Distinct", "2");
+	__viewNumbers.put("vw_CDSS_AgriculturalCASSLivestockStats", "106");
+	__viewNumbers.put("vw_CDSS_AgriculturalCASSLivestockStats_Distinct","111");
 	__viewNumbers.put("vw_CDSS_AgriculturalNASSCropStats", "3");
 	__viewNumbers.put("vw_CDSS_AgriculturalNASSCropStatsDistinct", "4");
 	__viewNumbers.put("vw_CDSS_Agstats", "5");
@@ -22033,6 +22412,8 @@ private void setupViewNumbersHashtable() {
 	__viewNumbers.put("vw_CDSS_CUBlaneyCriddle", "13");
 	__viewNumbers.put("vw_CDSS_CUModHargreaves", "14");
 	__viewNumbers.put("vw_CDSS_CUPenmanMonteith", "15");
+	__viewNumbers.put("vw_CDSS_CUPopulation", "107");
+	__viewNumbers.put("vw_CDSS_CUPopulation_Distinct", "112");
 	__viewNumbers.put("vw_CDSS_DailyAmt", "16");
 	__viewNumbers.put("vw_CDSS_DailyEVAP", "63");
 	__viewNumbers.put("vw_CDSS_DailyFlow", "66");
@@ -22286,6 +22667,115 @@ throws Exception {
 			if (!rs.wasNull()) {
 				data.setProductionUnit(s.trim());
 			}			
+		}
+
+		v.add(data);
+	}
+	return v;
+}
+
+/**
+Translate a ResultSet to HydroBase_AgriculturalCASSLivestockStats objects.
+@param rs ResultSet to translate.
+@return a Vector of HydroBase_AgriculturalLivestockCropStats.
+*/
+private Vector toAgriculturalCASSLivestockStatsList(
+	ResultSet rs, boolean distinct)
+throws Exception {
+	HydroBase_AgriculturalCASSLivestockStats data = null;
+	Vector v = new Vector();
+	int index = 1;
+
+	int i;
+	String s;
+	double d;
+
+	while (rs.next()) {
+		index = 1;
+		data = new HydroBase_AgriculturalCASSLivestockStats();
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setSt(s.trim());
+		}
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setCounty(s.trim());
+		}
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setCommodity(s.trim());
+		}
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setType(s.trim());
+		}
+		if (!distinct) {
+			// All the other...
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setCal_year(i);
+			}
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setHead(i);
+			}
+		}
+
+		v.add(data);
+	}
+	return v;
+}
+
+// REVISIT SAM 2006-10-31
+// Why do we need a different version of this method for stored procedures?
+// Both operate on a result set.
+/**
+Translate a ResultSet to HydroBase_AgriculturalCASSLivestockStats objects.
+@param rs ResultSet to translate.
+@param distinct whether it is a distinct query or not
+@return a Vector of HydroBase_AgriculturalCASSLivestockStats.
+*/
+private Vector toAgriculturalCASSLivestockStatsSPList(
+	ResultSet rs, boolean distinct)
+throws Exception {
+	HydroBase_AgriculturalCASSLivestockStats data = null;
+	Vector v = new Vector();
+	int index = 1;
+
+	int i;
+	String s;
+	double d;
+
+	while (rs.next()) {
+		index = 1;
+		data = new HydroBase_AgriculturalCASSLivestockStats();
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setSt(s.trim());
+		}
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setCounty(s.trim());
+		}
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setCommodity(s.trim());
+		}
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setType(s.trim());
+		}
+
+		if (!distinct) {
+			// All the other...
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setCal_year(i);
+			}
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setHead(i);
+			}
 		}
 
 		v.add(data);
@@ -24245,6 +24735,53 @@ throws Exception {
 		f = rs.getFloat(index++);		
 		if (!rs.wasNull()) {
 			data.setCropgrowcoeff(f);
+		}
+
+		v.add(data);
+	}
+	return v;
+}
+
+/**
+Translate a ResultSet to HydroBase_CUPopulation objects.
+@param rs ResultSet to translate.
+@return a Vector of HydroBase_CUPopulation.
+*/
+private Vector toCUPopulationList( ResultSet rs, boolean distinct)
+throws Exception {
+	HydroBase_CUPopulation data = null;
+	Vector v = new Vector();
+	int index = 1;
+
+	int i;
+	String s;
+	double d;
+
+	while (rs.next()) {
+		index = 1;
+		data = new HydroBase_CUPopulation();
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setArea_type(s.trim());
+		}
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setArea_name(s.trim());
+		}
+		s = rs.getString(index++);
+		if (!rs.wasNull()) {
+			data.setPop_type(s.trim());
+		}
+		if (!distinct) {
+			// All the other...
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setCal_year(i);
+			}
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setPopulation(i);
+			}
 		}
 
 		v.add(data);

@@ -65,6 +65,9 @@
 // 2006-06-26	SAM, RTi		When processing diversion comments, more
 //					gracefully handle the case where no
 //					time series are available in HydroBase.
+// 2006-10-31	SAM, RTi		Add CASS livestock time series.
+//					Add CUPopulation HumanPopulation time
+//					series (Demographics group).
 //------------------------------------------------------------------------------
 // EndHeader
 
@@ -128,11 +131,17 @@ public final static int DATA_TYPE_STRUCTURE_ALL = DATA_TYPE_STRUCTURE_DIVERSION|
 						DATA_TYPE_STRUCTURE_RESERVOIR |
 						DATA_TYPE_STRUCTURE_WELL;
 public final static int DATA_TYPE_WIS = 0x100000;
+
+public final static int DATA_TYPE_DEMOGRAPHICS_POPULATION = 0x1000000;
+public final static int DATA_TYPE_DEMOGRAPHICS_ALL =
+					DATA_TYPE_DEMOGRAPHICS_POPULATION;
+
 public final static int DATA_TYPE_ALL = DATA_TYPE_AGRICULTURE |
 					DATA_TYPE_HARDWARE |
 					DATA_TYPE_STATION_ALL |
 					DATA_TYPE_STRUCTURE_ALL |
-					DATA_TYPE_WIS;
+					DATA_TYPE_WIS |
+					DATA_TYPE_DEMOGRAPHICS_ALL;
 
 private static int __preferred_WDID_length = 7;
 					// The preferred length for WDID
@@ -1466,7 +1475,8 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		}
 		types.addElement ( prefix + "CropAreaHarvested" );
 		types.addElement ( prefix + "CropAreaPlanted" );
-		// Colorado agricultural statistics
+		types.addElement ( prefix + "LivestockHead" );
+		// National agricultural statistics
 		if ( add_group ) {
 			prefix = "Agriculture/NASS - ";
 		}
@@ -1486,6 +1496,13 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 							// TSTool -
 							// irrig_summary_ts
 							// table
+	}
+	if ( (include_types&DATA_TYPE_DEMOGRAPHICS_POPULATION) > 0 ) {
+		prefix = "";
+		if ( add_group ) {
+			prefix = "Demographics - ";
+		}
+		types.addElement ( prefix + "HumanPopulation" );
 	}
 	if ( (include_types&DATA_TYPE_STRUCTURE_DIVERSION) > 0 ) {
 		prefix = "";
@@ -1575,9 +1592,10 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 						String data_type,
 						String interval )
 {	String	ACRE = "ACRE", ACFT = "ACFT", CFS = "CFS", DAY = "DAY",
-		DEGF = "DEGF", FT = "FT",
+		DEGF = "DEGF", FT = "FT", HEAD = "HEAD",
 		IN = "IN", KM = "KM",
-		KPA = "KPA", MJM2 = "MJ/M2", UNKNOWN = "", VOLT = "VOLT";
+		KPA = "KPA", MJM2 = "MJ/M2", PERSONS = "PERSONS",
+		UNKNOWN = "", VOLT = "VOLT";
 	if ( data_type.startsWith("CropArea") ) {
 		return ACRE;
 	}
@@ -1610,6 +1628,12 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 		data_type.equalsIgnoreCase("FrostDateF32F") ||
 		data_type.equalsIgnoreCase("FrostDateF28F") ) {
 		return DAY;
+	}
+	else if ( data_type.equalsIgnoreCase("HumanPopulation") ) {
+		return PERSONS;
+	}
+	else if ( data_type.equalsIgnoreCase("LivestockHead") ) {
+		return HEAD;
 	}
 	else if ( data_type.equalsIgnoreCase("NaturalFlow") ) {
 		return ACFT;
@@ -1928,6 +1952,28 @@ public static boolean isAgriculturalCASSCropStatsTimeSeriesDataType (
 }
 
 /**
+Indicate whether a time series data type is for CASS agricultural livestock
+statistics.
+@param hbdmi An instance of HydroBaseDMI.  The data type is checked to see
+whether it is "LivestockHead".
+@param data_type A HydroBase data type.  If the data_type has a "-",
+then the token after the dash is compared.
+@return true if the data type is for agricultural livestock statistics.
+*/
+public static boolean isAgriculturalCASSLivestockStatsTimeSeriesDataType (
+							HydroBaseDMI hbdmi,
+							String data_type )
+{	if ( data_type.indexOf("-") >= 0) {
+		data_type = StringUtil.getToken(data_type,"-",0,1) ;
+	}
+	if ( data_type.equalsIgnoreCase("LivestockHead") ) {
+		return true;
+	}
+	else {	return false;
+	}
+}
+
+/**
 Indicate whether a time series data type is for NASS agricultural crop
 statistics.
 @param hbdmi An instance of HydroBaseDMI.  The data type is checked to see
@@ -1944,6 +1990,27 @@ public static boolean isAgriculturalNASSCropStatsTimeSeriesDataType (
 	}
 	if ( data_type.equalsIgnoreCase("CropArea") ||
 		data_type.equalsIgnoreCase("CropArea") ) {
+		return true;
+	}
+	else {	return false;
+	}
+}
+
+/**
+Indicate whether a time series data type is for CUPopulation.
+@param hbdmi An instance of HydroBaseDMI.  The data type is checked to see
+whether it is "HumanPopulation".
+@param data_type A HydroBase data type.  If the data_type has a "-",
+then the token after the dash is compared.
+@return true if the data type is for CUPopulation.
+*/
+public static boolean isCUPopulationTimeSeriesDataType (
+							HydroBaseDMI hbdmi,
+							String data_type )
+{	if ( data_type.indexOf("-") >= 0) {
+		data_type = StringUtil.getToken(data_type,"-",0,1) ;
+	}
+	if ( data_type.equalsIgnoreCase("HumanPopulation") ) {
 		return true;
 	}
 	else {	return false;
@@ -2181,9 +2248,13 @@ throws Exception
 		(ifp instanceof
 		HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel)
 		|| (ifp instanceof
-		HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel) ||
+		HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel)
+		|| (ifp instanceof
+		HydroBase_GUI_AgriculturalCASSLivestockStats_InputFilter_JPanel) ||
 		(ifp instanceof
-		HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel) ||
+		HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel)
+		|| (ifp instanceof
+		HydroBase_GUI_CUPopulation_InputFilter_JPanel) ||
 		(ifp instanceof
 		HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel) ||
 		(ifp instanceof 
@@ -2207,6 +2278,45 @@ throws Exception
 		}
 		catch ( Exception e ) {
 			message = "Error getting agricultural crop " +
+				"time series list from HydroBase.";
+			Message.printWarning ( 2, routine, message );
+			Message.printWarning ( 2, routine, e );
+			throw new Exception ( message );
+		}
+	}
+	else if(HydroBase_Util.
+		isAgriculturalCASSLivestockStatsTimeSeriesDataType ( hbdmi,
+		data_type ) ) {
+		try {	tslist = hbdmi.readAgriculturalCASSLivestockStatsList (
+				ifp,	// From input filter
+				null,		// county
+				null,		// commodity
+				null,		// type
+				null,		// date1
+				null,		// date2,
+				true );		// Distinct
+		}
+		catch ( Exception e ) {
+			message = "Error getting agricultural livestock " +
+				"time series list from HydroBase.";
+			Message.printWarning ( 2, routine, message );
+			Message.printWarning ( 2, routine, e );
+			throw new Exception ( message );
+		}
+	}
+	else if(HydroBase_Util.isCUPopulationTimeSeriesDataType ( hbdmi,
+		data_type ) ) {
+		try {	tslist = hbdmi.readCUPopulationList (
+				ifp,	// From input filter
+				null,		// county
+				null,		// commodity
+				null,		// type
+				null,		// date1
+				null,		// date2,
+				true );		// Distinct
+		}
+		catch ( Exception e ) {
+			message = "Error getting CU Population " +
 				"time series list from HydroBase.";
 			Message.printWarning ( 2, routine, message );
 			Message.printWarning ( 2, routine, e );

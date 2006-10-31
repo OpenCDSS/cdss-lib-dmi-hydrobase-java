@@ -55,6 +55,8 @@
 // 2005-06-28	JTS, RTi		Removed DMI parameters from table models
 // 2005-07-06	SAM, RTi		* Remove comment about irrigated crop
 //					  numbers since they are no longer used.
+// 2006-10-31	SAM, RTi		Change from ...CASS...InputFilter to
+//					...CASSCropStats... input filter.
 //-----------------------------------------------------------------------------
 // EndHeader
 
@@ -146,7 +148,7 @@ private HydroBaseDMI __dmi;
 /**
 Colorado agstats query input filters.
 */
-private HydroBase_GUI_CASS_InputFilter_JPanel __cassFilterJPanel = null;
+private HydroBase_GUI_CASSCropStats_InputFilter_JPanel __cassFilterJPanel = null;
 
 /**
 National agstats query input filters.
@@ -912,7 +914,7 @@ private void setupGUI() {
                 1, 1, 5, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
 	__dataTypeJComboBox.addItemListener(this);
 
-	__cassFilterJPanel = new HydroBase_GUI_CASS_InputFilter_JPanel(__dmi);
+	__cassFilterJPanel = new HydroBase_GUI_CASSCropStats_InputFilter_JPanel(__dmi);
 	__nassFilterJPanel = new HydroBase_GUI_NASS_InputFilter_JPanel(__dmi);
 	__cropGrowthFilterJPanel 
 		= new HydroBase_GUI_CropGrowth_InputFilter_JPanel(

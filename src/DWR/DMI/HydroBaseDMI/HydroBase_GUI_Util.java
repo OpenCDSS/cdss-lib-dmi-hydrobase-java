@@ -117,7 +117,10 @@
 // 2005-11-16	JTS, RTi		Recommented setWaterDistrictJComboBox()
 //					because previous comments were 
 //					unclear and insufficient.
+// 2006-10-30	SAM, RTi		Add CASS livestock support.
+//					Add CUPopulation support.
 //------------------------------------------------------------------------------
+// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -239,6 +242,9 @@ Label string that appears by the query results table.
 */
 public final static String LIST_LABEL = "Query Results List:";	
 
+// REVISIT SAM 2006-10-30
+// Need to clarify what these are really used for... are they identifiers for
+// windows?  Table names should not be used in the applications!
 /**
 Strings used by GUI objects.  These strings are used to separate database-
 dependent table names, field names, etc from the GUI objects.
@@ -253,8 +259,8 @@ protected static String
 	_GEOLOC,
 	_GEOLOC_TABLE_NAME, _WELL_APPLICATION, _WELL_APPLICATION_TABLE_NAME,
 	_STATION_TABLE_NAME, _PLSS_LOCATION, _PLSS_LOCATION_LABEL,
-	_MEASTYPE_TABLE_NAME, _CASS_TABLE_NAME, _NASS_TABLE_NAME,
-	_ALL_DIVISIONS, _DIVISION_8;
+	_MEASTYPE_TABLE_NAME, _CASS_TABLE_NAME, _CASS_LIVESTOCK_TABLE_NAME,
+	_NASS_TABLE_NAME, _ALL_DIVISIONS, _DIVISION_8;
 
 /**
 Assigns string values to variables.  This is not done statically so that
@@ -299,6 +305,7 @@ static {
 	_WELL_APPLICATION_TABLE_NAME =	"well_application";
 
 	_CASS_TABLE_NAME = 		"Agricultural_CASS_Crop_stats";
+	_CASS_LIVESTOCK_TABLE_NAME =	"Agricultural_CASS_Livestock_stats";
 	_NASS_TABLE_NAME = 		"Agricultural_NASS_Crop_stats";
 
 // The following are used for constraining queries by PLSS Location.
@@ -1197,7 +1204,7 @@ throws Exception {
 		}
 	}
 
-	// loop through all the InputFilters and put their values into 
+	// Loop through all the InputFilters and put their values into 
 	// the array.  getSPFlexParametersTriplet() will build an array 
 	// with the field to query, the SPFlex comparator, and the value
 	// to query against.
