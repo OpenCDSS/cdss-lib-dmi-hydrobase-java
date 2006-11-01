@@ -8775,7 +8775,7 @@ This method is used by:<ul>
 </ul>
 <b>Stored Procedures</b><p>
 This method uses the following views:<p><ul>
-<li>vw_CDSS_AgriculturalCASSCropStatsDistinct</li>
+<li>vw_CDSS_AgriculturalCASSCropStats_Distinct</li>
 <li>vw_CDSS_AgriculturalCASSCropStats</li></ul><p>
 @param panel the panel with the query constraints.  If null, it will not be 
 used.
@@ -8843,7 +8843,7 @@ throws Exception {
 		if (distinct) {
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
 				getViewNumber(
-				"vw_CDSS_AgriculturalCASSCropStatsDistinct"), 
+				"vw_CDSS_AgriculturalCASSCropStats_Distinct"), 
 				2, null);
 			ResultSet rs = runSPFlex(parameters);
 			Vector v = toAgriculturalCASSCropStatsSPList(rs, true);
@@ -22400,7 +22400,7 @@ private void setupViewNumbersHashtable() {
 	__viewNumbers.put("vw_CDSS_AgriculturalCASSLivestockStats", "106");
 	__viewNumbers.put("vw_CDSS_AgriculturalCASSLivestockStats_Distinct","111");
 	__viewNumbers.put("vw_CDSS_AgriculturalNASSCropStats", "3");
-	__viewNumbers.put("vw_CDSS_AgriculturalNASSCropStatsDistinct", "4");
+	__viewNumbers.put("vw_CDSS_AgriculturalNASSCropStats_Distinct", "4");
 	__viewNumbers.put("vw_CDSS_Agstats", "5");
 	__viewNumbers.put("vw_CDSS_Agstats_Distinct", "6");
 	__viewNumbers.put("vw_CDSS_Annual_Amt", "7");
