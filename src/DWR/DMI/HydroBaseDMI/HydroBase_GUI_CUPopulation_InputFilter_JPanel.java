@@ -95,10 +95,13 @@ throws Exception
 		}
 	}
 
-	Vector input_filters = new Vector(8);
+	Vector input_filters = new Vector(3);
 	input_filters.addElement ( new InputFilter ( "", "",
 			StringUtil.TYPE_STRING,
 			null, null, true ) );	// Blank to disable filter
+	// REVISIT SAM 2006-11-03
+	// Really need to have area_name cause a cascading filter on
+	// area_name choices, but don't have a way to do this right now.
 	input_filters.addElement ( new InputFilter (
 		"Area Type", "CUPopulation.area_type", "area_type",
 		StringUtil.TYPE_STRING,

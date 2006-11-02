@@ -8950,7 +8950,7 @@ state/county/commodity/type records will be returned.
 */
 public Vector readAgriculturalCASSLivestockStatsList(InputFilter_JPanel panel,
 String county, String commodity, String type, DateTime req_date1, 
-DateTime req_date2, boolean distinct) 
+DateTime req_date2, boolean distinct ) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -9001,18 +9001,19 @@ throws Exception {
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
 				getViewNumber(
 				"vw_CDSS_AgriculturalCASSLivestockStats_Distinct"), 
-				2, null);
+				111, null);
 			ResultSet rs = runSPFlex(parameters);
 			Vector v = toAgriculturalCASSLivestockStatsSPList(rs,
 				true);
 			closeResultSet(rs, __lastStatement);
 			return v;					
 		}
-		else {
+		else {	// For time series, order by distinct fields + year...
+			// This is the default inside the HydroBase view.
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
 				getViewNumber(
 				"vw_CDSS_AgriculturalCASSLivestockStats"), 
-				1, null);
+				-999, null);
 			ResultSet rs = runSPFlex(parameters);
 			Vector v = toAgriculturalCASSLivestockStatsSPList(rs,
 				false);
@@ -10430,18 +10431,22 @@ throws Exception {
 		HydroBase_GUI_Util.addTriplet(parameters, triplet);
 	}
 
+	// REVISIT SAM 2006-11-01
+	// Replace the order by (0) with a value appropriate for the
+	// CU Population data.
 	if (distinct) {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber(
-			"vw_CDSS_CUPopulation_Distinct"), 2, null);
+			"vw_CDSS_CUPopulation_Distinct"), 112, null);
 		ResultSet rs = runSPFlex(parameters);
 		Vector v = toCUPopulationList(rs, true);
 		closeResultSet(rs, __lastStatement);
 		return v;					
 	}
-	else {	HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber(
-			"vw_CDSS_CUPopulation"), 1, null);
+	else {	// Order by everything, including cal_year (default in view on
+		// database side)...
+		HydroBase_GUI_Util.fillSPParameters(parameters, 
+			getViewNumber( "vw_CDSS_CUPopulation"), -999, null );
 		ResultSet rs = runSPFlex(parameters);
 		Vector v = toCUPopulationList(rs, false);
 		closeResultSet(rs, __lastStatement);
@@ -24768,16 +24773,17 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setArea_name(s.trim());
 		}
+		if (!distinct) {
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setCal_year(i);
+			}
+		}
 		s = rs.getString(index++);
 		if (!rs.wasNull()) {
 			data.setPop_type(s.trim());
 		}
 		if (!distinct) {
-			// All the other...
-			i = rs.getInt(index++);
-			if (!rs.wasNull()) {
-				data.setCal_year(i);
-			}
 			i = rs.getInt(index++);
 			if (!rs.wasNull()) {
 				data.setPopulation(i);

@@ -40,7 +40,7 @@ throws Exception
 		(InputFilter_JPanel)null,	// Where clauses
 					null,	// county
 					null,	// commodity
-					null,	// practice
+					null,	// type
 					null,	// date1
 					null,	// date2,
 					true );	// Distinct
