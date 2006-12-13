@@ -36,7 +36,7 @@
 		</and>
 	</condition>
 	
-	<condition property="executable" value="I:\develop\jdk_142\bin\javac">
+	<condition property="executable" value="S:\develop\jdk_142\bin\javac">
 		<and>
 		       	<os family="windows" />
 		</and>
@@ -49,7 +49,7 @@
 		</and>
 	</condition>
 		
-	<condition property="jhome" value="I:\develop\jdk_142\bin\javac">
+	<condition property="jhome" value="S:\develop\jdk_142\bin\javac">
 		<and>
 			    <os family="windows" />
 		</and>
@@ -62,7 +62,7 @@
 		</and>
 	</condition>
 			
-	<condition property="jvm" value="I:\DEVELOP\jre_142">
+	<condition property="jvm" value="S:\DEVELOP\jre_142">
 		<and>
 				<os family="windows" />
 		</and>
@@ -84,7 +84,7 @@
 	<property name="package"     	 value="DWR${sep}DMI${sep}HydroBaseDMI" />
 	<property name="nsis.dir"		 location="NSIS" />
 	<property name="executable"  	 
-		location="I:${sep}develop${sep}jdk_142${sep}bin${sep}javac" />
+		location="S:${sep}develop${sep}jdk_142${sep}bin${sep}javac" />
 	<property name="classname"   	 value="" />
 	<property name="testSuite"  	 value="DWR.DMI.HydroBaseDMI.testSuite" />
 	<property name="jarfname"    	 value="HydroBaseDMI_142.jar" />
@@ -154,13 +154,6 @@
 ====================================================-->
 <target name="compile" >
 
-	<echo>
-********* COMPILING SOURCE ************
-	  destdir     : ${buildwork.dir}
-	  executable  : ${executable}
-	  compiler    : ${compiler}
-***************************************
-	</echo>
 
 	<mkdir dir="${buildwork.dir}" />
 	
@@ -184,14 +177,6 @@
 ==========================================================-->
 <target name="compileTest" depends="compile">
 
-	<echo>
-********* COMPILING TEST ************
-	  srcdir      : ${test.dir}${sep}${package}
-	  destdir     : ${build.dir}${sep}test
-	  executable  : ${executable}
-	  compiler    : ${compiler}
-***************************************
-	</echo>
 
 	<mkdir dir="${build.dir}${sep}test" />
 	
@@ -272,12 +257,6 @@
 ====================================================-->
 <target name="javadoc">
 
-	<echo>
-********** Creating Javadocs **************
-   Destination:     ${jdoc.dir}
-   From Dir   :     ${src.dir}${sep}${package} 
-*******************************************
-	</echo>
 	
 	<!-- cleanup old javadocs -->
 	<delete dir="${jdoc.dir}" />
@@ -301,13 +280,6 @@
 =======================================================-->
 <target name="jar" depends="compile" >
     
-	<echo>
-********** Creating jar file *****************
-   Destination:    ${dist.dir}
-   source dir :    ${buildwork.dir}
-   jar filename:   ${jarfname}
-**********************************************
-	</echo>
 
 	<!-- Uncomment this if there are graphics file needed in jar
 	=============================================================
