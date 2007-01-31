@@ -261,7 +261,9 @@ private void initialize ( JFrame parent, Command command )
     		"fillInterpolate() command." );
     	response ( false );
     }
-	__TSID_JComboBox.setData ( tsids );
+    else {
+    	__TSID_JComboBox.setData ( tsids );
+    }
 	// Always allow a "*" to let all time series be filled...
 	__TSID_JComboBox.add ( "*" );
 	__TSID_JComboBox.addItemListener ( this );
