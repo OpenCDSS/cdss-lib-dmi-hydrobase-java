@@ -114,17 +114,19 @@ throws InvalidCommandParameterException
 				"Specify a date or OutputEnd.";
 		}
 	}
-	if ( (FillFlag != null) && !(FillFlag.equalsIgnoreCase("Auto"))&&
+	if ( (FillFlag != null) && !(FillFlag.equalsIgnoreCase("Auto")) &&
 			(FillFlag.length() != 1) ) {
 		warning += "\nThe fill flag must be 1 character long or set to Auto.";
 	}
-	if ( FillUsingCIU != null && !FillUsingCIU.equalsIgnoreCase("true") ||
-			!FillUsingCIU.equalsIgnoreCase("false") ||
-			!FillUsingCIU.equalsIgnoreCase(""))
+	if ( FillUsingCIU != null && !(FillUsingCIU.equalsIgnoreCase("True")) && 
+			!(FillUsingCIU.equalsIgnoreCase("False")) &&
+			!(FillUsingCIU.equalsIgnoreCase(""))) {
+		warning += "\nFill Using CIU must be true, false or blank.\n";
+	}
 	if ( FillUsingCIU != null && 
 			FillUsingCIU.equalsIgnoreCase( "true" ) && 
 			FillUsingCIUFlag != null && 
-			!(FillUsingCIUFlag.equalsIgnoreCase("Auto")) || 
+			!(FillUsingCIUFlag.equalsIgnoreCase("Auto")) &&
 			FillUsingCIUFlag.length() != 1 ) {
 		warning += "\nThe fill using CIU flag must be 1 character long or set to Auto.";
 	}
