@@ -85,6 +85,7 @@ import RTi.TS.DayTS;
 import RTi.TS.MonthTS;
 import RTi.TS.TS;
 import RTi.TS.TSData;
+import RTi.TS.TSIterator;
 import RTi.TS.YearTS;
 
 import RTi.Util.GUI.InputFilter_JPanel;
@@ -684,6 +685,40 @@ public final static String [] convertToHydroBaseMeasType (
 }
 
 /**
+Creates a Property List with information needed to fill a Time Series with a
+constant value.
+@param inputTS Time Series to fill.
+@param value Constant used to fill the Time Series.
+@param start Start DateTime for filling.
+@param end End DateTime for filling.
+@return PropList List that contains information on filling a constant value for
+the given Time Series and dates.
+ */
+public static PropList createFillConstantPropList( TS inputTS, String value,
+		String fillFlag, DateTime start, DateTime end)
+{
+	if( inputTS == null ) {
+		return null;
+	}
+	if( start == null ) {
+		start = inputTS.getDate1();
+	}
+	if( end == null ) {
+		end = inputTS.getDate2();
+	}
+	// Create the PropList
+	PropList prop = new PropList(
+		"List to fill TS with constant value");
+	prop.add( "FillConstantValue=" + value );
+	prop.add( "StartDate=" + start.toString() );
+	prop.add( "EndDate=" + end.toString() );
+	prop.add( "FillMethods=FillConstant" );
+	prop.add( "FillFlag=" + fillFlag);
+	
+	return prop;
+}
+
+/**
 Fill a daily diversion (DivTotal or DivClass) or reservoir (RelTotal, RelClass)
 time series by carrying forward data.  The following rules are applied:
 <ol>
@@ -1151,6 +1186,74 @@ throws Exception
 			Message.printStatus(2, routine, comment_string);
 		}
 	}
+}
+
+/**
+Returns the nearest TSData point at which non-missing data is found.  If
+there are no non-missing data points found then null is returned.
+@param inputTS Time series object to iterate.
+@param date1 First DateTime of the iteration. If null, uses start date set for
+the given TS.
+@param date2 Last DateTime of the iteration.  If null, uses end date set for
+the given TS.
+@param reverse If true then the iteration will go from date2 to date1.  If
+false then iteration starts at date1 and finishes at date2.
+@return
+ */
+public static TSData findNearestDataPoint(TS inputTS, DateTime date1,
+		DateTime date2, boolean reverse)
+{
+	if( inputTS == null ) {
+		return null;
+	}
+	TSData nearestPoint = null;
+	String routine = 
+		"FillUsingDiversionComments_Command.getFirstNonMissingDate";
+	TSIterator iter = null;
+	
+	// check date parameters and if null set to TS dates
+	if( date1 == null ) {
+		date1 = inputTS.getDate1();
+	}
+	if( date2 == null ) {
+		date2 = inputTS.getDate2();
+	}
+	
+	// setup the iterator for the TS
+	try {
+		iter = inputTS.iterator(date1, date2);
+	} catch (Exception e) {
+		Message.printWarning(3, routine, e);
+		return null;
+	}
+	
+	DateTime date;
+	double value;
+	TSData data = null;
+	//Iterate 
+	if( reverse ) {
+		for ( ; (data = iter.previous()) != null; ) {
+			date = iter.getDate();
+		    value = iter.getDataValue();
+		    // Found nearest non-missing value
+		    if( ! inputTS.isDataMissing( value ) ) {
+		    	nearestPoint = data;
+		    	break;
+		    }
+		}
+	}
+	else {
+		for ( ; (data = iter.next()) != null; ) {
+			date = iter.getDate();
+		    value = iter.getDataValue();
+		    // Found nearest non-missing value
+		    if( ! inputTS.isDataMissing( value ) ) {
+		    	nearestPoint = data;
+		    	break;
+		    }
+		}
+	}
+	return nearestPoint;
 }
 
 /**

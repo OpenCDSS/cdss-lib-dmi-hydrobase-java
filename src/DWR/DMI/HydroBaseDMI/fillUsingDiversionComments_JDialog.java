@@ -90,7 +90,8 @@ Responds to ActionEvents.
 @param event ActionEvent object
 */
 public void actionPerformed( ActionEvent event )
-{	Object o = event.getSource();
+{	
+	Object o = event.getSource();
 
 	if ( o == __cancel_JButton ) {
 		response ( false );
@@ -303,7 +304,7 @@ private void initialize ( JFrame parent, Command command )
     3, y, 4, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
     
     JGUIUtil.addComponent(main_JPanel, new JLabel (
-	"Fill CUI:"), 
+	"Fill Using CUI:"), 
 	0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
 	__FillUsingCIU_JComboBox = new SimpleJComboBox ( false );
 	__FillUsingCIU_JComboBox.addItem ( __TRUE );
@@ -312,10 +313,10 @@ private void initialize ( JFrame parent, Command command )
     JGUIUtil.addComponent(main_JPanel, __FillUsingCIU_JComboBox,
 	1, y, 2, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
-	"Use a currently in use flag?"), 
+	"Use currently in use information."), 
 	3, y, 4, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
     
-    JGUIUtil.addComponent(main_JPanel, new JLabel ( "Fill CIU flag:" ), 
+    JGUIUtil.addComponent(main_JPanel, new JLabel ( "Fill Using CIU flag:" ), 
     0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
     __FillUsingCIUFlag_JTextField = new JTextField ( 5 );
     __FillUsingCIUFlag_JTextField.addKeyListener ( this );

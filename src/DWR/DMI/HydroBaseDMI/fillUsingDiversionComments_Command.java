@@ -118,10 +118,13 @@ throws InvalidCommandParameterException
 			(FillFlag.length() != 1) ) {
 		warning += "\nThe fill flag must be 1 character long or set to Auto.";
 	}
+	if ( FillUsingCIU != null && !FillUsingCIU.equalsIgnoreCase("true") ||
+			!FillUsingCIU.equalsIgnoreCase("false") ||
+			!FillUsingCIU.equalsIgnoreCase(""))
 	if ( FillUsingCIU != null && 
 			FillUsingCIU.equalsIgnoreCase( "true" ) && 
 			FillUsingCIUFlag != null && 
-			!(FillUsingCIUFlag.equalsIgnoreCase("Auto"))&& 
+			!(FillUsingCIUFlag.equalsIgnoreCase("Auto")) || 
 			FillUsingCIUFlag.length() != 1 ) {
 		warning += "\nThe fill using CIU flag must be 1 character long or set to Auto.";
 	}
@@ -134,40 +137,6 @@ throws InvalidCommandParameterException
 }
 
 /**
-Creates a Property List with information needed to fill a Time Series with a
-constant value.
-@param inputTS Time Series to fill.
-@param value Constant used to fill the Time Series.
-@param start Start DateTime for filling.
-@param end End DateTime for filling.
-@return PropList List that contains information on filling a constant value for
-the given Time Series and dates.
- */
-private PropList createFillConstantPropList( TS inputTS, String value,
-		String fillFlag, DateTime start, DateTime end)
-{
-	if( inputTS == null ) {
-		return null;
-	}
-	if( start == null ) {
-		start = inputTS.getDate1();
-	}
-	if( end == null ) {
-		end = inputTS.getDate2();
-	}
-	// Create the PropList
-	PropList prop = new PropList(
-		"List to fill TS with constant value");
-	prop.add( "FillConstantValue=" + value );
-	prop.add( "StartDate=" + start.toString() );
-	prop.add( "EndDate=" + end.toString() );
-	prop.add( "FillMethods=FillConstant" );
-	prop.add( "FillFlag=" + fillFlag);
-	
-	return prop;
-}
-
-/**
 Edit the command.
 @param parent The parent JFrame to which the command dialog will belong.
 @return true if the command was edited (e.g., "OK" was pressed), and false if
@@ -176,72 +145,6 @@ not (e.g., "Cancel" was pressed.
 public boolean editCommand ( JFrame parent )
 {	// The command will be modified if changed...
 	return (new fillUsingDiversionComments_JDialog ( parent, this )).ok();
-}
-
-/**
-Returns the nearest TSData point at which non-missing data is found.  If
-there are no non-missing data points found then null is returned.
-@param inputTS Time series object to iterate.
-@param date1 First DateTime of the iteration.
-@param date2 Last DateTime of the iteration.
-@param reverse If true then the iteration will go from date2 to date1.  If
-false then iteration starts at date1 and finishes at date2.
-@return
- */
-private TSData findNearestDataPoint(TS inputTS, DateTime date1,
-		DateTime date2, boolean reverse)
-{
-	if( inputTS == null ) {
-		return null;
-	}
-	TSData nearestPoint = null;
-	String routine = 
-		"FillUsingDiversionComments_Command.getFirstNonMissingDate";
-	TSIterator iter = null;
-	
-	// check date parameters and if null set to TS dates
-	if( date1 == null ) {
-		date1 = inputTS.getDate1();
-	}
-	if( date2 == null ) {
-		date2 = inputTS.getDate2();
-	}
-	
-	// setup the iterator for the TS
-	try {
-		iter = inputTS.iterator(date1, date2);
-	} catch (Exception e) {
-		Message.printWarning(3, routine, e);
-		return null;
-	}
-	
-	DateTime date;
-	double value;
-	TSData data;
-	//Iterate 
-	if( reverse ) {
-		for ( ; (data = iter.previous()) != null; ) {
-			date = iter.getDate();
-		    value = iter.getDataValue();
-		    // Found nearest non-missing value
-		    if( !( inputTS.isDataMissing( value ))) {
-		    	nearestPoint = data;
-		    	break;
-		    }
-		}
-	}
-	else {
-		for ( ; (data = iter.next()) != null; ) {
-			date = iter.getDate();
-		    value = iter.getDataValue();
-		    // Found nearest non-missing value
-		    if( !( inputTS.isDataMissing( value ))) {
-		    	nearestPoint = data;
-		    	break;
-		    }
-		}
-	}
-	return nearestPoint;
 }
 
 /**
@@ -292,14 +195,14 @@ throws InvalidCommandSyntaxException, InvalidCommandParameterException
 }
 
 /**
-Calls TSCommandProcessor to re-calulate limits for this Time Series.
+Calls TSCommandProcessor to re-calulate limits for this time series.
 @param ts Time Series.
 @param TSCmdProc TS Command Processor Object.
 @param warningLevel Warning level used for displaying warnings.
 @param warning_count Number of warnings found.
 @param command_tag Reference or identifier for this command.
  */
-private void recalculateLimits( TS ts, TSCommandProcessor TSCmdProc, 
+private int recalculateLimits( TS ts, TSCommandProcessor TSCmdProc, 
 		int warningLevel, int warning_count, String command_tag )
 {
 	String routine = "fillUsingDiversionComments_Command.recalculateLimits";
@@ -313,10 +216,9 @@ private void recalculateLimits( TS ts, TSCommandProcessor TSCmdProc,
 			++warning_count), routine, 
 			"Error recalculating original data " + 
 			"limits for \"" + ts.getIdentifierString() + "\""  );
-		Message.printWarning ( warningLevel,
-			MessageUtil.formatMessageTag( command_tag,
-			++warning_count),routine, e.toString() );
+		Message.printWarning ( warningLevel ,routine, e );
 	}
+	return warning_count;
 }
 
 
@@ -371,23 +273,25 @@ CommandWarningException, CommandException
 	HydroBaseDMI hbdmi = null;	// HydroBaseDMI to use
 	TSCommandProcessor TSCmdProc = (TSCommandProcessor)_processor;
 	int nts = TSCmdProc.getTimeSeriesSize();
-	int start_pos = 0;
-	int end_pos = nts;
+	int start_pos = 0;	// starting position TSID iterator
+	int end_pos = nts;	// end position for TSID iterator
 	// A specific TSID was chosen and should be used
+	message = "Unable to find time series \"" +
+	TSID + "\" for fillUsingDiversionComments() " +
+	"command.";
 	if( !TSID.equals( "*" )) {
 		nts = TSCmdProc.indexOf ( TSID );
 		if ( nts >= 0 ) {
 			try {
 				ts = TSCmdProc.getTimeSeries ( nts );
 			} catch (Exception e1) {
-				Message.printWarning(warningLevel,
-					MessageUtil.formatMessageTag( command_tag, ++warning_count),
-					routine, e1.toString());
+				Message.printWarning( 3,
+					MessageUtil.formatMessageTag( command_tag,
+					++warning_count), routine, message );
+				Message.printWarning( 3, routine, e1 );
 			}
 		}
-		else {	message = "Unable to find time series \"" +
-			TSID + "\" for fillUsingDiversionComments() " +
-			"command.";
+		else {	
 			Message.printWarning ( warningLevel,
 				MessageUtil.formatMessageTag( command_tag, ++warning_count),
 				routine, message );
@@ -409,11 +313,10 @@ CommandWarningException, CommandException
 	for ( int its = start_pos; its < end_pos; its++ ) {
 		try {
 			ts = TSCmdProc.getTimeSeries(its);
-			
 		} catch (Exception e1) {
 			Message.printWarning(warningLevel,
 					MessageUtil.formatMessageTag( command_tag, ++warning_count),
-					routine, e1.toString());
+					routine, "Could not find time series at position " + its);
 		}
 		hbdmi = TSCmdProc.getHydroBaseDMI (
 				ts.getIdentifier().getInputName() );
@@ -425,8 +328,11 @@ CommandWarningException, CommandException
 						hbdmi, ts, start, end, FillFlag, false );
 			} catch (Exception e) {
 				Message.printWarning(warningLevel,
-						MessageUtil.formatMessageTag( command_tag, ++warning_count),
-						routine, e.toString());
+						MessageUtil.formatMessageTag( command_tag,
+						++warning_count), routine, 
+						"Could not fill time series:" + ts + " with" +
+						"diversion comments.");
+				Message.printWarning(3, routine, e );
 			}
 		}
 		else {	// Extend the period if data are available...
@@ -436,7 +342,9 @@ CommandWarningException, CommandException
 			} catch (Exception e) {
 				Message.printWarning(warningLevel,
 						MessageUtil.formatMessageTag( command_tag, ++warning_count),
-						routine, e.toString());
+						routine, "Could not fill time series:" + ts + " with" +
+						"diversion comments.");
+				Message.printWarning(3, routine, e );
 			}
 		}
 		
@@ -445,11 +353,12 @@ CommandWarningException, CommandException
 		// Cases:
 		// HydroBase CIU Flag = "H" or "I"
 		// => Limits of Time Series are recomputed.
-		// => Missing data values at the end of the period are tagged.
+		// => Missing data values at the end of the period are filled with
+		// zeros and tagged.
 		// HydroBase CIU Flag = "N"
 		// => Limits of Time Series are recomputed
-	    // => Missing data values at the beginning of the period are tagged.
-		// Otherwise, old behavior is used. 
+	    // => Missing data values at the beginning of the period are filled
+		// with zeros and tagged.
 		if ( FillUsingCIU != null && FillUsingCIU.equalsIgnoreCase( "true" ) ) {
 			// get CIU flag value from HydroBase
 			String TSID_Location_part = ts.getLocation();
@@ -492,55 +401,67 @@ CommandWarningException, CommandException
 			if( ciu.equalsIgnoreCase( "H" ) || 
 					ciu.equalsIgnoreCase( "I" )) {
 				// Recalculate TS Limits
-				recalculateLimits( ts, TSCmdProc, warningLevel, 
+				warning_count = 
+					recalculateLimits( ts, TSCmdProc, warningLevel, 
 					warning_count, command_tag );
 				// Fill missing data values at end of period with zeros
 				try {
 					// get the nearest data point from the end of
 					// the period
-					TSData tmpTSData = findNearestDataPoint(ts, start, 
-							end, true);
+					TSData tmpTSData = 
+						HydroBase_Util.findNearestDataPoint(ts, start, 
+						end, true);
 					if( tmpTSData != null) {
-						PropList const_prop = createFillConstantPropList(ts,
+						PropList const_prop = 
+							HydroBase_Util.createFillConstantPropList(ts,
 							fillValue, fillFlag, 
 							tmpTSData.getDate(),
 							ts.getDate2());
 						// fill time series with zeros from last
 						// non-missing value
 						// until the end of the period.
-						TS tsFilled = TSUtil.fill(ts, const_prop);
-						ts = tsFilled;
+						TSUtil.fillConstant(ts, start, end, 0, const_prop);
+						//TS tsFilled = TSUtil.fill(ts, const_prop);
+						//ts = tsFilled;
 					}
 				} catch (Exception e) {
 					Message.printWarning(warningLevel, 
 						MessageUtil.formatMessageTag( command_tag,
-						++warning_count), routine, e.toString());
+						++warning_count), routine, "Could not fill" +
+						" time series:" + ts);
+					Message.printWarning(3, routine, e );
 				}	
 			}
 			// N = "Non-existent structure"
 			else if( ciu.equalsIgnoreCase( "N" )) {
 				// Recalculate TS Limits
-				recalculateLimits( ts, TSCmdProc, warningLevel, 
+				warning_count = 
+					recalculateLimits( ts, TSCmdProc, warningLevel, 
 					warning_count, command_tag );
 				try {
-					TSData tmpTSData = findNearestDataPoint(ts, start, 
-							end, false);
+					TSData tmpTSData = 
+						HydroBase_Util.findNearestDataPoint(ts, start, 
+						end, false);
 					if( tmpTSData != null) {
 						// Create propList for fill command
-						PropList const_prop = createFillConstantPropList(ts,
+						PropList const_prop = 
+							HydroBase_Util.createFillConstantPropList(ts,
 							fillValue, fillFlag, ts.getDate1(),
 							tmpTSData.getDate());
 						// fill time series with zero's from first
 						// non-missing value
 						// until the beginning of the period.
-						TS tsFilled = TSUtil.fill(ts, const_prop);
-						ts = tsFilled;
+						TSUtil.fillConstant(ts, start, end, 0, const_prop);
+						//TS tsFilled = TSUtil.fill(ts, const_prop);
+						//ts = tsFilled;
 					}
 				}
 				catch (Exception e) {
 					Message.printWarning(warningLevel, 
 						MessageUtil.formatMessageTag( command_tag,
-						++warning_count), routine, e.toString());
+						++warning_count), routine, "Could not fill" +
+						" time series:" + ts);
+					Message.printWarning(3, routine, e );
 				}
 			}	
 		}
@@ -550,7 +471,7 @@ CommandWarningException, CommandException
 		}
 		// Update...
 		try {
-			TSCmdProc.processTimeSeriesAction ( TSCmdProc.getUpdateTS(), 
+			TSCmdProc.processTimeSeriesAction ( TSCmdProc.UPDATE_TS, 
 					ts, its );
 		} catch (Exception e) {
 			Message.printWarning(warningLevel,
