@@ -5,7 +5,7 @@
 	<classpathentry kind="lib" path="externals/xerces.jar"/>
 	<classpathentry kind="lib" path="externals/CWRAT/CWRAT_142.jar"/>
 	<classpathentry kind="lib" path="externals/StateMod/StateMod_142.jar"/>
-	<classpathentry kind="lib" path="externals/RTi_Common/RTi_Common_142.jar"/>
 	<classpathentry kind="lib" path="externals/TSCommandProcessor/TSCommandProcessor_142.jar"/>
+	<classpathentry kind="lib" path="externals/RTi_Common/RTi_Common_142.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

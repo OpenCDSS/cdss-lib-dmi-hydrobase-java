@@ -411,7 +411,7 @@ CommandWarningException, CommandException
 					// get the nearest data point from the end of
 					// the period
 					TSData tmpTSData = 
-						HydroBase_Util.findNearestDataPoint(ts, start, 
+						TSUtil.findNearestDataPoint(ts, start, 
 						end, true);
 					if( tmpTSData != null) {
 						PropList const_prop = 
@@ -442,7 +442,7 @@ CommandWarningException, CommandException
 					warning_count, command_tag );
 				try {
 					TSData tmpTSData = 
-						HydroBase_Util.findNearestDataPoint(ts, start, 
+						TSUtil.findNearestDataPoint(ts, start, 
 						end, false);
 					if( tmpTSData != null) {
 						// Create propList for fill command

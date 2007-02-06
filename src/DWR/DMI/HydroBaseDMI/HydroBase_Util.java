@@ -68,6 +68,8 @@
 // 2006-10-31	SAM, RTi		Add CASS livestock time series.
 //					Add CUPopulation HumanPopulation time
 //					series (Demographics group).
+// 2007-02-06	Kurt Tometich, RTi		Moved the findNearestDataPoint
+//								method to TSUtil in RTiCommon.
 //------------------------------------------------------------------------------
 // EndHeader
 
@@ -706,6 +708,11 @@ public static PropList createFillConstantPropList( TS inputTS, String value,
 	if( end == null ) {
 		end = inputTS.getDate2();
 	}
+	if( fillFlag == null || fillFlag.equals("") && fillFlag.length() != 1 )
+	{
+		fillFlag = "Auto";
+	}
+	
 	// Create the PropList
 	PropList prop = new PropList(
 		"List to fill TS with constant value");
@@ -1186,74 +1193,6 @@ throws Exception
 			Message.printStatus(2, routine, comment_string);
 		}
 	}
-}
-
-/**
-Returns the nearest TSData point at which non-missing data is found.  If
-there are no non-missing data points found then null is returned.
-@param inputTS Time series object to iterate.
-@param date1 First DateTime of the iteration. If null, uses start date set for
-the given TS.
-@param date2 Last DateTime of the iteration.  If null, uses end date set for
-the given TS.
-@param reverse If true then the iteration will go from date2 to date1.  If
-false then iteration starts at date1 and finishes at date2.
-@return
- */
-public static TSData findNearestDataPoint(TS inputTS, DateTime date1,
-		DateTime date2, boolean reverse)
-{
-	if( inputTS == null ) {
-		return null;
-	}
-	TSData nearestPoint = null;
-	String routine = 
-		"FillUsingDiversionComments_Command.getFirstNonMissingDate";
-	TSIterator iter = null;
-	
-	// check date parameters and if null set to TS dates
-	if( date1 == null ) {
-		date1 = inputTS.getDate1();
-	}
-	if( date2 == null ) {
-		date2 = inputTS.getDate2();
-	}
-	
-	// setup the iterator for the TS
-	try {
-		iter = inputTS.iterator(date1, date2);
-	} catch (Exception e) {
-		Message.printWarning(3, routine, e);
-		return null;
-	}
-	
-	DateTime date;
-	double value;
-	TSData data = null;
-	//Iterate 
-	if( reverse ) {
-		for ( ; (data = iter.previous()) != null; ) {
-			date = iter.getDate();
-		    value = iter.getDataValue();
-		    // Found nearest non-missing value
-		    if( ! inputTS.isDataMissing( value ) ) {
-		    	nearestPoint = data;
-		    	break;
-		    }
-		}
-	}
-	else {
-		for ( ; (data = iter.next()) != null; ) {
-			date = iter.getDate();
-		    value = iter.getDataValue();
-		    // Found nearest non-missing value
-		    if( ! inputTS.isDataMissing( value ) ) {
-		    	nearestPoint = data;
-		    	break;
-		    }
-		}
-	}
-	return nearestPoint;
 }
 
 /**
