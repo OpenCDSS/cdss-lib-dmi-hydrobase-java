@@ -115,14 +115,15 @@
 //					  single generic one.
 // 2005-11-15	JTS, RTi		Option to query the entire state at once
 //					added to the district combo box.
+// 2007-02-07	SAM, RTi		Remove the dependence on CWRAT.
+//					Pass a JFrame in the constructor.
+//					Also pass in a GeoViewAppUI instance for map interaction.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -141,46 +142,29 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
 
-import java.util.Date;
 import java.util.Vector;
-
-import DWR.DMI.CWRAT.CWRATMainJFrame;
 
 import RTi.DMI.DMIUtil;
 
 import RTi.GIS.GeoView.GeoRecord;
 import RTi.GIS.GeoView.GeoViewListener;
-import RTi.GIS.GeoView.PLSSLocation;
-import RTi.GIS.GeoView.PLSSLocationJDialog;
 
 import RTi.GR.GRLimits;
 import RTi.GR.GRPoint;
 import RTi.GR.GRShape;
 
-import RTi.Util.GUI.EventTimer;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.JScrollWorksheet;
 import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.ReportJFrame;
-import RTi.Util.GUI.ReportJFrame;
-import RTi.Util.GUI.SimpleFileFilter;
-import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
 
-import RTi.Util.IO.ExportJGUI;
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PrintJGUI;
 import RTi.Util.IO.PropList;
 
@@ -200,15 +184,6 @@ public class HydroBase_GUI_WaterRightsQuery
 extends JFrame
 implements ActionListener, GeoViewListener, ItemListener, KeyListener, 
 MouseListener, WindowListener {
-
-/**
-Used to refer to the NetAmts table for queries.
-*/
-private final int __NET_AMOUNTS_TABLE = 0;
-/**
-Used to refer to the Transact table for queries.
-*/
-private final int __TRANSACT_TABLE = 1;
 
 /**
 Reference to a tabulation rights header.
@@ -231,11 +206,8 @@ private final String
 	__BUTTON_HELP = 		"Help",
 	__BUTTON_PRINT = 		"Print",
 	__BUTTON_SELECT_ON_MAP = 	"Select On Map",
-	__BUTTON_SAVE_AS = 		"Save As",
 	__BUTTON_VIEW = 		"View",
 	__BUTTON_VIEW_REPORT = 		"View Report:",
-	__CHECK_QUERY = 		"Check Query",
-	__JFRAME_TITLE = 		"Water Rights Query",
 	__LEGAL =			"Legal",
 	__PRIORITY_STREAM = 		"Priority List by Stream"
 					+ " (Stream, Admin #, ID)",	
@@ -273,8 +245,7 @@ private final String
 					+ " (Stream #, Admin #, ID)",
 	__STREAM = 			"Stream Alphabetical List"
 					+ " (Stream, Name, Admin #)",
-	__TRANSFER_RIGHTS = 		"Transfer Rights",	
-	__WATER_RIGHTS_DATA = 		"Water Rights Data";
+	__TRANSFER_RIGHTS = 		"Transfer Rights";
 
 private boolean __geoViewSelectQuery = false;
 
@@ -288,7 +259,11 @@ Whether this is a transaction query.
 */
 private boolean __isTransactionQuery = false;
 
-private CWRATMainJFrame __parent = null;
+// Parent frame, to allow chain to dialogs, etc.
+private JFrame __parent = null;
+
+// Interface to map
+private GeoViewUI __geoview_ui = null;
 
 /**
 Map query limits.
@@ -336,19 +311,9 @@ JButton to retrieve data from the database.
 private JButton __getDataJButton = null;
 
 /**
-JButton to open up the help.
-*/
-private JButton __helpJButton = null;
-
-/**
 JButton to print the results.
 */
 private JButton __printJButton = null;
-
-/**
-JButton to select the given station on the map.
-*/
-private JButton __selectOnMapJButton = null;
 
 /**
 JButton to show a new view.
@@ -407,11 +372,15 @@ private Vector __results = null;
 Constructor.  This is set up to read the GLOBAL_FAST data from the database
 and to also not be a transaction query.
 @param dmi open and non-null HydroBaseDMI object
+@param parent Parent JFrame that constructs an instance of this class.
+@param geoview_ui Instance of GeoViewUI that allows connection to map display.
 @throws Exception if an error occurs.
 */
-public HydroBase_GUI_WaterRightsQuery(HydroBaseDMI dmi, CWRATMainJFrame parent) 
+public HydroBase_GUI_WaterRightsQuery(HydroBaseDMI dmi, JFrame parent,
+		GeoViewUI geoview_ui ) 
 throws Exception {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
 	initialize(dmi, false);
 	__isQueryByExample = true;
@@ -422,13 +391,16 @@ Constructor.
 @param dmi open and non-null HydroBaseDMI object
 @param structureNum the structure number of the structure for which to 
 open data.
+@param parent Parent JFrame that constructs an instance of this class.
+@param geoview_ui Instance of GeoViewUI that allows connection to map display.
 @param isTransactionQuery whether this is a transaction query or not.
 @throws Exception if an error occurs.
 */
 public HydroBase_GUI_WaterRightsQuery(HydroBaseDMI dmi, int structureNum, 
-CWRATMainJFrame parent, boolean isTransactionQuery)
+JFrame parent, GeoViewUI geoview_ui, boolean isTransactionQuery)
 throws Exception {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	__isQueryByExample = false;
 	
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());	
@@ -494,7 +466,6 @@ public void actionPerformed(ActionEvent event) {
         else if (actionCommand.equals(__BUTTON_HELP)) {
         }
         else if (actionCommand.equals(__BUTTON_GET_DATA)) {
-              String view = __viewJComboBox.getSelected().trim();
 		__viewJButton.setEnabled(false);
 		try {
 			submitQuery();
@@ -758,7 +729,7 @@ is being used, disable the layers that are not a "WaterRight" or "BaseLayer"
 AppLayerType.
 */
 private void enableMapLayers() {
-	if (!__parent.isMapVisible()) {
+	if (!__geoview_ui.isMapVisible()) {
 		return;
 	}
 	JGUIUtil.setWaitCursor(this, true);
@@ -769,12 +740,12 @@ private void enableMapLayers() {
 	Vector enabledAppLayerTypes = new Vector(1);
 	enabledAppLayerTypes.addElement("WaterRight");
 	enabledAppLayerTypes.addElement("BaseLayer");
-	__parent.getGeoViewJPanel().enableAppLayerTypes(enabledAppLayerTypes, 
+	__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(enabledAppLayerTypes, 
 		false);
 	enabledAppLayerTypes = null;
 
 	// We want this GUI to listen to the map...
-	__parent.getGeoViewJPanel().getGeoView().addGeoViewListener(this);
+	__geoview_ui.getGeoViewJPanel().getGeoView().addGeoViewListener(this);
 	JGUIUtil.setWaitCursor(this, false);
 	__statusJTextField.setText("Map shows base layers and water "
 		+ "right layers.  Ready.");
@@ -795,9 +766,7 @@ throws Throwable {
 	__closeJButton = null;
 	__exportJButton = null;
 	__getDataJButton = null;
-	__helpJButton = null;
 	__printJButton = null;
-	__selectOnMapJButton = null;
 	__viewJButton = null;
 	__tableJLabel = null;
 	__worksheet = null;
@@ -835,7 +804,6 @@ Formats the net amounts data for output.
 */
 public Vector formatOutputForNetAmounts(int format) 
 throws Exception {
-	String routine = "HBWaterRightsQueryGUI.formatOutputForNetAmounts";
 	boolean printColumnHeaders = false;
 
         int size = __worksheet.getRowCount();
@@ -855,7 +823,6 @@ throws Exception {
 		int structure_num = 0;
 //              int structure_num = (new Integer(
 //			__searchForJTextField.getText())).intValue();
-                Vector results;
 
 		Object o = __dmi.readStructureGeolocForStructure_num(
 			structure_num);
@@ -899,7 +866,6 @@ throws Exception {
 
         // Now do the body of the output...
 
-        Vector strings;
 	int[] selected = __worksheet.getSelectedRows();
 	int length = selected.length;
 	boolean isSelected = false;
@@ -1071,8 +1037,7 @@ throws Exception {
 	                        // screen...					
 				int colCount = __worksheet.getColumnCount();
 				String s = "";			
-				String o;
-				String d = "";			
+				String o;		
 				if (!printedHeader) {				
 					for (int j = 0; j < colCount; j++) {
 						s += __worksheet
@@ -1153,7 +1118,6 @@ public Vector formatOutputForTransactions(int format) {
 		delim = HydroBase_GUI_Util.getDelimiterForFormat(format);
         }
 
-        Vector strings;
 	int[] selected = __worksheet.getSelectedRows();
 	int length = selected.length;
 	boolean isSelected = false;
@@ -1440,11 +1404,7 @@ been returned.
 */
 private void getSelectedView()
 throws Exception {
-	String ld = __dmi.getLeftIdDelim();
-	String rd = __dmi.getRightIdDelim();
         String view = __viewJComboBox.getSelected().trim();
-
-        Vector whereClause = new Vector(10, 10);
 
 	JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Retrieving Data...");
@@ -1572,7 +1532,7 @@ throws Exception {
 	PropList pl = new PropList("Report Props");
 	pl.set("Title", view);
 	pl.set("DisplayTextComponent", "JTextArea");
-	ReportJFrame rjf = new ReportJFrame(reportVector, pl);
+	new ReportJFrame(reportVector, pl);
 	JGUIUtil.setWaitCursor(this, false);
 }
 
@@ -1707,7 +1667,7 @@ public void mousePressed(MouseEvent event) {
 			else {
 				__viewJButton.setEnabled(true);
 			}
-			if (__parent.isMapVisible()) {
+			if (__geoview_ui.isMapVisible()) {
 //				__selectOnMapJButton.setEnabled(true);
 			}
 			else {
@@ -1756,7 +1716,6 @@ Vector of String, each of which has "wd,id".  These field names are set in the
 GeoView Project as AppJoinField="wd,id".
 */
 private void selectOnMap() {
-	int col = 0;	// Column of output to query...
 	String table = __tableJComboBox.getSelected();
 	Vector idlist = new Vector();
         __statusJTextField.setText(
@@ -1819,7 +1778,7 @@ private void selectOnMap() {
 
 	// Select the features, searching only selected structure types, and
 	// zoom to the selected shapes...
-	Vector matching_features =__parent.getGeoViewJPanel().selectAppFeatures(
+	Vector matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 		getVisibleAppLayerType(), idlist, true, .05, .05);
 	int matches = 0;
 	if (matching_features != null) {
@@ -1899,9 +1858,9 @@ public void setVisible(boolean state) {
 			__exportJButton.setEnabled(false);
 		}
 
-		if (	__parent.isMapVisible() &&
+		if (	__geoview_ui.isMapVisible() &&
 			(__worksheet.getRowCount() > 0) &&
-			__parent.getGeoViewJPanel().hasAppLayerType(
+			__geoview_ui.getGeoViewJPanel().hasAppLayerType(
 				getVisibleAppLayerType())) {
 //       			__selectOnMapJButton.setEnabled(true);
 		}
@@ -1930,17 +1889,12 @@ private void setupGUI()
 throws Exception {
 	Message.setTopLevel(this);
 
-        Insets insetsTLBR = new Insets(7,7,7,7);
         Insets insetsNLNR = new Insets(0,7,0,7);
-        Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         Insets insetsNNNX = new Insets(0,0,0,28);
         Insets insetsNLNN = new Insets(0,7,0,0);
         Insets insetsNNNR = new Insets(0,0,0,7);
-        Insets insetsTLBN = new Insets(7,0,7,7);
-        Insets insetsTNBR = new Insets(7,7,7,0);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
  
         addWindowListener(this);
         addKeyListener(this);
@@ -1956,21 +1910,21 @@ throws Exception {
         topJPanel.add("West", topLeftJPanel);
 
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("Query Options:"), 
-                0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+                0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topLeftJPanel, 
 		new JLabel("Water Division/District:"), 
-                0, 1, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+                0, 1, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __waterDistrictJComboBox = new SimpleJComboBox();
         if (!__isQueryByExample) {
                 __waterDistrictJComboBox.setEnabled(false);
         }
         JGUIUtil.addComponent(topLeftJPanel, __waterDistrictJComboBox, 
-                1, 1, 1, 1, 0, 0, insetsNNNX, gbc.HORIZONTAL, gbc.WEST);
+                1, 1, 1, 1, 0, 0, insetsNNNX, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("Water Rights Type:"), 
-                0, 2, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+                0, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __tableJComboBox = new SimpleJComboBox();
 	Vector tables = HydroBase_GUI_Util.getTableStrings(this);
@@ -1982,7 +1936,7 @@ throws Exception {
         }
         __tableJComboBox.addItemListener(this);
         JGUIUtil.addComponent(topLeftJPanel, __tableJComboBox, 
-                1, 2, 1, 1, 0, 0, insetsNNNX, gbc.HORIZONTAL, gbc.WEST);
+                1, 2, 1, 1, 0, 0, insetsNNNX, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__netAmtsFilterJPanel = new HydroBase_GUI_NetAmts_InputFilter_JPanel(
 		__dmi, this, __isQueryByExample);
@@ -1995,9 +1949,9 @@ throws Exception {
 	__transactFilterJPanel.addEventListeners(this);
 
         JGUIUtil.addComponent(topLeftJPanel, __netAmtsFilterJPanel,
-                0, 3, 3, 2, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+                0, 3, 3, 2, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
         JGUIUtil.addComponent(topLeftJPanel, __transactFilterJPanel,
-                0, 3, 3, 2, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+                0, 3, 3, 2, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __getDataJButton = new JButton(__BUTTON_GET_DATA);
 	__getDataJButton.setToolTipText("Read data from database.");
@@ -2006,17 +1960,17 @@ throws Exception {
         }
         __getDataJButton.addActionListener(this);
         JGUIUtil.addComponent(topLeftJPanel, __getDataJButton, 
-                4, 3, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.CENTER);
+                4, 3, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 
 	__orderJLabel = new JLabel("Column Order:");
 
         JGUIUtil.addComponent(topLeftJPanel, __orderJLabel,
-                3, 4, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+                3, 4, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __outputTemplateJComboBox = new SimpleJComboBox();
         __outputTemplateJComboBox.addItemListener(this);
         JGUIUtil.addComponent(topLeftJPanel, __outputTemplateJComboBox, 
-                4, 4, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+                4, 4, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Center JPanel
         JPanel centerJPanel = new JPanel();
@@ -2025,7 +1979,7 @@ throws Exception {
 
         __tableJLabel = new JLabel(HydroBase_GUI_Util.LIST_LABEL);
         JGUIUtil.addComponent(centerJPanel, __tableJLabel, 
-                1, 1, 7, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+                1, 1, 7, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	PropList p = 
 		new PropList("HydroBase_GUI_WaterRightsQuery.JWorksheet");
@@ -2040,7 +1994,7 @@ throws Exception {
 	__worksheet.setHourglassJFrame(this);
 	__worksheet.addMouseListener(this);
 	JGUIUtil.addComponent(centerJPanel, jsw,
-                1, 2, 7, 3, 1, 1, insetsNLNR, gbc.BOTH, gbc.WEST);
+                1, 2, 7, 3, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         // Bottom JPanel
         JPanel bottomJPanel = new JPanel();
@@ -2117,7 +2071,7 @@ throws Exception {
         //__statusJTextField.setBackground(Color.lightGray);
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 
-                0, 1, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+                0, 1, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // set table query 
         if (__isTransactionQuery == true) {     
@@ -2156,9 +2110,6 @@ the GUI.
 private void submitQuery() 
 throws Exception {  
 	String routine = "HydroBase_GUI_WaterRightsQuery.submitQuery";
-        // intialize variables
-        int numRecords = 0;
-        //__results.removeAllElements();
         String table = __tableJComboBox.getSelected();
         __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL); 
         __currTable = table;

@@ -84,6 +84,8 @@
 // 2005-11-16	JTS, RTi		Saving of options, in particular the
 //					default district, was severely buggy
 //					and was corrected.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Just pass a JFrame in the constructor.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -91,8 +93,6 @@ package DWR.DMI.HydroBaseDMI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -112,7 +112,6 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -138,7 +137,6 @@ import RTi.Util.GUI.SimpleFileFilter;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
 
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
 
 import RTi.Util.Message.Message;
@@ -147,8 +145,6 @@ import RTi.Util.String.StringUtil;
 
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.DateTimeBuilderJDialog;
-
-import DWR.DMI.CWRAT.CWRATMainJFrame;
 
 /**
 This JFrame implements a tabbed panel that lets the user specify options for
@@ -199,9 +195,19 @@ Used when setting up the GUI to ignore any actions that might call
 private boolean __ignoreChanges = false;
 
 /**
-Object that instantiated this class.
+Object that instantiated this class, for window positioning.
 */
-private CWRATMainJFrame __parent = null;
+private JFrame __parent = null;
+
+/**
+GeoViewUI interface for map interaction.
+*/
+private GeoViewUI __geoview_ui = null;
+
+/**
+OptionsUI interface for options interaction.
+*/
+private OptionsUI __options_ui = null;
 
 /**
 Reference to an open and non-null HydroBaseDMI object.
@@ -220,10 +226,7 @@ private JButton __cancelJButton = null;
 Change button
 */
 private JButton __changeJButton = null;
-/**
-Help button
-*/
-private JButton __helpJButton = null;
+
 /**
 OK Button
 */
@@ -391,13 +394,13 @@ public final static String
 General-purpose strings.
 */
 private final static String	
-	__HELP_STRING = 	"CWRAT.HydroBase_GUI_Options",
+	//__HELP_STRING = 	"CWRAT.HydroBase_GUI_Options",
 	__NONE = 		"NONE",
 	__TIME_INTERVAL = 	"Time Period",
         __MAP = 		"Map",
         __WATER_DISTRICT = 	"Water District Filter",
         __GENERAL = 		"General",
-        __NETWORK = 		"Network Settings",
+        //__NETWORK = 		"Network Settings",
 	__ADMIN = 		"Administration";
 
 /**
@@ -428,22 +431,28 @@ private final static String
 /**
 Constructor.
 @param parent the CWRATMainJFrame object that instantiated this one.
+@param geoview_ui GeoViewUI for map interaction.
+@param options_ui OptionsUI for options interaction.
 @param dmi an open, non-null DMI.
 @throws Exception if an error occurs.
 */
-public HydroBase_GUI_Options(CWRATMainJFrame parent, HydroBaseDMI dmi) 
+public HydroBase_GUI_Options(JFrame parent, GeoViewUI geoview_ui,
+		OptionsUI options_ui, HydroBaseDMI dmi) 
 throws Exception {
-	this(parent, dmi, true);
+	this(parent, geoview_ui, options_ui, dmi, true);
 }
 
 /**
 Constructor.
 @param parent the CWRATMainJFrame object that instantiated this one.
+@param geoview_ui GeoViewUI for map interaction.
+@param options_ui OptionsUI for options interaction.
 @param dmi an open, non-null DMI.
 @param visible whether the gui should be visible at creation time
 @throws Exception if an error occurs.
 */
-public HydroBase_GUI_Options(CWRATMainJFrame parent, HydroBaseDMI dmi, 
+public HydroBase_GUI_Options(JFrame parent, GeoViewUI geoview_ui,
+		OptionsUI options_ui, HydroBaseDMI dmi, 
 boolean visible) 
 throws Exception {
 	if (dmi == null) {
@@ -457,6 +466,8 @@ throws Exception {
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
         __dmi = dmi;
 	__parent = parent;
+	__geoview_ui = geoview_ui;
+	__options_ui = options_ui;
 
 	setupGUI(visible);
 }
@@ -468,7 +479,6 @@ This function responds to ActionEvents.
 public void actionPerformed(ActionEvent evt) {
 	String command = evt.getActionCommand();
 	String routine = "HydroBase_GUI_Options.actionPerformed";
-	Object ob = evt.getSource();
 
 	if (command.equals(__BUTTON_BROWSE_FOR_DEFAULT_GVP)) {
 		browseForGVP();
@@ -601,7 +611,6 @@ throws Exception {
 	String login = __dmi.getUserLogin();
 	String notFound = "Password not found on remote connection."
 			+ " Cannot change password.";
-	Vector whereClause = new Vector(10, 5);
 
 	// check for nulls and empty Strings
 	if (!isValidPassword(oldPW, __OLD_PW)) {
@@ -686,8 +695,7 @@ throws Exception {
 	// old password found on HOST connection and new password and login 
 	// are unique. First update the password on HOST connection to the 
 	// new password.
-	String dmiString = "";
-	if (__dmi.isDatabaseVersionAtLeast(__dmi.VERSION_19990305)) {
+	if (__dmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990305)) {
 		// Application in user_security...
 		__dmi.updateUserSecurityPasswordForLoginPasswordApplication(
 			newPW,login, oldPW, "CWRAT");		
@@ -934,7 +942,6 @@ throws Throwable {
 	__applyJButton = null;
 	__cancelJButton = null;
 	__changeJButton = null;
-	__helpJButton = null;
 	__okJButton = null;
 	__setIntervalJButton = null;
 	__wdJButton = null;
@@ -990,7 +997,6 @@ private void generateDistricts() {
 	int vsize;
 	int wd;	
 	String star = "";
-	Vector selectedRows = new Vector();
 	try {
         for (int count = 0; count < size; count++) {
 		v = __dmi.lookupWaterDistrictsForDivision((divisions[count]+1));
@@ -1132,10 +1138,8 @@ selected water districts.
 private void generateWIS() 
 throws Exception {
         // initialize variables
-        String function = "HydroBase_GUI_Options.generateWIS()";
         Vector whereClause = new Vector(10, 5);
 	Vector orderBy = new Vector(10, 5);
-	boolean none = false;
        
         // process query
 	JGUIUtil.setWaitCursor(this, true);
@@ -1388,10 +1392,10 @@ public void keyPressed(KeyEvent evt) {
 			okClicked();
 		}
 	}
-	else if (code == evt.VK_SHIFT) {
+	else if (code == KeyEvent.VK_SHIFT) {
 		JGUIUtil.setShiftDown(true);
 	}
-	else if (code == evt.VK_CONTROL) {
+	else if (code == KeyEvent.VK_CONTROL) {
 		JGUIUtil.setControlDown(true);
 	}
 }
@@ -1402,10 +1406,10 @@ Responds to key released events.
 */
 public void keyReleased(KeyEvent event) {
 	int code = event.getKeyCode();
-	if (code == event.VK_SHIFT) {
+	if (code == KeyEvent.VK_SHIFT) {
 		JGUIUtil.setShiftDown(false);
 	}
-	else if (code == event.VK_CONTROL) {
+	else if (code == KeyEvent.VK_CONTROL) {
 		JGUIUtil.setControlDown(false);
 	}
 	checkChanged();
@@ -1566,20 +1570,15 @@ private void setupGUI(boolean visible) {
 
         // objects to be used in the GUI layout
 	Insets TNNN = new Insets(7,0,0,0);
-	Insets NNNN = new Insets(0,0,0,0);
         Insets NLNR = new Insets(0,7,0,7);
         Insets NLBR = new Insets(0,7,7,7);
 	Insets NLBN = new Insets(0,7,7,0);
-        Insets TLBR = new Insets(7,7,7,7);        
-	Insets NNBN = new Insets(0,0,7,0);
 	Insets NLNN = new Insets(0,7,0,0);
         Insets TLBN = new Insets(7,7,7,0);
         Insets TLNN = new Insets(7,7,0,0);
-        Insets BLNN = new Insets(21,7,0,0);
 	Insets TLNR = new Insets(7,7,0,7);
 	Insets TNNR = new Insets(7,0,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         //---------------------------------------------------------------------
         // timeJPanel
@@ -1596,54 +1595,54 @@ private void setupGUI(boolean visible) {
         JGUIUtil.addComponent(timeNJPanel, new JLabel(
 		"The time period indicated below is used as a default for "
 		+ "display features (e.g., real-time data graphs)."),
-		0, 0, 4, 1, 0, 0, TNNN, gbc.NONE, gbc.WEST);
+		0, 0, 4, 1, 0, 0, TNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
 	JGUIUtil.addComponent(timeNJPanel, new JLabel(
 		"Default Time Period:"),
-		0, 1, 1, 1, 0, 0, TLBN, gbc.NONE, gbc.WEST);
+		0, 1, 1, 1, 0, 0, TLBN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __pastHoursJRadioButton = new JRadioButton(__BUTTON_PAST, true);
 	__pastHoursJRadioButton.addActionListener(this);
         JGUIUtil.addComponent(timeNJPanel, __pastHoursJRadioButton, 
-		0, 2, 1, 1, 0, 0, TNNN, gbc.NONE, gbc.WEST);
+		0, 2, 1, 1, 0, 0, TNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __pastHoursJTextField = new JTextField();	
 	__pastHoursJTextField.addKeyListener(this);
         JGUIUtil.addComponent(timeNJPanel, __pastHoursJTextField, 
-		1, 2, 1, 1, 0, 0, TLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 2, 1, 1, 0, 0, TLNR, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(timeNJPanel, new JLabel("hours"), 
-		2, 2, 1, 1, 0, 0, TNNN, gbc.NONE, gbc.WEST);
+		2, 2, 1, 1, 0, 0, TNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __timeIntervalJRadioButton = new JRadioButton(__BUTTON_PERIOD, false);
 	__timeIntervalJRadioButton.addActionListener(this);
         JGUIUtil.addComponent(timeNJPanel, __timeIntervalJRadioButton, 
-		0, 3, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		0, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	timeGroup.add(__pastHoursJRadioButton);
 	timeGroup.add(__timeIntervalJRadioButton);
 
         JGUIUtil.addComponent(timeNJPanel, new JLabel("Start Time:"), 
-		1, 4, 1, 1, 0, 0, gbc.NONE, gbc.EAST);
+		1, 4, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __startTimeJTextField = new JTextField(25);
 	__startTimeJTextField.setEditable(false);	
         JGUIUtil.addComponent(timeNJPanel, __startTimeJTextField, 
-		2, 4, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		2, 4, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(timeNJPanel, new JLabel("End Time:"), 
-		1, 5, 1, 1, 0, 0, TNNN, gbc.NONE, gbc.EAST);
+		1, 5, 1, 1, 0, 0, TNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __endTimeJTextField = new JTextField(25);
 	__endTimeJTextField.setEditable(false);
         JGUIUtil.addComponent(timeNJPanel, __endTimeJTextField, 
-		2, 5, 1, 1, 0, 0, TNNR, gbc.NONE, gbc.WEST);
+		2, 5, 1, 1, 0, 0, TNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__setIntervalJButton = new JButton(__BUTTON_SET_PERIOD);
 	__setIntervalJButton.setEnabled(false);
 	__setIntervalJButton.addActionListener(this);
         JGUIUtil.addComponent(timeNJPanel, __setIntervalJButton, 
-		3, 5, 1, 1, 0, 0, TNNN, gbc.NONE, gbc.WEST);
+		3, 5, 1, 1, 0, 0, TNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         //---------------------------------------------------------------------
         // mapJPanel
@@ -1659,21 +1658,21 @@ private void setupGUI(boolean visible) {
         JGUIUtil.addComponent(mapNJPanel, 
 		new JLabel("Default Map (GeoView) Project File (enter "
 		+ "NONE to disable map):"), 
-		0, 0, 1, 1, 0, 0, TLNN, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__defaultGVPJTextField = new JTextField(50);
 	__defaultGVPJTextField.setEditable(true);	// To null out.
 	__defaultGVPJTextField.addKeyListener(this);
         JGUIUtil.addComponent(mapNJPanel, __defaultGVPJTextField, 
-		0, 1, 1, 1, 0, 0, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, TNNN, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(mapNJPanel, new SimpleJButton("Browse...",
 		__BUTTON_BROWSE_FOR_DEFAULT_GVP,this),
-		1, 1, 1, 1, 0, 0, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		1, 1, 1, 1, 0, 0, TNNN, GridBagConstraints.EAST, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(mapNJPanel,
 		new JLabel("This property is saved for the division that was "
 		+ "selected during login."),
-		0, 2, 1, 1, 0, 0, TLNN, gbc.NONE, gbc.WEST);
+		0, 2, 1, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         //---------------------------------------------------------------------
         // wdJPanel
@@ -1693,22 +1692,22 @@ private void setupGUI(boolean visible) {
         JGUIUtil.addComponent(wdWJPanel, 
 		new JLabel("Select water divisions/districts to configure "
 		+ "database query defaults."),
-		0, 0, 3, 1, 0, 0, TLNN, gbc.NONE, gbc.WEST);
+		0, 0, 3, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(wdWJPanel, 
 		new JLabel("Districts for a division are not "
 		+ "automatically selected when a division is selected."), 
-		0, 1, 3, 1, 0, 0, NLBN, gbc.NONE, gbc.WEST);
+		0, 1, 3, 1, 0, 0, NLBN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JPanel wdCJPanel = new JPanel();
         wdCJPanel.setLayout(gbl);
         wdJPanel.add("Center", wdCJPanel);
 
         JGUIUtil.addComponent(wdCJPanel, new JLabel("Division"), 
-		0, 0, 1, 1, 1, 0, TLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 1, 0, TLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(wdCJPanel, new JLabel(
 		"District (* indicates available in current database)"), 
-		1, 0, 1, 1, 1, 0, TLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 1, 0, TLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	String[] names = HydroBase_WaterDivision.getDivisionNames();
         __divisionJList = new SimpleJList(names);
@@ -1721,7 +1720,7 @@ private void setupGUI(boolean visible) {
 	__divisionJList.addListSelectionListener(this);
 
         JGUIUtil.addComponent(wdCJPanel, new JScrollPane(__divisionJList), 
-		0, 1, 1, 1, 1, 1, NLNR, gbc.BOTH, gbc.WEST);
+		0, 1, 1, 1, 1, 1, NLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         __districtJList = new SimpleJList();
 	__districtJList.setInverseListSelection(true);
@@ -1734,19 +1733,19 @@ private void setupGUI(boolean visible) {
 	__districtJList.addListSelectionListener(this);
 	__districtJList.addKeyListener(this);
         JGUIUtil.addComponent(wdCJPanel, new JScrollPane(__districtJList), 
-		1, 1, 1, 1, 1, 1, NLNR, gbc.BOTH, gbc.WEST);
+		1, 1, 1, 1, 1, 1, NLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         __wdJButton = new JButton(__BUTTON_SELECT_DESELECT_ALL);
 	__wdJButton.addActionListener(this);
         JGUIUtil.addComponent(wdCJPanel, __wdJButton, 
-		1, 2, 0, 0, 0, 0, NLBR, gbc.NONE, gbc.WEST);
+		1, 2, 0, 0, 0, 0, NLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JPanel lowerWDJPanel = new JPanel();
 	lowerWDJPanel.setLayout(gbl);
 
         JGUIUtil.addComponent(lowerWDJPanel, 
 		new JLabel("Default District:"), 
-		0, 0, 1, 1, 0, 0, TLBN, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, TLBN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__defaultDistrictJTextField = new JTextField(30);
 	String pref_district = __dmi.getPreferenceValue("WD.DistrictDefault");
@@ -1760,12 +1759,12 @@ private void setupGUI(boolean visible) {
 	__defaultDistrictJTextField.setText(pref_district);
 	__defaultDistrictJTextField.setEnabled(false);
         JGUIUtil.addComponent(lowerWDJPanel, __defaultDistrictJTextField,
-		1, 0, 2, 1, 1, 0, TLBN, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 2, 1, 1, 0, TLBN, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
 	__defaultDistrictJButton = new SimpleJButton("Set...",
 		__BUTTON_SET_DEFAULT_DISTRICT, this);
         JGUIUtil.addComponent(lowerWDJPanel, __defaultDistrictJButton,
-		3, 0, 1, 1, 0, 0, TLBN, gbc.HORIZONTAL, gbc.WEST);
+		3, 0, 1, 1, 0, 0, TLBN, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
 	wdJPanel.add("South", lowerWDJPanel);
 
@@ -1785,7 +1784,7 @@ private void setupGUI(boolean visible) {
 	generalNJPanel.add("West", generalWJPanel);
 
 	String application = "CWRAT";
-	if (__parent.getViewOnly()) {
+	if (__options_ui.getViewOnly()) {
 		application = "StateView";
 	}
 
@@ -1794,7 +1793,7 @@ private void setupGUI(boolean visible) {
 	generalWJPanel.setBorder(generalTitle);
 
         JGUIUtil.addComponent(generalWJPanel, new JLabel("User Level:"), 
-		0, 0, 1, 1, 1, 1, TLNN, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 1, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__userLevelJComboBox = new SimpleJComboBox();
 	__userLevelJComboBox.add(VIEW_ONLY);
@@ -1804,46 +1803,46 @@ private void setupGUI(boolean visible) {
 	__userLevelJComboBox.addActionListener(this);
 	__userLevelJComboBox.setEnabled(true);	
         JGUIUtil.addComponent(generalWJPanel, __userLevelJComboBox, 
-		1, 0, 1, 1, 1, 1, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 1, 1, 1, 1, TNNN, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(generalWJPanel, 
 		new JLabel("Change password for " + application + " login"), 
-		0, 1, 1, 1, 0, 0, TLNN, gbc.NONE, gbc.WEST);
+		0, 1, 1, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(generalWJPanel, 
 		new JLabel("Old Password:"), 
-		0, 2, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		0, 2, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__oldPWJPasswordField = new JPasswordField(20);
 	__oldPWJPasswordField.setEchoChar('*');
 	__oldPWJPasswordField.addKeyListener(this);
         JGUIUtil.addComponent(generalWJPanel, __oldPWJPasswordField, 
-		1, 2, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+		1, 2, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(generalWJPanel, 
 		new JLabel("New Password:"), 
-		0, 3, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		0, 3, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__newPWJPasswordField = new JPasswordField(20);
 	__newPWJPasswordField.setEchoChar('*');
 	__newPWJPasswordField.addKeyListener(this);
         JGUIUtil.addComponent(generalWJPanel, __newPWJPasswordField, 
-		1, 3, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+		1, 3, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(generalWJPanel, 
 		new JLabel("Confirm new password:"), 
-		0, 4, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		0, 4, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__confirmPWJPasswordField = new JPasswordField(20);
 	__confirmPWJPasswordField.setEchoChar('*');
 	__confirmPWJPasswordField.addKeyListener(this);
         JGUIUtil.addComponent(generalWJPanel, __confirmPWJPasswordField, 
-		1, 4, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+		1, 4, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
 	__changeJButton = new JButton(__BUTTON_CHANGE);
 	__changeJButton.addActionListener(this);
         JGUIUtil.addComponent(generalWJPanel, __changeJButton,
-		1, 5, 1, 1, 0, 0, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		1, 5, 1, 1, 0, 0, TNNN, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
         //---------------------------------------------------------------------
         // administrationJPanel
@@ -1865,34 +1864,34 @@ private void setupGUI(boolean visible) {
 
         JGUIUtil.addComponent(wisWJPanel, 
 		new JLabel("Default WIS:"), 
-		0, 0, 1, 1, 0, 0, TLBN, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, TLBN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__wisJComboBox = new SimpleJComboBox();
 	__wisJComboBox.addActionListener(this);
         JGUIUtil.addComponent(wisWJPanel, __wisJComboBox,
-		1, 0, 2, 1, 1, 0, TLBN, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 2, 1, 1, 0, TLBN, GridBagConstraints.EAST, GridBagConstraints.WEST);
 
 	__wisJButton = new JButton(__BUTTON_GENERATE_LIST);
 	__wisJButton.addActionListener(this);
         JGUIUtil.addComponent(wisWJPanel, __wisJButton,
-		3, 0, 1, 1, 0, 0, TLBN, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, TLBN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 /*
         JGUIUtil.addComponent(wisWJPanel, 
 		new JLabel("Perform WIS Calculations:"), 
-		0, 1, 1, 1, 0, 0, TLNN, gbc.NONE, gbc.WEST);
+		0, 1, 1, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	ButtonGroup calcGroup = new ButtonGroup();
 
 	__autoJRadioButton = new JRadioButton("Automatically", false);
 	__autoJRadioButton.addActionListener(this);
         JGUIUtil.addComponent(wisWJPanel, __autoJRadioButton, 
-		1, 2, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		1, 2, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__manualJRadioButton = new JRadioButton("Manually", true);
 	__manualJRadioButton.addActionListener(this);
         JGUIUtil.addComponent(wisWJPanel, __manualJRadioButton,
-		2, 2, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		2, 2, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	calcGroup.add(__autoJRadioButton);
 	calcGroup.add(__manualJRadioButton);
@@ -1900,19 +1899,19 @@ private void setupGUI(boolean visible) {
 
         JGUIUtil.addComponent(wisWJPanel,
 		new JLabel("Enable Diversion Coding:"), 
-		0, 3, 1, 1, 0, 0, TLNN, gbc.NONE, gbc.WEST);
+		0, 3, 1, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	ButtonGroup codingGroup = new ButtonGroup();
 
 	__divCodingNoJRadioButton = new JRadioButton("No", true);
 	__divCodingNoJRadioButton.addActionListener(this);
         JGUIUtil.addComponent(wisWJPanel, __divCodingNoJRadioButton, 
-		1, 4, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		1, 4, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__divCodingYesJRadioButton = new JRadioButton("Yes", false);
 	__divCodingYesJRadioButton.addActionListener(this);
         JGUIUtil.addComponent(wisWJPanel, __divCodingYesJRadioButton,
-		2, 4, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		2, 4, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	codingGroup.add(__divCodingNoJRadioButton);
 	codingGroup.add(__divCodingYesJRadioButton);
@@ -1926,7 +1925,7 @@ private void setupGUI(boolean visible) {
 
         JGUIUtil.addComponent(lowerJPanel, 
 		new JLabel("Display Calling Right as:"), 
-		0, 0, 1, 1, 1, 1, TLNN, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 1, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__priorityJComboBox = new SimpleJComboBox();
 	__priorityJComboBox.add(ADJ_DATE);
@@ -1936,11 +1935,11 @@ private void setupGUI(boolean visible) {
 	__priorityJComboBox.add(PRIORITY_NUMBER);
 	__priorityJComboBox.addActionListener(this);
         JGUIUtil.addComponent(lowerJPanel, __priorityJComboBox, 
-		1, 0, 1, 1, 0, 0, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 1, 1, 0, 0, TNNN, GridBagConstraints.EAST, GridBagConstraints.WEST);
 	// list structures for calls
 	JGUIUtil.addComponent(lowerJPanel, 
 		new JLabel("Initial Structure List for Calls:"),
-		0, 1, 1, 1, 1, 1, TLNN, gbc.NONE, gbc.WEST);
+		0, 1, 1, 1, 1, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	ButtonGroup callStructGroup = new ButtonGroup();
 
@@ -1948,32 +1947,32 @@ private void setupGUI(boolean visible) {
 		"Using WIS Structures", false);
 	__callListUsingWISJRadioButton.addActionListener(this);
 	JGUIUtil.addComponent(lowerJPanel, __callListUsingWISJRadioButton, 
-		1, 1, 1, 1, 1, 1, TNNN, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 1, 1, TNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__callListAnyStructJRadioButton = new JRadioButton(
 		"Using Previous Calls", true);
 	__callListAnyStructJRadioButton.addActionListener(this);
 	JGUIUtil.addComponent(lowerJPanel, __callListAnyStructJRadioButton, 
-		1, 2, 1, 1, 1, 1, gbc.NONE, gbc.WEST);
+		1, 2, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
 	callStructGroup.add(__callListUsingWISJRadioButton);
 	callStructGroup.add(__callListAnyStructJRadioButton);
 
 	JGUIUtil.addComponent(lowerJPanel, 
 		new JLabel("Bypass Call Functionality:"),
-		0, 3, 1, 1, 1, 1, TLNN, gbc.NONE, gbc.WEST);
+		0, 3, 1, 1, 1, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	ButtonGroup bypassGroup = new ButtonGroup();
 
 	__bypassOnJRadioButton = new JRadioButton("On", false);
 	__bypassOnJRadioButton.addActionListener(this);
 	JGUIUtil.addComponent(lowerJPanel, __bypassOnJRadioButton, 
-		1, 3, 1, 1, 1, 1, TNNN, gbc.NONE, gbc.WEST);
+		1, 3, 1, 1, 1, 1, TNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__bypassOffJRadioButton = new JRadioButton("Off", true);
 	__bypassOffJRadioButton.addActionListener(this);
 	JGUIUtil.addComponent(lowerJPanel, __bypassOffJRadioButton, 
-		1, 4, 1, 1, 1, 1, gbc.NONE, gbc.WEST);
+		1, 4, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	bypassGroup.add(__bypassOnJRadioButton);
 	bypassGroup.add(__bypassOffJRadioButton);
@@ -1988,7 +1987,7 @@ private void setupGUI(boolean visible) {
         // Add all JPanels to the Tab JPanel
         //---------------------------------------------------------------------
 	JTabbedPane tab = new JTabbedPane();
-	if (!__parent.getViewOnly()) {
+	if (!__options_ui.getViewOnly()) {
         	tab.addTab(__ADMIN, administrationJPanel);
 	}	
 	tab.addTab(__GENERAL, generalJPanel);
@@ -2032,7 +2031,7 @@ private void setupGUI(boolean visible) {
         __statusJTextField.setBackground(Color.lightGray);
 	__statusJTextField.setEditable(false);
 	JGUIUtil.addComponent(buttonSJPanel, __statusJTextField,
-			0, 0, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST); 
+			0, 0, 1, 1, 1, 0, GridBagConstraints.EAST, GridBagConstraints.WEST); 
 
         // frame settings
 
@@ -2100,7 +2099,7 @@ public void setUserPreferences() {
 		+ HydroBase_GUI_Util.getActiveWaterDivision() 
 		+ ".GeoViewProject")) {
 */
-		__parent.openGVP(__defaultGVPJTextField.getText());
+		__geoview_ui.openGVP(__defaultGVPJTextField.getText());
 	}
 
         //---------------------------------------------------------------------
@@ -2144,7 +2143,7 @@ public void setUserPreferences() {
 	else {
 		__dmi.setPreferenceValue("General.UserLevel", "4");
 	}
-	__parent.enableMenusBasedOnUserLevel(
+	__options_ui.enableMenusBasedOnUserLevel(
 		__dmi.getPreferenceValue("General.UserLevel"));
 	if (__bypassOnJRadioButton.isSelected()) {
 		__dmi.setPreferenceValue("General.BypassCall", "1");

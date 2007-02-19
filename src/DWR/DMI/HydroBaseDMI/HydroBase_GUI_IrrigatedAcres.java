@@ -43,13 +43,15 @@
 //					  single generic one.
 // 2005-07-11	SAM, RTi		Widen the window to view additional
 //					columns without resizing.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass JFrame to constructor.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 // EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -60,17 +62,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
-import DWR.DMI.CWRAT.CWRATMainJFrame;
 
 import RTi.DMI.DMIUtil;
 
@@ -81,7 +79,6 @@ import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.JScrollWorksheet;
 import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.SimpleJButton;
-import RTi.Util.GUI.SimpleJComboBox;
 
 import RTi.Util.Message.Message;
 
@@ -129,9 +126,9 @@ private JTextField
 	__divTotDateJTextField,
 	__structTotJTextField,
 	__structTotDateJTextField,
-	__structureJTextField,
-	__awcJTextField,
-	__soilTypeJTextField;
+	__structureJTextField;
+	//__awcJTextField,
+	//__soilTypeJTextField;
 
 /**
 The worksheet in which irrig time series data will be displayed.
@@ -266,8 +263,8 @@ throws Throwable {
 	__structTotJTextField = null;
 	__structTotDateJTextField = null;
 	__structureJTextField = null;
-	__awcJTextField = null;
-	__soilTypeJTextField = null;
+	//__awcJTextField = null;
+	//__soilTypeJTextField = null;
 	__worksheet = null;
 	__structureName = null;
 	super.finalize();
@@ -280,9 +277,6 @@ Formats the data on the form for output to a file or the printer.
 public Vector formatOutput(int format) {
 	Vector v = new Vector();
 	int size = __worksheet.getRowCount();
-
-	String s2 = null;
-	HydroBase_ParcelUseTSStructureToParcel pts = null;
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		v.add(
@@ -420,9 +414,7 @@ private void setupGUI() {
         Insets insetsNLNR = new Insets(0,7,0,7);
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
-        Insets insetsBLNR = new Insets(14,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
         JPanel topJPanel = new JPanel();
@@ -440,40 +432,40 @@ private void setupGUI() {
 
         JLabel nameJLabel = new JLabel("Structure Name:");
         JGUIUtil.addComponent(topWNorthJPanel, nameJLabel, 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
  
         JLabel divJLabel = new JLabel("DIV:");
         JGUIUtil.addComponent(topWNorthJPanel, divJLabel, 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel wdJLabel = new JLabel("WD:");
         JGUIUtil.addComponent(topWNorthJPanel, wdJLabel, 
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel idJLabel = new JLabel("ID:");
         JGUIUtil.addComponent(topWNorthJPanel, idJLabel, 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureJTextField = new JTextField();
         __structureJTextField.setText(" " + __structureName + "       ");
         __structureJTextField.setEditable(false);
         JGUIUtil.addComponent(topWNorthJPanel, __structureJTextField, 
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(5);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(topWNorthJPanel, __divJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(5);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(topWNorthJPanel, __wdJTextField, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(10);
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(topWNorthJPanel, __idJTextField, 
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	// Center North JPanel
 	JPanel topWSouthJPanel = new JPanel();
@@ -485,49 +477,49 @@ private void setupGUI() {
 		"Irrigated Acres Summary"));
 
         JGUIUtil.addComponent(topWSouthJPanel, new JLabel("GIS Total (Acres):"),
-		0, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
         __gisTotJTextField = new JTextField(9);
         __gisTotJTextField.setEditable(false);
         JGUIUtil.addComponent(topWSouthJPanel, __gisTotJTextField, 
-		1, y, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(topWSouthJPanel, 
 		new JLabel("Most Recent Report Year:"),
-		2, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);
+		2, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
         __gisTotDateJTextField = new JTextField(5);
         __gisTotDateJTextField.setEditable(false);
         JGUIUtil.addComponent(topWSouthJPanel, __gisTotDateJTextField, 
-		3, y++, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, y++, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 
         JGUIUtil.addComponent(topWSouthJPanel, 
 		new JLabel("Diversion Comments Total (Acres):"),
-		0, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
         __divTotJTextField = new JTextField(9);
         __divTotJTextField.setEditable(false);
         JGUIUtil.addComponent(topWSouthJPanel, __divTotJTextField, 
-		1, y, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(topWSouthJPanel, 
 		new JLabel("Most Recent Report Year:"),
-		2, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);
+		2, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
         __divTotDateJTextField = new JTextField(5);
         __divTotDateJTextField.setEditable(false);
         JGUIUtil.addComponent(topWSouthJPanel, __divTotDateJTextField, 
-		3, y++, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, y++, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topWSouthJPanel, 
 		new JLabel("Structure Total (Acres):"),
-		0, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
         __structTotJTextField = new JTextField(9);
         __structTotJTextField.setEditable(false);
         JGUIUtil.addComponent(topWSouthJPanel, __structTotJTextField, 
-		1, y, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(topWSouthJPanel, 
 		new JLabel("Most Recent Report Year:"),
-		2, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);
+		2, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
         __structTotDateJTextField = new JTextField(5);
         __structTotDateJTextField.setEditable(false);
         JGUIUtil.addComponent(topWSouthJPanel, __structTotDateJTextField, 
-		3, y++, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, y++, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         // Center JPanel
         JPanel centerJPanel = new JPanel();
@@ -565,7 +557,7 @@ private void setupGUI() {
 
         JGUIUtil.addComponent(centerJPanel, jsw,
 		0, 5, 5, 1, 1, 1, 
-		insetsTLNR, gbc.BOTH, gbc.WEST);
+		insetsTLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         // Bottom JPanel
         JPanel bottomJPanel = new JPanel();
@@ -596,17 +588,15 @@ private void setupGUI() {
         JPanel bottomSSJPanel = new JPanel();
         bottomSSJPanel.setLayout(gbl);
         bottomSouthJPanel.add("South", bottomSSJPanel);
-        GridBagConstraints gbcBSS = new GridBagConstraints();
 
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSSJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbcBSS.HORIZONTAL, gbcBSS.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
       
         // Frame settings
         setTitle("Irrigated Acres Data");
         pack(); 
-	Dimension d = getSize();
 	setSize(getWidth() + 350, getHeight() + 100);
 
         JGUIUtil.center(this);

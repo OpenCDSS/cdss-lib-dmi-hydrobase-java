@@ -151,12 +151,15 @@
 //					  single generic one.
 // 2005-11-15	JTS, RTi		Option to query the entire state at once
 //					added to the district combo box.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass a JFrame to the constructor.
+//					Use GeoViewUI to link to map interface.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
  
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -176,19 +179,12 @@ import java.awt.event.WindowListener;
 
 import java.util.Vector;
 
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 
-import DWR.DMI.CWRAT.CWRATMainJFrame;
-
-import RTi.DMI.DMIUtil;
-
-import RTi.GIS.GeoView.GeoLayer;
 import RTi.GIS.GeoView.GeoRecord;
 import RTi.GIS.GeoView.GeoViewListener;
 
@@ -198,13 +194,7 @@ import RTi.GR.GRShape;
 
 import RTi.GRTS.TSViewJFrame;
 
-import RTi.TS.DayTS;
-import RTi.TS.HourTS;
-import RTi.TS.IrregularTS;
-import RTi.TS.MinuteTS;
-import RTi.TS.MonthTS;
 import RTi.TS.TS;
-import RTi.TS.TSException;
 import RTi.TS.TSLimits;
 import RTi.TS.TSUtil;
 
@@ -218,8 +208,6 @@ import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
 
-import RTi.Util.IO.ExportJGUI;
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PrintJGUI;
 import RTi.Util.IO.PropList;
 
@@ -244,31 +232,31 @@ private final String
 	__SUMMARY = 		"Time Series Summary",
 	__GRAPH = 		"Time Series Graph",
 	__TABLE = 		"Time Series Table",
-	__DTYP_EVAP = 		"Evaporation",
+	//__DTYP_EVAP = 		"Evaporation",
 	__DTYP_FROSTD = 	"Frost Dates",
 	__DTYP_TEMP = 		"Temp",
 	__DTYP_NATFLOW = 	"Natural Flow",
 	__DTYP_PTPX = 		"Precip",
-	__DTYP_RTH = 		"Height",
-	__DTYP_RTM =	 	"Misc.",
-	__DTYP_RTR =	 	"Rate",
-	__DTYP_RTV = 		"Volume",
-	__DTYP_SNOW =		 "Snow",
-	__DTYP_SNOWC = 		"Snow Course",
-	__DTYP_SOLAR = 		"Solar",
+	//__DTYP_RTH = 		"Height",
+	//__DTYP_RTM =	 	"Misc.",
+	//__DTYP_RTR =	 	"Rate",
+	//__DTYP_RTV = 		"Volume",
+	//__DTYP_SNOW =		 "Snow",
+	//__DTYP_SNOWC = 		"Snow Course",
+	//__DTYP_SOLAR = 		"Solar",
 	__DTYP_STREAM = 	"Streamflow",
-	__DTYP_VP = 		"Vapor Pressure",
-	__DTYP_WIND = 		"Wind",
+	//__DTYP_VP = 		"Vapor Pressure",
+	//__DTYP_WIND = 		"Wind",
 	__TIMES_DAILY = 	"Day",
 	__TIMES_MONTHLY = 	"Month",
 	__TIMES_ANNUAL = 	"Year",
-	__TIMES_REAL = 		"Real-time",
-	__MOD_TOTAL = 		"Total",
-	__MOD_MEAN = 		"Mean",
-	__MOD_AVG = 		"Average",
-	__MOD_RUN = 		"Run",
-	__MOD_MIN = 		"Minimum",
-	__MOD_MAX = 		"Maximum",		
+	//__TIMES_REAL = 		"Real-time",
+	//__MOD_TOTAL = 		"Total",
+	//__MOD_MEAN = 		"Mean",
+	//__MOD_AVG = 		"Average",
+	//__MOD_RUN = 		"Run",
+	//__MOD_MIN = 		"Minimum",
+	//__MOD_MAX = 		"Maximum",		
 	__BUTTON_CLOSE = 	"Close",
 	__BUTTON_EXPORT = 	"Export",
 	__BUTTON_GET_DATA = 	"Get Data",
@@ -283,9 +271,14 @@ to be considered.
 private boolean __geoViewSelectQuery = false;
 
 /**
-The parent JFrame under which this GUI is opened.
+The parent JFrame under which this GUI is opened, for window positions.
 */
-private CWRATMainJFrame __parent = null;
+private JFrame __parent = null;
+
+/**
+GeoViewUI interface, for map interaction.
+*/
+private GeoViewUI __geoview_ui = null;
 
 /**
 Query limits for the map.
@@ -301,11 +294,6 @@ private HydroBaseDMI __dmi;
 The filter panel for the query options.
 */
 private HydroBase_GUI_Station_InputFilter_JPanel __filterJPanel = null;
-
-/**
-Size of the ts cache.
-*/
-private int __cacheSize = 5;
 
 /**
 Label for the JTable.
@@ -358,23 +346,29 @@ private Vector __results = null;
 /**
 Create the interface and make visible.
 @param dmi non-null and open HydroBaseDMI object
+@param parent Calling JFrame, to allow window positioning.
+@param geoview_ui GeoViewUI for map interaction.
 @throws Exception if an error occurs
 */
-public HydroBase_GUI_StationQuery(HydroBaseDMI dmi, CWRATMainJFrame parent)
+public HydroBase_GUI_StationQuery(HydroBaseDMI dmi, JFrame parent,
+		GeoViewUI geoview_ui )
 throws Exception {
-	this(dmi, parent, true);
+	this(dmi, parent, geoview_ui, true);
 }
 
 /**
 Constructor.
 @param dmi non-null and open HydroBaseDMI object
+@param parent Calling JFrame, to allow window positioning.
+@param geoview_ui GeoViewUI for map interaction.
 @param isVisible Indicates if the GUI should be visible at creation.
 @throws Exception if an error occurs.
 */
-public HydroBase_GUI_StationQuery(HydroBaseDMI dmi, CWRATMainJFrame parent,
-boolean isVisible) 
+public HydroBase_GUI_StationQuery(HydroBaseDMI dmi, JFrame parent,
+GeoViewUI geoview_ui, boolean isVisible) 
 throws Exception {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());	
 	if (dmi == null) {
 		throw new Exception ("Null dmi passed to "
@@ -504,7 +498,6 @@ private void dataTypeJComboBoxClicked() {
 	clearWorksheet();
 
         // initialize variables
-        String routine = "HydroBase_GUI_StationQuery.dataTypeJComboBoxClicked";
         String dtype  = parseDataType(__dataTypeJComboBox.getSelected().trim());
 
 	// let's set the time step options and data type modifier options
@@ -522,10 +515,6 @@ Display the results of the query in the spreadsheet.
 */
 private void displayResults()
 throws Exception {
-	Object o = null;
-	if (__results.size() > 0) {
-		o = __results.elementAt(0);
-	}
 	
 	HydroBase_TableModel_StationView tm = 
 		new HydroBase_TableModel_StationView(__results, __dmi);
@@ -632,7 +621,7 @@ is being used, disable the layers that are not a "Streamflow", "Climate",
 or, "BaseLayer" AppLayerType.
 */
 private void enableMapLayers() {
-	if (__parent.isMapVisible()) {
+	if (__geoview_ui.isMapVisible()) {
 		JGUIUtil.setWaitCursor(this, true);
 		
 		__statusJTextField.setText(
@@ -648,7 +637,7 @@ private void enableMapLayers() {
 		
 		// Base layers are always visible...
 		enabledAppLayerTypes.add("BaseLayer");
-		__parent.getGeoViewJPanel().enableAppLayerTypes(
+		__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(
 			enabledAppLayerTypes, false);
 		enabledAppLayerTypes = null;
 
@@ -782,7 +771,7 @@ Vector selected, boolean append) {
 	// Figure out which app layer types are selected.  If one that is
 	// applicable to this GUI, execute a query...
 
-	Vector appLayerTypes = __parent.getGeoViewJPanel(
+	Vector appLayerTypes = __geoview_ui.getGeoViewJPanel(
 		).getLegendJTree().getSelectedAppLayerTypes(true);
 	int size = appLayerTypes.size();
 	String app_layer_type;
@@ -935,7 +924,7 @@ Display a station summary.
 @param tsVector Vector of time series to display.
 */
 private void getSummary(Vector tsVector) {
-	String  id, routine = "getSummary";
+	String  routine = "getSummary";
 
 	if (tsVector == null) {
 		return;
@@ -1030,7 +1019,7 @@ public void keyPressed(KeyEvent event) {
 	String routine = "HydroBase_GUI_StationQuery.keyPressed";
         int code = event.getKeyCode();
         
-        if (code == event.VK_ENTER) {
+        if (code == KeyEvent.VK_ENTER) {
 		try {
 	                submitQuery();
 		}
@@ -1087,7 +1076,7 @@ public void mousePressed(MouseEvent event) {
 				__tsGraphJButton.setEnabled(true);
 				__tsSummaryJButton.setEnabled(true);
 				__tsTableJButton.setEnabled(true);
-				if (__parent.isMapVisible()) {
+				if (__geoview_ui.isMapVisible()) {
 					__selectOnMapJButton.setEnabled(true);
 				}
 				else {
@@ -1118,7 +1107,7 @@ public void mouseReleased(MouseEvent event) {
 		__tsGraphJButton.setEnabled(true);
 		__tsSummaryJButton.setEnabled(true);
 		__tsTableJButton.setEnabled(true);
-		if (__parent.isMapVisible()) {
+		if (__geoview_ui.isMapVisible()) {
 			__selectOnMapJButton.setEnabled(true);
 		}
 		else {
@@ -1189,15 +1178,12 @@ private void setupGUI(boolean isVisible) {
         addKeyListener(this);
         
         // objects used throughout the GUI layout
-        Insets insetsNLNR = new Insets(0,7,0,7);
         Insets insetsNNNR = new Insets(0,0,0,7);
         Insets insetsNLNN = new Insets(0,7,0,0);
-        Insets insetsTLBR = new Insets(7,7,7,7);
         Insets insetsTLNN = new Insets(7,7,0,0);
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
         
         // North JPanel
         JPanel northJPanel = new JPanel();
@@ -1210,18 +1196,18 @@ private void setupGUI(boolean isVisible) {
         northJPanel.add("West", northWJPanel);
         
         JGUIUtil.addComponent(northWJPanel, new JLabel("Query Options:"), 
-                0, 0, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.WEST);
+                0, 0, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         
         JGUIUtil.addComponent(northWJPanel, new JLabel(
 		"Div/Dist:"), 
-                0, 1, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+                0, 1, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
         
         __waterDistrictJComboBox = new SimpleJComboBox();
         JGUIUtil.addComponent(northWJPanel, __waterDistrictJComboBox, 
-                1, 1, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+                1, 1, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
 	JGUIUtil.addComponent(northWJPanel, new JLabel("Data Type:"), 
-		0, 2, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__dataTypeJComboBox = new SimpleJComboBox();
 	Vector v = HydroBase_Util.getTimeSeriesDataTypes(__dmi,
@@ -1231,25 +1217,25 @@ private void setupGUI(boolean isVisible) {
 		__dmi, true));
 	__dataTypeJComboBox.addItemListener(this);
 	JGUIUtil.addComponent(northWJPanel, __dataTypeJComboBox, 
-		1, 2, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+		1, 2, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Time Step:"), 
-		0, 3, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 3, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
         
         __timeStepJComboBox = new SimpleJComboBox();
         __timeStepJComboBox.addItemListener(this);
         JGUIUtil.addComponent(northWJPanel, __timeStepJComboBox, 
-		1, 3, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+		1, 3, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         SimpleJButton get = new SimpleJButton(__BUTTON_GET_DATA, this);
 	get.setToolTipText("Read data from database.");
         JGUIUtil.addComponent(northWJPanel, get, 
-		5, 4, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.SOUTH);
+		5, 4, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH);
 
 	__filterJPanel = new HydroBase_GUI_Station_InputFilter_JPanel(__dmi);
 	__filterJPanel.addEventListeners(this);
         JGUIUtil.addComponent(northWJPanel, __filterJPanel,
-		0, 4, 4, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 4, 4, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         // Center JPanel
         JPanel centerJPanel = new JPanel();
@@ -1258,7 +1244,7 @@ private void setupGUI(boolean isVisible) {
         
         __tableJLabel = new JLabel(HydroBase_GUI_Util.LIST_LABEL);
         JGUIUtil.addComponent(centerJPanel, __tableJLabel, 1, 1, 
-                7, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+                7, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
 	PropList p = new PropList("HydroBase_GUI_StationQuery"
 		+ ".DragAndDropJWorksheet");
@@ -1275,7 +1261,7 @@ private void setupGUI(boolean isVisible) {
 	__worksheet.addMouseListener(this);
 //	JGUIUtil.addComponent(centerJPanel, jsw,
 	JGUIUtil.addComponent(centerJPanel, new JScrollPane(__worksheet),
-		1, 2, 7, 3, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		1, 2, 7, 3, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         
         //Bottom JPanel(Consist of three more JPanels)
         JPanel bottomJPanel = new JPanel();
@@ -1339,7 +1325,7 @@ private void setupGUI(boolean isVisible) {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 0, 1, 
-                10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+                10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
                 
 	// set defaults, based off initial data type choice
 	__dataTypeJComboBox.select(__DTYP_STREAM); // default upon create
@@ -1366,7 +1352,7 @@ private void setupGUI(boolean isVisible) {
 
 	// We want this GUI to listen to the map.  If no map is used no
 	// listener calls will be generated...
-	__parent.getGeoViewJPanel().getGeoView().addGeoViewListener(this);
+	__geoview_ui.getGeoViewJPanel().getGeoView().addGeoViewListener(this);
 
         setVisible(isVisible);
 }
@@ -1410,8 +1396,8 @@ public void setVisible(boolean state) {
 			__printJButton.setEnabled(false);
 			__exportJButton.setEnabled(false);
 		}
-		if (__parent.isMapVisible() && (__worksheet.getRowCount() > 0) 
-			&& __parent.getGeoViewJPanel().hasAppLayerType(
+		if (__geoview_ui.isMapVisible() && (__worksheet.getRowCount() > 0) 
+			&& __geoview_ui.getGeoViewJPanel().hasAppLayerType(
 		    	getVisibleAppLayerType())) {
         		__selectOnMapJButton.setEnabled(true);
 		}
@@ -1447,18 +1433,6 @@ private void selectOnMap() {
 
 	int row = 0;
 
-	boolean precip = false;
-	boolean temp = false;
-
-	if (parseDataType(__dataTypeJComboBox.getSelected())
-		.equals(__DTYP_PTPX)) {
-		precip = true;
-	}
-	if (parseDataType(__dataTypeJComboBox.getSelected())
-		.equals(__DTYP_TEMP)) {
-		temp = true;
-	}
-	
 	for (int i = 0; i < size; i++) {
 		if (all) {
 			row = i;
@@ -1473,7 +1447,7 @@ private void selectOnMap() {
 	}
 	// Select the features, specifying the AppLayerType corresponding to the
 	// currently selected data type, and zoom to the selected shapes...
-	Vector matching_features =__parent.getGeoViewJPanel().selectAppFeatures(
+	Vector matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 			getVisibleAppLayerType(),
 			idlist, true, .05, .05);
 	int matches = 0;
@@ -1675,7 +1649,6 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 
 	// collect all selected rows into a new vector, selectedResults
 
-	int station_num = 0;
 	for (int i = 0; i < rows.length; i++) {
 		selectedResults.add(__worksheet.getRowData(rows[i]));
 	}

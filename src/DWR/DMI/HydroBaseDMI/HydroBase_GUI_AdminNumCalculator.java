@@ -28,6 +28,9 @@
 //					* Converted to using DateTime.
 //					* Enabled graphing.
 // 2005-04-27	JTS, RTi		Added all data members to finalize().
+// 2007-02-07	SAM, RTi		Remove dependency on CWRAT package.
+//					Just pass a JFrame as the parent.
+//					Also clean up the code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -48,11 +51,10 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import DWR.DMI.CWRAT.CWRATMainJFrame;
 
 import RTi.GRTS.TSViewJFrame;
 
@@ -63,7 +65,6 @@ import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJButton;
 
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
 
 import RTi.Util.Message.Message;
@@ -106,7 +107,7 @@ private final String
 /**
 Parent frame that instantiated this gui.
 */
-private CWRATMainJFrame __parent;
+private JFrame __parent;
 
 /**
 DateTimes used for calculating things.
@@ -115,11 +116,6 @@ private DateTime
 	__aproDate = null,
 	__priorDate = null,
 	__priorDate2 = null;
-
-/**
-Reference to dmi.
-*/
-private HydroBaseDMI __dmi;
 
 /**
 References to types of actions the calculator can handle.
@@ -133,8 +129,7 @@ GUI buttons.
 */
 private JButton 
 	__closeJButton,
-	__graphJButton,
-	__helpJButton;
+	__graphJButton;
 
 /**
 GUI labels.
@@ -158,20 +153,14 @@ DateTimeBuilderJDialog property list.
 private PropList __dateProps;
 
 /**
-Calculate button.
-*/
-private SimpleJButton __calculateJButton;
-
-/**
 Constructor.
 @param dmi an open HydroBaseDMI object.
-@param parent the CWRATMainJFrame that instantiated this object.
+@param parent the JFrame that instantiated this object.
 */
-public HydroBase_GUI_AdminNumCalculator(HydroBaseDMI dmi, 
-CWRATMainJFrame parent) {
+public HydroBase_GUI_AdminNumCalculator(HydroBaseDMI dmi, JFrame parent)
+{
         super(parent, false);
 
-	__dmi = dmi;
         __parent = parent;
 
 	setupGUI();
@@ -269,10 +258,8 @@ throws Throwable {
 	__aproDate = null;
 	__priorDate = null;
 	__priorDate2 = null;
-	__dmi = null;
 	__closeJButton = null;
 	__graphJButton = null;
-	__helpJButton = null;
 	__adminNumJLabel = null;
 	__aproDateJLabel = null;
 	__adminNumJTextField = null;
@@ -280,7 +267,6 @@ throws Throwable {
 	__priorDateJTextField = null;
 	__priorDate2JTextField = null;
 	__dateProps = null;
-	__calculateJButton = null;
 	super.finalize();
 }
 
@@ -402,11 +388,11 @@ public void keyPressed(KeyEvent evt) {
 	int code = evt.getKeyCode();
 
 	// enter key is the same as ok
-	if (code == evt.VK_ENTER) {
+	if (code == KeyEvent.VK_ENTER) {
        		calculateClicked(__ADMIN_NUM);
 	}
 	// F1 envokes help
-	else if (code == evt.VK_F1) {
+	else if (code == KeyEvent.VK_F1) {
 	}
 }
 
@@ -548,7 +534,6 @@ private void setupGUI() {
         Insets NNNR = new Insets(0,0,0,7);
         Insets TLNN = new Insets(7,7,0,0);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // North JPanel
         JPanel northJPanel = new JPanel();
@@ -559,92 +544,92 @@ private void setupGUI() {
 	// start calculating admin number area ...
         JGUIUtil.addComponent(northJPanel, 
 		new JLabel("Calculate administration number:"),
-		0, y++, 2, 1, 0, 0, TLNN, gbc.NONE, gbc.WEST);
+		0, y++, 2, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(northJPanel, new JLabel("Appropriation date:"),
-		1, y, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	__aproDateJTextField = new JTextField(10);
 	__aproDateJTextField.setEditable(false);
         JGUIUtil.addComponent(northJPanel, __aproDateJTextField,
-		2, y, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		2, y, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	SimpleJButton temp = 
 		new SimpleJButton(__BUTTON_SET, __BUTTON_SET_APRO_DATE, this);
 	temp.setToolTipText("Set the appropriation date.");
         JGUIUtil.addComponent(northJPanel, temp,
-		3, y++, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		3, y++, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northJPanel, 
 		new JLabel("Prior adjudication date:"),
-		1, y, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	__priorDateJTextField = new JTextField(10);
 	__priorDateJTextField.setEditable(false);
         JGUIUtil.addComponent(northJPanel, __priorDateJTextField,
-		2, y, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		2, y, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	temp = new SimpleJButton(__BUTTON_SET, __BUTTON_SET_PRIOR_DATE, this);
 	temp.setToolTipText("Set the prior adjudication date.");
         JGUIUtil.addComponent(northJPanel, temp,
-		3, y, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		3, y, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	temp = new SimpleJButton(__BUTTON_CLEAR,__BUTTON_CLEAR_PRIOR_DATE,this);
 	temp.setToolTipText("Clear the prior adjudication date.");
         JGUIUtil.addComponent(northJPanel, temp,
-		4, y, 1, 1, 0, 0, NLNR, gbc.NONE, gbc.WEST);
+		4, y, 1, 1, 0, 0, NLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(northJPanel, new JLabel("(optional)"),
-		1, y++, 1, 1, 0, 0, 30, 40, 0, 0, gbc.NONE, gbc.WEST);
+		1, y++, 1, 1, 0, 0, 30, 40, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northJPanel, new JLabel("Administration number:"),
-		1, y, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	__adminNumJLabel = new JLabel("     ");
         JGUIUtil.addComponent(northJPanel, __adminNumJLabel,
-		2, y, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		2, y, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	temp = new SimpleJButton(__BUTTON_CALCULATE_ADMIN_NUM,
 		__BUTTON_CALCULATE_ADMIN_NUM, this);
 	temp.setToolTipText("Calculate the administration number.");
         JGUIUtil.addComponent(northJPanel, temp,		
-		3, y++, 2, 1, 0, 0, NNNR, gbc.NONE, gbc.WEST);
+		3, y++, 2, 1, 0, 0, NNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	//
 	// start calculate apropriation date area ...
 	//
         JGUIUtil.addComponent(northJPanel, 
 		new JLabel("Calculate apropriation date:"),
-		0, y++, 2, 1, 0, 0, TLNN, gbc.NONE, gbc.WEST);
+		0, y++, 2, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(northJPanel, new JLabel("Administration number:"),
-		1, y, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         __adminNumJTextField = new JTextField(10);
 	__adminNumJTextField.addKeyListener(this);
         JGUIUtil.addComponent(northJPanel, __adminNumJTextField, 
-		2, y++, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		2, y++, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northJPanel, 
 		new JLabel("Prior adjudication date:"),
-		1, y, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	__priorDate2JTextField = new JTextField(10);
 	__priorDate2JTextField.setEditable(false);
         JGUIUtil.addComponent(northJPanel, __priorDate2JTextField,
-		2, y, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		2, y, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	temp = new SimpleJButton(__BUTTON_SET, __BUTTON_SET_PRIOR_DATE2, this);
 	temp.setToolTipText("Set the prior adjudication date.");
         JGUIUtil.addComponent(northJPanel, temp,		
-		3, y, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		3, y, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	temp = new SimpleJButton(__BUTTON_CLEAR, __BUTTON_CLEAR_PRIOR_DATE2,
 		this);
 	temp.setToolTipText("Clear the prior adjudication date.");
         JGUIUtil.addComponent(northJPanel, temp,
-		4, y, 1, 1, 0, 0, NLNR, gbc.NONE, gbc.WEST);
+		4, y, 1, 1, 0, 0, NLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(northJPanel, 
 		new JLabel("(provide if available)"),
-		1, y++, 1, 1, 0, 0, 30, 40, 0, 0, gbc.NONE, gbc.WEST);
+		1, y++, 1, 1, 0, 0, 30, 40, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northJPanel, 
 		new JLabel("Appropriation date:"),
-		1, y, 1, 1, 0, 0, NLNN, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, NLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	__aproDateJLabel = new JLabel("     ");
         JGUIUtil.addComponent(northJPanel, __aproDateJLabel,
-		2, y, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		2, y, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	temp = 	new SimpleJButton(__BUTTON_CALCULATE_DATE, 
 		__BUTTON_CALCULATE_DATE, this);
 	temp.setToolTipText("Calculate the date.");
         JGUIUtil.addComponent(northJPanel, temp,
-		3, y++, 2, 1, 0, 0, NNNR, gbc.NONE, gbc.WEST);
+		3, y++, 2, 1, 0, 0, NNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         
         // South JPanel
         JPanel southJPanel = new JPanel();

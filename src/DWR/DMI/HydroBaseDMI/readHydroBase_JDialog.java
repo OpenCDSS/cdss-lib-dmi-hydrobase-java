@@ -38,6 +38,8 @@
 //					* As per Ray Bennett, filling with
 //					  diversion comments should NOT be the
 //					  default.
+// 2007-02-16	SAM, RTi		Use new CommandProcessor interface.
+//					Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -48,17 +50,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
 import java.util.Vector;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -68,19 +66,14 @@ import javax.swing.JTextField;
 
 import RTi.TS.TSIdent;
 
-import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.GUI.JGUIUtil;
-import RTi.Util.GUI.SimpleFileFilter;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
 import RTi.Util.IO.Command;
-import RTi.Util.IO.IOUtil;
+import RTi.Util.IO.CommandProcessor;
 import RTi.Util.IO.PropList;
 import RTi.Util.Message.Message;
-import RTi.Util.String.StringUtil;
-import RTi.Util.Time.DateTime;
-import RTi.Util.Time.TimeInterval;
 
 /**
 The readHydroBase_JDialog edits the readHydroBase() and
@@ -136,23 +129,28 @@ private SimpleJComboBox	__FillUsingDivComments_JComboBox;
 private JTextArea	__command_JTextArea = null;
 						// Command as JTextArea
 private Vector __input_filter_JPanel_Vector = new Vector();
-private InputFilter_JPanel __input_filter_HydroBase_CASS_JPanel = null;
+//TODO SAM 2007-02-17 Need to enable CASS when resources allow
+//private InputFilter_JPanel __input_filter_HydroBase_CASS_JPanel = null;
 						// InputFilter_JPanel for
 						// HydroBase CASS agricultural
 						// crop statistics time series.
-private InputFilter_JPanel __input_filter_HydroBase_NASS_JPanel = null;
+// TODO SAM 2007-02-17 Need to enable NASS when resources allow
+//private InputFilter_JPanel __input_filter_HydroBase_NASS_JPanel = null;
 						// InputFilter_JPanel for
 						// HydroBase NASS agricultural
 						// crop statistics time series.
-private InputFilter_JPanel __input_filter_HydroBase_irrigts_JPanel = null;
+//TODO SAM 2007-02-17 Need to enable irrig acres when resources allow
+//private InputFilter_JPanel __input_filter_HydroBase_irrigts_JPanel = null;
 						// InputFilter_JPanel for
 						// HydroBase structure
 						// irrig_summary_ts time series.
-private InputFilter_JPanel __input_filter_HydroBase_station_JPanel = null;
+//TODO SAM 2007-02-17 Need to enable station when resources allow
+//private InputFilter_JPanel __input_filter_HydroBase_station_JPanel = null;
 						// InputFilter_JPanel for
 						// HydroBase station time
 						// series.
-private InputFilter_JPanel __input_filter_HydroBase_structure_JPanel = null;
+//SAM 2007-02-17 Need to enable structures when resources allow
+//private InputFilter_JPanel __input_filter_HydroBase_structure_JPanel = null;
 						// InputFilter_JPanel for
 						// HydroBase structure time
 						// series - those that do not
@@ -162,7 +160,8 @@ private InputFilter_JPanel __input_filter_HydroBase_structure_sfut_JPanel =null;
 						// HydroBase structure time
 						// series - those that do use
 						// SFUT.
-private InputFilter_JPanel __input_filter_HydroBase_WIS_JPanel =null;
+// SAM 2007-02-17 Need to enable WIS when resources allow
+//private InputFilter_JPanel __input_filter_HydroBase_WIS_JPanel =null;
 						// InputFilter_JPanel for
 						// HydroBase WIS time
 						// series.
@@ -225,10 +224,11 @@ private void checkGUIState()
 	// Otherwise, clear and disable...
 	if ( __DataType_JTextField != null ) {
 		String DataType = __DataType_JTextField.getText().trim();
-		String Interval = "";
-		if (  __Interval_JTextField != null ) {
-			Interval = __Interval_JTextField.getText().trim();
-		}
+		// TODO SAM 2007-02-17 Add checks for interval
+		//String Interval = "";
+		//if (  __Interval_JTextField != null ) {
+		//	Interval = __Interval_JTextField.getText().trim();
+		//}
 		// REVISIT SAM 2006-04-25
 		// Should not need to hard-code these data types but there
 		// is no better way to do it at the moment.
@@ -479,9 +479,6 @@ private String getWhere ( int ifg )
 	String delim = ";";	// To separate input filter parts
 	InputFilter_JPanel filter_panel =
 			__input_filter_HydroBase_structure_sfut_JPanel;
-	InputFilter filter = (InputFilter)
-		__input_filter_HydroBase_structure_sfut_JPanel.
-			getInputFilter(ifg);
 	String where = filter_panel.toString(ifg,delim).trim();
 	return where;
 }
@@ -495,6 +492,7 @@ private void initialize ( JFrame parent, Command command )
 {	String routine = "readHydroBase_JDialog.initialize";
 	__parent_JFrame = parent;
 	__command = (readHydroBase_Command)command;
+	CommandProcessor processor = __command.getCommandProcessor();
 
 	// Determine whether this is the "TS Alias =" version of the command.
 	PropList props = __command.getCommandParameters();
@@ -521,13 +519,28 @@ private void initialize ( JFrame parent, Command command )
 	// initialization (doing so might prematurely warn the user)...
 	__command.setUseAlias ( __use_alias );
 
-	Object o =__command.getCommandProcessor().getPropContents(
-		"HydroBaseDMIList");
-	if ( o != null ) {
-		// Use the first HydroBaseDMI instance, since input filter
-		// information should be relatively consistent...
-		Vector v = (Vector)o;
-		__hbdmi = (HydroBaseDMI)v.elementAt(0);
+	try { Object o = processor.getPropContents("HydroBaseDMIList");
+		if ( o != null ) {
+			// Use the first HydroBaseDMI instance, since input filter
+			// information should be relatively consistent...
+			Vector v = (Vector)o;
+			if ( v.size() > 0 ) {
+				__hbdmi = (HydroBaseDMI)v.elementAt(0);
+			}
+			else {
+				String message =
+					"No HydroBase connection is available to use with command editing.\n" +
+					"Make sure that HydroBase is open.";
+				Message.printWarning(1, routine, message );
+			}
+		}
+	}
+	catch ( Exception e ){
+		// Not fatal, but of use to developers.
+		String message =
+			"No HydroBase connection is available to use with command editing.\n" +
+			"Make sure that HydroBase is open.";
+		Message.printWarning(1, routine, message );
 	}
 
 	addWindowListener( this );
@@ -536,104 +549,103 @@ private void initialize ( JFrame parent, Command command )
 
 	JPanel main_JPanel = new JPanel();
 	main_JPanel.setLayout( new GridBagLayout() );
-	GridBagConstraints gbc = new GridBagConstraints();
 	getContentPane().add ( "North", main_JPanel );
 	int y = 0;
 
 	if ( __use_alias ) {
         	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Read a single time series from the HydroBase database."),
-		0, y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 	else {	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Read one or more time series from the HydroBase database."),
-		0, y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        		JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"The data type and interval must be selected.  Constrain the " +
 		"query using the \"where\" clauses, if necessary." ), 
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        		JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"This command is fully enabled ONLY FOR STRUCTURE TIME SERIES "+
 		"(e.g., DivTotal, DivClass, RelTotal, RelClass)."),
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Refer to the HydroBase Input Type documentation for " +
 		"possible values." ), 
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Specifying the period will limit data that are available " +
 		"for fill commands but can increase performance." ), 
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"If not specified, the period defaults to the query period."),
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Filling with diversion comments applies only to diversion " +
 		"and reservoir release time series."),
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	if ( __use_alias ) {
         	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Time series alias:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		__Alias_JTextField = new JTextField ( 30 );
 		__Alias_JTextField.addKeyListener ( this );
 		JGUIUtil.addComponent(main_JPanel, __Alias_JTextField,
-		1, y, 3, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 3, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Location:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		__Location_JTextField = new JTextField ( "" );
 		__Location_JTextField.addKeyListener ( this );
         	JGUIUtil.addComponent(main_JPanel, __Location_JTextField,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"For example, station or structure ID."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Data source:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		__DataSource_JTextField = new JTextField ( "" );
 		__DataSource_JTextField.addKeyListener ( this );
         	JGUIUtil.addComponent(main_JPanel, __DataSource_JTextField,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"For example: USGS, NWS."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ( "Data type:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__DataType_JTextField = new JTextField ( "" );
 	__DataType_JTextField.addKeyListener ( this );
         JGUIUtil.addComponent(main_JPanel, __DataType_JTextField,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"For example: Streamflow."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ("Data interval:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__Interval_JTextField = new JTextField ( "" );
 	__Interval_JTextField.addKeyListener ( this );
         JGUIUtil.addComponent(main_JPanel, __Interval_JTextField,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"For example: 6Hour, Day, Month."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ("Input name:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__InputName_JTextField = new JTextField ( "" );
 	__InputName_JTextField.addKeyListener ( this );
         JGUIUtil.addComponent(main_JPanel, __InputName_JTextField,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"HydroBase connection name (blank for default)."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	if ( !__use_alias ) {
 		int buffer = 3;
@@ -647,8 +659,8 @@ private void initialize ( JFrame parent, Command command )
 				__hbdmi );
        			JGUIUtil.addComponent(main_JPanel,
 				__input_filter_HydroBase_station_JPanel,
-				0, ++y, 7, 1, 0.0, 0.0, insets, gbc.HORIZONTAL,
-				gbc.WEST );
+				0, ++y, 7, 1, 0.0, 0.0, insets, GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST );
 			__input_filter_JPanel_Vector.addElement (
 				__input_filter_HydroBase_station_JPanel );
 			__input_filter_HydroBase_station_JPanel.
@@ -672,8 +684,8 @@ private void initialize ( JFrame parent, Command command )
 				__hbdmi, false, filter_props );
        			JGUIUtil.addComponent(main_JPanel,
 				__input_filter_HydroBase_structure_JPanel,
-				0, ++y, 7, 1, 0.0, 0.0, insets, gbc.HORIZONTAL,
-				gbc.WEST );
+				0, ++y, 7, 1, 0.0, 0.0, insets, GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST );
 			__input_filter_JPanel_Vector.addElement (
 				__input_filter_HydroBase_structure_JPanel);
 			__input_filter_HydroBase_structure_JPanel.
@@ -698,8 +710,8 @@ private void initialize ( JFrame parent, Command command )
 				__hbdmi, true, filter_props );
        			JGUIUtil.addComponent(main_JPanel,
 				__input_filter_HydroBase_structure_sfut_JPanel,
-				0, ++y, 7, 1, 0.0, 0.0, insets, gbc.HORIZONTAL,
-				gbc.WEST );
+				0, ++y, 7, 1, 0.0, 0.0, insets, GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST );
 			__input_filter_JPanel_Vector.addElement (
 				__input_filter_HydroBase_structure_sfut_JPanel);
 			__input_filter_HydroBase_structure_sfut_JPanel.
@@ -720,8 +732,8 @@ private void initialize ( JFrame parent, Command command )
 				__hbdmi );
        			JGUIUtil.addComponent(main_JPanel,
 				__input_filter_HydroBase_irrigts_JPanel,
-				0, ++y, 7, 1, 0.0, 0.0, insets, gbc.HORIZONTAL,
-				gbc.WEST );
+				0, ++y, 7, 1, 0.0, 0.0, insets, GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST );
 			__input_filter_JPanel_Vector.addElement (
 				__input_filter_HydroBase_irrigts_JPanel);
 			__input_filter_HydroBase_irrigts_JPanel.
@@ -743,8 +755,8 @@ private void initialize ( JFrame parent, Command command )
 				__hbdmi );
        			JGUIUtil.addComponent(main_JPanel,
 				__input_filter_HydroBase_CASS_JPanel,
-				0, ++y, 7, 1, 0.0, 0.0, insets, gbc.HORIZONTAL,
-				gbc.WEST );
+				0, ++y, 7, 1, 0.0, 0.0, insets, GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST );
 			__input_filter_JPanel_Vector.addElement (
 				__input_filter_HydroBase_CASS_JPanel);
 			__input_filter_HydroBase_CASS_JPanel.
@@ -767,8 +779,8 @@ private void initialize ( JFrame parent, Command command )
 				__hbdmi );
        			JGUIUtil.addComponent(main_JPanel,
 				__input_filter_HydroBase_NASS_JPanel,
-				0, ++y, 7, 1, 0.0, 0.0, insets, gbc.HORIZONTAL,
-				gbc.WEST );
+				0, ++y, 7, 1, 0.0, 0.0, insets, GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST );
 			__input_filter_JPanel_Vector.addElement (
 				__input_filter_HydroBase_NASS_JPanel);
 			__input_filter_HydroBase_NASS_JPanel.
@@ -791,8 +803,8 @@ private void initialize ( JFrame parent, Command command )
 				__hbdmi );
        			JGUIUtil.addComponent(main_JPanel,
 				__input_filter_HydroBase_WIS_JPanel,
-				0, ++y, 7, 1, 0.0, 0.0, insets, gbc.HORIZONTAL,
-				gbc.WEST );
+				0, ++y, 7, 1, 0.0, 0.0, insets, GridBagConstraints.HORIZONTAL,
+				GridBagConstraints.WEST );
 			__input_filter_JPanel_Vector.addElement (
 				__input_filter_HydroBase_WIS_JPanel);
 			__input_filter_HydroBase_WIS_JPanel.
@@ -813,32 +825,32 @@ private void initialize ( JFrame parent, Command command )
 
 	if ( __use_alias ) {
         	JGUIUtil.addComponent(main_JPanel, new JLabel ( "TSID (full):"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		__TSID_JTextField = new JTextField ( "" );
 		__TSID_JTextField.setEditable ( false );
 		__TSID_JTextField.addKeyListener ( this );
         	JGUIUtil.addComponent(main_JPanel, __TSID_JTextField,
-		1, y, 6, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 6, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 
 	JGUIUtil.addComponent(main_JPanel, new JLabel ( "Period to read:" ), 
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__InputStart_JTextField = new JTextField ( 15 );
 	__InputStart_JTextField.addKeyListener ( this );
 	JGUIUtil.addComponent(main_JPanel, __InputStart_JTextField,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(main_JPanel, new JLabel ( "to" ), 
-		3, y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.CENTER);
+		3, y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.CENTER);
 	__InputEnd_JTextField = new JTextField ( 15 );
 	__InputEnd_JTextField.addKeyListener ( this );
 	JGUIUtil.addComponent(main_JPanel, __InputEnd_JTextField,
-		4, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		4, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	/* REVISIT SAM 2006-04-27
 	As per Ray Bennett this should always be done.
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Fill daily diversions:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	Vector FillDailyDiv_Vector = new Vector ( 3 );
 	FillDailyDiv_Vector.addElement ( "" );
 	FillDailyDiv_Vector.addElement ( __command._False );
@@ -848,26 +860,26 @@ private void initialize ( JFrame parent, Command command )
 	__FillDailyDiv_JComboBox.select ( 0 );
 	__FillDailyDiv_JComboBox.addActionListener ( this );
         JGUIUtil.addComponent(main_JPanel, __FillDailyDiv_JComboBox,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Whether to carry forward daily diversions (blank=True)."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Fill daily diversions flag:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__FillDailyDivFlag_JTextField = new JTextField ( "" );
 	__FillDailyDivFlag_JTextField.addKeyListener ( this );
         JGUIUtil.addComponent(main_JPanel, __FillDailyDivFlag_JTextField,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"1-character flag to indicate daily diversion filled values."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	*/
 
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Fill using diversion comments:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	Vector FillUsingDivComments_Vector = new Vector ( 3 );
 	FillUsingDivComments_Vector.addElement ( "" );
 	FillUsingDivComments_Vector.addElement ( __command._False );
@@ -877,34 +889,34 @@ private void initialize ( JFrame parent, Command command )
 	__FillUsingDivComments_JComboBox.select ( 0 );
 	__FillUsingDivComments_JComboBox.addActionListener ( this );
         JGUIUtil.addComponent(main_JPanel, __FillUsingDivComments_JComboBox,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Whether to use diversion comments to fill more zero values " +
 		"(blank=False)."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Fill using diversion comments flag:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__FillUsingDivCommentsFlag_JTextField = new JTextField ( "" );
 	__FillUsingDivCommentsFlag_JTextField.addKeyListener ( this );
         JGUIUtil.addComponent(main_JPanel,
 		__FillUsingDivCommentsFlag_JTextField,
-		1, y, 2, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"1-character flag to indicate filled diversion comment " +
 		"values."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ( "Command:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__command_JTextArea = new JTextArea (4,50);
 	__command_JTextArea.setLineWrap ( true );
 	__command_JTextArea.setWrapStyleWord ( true );
 	__command_JTextArea.setEditable ( false );
 	JGUIUtil.addComponent(main_JPanel, new JScrollPane(__command_JTextArea),
-		1, y, 6, 1, 1, 0, insetsTLBR, gbc.BOTH, gbc.WEST);
+		1, y, 6, 1, 1, 0, insetsTLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	// Refresh the contents...
 	refresh ();
@@ -913,7 +925,7 @@ private void initialize ( JFrame parent, Command command )
 	JPanel button_JPanel = new JPanel();
 	button_JPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         JGUIUtil.addComponent(main_JPanel, button_JPanel, 
-		0, ++y, 8, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.CENTER);
+		0, ++y, 8, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 
 	__cancel_JButton = new SimpleJButton( "Cancel", this);
 	button_JPanel.add ( __cancel_JButton );
@@ -990,7 +1002,6 @@ private void refresh ()
 	String FillUsingDivComments = "";
 	String FillUsingDivCommentsFlag = "";
 	PropList props = null;
-	String substring;
 	if ( __first_time ) {
 		__first_time = false;
 		// Get the parameters from the command...
@@ -1054,11 +1065,7 @@ private void refresh ()
 				__input_filter_HydroBase_structure_sfut_JPanel;
 			int nfg = filter_panel.getNumFilterGroups();
 			String where;
-			InputFilter filter;
 			for ( int ifg = 0; ifg < nfg; ifg ++ ) {
-				filter = (InputFilter)
-				__input_filter_HydroBase_structure_sfut_JPanel.
-				getInputFilter(ifg);
 				where = props.getValue ( "Where" + (ifg + 1) );
 				if ( where != null ) {
 					// Set the filter...
@@ -1169,13 +1176,9 @@ private void refresh ()
 		InputFilter_JPanel filter_panel =
 			__input_filter_HydroBase_structure_sfut_JPanel;
 		int nfg = filter_panel.getNumFilterGroups();
-		InputFilter filter;
 		String where;
 		String delim = ";";	// To separate input filter parts
 		for ( int ifg = 0; ifg < nfg; ifg ++ ) {
-			filter = (InputFilter)
-			__input_filter_HydroBase_structure_sfut_JPanel.
-			getInputFilter(ifg);
 			where = filter_panel.toString(ifg,delim).trim();
 			// Make sure there is a field that is being checked in
 			// a where clause...

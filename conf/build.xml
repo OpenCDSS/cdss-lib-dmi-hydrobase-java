@@ -98,10 +98,6 @@
 			value="${ext.dir}${sep}RTi_Common${sep}RTi_Common_142.jar" />
 	<property name="StateMod_jar" 
 			value="${ext.dir}${sep}StateMod${sep}StateMod_142.jar" />
-	<property name="CWRAT_jar"	  
-			value="${ext.dir}${sep}CWRAT${sep}CWRAT_142.jar"  />
-	<property name="TSCmdProc"
-	value="${ext.dir}${sep}TSCommandProcessor${sep}TSCommandProcessor_142.jar" />
 	
 	<!-- =========== Compiler Properties ===============-->
 	<property name="compiler" value="modern" />
@@ -112,8 +108,6 @@
 		<pathelement location="${xerces}" />
 		<pathelement location="${RTi_jar}" />
 		<pathelement location="${StateMod_jar}" />
-		<pathelement location="${CWRAT_jar}" />
-		<pathelement location="${TSCmdProc}" />
 		<pathelement location="${buildwork.dir}"/>
 		<pathelement location="."/>
 	</path>
@@ -122,8 +116,6 @@
 		<pathelement location="${xerces}" />
 		<pathelement location="${RTi_jar}" />
 		<pathelement location="${StateMod_jar}" />
-		<pathelement location="${CWRAT_jar}" />
-		<pathelement location="${TSCmdProc}" />
 		<pathelement location="${dist.dir}${sep}${jarfname}" />
 		<pathelement location="."/>
 	</path>

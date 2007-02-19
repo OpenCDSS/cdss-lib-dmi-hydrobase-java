@@ -39,6 +39,7 @@ import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleJComboBox;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.IO.Command;
+import RTi.Util.IO.CommandProcessor;
 import RTi.Util.IO.PropList;
 import RTi.Util.Message.Message;
 
@@ -202,6 +203,7 @@ Instantiates the GUI components.
 private void initialize ( JFrame parent, Command command )
 {	__parent_JFrame = parent;
 	__command = (fillUsingDiversionComments_Command)command;
+	CommandProcessor processor = __command.getCommandProcessor();
 
 	addWindowListener( this );
 
@@ -209,7 +211,6 @@ private void initialize ( JFrame parent, Command command )
 
 	JPanel main_JPanel = new JPanel();
 	main_JPanel.setLayout( new GridBagLayout() );
-	GridBagConstraints gbc = new GridBagConstraints();
 	getContentPane().add ( "North", main_JPanel );
 	int y = 0;
 
@@ -217,40 +218,51 @@ private void initialize ( JFrame parent, Command command )
 	"This command can be used to fill monthly, daily, and" +
 	" yearly diversions and reservoir releases for the " +
 	"HydroBase input type." ), 
-	0, y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	0, y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"The diversion comments in HydroBase indicate years when no" +
 	" water was carried for an entire irrigation year." ), 
-	0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"Consequently, missing values in diversion time series" +
 	" can be set to zero for the period November to October."),
-	0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"If a yearly time series is filled, the zero value in an" +
 	" irrigation year will be matched with the time series year."),
-	0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"For the fill period, use standard date formats " +
 	"appropriate for the date precision of the time series."),
-	0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"The recalculate limits flag, if set to True, will cause the " +
 	"average to be recalculated, for use in other fill commands."), 
-	0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"For example, use True with a fillUsingDiversionComments() " +
 	"command immediately after reading diversions."), 
-	0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"Time series to fill:" ), 
-	0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+	0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
     __TSID_JComboBox = new SimpleJComboBox ( false );
     
     int size = 0;
-    Vector tsids = (Vector)__command.getCommandProcessor().getPropContents (
-	"TSIDListNoInput" );
+    
+	   Vector tsids = null;
+	    try { Object o = processor.getPropContents ( "TSIDListNoInput" );
+			if ( o != null ) {
+				tsids = (Vector)o;
+			}
+		}
+		catch ( Exception e ) {
+			// Not fatal, but of use to developers.
+			String message = "Error requesting TSIDListNoInput from processor - not using.";
+			String routine = __command.getCommandName() + "_JDialog.initialize";
+			Message.printDebug(10, routine, message );
+		}
     
     if ( tsids != null ) {
     	size = tsids.size();
@@ -269,82 +281,82 @@ private void initialize ( JFrame parent, Command command )
 	__TSID_JComboBox.add ( "*" );
 	__TSID_JComboBox.addItemListener ( this );
 	    JGUIUtil.addComponent(main_JPanel, __TSID_JComboBox,
-		1, y, 6, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 6, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
     JGUIUtil.addComponent(main_JPanel,new JLabel(
 	"Fill start date:"),
-	0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+	0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__FillStart_JTextField = new JTextField ( "", 10 );
 	__FillStart_JTextField.addKeyListener ( this );
     JGUIUtil.addComponent(main_JPanel, __FillStart_JTextField,
-	1, y, 2, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
 	"Start of period to fill."), 
-	3, y, 4, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
     JGUIUtil.addComponent(main_JPanel,new JLabel(
 	"Fill end date:"),
-	0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+	0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__FillEnd_JTextField = new JTextField ( "", 10 );
 	__FillEnd_JTextField.addKeyListener ( this );
     JGUIUtil.addComponent(main_JPanel, __FillEnd_JTextField,
-	1, y, 2, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
 	"End of period to fill."), 
-	3, y, 4, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
     JGUIUtil.addComponent(main_JPanel, new JLabel ( "Fill flag:" ), 
-    0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+    0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
     __FillFlag_JTextField = new JTextField ( 5 );
     __FillFlag_JTextField.addKeyListener ( this );
        JGUIUtil.addComponent(main_JPanel, __FillFlag_JTextField,
-    1, y, 2, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+    1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
     "1-character (or \"Auto\") flag to indicate fill."), 
-    3, y, 4, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+    3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"Fill Using CUI:"), 
-	0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+	0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__FillUsingCIU_JComboBox = new SimpleJComboBox ( false );
 	__FillUsingCIU_JComboBox.addItem ( __TRUE );
 	__FillUsingCIU_JComboBox.addItem ( __FALSE );
 	__FillUsingCIU_JComboBox.addItemListener ( this );
     JGUIUtil.addComponent(main_JPanel, __FillUsingCIU_JComboBox,
-	1, y, 2, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
 	"Use currently in use information."), 
-	3, y, 4, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     
     JGUIUtil.addComponent(main_JPanel, new JLabel ( "Fill Using CIU flag:" ), 
-    0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+    0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
     __FillUsingCIUFlag_JTextField = new JTextField ( 5 );
     __FillUsingCIUFlag_JTextField.addKeyListener ( this );
     JGUIUtil.addComponent(main_JPanel, __FillUsingCIUFlag_JTextField,
-    1, y, 2, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+    1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
     "1-character (or \"Auto\") flag to indicate fill."), 
-    3, y, 4, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+    3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"Recalculate limits:"), 
-	0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+	0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__RecalcLimits_JComboBox = new SimpleJComboBox ( false );
 	__RecalcLimits_JComboBox.addItem ( __TRUE );
 	__RecalcLimits_JComboBox.addItem ( __FALSE );
 	__RecalcLimits_JComboBox.addItemListener ( this );
     JGUIUtil.addComponent(main_JPanel, __RecalcLimits_JComboBox,
-	1, y, 2, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
 	"Recalculate original data limits after fill?"), 
-	3, y, 4, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+	3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
     JGUIUtil.addComponent(main_JPanel, new JLabel ( "Command:" ), 
-	0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+	0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__command_JTextField = new JTextField ( 55 );
 	__command_JTextField.setEditable ( false );
 	JGUIUtil.addComponent(main_JPanel, __command_JTextField,
-	1, y, 6, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.WEST);
+	1, y, 6, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// Refresh the contents...
 	refresh ();
@@ -353,7 +365,7 @@ private void initialize ( JFrame parent, Command command )
 	JPanel button_JPanel = new JPanel();
 	button_JPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 	    JGUIUtil.addComponent(main_JPanel, button_JPanel, 
-	0, ++y, 8, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.CENTER);
+	0, ++y, 8, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 
 	__cancel_JButton = new SimpleJButton("Cancel", this);
 	button_JPanel.add ( __cancel_JButton );
@@ -381,7 +393,7 @@ Respond to KeyEvents.
 public void keyPressed ( KeyEvent event )
 {	int code = event.getKeyCode();
 
-	if ( code == event.VK_ENTER ) {
+	if ( code == KeyEvent.VK_ENTER ) {
 		refresh ();
 		checkInput();
 		if ( !__error_wait ) {

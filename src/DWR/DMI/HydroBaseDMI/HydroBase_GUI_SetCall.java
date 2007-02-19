@@ -48,6 +48,8 @@
 //					created properly for Bypass Structures.
 // 2006-01-11	JTS, RTi		Bypass Calls GUI now gets passed the
 //					CWRATMainJFrame.
+// 2007-02-07	SAM, RTi		Remove dependence on CWRAT.
+//					Just pass a JFrame as the parent.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -81,8 +83,6 @@ import javax.swing.ListSelectionModel;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import DWR.DMI.CWRAT.CWRATMainJFrame;
 
 import RTi.DMI.DMIUtil;
 
@@ -184,9 +184,14 @@ If the bypass structures have been generated yet or not.
 private boolean __haveGeneratedBypassStructures = false;
 
 /**
-The parent CWRAT application frame.
+The parent application frame, used to position child windows.
 */
-private CWRATMainJFrame __cwratParent;
+private JFrame __main_parent = null;
+
+/**
+Interface to GeoViewUI instance, for map interaction.
+*/
+private GeoViewUI __geoview_ui = null;
 
 /**
 Reference to a dmi.
@@ -303,13 +308,15 @@ private Vector __textFields_Vector = null;
 /**
 Constructor.
 @param parent HydroBase_GUI_CallsQuery object
-@param cwratParent the parent CWRAT JFrame object.
+@param main_parent the main application JFrame object.
+@param geoview_ui GeoViewUI instance, for map interaction.
 @param dmi HydroBaseDMI object.
 */
 public HydroBase_GUI_SetCall(HydroBase_GUI_CallsQuery parent,
-CWRATMainJFrame cwratParent, HydroBaseDMI dmi) {
+JFrame main_parent, GeoViewUI geoview_ui, HydroBaseDMI dmi) {
 	__parent = parent; 
-	__cwratParent = cwratParent;
+	__main_parent = main_parent;
+	__geoview_ui = geoview_ui;
 	__dmi = dmi;
 	__call = null;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
@@ -329,13 +336,15 @@ CWRATMainJFrame cwratParent, HydroBaseDMI dmi) {
 /**
 Constructor for doing copy calls.
 @param parent HydroBase_GUI_CallsQuery object
-@param cwratParent the parent CWRAT JFrame object.
+@param main_parent the parent JFrame object, for positioning child windows.
+@param geoview_ui GeoViewUI instance, for map interaction.
 @param dmi HydroBaseDMI object.
 */
 public HydroBase_GUI_SetCall(HydroBase_GUI_CallsQuery parent,
-CWRATMainJFrame cwratParent, HydroBaseDMI dmi, HydroBase_Calls call) {
+JFrame main_parent, GeoViewUI geoview_ui, HydroBaseDMI dmi, HydroBase_Calls call) {
 	__parent = parent; 
-	__cwratParent = cwratParent;
+	__main_parent = main_parent;
+	__geoview_ui = geoview_ui;
 	__dmi = dmi;
 	__call = call;
 
@@ -377,8 +386,7 @@ This routine handles the events using the ActionListener.
 */
 public void actionPerformed(ActionEvent event) {
         String s = event.getActionCommand();
-	String routine = "HydroBase_GUI_SetCall.actionPerformed";
-
+	
 	if (s.equals(__BUTTON_OK)) {
 		setCallClicked();
 	}
@@ -406,7 +414,6 @@ calls list.
 */
 private void callsClicked() {
 	// initialize variables
-	String routine = "HydroBase_GUI_SetCall.callsClicked()";
 
 	// return if no items are present in the the __callList object
 	int rows = __callList.getSelectedSize();
@@ -426,7 +433,7 @@ private void callsClicked() {
 	if (selectedItem.equals(__BYPASS)) {
 		if (__bypassGUI == null) {
 			__bypassGUI = new HydroBase_GUI_EditCallsBypass(
-				__dmi, __cwratParent, this, 
+				__dmi, __main_parent, this, 
 				__textFields_Vector);
 		}
 		else {
@@ -947,7 +954,7 @@ Cleans up member variables.
 */
 public void finalize() 
 throws Throwable {
-	__cwratParent = null;
+	__main_parent = null;
 	__dmi = null;
 	__call = null;
 	__callStructureQueryGUI = null;
@@ -1219,7 +1226,6 @@ Responds to the __set_Button ACTION_EVENT and inserts a new record
 into the calls table
 */
 private void setCallClicked() {
-	HydroBase_NetAmts netAmt = null;
 	HydroBase_StructureView view = null;
 	HydroBase_Calls call = null;
 	
@@ -1365,13 +1371,11 @@ private void setCallClicked() {
 		Message.printWarning(1, routine, e);
 	}
 
-	String date_time_released = "";
 	String set_comments = __setCommentJTextField.getText().trim();
 	if (set_comments.length()== 0) {
 		set_comments = " ";
 	}
 
-	String release_comments = "";
  	String districts_affected = __affectedJTextField.getText().trim();
 	if (districts_affected.length()== 0) {
 		districts_affected = " ";
@@ -1542,12 +1546,9 @@ private void setupGUI() {
 
 	// objects used throughout the GUI layout
 	int buffer = 2;
-        Insets insetsTLBR = new Insets(buffer,buffer,buffer,buffer);
 	Insets insetsNLNR = new Insets(0,buffer,0,buffer);
         Insets insetsNLBR = new Insets(0,buffer,buffer,buffer);
-	Insets insetsTLNR = new Insets(buffer,buffer,0,buffer);
        	GridBagLayout gbl = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
 
     	// Center JPanel
        	JPanel centerJPanel = new JPanel();
@@ -1563,24 +1564,24 @@ private void setupGUI() {
 
 	__structureListJLabel = new JLabel(__STRUCT_LABEL);
     	JGUIUtil.addComponent(centerWJPanel, __structureListJLabel,
-		0, y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__callJLabel = new JLabel("Available Calls:");
     	JGUIUtil.addComponent(centerWJPanel, __callJLabel, 
-		3, y, 2, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, y, 2, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	y++;
 	
 	__structureListJLabel2 = new JLabel("");
     	JGUIUtil.addComponent(centerWJPanel, __structureListJLabel2,
-		0, y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	__callJLabel2 = new JLabel("");
 	if (__bypassStructure != null) {
 		__callJLabel2.setText(findStructureName(__bypassStructure));
 	}
     	JGUIUtil.addComponent(centerWJPanel, __callJLabel2, 
-		3, y, 2, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, y, 2, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	y++;
 
@@ -1589,7 +1590,7 @@ private void setupGUI() {
 	__structureList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	__structureList.addListSelectionListener(this);
     	JGUIUtil.addComponent(centerWJPanel, new JScrollPane(__structureList),
-		0, y, 3, 2, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);	
+		0, y, 3, 2, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);	
 
 	// Add a popup menu to be added with the structure list to add
 	// search capabilities...
@@ -1601,7 +1602,7 @@ private void setupGUI() {
 	__callsJTextField = new JTextField();
 	__callsJTextField.setEditable(false);
     	JGUIUtil.addComponent(centerWJPanel, __callsJTextField, 
-		3, y, 2, 1, 1, 0, insetsNLNR, gbc.BOTH, gbc.WEST);	
+		3, y, 2, 1, 1, 0, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);	
 
 	y++;
 
@@ -1609,100 +1610,100 @@ private void setupGUI() {
 	__callList.addListSelectionListener(this);
 	__callList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     	JGUIUtil.addComponent(centerWJPanel, new JScrollPane(__callList), 
-		3, y, 2, 1, 1, 1, insetsNLNR, gbc.BOTH, gbc.WEST);	
+		3, y, 2, 1, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);	
 
 	y++;
 
 	SimpleJButton query = new SimpleJButton(__STRUCTURE_QUERY, this);
 	query.setToolTipText("Read data from database.");
     	JGUIUtil.addComponent(centerWJPanel, query, 
-		0, 4, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);	
+		0, 4, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	y++;
 
 	__callDescriptionJLabel = new JLabel("");
 
     	JGUIUtil.addComponent(centerWJPanel, __callDescriptionJLabel,
-		0, y, 3, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);	
+		0, y, 3, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	y++;
 
     	JGUIUtil.addComponent(centerWJPanel,
 		new JLabel("Administration Number:"),
-		0, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);	
+		0, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
     	JGUIUtil.addComponent(centerWJPanel, new JLabel("Appropriation Date:"),
-		1, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);	
+		1, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
     	JGUIUtil.addComponent(centerWJPanel, new JLabel("Decreed Amount:"),
-		2, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);	
+		2, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
  
     	JGUIUtil.addComponent(centerWJPanel, new JLabel("Adjudication Date:"), 
-		3, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);	
+		3, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
     	JGUIUtil.addComponent(centerWJPanel, new JLabel("Priority Number:"), 
-		4, y, 2, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);	
+		4, y, 2, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	y++;
 
 	__adminJTextField = new JTextField(10);
 	__adminJTextField.setEditable(false);
     	JGUIUtil.addComponent(centerWJPanel, __adminJTextField, 
-		0, y, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);	
+		0, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	__aproDateJTextField = new JTextField(15);
 	__aproDateJTextField.setEditable(false);
     	JGUIUtil.addComponent(centerWJPanel, __aproDateJTextField, 
-		1, y, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);	
+		1, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	__decreedJTextField = new JTextField(15);
 	__decreedJTextField.setEditable(false);
 	JGUIUtil.addComponent(centerWJPanel, __decreedJTextField, 
-		2, y, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);	
+		2, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	__adjDateJTextField = new JTextField(15);
 	__adjDateJTextField.setEditable(false);
     	JGUIUtil.addComponent(centerWJPanel, __adjDateJTextField, 
-		3, y, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);	
+		3, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	__priorNumJTextField = new JTextField(15);
 	__priorNumJTextField.setEditable(false);
     	JGUIUtil.addComponent(centerWJPanel, __priorNumJTextField, 
-		4, y, 2, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);	
+		4, y, 2, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	y++;
 
     	JGUIUtil.addComponent(centerWJPanel,
 		new JLabel("Date/Time that Call is Set:"), 
-		0, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);	
+		0, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);	
 
 	__setDateJTextField = new JTextField(15);
 	__setDateJTextField.setEditable(false);
     	JGUIUtil.addComponent(centerWJPanel, __setDateJTextField, 
-		1, y, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.EAST);	
+		1, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);	
 
 	SimpleJButton set = new SimpleJButton(__SET_DATE, this);
 	set.setToolTipText("Set date for call.");
     	JGUIUtil.addComponent(centerWJPanel, set,
-		2, y, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);	
+		2, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	y++;
 
 	JGUIUtil.addComponent(centerWJPanel, new JLabel("Districts Affected:"), 
-		0, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);	
+		0, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);	
 
 	__affectedJTextField = new JTextField();
     	JGUIUtil.addComponent(centerWJPanel, __affectedJTextField, 
-		1, y, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);	
+		1, y, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 
 	y++;
 
     	JGUIUtil.addComponent(centerWJPanel, new JLabel("Set Comment:"), 
-		0, y, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.EAST);	
+		0, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);	
  
 	__setCommentJTextField = new JTextField();			
    	JGUIUtil.addComponent(centerWJPanel, __setCommentJTextField, 
-		1, y, 2, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.EAST);	
+		1, y, 2, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);	
 		               
 	// Bottom JPanel
 	JPanel bottomJPanel = new JPanel();
@@ -1728,7 +1729,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
        	JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 		
 	// frame settings
 	String app = JGUIUtil.getAppNameForWindows();
@@ -1960,7 +1961,6 @@ Adds a HydroBase_Calls object to the list of structures.
 */
 private int structureAddition(HydroBase_Calls newCall) {
 	HydroBase_Calls	call = null;
-	String routine = "HydroBase_GUI_SetCall.structureAddition()";
 	int insertIndex = 0;
 	String new_name = newCall.getStr_name();
 	int new_wd = newCall.getWD(), old_wd;
@@ -2131,7 +2131,7 @@ private void structureQueryClicked() {
 		try {
 			__callStructureQueryGUI = 
 				new HydroBase_GUI_StructureQuery(__dmi, 
-				__cwratParent, true);
+				__main_parent, __geoview_ui, true);
 		}
 		catch (Exception e) {
 			Message.printWarning(1, routine, "Couldn't open "

@@ -104,6 +104,10 @@
 //					  single generic one.
 // 2005-08-03	JTS, RTi		Keyboard navigation around the worksheet
 //					is now handled properly.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass JFrame to constructor.
+//					Add GeoViewUI for map interaction.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -144,8 +148,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import DWR.DMI.CWRAT.CWRATMainJFrame;
-
 import RTi.DMI.DMIUtil;
 
 import RTi.Util.GUI.JGUIUtil;
@@ -157,7 +159,6 @@ import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJComboBox;
 import RTi.Util.GUI.SimpleJMenuItem;
 
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
 
 import RTi.Util.Message.Message;
@@ -350,9 +351,14 @@ private CardLayout
 	__constantCard;
 
 /**
-The parent JFrame running the entire application.
+The parent JFrame running the entire application, for window positioning.
 */
-private CWRATMainJFrame __parent;
+private JFrame __parent;
+
+/**
+GeoViewUI for map interactions.
+*/
+private GeoViewUI __geoview_ui;
 
 /**
 Hashtables to store data for populating the combo boxes on the form.
@@ -443,12 +449,10 @@ private JButton
 	__deleteRowJButton,
 	__displayGainsJButton,
 	__divideJButton,
-	__helpJButton,
 	__minusJButton,
 	__multiplyJButton,
 	__plusJButton,
-	__showNetworkJButton,
-	__sumJButton;
+	__showNetworkJButton;
 
 /**
 GUI check boxes.
@@ -600,12 +604,14 @@ private Vector __wisFormatVector;
 /**
 Constructor.
 @param parent the parent JFrame running the application.
+@param geoview_ui GeoViewUI interface for map interaction.
 @param dmi open and connected dmi object for reading data from the database.
 @param wis HydroBase_WISSheetName object.
 */
-public HydroBase_GUI_WISBuilder(CWRATMainJFrame parent, HydroBaseDMI dmi, 
-HydroBase_WISSheetName wis) {
+public HydroBase_GUI_WISBuilder(JFrame parent, GeoViewUI geoview_ui,
+HydroBaseDMI dmi, HydroBase_WISSheetName wis) {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	__dmi = dmi;
 	__wis = wis;
 	__wisNum = wis.getWis_num();
@@ -616,13 +622,15 @@ HydroBase_WISSheetName wis) {
 /**
 Constructor.
 @param parent the parent JFrame running the application.
+@param geoview_ui GeoViewUI interface for map interaction.
 @param dmi open and connected dmi object for reading data from the database.
 @param wis HydroBase_WISSheetName object.
 @param stream HydroBase_Stream object.
 */
-public HydroBase_GUI_WISBuilder(CWRATMainJFrame parent, HydroBaseDMI dmi, 
-HydroBase_WISSheetName wis, HydroBase_Stream stream) {
+public HydroBase_GUI_WISBuilder(JFrame parent, GeoViewUI geoview_ui,
+HydroBaseDMI dmi, HydroBase_WISSheetName wis, HydroBase_Stream stream) {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	__dmi = dmi;
 	__stream = stream; 
 	__wis = wis;
@@ -1569,7 +1577,6 @@ private void deleteRowClicked() {
 	__worksheet.deleteRow(selRow);
 	__wisFormatVector.removeElementAt(row + 1);
 
-	int newCol = getSelectedColumn();
 	if (selRow == (__worksheet.getRowCount())) {
 		selRow--;
 	}
@@ -1806,7 +1813,7 @@ private void displayGains(boolean isDisplay) {
 			}
 			setCellContents(display, node_row_num - 1,
 				HydroBase_GUI_WIS.GAIN_LOSS_COL);
-			node = network.getDownstreamNode(node,
+			node = HydroBase_NodeNetwork.getDownstreamNode(node,
 				HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 		}
 	}
@@ -1850,7 +1857,7 @@ private void displayGains(boolean isDisplay) {
 
 			setCellContents(display, node_row_num - 1,
 				HydroBase_GUI_WIS.GAIN_LOSS_COL);
-			node = network.getDownstreamNode(node,
+			node = HydroBase_NodeNetwork.getDownstreamNode(node,
 				HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 		}
 	}
@@ -1902,7 +1909,7 @@ private void displayRow(int rowNum) {
 	double streamMile = rowFormat.getStr_mile();
 	String weight_String = "";
 	double weight = rowFormat.getGain_factor();
-	String streamName = getStream_name(rowNum);
+	//String streamName = getStream_name(rowNum);
 	String identifier = rowFormat.getIdentifier();
         __rowTypeSimpleJComboBox.select(null);
         __rowTypeSimpleJComboBox.select(rowType);
@@ -2667,12 +2674,10 @@ throws Throwable {
 	__deleteRowJButton = null;
 	__displayGainsJButton = null;
 	__divideJButton = null;
-	__helpJButton = null;
 	__minusJButton = null;
 	__multiplyJButton = null;
 	__plusJButton = null;
 	__showNetworkJButton = null;
-	__sumJButton = null;
 	__divKnownPointJCheckBox = null;
 	__mfrWeightKnownPointJCheckBox = null;
 	__otherKnownPointJCheckBox = null;
@@ -2920,7 +2925,6 @@ private int getRecentFormatWISNum() {
 	}
 		
 	HydroBase_WISSheetName data = null;
-	String dmiString = null;
 	
 	if (results != null && !(results.isEmpty())) {
 		// compare effective date for element 0 against the current 
@@ -2928,8 +2932,8 @@ private int getRecentFormatWISNum() {
 		data = (HydroBase_WISSheetName)results.elementAt(0);
 		DateTime TSRecent = new DateTime(data.getEffective_date());	
 		TSRecent.setPrecision(DateTime.PRECISION_DAY);
-		String mostRecentDay = TSRecent.toString(
-			DateTime.FORMAT_Y2K_SHORT);
+		//String mostRecentDay = TSRecent.toString(
+			//DateTime.FORMAT_Y2K_SHORT);
 
 		int year1 = TSCurrent.getYear();
 		int year2 = TSRecent.getYear();
@@ -3631,7 +3635,7 @@ public void itemStateChanged(ItemEvent event) {
 	Object o = event.getItemSelectable();
 
 	// ignore deselection events -- except for JCheckBoxes.
-	if (event.getStateChange() != event.SELECTED
+	if (event.getStateChange() != ItemEvent.SELECTED
 		&& o != __divKnownPointJCheckBox
 		&& o != __staKnownPointJCheckBox
 		&& o != __resKnownPointJCheckBox
@@ -3800,13 +3804,13 @@ public void keyPressed(KeyEvent event) {
 	int code = event.getKeyCode();
 
 	if (event.getSource() == __worksheet) {
-		if (code == event.VK_KP_DOWN || code == event.VK_KP_UP
-		    || code == event.VK_KP_LEFT || code == event.VK_KP_RIGHT
-		    || code == event.VK_DOWN || code == event.VK_UP
-		    || code == event.VK_LEFT || code == event.VK_RIGHT) {
+		if (code == KeyEvent.VK_KP_DOWN || code == KeyEvent.VK_KP_UP
+		    || code == KeyEvent.VK_KP_LEFT || code == KeyEvent.VK_KP_RIGHT
+		    || code == KeyEvent.VK_DOWN || code == KeyEvent.VK_UP
+		    || code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT) {
 			__keyCell = new int[2];
 
-			if (code == event.VK_KP_DOWN || code == event.VK_DOWN) {
+			if (code == KeyEvent.VK_KP_DOWN || code == KeyEvent.VK_DOWN) {
 				if (__curCellRow == __worksheet.getRowCount()) {
 					__keyCell = null;
 					return;
@@ -3814,7 +3818,7 @@ public void keyPressed(KeyEvent event) {
 				__keyCell[0] = __curCellRow + 1;
 				__keyCell[1] = __curCellCol - 1;
 			}
-			else if (code == event.VK_KP_UP || code == event.VK_UP){
+			else if (code == KeyEvent.VK_KP_UP || code == KeyEvent.VK_UP){
 				if (__curCellRow == 0) {
 					__keyCell = null;
 					return;
@@ -3822,8 +3826,8 @@ public void keyPressed(KeyEvent event) {
 				__keyCell[0] = __curCellRow - 1;
 				__keyCell[1] = __curCellCol - 1;
 			}
-			else if (code == event.VK_KP_LEFT 
-			    || code == event.VK_LEFT) {
+			else if (code == KeyEvent.VK_KP_LEFT 
+			    || code == KeyEvent.VK_LEFT) {
 			    	if (__curCellCol == 1) {
 					__keyCell = null;
 					return;
@@ -3831,8 +3835,8 @@ public void keyPressed(KeyEvent event) {
 				__keyCell[0] = __curCellRow;
 				__keyCell[1] = __curCellCol - 2;
 			}
-			else if (code == event.VK_KP_RIGHT 
-			    || code == event.VK_RIGHT) {
+			else if (code == KeyEvent.VK_KP_RIGHT 
+			    || code == KeyEvent.VK_RIGHT) {
 			    	if (__curCellCol 
 				    == __worksheet.getColumnCount() + 1) {
 				    	__keyCell = null;
@@ -3847,7 +3851,7 @@ public void keyPressed(KeyEvent event) {
 		return;
 	}
 	
-	if (code == event.VK_ENTER) {
+	if (code == KeyEvent.VK_ENTER) {
 		if (__isConstantShown) {
 			addConstantClicked();
 		}
@@ -3856,7 +3860,7 @@ public void keyPressed(KeyEvent event) {
 			refreshWorksheet();
 		}
 	}
-	else if (code == event.VK_F1) {
+	else if (code == KeyEvent.VK_F1) {
 	}
 }
 
@@ -4458,7 +4462,6 @@ private void rowTypeSimpleJComboBoxClicked() {
 	}
 
 	// active the formula and edit buttons according to the selected cell
-	int col = getSelectedColumn();
 	isValidFormulaCell();
 	isValidImportCell();
 
@@ -4733,17 +4736,6 @@ private void setGUIDefaults() {
 }
 
 /**
-Sets the format for the current row.
-@param format the format to set for the current row.
-*/
-private void setRowFormat(String format) {
-	HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-		__wisFormatVector.elementAt(__curCellRow + 1);
-	wisFormat.setRow_type(format);
-	__wisFormatVector.setElementAt(wisFormat, __curCellRow + 1);
-}
-
-/**
 Sets the ID for the current row.
 @param id the ID to set for the current row.
 */
@@ -4939,7 +4931,6 @@ private void setupGUI() {
 	Insets insetsTLBN = new Insets(7, 7, 7, 0);
 	Insets insetsTNBR = new Insets(7, 0, 7, 7);
 	Insets insetsNLBR = new Insets(0, 7, 7, 7);
-	GridBagConstraints gbc = new GridBagConstraints();
 	GridBagLayout gbl = new GridBagLayout();
 
 	// Center JPanel
@@ -4958,20 +4949,20 @@ private void setupGUI() {
 	centerNorthJPanel.add("West", centerNorthWestJPanel);
 
 	JGUIUtil.addComponent(centerNorthWestJPanel, new JLabel("Sheet Name:"),
-		0, 0, 1, 1, 0, 0, insetsTLBN, gbc.NONE, gbc.EAST);
+		0, 0, 1, 1, 0, 0, insetsTLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__sheetNameJTextField = new JTextField(30);
 	__sheetNameJTextField.setEditable(false);
 	JGUIUtil.addComponent(centerNorthWestJPanel, __sheetNameJTextField, 
-		1, 0, 1, 1, 0, 0, insetsTNBR, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(centerNorthWestJPanel, new JLabel("Date:"), 
-		2, 0, 1, 1, 0, 0, insetsTLBN, gbc.NONE, gbc.EAST);
+		2, 0, 1, 1, 0, 0, insetsTLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	      
 	__dateJTextField = new JTextField(15);
 	__dateJTextField.setEditable(false);
 	JGUIUtil.addComponent(centerNorthWestJPanel, __dateJTextField, 
-		3, 0, 1, 1, 0, 0, insetsTNBR, gbc.HORIZONTAL, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__gainSimpleJComboBox = new SimpleJComboBox();
 	__gainSimpleJComboBox.addItemListener(this);
@@ -4979,7 +4970,7 @@ private void setupGUI() {
 	__gainSimpleJComboBox.add(HydroBase_GUI_WIS.WEIGHTS);
 	__gainSimpleJComboBox.add(HydroBase_GUI_WIS.STREAM_MILE);
 	JGUIUtil.addComponent(centerNorthWestJPanel, __gainSimpleJComboBox, 
-		4, 0, 1, 1, 0, 0, insetsTNBR, gbc.HORIZONTAL, gbc.WEST);
+		4, 0, 1, 1, 0, 0, insetsTNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// Center JPanel: Center
 	JPanel centerCenterJPanel = new JPanel();
@@ -5018,7 +5009,7 @@ private void setupGUI() {
 	__worksheet.setHourglassJFrame(this);
 	
 	JGUIUtil.addComponent(centerCenterJPanel, new JScrollPane(__worksheet), 
-		0, 1, 3, 1, 1, 1, insetsNLNR, gbc.BOTH, gbc.WEST);
+		0, 1, 3, 1, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 	__worksheet.addMouseListener(this);
 	__worksheet.addKeyListener(this);
 
@@ -5090,22 +5081,22 @@ private void setupGUI() {
 	bottomNorthJPanel.add("West", bottomNWJPanel);
 
 	JGUIUtil.addComponent(bottomNWJPanel, new JLabel("Water Districts:"), 
-		0, 0, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(bottomNWJPanel, new JLabel("Row Type:"), 
-		1, 0, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(bottomNWJPanel, new JLabel("Unique Identifier:"), 
-		2, 0, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(bottomNWJPanel,
 		new JLabel("Stream for Current Row:"), 
-		3, 0, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__waterDistrictSimpleJComboBox = new SimpleJComboBox();
 	__waterDistrictSimpleJComboBox.addItemListener(this);
 	JGUIUtil.addComponent(bottomNWJPanel, __waterDistrictSimpleJComboBox, 
-		0, 1, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__rowTypeSimpleJComboBox = new SimpleJComboBox();
 	__rowTypeSimpleJComboBox.add(HydroBase_GUI_WIS.CONFLUENCE);
@@ -5118,20 +5109,20 @@ private void setupGUI() {
 	__rowTypeSimpleJComboBox.add(HydroBase_GUI_WIS.STRING);
 	__rowTypeSimpleJComboBox.addItemListener(this);
 	JGUIUtil.addComponent(bottomNWJPanel, __rowTypeSimpleJComboBox, 
-		1, 1, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__uniqueJTextField = new JTextField();
 	__uniqueJTextField.addKeyListener(this);
 	__uniqueJTextField.setEditable(false);
 	__uniqueJTextField.setBackground(Color.lightGray);
 	JGUIUtil.addComponent(bottomNWJPanel, __uniqueJTextField, 
-		2, 1, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__currentStreamJTextField = new JTextField(25);
 	__currentStreamJTextField.setEditable(false);
 	__currentStreamJTextField.setBackground(Color.lightGray);
 	JGUIUtil.addComponent(bottomNWJPanel, __currentStreamJTextField, 
-		3, 1, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	//--------------------------------------------------------------
 	// CardLayout JPanel
@@ -5155,16 +5146,16 @@ private void setupGUI() {
 
 	__formulaJLabel = new JLabel(__FORMULA_LABEL);
 	JGUIUtil.addComponent(__formulaJPanel, __formulaJLabel, 
-		0, 0, 10, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 10, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__formulaList = new SimpleJList();
 	JGUIUtil.addComponent(__formulaJPanel, new JScrollPane(__formulaList), 
-		0, 1, 10, 10, 1, 1, insetsNLNR, gbc.BOTH, gbc.WEST);
+		0, 1, 10, 10, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	JPanel operatorsJPanel = new JPanel();
 	operatorsJPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 	JGUIUtil.addComponent(__formulaJPanel, operatorsJPanel, 
-		0, 12, 1, 1, 1, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 12, 1, 1, 1, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__deleteJButton = new JButton(__BUTTON_DELETE);
 	__deleteJButton.setToolTipText("Delete selected formula operation.");
@@ -5231,13 +5222,13 @@ private void setupGUI() {
 	__rowTypeJPanel.add(HydroBase_GUI_WIS.STRING, __stringJPanel);
 
 	JGUIUtil.addComponent(__stringJPanel, new JLabel("Row Label:"), 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.NORTHWEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	__stringRowLabelJTextField = new JTextField(30);
 	__stringRowLabelJTextField.addMouseListener(this);
 	__stringRowLabelJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__stringJPanel, __stringRowLabelJTextField, 
-		0, 1, 1, 1, 1, 0, insetsNLBR, gbc.NONE, gbc.NORTHWEST);
+		0, 1, 1, 1, 1, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	//--------------------------------------------------------------
 	// Stream JPanel and JComponents
@@ -5248,23 +5239,23 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(__streamJPanel, new JLabel(
 		"Stream (Stream Number):"), 
-		0, 0, 1, 1, 1, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__streamJPanel, new JLabel(
 		"Row Label (Select Stream at left if possible):"), 
-		1, 0, 1, 1, 1, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__streamNameSimpleJComboBox = new SimpleJComboBox();
 	__streamNameSimpleJComboBox.add(__SELECT_STREAM);    
 	__streamNameSimpleJComboBox.addItemListener(this);
 	JGUIUtil.addComponent(__streamJPanel, __streamNameSimpleJComboBox, 
-		0, 1, 1, 1, 1, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 1, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__streamRowLabelJTextField = new JTextField(30);
 	__streamRowLabelJTextField.addKeyListener(this);
 	__streamRowLabelJTextField.addMouseListener(this);
 	JGUIUtil.addComponent(__streamJPanel, __streamRowLabelJTextField, 
-		1, 1, 1, 1, 1, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 1, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	//--------------------------------------------------------------
 	// Confluence JPanel and JComponents
@@ -5275,7 +5266,7 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(__confluenceJPanel, new JLabel(
 		"Confluence (Stream Number):"), 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	ButtonGroup concbg = new ButtonGroup();
 	
@@ -5284,7 +5275,7 @@ private void setupGUI() {
 	__conStreamJRadioButton.addItemListener(this);
 	JGUIUtil.addComponent(__confluenceJPanel, 
 		__conStreamJRadioButton, 
-		1, 0, 1, 1, 0, 0, insetsTNNN, gbc.NONE, gbc.EAST);
+		1, 0, 1, 1, 0, 0, insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__conWDJRadioButton = new JRadioButton(__IN_WD + " " + __wis.getWD(), 
 		false);
@@ -5292,45 +5283,45 @@ private void setupGUI() {
 	__conWDJRadioButton.addItemListener(this);
 	JGUIUtil.addComponent(__confluenceJPanel, 
 		__conWDJRadioButton, 
-		2, 0, 1, 1, 0, 0, insetsTNNN, gbc.NONE, gbc.EAST);
+		2, 0, 1, 1, 0, 0, insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	JGUIUtil.addComponent(__confluenceJPanel, new JLabel(
 		"Row Label (Select Confluence at left if possible):"), 
-		3, 0, 2, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 0, 2, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__confluenceNameSimpleJComboBox = new SimpleJComboBox();
 	__confluenceNameSimpleJComboBox.addItemListener(this);
 	__confluenceNameSimpleJComboBox.add(__SELECT_STREAM);
 	JGUIUtil.addComponent(__confluenceJPanel, 
 		__confluenceNameSimpleJComboBox, 
-		0, 1, 3, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 3, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__confluenceRowLabelJTextField = new JTextField(30);
 	__confluenceRowLabelJTextField.addMouseListener(this);
 	__confluenceRowLabelJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__confluenceJPanel, 
 		__confluenceRowLabelJTextField, 
-		3, 1, 2, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 1, 2, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__confluenceJPanel, 
 		new JLabel("Stream Mile:"), 
-		3, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__confluenceJPanel, new JLabel(__WEIGHT), 
-		4, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		4, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__confluenceStreamMileJTextField = new JTextField(10);
 	__confluenceStreamMileJTextField.addMouseListener(this);
 	__confluenceStreamMileJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__confluenceJPanel,
 		__confluenceStreamMileJTextField,
-		3, 3, 1, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 3, 1, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__cflWeightJTextField = new JTextField(10);
 	__cflWeightJTextField.addMouseListener(this);
 	__cflWeightJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__confluenceJPanel, __cflWeightJTextField, 
-		4, 3, 1, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		4, 3, 1, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	//--------------------------------------------------------------
 	// Diversion JPanel and JComponents
@@ -5341,7 +5332,7 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(__diversionJPanel,
 		new JLabel("Diversion (WDID):"), 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	ButtonGroup strcbg = new ButtonGroup();
 	
@@ -5350,7 +5341,7 @@ private void setupGUI() {
 	__structStreamJRadioButton.addItemListener(this);
 	JGUIUtil.addComponent(__diversionJPanel, 
 		__structStreamJRadioButton, 
-		1, 0, 1, 1, 0, 0, insetsTNNN, gbc.NONE, gbc.EAST);
+		1, 0, 1, 1, 0, 0, insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__structWDJRadioButton = new JRadioButton(__IN_WD + " " + __wis.getWD(),
 		false);
@@ -5358,58 +5349,58 @@ private void setupGUI() {
 	__structWDJRadioButton.addItemListener(this);
 	JGUIUtil.addComponent(__diversionJPanel, 
 		__structWDJRadioButton, 
-		2, 0, 1, 1, 0, 0, insetsTNNN, gbc.NONE, gbc.EAST);
+		2, 0, 1, 1, 0, 0, insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	JGUIUtil.addComponent(__diversionJPanel, new JLabel(
 		"Row Label (Select Diversion at left if possible):"), 
-		3, 0, 2, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 0, 2, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__diversionNameSimpleJComboBox = new SimpleJComboBox();
 	__diversionNameSimpleJComboBox.addItemListener(this);
 	__diversionNameSimpleJComboBox.add(__SELECT_DIVERSION);
 	JGUIUtil.addComponent(__diversionJPanel, __diversionNameSimpleJComboBox,
-		0, 1, 3, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 3, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__diversionRowLabelJTextField = new JTextField(30);
 	__diversionRowLabelJTextField.addMouseListener(this);
 	__diversionRowLabelJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__diversionJPanel, __diversionRowLabelJTextField,
-		3, 1, 2, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 1, 2, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__divKnownPointJCheckBox = new JCheckBox("Baseflow");
 	__divKnownPointJCheckBox.setEnabled(false);
 	__divKnownPointJCheckBox.addItemListener(this);
 	JGUIUtil.addComponent(__diversionJPanel, __divKnownPointJCheckBox, 
-		5, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		5, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
 	//__divStreamNameJLabel = new JLabel("Stream Name:");
 	//JGUIUtil.addComponent(__diversionJPanel, __divStreamNameJLabel, 
-		//0, 2, 3, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		//0, 2, 3, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__diversionJPanel, 
 		new JLabel("Stream Mile:"), 
-		3, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__diversionJPanel, new JLabel(__WEIGHT), 
-		4, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		4, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	//__divStreamNameJTextField = new JTextField(30);
 	//__divStreamNameJTextField.setEditable(false);
 	//__divStreamNameJTextField.setBackground(Color.lightGray);
 	//JGUIUtil.addComponent(__diversionJPanel, __divStreamNameJTextField, 
-		//0, 3, 3, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		//0, 3, 3, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__divStreamMileJTextField = new JTextField(10);
 	__divStreamMileJTextField.addMouseListener(this);
 	__divStreamMileJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__diversionJPanel, __divStreamMileJTextField, 
-		3, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		3, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__divWeightJTextField = new JTextField(10);
 	__divWeightJTextField.addMouseListener(this);
 	__divWeightJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__diversionJPanel, __divWeightJTextField, 
-		4, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		4, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	//--------------------------------------------------------------
 	// Reservoir JPanel and JComponents
@@ -5420,7 +5411,7 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(__reservoirJPanel, new JLabel(
 		"Reservoir (WDID):"), 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	ButtonGroup rescbg = new ButtonGroup();
 	
@@ -5429,7 +5420,7 @@ private void setupGUI() {
 	__resStreamJRadioButton.addItemListener(this);
 	JGUIUtil.addComponent(__reservoirJPanel, 
 		__resStreamJRadioButton, 
-	1, 0, 1, 1, 0, 0, insetsTNNN, gbc.NONE, gbc.EAST);
+	1, 0, 1, 1, 0, 0, insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__resWDJRadioButton = new JRadioButton(__IN_WD + " " + __wis.getWD(), 
 		false);
@@ -5437,48 +5428,48 @@ private void setupGUI() {
 	__resWDJRadioButton.addItemListener(this);
 	JGUIUtil.addComponent(__reservoirJPanel, 
 		__resWDJRadioButton, 
-		2, 0, 1, 1, 0, 0, insetsTNNN, gbc.NONE, gbc.EAST);
+		2, 0, 1, 1, 0, 0, insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	JGUIUtil.addComponent(__reservoirJPanel, new JLabel(
 		"Row Label (Select Reservoir at left if possible):"), 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__reservoirNameSimpleJComboBox = new SimpleJComboBox();
 	__reservoirNameSimpleJComboBox.addItemListener(this);
 	__reservoirNameSimpleJComboBox.add(__SELECT_RESERVOIR);
 	JGUIUtil.addComponent(__reservoirJPanel, __reservoirNameSimpleJComboBox,
-		0, 1, 3, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 3, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__reservoirRowLabelJTextField = new JTextField(30);
 	__reservoirRowLabelJTextField.addMouseListener(this);
 	__reservoirRowLabelJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__reservoirJPanel, __reservoirRowLabelJTextField,
-		3, 1, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__resKnownPointJCheckBox = new JCheckBox("Baseflow");
 	__resKnownPointJCheckBox.setEnabled(false);
 	__resKnownPointJCheckBox.addItemListener(this);
 	JGUIUtil.addComponent(__reservoirJPanel, __resKnownPointJCheckBox, 
-		4, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		4, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
 	JGUIUtil.addComponent(__reservoirJPanel, 
 		new JLabel("Stream Mile:"), 
-		3, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__reservoirJPanel, new JLabel(__WEIGHT), 
-		4, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		4, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__resStreamMileJTextField = new JTextField(10);
 	__resStreamMileJTextField.addMouseListener(this);
 	__resStreamMileJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__reservoirJPanel, __resStreamMileJTextField, 
-		3, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		3, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__resWeightJTextField = new JTextField(10);
 	__resWeightJTextField.addMouseListener(this);
 	__resWeightJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__reservoirJPanel, __resWeightJTextField, 
-		4, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		4, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	//--------------------------------------------------------------
 	// Minimum Flow Reach and JComponents
@@ -5490,7 +5481,7 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(__minFlowReachJPanel,new JLabel(
 		"Min Flow Reach (WDID):"),
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	ButtonGroup mfrcbg = new ButtonGroup();
 	
@@ -5499,7 +5490,7 @@ private void setupGUI() {
 	__mfrWeightStreamJRadioButton.addItemListener(this);
 	JGUIUtil.addComponent(__minFlowReachJPanel, 
 		__mfrWeightStreamJRadioButton, 
-		1, 0, 1, 1, 0, 0, insetsTNNN, gbc.NONE, gbc.EAST);
+		1, 0, 1, 1, 0, 0, insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__mfrWeightWDJRadioButton = new JRadioButton(
 		__IN_WD + " " + __wis.getWD(), false);
@@ -5507,52 +5498,52 @@ private void setupGUI() {
 	__mfrWeightWDJRadioButton.addItemListener(this);
 	JGUIUtil.addComponent(__minFlowReachJPanel, 
 		__mfrWeightWDJRadioButton, 
-		2, 0, 1, 1, 0, 0, insetsTNNN, gbc.NONE, gbc.EAST);
+		2, 0, 1, 1, 0, 0, insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	JGUIUtil.addComponent(__minFlowReachJPanel, new JLabel(
 		"Row Label (Select Min Flow Reach at left if possible):"), 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__mfrWeightNameSimpleJComboBox = new SimpleJComboBox();
 	__mfrWeightNameSimpleJComboBox.addItemListener(this);
 	__mfrWeightNameSimpleJComboBox.add(__SELECT_MFR);
 	JGUIUtil.addComponent(__minFlowReachJPanel, 
 		__mfrWeightNameSimpleJComboBox, 
-		0, 1, 3, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 3, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__mfrWeightRowLabelJTextField =  new JTextField(30);
 	__mfrWeightRowLabelJTextField.addMouseListener(this);
 	__mfrWeightRowLabelJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__minFlowReachJPanel, 
 		__mfrWeightRowLabelJTextField, 
-		3, 1, 2, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 1, 2, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__mfrWeightKnownPointJCheckBox = new JCheckBox("Baseflow");
 	__mfrWeightKnownPointJCheckBox.setEnabled(false);
 	__mfrWeightKnownPointJCheckBox.addItemListener(this);
 	JGUIUtil.addComponent(__minFlowReachJPanel, 
 		__mfrWeightKnownPointJCheckBox, 
-		5, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		5, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
 	JGUIUtil.addComponent(__minFlowReachJPanel, 
 		new JLabel("Stream Mile:"), 
-		3, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__minFlowReachJPanel, new JLabel(__WEIGHT), 
-		4, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		4, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__mfrWeightStreamMileJTextField = new JTextField(10);
 	__mfrWeightStreamMileJTextField.addMouseListener(this);
 	__mfrWeightStreamMileJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__minFlowReachJPanel, 
 		__mfrWeightStreamMileJTextField, 
-		3, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		3, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__mfrWeightJTextField = new JTextField(10);
 	__mfrWeightJTextField.addMouseListener(this);
 	__mfrWeightJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__minFlowReachJPanel, __mfrWeightJTextField,
-		4, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		4, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	//--------------------------------------------------------------
 	// Other JPanel and JComponents
@@ -5562,37 +5553,37 @@ private void setupGUI() {
 	__rowTypeJPanel.add(HydroBase_GUI_WIS.OTHER, __otherJPanel);
 
 	JGUIUtil.addComponent(__otherJPanel, new JLabel("Row Label:"), 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__otherRowLabelJTextField =  new JTextField(30);
 	__otherRowLabelJTextField.addMouseListener(this);
 	__otherRowLabelJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__otherJPanel, __otherRowLabelJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__otherKnownPointJCheckBox = new JCheckBox("Baseflow");
 	__otherKnownPointJCheckBox.addItemListener(this);
 	JGUIUtil.addComponent(__otherJPanel, __otherKnownPointJCheckBox, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__otherJPanel, 
 		new JLabel("Stream Mile:"),
-		1, 4, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 4, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__otherJPanel, new JLabel(__WEIGHT), 
-		2, 4, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 4, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__otherStreamMileJTextField = new JTextField(30);
 	__otherStreamMileJTextField.addMouseListener(this);
 	__otherStreamMileJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__otherJPanel, __otherStreamMileJTextField, 
-		1, 5, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 5, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__otherWeightJTextField = new JTextField(10);
 	__otherWeightJTextField.addMouseListener(this);
 	__otherWeightJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__otherJPanel, __otherWeightJTextField, 
-		2, 5, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		2, 5, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	//--------------------------------------------------------------
 	// Station JPanel and JComponents
@@ -5603,47 +5594,47 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(__stationJPanel, new JLabel(
 		"Station (Station Identifier):"),
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__stationJPanel, new JLabel(
 		"Row Label (Select Station at left if possible):"), 
-		1, 0, 2, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 2, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__stationNameSimpleJComboBox = new SimpleJComboBox();
 	__stationNameSimpleJComboBox.addItemListener(this);
 	__stationNameSimpleJComboBox.add(__SELECT_STATION);
 	JGUIUtil.addComponent(__stationJPanel, __stationNameSimpleJComboBox, 
-		0, 1, 1, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	__stationRowLabelJTextField =  new JTextField(30);
 	__stationRowLabelJTextField.addMouseListener(this);
 	__stationRowLabelJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__stationJPanel, __stationRowLabelJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__staKnownPointJCheckBox = new JCheckBox("Baseflow");
 	__staKnownPointJCheckBox.addItemListener(this);
 	JGUIUtil.addComponent(__stationJPanel, __staKnownPointJCheckBox, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__stationJPanel, 
 		new JLabel("Stream Mile:"),
-		1, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(__stationJPanel, new JLabel(__WEIGHT), 
-		2, 2, 1, 1, 1, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		2, 2, 1, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__staStreamMileJTextField = new JTextField(30);
 	__staStreamMileJTextField.addMouseListener(this);
 	__staStreamMileJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__stationJPanel, __staStreamMileJTextField, 
-		1, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__staWeightJTextField = new JTextField(10);
 	__staWeightJTextField.addMouseListener(this);
 	__staWeightJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(__stationJPanel, __staWeightJTextField, 
-		2, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		2, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// Bottom: South JPanel
 	JPanel bottomSJPanel = new JPanel();
@@ -5689,7 +5680,7 @@ private void setupGUI() {
 	__statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
 	JGUIUtil.addComponent(bottomSSJPanel, __statusJTextField, 
-		0, 1, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// Popup Menu...
 
@@ -5900,7 +5891,7 @@ private void showCellProperties(int row, int col) {
 	else {	
 		HydroBase_Node node = __network.getMostUpstreamNode();
 		while (node != null) {
-			node = __network.getDownstreamNode(node,
+			node = HydroBase_NodeNetwork.getDownstreamNode(node,
 				HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 			// find the node matching the wisFormat key...
 			if (node.getWISFormat() == wisFormat) {
@@ -5936,7 +5927,7 @@ private void showCellProperties(int row, int col) {
 	}
 
 	HydroBase_GUI_WISCellAttributes gui = 
-		new HydroBase_GUI_WISCellAttributes(__parent,
+		new HydroBase_GUI_WISCellAttributes(__parent, __geoview_ui,
 		wisFormat.getRow_label(), getColumnType(col), contents, 
 		wisFormat, wisFormula, wisImport, __dmi, downstreamNode);
 	gui.setGainsField(mileString);

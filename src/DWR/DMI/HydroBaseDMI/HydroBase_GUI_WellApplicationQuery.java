@@ -75,6 +75,9 @@
 // 2005-06-28	JTS, RTi		Removed DMI parameter from table model.
 // 2005-11-15	JTS, RTi		Option to query the entire state at once
 //					added to the district combo box.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass a JFrame in the constructor.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -102,8 +105,6 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import DWR.DMI.CWRAT.CWRATMainJFrame;
-
 import RTi.GIS.GeoView.GeoRecord;
 import RTi.GIS.GeoView.GeoViewListener;
 
@@ -115,7 +116,6 @@ import RTi.Util.GUI.JGUIUtil;
 
 import RTi.Util.GUI.JScrollWorksheet;
 import RTi.Util.GUI.JWorksheet;
-import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
 
 import RTi.Util.IO.PropList;
@@ -149,9 +149,14 @@ Whether the query is a geo view select query or not.
 private boolean __geoViewSelectQuery = false;
 
 /**
-The parent JFrame on which the query JFrame was opened.
+The parent JFrame on which this JFrame was opened, for window positioning.
 */
-private CWRATMainJFrame __parent = null;
+private JFrame __parent = null;
+
+/**
+The GeoViewUI instance, for map interaction.
+*/
+private GeoViewUI __geoview_ui = null;
 
 /**
 The limits for doing geo view queries.
@@ -172,7 +177,6 @@ private JButton
 	__closeJButton,
 	__exportJButton,
 	__getDataJButton,
-	__helpJButton,
 	__selectOnMapJButton,
 	__viewJButton;
 
@@ -185,7 +189,6 @@ private JLabel __worksheetJLabel;
 GUI text fields.
 */
 private JTextField 
-	__locationJTextField = null,
 	__statusJTextField;
 
 /**
@@ -197,23 +200,28 @@ private SimpleJComboBox __waterDistrictJComboBox;
 
 /**
 Constructor.  Create the interface and make visible.
+@param dmi HydroBaseDMI instance for database interactions.
 @param parent the parent that opened this gui.
+@param geoview_ui GeoViewUI instance for map interactions.
 */
 public HydroBase_GUI_WellApplicationQuery(HydroBaseDMI dmi,
-CWRATMainJFrame parent) 
+JFrame parent, GeoViewUI geoview_ui) 
 throws Exception {
-	this(dmi, parent, true);
+	this(dmi, parent, geoview_ui, true);
 }
 
 /**
 Constructor.
+@param dmi HydroBaseDMI instance for database interactions.
 @param parent the parent app that opened this gui.
+@param geoview_ui GeoViewUI instance for map interactions.
 @param isVisible Indicates whether the interface should be visible at creation.
 */
 public HydroBase_GUI_WellApplicationQuery(HydroBaseDMI dmi, 
-CWRATMainJFrame parent, boolean isVisible)
+JFrame parent, GeoViewUI geoview_ui, boolean isVisible)
 throws Exception {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 
 	if (dmi == null) {
 		throw new Exception ("Null dmi passed to "
@@ -327,7 +335,7 @@ is being used, disable the layers that are not a "WellPermit" or "BaseLayer"
 AppLayerType.
 */
 private void enableMapLayers() {
-	if (__parent.isMapVisible()) {
+	if (__geoview_ui.isMapVisible()) {
 		JGUIUtil.setWaitCursor(this, true);
 		__statusJTextField.setText(
 			"Updating map to show only structure layers.");
@@ -339,7 +347,7 @@ private void enableMapLayers() {
 		
 		// Base layers are always visible...
 		enabled_appLayerTypes.addElement("BaseLayer");
-		__parent.getGeoViewJPanel().enableAppLayerTypes(
+		__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(
 			enabled_appLayerTypes, false);
 		enabled_appLayerTypes = null;
 		
@@ -363,11 +371,9 @@ throws Throwable {
 	__closeJButton = null;
 	__exportJButton = null;
 	__getDataJButton = null;
-	__helpJButton = null;
 	__selectOnMapJButton = null;
 	__viewJButton = null;
 	__worksheetJLabel = null;
-	__locationJTextField = null;
 	__statusJTextField = null;
 	__worksheet = null;
 	__waterDistrictJComboBox = null;
@@ -457,7 +463,7 @@ Vector selected, boolean append) {
 	// Figure out which app layer types are selected.  If one that is
 	// applicable to this GUI, execute a query...
 
-	Vector appLayerTypes = __parent.getGeoViewJPanel().getLegendJTree()
+	Vector appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree()
 		.getSelectedAppLayerTypes(true);
 	int size = appLayerTypes.size();
 	String appLayerType = null;
@@ -558,7 +564,7 @@ public void keyPressed(KeyEvent event) {
         int code = event.getKeyCode();
         
         // enter key runs the query.
-        if (code == event.VK_ENTER) {
+        if (code == KeyEvent.VK_ENTER) {
 		try {
 	                submitQuery();
 		}
@@ -612,8 +618,8 @@ public void mouseReleased(MouseEvent event) {
 		int row = __worksheet.getSelectedRowCount();
 		if (row == 1) {
 			__viewJButton.setEnabled(true);
-			if (__parent.isMapVisible()) {
-				Vector v = __parent.getGeoViewJPanel()
+			if (__geoview_ui.isMapVisible()) {
+				Vector v = __geoview_ui.getGeoViewJPanel()
 					.getEnabledAppLayerTypes();
 				if (v != null) {
 					int size = v.size();
@@ -694,7 +700,7 @@ private void selectOnMap() {
 		idlist.add(wav.getReceipt());
 	}
 	
-	Vector matching_features =__parent.getGeoViewJPanel().selectAppFeatures(
+	Vector matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 				getVisibleAppLayerType(), idlist, true,
 				0.5, 0.5);
 	int matches = 0;
@@ -838,15 +844,11 @@ private void setupGUI(boolean isVisible) {
         // objects used throughout the GUI layout
 	// int buffer = 7;	// Old inset.
 	int buffer = 4;		// New inset.
-        Insets insetsNLNR = new Insets(0,buffer,0,buffer);
         Insets insetsNNNR = new Insets(0,0,0,buffer);
         Insets insetsNLNN = new Insets(0,buffer,0,0);
-        Insets insetsTLBR = new Insets(buffer,buffer,buffer,buffer);
-        Insets insetsTLNN = new Insets(buffer,buffer,0,0);
         Insets insetsNLBR = new Insets(0,buffer,buffer,buffer);
         Insets insetsTLNR = new Insets(buffer,buffer,0,buffer);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
         
         // North JPanel
         JPanel top_JPanel = new JPanel();
@@ -859,25 +861,25 @@ private void setupGUI(boolean isVisible) {
         top_JPanel.add("West", topLeftPanel);
         
         JGUIUtil.addComponent(topLeftPanel, new JLabel("Query Options:"), 
-		0, 0, 2, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 2, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         
         JGUIUtil.addComponent(topLeftPanel, new JLabel("Div/Dist:"), 
-		0, 1, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 1, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__waterDistrictJComboBox = new SimpleJComboBox();
         JGUIUtil.addComponent(topLeftPanel, __waterDistrictJComboBox,
-		1, 1, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__filterJPanel = new HydroBase_GUI_Well_InputFilter_JPanel(__dmi, this);
 	__filterJPanel.addEventListeners(this);
         JGUIUtil.addComponent(topLeftPanel, __filterJPanel, 
-		0, 2, 3, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 2, 3, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
         __getDataJButton = new JButton(__BUTTON_GET_DATA);
 	__getDataJButton.setToolTipText("Read data from database.");
 	__getDataJButton.addActionListener(this);
         JGUIUtil.addComponent(topLeftPanel, __getDataJButton, 
-		6, 2, 1, 1, 0, 0, insetsNLNN, gbc.HORIZONTAL, gbc.CENTER);
+		6, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
         
         // Center JPanel
         JPanel center_JPanel = new JPanel();
@@ -886,7 +888,7 @@ private void setupGUI(boolean isVisible) {
         
         __worksheetJLabel = new JLabel(HydroBase_GUI_Util.LIST_LABEL);
         JGUIUtil.addComponent(center_JPanel, __worksheetJLabel, 1, 1, 
-		7, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		7, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
 	PropList p = new PropList("HydroBase_GUI_WellApplicationQuery"
 		+ ".JWorksheet");
@@ -899,7 +901,7 @@ private void setupGUI(boolean isVisible) {
 	__worksheet.setHourglassJFrame(this);
 	__worksheet.addMouseListener(this);
         JGUIUtil.addComponent(center_JPanel, jsw,
-		1, 2, 7, 3, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		1, 2, 7, 3, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         //Bottom JPanel(Consist of three more JPanels)
         JPanel bottom_JPanel = new JPanel();
@@ -956,7 +958,7 @@ private void setupGUI(boolean isVisible) {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSouth_JPanel, __statusJTextField, 0, 1, 
-		10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
         // Frame settings
 	String app = JGUIUtil.getAppNameForWindows();
@@ -973,7 +975,7 @@ private void setupGUI(boolean isVisible) {
 
 	// We want this GUI to listen to the map.  If no map is used no
 	// listener calls will be generated...
-	__parent.getGeoViewJPanel().getGeoView().addGeoViewListener(this);
+	__geoview_ui.getGeoViewJPanel().getGeoView().addGeoViewListener(this);
 
 	setVisible(isVisible);
 }

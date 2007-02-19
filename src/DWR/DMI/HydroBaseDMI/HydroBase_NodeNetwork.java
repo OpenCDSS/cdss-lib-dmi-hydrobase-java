@@ -220,6 +220,7 @@
 //					  -1 for node type for all nodes.
 //					* Overload writeListFile() to accept
 //					  a list of comments.
+// 2007-02-18	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 // EndHeader
 
@@ -241,6 +242,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+//TODO SAM 2007-02-18 Need to remove circular dependencey with StateMod
 import DWR.StateMod.StateMod_DataSet;
 import DWR.StateMod.StateMod_PrfGageData;
 import DWR.StateMod.StateMod_RiverNetworkNode;
@@ -377,11 +379,6 @@ private static boolean
 	__legendYSet = false;
 
 /**
-Specifies long labels; at an angle.
-*/
-private boolean __autoLabel;
-
-/**
 Whether to generate fancy node descriptions or not.
 */
 private boolean	__createFancyDescription;
@@ -413,18 +410,6 @@ the WIS.
 private boolean __treatDryAsBaseflow;
 
 /**
-Indicates whether daily data should be output when writing StateMod files.
-Newer feature that can be turned off.
-*/
-private boolean __useDailyData = true;
-
-/**
-Indicates whether well data should be output when writing StateMod files.
-Newer feature that can be turned off.
-*/
-private boolean __useWellData = true;
-
-/**
 Holds the bounds of the network when read in from the network file.
 */
 private static double
@@ -450,19 +435,18 @@ Used when interpolating node locations.
 private double 
 	__SPACING = 0,
 	__lx = 0,
-	__by = 0,
-	__rx = 0,
-	__ty = 0;
+	__by = 0;
 
 /**
 Data for graphics.
 */
 private double	
 	__fontSize,
-	__legendX,
-	__legendY,
-	__legendDX,
-	__legendDY,
+	// SAM 2007-02-18 Evaluate whether needed
+	//__legendX,
+	//__legendY,
+	//__legendDX,
+	//__legendDY,
 	__nodeDiam,
 	__titleX,
 	__titleY;
@@ -531,11 +515,6 @@ The line separator to be used.
 private String __newline = System.getProperty("line.separator");
 
 /**
-The font for labeling the network nodes.
-*/
-private String __font;
-
-/**
 The network title.
 */
 private String __title;
@@ -592,16 +571,6 @@ private Vector __nodes = null;
 Label carrier commands.
 */
 private Vector __plotCommands = null;
-
-/**
-Setrin commands from makenet.
-*/
-private Vector __setrinData = null;
-
-/**
-Setris commands from makenet.
-*/
-private Vector __setrisData = null;
 
 // Inner class to store river data for plotting...
 
@@ -1473,7 +1442,7 @@ public Vector createIndentedRiverNetworkStrings() {
 			// Have a non-blank node...
 			v.add(buffer.toString()
 				+ nodePt.getDescription() + "(Type = "
-				+ nodePt.getTypeString(nodePt.getType(), 0)
+				+ HydroBase_Node.getTypeString(nodePt.getType(), 0)
 				+ ", ID = \""
 				+ nodePt.getCommonID() + "\", Pos = "
 				+ nodePt.getSerial() + ")");
@@ -1656,7 +1625,6 @@ public boolean createRiverOrderFile(String basename, int flag) {
 		+ "---------------------------------------------------------");
 	orderfp.println("# EndHeader");
 	
-	int nodeType;
 	nodelist_fp.println("makenet_id,name,nodeType,down_id");
 	String down_id;
 	HydroBase_Node down_node = null;
@@ -1939,8 +1907,9 @@ public void deleteNode(String id) {
 	HydroBase_Node[] nodes = new HydroBase_Node[size - 1];
 	HydroBase_Node dsNode = null;
 	int count = 0;
-	int tribNum = 0;
-	int upCount = 0;
+	// TODO SAM 2007-02-18 Evaluate whether needed
+	//int tribNum = 0;
+	//int upCount = 0;
 	
 	// the the ids of the nodes upstream from the node to be deleted
 	String[] delUsid = null;
@@ -1972,8 +1941,9 @@ public void deleteNode(String id) {
 			delDsid = dsNode.getCommonID();
 			
 			delUsid = node.getUpstreamNodesIDs();
-			tribNum = node.getTributaryNumber();
-			upCount = node.getNumUpstreamNodes();
+			//TODO SAM 2007-02-18 Evaluate whether needed
+			//tribNum = node.getTributaryNumber();
+			//upCount = node.getNumUpstreamNodes();
 
 			comp = node.getComputationalOrder();
 			serial = node.getSerial();
@@ -2137,7 +2107,6 @@ public void deleteNode(String id) {
 	}
 
 	int pos = -1;
-	int spacing = 0;
 
 	// the above connections established via setting the ID still 
 	// account for the node being deleted.  Loop through all the nodes
@@ -2561,8 +2530,6 @@ GRLimits limits) {
 
 	__lx = lx;
 	__by = by;
-	__rx = rx;
-	__ty = ty;
 
 	if ((rx - lx) > (ty - by)) {
 		__SPACING = (ty - by) * 0.06;
@@ -3510,7 +3477,6 @@ public static HydroBase_Node findReachConfluenceNext(HydroBase_Node node) {
 	HydroBase_Node nodePt;
 	HydroBase_Node nodePt2;
 	int dl = 15;
-	int reachnum = 0;
 
 	// First check to see if we are on the main stem and there are no more
 	// upstream nodes.  If there are none, then we are at the end of the
@@ -3527,7 +3493,8 @@ public static HydroBase_Node findReachConfluenceNext(HydroBase_Node node) {
 
 	// First get the convergence node of this reach.  Save this reach
 	// number so that we can use it to go to the next reach if necessary...
-	reachnum = node.getTributaryNumber();
+	//TODO SAM evaluate whether reachnum is needed
+	//reachnum = node.getTributaryNumber();
 	if (Message.isDebugOn) {
 		Message.printDebug(dl, routine,
 			"At top of reach, get reach start node for \""
@@ -3723,9 +3690,7 @@ HydroBase_Node node, Vector prfGageData, boolean recursing) {
 	HydroBase_Node nodePt = null;
 	HydroBase_Node nodeReachTop = null;
 	int dl = 12;
-	int iprfGageData = 0;
-	int reachCounter = 0;
-	String nodeType = null;
+	//int reachCounter = 0;
 
 	if (upstreamFlowNodes == null) {
 		Message.printWarning(2, routine,
@@ -3758,7 +3723,9 @@ HydroBase_Node node, Vector prfGageData, boolean recursing) {
 	}
 
 	for (	nodePt	= getUpstreamNode(node, POSITION_COMPUTATIONAL),
-		reachCounter = nodePt.getReachCounter(),
+		// TODO SAM 2007-02-18 Evaluate whether needed
+		//reachCounter = nodePt.getReachCounter(),
+		nodePt.getReachCounter(),
 		nodePrev = node;
 		;
 		nodePrev = nodePt,
@@ -3825,7 +3792,6 @@ HydroBase_Node node, Vector prfGageData, boolean recursing) {
 			}
 			break;
 		}
-		nodeType = nodePt.getTypeString(nodePt.getType(), 1);
 		if (Message.isDebugOn) {
 			Message.printDebug(dl, routine,
 				"Checking node \"" + nodePt.getCommonID()
@@ -3943,7 +3909,6 @@ public String formatWDID(String wd, String id, int nodeType) {
 	int idFormatLen = 4;
 	int idLen;
 	int wdFormatLen = 2;
-	int wdLen;
 	String message;
 	String wdid;	
 
@@ -3960,7 +3925,6 @@ public String formatWDID(String wd, String id, int nodeType) {
 
 	wdid = wd;
 	idLen = id.length();
-	wdLen = wd.length();
 
 	if (idLen > 5) {
 		// Long identifiers are assumed to be used as is.
@@ -4422,9 +4386,6 @@ Returns the most upstream node in the network or null if not found.
 @return the most upstream node in the network or null if not found.
 */
 public HydroBase_Node getMostUpstreamNode() {
-	String routine = "HydroBase_NodeNetwork.getMostUpstreamNode";
-	int dl = 30;
-
 	// Go to the bottom of the system so that we can get to the top of
 	// the main stem...
 	HydroBase_Node node = null;
@@ -4496,7 +4457,6 @@ public Vector getNodeIdentifiersByType(int[] nodeTypes)
 throws Exception {
 	String routine = "HydroBase_NodeNetwork.getNodeIdentifiersByType";
 	Vector ids = new Vector();
-	int dl = 15;
 
 	try {	// Main try for method
 
@@ -4917,9 +4877,9 @@ POSITION_ABSOLUTE, POSITION_COMPUTATIONAL.
 @return the upstream node from the specified node.
 */
 public static HydroBase_Node getUpstreamNode(HydroBase_Node node, int flag) {
-	HydroBase_Node	nodePt, nodePt2;
+	HydroBase_Node	nodePt;
 	String	routine = "HydroBase_NodeNetwork.getUpstreamNode";
-	int	dl = 15, i, reachnum;
+	int	dl = 15, i;
 
 	if (flag == POSITION_ABSOLUTE) {
 		// It is expected that if you call this you are starting from
@@ -4999,8 +4959,8 @@ public static HydroBase_Node getUpstreamNode(HydroBase_Node node, int flag) {
 			return nodePt;
 		}
 		else if ((nodePt.getNumUpstreamNodes() == 1)
-			&& ((nodePt.getType() == nodePt.NODE_TYPE_CONFLUENCE)
-			|| (nodePt.getType() == nodePt.NODE_TYPE_XCONFLUENCE))){
+			&& ((nodePt.getType() == HydroBase_Node.NODE_TYPE_CONFLUENCE)
+			|| (nodePt.getType() == HydroBase_Node.NODE_TYPE_XCONFLUENCE))){
 			// If it is a confluence, then it must be at the top of
 			// the reach and we want to stop...
 			if (Message.isDebugOn) {
@@ -5134,15 +5094,13 @@ private void initialize() {
 	__isDatabaseUp = 		false;
 	__createOutputFiles = 		true;
 	__createFancyDescription = 	false;
-	__font = 			"Times-Roman";
 	__fontSize = 			10.0;
-	__autoLabel = 			false;
 	__dmi = 			null;
 	__labelType = 			LABEL_NODES_NETID;
-	__legendDX = 			1.0;
-	__legendDY = 			1.0;
-	__legendX = 			0.0;
-	__legendY = 			0.0;
+	//__legendDX = 			1.0;
+	//__legendDY = 			1.0;
+	//__legendX = 			0.0;
+	//__legendY = 			0.0;
 	__line = 			1;
 	__nodes = 			new Vector();
 	__plotCommands = 		new Vector();
@@ -5151,7 +5109,6 @@ private void initialize() {
 	__nodeHead = 			null;
 	__openCount = 			0;
 	__reachCounter = 		0;
-	__setrinData = 			null;
 	__title = 			"Node Network";
 	__titleX = 			0.0;
 	__titleY = 			0.0;
@@ -5454,7 +5411,6 @@ Print a node in the .ord file format.
 */
 public boolean printOrdNode(int nodeCount, PrintWriter orderfp, 
 HydroBase_Node node) {
-	String routine = "HydroBase_NodeNetwork.printOrdNode";
 	String	node_downstream_commonID,
 		node_downstream_rivernodeid,
 		stype;
@@ -5463,7 +5419,7 @@ HydroBase_Node node) {
 		return false;
 	}
 
-	stype = node.getTypeString(node.getType(), 1);
+	stype = HydroBase_Node.getTypeString(node.getType(), 1);
 
 	if (node.getDownstreamNode() == null) {
 		// We are at the bottom of the system.  Need to set some
@@ -5552,29 +5508,6 @@ String filename, boolean skipBlankNodes) {
 	return processMakenetNodes((HydroBase_Node)null, netfp, filename, wd,
 		x0, y0, dx, dy, __openCount, __closeCount, _reachLevel,
 		skipBlankNodes);
-}
-
-/**
-Processes node information from a makenet file. This version is called 
-recursively.  A main program should call the other version.
-@param node the node processed prior to the current iteration.
-@param netfp the BufferedReader to use for reading from the file.
-@param filename the name of the file being read.
-@param wd the water district in effect.
-@param x0 the starting X for the reach.
-@param y0 the starting Y for the reach.
-@param dx the X-increment for drawing each node.
-@param dy the Y-increment for drawing each node.
-@param openCount the number of open {s.
-@param closeCount the number of closed }s.
-@param reachLevel the current reach level being iterated over.
-@return a node filled with data from the makenet file.
-*/
-private HydroBase_Node processMakenetNodes(HydroBase_Node node, 
-BufferedReader netfp, String filename, String wd, double x0, double y0, 
-double dx, double dy, int openCount, int closeCount, int reachLevel) {
-	return processMakenetNodes(node, netfp, filename, wd, x0, y0, dx, dy,
-		openCount, closeCount, reachLevel, false);
 }
 
 /**
@@ -5726,7 +5659,7 @@ boolean skipBlankNodes) {
 
 			// If the current node(subsequent to the new reach)
 			// was a blank, then do not increment the counter...
-			if (node.getType() == node.NODE_TYPE_BLANK) {
+			if (node.getType() == HydroBase_Node.NODE_TYPE_BLANK) {
 				x -= dx;
 				y -= dy;
 			}
@@ -5961,7 +5894,7 @@ boolean skipBlankNodes) {
 			++__nodeCount;
 			if (token0.equalsIgnoreCase("BLANK")) {
 				// Allow blank nodes for spacing...
-				node.setType(node.NODE_TYPE_BLANK);
+				node.setType(HydroBase_Node.NODE_TYPE_BLANK);
 				node.setNetID("BLANK");
 				Message.printStatus(2, routine,
 					"Processing node " + (__nodeCount - 1)
@@ -5969,7 +5902,7 @@ boolean skipBlankNodes) {
 			}
 			else if (token0.equalsIgnoreCase("CONFL")) {
 				// Confluence...
-				node.setType(node.NODE_TYPE_CONFLUENCE);
+				node.setType(HydroBase_Node.NODE_TYPE_CONFLUENCE);
 				node.setNetID("CONFL");
 				Message.printStatus(2, routine,
 					"Processing node " + (__nodeCount - 1) 
@@ -5978,7 +5911,7 @@ boolean skipBlankNodes) {
 			else if (token0.equalsIgnoreCase("XCONFL")) {
 				// Computational confluence for off-stream
 				// channel...
-				node.setType(node.NODE_TYPE_XCONFLUENCE);
+				node.setType(HydroBase_Node.NODE_TYPE_XCONFLUENCE);
 				node.setNetID("XCONFL");
 				Message.printStatus(2, routine,
 					"Processing node " + (__nodeCount - 1)
@@ -5987,7 +5920,7 @@ boolean skipBlankNodes) {
 			else if (token0.equalsIgnoreCase("END")) {
 				// End of system.  This node has no
 				// downstream node...
-				node.setType(node.NODE_TYPE_END);
+				node.setType(HydroBase_Node.NODE_TYPE_END);
 				node.setNetID(token0);
 				Message.printStatus(2, routine,
 					"Processing node " + (__nodeCount - 1) 
@@ -6002,10 +5935,10 @@ boolean skipBlankNodes) {
 				// Get the node type. 
 				String token1 = (String)tokens.elementAt(1);
 				if (token1.equalsIgnoreCase("BLANK")) {
-					node.setType(node.NODE_TYPE_BLANK);
+					node.setType(HydroBase_Node.NODE_TYPE_BLANK);
 				}
 				else if (token1.equalsIgnoreCase("DIV")) {
-					node.setType(node.NODE_TYPE_DIV);
+					node.setType(HydroBase_Node.NODE_TYPE_DIV);
 					if (Message.isDebugOn) {
 						Message.printDebug(dl, routine,
 							"Node \"" 
@@ -6017,7 +5950,7 @@ boolean skipBlankNodes) {
 				else if (token1.equalsIgnoreCase("D&W")
 					|| token1.equalsIgnoreCase("DW")) {
 					node.setType(
-						node.NODE_TYPE_DIV_AND_WELL);
+							HydroBase_Node.NODE_TYPE_DIV_AND_WELL);
 					if (Message.isDebugOn) {
 						Message.printDebug(dl, routine,
 							"Node \"" 
@@ -6027,35 +5960,35 @@ boolean skipBlankNodes) {
 					}
 				}
 				else if (token1.equalsIgnoreCase("WELL")) {
-					node.setType(node.NODE_TYPE_WELL);
+					node.setType(HydroBase_Node.NODE_TYPE_WELL);
 				}
 				else if (token1.equalsIgnoreCase("FLOW")) {
-					node.setType(node.NODE_TYPE_FLOW);
+					node.setType(HydroBase_Node.NODE_TYPE_FLOW);
 				}
 				else if (token1.equalsIgnoreCase("CONFL")) {
-					node.setType(node.NODE_TYPE_CONFLUENCE);
+					node.setType(HydroBase_Node.NODE_TYPE_CONFLUENCE);
 				}
 				else if (token1.equalsIgnoreCase("XCONFL")) {
 					node.setType(
-						node.NODE_TYPE_XCONFLUENCE);
+							HydroBase_Node.NODE_TYPE_XCONFLUENCE);
 				}
 				else if (token1.equalsIgnoreCase("END")) {
-					node.setType(node.NODE_TYPE_END);
+					node.setType(HydroBase_Node.NODE_TYPE_END);
 				}
 				else if (token1.equalsIgnoreCase("ISF")) {
-					node.setType(node.NODE_TYPE_ISF);
+					node.setType(HydroBase_Node.NODE_TYPE_ISF);
 				}
 				else if (token1.equalsIgnoreCase("OTH")) {
-					node.setType(node.NODE_TYPE_OTHER);
+					node.setType(HydroBase_Node.NODE_TYPE_OTHER);
 				}
 				else if (token1.equalsIgnoreCase("RES")) {
-					node.setType(node.NODE_TYPE_RES);
+					node.setType(HydroBase_Node.NODE_TYPE_RES);
 				}
 				else if (token1.equalsIgnoreCase("IMPORT")) {
-					node.setType(node.NODE_TYPE_IMPORT);
+					node.setType(HydroBase_Node.NODE_TYPE_IMPORT);
 				}
 				else if (token1.equalsIgnoreCase("BFL")) {
-					node.setType(node.NODE_TYPE_BASEFLOW);
+					node.setType(HydroBase_Node.NODE_TYPE_BASEFLOW);
 				}
 				else {	
 					// Assume number type...
@@ -6120,34 +6053,34 @@ boolean skipBlankNodes) {
 			// because some nodes types have multiple values being
 			// set - we can't just check the description being
 			// empty in an outside loop.
-			if (node.getType() == node.NODE_TYPE_FLOW) {
+			if (node.getType() == HydroBase_Node.NODE_TYPE_FLOW) {
 				node.setCommonID(node.getNetID());
 			}
-			else if (node.getType() == node.NODE_TYPE_CONFLUENCE) {
+			else if (node.getType() == HydroBase_Node.NODE_TYPE_CONFLUENCE) {
 				// Confluences...
 		    		node.setCommonID("CONFL");
 			}
-			else if (node.getType() == node.NODE_TYPE_XCONFLUENCE) {
+			else if (node.getType() == HydroBase_Node.NODE_TYPE_XCONFLUENCE) {
 				// Confluences...
 		    		node.setCommonID("XCONFL");
 			}
-			else if (node.getType() == node.NODE_TYPE_BLANK) {
+			else if (node.getType() == HydroBase_Node.NODE_TYPE_BLANK) {
 				// Blank nodes...
 		    		node.setCommonID("BLANK");
 			}
-			else if (node.getType() == node.NODE_TYPE_END) {
+			else if (node.getType() == HydroBase_Node.NODE_TYPE_END) {
 				// End node...
 		    		node.setCommonID(node.getNetID());
 			}
-			else if (node.getType() == node.NODE_TYPE_BASEFLOW) {
+			else if (node.getType() == HydroBase_Node.NODE_TYPE_BASEFLOW) {
 				// Special baseflow node...
 		    		node.setCommonID(node.getNetID());
 			}
-			else if (node.getType() == node.NODE_TYPE_RES) {
+			else if (node.getType() == HydroBase_Node.NODE_TYPE_RES) {
 				// Reservoirs...
 				node.setCommonID(node.getNetID());
 			}
-			else if (node.getType() == node.NODE_TYPE_ISF) {
+			else if (node.getType() == HydroBase_Node.NODE_TYPE_ISF) {
 				// Minimum streamflows.  Get the description
 				// from the water rights...  For these
 				// we are allowed to abbreviate the
@@ -6171,7 +6104,7 @@ boolean skipBlankNodes) {
 				node.setCommonID(wdid); 
 				node.setCommonID(node.getNetID());
 			}
-			else if (node.getType() == node.NODE_TYPE_WELL) {
+			else if (node.getType() == HydroBase_Node.NODE_TYPE_WELL) {
 				// Ground water well only.  Don't allow the
 				// abbreviation...
 				node.setCommonID(node.getNetID());
@@ -6210,8 +6143,8 @@ boolean skipBlankNodes) {
 			// Now plot the node...
 			node.setX(x);
 			node.setY(y);
-			if ((node.getType() != node.NODE_TYPE_CONFLUENCE) 
-			    && (node.getType() != node.NODE_TYPE_XCONFLUENCE)) {
+			if ((node.getType() != HydroBase_Node.NODE_TYPE_CONFLUENCE) 
+			    && (node.getType() != HydroBase_Node.NODE_TYPE_XCONFLUENCE)) {
 				// If a confluence we want the line to come
 				// in at the same point...
 				x += dx;
@@ -6231,15 +6164,12 @@ throws Throwable {
 	__nodeHead = null;
 	__checkFP = null;
 	__newline = null;
-	__font = null;
 	__title = null;
 	__annotations = null;
 	__layouts = null;
 	__links = null;
 	__nodes = null;	
 	__plotCommands = null;
-	__setrinData = null;
-	__setrisData = null;
 
 	super.finalize();
 }
@@ -6379,7 +6309,6 @@ Processes a document node while reading from an XML file.
 */
 private static void processDocumentNodeForRead(Node node)
 throws Exception {
-	String routine = "StateCU_DataSet.processDocumentNodeForRead";
 	NodeList children;
 	switch (node.getNodeType()) {
 		case Node.DOCUMENT_NODE:
@@ -6944,14 +6873,15 @@ String filename, boolean skipBlankNodes) {
 				Message.printDebug(dl, routine,
 				"Found LEGEND command");
 			}
-			__legendX = StringUtil.atod(
-					 (String)tokens.elementAt(1));
-			__legendY = StringUtil.atod(
-					 (String)tokens.elementAt(2));
-			__legendDX = StringUtil.atod(
-					 (String)tokens.elementAt(3));
-			__legendDY = StringUtil.atod(
-					 (String)tokens.elementAt(4));
+			//TODO SAM 2007-02-18 Evaluate whether needed
+			//__legendX = StringUtil.atod(
+			//		 (String)tokens.elementAt(1));
+			//__legendY = StringUtil.atod(
+			//		 (String)tokens.elementAt(2));
+			//__legendDX = StringUtil.atod(
+			//		 (String)tokens.elementAt(3));
+			//__legendDY = StringUtil.atod(
+			//		 (String)tokens.elementAt(4));
 			continue;
 		}
 		else if (token0.equalsIgnoreCase("SCALE")) {
@@ -7405,7 +7335,7 @@ Message.printStatus(2, "", "(" + currentRow.getWdwater_num() + " =?= "
 					+ "as previous row");
 			}			
 			nodeFound = findNode(NODE_DATA_LINK, 
-				node.NODE_TYPE_CONFLUENCE,
+				HydroBase_Node.NODE_TYPE_CONFLUENCE,
 				(new Long(
 				currentRow.getWdwater_num())).toString());
 			if (nodeFound != null) {
@@ -7582,8 +7512,7 @@ Resets the computational order information for each node.
 */
 public void resetComputationalOrder() {
 	String routine = "HydroBase_NodeNetwork.resetComputationalOrder";
-	int dl = 30;	
-	Vector v = new Vector();
+	int dl = 30;
 
 	Message.printDebug(dl, routine, 
 		"Resetting computational order for nodes");
@@ -7613,14 +7542,6 @@ Can be null.
 */
 public void setAnnotations(Vector annotations) {
 	__annotations = annotations;
-}
-
-/**
-Set the __autoLabel flag.  Auto label prints all labels at 45 degree angle,
-ignoring any angle specified by the user.
-*/
-public void setAutoLabel(boolean autoLabel) {
-	__autoLabel = autoLabel;
 }
 
 /**
@@ -7660,8 +7581,7 @@ Set the font to use for drawing.
 @param size Size in data units.
 */
 protected void setFont(String font, double size) {
-	__font = new String(font);
-	__fontSize = size;
+		__fontSize = size;
 }
 
 /**
@@ -7762,7 +7682,6 @@ throws Exception
 	HydroBase_StationView view;
 	HydroBase_Structure structure;
 	HydroBase_StructureWDWater wdwater;
-	HydroBase_Wells struct_to_well;
 	HydroBase_WellApplicationView well_applicationView;		
 	int	dl = 15, 
 		geoloc_num = 0,
@@ -7774,7 +7693,6 @@ throws Exception
 		nodeType,
 		stationName,
 		streamName,
-		tempID,
 		userDesc,
 		wdid;
 	Vector	idList = null,
@@ -7782,8 +7700,7 @@ throws Exception
 		statList = null,
 		structList = null,
 		waterList = null,
-		wellApplications = null,
-		wellList = null;
+		wellApplications = null;
 
 	Message.printStatus(2, routine, "Setting node names from HydroBase...");
 
@@ -7992,7 +7909,7 @@ throws Exception
 		else {
 			type = nodePt.getType();	
 			userDesc = nodePt.getUserDescription();
-			nodeType = nodePt.getTypeString(type, 1); 
+			nodeType = HydroBase_Node.getTypeString(type, 1); 
 			streamName = "";
 		}
 
@@ -8517,40 +8434,6 @@ public void setNodeDiam(double node_diam) {
 }
 
 /**
-Set the setrin() data from makenet, to be applied to the .rin file before
-writing.
-@param setrin_data setrin() commands as Vector of StateMod_StreamGage.
-*/
-public void setSetRinData(Vector setrin_data) {
-	__setrinData = setrin_data;
-}
-
-/**
-Set the setris() data from makenet, to be applied to the .ris file before
-writing.
-@param setris_data setris() commands as Vector of StateMod_StreamGage.
-*/
-public void setSetRisData(Vector setris_data) {
-	__setrisData = setris_data;
-}
-
-/**
-Set whether daily data should be output.
-@param use_daily_data indicates whether daily data should be output.
-*/
-public void setUseDailyData(boolean use_daily_data) {
-	__useDailyData = use_daily_data;
-}
-
-/**
-Set whether well data should be output.
-@param use_well_data indicates whether well data should be output.
-*/
-public void setUseWellData(boolean use_well_data) {
-	__useWellData = use_well_data;
-}
-
-/**
 Store a stream reach label for plotting later.
 The coordinates are stored as the network is read and the information is
 plotted in createPlotFile().
@@ -8565,7 +8448,8 @@ if it was not stored correctly.
 protected boolean storeLabel(String label, double x1, double y1, double x2,
 double y2) {
 	String routine = "HydroBase_NodeNetwork.storeLabel";
-	double x;
+	// TODO SAM 2007-02-18 Evaluate whether needed
+	//double x;
 	double y;
 	double lx;
 	double ly;
@@ -8600,19 +8484,19 @@ double y2) {
 					+ " \"" + label + "\"");
 			}
 		}
-		x = 	x1 - label.length() * 0.25 * __fontSize;
+		//x = 	x1 - label.length() * 0.25 * __fontSize;
 		lx = 	x2;
 	}
 	else if (y1 == y2) {
 		// Horizontal line...
 		if (x2 < x1) {
-			x = 	x2 -label.length() * 0.5 * __fontSize - 2 
-				* __nodeDiam;
+			//x = 	x2 -label.length() * 0.5 * __fontSize - 2 
+				//* __nodeDiam;
 			lx = 	x2 - __nodeDiam;
 			lflag = GRText.RIGHT|GRText.CENTER_Y;
 		}
 		else {	
-			x = 	x2 + 2 * __fontSize;
+			//x = 	x2 + 2 * __fontSize;
 			lx = 	x2 + __nodeDiam;
 			lflag = GRText.LEFT | GRText.CENTER_Y;
 		}

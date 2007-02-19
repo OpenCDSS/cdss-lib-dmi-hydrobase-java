@@ -28,6 +28,10 @@
 // 2003-11-28	J. Thomas Sapienza, RTi	Initial Swing version.
 // 2004-05-13	JTS, RTi		Minor revisions following review.
 // 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass JFrame to constructor.
+//					Add GeoViewUI to pass to structure query.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -49,8 +53,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
-import DWR.DMI.CWRAT.CWRATMainJFrame;
 
 import RTi.DMI.DMIUtil;
 
@@ -83,7 +85,12 @@ private final String
 /**
 Reference to the parent JFrame running the application.
 */
-private CWRATMainJFrame __parent = null;
+private JFrame __parent = null;
+
+/**
+GeoViewUI for map interactions - passed to structure query.
+*/
+private GeoViewUI __geoview_ui = null;
 
 /**
 DMI used to communicate with the database.
@@ -117,7 +124,6 @@ GUI text fields.
 */
 private JTextField
 	__gainLossJTextField,
-	__identifierJTextField,
 	__weightJTextField;
 
 /**
@@ -140,7 +146,7 @@ Constructor.
 public HydroBase_GUI_WISCellAttributes(String rowLabel, String colLabel, 
 String contents, HydroBase_WISFormat wisFormat, HydroBase_WISFormula wisFormula,
 HydroBase_WISImport wisImport, HydroBaseDMI dmi) {
-	this(null, rowLabel, colLabel, contents, wisFormat, wisFormula,
+	this(null, null, rowLabel, colLabel, contents, wisFormat, wisFormula,
 		wisImport, dmi, null);
 }
 
@@ -159,13 +165,14 @@ public HydroBase_GUI_WISCellAttributes(String rowLabel, String colLabel,
 String contents, HydroBase_WISFormat wisFormat, HydroBase_WISFormula wisFormula,
 HydroBase_WISImport wisImport, HydroBaseDMI dmi, 
 HydroBase_Node downstreamNode) {
-	this(null, rowLabel, colLabel, contents, wisFormat, wisFormula,
+	this(null, null, rowLabel, colLabel, contents, wisFormat, wisFormula,
 		wisImport, dmi, downstreamNode);
 }
 
 /**
 Constructor.
 @param parent the parent CWRATMainJFrame running the application.
+@param geoview_ui GeoViewUI for map interaction.
 @param rowLabel the label for the current row that this cell appears in.
 @param colLabel the label for the current column that this cell appears in.
 @param contents the data stored in this cell.
@@ -174,17 +181,19 @@ Constructor.
 @param wisImport the WISImport object that accompanies this cell.
 @param dmi the DMI to use for communicating with the database.
 */
-public HydroBase_GUI_WISCellAttributes(CWRATMainJFrame parent, String rowLabel, 
+public HydroBase_GUI_WISCellAttributes(JFrame parent, GeoViewUI geoview_ui,
+String rowLabel, 
 String colLabel, String contents, HydroBase_WISFormat wisFormat, 
 HydroBase_WISFormula wisFormula, HydroBase_WISImport wisImport, 
 HydroBaseDMI dmi) {	
-	this(parent, rowLabel, colLabel, contents, wisFormat, wisFormula,
-		wisImport, dmi, null);
+	this(parent, geoview_ui, rowLabel, colLabel, contents, wisFormat,
+		wisFormula, wisImport, dmi, null);
 }
 
 /**
 Constructor.
-@param parent the parent CWRATMainJFrame running the application.
+@param parent the parent JFrame running the application.
+@param geoview_ui GeoViewUI for map interaction.
 @param rowLabel the label for the current row that this cell appears in.
 @param colLabel the label for the current column that this cell appears in.
 @param contents the data stored in this cell.
@@ -195,11 +204,13 @@ null.
 @param dmi the DMI to use for communicating with the database.
 @param downstreamNode the node that is downstream from the current cell's.
 */
-public HydroBase_GUI_WISCellAttributes(CWRATMainJFrame parent, String rowLabel, 
+public HydroBase_GUI_WISCellAttributes(JFrame parent, GeoViewUI geoview_ui,
+String rowLabel, 
 String colLabel, String contents, HydroBase_WISFormat wisFormat, 
 HydroBase_WISFormula wisFormula, HydroBase_WISImport wisImport, 
 HydroBaseDMI dmi, HydroBase_Node downstreamNode) {	
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	__wisFormat = wisFormat;
 	__wisFormula = wisFormula;
 	__wisImport = wisImport;
@@ -238,7 +249,6 @@ throws Throwable {
 	__infoJButton = null;
 	__okJButton = null;
 	__gainLossJTextField = null;
-	__identifierJTextField = null;
 	__weightJTextField = null;
 	__formulaJList = null;
 	__importJList = null;
@@ -362,7 +372,6 @@ HydroBase_Node downstreamNode) {
 	Insets insetsTNNR = new Insets(7,0,0,7);
 	Insets insetsNNNR = new Insets(0,0,0,7);
 	Insets insetsNLNN = new Insets(0,7,0,0);
-        GridBagConstraints gbc = new GridBagConstraints();
 	GridBagLayout gbl = new GridBagLayout();
 
         // North West panel
@@ -373,7 +382,7 @@ HydroBase_Node downstreamNode) {
 
 	int y = 0;
        	JGUIUtil.addComponent(northWJPanel, new JLabel("Row JLabel:"), 
-		0, y, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField rowLabelJTextField = null;
 	if (rowLabel != null) {
 		rowLabelJTextField = new JTextField(rowLabel);
@@ -383,17 +392,17 @@ HydroBase_Node downstreamNode) {
 	}
 	rowLabelJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, rowLabelJTextField, 
-		1, y, 3, 1, 1, 0, insetsTNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 3, 1, 1, 0, insetsTNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Internal Identifier:"), 
-		0, ++y, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField __identifierJTextField = new JTextField();
 	String id = "";
 	id = __wisFormat.getIdentifier();
 	__identifierJTextField.setText(id);
 	__identifierJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, __identifierJTextField, 
-		1, y, 2, 1, 1, 0, insetsTNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 1, 0, insetsTNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	// Only add if a WDID - don't want to mess with station yet...
 	if (id.startsWith("wdid:")) {
 		__infoJButton = new JButton(__BUTTON_FULL_INFO);
@@ -401,31 +410,31 @@ HydroBase_Node downstreamNode) {
 			+ "structure or station.");
 		__infoJButton.addActionListener(this);
 		JGUIUtil.addComponent(northWJPanel, __infoJButton, 
-			3, y, 1, 1, 0, 0, insetsTNNR, gbc.NONE, gbc.WEST);
+			3, y, 1, 1, 0, 0, insetsTNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 
 	if (colLabel != null) {
         	JGUIUtil.addComponent(northWJPanel, new JLabel("Column:"), 
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		JTextField colLabelJTextField = new JTextField(" " + colLabel 
 			+ "     ");
 		colLabelJTextField.setEditable(false);
         	JGUIUtil.addComponent(northWJPanel, colLabelJTextField, 
-			1, y, 3, 1, 0, 0, insetsNNNR, gbc.NONE, gbc.WEST);
+			1, y, 3, 1, 0, 0, insetsNNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Row Type:"), 
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField rowTypeJTextField = new JTextField();
 	if (__wisFormat.getRow_type() != null) {
 		rowTypeJTextField.setText(__wisFormat.getRow_type());
 	}
 	rowTypeJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, rowTypeJTextField, 
-		1, y, 1, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Stream for Row:"), 
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField streamJTextField = new JTextField();
 	HydroBase_Stream stream = null;
 	try {
@@ -448,17 +457,17 @@ HydroBase_Node downstreamNode) {
 	}
 	streamJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, streamJTextField, 
-		1, y, 3, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 3, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Stream Mile:"), 
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField mileJTextField = new JTextField();
 	if (__wisFormat.getStr_mile() != DMIUtil.MISSING_DOUBLE) {
 		mileJTextField.setText("" + __wisFormat.getStr_mile());
 	}
 	mileJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, mileJTextField, 
-		1, y, 1, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	if (__wisFormat.getRow_type().equalsIgnoreCase(
 		HydroBase_GUI_WIS.CONFLUENCE)) {
@@ -467,7 +476,7 @@ HydroBase_Node downstreamNode) {
 		// confluence...
         	JGUIUtil.addComponent(northWJPanel, new JLabel(
 			"Tributary Stream:"), 
-			0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+			0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		JTextField trib_streamJTextField = new JTextField();
 		try {
 			stream = __dmi.readStreamForStream_num(
@@ -489,7 +498,7 @@ HydroBase_Node downstreamNode) {
 		}
 		trib_streamJTextField.setEditable(false);
 		JGUIUtil.addComponent(northWJPanel, trib_streamJTextField, 
-			1, y, 3, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+			1, y, 3, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 	else if (__wisFormat.getRow_type().equalsIgnoreCase(
 		HydroBase_GUI_WIS.STREAM)) {
@@ -497,7 +506,7 @@ HydroBase_Node downstreamNode) {
 		// is the stream number for the downstream stream...
         	JGUIUtil.addComponent(northWJPanel, new JLabel(
 			"Downstream Stream:"), 
-			0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+			0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		JTextField trib_streamJTextField = new JTextField();
 		try {
 			stream = __dmi.readStreamForStream_num(
@@ -519,29 +528,29 @@ HydroBase_Node downstreamNode) {
 		}
 		trib_streamJTextField.setEditable(false);
 		JGUIUtil.addComponent(northWJPanel, trib_streamJTextField, 
-			1, y, 3, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+			1, y, 3, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Is Baseflow:"), 
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField baseflowJTextField = new JTextField(7);
 	baseflowJTextField.setText(__wisFormat.getKnown_point());
 	baseflowJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, baseflowJTextField, 
-		1, y, 1, 1, 0, 0, insetsNNNR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel,new JLabel("Current Cell Contents:"),
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField contentsJTextField = new JTextField();
 	if (contents != null) {
 		contentsJTextField.setText(contents);
 	}
 	contentsJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, contentsJTextField, 
-		1, y, 3, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 3, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel,new JLabel("Downstream Row Label:"),
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField down_row_labelJTextField = new JTextField();
 	down_row_labelJTextField.setEditable(false);
 	if (downstreamNode != null) {
@@ -550,11 +559,11 @@ HydroBase_Node downstreamNode) {
 	}
 	contentsJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, down_row_labelJTextField, 
-		1, y, 3, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 3, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel,
 		new JLabel("Downstream Internal Identifier:"), 
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField down_internal_idJTextField = new JTextField();
 	down_internal_idJTextField.setEditable(false);
 	if (downstreamNode != null) {
@@ -563,35 +572,35 @@ HydroBase_Node downstreamNode) {
 	}
 	contentsJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, down_internal_idJTextField, 
-		1, y, 3, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 3, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel(
 		"Gain/Loss Coefficient. (using Stream Mile):"), 
-		0, ++y, 2, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 2, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__gainLossJTextField = new JTextField();
 	__gainLossJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, __gainLossJTextField, 
-		2, y, 2, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		2, y, 2, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel(
 		"Gain/Loss Coefficient. (using Weight):"), 
-		0, ++y, 2, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 2, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__weightJTextField = new JTextField();
 	__weightJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, __weightJTextField, 
-		2, y, 2, 1, 1, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		2, y, 2, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Import:"), 
-		0, ++y, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.NORTHEAST);
+		0, ++y, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.NORTHEAST);
 	__importJList = new SimpleJList();
         JGUIUtil.addComponent(northWJPanel, new JScrollPane(__importJList), 
-		1, y, 4, 1, 1, 1, insetsTNNR, gbc.BOTH, gbc.WEST);
+		1, y, 4, 1, 1, 1, insetsTNNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Formula:"), 
-		0, ++y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.NORTHEAST);
+		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.NORTHEAST);
 	__formulaJList = new SimpleJList();
         JGUIUtil.addComponent(northWJPanel, new JScrollPane(__formulaJList), 
-		1, y, 4, 1, 1, 1, insetsNNNR, gbc.BOTH, gbc.WEST);
+		1, y, 4, 1, 1, 1, insetsNNNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	JPanel okJPanel = new JPanel();
 	getContentPane().add("South", okJPanel);
@@ -639,7 +648,7 @@ private void showFullInformation() {
 		try {
 			HydroBase_GUI_StructureQuery gui = 
 				new HydroBase_GUI_StructureQuery(__dmi, 
-				__parent);
+				__parent, __geoview_ui );
 			gui.setQueryWDID(id.substring(5));
 			gui.submitQuery();
 		}

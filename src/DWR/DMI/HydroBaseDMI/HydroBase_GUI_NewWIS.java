@@ -24,6 +24,10 @@
 // 2005-05-25	JTS, RTi		Converted queries that pass in a 
 //					String date to pass in DateTimes 
 //					instead.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass JFrame to the constructor.
+//					Add GeoViewUI for map interactions.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -50,16 +54,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import DWR.DMI.CWRAT.CWRATMainJFrame;
-
 import RTi.DMI.DMIUtil;
 
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
-
-import RTi.Util.IO.IOUtil;
 
 import RTi.Util.Message.Message;
 
@@ -86,7 +86,12 @@ private final String
 /**
 Parent JFrame running the application.
 */
-private CWRATMainJFrame __parent;
+private JFrame __parent;
+
+/**
+GeoViewUI instance for map interactions.
+*/
+private GeoViewUI __geoview_ui = null;
 
 /**
 DMI to communicate with the database.
@@ -128,12 +133,14 @@ private Vector __streamVector;
 /**
 Constructor.
 @param parent the parent JFrame running the application.
+@param geoview_ui GeoViewUI for map interactions.
 @param dmi the dmi used to communicate with the database.
 @param loadWISGUI the parent GUI for loading a WIS.
 */
-public HydroBase_GUI_NewWIS(CWRATMainJFrame parent, HydroBaseDMI dmi, 
-HydroBase_GUI_LoadWIS loadWISGUI) {
+public HydroBase_GUI_NewWIS(JFrame parent, GeoViewUI geoview_ui,
+		HydroBaseDMI dmi, HydroBase_GUI_LoadWIS loadWISGUI) {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
         __dmi = dmi;
         __loadWISGUI = loadWISGUI;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
@@ -235,7 +242,7 @@ list.
 @param event the ItemEvent that happened.
 */
 public void itemStateChanged(ItemEvent event) {
-	if (event.getStateChange() != event.SELECTED) {
+	if (event.getStateChange() != ItemEvent.SELECTED) {
 		return;
 	}
 
@@ -254,7 +261,7 @@ public void keyPressed(KeyEvent event) {
 	int code = event.getKeyCode();
 	
 	// enter key is the same as selecting ok
-	if (code == event.VK_ENTER) {
+	if (code == KeyEvent.VK_ENTER) {
 		okClicked();
 	}
 }
@@ -537,7 +544,7 @@ private void okClicked() {
 				__streamJComboBox.getSelectedIndex());
 		}
 
-	        new HydroBase_GUI_WISBuilder(__parent, __dmi, data, stream);
+	        new HydroBase_GUI_WISBuilder(__parent, __geoview_ui, __dmi, data, stream);
 	
 		JGUIUtil.setWaitCursor(this, false);
 	        tempString = "Finished loading new WIS.";
@@ -571,7 +578,6 @@ private void setupGUI() {
         Insets insetsTLNN = new Insets(7,7,0,0);
         Insets insetsTNNR = new Insets(7,0,0,7);  
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // North JPanel
         JPanel northJPanel = new JPanel();
@@ -585,28 +591,28 @@ private void setupGUI() {
 
         JGUIUtil.addComponent(northWJPanel, 
 		new JLabel("New Water Information Sheet Name:"),
-		0, 0, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.EAST);
+		0, 0, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
                 
         __sheetNameJTextField = new JTextField(25);
 	__sheetNameJTextField.addKeyListener(this);
         JGUIUtil.addComponent(northWJPanel, __sheetNameJTextField, 
-		1, 0, 1, 1, 0, 0, insetsTNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, 
 		new JLabel("Sheet most closely associated with:"), 
-		0, 1, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.EAST);
+		0, 1, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
                 
         __associatedJComboBox = new SimpleJComboBox();
 	__associatedJComboBox.addItemListener(this);
         JGUIUtil.addComponent(northWJPanel, __associatedJComboBox, 
-		1, 1, 1, 1, 0, 0, insetsTNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsTNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Main Stem:"), 
-		0, 2, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.EAST);
+		0, 2, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __streamJComboBox = new SimpleJComboBox();
         JGUIUtil.addComponent(northWJPanel, __streamJComboBox, 
-		1, 2, 1, 1, 0, 0, insetsTNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 2, 1, 1, 0, 0, insetsTNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
                                  
         // South JPanel
         JPanel southJPanel = new JPanel();
@@ -635,7 +641,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(southSJPanel, __statusJTextField, 
-		0, 0, 1, 1, 1, 1, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	String app = JGUIUtil.getAppNameForWindows();
 	if (app == null || app.trim().equals("")) {

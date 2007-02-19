@@ -20,31 +20,30 @@
 //					  and not be an option - comment out the
 //					  code in case it needs to be enabled
 //					  later.
+// 2007-02-11	SAM, RTi		Remove dependence on TSCommandProcessor.
+//					Use the more generic CommandProcessor interface instead.
+//					Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 // EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JFrame;
 
 import RTi.TS.TS;
-import RTi.TS.TSCommandProcessor;
 import RTi.TS.TSIdent;
-import RTi.TS.TSUtil;
 
-import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.Message.Message;
 import RTi.Util.Message.MessageUtil;
 import RTi.Util.IO.Command;
 import RTi.Util.IO.CommandException;
+import RTi.Util.IO.CommandProcessorRequestResultsBean;
 import RTi.Util.IO.CommandWarningException;
 import RTi.Util.IO.InvalidCommandParameterException;
 import RTi.Util.IO.InvalidCommandSyntaxException;
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.Prop;
 import RTi.Util.IO.PropList;
 import RTi.Util.IO.SkeletonCommand;
@@ -187,8 +186,7 @@ throws InvalidCommandParameterException
 	if (	(InputStart != null) && !InputStart.equals("") &&
 		!InputStart.equalsIgnoreCase("InputStart") &&
 		!InputStart.equalsIgnoreCase("InputEnd") ) {
-		try {	DateTime InputStart_DateTime =
-			DateTime.parse(InputStart);
+		try {	DateTime.parse(InputStart);
 		}
 		catch ( Exception e ) {
 			warning += 
@@ -200,8 +198,7 @@ throws InvalidCommandParameterException
 	if (	(InputEnd != null) && !InputEnd.equals("") &&
 		!InputEnd.equalsIgnoreCase("InputStart") &&
 		!InputEnd.equalsIgnoreCase("InputEnd") ) {
-		try {	DateTime InputEnd_DateTime =
-				DateTime.parse( InputEnd );
+		try {	DateTime.parse( InputEnd );
 		}
 		catch ( Exception e ) {
 			warning +=
@@ -390,40 +387,77 @@ CommandWarningException, CommandException
 	String InputStart = _parameters.getValue ( "InputStart" );
 	DateTime InputStart_DateTime = null;
 	if ( InputStart != null ) {
-		try {	InputStart_DateTime = ((TSCommandProcessor)_processor).
-				getDateTime(InputStart);
+		PropList request_params = new PropList ( "" );
+		request_params.set ( "DateTime", InputStart );
+		CommandProcessorRequestResultsBean bean = null;
+		try { bean =
+			_processor.processRequest( "DateTime", request_params);
 		}
 		catch ( Exception e ) {
-			message = "InputStart \"" + InputStart +
-				"\" is invalid.";
-			Message.printWarning ( warning_level,
-			MessageUtil.formatMessageTag(
-			command_tag,++warning_count), routine, message );
+			Message.printWarning(warning_level,
+					MessageUtil.formatMessageTag( command_tag, ++warning_count),
+					routine, "Error requesting DateTime(DateTime=" + InputStart +
+					"\" from processor." );
+		}
+		PropList bean_PropList = bean.getResultsPropList();
+		Object prop_contents = bean_PropList.getContents ( "DateTime" );
+		if ( prop_contents == null ) {
+			Message.printWarning(warning_level,
+				MessageUtil.formatMessageTag( command_tag, ++warning_count),
+				routine, "Null value for DateTime(DateTime=" + InputStart +
+				"\") returned from processor." );
+		}
+		else {	InputStart_DateTime = (DateTime)prop_contents;
 		}
 	}
 	else {	// Get from the processor...
-		Object o = _processor.getPropContents ( "InputStart" );
-		if ( o != null ) {
-			InputStart_DateTime = (DateTime)o;
+		try { Object o = _processor.getPropContents ( "InputStart" );
+			if ( o != null ) {
+				InputStart_DateTime = (DateTime)o;
+			}
+		}
+		catch ( Exception e ) {
+			// Not fatal, but of use to developers.
+			message = "Error requesting InputStart from processor - not using.";
+			Message.printDebug(10, routine, message );
 		}
 	}
 	String InputEnd = _parameters.getValue ( "InputEnd" );
 	DateTime InputEnd_DateTime = null;
 	if ( InputEnd != null ) {
-		try {	InputEnd_DateTime = ((TSCommandProcessor)_processor).
-				getDateTime (InputEnd);
+		PropList request_params = new PropList ( "" );
+		request_params.set ( "DateTime", InputEnd );
+		CommandProcessorRequestResultsBean bean = null;
+		try { bean =
+			_processor.processRequest( "DateTime", request_params);
 		}
 		catch ( Exception e ) {
-			message = "InputEnd \"" + InputEnd + "\" is invalid.";
-			Message.printWarning ( warning_level,
-			MessageUtil.formatMessageTag(
-			command_tag,++warning_count), routine, message );
+			Message.printWarning(warning_level,
+					MessageUtil.formatMessageTag( command_tag, ++warning_count),
+					routine, "Error requesting DateTime(DateTime=" + InputEnd +
+					"\" from processor." );
+		}
+		PropList bean_PropList = bean.getResultsPropList();
+		Object prop_contents = bean_PropList.getContents ( "DateTime" );
+		if ( prop_contents == null ) {
+			Message.printWarning(warning_level,
+				MessageUtil.formatMessageTag( command_tag, ++warning_count),
+				routine, "Null value for DateTime(DateTime=" + InputEnd +
+				"\") returned from processor." );
+		}
+		else {	InputEnd_DateTime = (DateTime)prop_contents;
 		}
 	}
 	else {	// Get from the processor...
-		Object o = _processor.getPropContents ( "InputEnd" );
-		if ( o != null ) {
-			InputEnd_DateTime = (DateTime)o;
+		try { Object o = _processor.getPropContents ( "InputEnd" );
+			if ( o != null ) {
+				InputEnd_DateTime = (DateTime)o;
+			}
+		}
+		catch ( Exception e ) {
+			// Not fatal, but of use to developers.
+			message = "Error requesting InputEnd from processor - not using.";
+			Message.printDebug(10, routine, message );
 		}
 	}
 
@@ -672,11 +706,8 @@ CommandWarningException, CommandException
 			// Populate with the where information from the
 			// command...
 
-			String where;
-			InputFilter filter;
 			String filter_delim = ";";
 			for ( int ifg = 0; ifg < nfg; ifg ++ ) {
-				filter = filter_panel.getInputFilter(ifg);
 				WhereN = (String)WhereN_Vector.elementAt(ifg); 
 				// Set the filter...
 				try {	filter_panel.setInputFilter( ifg,
@@ -845,10 +876,16 @@ CommandWarningException, CommandException
 		// Further process the time seies and add the time series to the
 		// list being managed in the command processor...
 
-		TSCommandProcessor tsprocessor =
-			(TSCommandProcessor)_processor;
-		Vector v = (Vector)tsprocessor.
-			getPropContents("TSResultsList");
+		Object o = null;
+		o = _processor.getPropContents ( "TSResultsList");
+		if ( o == null ) {
+			message = "Unable to get list of time series.  Can't add to list.";
+			Message.printWarning(warning_level,
+					MessageUtil.formatMessageTag( command_tag, ++warning_count),
+					routine, message );
+			throw new CommandException ( message );
+		}
+		Vector v = (Vector)o;
 		int vsize = 0;	// Existing list size.
 		if ( v != null ) {
 			vsize = v.size();
@@ -863,7 +900,10 @@ CommandWarningException, CommandException
 		}
 		Message.printStatus ( 2, routine,
 		"Read " + size + " HydroBase time series." );
-		try {	tsprocessor.readTimeSeries2 ( tslist );
+		try {	
+			PropList request_params = new PropList ( "" );
+			request_params.setUsingObject ( "TSList", tslist );
+			_processor.processRequest( "ReadTimeSeries2", request_params);
 		}
 		catch ( Exception e ) {
 			message =
@@ -874,8 +914,18 @@ CommandWarningException, CommandException
 			throw new CommandException ( message );
 		}
 		for ( int i = 0; i < size; i++ ) {
-			tsprocessor.setTimeSeries (
-				(TS)tslist.elementAt(i), (vsize + i) );
+			PropList request_params = new PropList ( "" );
+			request_params.setUsingObject ( "TS", tslist.elementAt(i) );
+			request_params.setUsingObject ( "Index", new Integer(vsize + 1) );
+			try {
+				_processor.processRequest( "SetTimeSeries", request_params);
+			}
+			catch ( Exception e ) {
+				Message.printWarning(warning_level,
+						MessageUtil.formatMessageTag( command_tag, ++warning_count),
+						routine, "Error requesting SetTimeSeries(Index=" + (vsize + 1) +
+						"\" from processor." );
+			}
 		}
 	}
 	catch ( Exception e ) {

@@ -21,12 +21,14 @@
 // 2005-02-14	JTS, RTi		Checked all dmi calls to make sure they
 //					use stored procedures.
 // 2005-04-28	JTS, RTi		Added finalize().
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass JFrame to constructor.
+//					Clean up code based on Elipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -55,16 +57,19 @@ import RTi.Util.GUI.SimpleJButton;
 
 import RTi.Util.Message.Message;
 
-import DWR.DMI.CWRAT.CWRATMainJFrame;
-
 public class HydroBase_GUI_RegisterUser 
 extends JFrame 
 implements ActionListener, KeyListener, WindowListener {
 
 /**
-GUI that instantiate this one.
+GUI that instantiate this one, for window positioning.
 */
-private CWRATMainJFrame __parent;
+private JFrame __parent = null;
+
+/**
+OptionsUI to handle HydroBase options.
+*/
+private OptionsUI __options_ui;
 
 /**
 Reference to a DMI.
@@ -122,11 +127,14 @@ private final String __READY = "Ready";
 /**
 HydroBase_GUI_RegisterUser constructor
 @param dmi HydroBaseDMI object
-@param parent CWRATMainJFrame that instantiated this object.
+@param parent JFrame that instantiated this object.
+@param options_ui OptionsUI to handle 
 */
-public HydroBase_GUI_RegisterUser(HydroBaseDMI dmi, CWRATMainJFrame parent) {
+public HydroBase_GUI_RegisterUser(HydroBaseDMI dmi, JFrame parent,
+		OptionsUI options_ui ) {
 	__dmi = dmi;
 	__parent = parent;
+	__options_ui = options_ui;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
 	setupGUI();
 }
@@ -258,7 +266,7 @@ Responds to KeyReleased KeyEvents.
 public void keyPressed(KeyEvent event) {
 	int i = event.getKeyCode();
 
-	if (i == event.VK_ENTER) {
+	if (i == KeyEvent.VK_ENTER) {
 		registerClicked();
 	}
 }
@@ -347,7 +355,7 @@ private void registerClicked() {
 			// Insert new user record...
 			int userNum = DMIUtil.MISSING_INT;
 			if (__dmi.isDatabaseVersionAtLeast(
-				__dmi.VERSION_19990305)) {
+				HydroBaseDMI.VERSION_19990305)) {
 				// Set user num to negative so that we can later
 				// identify that this user has not synchronized
 				// with the central database.
@@ -370,7 +378,7 @@ private void registerClicked() {
 
 			String dmiString = "";
 			if (__dmi.isDatabaseVersionAtLeast(
-				__dmi.VERSION_19990305)) {
+				HydroBaseDMI.VERSION_19990305)) {
 				HydroBase_UserSecurity us = 
 					new HydroBase_UserSecurity();
 				us.setUser_num(userNum);
@@ -464,7 +472,7 @@ private void registerClicked() {
 					(HydroBase_UserPreferences)
 					results.elementAt(i);
 				if (__dmi.isDatabaseVersionAtLeast(
-					__dmi.VERSION_19990305)) {
+					HydroBaseDMI.VERSION_19990305)) {
 					// New database does not have
 					// appliation in preferences...
 					HydroBase_UserPreferences up = 
@@ -532,7 +540,7 @@ private void registerClicked() {
 		+ "\nUser name: " + userName
  		+ "\nLogin: " + login, ResponseJDialog.OK);
 
-	__parent.setupNewUser(login, password);
+	__options_ui.setupNewUser(login, password);
 	closeClicked();	
 }
 
@@ -552,16 +560,13 @@ private void setupGUI() {
 
 	// the following are used in the GUI layout
 	Insets TLBR = new Insets(7,7,7,7);
-	Insets TLNR = new Insets(7,7,0,7);
 	Insets XLNR = new Insets(21,7,0,7);
 	Insets NLNR = new Insets(0,7,0,7);
-	Insets T_LNR = new Insets(-7,7,0,7);
 	Insets NLBR = new Insets(0,7,7,7);
 	Insets NLBN = new Insets(0,7,7,7);
 	Insets TLNN = new Insets(7,7,0,0);
 	Insets NLNN = new Insets(0,7,0,0);
 	GridBagLayout gbl = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
 
 	JPanel northJPanel = new JPanel();
 	northJPanel.setLayout(new BorderLayout());
@@ -576,105 +581,105 @@ private void setupGUI() {
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("You need to register only if you will "
 		+ "synchronize data to/from the main database."),
-		0, y++, 4, 1, 0, 1, XLNR, gbc.NONE, gbc.WEST);
+		0, y++, 4, 1, 0, 1, XLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("Name:"),
-		0, y, 1, 1, 0, 1, TLNN, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__lastJTextField = new JTextField(15);	
 	__lastJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(northWJPanel,
 		__lastJTextField,
-		1, y, 1, 1, 0, 1, TLNN, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 0, 1, TLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__firstJTextField = new JTextField(15);
 	__firstJTextField.addKeyListener(this);	
 	JGUIUtil.addComponent(northWJPanel,
 		__firstJTextField,
-		2, y, 1, 1, 0, 1, TLNN, gbc.NONE, gbc.WEST);
+		2, y, 1, 1, 0, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__middleJTextField = new JTextField(2);
 	__middleJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(northWJPanel,
 		__middleJTextField,
-		3, y++, 1, 1, 0, 1, TLNN, gbc.NONE, gbc.WEST);
+		3, y++, 1, 1, 0, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("Last:"),
-		1, y, 1, 1, 0, 1, NLNN, gbc.NONE, gbc.NORTHWEST);
+		1, y, 1, 1, 0, 1, NLNN, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("First:"),
-		2, y, 1, 1, 0, 1, NLBN, gbc.NONE, gbc.NORTHWEST);
+		2, y, 1, 1, 0, 1, NLBN, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("Middle Initial:"),
-		3, y++, 1, 1, 0, 1, NLBR, gbc.NONE, gbc.NORTHWEST);
+		3, y++, 1, 1, 0, 1, NLBR, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("Login:"),
-		0, y, 1, 1, 0, 1, NLBN, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 1, NLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__loginJTextField = new JTextField(15);
 	__loginJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(northWJPanel,
 		__loginJTextField,
-		1, y++, 1, 1, 0, 1, NLBN, gbc.HORIZONTAL, gbc.EAST);
+		1, y++, 1, 1, 0, 1, NLBN, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("Password:"),
-		0, y, 1, 1, 0, 1, NLBN, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 1, NLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__passwordJPasswordField = new JPasswordField(15);
 	__passwordJPasswordField.setEchoChar('*');
 	__passwordJPasswordField.addKeyListener(this);
 	JGUIUtil.addComponent(northWJPanel,
 		__passwordJPasswordField,
-		1, y++, 1, 1, 0, 1, NLBN, gbc.HORIZONTAL, gbc.EAST);
+		1, y++, 1, 1, 0, 1, NLBN, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("Re-enter Password:"),
-		0, y, 1, 1, 0, 1, NLBN, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 1, NLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__confirmJPasswordField = new JPasswordField(15);
 	__confirmJPasswordField.setEchoChar('*');
 	__confirmJPasswordField.addKeyListener(this);
 	JGUIUtil.addComponent(northWJPanel,
 		__confirmJPasswordField,
-		1, y++, 1, 1, 0, 1, NLBN, gbc.HORIZONTAL, gbc.EAST);
+		1, y++, 1, 1, 0, 1, NLBN, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("IMPORTANT!"),
-		0, y++, 1, 1, 0, 1, XLNR, gbc.NONE, gbc.WEST);
+		0, y++, 1, 1, 0, 1, XLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("NEW USERS:"),
-		0, y++, 4, 1, 0, 1, NLNR, gbc.NONE, gbc.WEST);
+		0, y++, 4, 1, 0, 1, NLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("After pressing Register, you must synchronize your "
 		+ "preferences to the server and then contact the"),
-		0, y++, 4, 1, 0, 1, TLBR, gbc.NONE, gbc.WEST);
+		0, y++, 4, 1, 0, 1, TLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("CDSS administrator at cdss@state.co.us "
 		+ "to obtain synchronization privileges on the server."),
-		0, y++, 4, 1, 0, 1, TLBR, gbc.NONE, gbc.WEST);
+		0, y++, 4, 1, 0, 1, TLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel(
 		"IF YOU ARE AN EXISTING USER INSTALLING A NEW DATABASE:"),
-		0, y++, 4, 1, 0, 1, TLBR, gbc.NONE, gbc.WEST);
+		0, y++, 4, 1, 0, 1, TLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("First register using the same name and login"
 		+ " that you used previously."),
-		0, y++, 4, 1, 0, 1, TLBR, gbc.NONE, gbc.WEST);
+		0, y++, 4, 1, 0, 1, TLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(northWJPanel,
 		new JLabel("After pressing Register, you can synchronize your "
 		+ "preferences from the server if you backed them up."),
-		0, y++, 4, 1, 0, 1, TLBR, gbc.NONE, gbc.WEST);
+		0, y++, 4, 1, 0, 1, TLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JPanel southJPanel = new JPanel();
 	southJPanel.setLayout(new BorderLayout());
@@ -698,7 +703,7 @@ private void setupGUI() {
 	__statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
 	JGUIUtil.addComponent(statusJPanel, __statusJTextField,
-		0, 0, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	String app = JGUIUtil.getAppNameForWindows();
 	if (app == null || app.trim().equals("")) {

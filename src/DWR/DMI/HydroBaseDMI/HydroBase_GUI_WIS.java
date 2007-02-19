@@ -80,6 +80,10 @@
 //					has changed (because a new format was
 //					built in the WIS Builder) the old data
 //					is fit into the new format gracefully.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass a JFrame to the constructor.
+//					Add GeoViewUI for map interaction.
+//					Clean up based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -91,7 +95,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -116,8 +119,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import DWR.DMI.CWRAT.CWRATMainJFrame;
-
 import RTi.DMI.DMIUtil;
 
 import RTi.GRTS.TSViewJFrame;
@@ -125,7 +126,6 @@ import RTi.GRTS.TSViewJFrame;
 import RTi.TS.TS;
 
 import RTi.Util.GUI.JGUIUtil;
-import RTi.Util.GUI.JScrollWorksheet;
 import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.JWorksheet_CellAttributes;
 import RTi.Util.GUI.ReportJFrame;
@@ -373,7 +373,7 @@ private boolean __ignoreItemStateChanged = false;
 /**
 Whether the GUI is currently calculating the wis values in computeWIS().
 */
-private boolean __inComputeWIS = false;
+//private boolean __inComputeWIS = false;
 
 /**
 Whether the gui is fully initialized and data are being shown or not.
@@ -397,13 +397,19 @@ private boolean __sheetModified = false;
 
 /**
 Whether the grid behavior is to display solving order.
+See the public access method.
 */
 private boolean __showGridResponse = false;
 
 /**
 The parent JFrame running the application.
 */
-private CWRATMainJFrame __parent;
+private JFrame __parent;
+
+/**
+GeoViewUI for map interaction.
+*/
+GeoViewUI __geoview_ui = null;
 
 /**
 The admin date.
@@ -464,7 +470,6 @@ private JButton
 	__dateJButton,
 	__dryRiverJButton,
 	__exportJButton,
-	__helpJButton,
 	__loadJButton,
 	__printJButton,
 	__summaryJButton;
@@ -519,8 +524,7 @@ private SimpleJMenuItem
 /**
 Data Vectors.
 */
-private Vector		
-	__wisDataVector,
+private Vector
 	__wisDiversionCodingVector,
 	__wisFormatVector,
 	__wisFormulaVector,
@@ -549,6 +553,7 @@ private String __wisStatus;
 /**
 Constructor.
 @param parent the parent JFrame running the application.
+@param geoview_ui GeoViewUI for map interaction.
 @param dmi the dmi to use for communicating with the database.
 @param wis the sheet to display data for.
 @param mode the mode in which to instantiate the gui.
@@ -560,11 +565,11 @@ is no wis data.
 data was available
 @param editable whether the sheet can be edited or not
 */
-public HydroBase_GUI_WIS(CWRATMainJFrame parent, HydroBaseDMI dmi, 
+public HydroBase_GUI_WIS(JFrame parent, GeoViewUI geoview_ui, HydroBaseDMI dmi, 
 HydroBase_WISSheetName wis, int mode, String set_date, String wisStatus, 
 String sheetName, boolean isNewSheet, boolean previousDataAvailable, 
 boolean editable) {
-	this(parent, dmi, wis, mode, set_date, wisStatus, sheetName,
+	this(parent, geoview_ui, dmi, wis, mode, set_date, wisStatus, sheetName,
 		isNewSheet, previousDataAvailable, editable, 
 		DMIUtil.MISSING_INT);
 }
@@ -572,6 +577,7 @@ boolean editable) {
 /**
 Constructor.
 @param parent the parent JFrame running the application.
+@param geoview_ui GeoViewUI for map interaction.
 @param dmi the dmi to use for communicating with the database.
 @param wis the sheet to display data for.
 @param mode the mode in which to instantiate the gui.
@@ -583,11 +589,12 @@ is no wis data.
 data was available
 @param editable whether the sheet can be edited or not
 */
-public HydroBase_GUI_WIS(CWRATMainJFrame parent, HydroBaseDMI dmi, 
+public HydroBase_GUI_WIS(JFrame parent, GeoViewUI geoview_ui, HydroBaseDMI dmi, 
 HydroBase_WISSheetName wis, int mode, String set_date, String wisStatus, 
 String sheetName, boolean isNewSheet, boolean previousDataAvailable, 
 boolean editable, int oldFormatWISNum) {		
 	__parent = parent;
+	__geoview_ui = geoview_ui;
         __dmi = dmi;
 	__wis = wis;
 	__wisNum = __wis.getWis_num();
@@ -684,8 +691,7 @@ public void actionPerformed(ActionEvent event) {
 		// is not check to make sure the same diversion is not edited
 		// more than once.
 
-		HydroBase_GUI_WISDiversionCoding sfut_gui =
-			new HydroBase_GUI_WISDiversionCoding(__dmi, this, 
+		new HydroBase_GUI_WISDiversionCoding(__dmi, this, 
 			__wis, __adminDateTime,
 			__worksheet.getSelectedRow(), 
 			__worksheet.getSelectedColumn(),
@@ -718,9 +724,7 @@ private boolean canDryRow(int row) {
 	// Only rows with valid flows can be set to dry river...
 	boolean isUserEnterCell = isEntryCell(row, POINT_FLOW_COL);
 	boolean isFormula = isFormulaCell(row, POINT_FLOW_COL);
-	boolean isImport = isImportCell(row, POINT_FLOW_COL);	
-	HydroBase_WISData wisdata = 
-		(HydroBase_WISData)__worksheet.getRowData(row);
+	boolean isImport = isImportCell(row, POINT_FLOW_COL);
 	HydroBase_WISFormat wisformat = 
 		(HydroBase_WISFormat)__wisFormatVector.elementAt(row);
 	String rowType = wisformat.getRow_type();
@@ -934,12 +938,12 @@ public void computeWIS() {
 		return;
 	}
 
-	__inComputeWIS = true;
+	//__inComputeWIS = true;
 
 	int row = __worksheet.getSelectedRow();
 
 	HydroBase_WISFormat wisFormat = null;
-	int numRows = __worksheet.getRowCount();
+	//int numRows = __worksheet.getRowCount();
 	setGridResponse(false);
         setIsModified(true);
 
@@ -991,7 +995,7 @@ public void computeWIS() {
 
 	if (__network == null) {
 		__autoCalc = holdAutoCalc;
-		__inComputeWIS = false;
+		//__inComputeWIS = false;
 		return;
 	}
 	
@@ -1000,13 +1004,13 @@ public void computeWIS() {
 		Message.printWarning(1, routine, "An error has occurred in "
 			+ "the river network.  Upstream node is null.");
 		__autoCalc = holdAutoCalc;
-		__inComputeWIS = false;
+		//__inComputeWIS = false;
 		return;
 	}
 	int curRow = 0;
 	boolean breakNow = false;
 	for (; node != null;
-		node = __network.getDownstreamNode(node,
+		node = HydroBase_NodeNetwork.getDownstreamNode(node,
 		HydroBase_NodeNetwork.POSITION_COMPUTATIONAL)) {
 
 		// If the downstream node is null then the last node in the
@@ -1036,7 +1040,7 @@ public void computeWIS() {
 	node = __network.getMostUpstreamNode();
 	breakNow = false;
 	for (; node != null;
-		node = __network.getDownstreamNode(node,
+		node = HydroBase_NodeNetwork.getDownstreamNode(node,
 		HydroBase_NodeNetwork.POSITION_COMPUTATIONAL)) {
 
 		// If the downstream node is null then the last node in the
@@ -1073,7 +1077,7 @@ public void computeWIS() {
 	node = __network.getMostUpstreamNode();
 	breakNow = false;
 	for (; node != null;
-		node = __network.getDownstreamNode(node,
+		node = HydroBase_NodeNetwork.getDownstreamNode(node,
 		HydroBase_NodeNetwork.POSITION_COMPUTATIONAL)) {
 
 		// If the downstream node is null then the last node in the
@@ -1110,7 +1114,7 @@ public void computeWIS() {
 	node = __network.getMostUpstreamNode();
 	breakNow = false;
 	for (; node != null;
-		node = __network.getDownstreamNode(node,
+		node = HydroBase_NodeNetwork.getDownstreamNode(node,
 		HydroBase_NodeNetwork.POSITION_COMPUTATIONAL)) {
 
 		// If the downstream node is null then the last node in the
@@ -1155,7 +1159,7 @@ public void computeWIS() {
 	node = __network.getMostUpstreamNode();
 	breakNow = false;
 	for (; node != null;
-		node = __network.getDownstreamNode(node,
+		node = HydroBase_NodeNetwork.getDownstreamNode(node,
 		HydroBase_NodeNetwork.POSITION_COMPUTATIONAL)) {
 
 		// If the downstream node is null then the last node in the
@@ -1203,15 +1207,13 @@ public void computeWIS() {
 	}
 	__autoCalc = holdAutoCalc;
 
-	__inComputeWIS = false;
+	//__inComputeWIS = false;
 
 	if (__diagramGUI == null) {
 		return;
 	}
 	String id = null;
 	HydroBase_WISFormat format = null;
-	double df = 0;
-	double nf = 0;
 	double pf = 0;
 	for (int i = 1; i < rows; i++) {
 		format = (HydroBase_WISFormat)__wisFormatVector.elementAt(i);
@@ -1386,6 +1388,9 @@ private void computeNaturalFlow(HydroBase_Node curNode) {
 Computes natural flow for all nodes where the point flow is known and is not
 a formula.
 */
+/*
+SAM REVISIT 2007-02-08
+Evaluate whether this can be deleted.
 private void computeNaturalForUserEnteredBaseflows() {
 	HydroBase_Node node = __network.getMostUpstreamNode();
 
@@ -1393,7 +1398,7 @@ private void computeNaturalForUserEnteredBaseflows() {
 	int curRow;
 	// move downstream in computational order...
 	for (; node != null;
-		node = __network.getDownstreamNode(node,
+		node = HydroBase_NodeNetwork.getDownstreamNode(node,
 			HydroBase_NodeNetwork.POSITION_COMPUTATIONAL)) {
 
 		// If the downstream node is null, break(redundant?)
@@ -1416,6 +1421,7 @@ private void computeNaturalForUserEnteredBaseflows() {
 		}		
 	}
 }
+*/
 
 /**
 Computes delivery flow at the specified node.
@@ -1495,15 +1501,11 @@ NATURAL_FLOW, or STRING).
 @param curNode the node in which to evaluate the formula.
 */
 private void computeFormulas(String flag, HydroBase_Node curNode) {
-	String routine = CLASS + ".computeFormulas()";
-
 	HydroBase_WISFormat wisFormat;
 	HydroBase_WISFormula wisFormula;
-	HydroBase_WISMath wisMath;
 
 	int row = -1;
 	int col = -1;
-	int curCol = -1;
 	int numFormulas = -1;
 	int curFormula = -1;	
 //Message.printStatus(1, "", "computeFormulas(" + flag + "): \n" + curNode);
@@ -1640,7 +1642,6 @@ private void dryRiver(int row) {
 		(HydroBase_WISData)__worksheet.getRowData(row);
 	HydroBase_WISFormat wisformat = 
 		(HydroBase_WISFormat)__wisFormatVector.elementAt(row);
-	String rowType = wisformat.getRow_type();
 
 	int dryRiver = wisdata.getDry_river();
 
@@ -1695,7 +1696,6 @@ private void dryRiverClicked() {
 		(HydroBase_WISData)__worksheet.getRowData(row);
 	HydroBase_WISFormat wisformat = 
 		(HydroBase_WISFormat)__wisFormatVector.elementAt(row);
-	String rowType = wisformat.getRow_type();
 
 	int dryRiver = wisdata.getDry_river();
 
@@ -1815,7 +1815,6 @@ throws Throwable {
 	__dateJButton = null;
 	__dryRiverJButton = null;
 	__exportJButton = null;
-	__helpJButton = null;
 	__loadJButton = null;
 	__printJButton = null;
 	__summaryJButton = null;
@@ -1830,7 +1829,6 @@ throws Throwable {
 	__gainSimpleJComboBox = null;
 	__cellGraphJMenuItem1 = null;
 	__cellGraphJMenuItem2 = null;
-	__wisDataVector = null;
 	__wisDiversionCodingVector = null;
 	__wisFormatVector = null;
 	__wisFormulaVector = null;
@@ -1857,7 +1855,6 @@ private int findRowForWDID(int wd, int id) {
 		size = __wisFormatVector.size();
 	}
 
-	HydroBase_WISFormat wisformat = null;
 	String identifier;
 	int[] wdidParts;
 	for (int row = 0; row < size; row++) {
@@ -2112,7 +2109,6 @@ private Vector formatTextOutput() {
 	// column headers
 	String cellString;
 	String rowString = "";
-	Object o;
 	/*
 	for (int curCol = 0; curCol < NUM_COLUMNS; curCol++) {
 		cellString = __worksheet.getColumnName(curCol, true);
@@ -2542,6 +2538,9 @@ Returns the specified row values as a HydroBase_WISData object.
 @param row the row number to evaluate.
 @return the HydroBase_WISData object for the specified row.
 */
+/*
+SAM REVISIT 2007-02-08
+Evaluate whether this can be removed.
 private HydroBase_WISData getRowValues(int row) {
 	double curDouble;
 	HydroBase_WISData rowData = new HydroBase_WISData();	
@@ -2622,6 +2621,7 @@ private HydroBase_WISData getRowValues(int row) {
 
 	return rowData;
 }
+*/
 
 /**
 Get the selected column.
@@ -2740,6 +2740,8 @@ row.
 @param flag the data flag
 @return the value for the specified row variable.
 */
+/* SAM REVISIT 2007-02-08
+Evaluate whether this can be removed.
 private double getWISFormatValue(int row, int flag) {
 	double value = DMIUtil.MISSING_DOUBLE;
 
@@ -2762,6 +2764,7 @@ private double getWISFormatValue(int row, int flag) {
 	}
 	return value;
 }
+*/
 
 /**
 Returns the vector of wis formats.
@@ -3286,7 +3289,7 @@ public void itemStateChanged(ItemEvent event) {
 	Object o = event.getItemSelectable();
 
 	if (o == __gainSimpleJComboBox 
-	    && event.getStateChange() == event.SELECTED) {
+	    && event.getStateChange() == ItemEvent.SELECTED) {
 		wisChanged(true);		
 		computeWIS();
 	}
@@ -3317,7 +3320,7 @@ in the __worksheet object.
 */
 private void loadClicked() {
 	if (__loadWISGUI == null) {
-        	__loadWISGUI = new HydroBase_GUI_LoadWIS(__parent, __dmi, 
+        	__loadWISGUI = new HydroBase_GUI_LoadWIS(__parent, __geoview_ui, __dmi, 
 			__mode, !__editable);
 	}
 	else {	
@@ -3334,7 +3337,6 @@ forward, if necessary.
 private void loadSheet() {
 	// initialize variables
 	String routine = CLASS + ".loadSheet()";
-	Vector contents = new Vector();
 
 	// Add an empty String to the first element so that the row numbers
 	// in the __worksheet object will match the elements in the 
@@ -3395,11 +3397,8 @@ private void loadSheet() {
 	}
 
 	// display results from wis_format query
-	String rowType;
-	int atRow;
 	HydroBase_WISFormat data;
-	if (results != null && results.size() > 0) {	
-		HydroBase_WISData wisData = null;
+	if (results != null && results.size() > 0) {
 		for (int i = 0; i < size; i++) {
 			data = (HydroBase_WISFormat)results.elementAt(i);
 			// Add the element here in the event that data members
@@ -3469,10 +3468,6 @@ private void loadSheet() {
 		__dateJTextField.setText(currentDate);
 		
 		if (!__previousDataAvailable) {
-			boolean isEntryCell = false;
-			boolean isFormulaCell = false;
-			boolean isImportCell = false;
-			HydroBase_WISFormat wisFormat = null;
 			HydroBase_WISData wisData = new HydroBase_WISData();
 			for (int row = 0; row < size; row++) {
 				setRowValues(wisData, row);
@@ -3506,7 +3501,7 @@ private void loadAndConvertOldFormatWISData() {
 	try {	
 		dateDate = DateTime.parse(__set_date, 
 			DateTime.FORMAT_YYYY_MM_DD_HH_mm);
-		dateDate.setPrecision(dateDate.PRECISION_DAY);
+		dateDate.setPrecision(DateTime.PRECISION_DAY);
 	}
 	catch (Exception e) {}
 
@@ -3571,7 +3566,6 @@ private void loadAndConvertOldFormatWISData() {
 		}
 	}
 
-	HydroBase_WISData wisData;
 	HydroBase_Node node = null;
 	HydroBase_WISFormat wisformat = null;
 		__worksheet.clear();
@@ -3644,7 +3638,7 @@ private void loadWISData() {
 	try {	
 		dateDate = DateTime.parse(__set_date, 
 			DateTime.FORMAT_YYYY_MM_DD_HH_mm);
-		dateDate.setPrecision(dateDate.PRECISION_DAY);
+		dateDate.setPrecision(DateTime.PRECISION_DAY);
 	}
 	catch (Exception e) {}
 
@@ -4105,11 +4099,15 @@ protected void networkGUIClosed() {
 /**
 Notifies the network GUI (if it is open) that the network has been changed.
 */
+/*
+SAM REVISIT 2007-02-08
+Evaluate whether this can be removed.
 private void notifyDiagramGUI() {
 	if (__diagramGUI != null) {
 		__diagramGUI.rereadDiagram();
 	}
 }
+*/
 
 /**
 Responds when the print button is clicked.
@@ -4213,8 +4211,6 @@ called once when the instance of this class occurs as the references are
 constant for the entire session.
 */
 private void setFormulaReferences() {
-	String routine = CLASS + ".setFormulaReferences()";
-	
 	int numFormulas = __wisFormulaVector.size();
 
 	HydroBase_WISFormula wisFormula;
@@ -4287,8 +4283,6 @@ public void setIsModified(boolean state) {
 Sets the formats and flags for the known baseflow rows.
 */
 private void setKnownBaseflowFormats() {
-	String routine = CLASS + ".setKnownBaseflowFormats";
-		
 	HydroBase_WISFormat wisFormat;
 	int numRows = __wisFormatVector.size();
 	for (int curRow = 0; curRow < numRows; curRow++) {
@@ -4632,9 +4626,6 @@ private boolean saveClicked() {
 	// get the current system time
 	DateTime tsDate = new DateTime();
 	tsDate.shiftTimeZone(TimeUtil.getLocalTimeZoneAbbr());
-	String archiveDate = tsDate.toString(
-		DateTime.FORMAT_Y2K_SHORT);
-//		DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH_mm);
 
 	// check for the presence of single quotes
 	if (DMIUtil.checkSingleQuotes(__commentsJTextField.getText().trim())) {
@@ -4699,8 +4690,8 @@ private boolean saveClicked() {
 
 	// dates are now in the correct Time Zone for archiving
 	try {
-		tsDate.setPrecision(tsDate.PRECISION_DAY);
-		archiveDateTime.setPrecision(archiveDateTime.PRECISION_MINUTE);
+		tsDate.setPrecision(DateTime.PRECISION_DAY);
+		archiveDateTime.setPrecision(DateTime.PRECISION_MINUTE);
 	}
 	catch (Exception e) {}
 	DateTime archive_DateTime = new DateTime();
@@ -4717,7 +4708,6 @@ private boolean saveClicked() {
 	// the current set_date. This prohibits having multilple
 	// WIS for the same day.
 	Message.printStatus(1, routine, "Deleting WIS records..");
-	int res;
 	try {
 		__dmi.deleteWISForWis_numSet_date(__wisNum, tsDate);
 		// pre 2005-02-23 this did two delets to first delete
@@ -4859,29 +4849,10 @@ private boolean saveDiversionCoding() {
 	Vector oldrecords = null;
 	HydroBase_WISDailyWC record = null;
 	HydroBase_WISDailyWC record2 = null;
-	String dmi_String = "";
 	int meas_num = 0;
 	int structure_num = 0;
 
-	__adminDateTime.setPrecision(__adminDateTime.PRECISION_MINUTE);
-	
-	String source_String0 = "";
-	String source_String1 = "";
-	String source_String2 = "";
-	String from_String0 = "";
-	String from_String1 = "";
-	String from_String2 = "";
-	String use_String0 = "";
-	String use_String1 = "";
-	String use_String2 = "";
-	String type_String0 = "";
-	String type_String1 = "";
-	String type_String2 = "";
-	String obs_String0 = "";
-	String obs_String1 = "";
-	String obs_String2 = "";
-	String ld = __dmi.getLeftIdDelim();
-	String rd = __dmi.getRightIdDelim();
+	__adminDateTime.setPrecision(DateTime.PRECISION_MINUTE);
 
 	int wd_prev = -1;	// Previous WD for a diversion coding record
 	int id_prev = -1;	// Previous ID for a diversion coding record
@@ -5429,7 +5400,6 @@ private boolean saveDiversionCoding() {
                 	dmi.processUpdate(dmi_String);
 	*/	
 	
-	dmi_String = null;
 	oldrecords = null;
 	record = null;
 	return true;
@@ -5546,7 +5516,6 @@ private void setupGUI() {
 	Insets insetsTLBN = new Insets(7,7,7,0);
 	Insets insetsTNBR = new Insets(7,0,7,7);
        	GridBagLayout gbl = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
 
         // North JPanel
         JPanel northJPanel = new JPanel();
@@ -5608,14 +5577,14 @@ private void setupGUI() {
 	// the tab panel needs the name of the worksheet there
 	__tabJPanel.add(new JScrollPane(__worksheet));
         JGUIUtil.addComponent(centerJPanel, __tabJPanel, 
-		0, 1, 6, 1, 1, 1, insetsTLNR, gbc.BOTH, gbc.WEST);
+		0, 1, 6, 1, 1, 1, insetsTLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(centerJPanel, new JLabel("Comments:"), 
-		0, 2, 1, 1, 0, 0, insetsTLBN, gbc.NONE, gbc.EAST);
+		0, 2, 1, 1, 0, 0, insetsTLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
          
         __commentsJTextField = new JTextField(40);        
 	JGUIUtil.addComponent(centerJPanel, __commentsJTextField, 
-		1, 2, 4, 1, 1, 0, insetsTNBR, gbc.HORIZONTAL, gbc.WEST);
+		1, 2, 4, 1, 1, 0, insetsTNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	if (!__editable) {
 		__commentsJTextField.setEditable(false);
 	}
@@ -5628,16 +5597,16 @@ private void setupGUI() {
 	removed because the wis is automatically calculated after every entry 
 	now
 	JGUIUtil.addComponent(centerJPanel, __calculateJButton, 
-		5, 2, 1, 1, 0, 0, insetsTNBR, gbc.NONE, gbc.WEST);
+		5, 2, 1, 1, 0, 0, insetsTNBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	*/
 
 //	JGUIUtil.addComponent(centerJPanel, new JLabel("Status:"), 
-//		0, 3, 1, 1, 0, 0, insetsNLBN, gbc.NONE, gbc.EAST);
+//		0, 3, 1, 1, 0, 0, insetsNLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __statusUserJTextField = new JTextField(40);
 //	__statusUserJTextField.setEditable(false);
 //	JGUIUtil.addComponent(centerJPanel, __statusUserJTextField, 
-//		1, 3, 4, 1, 1, 0, insetsNNBR, gbc.HORIZONTAL, gbc.WEST);
+//		1, 3, 4, 1, 1, 0, insetsNNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// REVISIT (JTS - 2004-06-09)
 	// gain method needs to be saved with wis_comments
@@ -5648,7 +5617,7 @@ private void setupGUI() {
 	__gainSimpleJComboBox.add(WEIGHTS);
 	if (__editable) {
 		JGUIUtil.addComponent(centerJPanel, __gainSimpleJComboBox, 
-			5, 2, 1, 1, 0, 0, insetsNNBR, gbc.NONE, gbc.WEST);
+			5, 2, 1, 1, 0, 0, insetsNNBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 		
         // Bottom JPanel
@@ -5664,7 +5633,7 @@ private void setupGUI() {
 	JPanel operationsJPanel = new JPanel();
 	operationsJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 	JGUIUtil.addComponent(bottomNJPanel, operationsJPanel, 
-		0, 0, 1, 1, 1, 0, gbc.NONE, gbc.CENTER);
+		0, 0, 1, 1, 1, 0, GridBagConstraints.NONE, GridBagConstraints.CENTER);
 
         __archiveJButton = new JButton(__BUTTON_SAVE);
 	__archiveJButton.setToolTipText("Save WIS to database.");
@@ -5706,7 +5675,7 @@ private void setupGUI() {
 	JPanel frameJPanel = new JPanel();
 	frameJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 	JGUIUtil.addComponent(bottomNJPanel, frameJPanel, 
-		0, 1, 1, 1, 1, 0, insetsNLBN, gbc.NONE, gbc.CENTER);
+		0, 1, 1, 1, 1, 0, insetsNLBN, GridBagConstraints.NONE, GridBagConstraints.CENTER);
                          
         __printJButton = new JButton(__BUTTON_PRINT);
 	__printJButton.setToolTipText("Print WIS.");
@@ -5797,7 +5766,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 
-		0, 1, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // JFrame settings
 	String app = JGUIUtil.getAppNameForWindows();
@@ -5828,13 +5797,11 @@ Show cell properties.
 @param col Column number.
 */
 public void showCellProperties(int row, int col) {
-	String routine = CLASS + ".showCellProperties()";
 //	__statusJTextField.setText("Displaying cell properties.");
 
 	HydroBase_WISFormat wisFormat = 
 		(HydroBase_WISFormat)__wisFormatVector.elementAt(row);
 	String rowType = wisFormat.getRow_type();
-	int upRow = DMIUtil.MISSING_INT;
 
 	// locate the formula and import for the current cell
 	HydroBase_WISFormula wisFormula = getCellFormula(row, col);
@@ -5863,7 +5830,7 @@ public void showCellProperties(int row, int col) {
 	else {	
 		HydroBase_Node node = __network.getMostUpstreamNode();
 		while (node != null) {
-			node = __network.getDownstreamNode(node,
+			node = HydroBase_NodeNetwork.getDownstreamNode(node,
 				HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 			// find the node
 			if (node.getWISFormat() == wisFormat) {
@@ -5899,7 +5866,7 @@ public void showCellProperties(int row, int col) {
 		}
 	}
 	HydroBase_GUI_WISCellAttributes gui = 
-		new HydroBase_GUI_WISCellAttributes(__parent, 
+		new HydroBase_GUI_WISCellAttributes(__parent, __geoview_ui,
 		wisFormat.getRow_label(), 
 		HydroBase_GUI_WISBuilder.getColumnType(col), contents, 
 		wisFormat, wisFormula, wisImport, __dmi, downstream_node);

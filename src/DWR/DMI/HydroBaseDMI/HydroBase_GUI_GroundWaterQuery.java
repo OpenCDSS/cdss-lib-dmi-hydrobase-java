@@ -86,12 +86,12 @@
 //					k sum data.
 // 2005-11-15	JTS, RTi		Option to query the entire state at once
 //					added to the district combo box.
+// 2007-02-07	SAM, RTi		Remove the dependence on CWRAT.
+//					Pass a JFrame to the constructor.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import DWR.DMI.CWRAT.CWRATMainJFrame;
- 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -112,11 +112,9 @@ import java.awt.event.WindowListener;
 
 import java.util.Vector;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import RTi.DMI.DMIUtil;
@@ -127,13 +125,11 @@ import RTi.Util.GUI.DragAndDropUtil;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.GUI.JGUIUtil; 
 import RTi.Util.GUI.JScrollWorksheet;
-import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.ReportJFrame;
 import RTi.Util.GUI.SimpleJButton; 
 import RTi.Util.GUI.SimpleJComboBox;
 
-import RTi.Util.IO.PrintJGUI; 
-import RTi.Util.IO.ExportJGUI; 
+import RTi.Util.IO.PrintJGUI;
 import RTi.Util.IO.PropList;
 
 import RTi.Util.Message.Message;
@@ -241,7 +237,6 @@ private JLabel		__tableJLabel;
 GUI textfields.
 */
 private JTextField 
-	__locationJTextField,
 	__statusJTextField;
 
 /**
@@ -264,7 +259,7 @@ public HydroBase_GUI_GroundWaterQuery(HydroBaseDMI dmi) {
 	__dmi = dmi;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
 
-	if (__dmi.getDatabaseVersion() < __dmi.VERSION_20050701) {
+	if (__dmi.getDatabaseVersion() < HydroBaseDMI.VERSION_20050701) {
 		__newWellFormat = false;
 	}
 	else {
@@ -618,7 +613,6 @@ throws Throwable {
 	__waterDistrictJComboBox = null;
 	__dataTypeJComboBox = null;
 	__tableJLabel = null;
-	__locationJTextField = null;
 	__statusJTextField = null;
 	__worksheet = null;
 	__tableLabelString = null;
@@ -652,9 +646,7 @@ private Vector formatOutput(int format) {
 	int[] selected = __worksheet.getSelectedRows();
 	int length = selected.length;
 
-	Object o;
-	String d = "";	
-	Class c;
+	String d = "";
         for (int i = 0; i < size; i++) {
 		isSelected = false;
 		s = "";
@@ -836,7 +828,7 @@ Responds to key pressed events.
 */
 public void keyPressed(KeyEvent event) { 
 	int code = event.getKeyCode();
-	if (code == event.VK_ENTER) {
+	if (code == KeyEvent.VK_ENTER) {
 		submitQuery();
 	}
 }
@@ -932,15 +924,11 @@ private void setupGUI() {
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
         
         // objects used throughout the GUI layout
-        Insets insetsNLNR = new Insets(0,7,0,7);
-        Insets insetsNNNR = new Insets(0,0,0,7);
         Insets insetsNLNN = new Insets(0,7,0,0);
-        Insets insetsTLBR = new Insets(7,7,7,7);
         Insets insetsTLNN = new Insets(7,7,0,0);
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
         
         // North JPanel
         JPanel northJPanel = new JPanel();
@@ -954,18 +942,18 @@ private void setupGUI() {
         
 	int y=0;
         JGUIUtil.addComponent(northWJPanel, new JLabel("Query Options:"), 
-                0, y++, 4, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.WEST);
+                0, y++, 4, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Div/Dist:"), 
-                0, y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+                0, y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__waterDistrictJComboBox = new SimpleJComboBox();
         JGUIUtil.addComponent(northWJPanel, __waterDistrictJComboBox, 
-                1, y++, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+                1, y++, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	__waterDistrictJComboBox.addItemListener(this);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Data Type:"), 
-                0, y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+                0, y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__dataTypeJComboBox = new SimpleJComboBox();
 	if (__newWellFormat) {
@@ -979,25 +967,25 @@ private void setupGUI() {
 	}
 	__dataTypeJComboBox.add(__DTYP_WELLMEAS);
         JGUIUtil.addComponent(northWJPanel, __dataTypeJComboBox, 
-                1, y++, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+                1, y++, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__oldFilterJPanel = new HydroBase_GUI_GroundWaterOld_InputFilter_JPanel(
 		__dmi, this);
 	__oldFilterJPanel.addEventListeners(this);
         JGUIUtil.addComponent(northWJPanel, __oldFilterJPanel,
-      		0, y, 3, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+      		0, y, 3, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__newFilterJPanel 
 		= new HydroBase_GUI_GroundWater_InputFilter_JPanel(
 		__dmi, this, false);
 	__newFilterJPanel.addEventListeners(this);
         JGUIUtil.addComponent(northWJPanel, __newFilterJPanel,
-      		0, y, 3, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+      		0, y, 3, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         SimpleJButton get = new SimpleJButton(__BUTTON_GET_DATA, this );
 	get.setToolTipText ( "Query for data matching the Where/Is" );
         JGUIUtil.addComponent(northWJPanel, get, 
-		3, y, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL,gbc.SOUTHWEST);
+		3, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL,GridBagConstraints.SOUTHWEST);
 
         // Center JPanel for MultiList
         JPanel centerJPanel = new JPanel();
@@ -1022,9 +1010,9 @@ private void setupGUI() {
 	__tableJLabel.setText(__tableLabelString);
 	JGUIUtil.addComponent(centerJPanel, __tableJLabel, 
 		1, 1, 7, 1, 1, 0, 
-		insetsNLNN, gbc.HORIZONTAL, gbc.WEST);
+		insetsNLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(centerJPanel, jsw,
-		1, 2, 7, 3, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		1, 2, 7, 3, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         
         //Bottom JPanel(Consist of two more JPanels)
         JPanel bottomJPanel = new JPanel();
@@ -1062,7 +1050,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 0, 1, 
-                10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+                10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
                 
 	// set defaults, based off initial data type choice
 	if (__newWellFormat) {

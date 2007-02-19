@@ -14,6 +14,9 @@
 //							findNearestDataPoint() to decrease
 //							duplication of code needed in the runCommand()
 //							method.
+// 2008-02-08	SAM, RTi			Remove dependency on TSCommandProcessor,
+//						instead using the more general CommandProcessor
+//						interface.
 //------------------------------------------------------------------------------
 // EndHeader
 
@@ -24,15 +27,16 @@ import javax.swing.JFrame;
 import java.util.Vector;
 
 import RTi.TS.TS;
-import RTi.TS.TSCommandProcessor;
 import RTi.TS.TSData;
-import RTi.TS.TSIterator;
+import RTi.TS.TSLimits;
 import RTi.TS.TSUtil;
 
 import RTi.Util.Message.Message;
 import RTi.Util.Message.MessageUtil;
 import RTi.Util.IO.Command;
 import RTi.Util.IO.CommandException;
+import RTi.Util.IO.CommandProcessor;
+import RTi.Util.IO.CommandProcessorRequestResultsBean;
 import RTi.Util.IO.CommandWarningException;
 import RTi.Util.IO.InvalidCommandParameterException;
 import RTi.Util.IO.InvalidCommandSyntaxException;
@@ -94,7 +98,7 @@ throws InvalidCommandParameterException
 	}
 	if ( (FillStart != null) && !FillStart.equals("") &&
 		!FillStart.equalsIgnoreCase("OutputStart")){
-		try {	DateTime startdate = DateTime.parse(FillStart);
+		try {	DateTime.parse(FillStart);
 		}
 		catch ( Exception e ) {
 			warning += 
@@ -105,7 +109,7 @@ throws InvalidCommandParameterException
 	}
 	if ( (FillEnd != null) && !FillEnd.equals("") &&
 		!FillEnd.equalsIgnoreCase("OutputEnd") ) {
-		try {	DateTime enddate = DateTime.parse( FillEnd);
+		try {	DateTime.parse( FillEnd);
 		}
 		catch ( Exception e ) {
 			warning +=
@@ -192,37 +196,49 @@ throws InvalidCommandSyntaxException, InvalidCommandParameterException
 				MessageUtil.formatMessageTag(
 						command_tag,++warning_count), routine, message);
 		throw new InvalidCommandSyntaxException ( message );
-
 	}
 }
 
 /**
 Calls TSCommandProcessor to re-calulate limits for this time series.
 @param ts Time Series.
-@param TSCmdProc TS Command Processor Object.
+@param TSCmdProc CommandProcessor that is using this command.
 @param warningLevel Warning level used for displaying warnings.
 @param warning_count Number of warnings found.
 @param command_tag Reference or identifier for this command.
  */
-private int recalculateLimits( TS ts, TSCommandProcessor TSCmdProc, 
+private int recalculateLimits( TS ts, CommandProcessor TSCmdProc, 
 		int warningLevel, int warning_count, String command_tag )
 {
 	String routine = "fillUsingDiversionComments_Command.recalculateLimits";
 	
-	try {	ts.setDataLimitsOriginal (
-			TSCmdProc.calculateTSAverageLimits(ts));
+	PropList request_params = new PropList ( "" );
+	request_params.setUsingObject ( "TS", ts );
+	CommandProcessorRequestResultsBean bean = null;
+	try { bean =
+		TSCmdProc.processRequest( "CalculateTSAverageLimits", request_params);
 	}
 	catch ( Exception e ) {
-		Message.printWarning ( warningLevel,
-			MessageUtil.formatMessageTag( command_tag,
-			++warning_count), routine, 
-			"Error recalculating original data " + 
-			"limits for \"" + ts.getIdentifierString() + "\""  );
-		Message.printWarning ( warningLevel ,routine, e );
+		Message.printWarning(warningLevel,
+				MessageUtil.formatMessageTag( command_tag, ++warning_count),
+				routine, "Error recalculating original data " + 
+				"limits for \"" + ts.getIdentifierString() + "\""  );
+		return warning_count;
 	}
+	// Get the calculated limits and set in the original data limits...
+	PropList bean_PropList = bean.getResultsPropList();
+	Object prop_contents = bean_PropList.getContents ( "TSLimits" );
+	if ( prop_contents == null ) {
+		Message.printWarning(warningLevel,
+			MessageUtil.formatMessageTag( command_tag, ++warning_count),
+			routine, "Null value from CalculateTSAverageLimits(" +
+			ts.getIdentifierString() + ")" );
+		return warning_count;
+	}
+	// Now set the limits.
+	ts.setDataLimitsOriginal ( (TSLimits)prop_contents );
 	return warning_count;
 }
-
 
 /**
 Method to execute the fillUsingDiversionComments() command.
@@ -235,6 +251,7 @@ throws InvalidCommandParameterException,
 CommandWarningException, CommandException
 {	
 	int warning_count = 0;
+	int log_level = 3;
 	String message, routine = "fillUsingDiversionComments_Command.runCommand";
 	String TSID = _parameters.getValue ( "TSID" );
 	String FillStart = _parameters.getValue ( "FillStart" );
@@ -251,7 +268,7 @@ CommandWarningException, CommandException
 		}
 	}
 	catch ( Exception e ) {
-		message = "Fill start is not a valid date.  Ignoring date.";
+		message = "Fill start " + FillStart + " is not a valid date.";
 		Message.printWarning ( warningLevel, 
 			MessageUtil.formatMessageTag( command_tag, ++warning_count),
 			routine, message );
@@ -262,7 +279,7 @@ CommandWarningException, CommandException
 		}
 	}
 	catch ( Exception e ) {
-		message = "Fill end is not a valid date.  Ignoring date.";
+		message = "Fill end " + FillEnd + " is not a valid date.";
 		Message.printWarning ( warningLevel,
 			MessageUtil.formatMessageTag( command_tag, ++warning_count),
 			routine, message );
@@ -273,27 +290,57 @@ CommandWarningException, CommandException
 	// The default is to fill all time series ( TSID = "*" )
 	TS ts = null;			// Time series instance to update
 	HydroBaseDMI hbdmi = null;	// HydroBaseDMI to use
-	TSCommandProcessor TSCmdProc = (TSCommandProcessor)_processor;
-	int nts = TSCmdProc.getTimeSeriesSize();
+	// Defaults are to process a list of time series returned with TSID="*".
+	// This will be reset below to a single time series if a TSID is
+	// specified as input.
+	int nts = 0;
+	Object o = null;
+	try { o = _processor.getPropContents ( "TSResultsListSize");
+		if ( o == null ) {
+			Message.printWarning(log_level,
+			MessageUtil.formatMessageTag( command_tag, ++warning_count),
+			routine, "Unable to determine number of time series to process.  Assuming 0." );
+		}
+		else {	nts = ((Integer)o).intValue();
+		}
+	}
+	catch ( Exception e ) {
+		// Not fatal, but of use to developers.
+		message = "Error requesting TSResultsListSize from processor - not using.";
+		Message.printDebug(10, routine, message );
+	}
 	int start_pos = 0;	// starting position TSID iterator
 	int end_pos = nts;	// end position for TSID iterator
-	// A specific TSID was chosen and should be used
-	message = "Unable to find time series \"" +
-	TSID + "\" for fillUsingDiversionComments() " +
-	"command.";
+	
 	if( !TSID.equals( "*" )) {
-		nts = TSCmdProc.indexOf ( TSID );
-		if ( nts >= 0 ) {
-			try {
-				ts = TSCmdProc.getTimeSeries ( nts );
-			} catch (Exception e1) {
-				Message.printWarning( 3,
-					MessageUtil.formatMessageTag( command_tag,
-					++warning_count), routine, message );
-				Message.printWarning( 3, routine, e1 );
-			}
+		// A specific TSID was chosen and should be used
+		PropList request_params = new PropList ( "" );
+		request_params.set ( "TSID", TSID );
+		CommandProcessorRequestResultsBean bean = null;
+		try { bean =
+			_processor.processRequest( "IndexOf", request_params);
 		}
-		else {	
+		catch ( Exception e ) {
+			Message.printWarning(log_level,
+					MessageUtil.formatMessageTag( command_tag, ++warning_count),
+					routine, "Error requesting IndexOf(TSID=" + TSID +
+					"\" from processor." );
+		}
+		PropList bean_PropList = bean.getResultsPropList();
+		Object prop_contents = bean_PropList.getContents ( "Index" );
+		if ( prop_contents == null ) {
+			Message.printWarning(warningLevel,
+				MessageUtil.formatMessageTag( command_tag, ++warning_count),
+				routine, "Null value for IndexOf(TSID=" + TSID +
+				"\") returned from processor." );
+		}
+		else {	nts = ((Integer)o).intValue();
+		}
+		if ( nts != 1 ) {
+			// Unable to get a list of time series to process.
+			message = "Unable to find time series \"" +
+			TSID + "\" for " + getCommandName() + "() " +
+			"command.";
 			Message.printWarning ( warningLevel,
 				MessageUtil.formatMessageTag( command_tag, ++warning_count),
 				routine, message );
@@ -307,23 +354,87 @@ CommandWarningException, CommandException
 				return;
 			}
 		}
-		start_pos= nts;
+		// Start is the specific time series to process
+		start_pos = nts;
+		// End is one more for "<" conditional in loop.
 		end_pos = ++nts;
+	}
+	
+	boolean HaveOutputPeriod_boolean = false;
+	try { o = _processor.getPropContents ( "HaveOutputPeriod");
+		if ( o == null ) {
+			Message.printWarning(warningLevel,
+					MessageUtil.formatMessageTag( command_tag, ++warning_count),
+					routine, "Unable to whether output period is available.  Assuming False." );
+		}
+		else {	HaveOutputPeriod_boolean = ((Boolean)o).booleanValue();
+		}
+	}
+	catch ( Exception e ) {
+			// Not fatal, but of use to developers.
+			message = "Error requesting HaveOutputPeriod from processor - not using.";
+			Message.printDebug(10, routine, message );
 	}
 	
 	// Loop through and fill data for TSID's chosen
 	for ( int its = start_pos; its < end_pos; its++ ) {
-		try {
-			ts = TSCmdProc.getTimeSeries(its);
-		} catch (Exception e1) {
+		// Get the time series to process...
+		
+		PropList request_params = new PropList ( "" );
+		request_params.setUsingObject ( "Index", new Integer(its) );
+		CommandProcessorRequestResultsBean bean = null;
+		try { bean =
+			_processor.processRequest( "GetTimeSeries", request_params);
+		}
+		catch ( Exception e ) {
 			Message.printWarning(warningLevel,
 					MessageUtil.formatMessageTag( command_tag, ++warning_count),
-					routine, "Could not find time series at position " + its);
+					routine, "Error requesting GetTimeSeries(Index=" + its +
+					"\" from processor.  Skipping." );
+			continue;
 		}
-		hbdmi = TSCmdProc.getHydroBaseDMI (
-				ts.getIdentifier().getInputName() );
+		PropList bean_PropList = bean.getResultsPropList();
+		Object prop_contents = bean_PropList.getContents ( "TS" );
+		if ( prop_contents == null ) {
+			Message.printWarning(warningLevel,
+				MessageUtil.formatMessageTag( command_tag, ++warning_count),
+				routine, "Null value for GetTimeSeries(Index=" + its +
+				"\") returned from processor.  Skipping time series." );
+				continue;
+		}
+		// Now get the time series from the request results.
+		ts = (TS)prop_contents;
+		
+		// Get the HydroBase connection instance to use for this time series.
+		
+		request_params = new PropList ( "" );
+		request_params.set ( "InputName", "" + ts.getIdentifier().getInputName() );
+		try { bean =
+			_processor.processRequest( "GetHydroBaseDMI", request_params);
+		}
+		catch ( Exception e ) {
+			Message.printWarning(warningLevel,
+					MessageUtil.formatMessageTag( command_tag, ++warning_count),
+					routine, "Error requesting GetHydroBaseDMI(InputName=" +
+					ts.getIdentifier().getInputName() +
+					"\" from processor.  Skipping time series." );
+			continue;
+		}
+		bean_PropList = bean.getResultsPropList();
+		prop_contents = bean_PropList.getContents ( "HydroBaseDMI" );
+		if ( prop_contents == null ) {
+			Message.printWarning(warningLevel,
+				MessageUtil.formatMessageTag( command_tag, ++warning_count),
+				routine, "Null value for GetHydroBaseDMI(InputName=" +
+				ts.getIdentifier().getInputName() +
+				"\") returned from processor.  Skipping time series." );
+				continue;
+		}
+		hbdmi = (HydroBaseDMI)prop_contents;
+		
+		// Fill with diversion comments...
 
-		if ( TSCmdProc.haveOutputPeriod() ) {
+		if ( HaveOutputPeriod_boolean ) {
 			// No need to extend the period...
 			try {
 				HydroBase_Util.fillTSUsingDiversionComments (
@@ -404,7 +515,7 @@ CommandWarningException, CommandException
 					ciu.equalsIgnoreCase( "I" )) {
 				// Recalculate TS Limits
 				warning_count = 
-					recalculateLimits( ts, TSCmdProc, warningLevel, 
+					recalculateLimits( ts, _processor, warningLevel, 
 					warning_count, command_tag );
 				// Fill missing data values at end of period with zeros
 				try {
@@ -438,7 +549,7 @@ CommandWarningException, CommandException
 			else if( ciu.equalsIgnoreCase( "N" )) {
 				// Recalculate TS Limits
 				warning_count = 
-					recalculateLimits( ts, TSCmdProc, warningLevel, 
+					recalculateLimits( ts, _processor, warningLevel, 
 					warning_count, command_tag );
 				try {
 					TSData tmpTSData = 
@@ -468,13 +579,26 @@ CommandWarningException, CommandException
 			}	
 		}
 		else if ( RecalcLimits.equalsIgnoreCase( "True" ) ) {
-				recalculateLimits( ts, TSCmdProc, warningLevel,
+				recalculateLimits( ts, _processor, warningLevel,
 					warning_count, command_tag );
 		}
-		// Update...
+		// Update the time series in the processor...
+
 		try {
-			TSCmdProc.processTimeSeriesAction ( TSCmdProc.UPDATE_TS, 
-					ts, its );
+		request_params = new PropList ( "" );
+		request_params.set ( "Action", "Update" );
+		request_params.setUsingObject ( "TS", ts );
+		request_params.setUsingObject ( "Index", new Integer(its) );
+		try { bean =
+			_processor.processRequest( "ProcessTimeSeriesAction", request_params);
+		}
+		catch ( Exception e ) {
+			Message.printWarning(warningLevel,
+					MessageUtil.formatMessageTag( command_tag, ++warning_count),
+					routine, "Error requesting ProcessTimeSeriesAction(Action=Update" +
+					"\" from processor.  Results will not be visible." );
+			continue;
+		}
 		} catch (Exception e) {
 			Message.printWarning(warningLevel,
 					MessageUtil.formatMessageTag( command_tag, ++warning_count),

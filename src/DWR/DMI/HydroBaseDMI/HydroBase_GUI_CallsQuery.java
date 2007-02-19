@@ -83,6 +83,9 @@
 //					object of the call to use in the copy
 //					call GUI, rather than using the object
 //					being displayed in the worksheet.
+// 2007-02-07	SAM, RTi		Remove dependences on CWRAT.
+//					Just pass a JFrame as the parent.
+//					Add GeoViewUI to the constructor to handle map interaction.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -107,23 +110,17 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-
-import DWR.DMI.CWRAT.CWRATMainJFrame;
 
 import RTi.DMI.DMIUtil;
 
 import RTi.Util.GUI.DragAndDropJWorksheet;
 import RTi.Util.GUI.DragAndDropListener;
-import RTi.Util.GUI.DragAndDropUtil;
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.JScrollWorksheet;
 import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJButton;
 
-import RTi.Util.IO.ExportJGUI;
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PrintJGUI;
 import RTi.Util.IO.PropList;
 
@@ -164,8 +161,6 @@ Misc strings.
 private final String    
 		__MAIN_LABEL = 		"Main Stem Calls:", 
                 __TRIB_LABEL = 		"Tributary Calls:", 
-		__CALLS_HELP = 		"CWRAT.HydroBase_GUI_CallsQuery",
-		__EDIT_CALLS_HELP = 	"CWRAT.HBEditCallsGUI",
 		__BUTTON_COPY_CALL = 	"Copy Call",
 		__BUTTON_EDIT_COMMENTS = "Edit Comments",
 		__BUTTON_GRAPH = 	"Graph",
@@ -193,7 +188,12 @@ private DragAndDropJWorksheet __tribTable;
 /**
 The parent frame running the application.
 */
-private CWRATMainJFrame __parent;
+private JFrame __parent = null;
+
+/**
+The GeoViewUI instance for map interaction.
+*/
+private GeoViewUI __geoview_ui = null;
 
 /**
 Reference to an open and non-null DMI object.
@@ -272,24 +272,21 @@ private SimpleJButton
 	__setJButton;
 
 /**
-The string that appears on the help key.
-*/
-private String __helpKey;
-
-/**
 Results of the calls.
 */
-private Vector __results;
+private Vector __results = null;
 
 /**
 Constructor.
-@param parent the parent CWRAT JFrame object.
+@param parent the parent JFrame object, to position windows.
+@param geoview_ui The GeoViewUI instance for handling maps.
 @param dmi an open and non-null HydroBaseDMI object.
 @param flag CALLS, or EDIT_CALLS
 */
-public HydroBase_GUI_CallsQuery(CWRATMainJFrame parent, HydroBaseDMI dmi, 
+public HydroBase_GUI_CallsQuery(JFrame parent, GeoViewUI geoview_ui, HydroBaseDMI dmi, 
 int flag) {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	__dmi = dmi;
 	__guiMode = flag;	
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
@@ -449,7 +446,7 @@ private void copyCall() {
 	copyCall.setDate_time_released(null);
 	copyCall.setRelease_comments("");
 
-	new HydroBase_GUI_SetCall(this, __parent, __dmi, copyCall);
+	new HydroBase_GUI_SetCall(this, __parent, __geoview_ui, __dmi, copyCall);
 }
 
 /**
@@ -652,7 +649,6 @@ throws Throwable {
 	__releaseJButton = null;
 	__removeJButton = null;
 	__setJButton = null;
-	__helpKey = null;
 	__results = null;
 	super.finalize();
 }
@@ -671,7 +667,6 @@ private String formatLine(HydroBase_Calls call, char delim, boolean fullPad) {
 	String routine = "HydroBase_GUI_CallsQuery.formatLine";
 	String line = "";
 	String s = "";
-	int count = 0;
 	String format = "";
 	
 	try {
@@ -1042,52 +1037,6 @@ private int getSelectedCall() {
 	return call.getCall_num();
 }
 
-
-/**
-Returns selected call numbers if multiple selections.
-@return an array of the selected call numbers if multiple calls are selected.
-The array first contains the selections from the top table and then the
-selections from the bottom table.
-*/
-private int[] getSelectedCalls() {
-	String selectCall = "Must select a call.";
-
-	// check for if both list were selected
-	int[] mainSelect = __mainTable.getSelectedRows();
-        int[] tribSelect = __tribTable.getSelectedRows();
-
-	// No selection made
-	if (mainSelect.length == 0 && tribSelect.length == 0) {
-		new ResponseJDialog(this, selectCall, selectCall,
-			ResponseJDialog.OK).response();
-                return null;
-	}
-
-	// Selection from main stem list
-	int[] selected = new int[mainSelect.length + tribSelect.length];
-	int selectedCount = 0;
-
-	HydroBase_Calls call = null;
-	if (mainSelect.length > 0) {
-		for (int i = 0; i < mainSelect.length; i++) {
-			call = (HydroBase_Calls)
-				__mainTable.getRowData(mainSelect[i]);
-			selected[selectedCount++] = call.getCall_num();	
-		}
-
-	}
-
-	// Selection from tributary list
-	if (tribSelect.length > 0) {
-		for (int i = 0; i < tribSelect.length; i++) {
-			call = (HydroBase_Calls)
-				__tribTable.getRowData(tribSelect[i]);
-			selected[selectedCount++] = call.getCall_num();
-		}
-	}
-	return selected;
-}
-
 /**
 Returns the fromJTextField parsed to DateTime object.
 @return the fromJTextField value parsed into a DateTime object.
@@ -1235,7 +1184,6 @@ private void reactivateClicked() {
 	Vector whereClause = new Vector();
 	// determine if the selected call has a release date
 	whereClause.addElement("calls.call_num = " + callNum);
-	Vector results = null;
 	HydroBase_Calls call = null;
 	try {
 		call = __dmi.readCallsForCall_num(callNum);
@@ -1254,7 +1202,6 @@ private void reactivateClicked() {
 		return;
 	}	
 
-	String dmiString = null;
 	try {
 		if (clearComment) {
 			__dmi.updateCallsArchiveDateReleaseCommentsForCall_num(
@@ -1368,7 +1315,7 @@ Refreshes the worksheets.
 */
 private void refresh() {
 	try {	
-		Vector results = submitQuery(false);
+		submitQuery(false);
 	}
 	catch (Exception e) {
 		String routine = "HydroBase_GUI_CallsQuery.refresh()";
@@ -1383,7 +1330,7 @@ Displays the set Call GUI
 private void setCallClicked() {
 	JGUIUtil.setWaitCursor(this, true);
 	if (__setCallGUI == null) {
-		__setCallGUI = new HydroBase_GUI_SetCall(this, __parent, __dmi);
+		__setCallGUI = new HydroBase_GUI_SetCall(this, __parent, __geoview_ui, __dmi);
 	}	
 	else {	
 		__setCallGUI.setVisible(true);
@@ -1395,16 +1342,13 @@ private void setCallClicked() {
 Sets up the GUI.
 */
 private void setupGUI() {
-	String rtn = "HydroBase_GUI_CallsQuery.setupGUI";
 	addWindowListener(this);
 	
         // objects used throughout the GUI layout
-        Insets insetsTLBR = new Insets(7,7,7,7);
         Insets insetsNLNR = new Insets(0,7,0,7);
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
        	JPanel topJPanel = new JPanel();
@@ -1435,7 +1379,7 @@ private void setupGUI() {
         
         __mainJLabel = new JLabel(__MAIN_LABEL);
         JGUIUtil.addComponent(centerJPanel, __mainJLabel, 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	PropList p = 
 		new PropList("HydroBase_GUI_CallsQuery.DragAndDropJWorksheet");
@@ -1461,11 +1405,11 @@ private void setupGUI() {
 	__mainTable.addMouseListener(this);
 
         JGUIUtil.addComponent(centerJPanel, mainJSW,
-		1, 2, 1, 1, 1, 1, insetsNLNR, gbc.BOTH, gbc.WEST);
+		1, 2, 1, 1, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
  
         __tribJLabel = new JLabel(__TRIB_LABEL);
         JGUIUtil.addComponent(centerJPanel, __tribJLabel, 
-		1, 3, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 3, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
  
  	JScrollWorksheet tribJSW = new JScrollWorksheet(0, 0, p, true);
 	__tribTable = (DragAndDropJWorksheet)tribJSW.getJWorksheet();
@@ -1473,7 +1417,7 @@ private void setupGUI() {
 	__tribTable.addMouseListener(this);
  
         JGUIUtil.addComponent(centerJPanel, tribJSW,
-		1, 4, 1, 1, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		1, 4, 1, 1, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
     
         // Bottom JPanel
         JPanel bottomJPanel = new JPanel();
@@ -1565,7 +1509,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // frame settings
 
@@ -1577,7 +1521,6 @@ private void setupGUI() {
 		else {	setTitle( JGUIUtil.getAppNameForWindows() +
 			" - Call Chronology Data - Query" );
 		}
-		__helpKey = __CALLS_HELP;
 	}
 	else {	if (	(JGUIUtil.getAppNameForWindows() == null) ||
 			JGUIUtil.getAppNameForWindows().equals("") ) {
@@ -1586,7 +1529,6 @@ private void setupGUI() {
 		else {	setTitle( JGUIUtil.getAppNameForWindows() +
 			" - Administration - Edit Calls" );
 		}
-		__helpKey = __EDIT_CALLS_HELP;
 	}
 	initialize();
 

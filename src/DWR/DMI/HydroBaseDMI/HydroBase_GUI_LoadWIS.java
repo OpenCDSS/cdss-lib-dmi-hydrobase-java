@@ -55,6 +55,10 @@
 //					now pass a "true" to make sure the 
 //					query results are sorted by 
 //					effective date.
+// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
+//					Pass JFrame to constructor.
+//					Add GoeViewUI to handle map interactions.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -76,14 +80,11 @@ import java.awt.event.WindowListener;
 import java.util.Date;
 import java.util.Vector;
 
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
-import DWR.DMI.CWRAT.CWRATMainJFrame;
 
 import RTi.DMI.DMIUtil;
 
@@ -140,9 +141,14 @@ Whether any additional wisses should be opened in readonly mode.
 private boolean __readonly = false;
 
 /**
-The parent JFrame running the application.
+The parent JFrame running the application, for window positioning
 */
-private CWRATMainJFrame __parent;
+private JFrame __parent = null;
+
+/**
+GeoViewUI for map interactions.
+*/
+private GeoViewUI __geoview_ui = null;
 
 /**
 DMI for communicating with the database.
@@ -183,14 +189,17 @@ private Vector
 
 /**
 Constructor.
+@param parent JFrame that instantiates this class, for window positioning.
+@param geoview_ui GeoViewUI for map interactions.
 @param dmi an open and connected dmi object with which to communicate with
 the database.
 @param mode mode in which this dialog may be instantiated as follows:
 WIS_BUILDER, DISTRICT_WIS, DIVISION_WIS
 */
-public HydroBase_GUI_LoadWIS(CWRATMainJFrame parent, HydroBaseDMI dmi, 
-int mode) {
+public HydroBase_GUI_LoadWIS(JFrame parent, GeoViewUI geoview_ui,
+HydroBaseDMI dmi, int mode) {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	__dmi = dmi;
         __mode = mode;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
@@ -199,14 +208,17 @@ int mode) {
 
 /**
 Constructor.
+@param parent JFrame that instantiates this class, for window positioning.
+@param geoview_ui GeoViewUI for map interactions.
 @param dmi an open and connected dmi object with which to communicate with
 the database.
 @param mode mode in which this dialog may be instantiated as follows:
 WIS_BUILDER, DISTRICT_WIS, DIVISION_WIS
 */
-public HydroBase_GUI_LoadWIS(CWRATMainJFrame parent, HydroBaseDMI dmi, 
-int mode, boolean readonly) {
+public HydroBase_GUI_LoadWIS(JFrame parent, GeoViewUI geoview_ui,
+		HydroBaseDMI dmi, int mode, boolean readonly) {
 	__parent = parent;
+	__geoview_ui = geoview_ui;
 	__dmi = dmi;
         __mode = mode;
 	__readonly = readonly;
@@ -262,7 +274,6 @@ private void deleteClicked() {
 	try {
         // initialize variables
 	String sheetName = "";
-	int sheetIndex = __sheetNameComboBox.getSelectedIndex();
 	// Parse out by a -
 	sheetName = StringUtil.getToken(
 		(String)__sheetNameComboBox.getSelectedItem(),
@@ -373,7 +384,7 @@ private void editClicked() {
       	HydroBase_WISSheetName data = 
 		(HydroBase_WISSheetName)__sheetDatesVector.elementAt(index);
 
-        new HydroBase_GUI_WISBuilder(__parent, __dmi, data);
+        new HydroBase_GUI_WISBuilder(__parent, __geoview_ui, __dmi, data);
 
 	JGUIUtil.setWaitCursor(this, false);
         __statusJTextField.setText("Ready");
@@ -435,8 +446,7 @@ private void generateDates() {
 	if (!results.isEmpty()) {
 		if (__dmi.useStoredProcedures()) {
 			Vector rows = new Vector();
-	                int size = results.size(); 
-	                Vector wis_numVector = new Vector(size);
+	                int size = results.size();
 	                for (int curRow = 0; curRow < size; curRow++) {
 	                        data = (HydroBase_WISSheetName)
 					results.elementAt(curRow);
@@ -605,7 +615,6 @@ to Districts selected in the user preferences.
 */
 private Vector getWD() {
 	Vector v = HydroBase_GUI_Util.generateWaterDistricts(__dmi, true);
-	String wd_where = null;
 
 	Vector results = new Vector();
 
@@ -642,7 +651,6 @@ private void getWISSheets() {
 	DateTime first = null;
 	DateTime last = null;
 	int nsheets = 0;
-	int nwis = 0;
 	HydroBase_WISSheetName data = null;
 	String name = null;
 
@@ -796,7 +804,7 @@ public void itemStateChanged(ItemEvent event) {
 		return;
 	}
 	
-	if (event.getStateChange() != event.SELECTED) {
+	if (event.getStateChange() != ItemEvent.SELECTED) {
 		return;
 	}
 	
@@ -854,7 +862,7 @@ Prompts user for new water information sheet information.
 */
 private void newClicked() {
 	if (__newWISGUI == null) {	
-	        __newWISGUI = new HydroBase_GUI_NewWIS(__parent, __dmi, this);
+	        __newWISGUI = new HydroBase_GUI_NewWIS(__parent, __geoview_ui, __dmi, this);
 	}
 	else {	
 		__newWISGUI.setVisible(true);
@@ -1014,7 +1022,7 @@ Message.printStatus(1, "", "      oldFormatWISNum: " + oldFormatWISNum);
 
 	JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Please Wait...Displaying WIS ");
-	new HydroBase_GUI_WIS(__parent, __dmi, sheetData, __mode, date, 
+	new HydroBase_GUI_WIS(__parent, __geoview_ui, __dmi, sheetData, __mode, date, 
 		status, sheetName, isNewSheet, previousData, editable,
 		oldFormatWISNum);
 		
@@ -1055,7 +1063,6 @@ private void setupGUI() {
         Insets insetsTLNN = new Insets(7,7,0,0);
         Insets insetsTNNR = new Insets(7,0,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
         JPanel topJPanel = new JPanel();
@@ -1063,12 +1070,12 @@ private void setupGUI() {
         getContentPane().add("North", topJPanel);
 
         JGUIUtil.addComponent(topJPanel, new JLabel("Sheet Name:"), 
-		0, 0, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.EAST);
+		0, 0, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
                 
         __sheetNameComboBox = new SimpleJComboBox();
 	__sheetNameComboBox.addItemListener(this);
         JGUIUtil.addComponent(topJPanel, __sheetNameComboBox, 
-		1, 0, 1, 1, 1, 0, insetsTNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 0, 1, 1, 1, 0, insetsTNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Center JPanel
         JPanel centerJPanel = new JPanel();
@@ -1076,17 +1083,17 @@ private void setupGUI() {
         getContentPane().add("Center", centerJPanel);
          
         JGUIUtil.addComponent(centerJPanel, new JLabel("Date:"), 
-		0, 1, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
                 
         __historyList = new SimpleJList();
 	__historyList.addMouseListener(this);
         JGUIUtil.addComponent(centerJPanel, new JScrollPane(__historyList),
-		0, 2, 2, 1, 1, 1, insetsNLNR, gbc.BOTH, gbc.WEST);
+		0, 2, 2, 1, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         JPanel buttonJPanel = new JPanel();
         buttonJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         JGUIUtil.addComponent(centerJPanel, buttonJPanel, 
-		0, 3, 2, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST); 
+		0, 3, 2, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
  
  	SimpleJButton openReadOnly = new SimpleJButton(__BUTTON_OPEN_READ_ONLY,
 		this);
@@ -1139,7 +1146,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(southJPanel, __statusJTextField, 
-		0, 0, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	String app = JGUIUtil.getAppNameForWindows();
 	if (app == null || app.trim().equals("")) {

@@ -12,6 +12,9 @@
 //					connections now iterates through a list
 //					of possible ports to connect to, in 
 //					order to support MSDE servers.
+// 2007-02-11	SAM, RTi		Verify that code is consistent with the new
+//					TSCommandProcessor.  Clean up code based on Eclipse
+//					feedback.
 //------------------------------------------------------------------------------
 // EndHeader
 
@@ -29,11 +32,9 @@ import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.Prop;
 import RTi.Util.IO.PropList;
 import RTi.Util.IO.SkeletonCommand;
-import RTi.Util.Math.MathUtil;
 import RTi.Util.Message.Message;
 import RTi.Util.Message.MessageUtil;
 import RTi.Util.String.StringUtil;
-import RTi.Util.Time.DateTime;
 
 /**
 <p>
@@ -87,9 +88,10 @@ throws InvalidCommandParameterException
 	if ( DatabaseName == null ) {
 		DatabaseName = "";
 	}
-	String RunMode = parameters.getValue ( "RunMode" );
-	String UseStoredProcedures = parameters.getValue("UseStoredProcedures");
-	String InputName = parameters.getValue ( "InputName" );
+	//TODO SAM 2007-02-11 Need to add checks for the following.
+	//String RunMode = parameters.getValue ( "RunMode" );
+	//String UseStoredProcedures = parameters.getValue("UseStoredProcedures");
+	//String InputName = parameters.getValue ( "InputName" );
 	String warning = "";
 
 	if (	(OdbcDsn.equals("") && DatabaseServer.equals("")) ||
@@ -304,7 +306,8 @@ CommandWarningException, CommandException
 		}
 		// Set the HydroBaseDMI instance in the Vector of open
 		// connections, passed back to the CommandProcessor...
-		setHydroBaseDMI ( hbdmi, false );
+		warning_count = setHydroBaseDMI ( hbdmi, false, warning_level,
+				warning_count, command_tag );
 		// Print a message to the log file...
 		try {	String [] comments = hbdmi.getVersionComments();
 			for ( int i = 0; i < comments.length; i++ ) {
@@ -343,16 +346,35 @@ location.  If a match is not found, the new instance is added at the end.
 @param close_old If an old DMI instance is matched, close the DMI instance if
 true.  The main issue is that if something else is using the DMI instance (e.g.,
 the TSTool GUI) it may be necessary to leave the old instance open.
+@param warning_level Warning level for user-visible command messages.
+@param warning_count The count of warnings generated in this command.
+@param command_tag String used to tag messages
 */
-private void setHydroBaseDMI ( HydroBaseDMI hbdmi, boolean close_old )
-{	if ( hbdmi == null ) {
-		return;
+private int setHydroBaseDMI ( HydroBaseDMI hbdmi, boolean close_old, int warning_level,
+		int warning_count, String command_tag )
+throws CommandException
+{	String routine = getCommandName() + ".setHydroBaseDMI";
+	String message;
+	if ( hbdmi == null ) {
+		return warning_count;
 	}
 
 	// Get the DMI instances from the processor...
 
-	Vector dmilist = (Vector)_processor.getPropContents("HydroBaseDMIList");
-
+	Vector dmilist = null;
+	try { Object o = _processor.getPropContents ( "HydroBaseDMIList" );
+			if ( o != null ) {
+				dmilist = (Vector)o;
+			}
+	}
+	catch ( Exception e ) {
+		// Not fatal, but of use to developers.
+		message =
+			"Error requesting HydroBaseDMIList from processor - starting new list.";
+		routine = getCommandName() + ".setHydroBaseDMI";
+		Message.printDebug(10, routine, message );
+	}
+	
 	int size = 0;
 	if ( dmilist == null ) {
 		dmilist = new Vector();
@@ -375,15 +397,34 @@ private void setHydroBaseDMI ( HydroBaseDMI hbdmi, boolean close_old )
 				}
 			}
 			dmilist.setElementAt ( hbdmi, i );
-			_processor.setPropContents ( "HydroBaseDMIList",
+			try { _processor.setPropContents ( "HydroBaseDMIList",
 				dmilist );
-			return;
+			}
+			catch ( Exception e ){
+				message = "Cannot set updated HydroBaseDMI list.";
+				Message.printWarning ( warning_level,
+					MessageUtil.formatMessageTag(
+					command_tag, ++warning_count),
+					routine,message);
+				throw new CommandException ( message );
+			}
+			return warning_count;
 		}
 	}
 	// Add a new instance to the Vector...
 	dmilist.addElement ( hbdmi );
 	// Set back in the processor...
-	_processor.setPropContents ( "HydroBaseDMIList", dmilist );
+	try { _processor.setPropContents ( "HydroBaseDMIList", dmilist );
+	}
+	catch ( Exception e ){
+		message = "Cannot set updated HydroBaseDMI list.";
+		Message.printWarning ( warning_level,
+			MessageUtil.formatMessageTag(
+			command_tag, ++warning_count),
+			routine,message);
+		throw new CommandException ( message );
+	}
+	return warning_count;
 }
 
 /**
