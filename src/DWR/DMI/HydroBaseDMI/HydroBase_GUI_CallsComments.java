@@ -11,6 +11,7 @@
 //					if the call was specified in the 
 //					constructor as having been released.
 // 2005-04-27	JTS, RTi		Added all data members to finalize().
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -241,10 +242,6 @@ private void okClicked() {
 Sets up the GUI.
 */
 private void setupGUI() {
-	String routine = "HydroBase_GUI_CallsComments.setupGUI";
-
-        GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 	
 	JPanel panel = new JPanel();
 	panel.setLayout(new GridBagLayout());
@@ -253,33 +250,33 @@ private void setupGUI() {
 	int y = 0;
 	JGUIUtil.addComponent(panel, new JLabel("Districts affected: "),
 		0, y, 1, 1, 0, 0,
-		gbc.NONE, gbc.EAST);
+		GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__districtsAffectedJTextField = new JTextField(40);
 	__districtsAffectedJTextField.setText(__districtsAffected);
 	JGUIUtil.addComponent(panel, __districtsAffectedJTextField,
 		1, y, 1, 1, 0, 0,
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	y++;
 	JGUIUtil.addComponent(panel, new JLabel("Set comments: "),
 		0, y, 1, 1, 0, 0, 
-		gbc.NONE, gbc.EAST);
+		GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__setCommentsJTextField = new JTextField(40);
 	__setCommentsJTextField.setText(__setComments);
 	JGUIUtil.addComponent(panel, __setCommentsJTextField,
 		1, y, 1, 1, 0, 0,
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
 	y++;
 	JGUIUtil.addComponent(panel, new JLabel("Release comments: "),
 		0, y, 1, 1, 0, 0,
-		gbc.NONE, gbc.EAST);
+		GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__releaseCommentsJTextField = new JTextField(40);
 	__releaseCommentsJTextField.setText(__releaseComments);
 	__releaseCommentsJTextField.setEditable(__released);
 	JGUIUtil.addComponent(panel, __releaseCommentsJTextField,
 		1, y, 1, 1, 0, 0,
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JPanel buttons = new JPanel();
 	buttons.setLayout(new GridBagLayout());
@@ -291,7 +288,7 @@ private void setupGUI() {
 	JGUIUtil.addComponent(buttons, __restoreJButton,
 		0, 0, 1, 1, 0, 0,
 		2, 4, 2, 4,
-		gbc.NONE, gbc.EAST);
+		GridBagConstraints.NONE, GridBagConstraints.EAST);
 	
 	__okJButton = new JButton(__BUTTON_OK);
 	__okJButton.addActionListener(this);
@@ -300,7 +297,7 @@ private void setupGUI() {
 	JGUIUtil.addComponent(buttons, __okJButton,
 		1, 0, 1, 1, 0, 0,
 		2, 4, 2, 4,
-		gbc.NONE, gbc.EAST);
+		GridBagConstraints.NONE, GridBagConstraints.EAST);
 	
 	__cancelJButton = new JButton(__BUTTON_CANCEL);
 	__cancelJButton.addActionListener(this);
@@ -309,7 +306,7 @@ private void setupGUI() {
 	JGUIUtil.addComponent(buttons, __cancelJButton,
 		2, 0, 1, 1, 0, 0,
 		2, 4, 2, 4,
-		gbc.NONE, gbc.EAST);
+		GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	getContentPane().add("South", buttons);
 

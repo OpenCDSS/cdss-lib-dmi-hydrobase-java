@@ -18,6 +18,7 @@
 // 2005-04-28	JTS, RTi		Added finalize().
 // 2005-11-16	JTS, RTi		Added support for the "Entire State"
 //					option.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -38,10 +39,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import java.util.Vector;
-
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -57,7 +55,6 @@ import RTi.Util.Message.Message;
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleJList;
 
-import RTi.Util.IO.IOUtil;
 
 /**
 GUI to select a default district for menus, etc.
@@ -107,8 +104,7 @@ Miscellaneous Strings.
 private final String 
 	__BUTTON_CANCEL = 	"Cancel",
 	__BUTTON_HELP = 	"Help",
-	__BUTTON_OK = 		"OK",	
-	__HELP_STRING = 	"CWRAT.HydroBase_GUI_SelectDefaultDistrict";
+	__BUTTON_OK = 		"OK";
 
 /**
 String for No Preference.
@@ -184,11 +180,11 @@ public void keyPressed(KeyEvent evt) {
 	int code = evt.getKeyCode();
 
 	// enter key is the same as ok
-	if (code == evt.VK_ENTER) {
+	if (code == KeyEvent.VK_ENTER) {
        		okClicked();
 	}
 	// F1 envokes help
-	else if (code == evt.VK_F1) {
+	else if (code == KeyEvent.VK_F1) {
 	}
 }
 
@@ -237,13 +233,8 @@ private void setupGUI() {
 	addWindowListener(this);
                 
         // used in the GridBagLayouts
-        Insets TB_insets = new Insets(7,0,7,0);
-        Insets LR_insets = new Insets(0,7,0,7);
         Insets LTB_insets = new Insets(7,7,0,0);
-        Insets LRTB_insets = new Insets(7,7,7,7);
-        Insets RTB_insets = new Insets(7,0,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // North JPanel
         JPanel northJPanel = new JPanel();
@@ -259,25 +250,25 @@ private void setupGUI() {
 
         JGUIUtil.addComponent(northWJPanel, new JLabel(
 		"* indicates that the district is in the current database"), 
-		0, y, 2, 1, 0, 0, LTB_insets, gbc.NONE, gbc.CENTER);
+		0, y, 2, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.CENTER);
 	++y;
         JGUIUtil.addComponent(northWJPanel, new JLabel(
 		"The districts are grouped by division."), 
-		0, y, 2, 1, 0, 0, LTB_insets, gbc.NONE, gbc.CENTER);
+		0, y, 2, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.CENTER);
 
 	// Show the current default...
 
 	++y;
         JGUIUtil.addComponent(northWJPanel, new JLabel(
 		"Current default:"), 
-		0, y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__currentDefaultJTextField = new JTextField(40);
 	__currentDefaultJTextField.setText(
 		__dmi.getPreferenceValue("WD.DistrictDefault"));
 	__currentDefaultJTextField.setEnabled(false);
         JGUIUtil.addComponent(northWJPanel, __currentDefaultJTextField,
-		1, y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	// Add list and show 20 districts...
 	++y;
@@ -298,13 +289,13 @@ private void setupGUI() {
 		ListSelectionModel.SINGLE_SELECTION);
 	__districtJList.addListSelectionListener(this);
         JGUIUtil.addComponent(northWJPanel, new JScrollPane(__districtJList),
-		0, y, 2, 1, 0, 0, LTB_insets, gbc.BOTH, gbc.CENTER);
+		0, y, 2, 1, 0, 0, LTB_insets, GridBagConstraints.BOTH, GridBagConstraints.CENTER);
 	
 	// Always add none...
 	__districtJList.add(__NONE);
 
 	// Always add Entire State.
-	if (__dmi.getDatabaseVersion() >= __dmi.VERSION_20050701) {
+	if (__dmi.getDatabaseVersion() >= HydroBaseDMI.VERSION_20050701) {
 		__districtJList.add(HydroBase_GUI_Util._ALL_DIVISIONS);
 	}
 	
@@ -367,7 +358,7 @@ private void setupGUI() {
         __statusJTextField.setBackground(Color.lightGray);
 	__statusJTextField.setEditable(false);
         JGUIUtil.addComponent(southSJPanel, __statusJTextField, 
-		0, 0, 1, 1, 1, 1, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	__statusJTextField.setText(
 	"Select a default district(for menus, queries, etc.)");
         

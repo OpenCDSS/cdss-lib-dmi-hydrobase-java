@@ -13,21 +13,15 @@
 //					HydroBase_Crop.java and modify.
 // 2003-01-05	SAM, RTi		Update based on changes to the DMI
 //					package.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.io.IOException;
-
 import java.util.Date;
-import java.util.Vector;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
-
-import RTi.Util.Message.Message;
-import RTi.Util.String.StringUtil;
 
 /**
 This class provides storage for data from the HydroBase db_version table.

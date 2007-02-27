@@ -26,6 +26,7 @@
 // 2005-04-27	JTS, RTi		Added finalize().
 // 2005-05-09	JTS, RTi		All structure queries now return
 //					structure view objects.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -219,7 +220,6 @@ in the Vector.
 */
 private Generic_TableModel buildTableModel(Vector v) {
 	try {
-		GenericWorksheetData data =(GenericWorksheetData)v.elementAt(0);
 		Generic_TableModel model = new Generic_TableModel(v);
 
 		model.setColumnInformation(0, "IRR YEAR", "%4s", 8);
@@ -520,7 +520,6 @@ private Vector resultsToGenericData(Vector results) {
 Sets up the GUI.
 */
 private void setupGUI() {
-	String routine = CLASS + ".setupGUI";
 	addWindowListener(this);
 
         // objects used throughout the GUI layout
@@ -528,7 +527,6 @@ private void setupGUI() {
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
                
         // North JPanel
         JPanel NorthJPanel = new JPanel();
@@ -541,36 +539,36 @@ private void setupGUI() {
         NorthJPanel.add("West", NorthWJPanel);
 
         JGUIUtil.addComponent(NorthWJPanel, new JLabel("Structure Name"), 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST); 
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST); 
 
         JGUIUtil.addComponent(NorthWJPanel, new JLabel("DIV"), 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
      
         JGUIUtil.addComponent(NorthWJPanel, new JLabel("WD"), 
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(NorthWJPanel, new JLabel("ID"), 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureJTextField = new JTextField(__structureName);
         __structureJTextField.setEditable(false);
         JGUIUtil.addComponent(NorthWJPanel, __structureJTextField, 
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
        
         __divJTextField = new JTextField(5);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(NorthWJPanel, __divJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(5);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(NorthWJPanel, __wdJTextField, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(5);
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(NorthWJPanel, __idJTextField, 
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         // Center JPanel
         JPanel centerJPanel = new JPanel();
@@ -578,16 +576,16 @@ private void setupGUI() {
         add("Center", centerJPanel);
 
         JGUIUtil.addComponent(centerJPanel, new JLabel("UNITS:"), 
-		0, 0, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);        
+		0, 0, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);        
 
         __unitsJTextField = new JTextField(5);
         __unitsJTextField.setEditable(false);
         JGUIUtil.addComponent(centerJPanel, __unitsJTextField, 
-		1, 0, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		1, 0, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __worksheetJLabel = new JLabel(HydroBase_GUI_Util.LIST_LABEL);
         JGUIUtil.addComponent(centerJPanel, __worksheetJLabel, 
-		0, 1, 3, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 3, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	PropList p = new PropList("HydroBase_GUI_DailyWC.JWorksheet");
 	p.add("JWorksheet.ShowRowHeader=true");
@@ -599,7 +597,7 @@ private void setupGUI() {
 	__worksheet.setHourglassJFrame(this);
 
         JGUIUtil.addComponent(centerJPanel, jsw,
-		0, 2, 3, 3, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		0, 2, 3, 3, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         // Bottom JPanel
         JPanel bottomJPanel = new JPanel();
@@ -630,7 +628,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Frame settings
         setTitle("Historic Diversion - Daily WC");

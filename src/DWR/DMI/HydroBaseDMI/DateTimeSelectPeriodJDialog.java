@@ -37,6 +37,7 @@
 //					  when the year in -999.
 //					* Updated some things that were still
 //					  in the old AWT style.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -582,9 +583,7 @@ private void setupGUI() {
 	Insets TLNR = new Insets(7,7,0,7);
 	Insets NLBR = new Insets(0,7,7,7);
 	Insets TLNN = new Insets(7,7,0,0);
-	Insets N4BR = new Insets(0,28,7,7);
 	GridBagLayout gbl = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
 
 	JPanel northJPanel = new JPanel();
 	northJPanel.setLayout(new BorderLayout());
@@ -596,7 +595,7 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(northWJPanel, 
 		new JLabel("Selected Time Series:"), 
-		0, 0, 2, 1, 0, 0, TLNN, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 2, 1, 0, 0, TLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__simpleList = new JTextArea("", _NUM_ROWS, _NUM_COLS);
         __simpleList.setFont(new Font("Courier", Font.PLAIN, 11));
@@ -605,7 +604,7 @@ private void setupGUI() {
 		new JScrollPane(__simpleList, 
 		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-		0, 1, 2, 1, 1, 1, NLBR, gbc.BOTH, gbc.WEST);
+		0, 1, 2, 1, 1, 1, NLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	__userJRadioButton = new JRadioButton("User defined" , false);
 	__maxJRadioButton = new JRadioButton("Maximize the Period", false);
@@ -619,32 +618,32 @@ private void setupGUI() {
 		__userJRadioButton.setSelected(true);
 	}
 	JGUIUtil.addComponent(northWJPanel, __userJRadioButton, 
-		0, 2, 1, 1, 0, 0, TLNN, gbc.HORIZONTAL, gbc.WEST);
+		0, 2, 1, 1, 0, 0, TLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel, 
 		__setPeriodJButton = new SimpleJButton(__SET_PERIOD, this),
-		1, 2, 1, 1, 0, 0, TNNR, gbc.NONE, gbc.WEST);
+		1, 2, 1, 1, 0, 0, TNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	if (__preferredState.equals(__MAX)) {
 		__maxJRadioButton.setSelected(true);
 	}
 	JGUIUtil.addComponent(northWJPanel, __maxJRadioButton, 
-		0, 3, 2, 1, 0, 0, TLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 3, 2, 1, 0, 0, TLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	if (__preferredState.equals(__MIN)) {
 		__minJRadioButton.setSelected(true);
 	}
 	JGUIUtil.addComponent(northWJPanel, __minJRadioButton, 
-		0, 4, 2, 1, 0, 0, TLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, 4, 2, 1, 0, 0, TLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(northWJPanel, 
 		new JLabel("Plot Period:"), 
-		0, 5, 1, 1, 0, 0, TLNN, gbc.NONE, gbc.EAST);
+		0, 5, 1, 1, 0, 0, TLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	JPanel intervalJPanel = new JPanel();
 	intervalJPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 	JGUIUtil.addComponent(northWJPanel, intervalJPanel,
-		1, 5, 1, 1, 0, 0, TNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 5, 1, 1, 0, 0, TNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__fromJTextField = new JTextField(15);
 	__fromJTextField.setEditable(false);
@@ -674,7 +673,7 @@ private void setupGUI() {
 	__statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
 	JGUIUtil.addComponent(statusJPanel, __statusJTextField,
-		0, 0, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	__userJRadioButton.addItemListener(this);
 	__maxJRadioButton.addItemListener(this);

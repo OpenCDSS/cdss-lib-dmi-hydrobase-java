@@ -6,17 +6,14 @@
 // ----------------------------------------------------------------------------
 // History:
 // 2005-02-09	J. Thomas Sapienza, RTi	Initial version.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
-
-import RTi.TS.TS;
 
 /**
 Class to store data from the HydroBase struct_meas_type table.

@@ -31,6 +31,7 @@
 //					structure view objects.
 // 2005-07-07	JTS, RTi		* Organized the GUI components.
 //					* Added UTM values.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -108,33 +109,24 @@ GUI buttons.
 private JButton
 	__closeJButton,
 	__exportJButton,
-	__helpJButton,
 	__printJButton;
 
 /**
 Textfields for displaying data.
 */
-private JTextField      
-	__areaJTextField,
-	__caseJTextField,
-	__commentsJTextField,
+private JTextField
 	__countyJTextField,
 	__divJTextField,
-	__docJTextField,
 	__ewCoordJTextField,
 	__hydroCodeJTextField,
 	__idJTextField,
 	__latitudeJTextField,
 	__longitudeJTextField,
-	__lotsJTextField,
 	__nsCoordJTextField,
 	__pmJTextField,
 	__q10JTextField,
 	__q40JTextField,
 	__q160JTextField,
-	__requirementsJTextField,
-	__reviewedJTextField,
-	__responseJTextField,
 	__rngJTextField,
 	__sec1JTextField,
 	__sec2JTextField,
@@ -144,8 +136,6 @@ private JTextField
 	__streamNameJTextField,
 	__structureTypeJTextField,
 	__structureNameJTextField,
-	__subNameJTextField,
-	__subStatusJTextField,
 	__topoMapJTextField,
 	__twnJTextField,
 	__utmXJTextField,
@@ -277,7 +267,7 @@ private void displayStationLocation(HydroBase_StationGeoloc station) {
                         StringUtil.formatString(curDouble, "%7.2f").trim()); 
         }
 
-	if (__dmi.isDatabaseVersionAtLeast(__dmi.VERSION_19990305)) {
+	if (__dmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990305)) {
 		// Need to handle separate fields...
 		int ew = station.getCoordsew();
 		if (DMIUtil.isMissing(ew)) {
@@ -390,7 +380,7 @@ private void displayStructureLocation(HydroBase_StructureView structureView) {
                         StringUtil.formatString(curDouble, "%7.2f").trim()); 
         }
 
-	if (__dmi.isDatabaseVersionAtLeast(__dmi.VERSION_19990305)) {
+	if (__dmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990305)) {
 		// Need to handle separate fields...
 		int ew = structureView.getCoordsew();
 		if (DMIUtil.isMissing(ew)) {
@@ -482,28 +472,19 @@ throws Throwable {
 	__structureView = null;
 	__closeJButton = null;
 	__exportJButton = null;
-	__helpJButton = null;
 	__printJButton = null;
-	__areaJTextField = null;
-	__caseJTextField = null;
-	__commentsJTextField = null;
 	__countyJTextField = null;
 	__divJTextField = null;
-	__docJTextField = null;
 	__ewCoordJTextField = null;
 	__hydroCodeJTextField = null;
 	__idJTextField = null;
 	__latitudeJTextField = null;
 	__longitudeJTextField = null;
-	__lotsJTextField = null;
 	__nsCoordJTextField = null;
 	__pmJTextField = null;
 	__q10JTextField = null;
 	__q40JTextField = null;
 	__q160JTextField = null;
-	__requirementsJTextField = null;
-	__reviewedJTextField = null;
-	__responseJTextField = null;
 	__rngJTextField = null;
 	__sec1JTextField = null;
 	__sec2JTextField = null;
@@ -513,8 +494,6 @@ throws Throwable {
 	__streamNameJTextField = null;
 	__structureTypeJTextField = null;
 	__structureNameJTextField = null;
-	__subNameJTextField = null;
-	__subStatusJTextField = null;
 	__topoMapJTextField = null;
 	__twnJTextField = null;
 	__utmXJTextField = null;
@@ -639,12 +618,10 @@ private void setupGUI() {
         Insets NLNR = new Insets(0,7,0,7);
         Insets TLNR = new Insets(7,7,0,7);
         Insets NLBR = new Insets(0,7,7,7);
-        Insets NNNR = new Insets(0,0,0,7);
         Insets NLBN = new Insets(0,7,7,0);
         Insets NLNN = new Insets(0,7,0,0);       
 
 	GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
         
 	JPanel bigPanel = new JPanel();
 	bigPanel.setLayout(new GridBagLayout());
@@ -654,28 +631,28 @@ private void setupGUI() {
         topLeftJPanel.setLayout(gbl);
 
 	JGUIUtil.addComponent(bigPanel, topLeftJPanel,
-		0, 0, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	if (__isStructure) {
 	        JGUIUtil.addComponent(topLeftJPanel, 
 			new JLabel("Structure Name:"), 
 			0, 0, 1, 1, 0, 0, TLNR, 
-			gbc.NONE, gbc.WEST);
+			GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 	else {
 	        JGUIUtil.addComponent(topLeftJPanel, 
 			new JLabel("Station Name:"), 
 			0, 0, 1, 1, 0, 0, TLNR, 
-			gbc.NONE, gbc.WEST);
+			GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("DIV:"), 
 		1, 0, 1, 1, 0, 0, TLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("WD:"), 
 		2, 0, 1, 1, 0, 0, TLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JLabel id = null;
 	if (__isStructure) {
@@ -687,7 +664,7 @@ private void setupGUI() {
 
         JGUIUtil.addComponent(topLeftJPanel, id, 
 		3, 0, 1, 1, 0, 0, TLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureNameJTextField = new JTextField();
 	if (__isStructure) {
@@ -701,243 +678,243 @@ private void setupGUI() {
         __structureNameJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __structureNameJTextField, 
 		0, 1, 1, 1, 1, 0, NLBR, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(3);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel,__divJTextField, 
 		1, 1, 1, 1, 0, 0, NLBR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(3);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __wdJTextField, 
 		2, 1, 1, 1, 0, 0, NLBR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(10);
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __idJTextField, 
 		3, 1, 1, 1, 0, 0, NLBR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 		
         // Top: South: West JPanel
         JPanel topSWJPanel = new JPanel();
         topSWJPanel.setLayout(gbl);
 
 	JGUIUtil.addComponent(bigPanel, topSWJPanel,
-		0, 1, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		0, 1, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topSWJPanel, new JLabel("State:"), 
 		0, 2, 1, 1, 0, 0, NLNN, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topSWJPanel, new JLabel("County:"), 
 		1, 2, 1, 1, 0, 0, NLNN, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 		
         JGUIUtil.addComponent(topSWJPanel, new JLabel("Location Type:"), 
 		2, 2, 1, 1, 0, 0, NLNN, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(topSWJPanel, new JLabel("Stream Name:"),
 		3, 2, 1, 1, 0, 0, NLNN, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topSWJPanel, new JLabel("Stream Mile:"), 
 		4, 2, 1, 1, 0, 0, NLNN, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __stateJTextField = new JTextField(10);
         __stateJTextField.setEditable(false);
         JGUIUtil.addComponent(topSWJPanel, __stateJTextField, 
 		0, 3, 1, 1, 0, 0, NLBN, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __countyJTextField = new JTextField(10);
         __countyJTextField.setEditable(false);
         JGUIUtil.addComponent(topSWJPanel, __countyJTextField, 
 		1, 3, 1, 1, 0, 0, NLBN, 
-		gbc.HORIZONTAL, gbc.WEST);  
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);  
 
         __structureTypeJTextField = new JTextField(20);
         __structureTypeJTextField.setEditable(false);
         JGUIUtil.addComponent(topSWJPanel, __structureTypeJTextField, 
 		2, 3, 1, 1, 0, 0, NLBN, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__streamNameJTextField = new JTextField(20);
 	__streamNameJTextField.setEditable(false);
 	JGUIUtil.addComponent(topSWJPanel, __streamNameJTextField, 
 		3, 3, 1, 1, 0, 0, NLBN, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __streamMileJTextField = new JTextField(20);
         __streamMileJTextField.setEditable(false);
         JGUIUtil.addComponent(topSWJPanel, __streamMileJTextField, 
 		4, 3, 1, 1, 0, 0, NLBR, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // CenterTop: West JPanel
         JPanel centerTopWestJPanel = new JPanel();
         centerTopWestJPanel.setLayout(gbl);
 
 	JGUIUtil.addComponent(bigPanel, centerTopWestJPanel,
-		0, 2, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		0, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerTopWestJPanel, new JLabel("COORDINATES:"),
 		0, 0, 2, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.CENTER);
+		GridBagConstraints.NONE, GridBagConstraints.CENTER);
 
         JGUIUtil.addComponent(centerTopWestJPanel, new JLabel("PM:"), 
 		0, 1, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerTopWestJPanel, new JLabel("TWN:"), 
 		1, 1, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerTopWestJPanel, new JLabel("RNG:"), 
 		3, 1, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerTopWestJPanel, new JLabel("SEC:"), 
 		5, 1, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerTopWestJPanel, new JLabel("1/4:"), 
 		7, 1, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerTopWestJPanel, new JLabel("1/4 1/4:"), 
 		8, 1, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerTopWestJPanel, new JLabel("1/4 1/4 1/4:"), 
 		9, 1, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
         
         __pmJTextField = new JTextField(3);
         __pmJTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __pmJTextField, 
 		0, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
         __twnJTextField = new JTextField(3);
         __twnJTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __twnJTextField, 
 		1, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);                        
+		GridBagConstraints.NONE, GridBagConstraints.WEST);                        
 
         __nsCoordJTextField = new JTextField(2);
         __nsCoordJTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __nsCoordJTextField, 
 		2, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 		
         __rngJTextField = new JTextField(3);
         __rngJTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __rngJTextField, 
 		3, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);                        
+		GridBagConstraints.NONE, GridBagConstraints.WEST);                        
 
 	// 4 digits plus direction...
         __ewCoordJTextField = new JTextField(2);
         __ewCoordJTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __ewCoordJTextField, 
 		4, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);                                 
+		GridBagConstraints.NONE, GridBagConstraints.WEST);                                 
 
         __sec1JTextField = new JTextField(3);
         __sec1JTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __sec1JTextField, 
 		5, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);                        
+		GridBagConstraints.NONE, GridBagConstraints.WEST);                        
                       
         __sec2JTextField = new JTextField(3);
         __sec2JTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __sec2JTextField, 
 		6, 2, 1, 1, 0, 0, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __q160JTextField = new JTextField(3);
         __q160JTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __q160JTextField, 
 		7, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);                        
+		GridBagConstraints.NONE, GridBagConstraints.WEST);                        
 
         __q40JTextField = new JTextField(3);
         __q40JTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __q40JTextField, 
 		8, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __q10JTextField = new JTextField(3);
         __q10JTextField.setEditable(false);
         JGUIUtil.addComponent(centerTopWestJPanel, __q10JTextField, 
 		9, 2, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JPanel fourthPanel = new JPanel();
 	fourthPanel.setLayout(new GridBagLayout());
 
 	JGUIUtil.addComponent(bigPanel, fourthPanel,
-		0, 3, 1, 1, 0, 0, gbc.NONE, gbc.WEST);
+		0, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(fourthPanel, new JLabel("Latitude:"), 
 		0, 3, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);		
+		GridBagConstraints.NONE, GridBagConstraints.WEST);		
         JGUIUtil.addComponent(fourthPanel, new JLabel("Longitude:"), 
 		1, 3, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fourthPanel, new JLabel("UTM X:"), 
 		2, 3, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fourthPanel, new JLabel("UTM Y:"), 
 		3, 3, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);		
+		GridBagConstraints.NONE, GridBagConstraints.WEST);		
         JGUIUtil.addComponent(fourthPanel, new JLabel("Topographic Map:"),
 		4, 3, 1, 1, 0, 0, NLNR, 
-		 gbc.NONE, gbc.WEST);
+		 GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fourthPanel, new JLabel("Hydrologic Unit Code:"), 
 		5, 3, 1, 1, 0, 0, NLNR, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 		
         __latitudeJTextField = new JTextField(10);
         __latitudeJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthPanel, __latitudeJTextField, 
 		0, 10, 1, 1, 0, 0, NLBR, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __longitudeJTextField = new JTextField(10);
         __longitudeJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthPanel, __longitudeJTextField, 
 		1, 10, 1, 1, 0, 0, NLBR, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __utmXJTextField = new JTextField(11);
         __utmXJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthPanel, __utmXJTextField, 
 		2, 10, 1, 1, 0, 0, NLBR, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __utmYJTextField = new JTextField(11);
         __utmYJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthPanel, __utmYJTextField, 
 		3, 10, 1, 1, 0, 0, NLBR, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __topoMapJTextField = new JTextField();
         __topoMapJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthPanel, __topoMapJTextField, 
 		4, 10, 1, 1, 0, 0, NLBR, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __hydroCodeJTextField = new JTextField();
         __hydroCodeJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthPanel, __hydroCodeJTextField, 
 		5, 10, 1, 1, 0, 0, NLBR, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	getContentPane().add("Center", bigPanel);
 
@@ -981,13 +958,13 @@ private void setupGUI() {
         JPanel bottomSouthSouth_fillerJPanel = new JPanel();
         JGUIUtil.addComponent(bottomSouthJPanel, bottomSouthSouth_fillerJPanel, 
 		0, 0, 1, 1, 0, 0, 
-		gbc.NONE, gbc.WEST);
+		GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSouthJPanel, __statusJTextField, 
 		0, 1, 10, 1, 1, 0, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         setTitle("Location Data");
         pack();

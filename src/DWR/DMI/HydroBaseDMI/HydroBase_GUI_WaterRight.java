@@ -32,41 +32,32 @@
 // 2005-07-11	JTS, RTi		* Stopped using X* fields.
 //					* Transact had two strtype fields.  
 //					  Removed the second one.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.event.WindowAdapter;
 
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
-
-import RTi.DMI.DMIUtil;
 
 import RTi.Util.IO.PrintJGUI;
 
@@ -119,10 +110,7 @@ private JButton __closeJButton;
 Button to export the data.
 */
 private JButton __exportJButton;
-/**
-Button to open the help.
-*/
-private JButton __helpJButton;
+
 /**
 Button to print the data.
 */
@@ -526,7 +514,6 @@ throws Throwable {
 	__hydroBaseTransact = null;
 	__closeJButton = null;
 	__exportJButton = null;
-	__helpJButton = null;
 	__printJButton = null;
 	__actionCommentJTextArea = null;
 	__abandJTextField = null;
@@ -789,15 +776,10 @@ private void setupGUI() {
 	int entireJPanelY = 0;
 
         // objects used throughout the GUI layout
-        Insets insetsTLBR = new Insets(4,4,4,4);
         Insets insetsTNNN = new Insets(14,0,0,0);
-        Insets insetsTNBN = new Insets(14,0,14,0);
-        Insets insetsTLNR = new Insets(4,4,0,4);
         Insets insetsNLNN = new Insets(0,4,0,0);
         Insets insetsNNNN = new Insets(0,0,0,0);
-        Insets insetsNNNNS = new Insets(0,0,0,0);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent evt) {
@@ -818,44 +800,44 @@ private void setupGUI() {
 	firstJPanel.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, firstJPanel, 
 		0, entireJPanelY++, 1, 1, 0, 0, 
-		insetsNNNN, gbc.NONE, gbc.NORTHWEST);
+		insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
         JGUIUtil.addComponent(firstJPanel, new JLabel(" Water Right Name:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(firstJPanel, new JLabel("DIV:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(firstJPanel, new JLabel(" WD:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(firstJPanel, new JLabel("ID:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(firstJPanel, new JLabel(" Water Source:"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x = 0;
         __wrnameJTextField = new JTextField(20);
 	__wrnameJTextField.setEditable(false);
         JGUIUtil.addComponent(firstJPanel, __wrnameJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(3);
 	__divJTextField.setEditable(false);
         JGUIUtil.addComponent(firstJPanel, __divJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
         __wdJTextField = new JTextField(3);
 	__wdJTextField.setEditable(false);
         JGUIUtil.addComponent(firstJPanel, __wdJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
         __idJTextField = new JTextField(4);
 	__idJTextField.setEditable(false);
         JGUIUtil.addComponent(firstJPanel, __idJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
        	__sourceJTextField = new JTextField(25);
 	__sourceJTextField.setEditable(false);
        	JGUIUtil.addComponent(firstJPanel, __sourceJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// SECOND PANEL - pm, twn, rng, sec, seca, Q160, Q40, Q10
 	//
@@ -863,75 +845,75 @@ private void setupGUI() {
 	secondJPanel.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, secondJPanel, 
 		0, entireJPanelY++, 1, 1, 0, 0, 
-		insetsTNNN, gbc.NONE, gbc.NORTHWEST);
+		insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	x = 0;
 	y = 0;
         JGUIUtil.addComponent(secondJPanel, new JLabel("County:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(secondJPanel, new JLabel("PM:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(secondJPanel, new JLabel("TWN:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	x++;
         JGUIUtil.addComponent(secondJPanel, new JLabel("RNG:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	x++;
         JGUIUtil.addComponent(secondJPanel, new JLabel("SEC:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	x++;	// seca has no label
         JGUIUtil.addComponent(secondJPanel, new JLabel("1/4:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(secondJPanel, new JLabel("1/4 1/4:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(secondJPanel, new JLabel("1/4 1/4 1/4:"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x = 0;
         __countyJTextField = new JTextField(12);
 	__countyJTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __countyJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __pmJTextField = new JTextField(3);
 	__pmJTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __pmJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __twnJTextField = new JTextField(4);
 	__twnJTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __twnJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __tdirJTextField = new JTextField(4);
 	__tdirJTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __tdirJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __rngJTextField = new JTextField(4);
 	__rngJTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __rngJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __rdirJTextField = new JTextField(4);
 	__rdirJTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __rdirJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __secJTextField = new JTextField(4);
 	__secJTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __secJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __secaJTextField = new JTextField(4);
 	__secaJTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __secaJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __q160JTextField = new JTextField(5);
 	__q160JTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __q160JTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __q40JTextField = new JTextField(4);
 	__q40JTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __q40JTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __q10JTextField = new JTextField(4);
 	__q10JTextField.setEditable(false);
         JGUIUtil.addComponent(secondJPanel, __q10JTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// THIRD PANEL - adj date, padj date, apro date, admin no, 
 	// 	order no, prior no, adj type, use type
@@ -940,76 +922,76 @@ private void setupGUI() {
 	thirdJPanel.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, thirdJPanel, 
 		0, entireJPanelY++, 1, 1, 0, 0, 
-		insetsTNNN, gbc.NONE, gbc.NORTHWEST);
+		insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	x = 0;
 	y = 0;
         JGUIUtil.addComponent(thirdJPanel, new JLabel("Adjudication Date:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(thirdJPanel,new 
 		JLabel("Prior Adjudication Date:"),
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(thirdJPanel, new JLabel("Appropriation Date:"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x = 0;
         __adjDateJTextField = new JTextField();
 	__adjDateJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __adjDateJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __padjDateJTextField = new JTextField();
 	__padjDateJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __padjDateJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __aproDateJTextField = new JTextField();
 	__aproDateJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __aproDateJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	x = 0;
         JGUIUtil.addComponent(thirdJPanel, new JLabel("Administration No:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(thirdJPanel, new JLabel("Order No:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(thirdJPanel, new JLabel("Prior/Case No:"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x = 0;
         __adminNoJTextField = new JTextField();
 	__adminNoJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __adminNoJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __orderNoJTextField = new JTextField();
 	__orderNoJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __orderNoJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __priorNoJTextField = new JTextField();
 	__priorNoJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __priorNoJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 
 	x = 0;
         JGUIUtil.addComponent(thirdJPanel, new JLabel("Adjudication Type:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(thirdJPanel, new JLabel("Use Type:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(thirdJPanel, new JLabel("Struct Type:"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x = 0;
         __adjTypeJTextField = new JTextField();
 	__adjTypeJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __adjTypeJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __useTypeJTextField = new JTextField();
 	__useTypeJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __useTypeJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __structTypeJTextField = new JTextField();
 	__structTypeJTextField.setEditable(false);
         JGUIUtil.addComponent(thirdJPanel, __structTypeJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	// 
 	// FOURTH PANEL - NET ONLY!  
@@ -1020,53 +1002,53 @@ private void setupGUI() {
 	fourthJPanel.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, fourthJPanel, 
 		0, entireJPanelY++, 1, 1, 0, 0, 
-		insetsTNNN, gbc.NONE, gbc.NORTHWEST);
+		insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	x = 0;
 	y = 0;
         JGUIUtil.addComponent(fourthJPanel, new JLabel("Rate Abs (cfs):"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fourthJPanel, new JLabel("Vol Abs (acft):"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fourthJPanel, new JLabel("Rate Cond (cfs):"), 
-		x++, y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fourthJPanel, new JLabel("Vol Cond (acft):"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fourthJPanel, new JLabel("Rate Apex (cfs):"), 
-		x++, y, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fourthJPanel, new JLabel("Vol Apex (acft):"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
 	x = 0;
         __rateAbsJTextField = new JTextField();
 	__rateAbsJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthJPanel, __rateAbsJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __volAbsJTextField = new JTextField();
 	__volAbsJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthJPanel, __volAbsJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __rateCondJTextField = new JTextField();
 	__rateCondJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthJPanel, __rateCondJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __volCondJTextField = new JTextField();
 	__volCondJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthJPanel, __volCondJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __rateApexJTextField = new JTextField();
 	__rateApexJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthJPanel, __rateApexJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __volApexJTextField = new JTextField();
 	__volApexJTextField.setEditable(false);
         JGUIUtil.addComponent(fourthJPanel, __volApexJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 
 	x = 0;
         JGUIUtil.addComponent(fourthJPanel, new JLabel("Action Comment:"), 
-		x, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __actionCommentJTextArea = new JTextArea("", 4, 65);
 	__actionCommentJTextArea.setEditable(false);
@@ -1074,7 +1056,7 @@ private void setupGUI() {
 		__volApexJTextField.getBackground());
 	JScrollPane jsp1 = new JScrollPane(__actionCommentJTextArea);
         JGUIUtil.addComponent(fourthJPanel, jsp1, 
-		x, y, 6, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x, y, 6, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 
 
@@ -1089,127 +1071,127 @@ private void setupGUI() {
 	fifthJPanel.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, fifthJPanel, 
 		0, entireJPanelY++, 1, 1, 0, 0, 
-		insetsTNNN, gbc.NONE, gbc.NORTHWEST);
+		insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
 	x = 0;
 	y = 0;
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Rate Amt (cfs):"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Vol Amt (acft):"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Aband:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Status:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Case No:"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x = 0;
         __rateAmtJTextField = new JTextField();
 	__rateAmtJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __rateAmtJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __volAmtJTextField = new JTextField();
 	__volAmtJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __volAmtJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __abandJTextField = new JTextField();
 	__abandJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __abandJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __wrstatusJTextField = new JTextField();
 	__wrstatusJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __wrstatusJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __caseNoJTextField = new JTextField();
 	__caseNoJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __caseNoJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	x = 0;
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Assoc Type:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Assoc WD:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Assoc ID:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Aug Role:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Plan WD:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Plan ID:"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x = 0;
         __assocTypeJTextField = new JTextField();
 	__assocTypeJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __assocTypeJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __assocWDJTextField = new JTextField();
 	__assocWDJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __assocWDJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __assocIDJTextField = new JTextField();
 	__assocIDJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __assocIDJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __augRoleJTextField = new JTextField();
 	__augRoleJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __augRoleJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __planWDJTextField = new JTextField();
 	__planWDJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __planWDJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __planIDJTextField = new JTextField();
 	__planIDJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __planIDJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	x = 0;
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Trans Type:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Tran WD:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Tran ID:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Last Due Dil:"), 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Action Update:"), 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	
 	x = 0;
         __transTypeJTextField = new JTextField();
 	__transTypeJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __transTypeJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __tranWDJTextField = new JTextField();
 	__tranWDJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __tranWDJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __tranIDJTextField = new JTextField();
 	__tranIDJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __tranIDJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __lastDueDilJTextField = new JTextField();
 	__lastDueDilJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __lastDueDilJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         __actionUpdateJTextField = new JTextField();
 	__actionUpdateJTextField.setEditable(false);
         JGUIUtil.addComponent(fifthJPanel, __actionUpdateJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	x = 0;
         JGUIUtil.addComponent(fifthJPanel, new JLabel("Action Comment:"), 
-		x, y++, 3, 1, 0, 0, insetsNNNN, gbc.NONE, gbc.WEST);
+		x, y++, 3, 1, 0, 0, insetsNNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         __actionCommentJTextArea = new JTextArea("", 2, 65);
 	__actionCommentJTextArea.setEditable(false);
 	JScrollPane jsp2 = new JScrollPane(__actionCommentJTextArea);
 	jsp2.setHorizontalScrollBarPolicy(
 		JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         JGUIUtil.addComponent(fifthJPanel, jsp2, 
-		x, y, 6, 1, 0, 0, insetsNNNN, gbc.HORIZONTAL, gbc.WEST);
+		x, y, 6, 1, 0, 0, insetsNNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	}
 
@@ -1250,7 +1232,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
         JGUIUtil.addComponent(statusJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         //__statusJTextField.setBackground(Color.lightGray);
 
         // Frame settings

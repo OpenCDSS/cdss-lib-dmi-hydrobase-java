@@ -11,6 +11,7 @@
 // 2004-06-09	JTS, RTi		Worksheet data can now be set 
 //					uneditable.
 // 2005-04-29	JTS, RTi		Added finalize().
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -20,9 +21,6 @@ import java.util.Vector;
 import RTi.DMI.DMIUtil;
 
 import RTi.Util.GUI.JWorksheet;
-import RTi.Util.GUI.JWorksheet_TableModelListener;
-
-import RTi.Util.Message.Message;
 
 /**
 This class is a table model for displaying diversion coding.

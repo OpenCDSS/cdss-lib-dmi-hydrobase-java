@@ -10,6 +10,7 @@
 // 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
 //					new JWorksheet column header system.
 // 2005-04-29	JTS, RTi		Added finalize().
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -22,8 +23,6 @@ import RTi.DMI.DMIUtil;
 
 import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.JWorksheet_CellAttributes;
-
-import RTi.Util.Message.Message;
 
 /**
 This class is a table model for displaying wis data.
@@ -468,8 +467,6 @@ public void setWorksheet(JWorksheet worksheet) {
 public void setCellContents(double contents, String format, int row, 
 int col, String rowType, boolean isEntryCell, boolean isFormulaCell, 
 boolean isImportCell, boolean isFirstCalc) {
-	String routine = "HydroBase_TableModel_WIS.setCellContents";
-
 /*
 	if (row == 1 && col == 2) {
 	__worksheet.except(1, 4);

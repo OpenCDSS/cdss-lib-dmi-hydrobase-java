@@ -7,6 +7,7 @@
 // History:
 //
 // 2005-06-22	J. Thomas Sapienza, RTi	Initial version.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -17,8 +18,6 @@ import java.util.Date;
 
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-
-import javax.swing.table.DefaultTableCellRenderer;
 
 import RTi.DMI.DMIUtil;
 

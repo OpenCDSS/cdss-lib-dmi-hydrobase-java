@@ -13,11 +13,11 @@
 //					sorting the Calls list in the SetCalls
 //					GUI.  Sorts only on WD and ID.
 // 2005-08-15	JTS, RTi		Added copy constructor.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

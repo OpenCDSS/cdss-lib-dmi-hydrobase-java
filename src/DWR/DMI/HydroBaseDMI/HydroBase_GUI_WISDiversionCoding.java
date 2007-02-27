@@ -40,6 +40,7 @@
 //					* The table-specific cell renderers 
 //					  were removed and replaced with a 
 //					  single generic one.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -62,7 +63,6 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import RTi.DMI.DMIUtil;
@@ -75,7 +75,6 @@ import RTi.Util.GUI.JWorksheet_TableModelListener;
 import RTi.Util.GUI.ReportJFrame;
 import RTi.Util.GUI.SimpleJButton;
 
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
 
 import RTi.Util.Message.Message;
@@ -83,7 +82,6 @@ import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
 
 import RTi.Util.Time.DateTime;
-import RTi.Util.Time.TimeUtil;
 
 /**
 This class is a gui for displaying diversion coding information.
@@ -189,11 +187,6 @@ The wis gui that opened this gui.
 private HydroBase_GUI_WIS __wisGUI = null;
 
 /**
-The wis this is opened for.
-*/
-private HydroBase_WISSheetName __wis = null;
-
-/**
 The table model for the table.
 */
 private HydroBase_TableModel_WISDiversionCoding __tableModel = null;
@@ -261,7 +254,6 @@ int wisRow, int wisCol, Vector previousRecords, boolean editable) {
 	__wisRow = wisRow;
 	__wisCol = wisCol;
 	__wisGUI = wisGUI;
-	__wis = wis;
 	__detailDateTime = detailDateTime;
 	__previousRecords = previousRecords;
 	__editable = editable;
@@ -320,13 +312,13 @@ it's a data row.
 private void addRowClicked(boolean totalRow) {
 	HydroBase_WISDailyWC wc = new HydroBase_WISDailyWC();
 	String wis_column = "";		
-	if (__wisCol == __wisGUI.PRIORITY_DIV_COL) {
+	if (__wisCol == HydroBase_GUI_WIS.PRIORITY_DIV_COL) {
 		wis_column = "PD";
 	}
-	else if (__wisCol == __wisGUI.DELIVERY_DIV_COL) {
+	else if (__wisCol == HydroBase_GUI_WIS.DELIVERY_DIV_COL) {
 		wis_column = "DD";
 	}
-	else if (__wisCol == __wisGUI.RELEASES_COL) {
+	else if (__wisCol == HydroBase_GUI_WIS.RELEASES_COL) {
 		wis_column = "RR";
 	}
 	wc.setWis_column(wis_column);
@@ -363,7 +355,6 @@ throws Throwable {
 	__detailDateTime = null;
 	__dmi = null;
 	__wisGUI = null;
-	__wis = null;
 	__tableModel = null;
 	__statusJTextField = null;
 	__worksheet = null;
@@ -454,7 +445,6 @@ private void setupGUI() {
         Insets insetsNLNR = new Insets(0, 2, 0, 2);
 	Insets insetsNLBR = new Insets(0, 2, 2, 2);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Center JPanel
         JPanel center = new JPanel();
@@ -467,50 +457,50 @@ private void setupGUI() {
 	if (__wisCellContents.trim().equals("")) {
 		JGUIUtil.addComponent(center, new JLabel(
 			"Diversion coding total from WIS cell:  NONE"),
-			0, y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+			0, y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 	else {	
 		JGUIUtil.addComponent(center, new JLabel(
 			"Diversion coding total from WIS cell:  " 
 			+ __wisCellContents),
-			0, y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+			0, y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 
         JGUIUtil.addComponent(center, new JLabel(
 		"Source:  enter code or right-click on selected cell to "
 		+ "see choices."),
-		0, ++y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, ++y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(center, new JLabel(
 		"From:  enter structure identifier (no WD), if appropriate,"
 		+ " for source."),
-		0, ++y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, ++y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(center, new JLabel(
 		"Use:  enter code or right-click on selected cell to see "
 		+ "choices."),
-		0, ++y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, ++y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(center, new JLabel(
 		"Type:  enter code or right-click on selected cell to see "
 		+ "choices."),
-		0, ++y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, ++y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(center, new JLabel(
 		"Obs:  enter code or right-click on selected cell to see "
 		+ "choices.  W indicates default assigned by WIS.  C "
 		+ "indicates that values are carried forward."),
-		0, ++y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		0, ++y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(center, new JLabel(
 		"The total amount from this dialog will override the WIS value"
 		+ " if OK is pressed."),
-		0, ++y, 3, 1, 1, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, ++y, 3, 1, 1, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(center, new JLabel(
 		"See the DWR Water Commissioner Manual for diversion coding "
 		+ "information."),
-		0, ++y, 3, 1, 1, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, ++y, 3, 1, 1, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// Declare now so it can be used in the grid...
         __statusJTextField = new JTextField();
@@ -572,7 +562,7 @@ private void setupGUI() {
 	}
 
         JGUIUtil.addComponent(center, jsw,
-		0, ++y, 3, 1, 1, 1, insetsTLBR, gbc.BOTH, gbc.WEST);
+		0, ++y, 3, 1, 1, 1, insetsTLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
     
         // Bottom JPanel
         JPanel bottom = new JPanel();
@@ -632,7 +622,7 @@ private void setupGUI() {
 
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSouthSouth, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	pack();
 
@@ -884,8 +874,6 @@ private void viewHistoryClicked() {
 	// Now loop through the historic records, which are in ascending order
 	// by date...
 
-	int prev_cal_year = -1;
-	int prev_cal_mon = -1;
 	int size = 0;
 	if (records != null) {
 		size = records.size();

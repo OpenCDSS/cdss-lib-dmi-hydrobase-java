@@ -6,15 +6,12 @@
 // History:
 // 2003-11-20	J. Thomas Sapienza, RTi	Initial version.
 // 2005-04-29	JTS, RTi		Added finalize().
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Vector;
-
-import RTi.Util.GUI.JWorksheet;
-
-import RTi.Util.Message.Message;
 
 /**
 This class is a table model for displaying wis data.
@@ -26,11 +23,6 @@ extends HydroBase_TableModel {
 Number of columns in the table model.
 */
 private final static int __COLUMNS = 12;
-
-/**
-The GUI on which the worksheet appears.
-*/
-private HydroBase_GUI_WISBuilder __parentWISBuilder;
 
 /**
 Constructor.
@@ -46,7 +38,6 @@ throws Exception {
 	}
 	_rows = data.size();
 	_data = data;
-	__parentWISBuilder = wisBuilder;
 }
 
 /**
@@ -54,7 +45,6 @@ Cleans up member variables.
 */
 public void finalize()
 throws Throwable {
-	__parentWISBuilder = null;
 	super.finalize();
 }
 
@@ -257,7 +247,6 @@ Sets the value at the specified position.
 public void setValueAt(Object o, int row, int col) {
 	// o will always be passed in as a String -- convert accordingly
 	HydroBase_WISData w = (HydroBase_WISData)_data.elementAt(row);
-	boolean valueSet = false;
 	switch (col) {
 		case HydroBase_GUI_WIS.ROW_LABEL_COL:	
 			w.setRow_label((String)o);	

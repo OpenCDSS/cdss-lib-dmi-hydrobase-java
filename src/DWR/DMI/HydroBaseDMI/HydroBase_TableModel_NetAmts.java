@@ -22,6 +22,7 @@
 // 2005-07-06	Steven A. Malers, RTi	Review headers and add tooltips.
 // 2005-07-11	JTS, RTi		Added the strtype field.
 // 2005-11-15	JTS, RTi		Added div column.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 // EndHeader
 
@@ -29,8 +30,6 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
 import java.util.Vector;
-
-import RTi.DMI.DMIUtil;
 
 import RTi.Util.Time.DateTime;
 

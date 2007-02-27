@@ -24,6 +24,7 @@
 // 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
 //					Pass JFrame to constructor.
 //					Clean up code based on Elipse feedback.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -60,11 +61,6 @@ import RTi.Util.Message.Message;
 public class HydroBase_GUI_RegisterUser 
 extends JFrame 
 implements ActionListener, KeyListener, WindowListener {
-
-/**
-GUI that instantiate this one, for window positioning.
-*/
-private JFrame __parent = null;
 
 /**
 OptionsUI to handle HydroBase options.
@@ -133,7 +129,6 @@ HydroBase_GUI_RegisterUser constructor
 public HydroBase_GUI_RegisterUser(HydroBaseDMI dmi, JFrame parent,
 		OptionsUI options_ui ) {
 	__dmi = dmi;
-	__parent = parent;
 	__options_ui = options_ui;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
 	setupGUI();
@@ -213,7 +208,6 @@ Cleans up member variables.
 */
 public void finalize()
 throws Throwable {
-	__parent = null;
 	__dmi = null;
 	__firstJTextField = null;
 	__lastJTextField = null;

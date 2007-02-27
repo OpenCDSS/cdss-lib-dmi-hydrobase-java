@@ -9,6 +9,7 @@
 // 2005-04-29	JTS, RTi		Added finalize().
 // 2005-06-28	JTS, RTi		Removed unused DMI parameter.
 // 2005-07-06	Steven A. Malers, RTi	Add tool tips.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 // EndHeader
 
@@ -648,7 +649,6 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	Date d = null;
 	HydroBase_WellApplicationView w = 
 		(HydroBase_WellApplicationView)_data.elementAt(row);
 	switch (col) {

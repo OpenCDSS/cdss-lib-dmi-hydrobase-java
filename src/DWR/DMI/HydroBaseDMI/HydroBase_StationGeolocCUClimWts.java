@@ -8,12 +8,11 @@
 // 2003-02-22	Steven A. Malers , RTi	Initial version.
 // 2004-02-09	J. Thomas Sapienza, RTi	Renamed to match the pattern of 
 //					file extends.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 /**

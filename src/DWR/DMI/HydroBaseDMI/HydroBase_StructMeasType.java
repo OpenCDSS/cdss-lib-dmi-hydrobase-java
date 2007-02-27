@@ -16,13 +16,13 @@
 //					since it is for internal use (not part
 //					of the HydroBase tables).
 // 2005-03-01	JTS, RTi		Added view copy constructor.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

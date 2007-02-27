@@ -7,11 +7,11 @@
 // History:
 // 2003-02-18	J. Thomas Sapienza, RTi	Initial version from HBStructureType.
 // 2003-02-25	JTS, RTi		Finally actually added the data members!
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

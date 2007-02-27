@@ -14,13 +14,13 @@
 // 2005-02-28	JTS, RTi		Private data members were made protected
 //					so this data object can be checked 
 //					during unit tests.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Vector;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

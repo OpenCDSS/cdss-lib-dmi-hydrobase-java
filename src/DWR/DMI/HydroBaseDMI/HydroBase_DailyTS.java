@@ -13,11 +13,11 @@
 //					passes the day as an argument and remove
 //					all the more primitive methods.
 // 2005-03-01	JTS, RTi		Added the flag values.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

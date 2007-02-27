@@ -79,14 +79,14 @@
 // 2005-08-03	JTS, RTi		Added a check for old configuration
 //					files that force local to appear as the
 //					host.
+// 2007-02-26	SAM, RTi		Make stored procedures the default unless
+//					running in test mode.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.awt.Component;
-
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -97,7 +97,6 @@ import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -114,15 +113,11 @@ import java.awt.event.WindowListener;
 
 import java.io.File;
 
-import java.net.ServerSocket;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 
 import java.util.Hashtable;
 import java.util.Vector;
-
-import javax.swing.JCheckBox;
 
 import RTi.DMI.DMIUtil;
 import RTi.DMI.GenericDMI;
@@ -131,11 +126,8 @@ import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
 
-import RTi.Util.Help.URLHelp;
-
 import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
-import RTi.Util.IO.ProcessManager;
 
 import RTi.Util.Message.Message;
 
@@ -295,8 +287,7 @@ GUI buttons.
 */
 private SimpleJButton 
 	__okJButton = null,
-	__cancelJButton = null,
-	__helpJButton = null;
+	__cancelJButton = null;
 			
 /**
 The combo box for choosing to do a remote or local connection.
@@ -620,8 +611,7 @@ private void connectionSelected(String connection) {
 	}
 
 	// If it is not local, disable the ODBC Data Source name
-	String connection_string = 
-		(String)__connectionJComboBox.getSelectedItem();
+
 	if (((String)__connectionJComboBox.getSelectedItem()).equals(__REMOTE)){
 		// Will use a remote database, so set to the default for 
 		// the main server to make sure that they are consistent.
@@ -726,19 +716,6 @@ private void connectionSelected(String connection) {
 }
 
 /**
-Used when tabbing between fields, this deselects the text in a combo box.
-@param comboBox the combo box in which to deselect the text.
-*/
-private void deselect(SimpleJComboBox comboBox) {
-	if (!comboBox.isEditable()) {
-		return;
-	}
-
-	((JTextComponent)(comboBox.getEditor()).getEditorComponent())
-		.select(0, 0);
-}
-
-/**
 Cleans up member variables.
 */
 public void finalize() 
@@ -754,7 +731,6 @@ throws Throwable {
 	__configurationProps = null;
 	__okJButton = null;
 	__cancelJButton = null;
-	__helpJButton = null;
 	__connectionJComboBox = null;
 	__databaseNamesJComboBox = null;
 	__hostnameJComboBox = null;
@@ -981,14 +957,10 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	addWindowListener(this);
                 
 	// used in the GridBagLayouts
-	Insets TB_insets = new Insets(7,0,7,0);
 	Insets LR_insets = new Insets(0,7,0,7);
 	Insets LTB_insets = new Insets(7,7,0,0);
-	Insets LRTB_insets = new Insets(7,7,7,7);
 	Insets RTB_insets = new Insets(7,0,0,7);
-	Insets R_insets = new Insets(0,0,0,7);
 	GridBagLayout gbl = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
 
 	// North JPanel
 	JPanel northJPanel = new JPanel();
@@ -1009,7 +981,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Login
 	if (__validateLogin) {
         	JGUIUtil.addComponent(northWJPanel, new JLabel("Login (1):"), 
-			0, ++y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.EAST);
+			0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	}
 	
         __loginJTextField = new JTextField(25);
@@ -1017,13 +989,13 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__loginJTextField.setText(userLogin);
 	if (__validateLogin) {
 	        JGUIUtil.addComponent(northWJPanel, __loginJTextField, 
-			1, y, 1, 1, 0, 0, RTB_insets, gbc.HORIZONTAL, gbc.WEST);
+			1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 
 	// Password
 	if (__validateLogin) {
 	        JGUIUtil.addComponent(northWJPanel, new JLabel("Password:"), 
-			0, ++y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.EAST);
+			0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	}
 	
 	__passwordJPasswordField = new JPasswordField(25);
@@ -1032,14 +1004,14 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__passwordJPasswordField.addKeyListener(this);
 	if (__validateLogin) {
 		JGUIUtil.addComponent(northWJPanel, __passwordJPasswordField, 
-			1, y, 1, 1, 0, 0, RTB_insets, gbc.HORIZONTAL, gbc.WEST);
+			1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 
 	// Always add the connection
 
 	JLabel dataBaseJLabel = new JLabel("Connection:");
        	JGUIUtil.addComponent(northWJPanel, dataBaseJLabel, 
-		0, ++y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		
 	__connectionJComboBox = new SimpleJComboBox();
 	
@@ -1056,7 +1028,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	}
 	
        	JGUIUtil.addComponent(northWJPanel, __connectionJComboBox, 
-		1, y, 1, 1, 0, 0, RTB_insets, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 		
 	// Add a listener so can enable/disable the data source name:
 	__connectionJComboBox.addItemListener(this);
@@ -1067,7 +1039,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Define because below set invisible if an Applet
 	JLabel hostname_JLabel = new JLabel("Database Hostname:");
        	JGUIUtil.addComponent(northWJPanel, hostname_JLabel,
-		0, ++y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	// The contents will be set in "connectionSelected"
 	__hostnameJComboBox = new SimpleJComboBox ();
@@ -1075,7 +1047,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__hostnameJComboBox.addKeyListener(this);
 	__hostnameJComboBox.addActionAndKeyListeners(this, this);
        	JGUIUtil.addComponent(northWJPanel, __hostnameJComboBox, 
-		1, y, 1, 1, 0, 0, RTB_insets, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// Add the data source (only enabled if using a local database).
 	// Get the data source names from the system.
@@ -1129,7 +1101,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Items will be added to this in "connectionSelected"
 	__odbcDSNsJLabel = new JLabel("Database ODBC DSNs:");
        	JGUIUtil.addComponent(northWJPanel, __odbcDSNsJLabel, 
-		0, ++y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		
 	__odbcDSNJComboBox = new SimpleJComboBox();
 	__odbcDSNJComboBox.setEditable(true);
@@ -1139,11 +1111,11 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// local does not hide components...
 	__odbcDSNJComboBox.setPrototypeDisplayValue(longest_odbc);
        	JGUIUtil.addComponent(northWJPanel, __odbcDSNJComboBox,
-		1, y, 1, 1, 0, 0, RTB_insets, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__databaseNamesJLabel = new JLabel("Database Names:");
        	JGUIUtil.addComponent(northWJPanel, __databaseNamesJLabel, 
-		0, y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.EAST);
+		0, y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		
 	__databaseNamesJComboBox = new SimpleJComboBox();
 	__databaseNamesJComboBox.setEditable(true);
@@ -1153,7 +1125,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// local does not hide components...
 	__databaseNamesJComboBox.setPrototypeDisplayValue(longest_odbc);
        	JGUIUtil.addComponent(northWJPanel, __databaseNamesJComboBox,
-		1, y, 1, 1, 0, 0, RTB_insets, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	__odbcDSNsJLabel.setVisible(false);
 	__odbcDSNJComboBox.setVisible(false);
@@ -1161,7 +1133,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	if (__showWaterDivisions) {
        		JGUIUtil.addComponent(northWJPanel,
 			new JLabel("Water Division (2):"),
-			0, ++y, 1, 1, 0, 0, LTB_insets, gbc.NONE, gbc.EAST);
+			0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	}
 
 	// Always add the full list of choices...
@@ -1178,7 +1150,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	
 	if (__showWaterDivisions) {
        		JGUIUtil.addComponent(northWJPanel, __waterDivisionJComboBox, 
-			1, y, 1, 1, 0, 0, RTB_insets, gbc.HORIZONTAL, gbc.WEST);
+			1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 	
 	try {	
@@ -1206,22 +1178,22 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
         	JGUIUtil.addComponent(northWJPanel, new JLabel(
 			"(1) Use \"guest\" for the login and password "
 			+ "for general use."), 
-			0, ++y, 2, 1, 0, 0, LR_insets, gbc.NONE, gbc.WEST);
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
         	JGUIUtil.addComponent(northWJPanel, new JLabel(
 			"State of Colorado users who update HydroBase "
 			+ "have accounts."), 
-			0, ++y, 2, 1, 0, 0, LR_insets, gbc.NONE, gbc.WEST);
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 	
 	if (__showWaterDivisions) {
         	JGUIUtil.addComponent(northWJPanel, new JLabel(
 			"(2) Select a water division to optimize map "
 			+ "displays and menu choices."),
-			0, ++y, 2, 1, 0, 0, LR_insets, gbc.NONE, gbc.WEST);
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
         	JGUIUtil.addComponent(northWJPanel, new JLabel(
 			"The value may be reset if using a local database "
 			+ "with only one division."),
-			0, ++y, 2, 1, 0, 0, LR_insets, gbc.NONE, gbc.WEST);
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 
 	// Hide the database choice if running an applet (default to remote)...
@@ -1258,18 +1230,23 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 //	__helpJButton.setEnabled ( false );
 //	southNJPanel.add(__helpJButton);
 
+	// Always create the checkbox but only show it if in test mode.
 	__useSPJCheckBox = new JCheckBox((String)null);
 	__useSPJCheckBox.setSelected(true);
-	__useSPJCheckBox.setToolTipText("<html>Check this box to log into the "
-		+ "database as the 'cdss' user.<br>Unchecking this box will "
-		+ "cause the 'crdss' login to be used.</html>");
-	JLabel tempLabel = new JLabel(" Use Stored Procedures:");
-	tempLabel.setToolTipText("<html>Check this box to log into the "
-		+ "database as the 'cdss' user.<br>Unchecking this box will "
-		+ "cause the 'crdss' login to be used.</html>");
-	southNJPanel.add(tempLabel);
-	southNJPanel.add(__useSPJCheckBox);
-	__useSPJCheckBox.addActionListener(this);
+	if ( IOUtil.testing() ) {
+			// Actually show the checkbox.  Otherwise it is invisible
+			// but selected.
+		__useSPJCheckBox.setToolTipText("<html>Check this box to log into the "
+				+ "database as the 'cdss' user.<br>Unchecking this box will "
+				+ "cause the 'crdss' login to be used.</html>");
+		JLabel tempLabel = new JLabel(" Use Stored Procedures:");
+		tempLabel.setToolTipText("<html>Check this box to log into the "
+				+ "database as the 'cdss' user.<br>Unchecking this box will "
+				+ "cause the 'crdss' login to be used.</html>");
+		southNJPanel.add(tempLabel);
+		southNJPanel.add(__useSPJCheckBox);
+		__useSPJCheckBox.addActionListener(this);
+	}
 
 	// South South JPanel
 	JPanel southSJPanel = new JPanel();
@@ -1279,7 +1256,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
 	JGUIUtil.addComponent(southSJPanel, __statusJTextField, 
-		0, 0, 1, 1, 1, 1, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
 	// frame settings        
 	setTitle("Select HydroBase");
@@ -1350,7 +1327,7 @@ Responds to Key Press events.
 public void keyPressed(KeyEvent event) {
 	int code = event.getKeyCode(); 
 	// enter key is the same as ok
-	if (code == event.VK_ENTER) {
+	if (code == KeyEvent.VK_ENTER) {
 		if (__hostnameJComboBox.getSelected().trim().equalsIgnoreCase(
 		    __lastSelectedServer)) {
 			okClicked();
@@ -1360,7 +1337,7 @@ public void keyPressed(KeyEvent event) {
 			__lastSelectedServer=__hostnameJComboBox.getSelected();
 		}
 	}
-	else if (code == event.VK_ESCAPE) {
+	else if (code == KeyEvent.VK_ESCAPE) {
 		cancelClicked();
 	}
 }
@@ -1389,7 +1366,7 @@ instance.  If successful, save the new HydroBaseDMI information and close the
 dialog.
 */
 private void okClicked() {
-	String routine = "SelectHydroBaseJDialog.okClicked", message;
+	String routine = "SelectHydroBaseJDialog.okClicked";
 
 	JGUIUtil.setWaitCursor(this, true);
 

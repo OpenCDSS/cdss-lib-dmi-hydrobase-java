@@ -29,16 +29,13 @@
 // 2004-01-13	SAM, RTi		Added "common_id" as a data member to
 //					use in a work-around for the well data
 //					storage problems.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.io.IOException;
-
 import java.util.Date;
-import java.util.Vector;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

@@ -12,6 +12,7 @@
 // 2005-11-17	JTS, RTi		Added new fields "Basin", 
 //					"DSS_aquifer1", "DSS_aquifer2", 
 //					"DSS_aquifer_comment".
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -42,9 +43,6 @@ entry text field is clicked in.  Cannot be null.
 */
 public HydroBase_GUI_GroundWater_InputFilter_JPanel(HydroBaseDMI dmi,
 MouseListener listener, boolean tstool) {
-	String rd = dmi.getRightIdDelim();
-	String ld = dmi.getLeftIdDelim();
-
 	InputFilter filter = null;
 
 	Vector filters = new Vector();
@@ -124,10 +122,10 @@ MouseListener listener, boolean tstool) {
 			null, null, false);
 		// all constraints other than EQUALS are removed because 
 		// PLSS Locations are compared in a special way
-		filter.removeConstraint(filter.INPUT_ONE_OF);
-		filter.removeConstraint(filter.INPUT_STARTS_WITH);
-		filter.removeConstraint(filter.INPUT_ENDS_WITH);
-		filter.removeConstraint(filter.INPUT_CONTAINS);
+		filter.removeConstraint(InputFilter.INPUT_ONE_OF);
+		filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+		filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+		filter.removeConstraint(InputFilter.INPUT_CONTAINS);
 		// the PLSS Location text field is not editable because users 
 		// must go through the PLSS Location JDialog to build a location
 		filter.setInputJTextFieldEditable(false);

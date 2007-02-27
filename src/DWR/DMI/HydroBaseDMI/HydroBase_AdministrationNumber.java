@@ -19,14 +19,10 @@
 // 2003-04-08	JTS, RTi		Moved TSDates to DateTime.
 // 2004-02-04	JTS, RTi		Now extends DMIDataObject.
 // 2005-02-11	JTS, RTi		No longer extends DMIDataObject.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
-
-import java.util.Date;
-import java.util.Vector;
-
-import RTi.DMI.DMIDataObject;
 
 import RTi.Util.Message.Message;
 
@@ -392,9 +388,7 @@ an integer.
 */
 private void reset ( double admin_number, DateTime prior_adj_date )
 throws Exception
-{	String	routine = "HydroBase_AdministrationNumber.reset";
-
-	if ( _admin_number_date_datum == null ) {
+{	if ( _admin_number_date_datum == null ) {
 		initializeDatum ();
 	}
 

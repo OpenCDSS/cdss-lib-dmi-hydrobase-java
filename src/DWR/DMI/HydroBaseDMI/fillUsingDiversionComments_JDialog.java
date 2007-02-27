@@ -8,7 +8,7 @@
 // 2007-01-25	Kurt Tometich, RTi		Initial Version.
 // 2007-01-29	KAT, RTi		Added components needed for new CIU
 //							parameters -> FillUsingCIU and FillUsingCIUFlag.
-//					
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.		
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -58,7 +58,6 @@ private SimpleJComboBox	__RecalcLimits_JComboBox = null;
 						// Field for recalculation indicator
 private SimpleJComboBox __FillUsingCIU_JComboBox = null;
 						// Flag for using CIU value
-private JFrame __parent_JFrame = null;
 private JTextField	__FillStart_JTextField = null;
 						// Field for fill start
 private JTextField	__FillEnd_JTextField = null;
@@ -191,7 +190,6 @@ throws Throwable
 	__cancel_JButton = null;
 	__command_JTextField = null;
 	__ok_JButton = null;
-	__parent_JFrame = null;
 	super.finalize ();
 }
 
@@ -201,8 +199,7 @@ Instantiates the GUI components.
 @param command Command to edit.
 */
 private void initialize ( JFrame parent, Command command )
-{	__parent_JFrame = parent;
-	__command = (fillUsingDiversionComments_Command)command;
+{	__command = (fillUsingDiversionComments_Command)command;
 	CommandProcessor processor = __command.getCommandProcessor();
 
 	addWindowListener( this );

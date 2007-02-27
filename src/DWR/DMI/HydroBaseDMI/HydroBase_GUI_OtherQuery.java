@@ -57,14 +57,13 @@
 //					  numbers since they are no longer used.
 // 2006-10-31	SAM, RTi		Change from ...CASS...InputFilter to
 //					...CASSCropStats... input filter.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 // EndHeader
 
 package DWR.DMI.HydroBaseDMI;
  
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -85,7 +84,6 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import RTi.DMI.DMIUtil;
@@ -99,7 +97,6 @@ import RTi.Util.GUI.ReportJFrame;
 import RTi.Util.GUI.SimpleJButton; 
 import RTi.Util.GUI.SimpleJComboBox;
 
-import RTi.Util.IO.ExportJGUI;
 import RTi.Util.IO.PrintJGUI;
 import RTi.Util.IO.PropList;
 
@@ -125,10 +122,7 @@ private final String 	__BUTTON_GET_DATA = "Get Data",
 /**
 General strings.
 */
-private final String	__SUMMARY        = "Report Summary",
-			__COUNTY_NAME    = "County",
-			__ALL		= "All",
-			__ALL_METHODS = "All CU Methods";
+private final String	__SUMMARY        = "Report Summary";
 
 /**
 Data type strings.
@@ -295,51 +289,6 @@ public void actionPerformed(ActionEvent evt) {
 }
 
 /**
-Capitalizes a string nicely.  It capitalizes all the first letters of a word, 
-words being determined by characters following spaces, '-' or '_'.
-@param s the String to capitalize nicely.
-@return the nicely-capitalized String.
-*/
-private String capitalizeNicely(String s) {
-	if (s == null || s.length() == 0) {
-		return s;
-	}
-	if (s.length() == 1) {
-		return s.toUpperCase();
-	}
-
-	s = s.toLowerCase();
-
-	String[] delims = new String[3];
-	delims[0] = " ";
-	delims[1] = "_";
-	delims[2] = "-";
-
-	for (int i = 0; i < delims.length; i++) {
-		String[] strings = s.split(delims[i]);
-		String nice = "";
-		String firstLetter = null;
-		String rest = null;
-		
-		for (int j = 0; j < strings.length; j++) {
-			if (strings[j].length() > 0) {
-				firstLetter = strings[j].substring(0,1);
-				rest = strings[j].substring(1);
-				if (j > 0) {
-					nice += delims[i];
-				}
-				nice += firstLetter.toUpperCase() + rest;
-			}
-			else {
-				nice += delims[i];
-			}
-		}
-		s = nice;
-	}
-	return s;
-}
-
-/**
 Closes the GUI.
 */
 protected void closeClicked() {
@@ -351,9 +300,7 @@ Fills in the JComboBoxes appropriately after a data type is selected from
 the __dataTypeJComboBox.
 */
 private void dataTypeJComboBoxClicked() {
-	String routine = "dataTypeJComboBoxClicked";
-
-        String dtype  = __dataTypeJComboBox.getSelected().trim();
+	String dtype  = __dataTypeJComboBox.getSelected().trim();
 
 	if (dtype.equals(__DTYPE_CASS)) {
 		__cassFilterJPanel.setVisible(true);
@@ -572,7 +519,7 @@ private int formatCropGrowthReport(Vector[] vectors) {
 		}		
 	}
 
-	ReportJFrame j = new ReportJFrame(strings, reportProp);
+	new ReportJFrame(strings, reportProp);
 
 	return recordCount;
 }
@@ -787,8 +734,7 @@ private Vector formatOutput(int format) {
 	int[] selected = __worksheet.getSelectedRows();
 	int length = selected.length;
 	boolean isSelected = false;
-	String o;
-	String d = "";			
+	String o;			
         for (int i = 0; i < size; i++) {
 		isSelected = false;
 		if (length == 0) {
@@ -847,7 +793,7 @@ Responds to key pressed events.
 */
 public void keyPressed(KeyEvent e) { 
 	int code = e.getKeyCode();
-	if (code == e.VK_ENTER) {
+	if (code == KeyEvent.VK_ENTER) {
 		submitQuery();
 	}
 }
@@ -878,15 +824,11 @@ private void setupGUI() {
 	addWindowListener(this);
         
         // objects used throughout the GUI layout
-        Insets insetsNLNR = new Insets(0,7,0,7);
-        Insets insetsNNNR = new Insets(0,0,0,7);
         Insets insetsNLNN = new Insets(0,7,0,0);
         Insets insetsTLBR = new Insets(7,7,7,7);
         Insets insetsTLNN = new Insets(7,7,0,0);
         Insets insetsNLBR = new Insets(0,7,7,7);
-        Insets insetsTLNR = new Insets(7,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
         
         // North JPanel
         JPanel northJPanel = new JPanel();
@@ -899,10 +841,10 @@ private void setupGUI() {
         northJPanel.add("West", northWJPanel);
         
         JGUIUtil.addComponent(northWJPanel, new JLabel("Query Options:"), 
-                0, 0, 2, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.WEST);
+                0, 0, 2, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Data Type:"), 
-                0, 1, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+                0, 1, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__dataTypeJComboBox = new SimpleJComboBox();
 	__dataTypeJComboBox.add(__DTYPE_CASS);
@@ -911,7 +853,7 @@ private void setupGUI() {
 	__dataTypeJComboBox.add(__DTYPE_CROPG);
 	__dataTypeJComboBox.add(__DTYPE_HUM);
         JGUIUtil.addComponent(northWJPanel, __dataTypeJComboBox, 
-                1, 1, 5, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+                1, 1, 5, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	__dataTypeJComboBox.addItemListener(this);
 
 	__cassFilterJPanel = new HydroBase_GUI_CASSCropStats_InputFilter_JPanel(__dmi);
@@ -925,18 +867,18 @@ private void setupGUI() {
 	__cropGrowthFilterJPanel.addEventListeners(this);
 
 	JGUIUtil.addComponent(northWJPanel, __cassFilterJPanel,
-		0, 2, 3, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+		0, 2, 3, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(northWJPanel, __nassFilterJPanel,
-		0, 2, 3, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+		0, 2, 3, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(northWJPanel, __cropGrowthFilterJPanel,
-		0, 2, 3, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+		0, 2, 3, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__cropGrowthFilterJPanel.setVisible(false);
 
         SimpleJButton get = new SimpleJButton(__BUTTON_GET_DATA, this );
 	get.setToolTipText("Retrieve data from database.");
         JGUIUtil.addComponent(northWJPanel, get, 
-		6, 2, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		6, 2, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 		
         // Center Filler JPanel
         JPanel centerJPanel = new JPanel();
@@ -964,9 +906,9 @@ private void setupGUI() {
 	__tableJLabel = new JLabel();
 	JGUIUtil.addComponent(centerJPanel, __tableJLabel, 
 		1, 1, 7, 1, 1, 0, 
-		insetsNLNN, gbc.HORIZONTAL, gbc.WEST);	
+		insetsNLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);	
 	JGUIUtil.addComponent(centerJPanel, jsw,
-		1, 2, 7, 3, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		1, 2, 7, 3, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         
         //Bottom JPanel(Consist of two more JPanels)
         JPanel bottomJPanel = new JPanel();
@@ -1003,7 +945,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 0, 1, 
-                10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+                10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
                 
 	// set defaults, based off initial data type choice
 	__dataTypeJComboBox.select(__DTYPE_CASS); // default upon create

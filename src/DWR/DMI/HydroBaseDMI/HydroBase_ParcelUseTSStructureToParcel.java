@@ -9,12 +9,11 @@
 // 2004-09-21	Steven A. Malers, RTi	Split out of HydroBase_ParcelUseTS,
 //					which was mistakenly a join of two
 //					tables.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 /**

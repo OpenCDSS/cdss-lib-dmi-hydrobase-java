@@ -15,11 +15,11 @@
 // 2003-12-09	JTS, RTI		Now extends DMIDataObject.
 // 2005-07-13	JTS, RTi		Now implements Comparable, but only
 //					sorts for now on irr_year.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

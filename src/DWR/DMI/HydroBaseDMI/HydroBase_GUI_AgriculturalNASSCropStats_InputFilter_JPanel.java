@@ -11,6 +11,7 @@
 //					input filter panel type.
 // 2005-04-05	J. Thomas Sapienza, RTi	Adapted the fields for use with 
 //					stored procedures.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -51,10 +52,9 @@ throws Exception
 		size = v.size();
 	}
 	Vector commodity_Vector = new Vector();
-	Vector practice_Vector = new Vector();
-	String commodity, practice;
+	String commodity;
 	HydroBase_AgriculturalNASSCropStats agstats = null;
-	int commodity_size = 0, practice_size = 0, j = 0;
+	int commodity_size = 0, j = 0;
 	boolean found = false;
 	for ( int i = 0; i < size; i++ ) {
 		agstats = (HydroBase_AgriculturalNASSCropStats)v.elementAt(i);

@@ -751,6 +751,13 @@
 // 2006-10-30	SAM, RTi		Add code to read CASS livestock
 //					statistics.
 //					Add code to read CUPopulation.
+// 2007-02-23	SAM, RTi
+//					Update to handle HydroBase 20060201 release.
+//					Since there is not a DB design version record for
+//					this, key off the 20061003 version.
+//					In particular, handle SFUT with G: at end and F: that
+//					is 7-digit, padded with zeros.
+//					Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 // EndHeader
 
@@ -797,7 +804,6 @@ import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
 
 import RTi.Util.Time.DateTime;
-import RTi.Util.Time.StopWatch;
 import RTi.Util.Time.TimeInterval;
 import RTi.Util.Time.TimeUtil;
 
@@ -887,8 +893,12 @@ public class HydroBaseDMI
 extends DMI 
 implements TSProductAnnotationProvider, TSProductDMI {
 
-public final static long VERSION_20051115 = 2005111520051115L,
-			 VERSION_LATEST   = VERSION_20051115;
+// HydroBase release dates.  The design version is first, followed by
+// the release date.
+public final static long VERSION_20061003 = 2006100320070201L;
+public final static long VERSION_LATEST = VERSION_20061003;
+
+public final static long VERSION_20051115 = 2005111520051115L;
 
 public final static long VERSION_20050701 = 2005050120050701L;
 
@@ -1063,10 +1073,6 @@ private final int __S_CG_CU_MOD_HARGREAVES_FOR_METHOD_DESC = 423;
 // cu_penman_monteith
 private final int __S_CG_CU_PENMAN_MONTEITH = 441;
 private final int __S_CG_CU_PENMAN_MONTEITH_FOR_METHOD_DESC = 443;
-
-// CUPopulation
-private final int __S_CUPOPULATION = 461;
-private final int __S_CUPOPULATION_DISTINCT = 462;
 
 // daily_amt
 private final int __S_DAILY_AMT = 480;
@@ -1340,7 +1346,6 @@ private final int __S_WELLS_STRUCTURE = 2180;
 private final int __S_WELLS = 2200;
 
 // wis_comments
-private final int __D_WIS_COMMENTS = 1998;
 private final int __D_WIS_COMMENTS_FOR_WIS_NUM = 1999;
 private final int __S_WIS_COMMENTS_FOR_WIS_NUM_SET_DATE = 2001;
 private final int __W_WIS_COMMENTS = 2002;
@@ -1355,7 +1360,6 @@ private final int __S_WIS_DATA = 2020;
 private final int __S_WIS_DATA_FOR_WIS_NUM_SET_DATE = 2021;
 private final int __W_WIS_DATA = 2022;
 private final int __D_WIS_DATA = 2023;
-private final int __D_WIS_DATA_FOR_WIS_NUM = 2024;
 
 // wis_diagram_data
 private final int __S_WIS_DIAGRAM_DATA = 2085;
@@ -1423,8 +1427,6 @@ procedure connections in order that the stored procedures can be closed
 properly.
 */
 private DMISelectStatement __lastStatement = null;
-
-private Hashtable __orderByNumbers = null;
 
 /**
 The hashtable that caches stored procedure information.
@@ -1906,7 +1908,6 @@ private void buildSQL (DMIStatement statement, int sqlNumber)
 throws Exception {
 	DMISelectStatement select;
 	DMIWriteStatement write;
-	DMIDeleteStatement del;
 	boolean distinct = false;
 	String table = null;
 	long version = getDatabaseVersion();
@@ -6223,7 +6224,6 @@ total number of records deleted.
 public int[] deleteTSProductForIdentifier(String identifier, int user_num) 
 throws Exception {
 	DMIDeleteStatement del1 = new DMIDeleteStatement(this);
-	DMIDeleteStatement del2 = new DMIDeleteStatement(this);
 	int[] deleted = new int[3];
 
 	HydroBase_TSProduct tsp = readTSProductForIdentifier(identifier, 
@@ -6622,8 +6622,12 @@ public void determineDatabaseVersion() {
 	boolean version_found = false;
 	long version = VERSION_UNKNOWN;
 	try {
+		// VERSION_20061003
+		if (isVersionAtLeast(VERSION_20061003)) {
+			version = VERSION_20061003;
+		}
 		// VERSION_20051115
-		if (isVersionAtLeast(VERSION_20051115)) {
+		else if (isVersionAtLeast(VERSION_20051115)) {
 			version = VERSION_20051115;
 		}
 		// VERSION_20050701
@@ -6784,7 +6788,6 @@ protected void finalize()
 throws Throwable {
 	__storedProcedureHashtable = null;
 	__viewNumbers = null;
-	__orderByNumbers = null;
 	__prefsProps = null;
 	__userSecurityPermissions = null;
 	__CountyRef_Vector = null;
@@ -6977,7 +6980,6 @@ information about the connection.
 </ul>
 */
 public Vector getDatabaseProperties () {
-	String routine = "HydroBaseDMI.getDatabaseProperties";
 	Vector v = new Vector();
 	v.add("HydroBase Database Host: " + getDatabaseServer());
 	if (getODBCName() != null) {
@@ -7371,17 +7373,6 @@ throws Exception {
 	return v;
 }
 
-private String getOrderByNumber(String orderByName) 
-throws Exception {
-	String s = (String)(__orderByNumbers.get(orderByName));
-	if (s == null) {
-		throw new Exception("OrderBy '" + orderByName 
-			+ "' could not be "
-			+ "found in the orderBy-to-number lookup.");
-	}
-	return s;
-}
-
 /**
 Looks up a view with a given name in the view name to view number hashtable.
 If the view name cannot be found, an exception will be thrown.  Otherwise,
@@ -7707,7 +7698,10 @@ throws Exception {
 			+ version);
 	}
 
-	if (version == VERSION_20051115) {
+	if (version == VERSION_20061003) {
+		return isVersion20061003();
+	}
+	else if (version == VERSION_20051115) {
 		return isVersion20051115();
 	}
 	else if (version == VERSION_20050701) {
@@ -8265,7 +8259,7 @@ throws Exception {
 }
 
 /**
-Check the database version to see if it matches the 2004-07-01 database.
+Check the database version to see if it matches the 2005-05-01 database.
 The 2005-05-01 database includes the following change:<p>
 <ul>
 <li>usp_CDSS_refCounty_Sel stored procedure can be set up.</li>
@@ -8323,7 +8317,7 @@ throws Exception {
 }
 
 /**
-Check the database version to see if it matches the 2004-07-01 database.
+Check the database version to see if it matches the 2005-07-01 database.
 The 2005-07-01 database includes the following change:<p>
 <ul>
 <li>usp_CDSS_Geophlogs_Sel stored procedure available</li>
@@ -8343,7 +8337,6 @@ throws Exception {
 				+ "procedure is available.");
 	}
 
-	DMISelectStatement q = new DMISelectStatement(this);
 	if (!DMIUtil.databaseHasStoredProcedure(this,"usp_CDSS_Geophlogs_Sel")){
 		if (Message.isDebugOn) {
 			Message.printDebug(dl, routine,
@@ -8379,7 +8372,7 @@ throws Exception {
 }
 
 /**
-Check the database version to see if it matches the 2004-07-01 database.
+Check the database version to see if it matches the 2005-11-15 database.
 The 2005-11-15 database includes the following change:<p>
 <ul>
 <li>The ResultSet generated for the 
@@ -8434,6 +8427,23 @@ throws Exception {
 	closeResultSet(rs, __lastStatement);
 
 	return hasField;
+}
+
+/**
+Check the database version to see if it matches the 2006-10-03 database.
+The 2006-10-03 database includes the following change:<p>
+<ul>
+<li>The view vw_CDSS_CUPopulation was added.</li>
+</ul><p>
+@return true if the version matches the 2005-11-15 version.
+*/
+public boolean isVersion20061003 ()
+throws Exception {
+	// Checking for a view is treated like checking for a table...
+	if ( DMIUtil.databaseHasTable(this,"vw_CDSS_CUPopulation")) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -8682,7 +8692,6 @@ throws Exception {
 	HydroBase_WaterDistrict w;
 	Vector waterDistrictsByDiv = getWaterDistrictsByDiv();
 	int size = waterDistrictsByDiv.size();
-	Vector waterDistricts = new Vector();	
 	for (int i = 0; i < size; i++) {
 		w = (HydroBase_WaterDistrict)
 			waterDistrictsByDiv.elementAt(i);
@@ -8863,15 +8872,12 @@ throws Exception {
 	}
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
-		int queryType = __S_AGRICULTURAL_CASS_CROP_STATS;
 		if (distinct) {
-			buildSQL(q, queryType =
-				__S_AGRICULTURAL_CASS_CROP_STATS_DISTINCT);
+			buildSQL(q, __S_AGRICULTURAL_CASS_CROP_STATS_DISTINCT);
 			q.selectDistinct(true);
 		}
 		else {
-			buildSQL(q, 
-				queryType = __S_AGRICULTURAL_CASS_CROP_STATS);
+			buildSQL(q, __S_AGRICULTURAL_CASS_CROP_STATS);
 		}
 		Vector wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
@@ -9023,15 +9029,12 @@ throws Exception {
 	}
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
-		int queryType = __S_AGRICULTURAL_CASS_LIVESTOCK_STATS;
 		if (distinct) {
-			buildSQL(q, queryType =
-				__S_AGRICULTURAL_CASS_LIVESTOCK_STATS_DISTINCT);
+			buildSQL(q, __S_AGRICULTURAL_CASS_LIVESTOCK_STATS_DISTINCT);
 			q.selectDistinct(true);
 		}
 		else {
 			buildSQL(q, 
-				queryType =
 				__S_AGRICULTURAL_CASS_LIVESTOCK_STATS);
 		}
 		Vector wheres 
@@ -9175,15 +9178,12 @@ throws Exception {
 	}
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
-		int queryType = __S_AGRICULTURAL_NASS_CROP_STATS;
 		if (distinct) {
-			buildSQL(q, queryType =
-				__S_AGRICULTURAL_NASS_CROP_STATS_DISTINCT);
+			buildSQL(q, __S_AGRICULTURAL_NASS_CROP_STATS_DISTINCT);
 			q.selectDistinct(true);
 		}
 		else {
-			buildSQL(q, 
-				queryType = __S_AGRICULTURAL_NASS_CROP_STATS);
+			buildSQL(q, __S_AGRICULTURAL_NASS_CROP_STATS);
 		}
 		Vector wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
@@ -10037,7 +10037,6 @@ throws Exception {
 	}
 	else {
 		ResultSet rs = null;
-		Vector v = null;
 		Vector[] varray = new Vector[3];
 
 		boolean doAll = false;
@@ -11525,8 +11524,6 @@ throws Exception {
 	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
 		panel, districtWhere);
 
-	String[] triplet = null;
-
 	HydroBase_GUI_Util.fillSPParameters(parameters, 
 		getViewNumber(
 		"vw_CDSS_GroundWaterWellsDrillersKSum"), 84, null);
@@ -11554,8 +11551,6 @@ throws Exception {
 	// SP only
 	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
 		panel, districtWhere);
-
-	String[] triplet = null;
 
 	HydroBase_GUI_Util.fillSPParameters(parameters, 
 		getViewNumber(
@@ -11720,9 +11715,6 @@ public Vector readGroundWaterWellsPumpingTestList(InputFilter_JPanel panel,
 String[] districtWhere)
 throws Exception {
 	if (__useSP) {
-		Vector orderBys 
-			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
-			panel, true);
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
 			panel, districtWhere);
 
@@ -11744,9 +11736,6 @@ throws Exception {
 		return v;
 	}
 	else {
-		Vector orderBys 
-			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
-			panel, false);
 		Vector wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel, HydroBase_GUI_Util._GEOLOC_TABLE_NAME,
@@ -11788,8 +11777,6 @@ throws Exception {
 	// SP only
 	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
 		panel, districtWhere);
-
-	String[] triplet = null;
 
 	HydroBase_GUI_Util.fillSPParameters(parameters, 
 		getViewNumber(
@@ -12281,7 +12268,6 @@ throws Exception {
 			q.addWhereClause("net_rate_abs > 0");
 		}
 
-		int orderNumber = -1;
 		if (orderCode == null) {
 			// default order by (used by StateDMI)
 			q.addOrderByClause("net_amts.admin_no");
@@ -13473,9 +13459,6 @@ String time_step, String vax_field, String data_source, String transmit,
 boolean meas_typeContains)
 throws Exception {
 	if (__useSP) {
-		Vector orderBys 
-			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
-			panel, true);
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
 			panel, districtWhere);
 
@@ -13762,9 +13745,6 @@ This method uses the following view:<p><ul>
 */
 public HydroBase_StationView readStationViewForStation_id(String station_id) 
 throws Exception {
-	Vector orderBys 
-		= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
-		null, true);
 	Vector v = null;
 	
 	if (__useSP) {
@@ -13814,9 +13794,6 @@ Reads all station views with the given WD.
 */
 public Vector readStationViewListForWD(int wd) 
 throws Exception {
-	Vector orderBys 
-		= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
-		null, true);
 	Vector v = null;
 	
 	if (__useSP) {
@@ -13999,12 +13976,48 @@ This method is used by:<ul>
 @param structure_num the structure_num for which to read data.
 @param meas_type the meas_type for which to read data.  Can be null or blank.
 @param identifier the struct_meas_type.identifier for which to read data.
-Can be null or blank.
+Can be null or blank.  This is the SFUT code that indicates water class.  As of
+version 20061003, the SFUT also contains a G: at the end and the F: is a 7-digit
+structure identifier.  This method handles backward-compatibility by manipulating
+the identifier string, as needed.
 @param time_step the struct_meas_type.time_step for which to read data.  Can be
 null or blank.
 @return a Vector of HydroBase_StructMeasType objects.
 */
 public Vector readStructMeasTypeListForStructure_num(int structure_num, 
+String meas_type, String identifier, String time_step, String data_source) 
+throws Exception {
+	return readStructMeasTypeListForWDIDStructure_num ( -1, -1, structure_num,
+			meas_type, identifier, time_step, data_source );
+}
+
+/**
+Read the struct_meas_type table and the wd, id from the structure table for the
+records that match the specified structure_num, meas_type, identifier,
+time_step, and data_source and join with data in the structure table, ordering
+by struct_meas_type.identifier.<p>
+This method is used by:<ul>
+<li>readTimeSeries()</li>
+</ul>
+<p><b>Stored Procedures</b><p>
+
+@param wd Water district, only used when adjusting the "identifier" because of
+database version backward-compatibiliy issues.
+@param id Structure identifier, only used when adjusting the "identifier" because of
+database version backward-compatibiliy issues.
+@param structure_num the structure_num for which to read data.
+@param meas_type the meas_type for which to read data.  Can be null or blank.
+@param identifier the struct_meas_type.identifier for which to read data.
+Can be null or blank.  This is the SFUT code that indicates water class.  As of
+version 20061003, the SFUT also contains a G: at the end and the F: is a 7-digit
+structure identifier.  This method handles backward-compatibility by manipulating
+the identifier string, as needed.
+@param time_step the struct_meas_type.time_step for which to read data.  Can be
+null or blank.
+@return a Vector of HydroBase_StructMeasType objects.
+*/
+private Vector readStructMeasTypeListForWDIDStructure_num(int wd, int id,
+int structure_num, 
 String meas_type, String identifier, String time_step, String data_source) 
 throws Exception {
 	if (__useSP) {
@@ -14025,6 +14038,7 @@ throws Exception {
 		}
 
 		if (identifier != null && identifier.length() > 0) {
+			identifier = HydroBase_Util.adjustSFUTForHydroBaseVersion(this,wd,id,identifier);
 			triplet[0] = "identifier";
 			triplet[1] = "MA";
 			triplet[2] = identifier;
@@ -14381,8 +14395,6 @@ throws Exception {
 	buildSQL (q, __S_STRUCTURE_GEOLOC_LIST_FOR_WDID);
 	StringBuffer where = new StringBuffer ("(");
 	
-	String wd = null;
-	String id = null;
 	int [] wdid_parts = new int[2];
 	String wdid = null;
 	count = 0;
@@ -15067,7 +15079,6 @@ throws Exception {
 	Object o = null;
 
 	if (__useSP) {
-		HydroBase_StructureView view = null;
 		for (int i = 0; i < size; i++) {
 			wdid = (String)WDIDs.elementAt(i);
 			if (StringUtil.isLong(wdid) 
@@ -15095,7 +15106,6 @@ throws Exception {
 		}
 	}
 	else {
-		HydroBase_Structure view = null;
 		for (int i = 0; i < size; i++) {
 			wdid = (String)WDIDs.elementAt(i);
 			if (StringUtil.isLong(wdid) 
@@ -15204,9 +15214,6 @@ throws Exception {
 		return v;
 	}
 	else {
-		Vector orderBys 
-			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
-			panel, false);
 		Vector wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel, HydroBase_GUI_Util._GEOLOC_TABLE_NAME,
@@ -15729,8 +15736,6 @@ throws Exception, NoDataFoundException
 	// First determine the meas_type or struct_meas_type for the time
 	// series...
 
-	HydroBase_MeasType mt = null;		// For stations
-	HydroBase_StructMeasType str_mt = null;	// For structures
 	HydroBase_StructMeasTypeView str_mt_v = null;	// For structures
 
 	int mt_meas_num = DMIUtil.MISSING_INT;
@@ -15953,10 +15958,12 @@ throws Exception, NoDataFoundException
 		// The identifier is the SFUT string which should have come in
 		// as the sub data type...
 		String identifier = sub_data_type;
+		String identifier_adjusted = HydroBase_Util.adjustSFUTForHydroBaseVersion(
+				this,wdid_parts[0],wdid_parts[1],identifier);
 		// Next get the struct_meas_type for the structure...
 		Vector mts = readStructMeasTypeListForStructure_num
-			(strView.getStructure_num(), meas_type, identifier,
-			time_step, data_source);
+			(strView.getStructure_num(), meas_type,
+			identifier_adjusted,time_step, data_source);
 		if ((mts == null) || (mts.size() == 0)) {
 			message = "Unable to find struct_meas_type "
 				+ "for \"" + tsident_string 
@@ -15967,6 +15974,9 @@ throws Exception, NoDataFoundException
 				+ " time_step=" + time_step
 				+ "  Structure does not have a time series "
 				+ "in HydroBase.";
+			if ( identifier.equals(identifier_adjusted) ) {
+				 message += " (SFUT adjusted to be compatible with database version)";
+			}
 			Message.printWarning(3, routine, message);
 			throw new NoDataFoundException(message);
 		}
@@ -20065,7 +20075,6 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WD_WATER_NO_STRUCTURE);
 		q.addWhereClause("wdwater_num = " + wdwater_num);
-		int size = 0;
 		ResultSet rs = dmiSelect(q);
 		Vector v = toWDWaterList(rs);
 		closeResultSet(rs);
@@ -20245,9 +20254,6 @@ public Vector readWellApplicationGeolocList(InputFilter_JPanel panel,
 String[] districtWhere, GRLimits mapQueryLimits)
 throws Exception {
 	if (__useSP) {
-		Vector orderBys 
-			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
-			panel, true);
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
 			panel, districtWhere);
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
@@ -21166,7 +21172,6 @@ public Vector readWISDataListForWis_numWis_rowList(Vector wisNums,
 Vector wisRows, Vector order) 
 throws Exception {
 	if (__useSP) {
-		HydroBase_WISData data = null;
 		int size = wisNums.size();
 		int vsize = 0;
 		String wisNum = null;
@@ -21999,9 +22004,6 @@ public Vector readWISSheetNameWISFormatListDistinct(
 InputFilter_JPanel panel)
 throws Exception {
 	if (__useSP) {
-		Vector orderBys 
-			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
-			panel, true);
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
 			panel, null);
 
@@ -22092,7 +22094,6 @@ throws Exception {
 	HydroBase_WISSheetName wisData;
 
         // initialize variables
-        Vector structure_results = null;
         Vector structureNums = null;
 
 	Vector wds = HydroBase_GUI_Util.generateWaterDistricts(this, false);
@@ -22109,7 +22110,6 @@ throws Exception {
         }
 */
         // build or clause for the water districts
-	String orString = "";
         Vector wisResults = readWISSheetNameList(wds);
 
         // get the unique wisNums from the HBWISQuery
@@ -22289,10 +22289,8 @@ public boolean saveUserPreferences() {
         // get database connection information
 
 	boolean insert = false;
-        String query;
 	String prefName;
 	String prefValue;
-	String programName;
 
 	Vector dbProps = new Vector();
 	try {
@@ -22693,7 +22691,6 @@ throws Exception {
 
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -22749,7 +22746,6 @@ throws Exception {
 
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -23300,50 +23296,6 @@ throws Exception {
 }
 
 /**
-Translate a ResultSet from an Annual_wc SFUT query to HydroBase_AnnualWC 
-objects.  
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_AnnualWC
-@throws Exception if an error occurs.
-*/
-private Vector toAnnualWCSFUTList (ResultSet rs) 
-throws Exception {
-	HydroBase_AnnualWC data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-	Date dt;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_AnnualWC();
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setS(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setF(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setU(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setT(s.trim());
-		}
-
-		v.add(data);
-	}
-
-	return v;
-}
-
-/**
 Translates a ResultSet to HydroBase_Aquifer objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_Aquifer.
@@ -23393,7 +23345,6 @@ throws Exception {
 
 	int i;
 	double d;
-	Date dt;
 
 	while (rs.next()) {
 		index = 1;
@@ -23687,8 +23638,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
-	Date dt;
 
 	while (rs.next()) {
 		index = 1;
@@ -23713,61 +23662,6 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setID(i);
 		}		
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setDeleted(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setDiv(i);
-		}
-
-		v.add(data);
-	}
-	return v;
-}
-
-/**
-Translate a ResultSet from a stored procedure to HydroBase_Calls objects.
-@param rs ResultSet to translate.
-@param distinct whether the query was distrinct (true) or not (false)
-@return a Vector of HydroBase_Calls
-@throws Exception if an error occurs.
-*/
-private Vector toCallsDistinctSPList (ResultSet rs) 
-throws Exception {
-	HydroBase_Calls data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-	Date dt;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_Calls();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWdwater_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStructure_num(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStr_name(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWD(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setID(i);
-		}
 		s = rs.getString(index++);
 		if (!rs.wasNull()) {
 			data.setDeleted(s.trim());
@@ -23795,7 +23689,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	Date d;
 
 	long version = getDatabaseVersion();
 	String areaCode = null;
@@ -23868,9 +23761,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	Date d;
-
-	String areaCode = null;
 
 	while (rs.next()) {
 		index = 1;
@@ -23923,7 +23813,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	long version = getDatabaseVersion();
 
@@ -23975,7 +23864,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -24279,9 +24167,7 @@ throws Exception {
 	Vector v = new Vector();
 	int index = 1;
 	
-	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -24361,10 +24247,8 @@ throws Exception {
 	HydroBase_CUBlaneyCriddle data = null;
 	Vector v = new Vector();
 	int index = 1;
-	
-	int i;
+
 	String s;
-	float f;
 
 	while (rs.next()) {
 		index = 1;
@@ -24760,7 +24644,6 @@ throws Exception {
 
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -25877,7 +25760,6 @@ throws Exception {
 	String s;
 	double d;
 	float f;
-	Date dt;
 
 	long version = getDatabaseVersion();
 
@@ -26092,7 +25974,6 @@ throws Exception {
 	String s;
 	double d;
 	float f;
-	Date dt;
 
 	while (rs.next()) {
 		index = 1;
@@ -26661,7 +26542,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 	Date dt;
 
 	while (rs.next()) {
@@ -26712,7 +26592,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 	Date dt;
 
 	while (rs.next()) {
@@ -26923,7 +26802,6 @@ throws Exception {
 	int i;
 	String s;
 	double d;
-	Date dt;
 
 	long version = getDatabaseVersion();
 
@@ -27118,7 +26996,6 @@ throws Exception {
 	int i;
 	String s;
 	double d;
-	Date dt;
 
 	while (rs.next()) {
 		index = 1;
@@ -28802,9 +28679,7 @@ throws Exception {
 	Vector v = new Vector();
 	int index = 1;
 	
-	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -28938,78 +28813,11 @@ Translate a ResultSet to HydroBase_MeasType objects.
 @return a Vector of HydroBase_MeasType
 @throws Exception if an error occurs.
 */
-private Vector toMeasTypeList (ResultSet rs) 
-throws Exception {
-	HydroBase_MeasType data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	Date dt;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_MeasType();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStation_num(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_type(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTime_step(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStart_year(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setEnd_year(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTransmit(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setVax_field(s.trim());
-		}		
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_count(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setData_source(s.trim());
-		}
-
-		v.add(data);
-	}
-
-	return v;
-}
-
-/**
-Translate a ResultSet to HydroBase_MeasType objects.
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_MeasType
-@throws Exception if an error occurs.
-*/
 private Vector toMeasTypeDistinctList(ResultSet rs) 
 throws Exception {
 	HydroBase_MeasType data = null;
 	Vector v = new Vector();
 	int index = 1;
-	int i;
 	String s;
 
 	while (rs.next()) {
@@ -30018,7 +29826,6 @@ throws Exception {
 	HydroBase_RefCIU data = null;
 	Vector v = new Vector();
 	int index = 1;
-	int i;
 	String s;
 
 	while (rs.next()) {
@@ -30234,7 +30041,6 @@ throws Exception {
 	int i;
 	int i2;
 	String s;
-	double d;
 
 	long version = getDatabaseVersion();
 
@@ -30347,9 +30153,7 @@ throws Exception {
 	int index = 1;
 	
 	int i;
-	int i2;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -30552,9 +30356,7 @@ throws Exception {
 	Vector v = new Vector();
 	int index = 1;
 	
-	int i;
 	String s;
-	Date dt;
 
 	while (rs.next()) {
 		index = 1;
@@ -31203,263 +31005,6 @@ throws Exception {
 }
 
 /**
-Translate a ResultSet to HydroBase_StationGeolocMeasType objects.
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_StationGeolocMeasType
-@throws Exception if an error occurs.
-@param distinct whether this is a distinct query or not
-*/
-private Vector toStationGeolocMeasTypeList (ResultSet rs, boolean distinct) 
-throws Exception {
-	HydroBase_StationGeolocMeasType data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-
-	long version = getDatabaseVersion();
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_StationGeolocMeasType();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setGeoloc_num(i);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setLatdecdeg(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setLongdecdeg(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPM(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setSec(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setSeca(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setTS(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTdir(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTsa(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setRng(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setRdir(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setRnga(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ160(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ40(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ10(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setCoordsns(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setCoordsew(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setCounty(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTopomap(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setCty(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setLoc_type(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setHUC(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setST(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setGeoloc_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStation_num(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStation_name(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStation_id(s.trim());
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setDrain_area(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setContr_area(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			if (version >= VERSION_20010326) {
-				data.setElev(d);
-			}
-			else if (version >= VERSION_20000427) {
-				data.setElevation(d);
-			}
-			else {
-				data.setElevation(d);
-			}
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setSource(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setAbbrev(s.trim());
-		}
-		if (version < VERSION_19990305) {
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setTransmnt(s.trim());
-			}
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWD(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setDiv(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStation_name(s.trim());
-		}
-		if (!distinct) {
-			i = rs.getInt(index++);
-			if (!rs.wasNull()) {
-				data.setMeas_num(i);
-			}
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_type(s.trim());
-		}
-		if (!distinct) {
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setTime_step(s.trim());
-			}
-			i = rs.getInt(index++);
-			if (!rs.wasNull()) {
-				data.setStart_year(i);
-			}
-			i = rs.getInt(index++);
-			if (!rs.wasNull()) {
-				data.setEnd_year(i);
-			}
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setTransmit(s.trim());
-			}
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setVax_field(s.trim());
-			}
-			i = rs.getInt(index++);
-			if (!rs.wasNull()) {
-				data.setMeas_count(i);
-			}
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setData_source(s.trim());
-		}		
-		if (version >= VERSION_19990305) {
-			i = rs.getInt(index++);
-			if (!rs.wasNull()) {
-				data.setTransbsn(i);
-			}
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setNesdis_id(s.trim());
-			}
-			d = rs.getDouble(index++);
-			if (!rs.wasNull()) {
-				data.setUtm_x(d);
-			}
-			d = rs.getDouble(index++);
-			if (!rs.wasNull()) {
-				data.setUtm_y(d);
-			}
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setCoordsns_dir(s.trim());
-			}
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setCoordsew_dir(s.trim());
-			}
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setFeature_type(s.trim());
-			}
-			i = rs.getInt(index++);
-			if (!rs.wasNull()) {
-				data.setAccuracy(i);
-			}
-		}
-
-		v.add(data);
-	}
-
-	return v;
-}
-
-/**
 Translate a ResultSet to HydroBase_StationView objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_StationView
@@ -31774,9 +31319,7 @@ throws Exception {
 	Vector v = new Vector();
 	int index = 1;
 	
-	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -31895,7 +31438,6 @@ throws Exception {
 	HydroBase_StructMeasType data = null;
 	Vector v = new Vector();
 	int index = 1;
-	int i;
 	String s;
 
 	while (rs.next()) {
@@ -31913,84 +31455,6 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setData_source(s.trim());
 		}
-		v.add(data);
-	}
-
-	return v;
-}
-
-/**
-Translate a ResultSet to HydroBase_StructMeasType objects.
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_StructMeasType
-@throws Exception if an error occurs.
-*/
-private Vector toStructMeasTypeList (ResultSet rs) 
-throws Exception {
-	HydroBase_StructMeasType data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_StructMeasType();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStructure_num(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_type(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTime_step(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStart_year(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setEnd_year(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTransmit(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_count(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setData_source(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStr_name(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWD(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setID(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setIdentifier(s.trim());
-		}
-
 		v.add(data);
 	}
 
@@ -32215,7 +31679,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -32264,7 +31727,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -32553,7 +32015,6 @@ throws Exception {
 	int i;
 	String s;
 	double d;
-	Date date;
 	float f;
 
 	long version = getDatabaseVersion();
@@ -32832,7 +32293,6 @@ private Vector toStructureList (ResultSet rs) throws Exception {
 	int i;
 	String s;
 	float f;
-	Date d;
 	double dd;
 
 	while (rs.next()) {
@@ -33037,7 +32497,6 @@ throws Exception {
 	int i;
 	String s;
 	double d;
-	float f;
 
 	while (rs.next()) {
 		index = 1;
@@ -33172,7 +32631,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -33399,9 +32857,6 @@ throws Exception {
 	String s;
 	double d;
 	Date dt;
-	float f;
-
-	long version = getDatabaseVersion();
 
 	while (rs.next()) {
 		index = 1;
@@ -33920,425 +33375,6 @@ throws Exception {
 }
 
 /**
-Translate a ResultSet to HydroBase_StructureGeolocStructMeasType objects.
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_StructureGeolocStructMeasType
-@throws Exception if an error occurs.
-*/
-private Vector toStructureGeolocStructMeasTypeList(ResultSet rs,
-boolean unpermittedWells)
-throws Exception {
-	HydroBase_StructureGeolocStructMeasType data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-	float f;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_StructureGeolocStructMeasType();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWD(i);
-		}		
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setID(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStr_name(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPM(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setTS(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTdir(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setRng(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setRdir(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setSec(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setSeca(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ160(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ40(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ10(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStart_year(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setEnd_year(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_num(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_type(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTime_step(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setIdentifier(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_count(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setData_source(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStructure_num(i);
-		}
-		if (unpermittedWells) {
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setUsgs_id(s.trim());
-			}
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setUsbr_id(s.trim());
-			}
-		}
-
-		v.add(data);
-	}
-
-	return v;
-}
-
-/**
-Translate a ResultSet to HydroBase_StructureGeolocStructMeasType objects.
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_StructureGeolocStructMeasType
-@throws Exception if an error occurs.
-*/
-private Vector toStructureGeolocStructMeasTypeList2(ResultSet rs,
-boolean unpermittedWells)
-throws Exception {
-	HydroBase_StructureGeolocStructMeasType data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-	float f;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_StructureGeolocStructMeasType();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWD(i);
-		}		
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setID(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStr_name(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPM(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setTS(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTdir(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setRng(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setRdir(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setSec(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setSeca(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ160(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ40(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ10(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStart_year(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setEnd_year(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStructure_num(i);
-		}
-		if (unpermittedWells) {
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setUsgs_id(s.trim());
-			}
-			s = rs.getString(index++);
-			if (!rs.wasNull()) {
-				data.setUsbr_id(s.trim());
-			}
-		}
-
-		v.add(data);
-	}
-
-	return v;
-}
-
-/**
-Translate a ResultSet to HydroBase_StructureGeolocStructMeasTypeView objects.
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_StructureGeolocStructMeasTypeView
-@throws Exception if an error occurs.
-*/
-private Vector toStructureGeolocStructMeasTypeSPList(ResultSet rs) 
-throws Exception {
-	HydroBase_StructureGeolocStructMeasTypeView data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-	float f;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_StructureGeolocStructMeasTypeView();
-
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setDiv(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWD(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setID(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStr_name(s.trim());
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setUtm_x(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setUtm_y(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setLatdecdeg(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setLongdecdeg(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPM(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setTS(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTdir(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTsa(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setRng(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setRdir(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setRnga(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setSec(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setSeca(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ160(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ40(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ10(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setCoordsns(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setCoordsns_dir(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setCoordsew(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setCoordsew_dir(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setCounty(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTopomap(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setCty(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setHUC(s.trim());
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setElev(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setLoc_type(s.trim());
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setStr_mile(d);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStructure_num(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_type(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTime_step(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStart_year(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setEnd_year(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setIdentifier(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTransmit(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeas_count(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setData_source(s.trim());
-		}
-		v.add(data);
-	}
-
-	return v;
-}
-
-/**
 Translate a ResultSet to HydroBase_StructureGeoloc objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_StructureGeoloc
@@ -34354,7 +33390,6 @@ throws Exception {
 	String s;
 	double d;
 	float f;
-	Date dt;
 
 	long version = getDatabaseVersion();
 
@@ -35531,7 +34566,6 @@ throws Exception {
 	int i;
 	String s;
 	double d;
-	float f;
 
 	long version = getDatabaseVersion();
 
@@ -36008,7 +35042,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	long version = getDatabaseVersion();
 
@@ -36070,7 +35103,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -36108,7 +35140,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -36232,733 +35263,6 @@ throws Exception {
 	
 		v.add(data);
 	}
-	return v;
-}
-
-/**
-Translate a ResultSet to HydroBase_WellApplication objects.
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_WellApplication
-@throws Exception if an error occurs.
-*/
-private Vector toWellApplicationList (ResultSet rs) 
-throws Exception {
-	HydroBase_WellApplication data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-	Date dt;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_WellApplication();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWell_app_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStructure_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setGw_controller_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setSubdiv_num(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setReceipt(s.trim());
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setPyield(d);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setPdepth(i);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setPacreft(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setUser(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setCase_no(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setElev(i);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setArea_irr(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setIrr_meas(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setComment(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWellxno(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setWellxsuf(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setWellxrpl(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setWell_name(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setSubdiv_name(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setFiling(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setLot(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setBlock(s.trim());
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setParcel_size(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setParcel_no(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setAquifer1(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setAquifer2(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setUse1(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setUse2(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setUse3(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setDriller_lic(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPump_lic(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setActcode(s.trim());
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setActdate(dt);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStatcode(s.trim());
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setStatdate(dt);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTrancode(s.trim());
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setTrandate(dt);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setPermit_type_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setPermitno(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPermitsuf(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPermitrpl(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setEngineer(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStatute(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setTperf(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setBperf(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setAbreq(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeter(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setLog(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setMD(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setBasin(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setValid_permit(i);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setNpdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setExdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setNoticedate(dt);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setYield(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setAcreft(d);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setDepth(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setLevel(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setQual(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setWell_type(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setValid_struc(i);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setPidate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setWadate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setSadate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setSbudate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setAbrdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setAbcodate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setNwcdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setNbudate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setWcdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setPcdate(dt);
-		}
-//		s = rs.getString(index++);
-//		if (!rs.wasNull()) {
-//			data.setXref_location(s.trim());
-//		}
-//		s = rs.getString(index++);
-//		if (!rs.wasNull()) {
-//			data.setXref_city(s.trim());
-//		}
-//		i = rs.getInt(index++);
-//		if (!rs.wasNull()) {
-//			data.setXref_cty(i);
-//		}
-//		s = rs.getString(index++);
-//		if (!rs.wasNull()) {
-//			data.setXref_owner_name(s.trim());
-//		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setDiv(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWD(i);
-		}
-
-		v.add(data);
-	}
-
-	return v;
-}
-
-/**
-Translate a ResultSet to HydroBase_WellApplicationGeoloc objects.
-@param rs ResultSet to translate.
-@return a Vector of HydroBase_WellApplicationGeoloc
-@throws Exception if an error occurs.
-*/
-private Vector toWellApplicationGeolocList (ResultSet rs) 
-throws Exception {
-	HydroBase_WellApplicationGeoloc data = null;
-	Vector v = new Vector();
-	int index = 1;
-	
-	int i;
-	String s;
-	double d;
-	Date dt;
-
-	while (rs.next()) {
-		index = 1;
-		data = new HydroBase_WellApplicationGeoloc();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWell_app_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setStructure_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setGw_controller_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setSubdiv_num(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setReceipt(s.trim());
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setPyield(d);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setPdepth(i);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setPacreft(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setUser(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setCase_no(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setElev(i);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setArea_irr(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setIrr_meas(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setComment(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWellxno(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setWellxsuf(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setWellxrpl(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setWell_name(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setSubdiv_name(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setFiling(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setLot(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setBlock(s.trim());
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setParcel_size(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setParcel_no(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setAquifer1(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setAquifer2(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setUse1(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setUse2(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setUse3(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setDriller_lic(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPump_lic(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setActcode(s.trim());
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setActdate(dt);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStatcode(s.trim());
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setStatdate(dt);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTrancode(s.trim());
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setTrandate(dt);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setPermit_type_num(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setPermitno(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPermitsuf(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPermitrpl(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setEngineer(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setStatute(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setTperf(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setBperf(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setAbreq(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setMeter(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setLog(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setMD(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setBasin(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setValid_permit(i);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setNpdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setExdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setNoticedate(dt);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setYield(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setAcreft(d);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setDepth(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setLevel(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setQual(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setWell_type(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setValid_struc(i);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setPidate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setWadate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setSadate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setSbudate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setAbrdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setAbcodate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setNwcdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setNbudate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setWcdate(dt);
-		}
-		dt = rs.getDate(index++);
-		if (!rs.wasNull()) {
-			data.setPcdate(dt);
-		}
-//		s = rs.getString(index++);
-//		if (!rs.wasNull()) {
-//			data.setXref_location(s.trim());
-//		}
-//		s = rs.getString(index++);
-//		if (!rs.wasNull()) {
-//			data.setXref_city(s.trim());
-//		}
-//		i = rs.getInt(index++);
-//		if (!rs.wasNull()) {
-//			data.setXref_cty(i);
-//		}
-//		s = rs.getString(index++);
-//		if (!rs.wasNull()) {
-//			data.setXref_owner_name(s.trim());
-//		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setDiv(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setWD(i);
-		}
-
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setGeoloc_num(i);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setUtm_x(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setUtm_y(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setLatdecdeg(d);
-		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setLongdecdeg(d);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setPM(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setTS(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setTdir(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setRng(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setRdir(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setSec(i);
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ160(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ40(s.trim());
-		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setQ10(s.trim());
-		}
-
-		v.add(data);
-	}
-
 	return v;
 }
 
@@ -37386,7 +35690,6 @@ throws Exception {
 	int i;
 	String s;
 	double d;
-	float f;
 	Date dt;
 
 	while (rs.next()) {
@@ -37482,7 +35785,6 @@ throws Exception {
 	int i;
 	String s;
 	double d;
-	float f;
 	Date dt;
 
 	if (getDatabaseVersion() < VERSION_20050701) {
@@ -37853,7 +36155,6 @@ throws Exception {
 
 	int i;
 	String s;
-	double d;
 	float f;
 	Date dt;
 	int[] wdid = null;
@@ -37974,7 +36275,6 @@ throws Exception {
 
 	int i;
 	String s;
-	double d;
 	float f;
 	Date dt;
 
@@ -38396,7 +36696,6 @@ throws Exception {
 
 	int i;
 	String s;
-	double d;
 	float f;
 	Date dt;
 
@@ -39533,7 +37832,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -39579,7 +37877,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	double d;
 
 	while (rs.next()) {
 		index = 1;
@@ -39647,7 +37944,6 @@ throws Exception {
 	Vector v = new Vector();
 	int index = 1;
 	
-	double d;
 	int i;
 	String s;
 
@@ -39691,9 +37987,7 @@ throws Exception {
 	Vector v = new Vector();
 	int index = 1;
 	
-	int i;
 	String s;
-	Date dt;
 
 	while (rs.next()) {
 		index = 1;
@@ -39785,7 +38079,6 @@ throws Exception {
 	
 	int i;
 	String s;
-	Date dt;
 
 	while (rs.next()) {
 		index = 1;
@@ -40549,7 +38842,6 @@ public boolean writeTSProduct(TSProduct product) {
 				// of the property in the database
 	int size = v.size();
 	Prop p = null;
-	String sql = null;
 	HydroBase_TSProductProps tspp = null;
 	try {
 		// loop through and write almost all of them out.
@@ -41345,8 +39637,6 @@ throws Exception {
 	String wdid;
 	boolean isWDID = false;
 	Vector v;
-	String id;
-	String wd;
 	int structureCount = 0;
 	String where = "";
 	if (ids == null) {

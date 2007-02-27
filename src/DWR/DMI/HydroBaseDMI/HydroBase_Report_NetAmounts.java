@@ -35,6 +35,7 @@
 // 2005-04-28	JTS, RTi		Added finalize().
 // 2005-07-14	JTS, RTi		Altered the tabulation report to include
 //					tdir and rdir.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -313,8 +314,6 @@ public void createPriorityReport(int type)
 throws Exception {
 	// set up variables
 	initialize();
-	Vector report = new Vector(100, 100);
-	boolean	isNewStreamNode = false;
 	String lastStreamName = new String();
 	boolean	byStream = false;
 	HydroBase_NetAmts node = null;
@@ -524,8 +523,6 @@ public void createAdminReport(int type)
 throws Exception {
 	// initialize variables
 	initialize();
-	Vector 	report = new Vector(100, 100);
-	boolean	isNewStreamNode = false;
 	String 	lastStreamName = new String();
 	boolean	byStream = false;
 	HydroBase_NetAmts node = null;
@@ -1211,8 +1208,6 @@ throws Exception {
 	v.addElement(format(n.getID()));
 	v.addElement(n.getWr_name());
 	v.addElement(n.getUnit());
-
-	double value = 0;
 
 	String unit = n.getUnit();
 	if (unit.equalsIgnoreCase("C"))

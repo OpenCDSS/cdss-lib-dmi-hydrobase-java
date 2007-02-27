@@ -20,13 +20,11 @@
 // 2003-02-10	JTS, RTi		Completed the above.
 // 2003-02-19	JTS, RTi		Added methods to support different 
 //					database version.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.io.IOException;
-
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

@@ -66,6 +66,7 @@
 //					* Add tool tips for the buttons.
 // 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
 // 2005-04-27	JTS, RTi		Added all data members to finalize().
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -97,12 +98,10 @@ import RTi.DMI.DMIUtil;
 import RTi.GRTS.TSViewJFrame;
 
 import RTi.TS.DayTS;
-import RTi.TS.TS;
 
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleJList;
 import RTi.Util.GUI.SimpleJButton;
-import RTi.Util.GUI.ResponseJDialog;
 
 import RTi.Util.IO.PropList;
 
@@ -127,11 +126,6 @@ implements ActionListener, KeyListener, WindowListener {
 The GUI that opened this one.
 */
 private HydroBase_GUI_CallsQuery __parent = null;
-
-/**
-Reference to the dmi.
-*/
-private HydroBaseDMI __dmi = null;
 
 /**
 The label for the form's list.
@@ -175,11 +169,6 @@ Vector that holds the results that are displayed.
 private Vector __results = null;
 
 /**
-Vector of time series.
-*/
-private Vector __tsVector;	
-
-/**
 HydroBase_GUI_CallSelection constructor
 */
 public HydroBase_GUI_CallSelection(HydroBaseDMI dmi, 
@@ -188,7 +177,6 @@ HydroBase_GUI_CallsQuery parent, Vector results) {
 	super (parent, false);
 
 	__parent = parent;
-	__dmi = dmi;
 	__results = results;
 	setupGUI();
 }
@@ -223,14 +211,12 @@ Clean up for garbage collection.
 protected void finalize()
 throws Throwable {
 	__parent = null;
-	__dmi = null;
 	__listJLabel = null;
 	__fromJTextField = null;
 	__statusJTextField = null;
 	__toJTextField = null;
 	__list = null;
 	__results = null;
-	__tsVector = null;
 
 	super.finalize();
 }
@@ -555,7 +541,7 @@ Respond to key released events.
 public void keyReleased(KeyEvent event) {
 	int code = event.getKeyCode();
 
-	if (code == event.VK_ENTER) {
+	if (code == KeyEvent.VK_ENTER) {
 		// enter key in "is" field has same effect as "Graph"
 		// button
 		graphClicked();
@@ -584,9 +570,7 @@ private void setupGUI() {
 
 	// the following are used in the GUI layout
         Insets insetsNLNR = new Insets(0,0,0,0);
-        Insets insetsTLNR = new Insets(2,2,0,2);
 	GridBagLayout gbl = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
        	JPanel topJPanel = new JPanel();
@@ -614,21 +598,21 @@ private void setupGUI() {
         JGUIUtil.addComponent(centerJPanel,
         	new JLabel("Information below includes the WDID, " +
 		"(legend index) structure name, decree,"),
-		1, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         JGUIUtil.addComponent(centerJPanel,
         	new JLabel("and administration number."),
-		1, ++y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, ++y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __listJLabel = new JLabel();
         JGUIUtil.addComponent(centerJPanel, __listJLabel, 
-		1, ++y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, ++y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __list = new SimpleJList();
 	__list.setFont(new Font("Courier", Font.PLAIN, 11));
 	__list.addKeyListener(this);
 
         JGUIUtil.addComponent(centerJPanel, new JScrollPane(__list), 
-		1, ++y, 1, 1, 1, 1, insetsNLNR, gbc.BOTH, gbc.WEST);
+		1, ++y, 1, 1, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	JPanel southJPanel = new JPanel();
 	southJPanel.setLayout(new BorderLayout());
@@ -653,7 +637,7 @@ private void setupGUI() {
 		"Select the calls to graph from the list.");
 	__statusJTextField.setEditable(false);
 	JGUIUtil.addComponent(statusJPanel, __statusJTextField,
-		0, 0, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	if (	(JGUIUtil.getAppNameForWindows() == null) ||
 		JGUIUtil.getAppNameForWindows().equals("") ) {

@@ -9,11 +9,11 @@
 //					HBStationFrostDatesRecord.
 // 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
 //					super.finalize() gets called.
+
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

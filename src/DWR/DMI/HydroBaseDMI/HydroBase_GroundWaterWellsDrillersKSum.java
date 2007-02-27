@@ -12,12 +12,11 @@
 // 2005-06-29	JTS, RTi		* Changed structure_num to well_num.
 //					* Now extends GroundWaterWellsView.
 // 2005-06-29	JTS, RTi		Renamed from HydroBase_DrillersKSum
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 /**

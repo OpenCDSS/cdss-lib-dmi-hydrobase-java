@@ -26,6 +26,7 @@
 //					* The table-specific cell renderers 
 //					  were removed and replaced with a 
 //					  single generic one.
+// 2007-02-26	SAM, RTi		Clean up code baed on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -41,13 +42,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
@@ -65,8 +64,6 @@ import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
 
-import RTi.Util.Time.DateTime;
-
 /**
 This class is a GUI for displaying all sorts of Dam information.
 */
@@ -79,7 +76,6 @@ Button and tab labels.
 private final String	
 	__BUTTON_CLOSE = 		"Close",
 	__BUTTON_EXPORT = 		"Export",
-	__BUTTON_HELP = 		"Help",
 	__BUTTON_PRINT = 		"Print",
 	__TAB_EMERGENCY = 		"Emergency Plan",
 	__TAB_INSPECTION = 		"Inspection",
@@ -328,8 +324,6 @@ public Vector formatOutput(int format) {
 	String s1;
 	Double d2, d5, d6, d11, d12, d13;
 	String s2, s5, s6, s11, s12, s13;
-	Date dt7;
-	DateTime dt;
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
@@ -415,7 +409,6 @@ public Vector formatOutput(int format) {
 				+ "_________________________________________"
 				+ "_________________________________________");
 			// Now do the list...
-			Vector strings;
 			for (int i = 0; i < spillwaySize; i++) {
 				s0 = (String)__spillwayWorksheet.getValueAt(
 					i, 0);
@@ -784,7 +777,6 @@ public Vector formatOutput(int format) {
 			v.addElement("NAME" + delim + "CAPACITY" + delim 
 				+ "DIAMETER" + delim + "LENGTH" + delim 
 				+ "TYPE" + delim + "OUTLET DESCRIPTION" +delim);
-			Vector strings;
 			for (int i = 0; i < outletSize; i++) {
 				s10 = (String)__outletWorksheet.getValueAt(
 					i, 0);
@@ -842,7 +834,6 @@ public Vector formatOutput(int format) {
 			v.addElement("");
 			v.addElement("DATE" + delim + "INSPECTOR" + delim 
 				+ "TYPE" + delim + "DAM/OUTLET NAME" + delim);
-			Vector strings;
 			for (int i = 0; i < inspectionSize; i++) {
 				s7 = (String)__inspectionWorksheet.getValueAt(
 					i, 0);
@@ -869,7 +860,6 @@ public Vector formatOutput(int format) {
 		if (emergencySize > 0) {
 			v.addElement("");
 			v.addElement("DATE" + delim + "REQUIRED" + delim);
-			Vector strings;
 			for (int i = 0; i < emergencySize; i++) {
 				s16 = (String)__emergencyWorksheet.getValueAt(
 					i, 0);
@@ -902,7 +892,6 @@ private void setupGUI() {
         Insets insetsTLBR = new Insets(7,7,7,7);
         Insets insetsTLBN = new Insets(7,7,7,0);
         Insets insetsTNBR = new Insets(7,0,7,7);
-        Insets insetsNLNR = new Insets(0,7,0,7);
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         Insets insetsNNNR = new Insets(0,0,0,7);
@@ -910,8 +899,7 @@ private void setupGUI() {
         Insets insetsNNBR = new Insets(0,0,7,7);
         Insets insetsNLBN = new Insets(0,7,7,0);
         Insets insetsNNBN = new Insets(0,0,7,0);
-        GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();        
+        GridBagLayout gbl = new GridBagLayout();      
 
         // Top JPanel
         JPanel topJPanel = new JPanel();
@@ -925,40 +913,40 @@ private void setupGUI() {
 
         JLabel nameJLabel = new JLabel("Structure Name:");
         JGUIUtil.addComponent(topWJPanel, nameJLabel, 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
  
         JLabel divJLabel = new JLabel("DIV:");
         JGUIUtil.addComponent(topWJPanel, divJLabel, 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel wdJLabel = new JLabel("WD:");
         JGUIUtil.addComponent(topWJPanel, wdJLabel, 
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel idJLabel = new JLabel("ID:");
         JGUIUtil.addComponent(topWJPanel, idJLabel, 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureJTextField = new JTextField();
         __structureJTextField.setText(__structureName);
         __structureJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __structureJTextField, 
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(5);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __divJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(5);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __wdJTextField, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(10);
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __idJTextField, 
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);            
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);            
 
         // Center JPanel
         JPanel centerJPanel = new JPanel();
@@ -971,204 +959,204 @@ private void setupGUI() {
         centerJPanel.add("West", centerWJPanel);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Dam AKA:"), 
-		0, 2, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __damAKAJTextField = new JTextField(20);
         __damAKAJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __damAKAJTextField, 
-		1, 2, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 2, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
                       
         JGUIUtil.addComponent(centerWJPanel, new JLabel("State Dam ID:"), 
-		4, 2, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		4, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __stateDamIDJTextField = new JTextField(5);
         __stateDamIDJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __stateDamIDJTextField, 
-		5, 2, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		5, 2, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Hazard Class:"), 
-		0, 3, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 3, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __hazardClassJTextField = new JTextField(5);
         __hazardClassJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __hazardClassJTextField, 
-		1, 3, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 3, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("NAB Code:"), 
-		2, 3, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		2, 3, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __nabCodeJTextField = new JTextField(10);
         __nabCodeJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __nabCodeJTextField, 
-		3, 3, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 3, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, 
 		new JLabel("National Inventory ID:"), 
-		4, 3, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		4, 3, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __nationalIDJTextField = new JTextField(10);
         __nationalIDJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __nationalIDJTextField, 
-		5, 3, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		5, 3, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Nearest Downstream"), 
-		0, 4, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 4, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Forest Service ID:"), 
-		4, 4, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		4, 4, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __forestIDJTextField = new JTextField(10);
         __forestIDJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __forestIDJTextField, 
-		5, 4, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		5, 4, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
                                                                 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Town Name:"), 
-		0, 5, 1, 1, 0, 0, insetsNLBN, gbc.NONE, gbc.EAST);
+		0, 5, 1, 1, 0, 0, insetsNLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __nameJTextField = new JTextField(10);
         __nameJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __nameJTextField, 
-		1, 5, 1, 1, 0, 0, insetsNNBR, gbc.HORIZONTAL, gbc.WEST);
+		1, 5, 1, 1, 0, 0, insetsNNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Distance:"), 
-		2, 5, 1, 1, 0, 0, insetsNNBN, gbc.NONE, gbc.EAST);
+		2, 5, 1, 1, 0, 0, insetsNNBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __distanceJTextField = new JTextField(10);
         __distanceJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __distanceJTextField, 
-		3, 5, 1, 1, 0, 0, insetsNNBR, gbc.HORIZONTAL, gbc.WEST);
+		3, 5, 1, 1, 0, 0, insetsNNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Federal Land:"), 
-		4, 5, 1, 1, 0, 0, insetsNLBN, gbc.NONE, gbc.EAST);
+		4, 5, 1, 1, 0, 0, insetsNLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __federalLandJTextField = new JTextField(10);
         __federalLandJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __federalLandJTextField, 
-		5, 5, 1, 1, 0, 0, insetsNNBR, gbc.HORIZONTAL, gbc.WEST);
+		5, 5, 1, 1, 0, 0, insetsNNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Stream Code:"), 
-		2, 6, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		2, 6, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __streamCodeJTextField = new JTextField(10);
         __streamCodeJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __streamCodeJTextField, 
-		3, 6, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 6, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, 
 		new JLabel("Federal Regulations:"), 
-		4, 6, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		4, 6, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __regulationsJTextField = new JTextField(10);
         __regulationsJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __regulationsJTextField, 
-		5, 6, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		5, 6, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Crest:"), 
-		2, 7, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+		2, 7, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Dam Heights:"), 
-		4, 7, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.WEST);
+		4, 7, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Spillway Capacity:"), 
-		0, 8, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 8, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __spillwayJTextField = new JTextField(10);
         __spillwayJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __spillwayJTextField, 
-		1, 8, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 8, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Elevation:"), 
-		2, 8, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		2, 8, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __elevationJTextField = new JTextField(10);
         __elevationJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __elevationJTextField, 
-		3, 8, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 8, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Jurisdictional:"), 
-		4, 8, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		4, 8, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __jurisdictionalJTextField = new JTextField(10);
         __jurisdictionalJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __jurisdictionalJTextField, 
-		5, 8, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		5, 8, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Outlet Capacity:"), 
-		0, 9, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		0, 9, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __outletJTextField = new JTextField(10);
         __outletJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __outletJTextField, 
-		1, 9, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 9, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Length:"), 
-		2, 9, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		2, 9, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __lengthJTextField = new JTextField(10);
         __lengthJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __lengthJTextField, 
-		3, 9, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 9, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Hydraulic:"), 
-		4, 9, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		4, 9, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
          __hydraulicJTextField = new JTextField(10);
         __hydraulicJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __hydraulicJTextField, 
-		5, 9, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		5, 9, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Width:"), 
-		2, 10, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		2, 10, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __widthJTextField = new JTextField(10);
         __widthJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __widthJTextField, 
-		3, 10, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 10, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Structural:"), 
-		4, 10, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		4, 10, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __structuralJTextField = new JTextField(10);
         __structuralJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __structuralJTextField, 
-		5, 10, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		5, 10, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Dam Type:"), 
-		0, 11, 1, 1, 0, 0, insetsTLBN, gbc.NONE, gbc.EAST);
+		0, 11, 1, 1, 0, 0, insetsTLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __damTypeJTextField = new JTextField(10);
         __damTypeJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __damTypeJTextField, 
-		1, 11, 1, 1, 0, 0, insetsTNBR, gbc.HORIZONTAL, gbc.WEST);
+		1, 11, 1, 1, 0, 0, insetsTNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Purpose:"), 
-		2, 11, 1, 1, 0, 0, insetsTLBN, gbc.NONE, gbc.EAST);
+		2, 11, 1, 1, 0, 0, insetsTLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __purposeJTextField = new JTextField(10);
         __purposeJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __purposeJTextField, 
-		3, 11, 1, 1, 0, 0, insetsTNBR, gbc.HORIZONTAL, gbc.WEST);
+		3, 11, 1, 1, 0, 0, insetsTNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Year Completed:"), 
-		4, 11, 1, 1, 0, 0, insetsNLNN, gbc.NONE, gbc.EAST);
+		4, 11, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __yearJTextField = new JTextField(10);
         __yearJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __yearJTextField, 
-		5, 11, 1, 1, 0, 0, insetsTNBR, gbc.HORIZONTAL, gbc.WEST);
+		5, 11, 1, 1, 0, 0, insetsTNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Remarks:"), 
-		0, 12, 1, 1, 0, 0, insetsTLBN, gbc.NONE, gbc.EAST);
+		0, 12, 1, 1, 0, 0, insetsTLBN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __remarksJTextField = new JTextField(10);
         __remarksJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __remarksJTextField, 
-		1, 12, 6, 1, 0, 0, insetsTNBR, gbc.HORIZONTAL, gbc.WEST);
+		1, 12, 6, 1, 0, 0, insetsTNBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JTabbedPane tabPanel = new JTabbedPane();
 	JGUIUtil.addComponent(centerWJPanel, tabPanel,
 		0, 13, 6, 5, 0, 1, 
-		insetsTLBR, gbc.BOTH, gbc.WEST);
+		insetsTLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	PropList p = new PropList("HydroBase_GUI_Dam.JWorksheet");
 	/*
@@ -1329,12 +1317,11 @@ private void setupGUI() {
         JPanel bottomSSJPanel = new JPanel();
         bottomSSJPanel.setLayout(gbl);
         bottomSouthJPanel.add("South", bottomSSJPanel);
-        GridBagConstraints gbcBSS = new GridBagConstraints();
 
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSSJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbcBSS.HORIZONTAL, gbcBSS.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.WEST);
             
         // Frame settings
         setTitle("Dam Information");

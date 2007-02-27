@@ -12,11 +12,11 @@
 // 2004-02-20	SAM, RTi		Change the name of the class from
 //					AgriculturalCropStats because the table
 //					name was changed.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

@@ -7,11 +7,11 @@
 // History:
 // 2004-02-20	Steven A. Malers, RTi	Initial version - copy and modify
 //					HydroBase_AgriculturalCASSCropStats.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

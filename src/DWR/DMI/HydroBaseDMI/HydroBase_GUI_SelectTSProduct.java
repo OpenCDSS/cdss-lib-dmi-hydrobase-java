@@ -27,6 +27,7 @@
 // 2005-04-28	JTS, RTi		Added finalize().
 // 2005-08-04	SAM, RTi		Clean up the notes at the top of the
 //					frame.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 // EndHeader
 
@@ -72,7 +73,6 @@ import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleFileFilter;
 import RTi.Util.GUI.TextResponseJDialog;
 
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.Prop;
 import RTi.Util.IO.PropList;
 

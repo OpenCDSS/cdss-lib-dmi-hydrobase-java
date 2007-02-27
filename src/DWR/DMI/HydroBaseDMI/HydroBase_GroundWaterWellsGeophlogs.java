@@ -11,14 +11,13 @@
 // 2005-06-21	JTS, RTi		Added variables for new view queries.
 // 2005-06-29	JTS, RTi		Now extends 
 //					HydroBase_GroundWaterWellsView
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 /**

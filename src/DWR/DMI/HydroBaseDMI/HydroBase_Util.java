@@ -70,6 +70,9 @@
 //					series (Demographics group).
 // 2007-02-06	Kurt Tometich, RTi		Moved the findNearestDataPoint
 //								method to TSUtil in RTiCommon.
+// 2007-02-26	SAM, RTi		Update parseSFUT() to handle G:
+//					Clean up code based on Eclipse feedback.
+//					Reorder some code to be alphabetical.
 //------------------------------------------------------------------------------
 // EndHeader
 
@@ -87,7 +90,6 @@ import RTi.TS.DayTS;
 import RTi.TS.MonthTS;
 import RTi.TS.TS;
 import RTi.TS.TSData;
-import RTi.TS.TSIterator;
 import RTi.TS.YearTS;
 
 import RTi.Util.GUI.InputFilter_JPanel;
@@ -190,6 +192,109 @@ public final static void addAlternateWellIdentifiers (	HydroBaseDMI dmi,
 			// ignore...
 		}
 	}	
+}
+
+/**
+Adjust the struct_meas_type SFUT identifier for the database version as follows.
+If the database is at least the 20061003, then the new G: is included in the identifier
+in the database, and the F: if specified is 7-digits padded to zeros.  Requests using
+the old SFUT with no G: are updated as follows.
+<ol>
+<li>	" G:" is added to the end of the identifier.</li>
+<li>	The F: (if specified as non-blank) is updated to a 7-digit value padded
+		with zeros.</li>
+</ol>
+If the database is earlier than 20061003, then the new G: is NOT included in the identifier
+in the database, and the F: if specified as the structure number in the district of the
+structure.  Requests using the new SFUT(G) are updated as follows.
+<ol>
+<li>	" G:" is removed from the end of the identifier.  An attempt to strip a non-blank
+		value will result in an exception.</li>
+<li>	The F: (if specified as non-blank) is updated to only the structure identifier.
+		An attempt to strip a WD that is different from the wd passed to this method
+		will result in an exception.</li>
+</ol>
+@param dmi HydroBaseDMI instance that is being used for data requests.
+@param wd Water district identifier, needed to adjust the F: to/from 7-digits.
+@param id Structure identifier.
+@param identifier The SFUT(G) identifier to adjust.
+@returns An SFUT(G) identifier that can be used to query data in the database
+version that is being used.
+*/
+public static String adjustSFUTForHydroBaseVersion ( HydroBaseDMI dmi, int wd, int id,
+		String identifier )
+throws Exception
+{	if ( (identifier == null) || (identifier.length() == 0) ) {
+		return identifier;
+	}
+	String identifier_new = identifier;
+	boolean need_to_adjust = false;	// true if need to adjust SFUT string
+	String G = "";
+	String F = "";
+	String[] SFUT_parts = HydroBase_Util.parseSFUT( identifier );
+	if ( dmi.isVersionAtLeast(HydroBaseDMI.VERSION_20061003) ) {
+		// Version that requires G: and 7-digit F: in SFUT.
+		if ( identifier.indexOf("G:") < 0 ){
+			// Requested identifier does not have G: so add it as blank...
+			need_to_adjust = true;
+		}
+		if ( SFUT_parts[1].length() > 0 ) {
+			// Have a non-blank F: so make sure it is 7-digits
+			F = SFUT_parts[1];	// Default is use all 7
+			if ( F.length() < 7 ) {
+				// Reformat to be 7 characters.  Assume that the WDID for the F: is
+				// the same as that passed in to this method.  Make sure that the
+				// overall length is 7.
+				need_to_adjust = true;
+				F = HydroBase_WaterDistrict.formWDID(7,""+wd,F);
+			}
+		}
+		if ( need_to_adjust ) {
+			// TODO SAM 2007-02-26 Might need an SFUT object to handle its own parse/toString().
+			// Reformat the identifier to include G: and 7-digit FROM...
+			identifier_new = "S:" + SFUT_parts[0] +
+							" F:" + F +
+							" U:" + SFUT_parts[2] +
+							" T:" + SFUT_parts[3] +
+							" G:" + G;
+		}
+	}
+	else {
+		// HydroBase version that DOES NOT include G: and 7-digit F: in SFUT.
+		// Adjust the data back to the old format, if possible.
+		if ( SFUT_parts.length > 4 ) {
+			need_to_adjust = true;	// Simple cut - omit G below
+			// Have a G: OK to cut off if blank but problems otherwise.
+			if ( SFUT_parts[4].length() > 0 ) {
+				throw new Exception ( "New SFUT with non-blank G: (" + identifier +
+						") cannot be used with old database.");
+			}
+		}
+		F = SFUT_parts[1];	// Default is to use F as is
+		if ( F.length() >= 7 ) {
+			// Reformat to just be the ID.  In this case, the WD part must agree
+			// with the WD passed in to this method.
+			need_to_adjust = true;
+			int [] wdid_parts = HydroBase_WaterDistrict.parseWDID( F );
+			if ( wdid_parts[0] != wd ) {
+				throw new Exception ( "Long F: WDID (" + SFUT_parts[1] +
+						") has different WD than structure.  Request is not compatible with older HydroBase." );
+			}
+			else {	F = "" + wdid_parts[1];
+					need_to_adjust = true;
+			}
+		}
+		if ( need_to_adjust ) {
+			// TODO SAM 2007-02-26 Might need an SFUT object to handle its own parse/toString().
+			// Reformat the identifier to exclude G: and not use 7-digit FROM...
+			identifier_new = "S:" + SFUT_parts[0] +
+							" F:" + F +
+							" U:" + SFUT_parts[2] +
+							" T:" + SFUT_parts[3];
+		}
+	}
+	Message.printStatus(2, "", "Adjusted SFUT=\"" + identifier_new + "\"" );
+	return identifier_new;
 }
 
 /**
@@ -749,9 +854,6 @@ static void fillTSIrrigationYearCarryForward (
 					DayTS ts, String FillDailyDivFlag )
 throws Exception
 {	String routine = "HydroBase_Util.fillTSIrrigationYearCarryForward";
-	// REVISIT SAM 2006-04-25
-	// Remove debug when code is tested in production
-	int dl = 10;
 	if ( ts == null ) {
 		return;
 	}
@@ -1634,7 +1736,7 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 						String data_type,
 						String interval )
 {	String	ACRE = "ACRE", ACFT = "ACFT", CFS = "CFS", DAY = "DAY",
-		DEGF = "DEGF", FT = "FT", HEAD = "HEAD",
+		FT = "FT", HEAD = "HEAD",
 		IN = "IN", KM = "KM",
 		KPA = "KPA", MJM2 = "MJ/M2", PERSONS = "PERSONS",
 		UNKNOWN = "", VOLT = "VOLT";
@@ -1830,7 +1932,6 @@ public static Vector getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 {	String Month = "Month";
 	String Day = "Day";
 	String Year = "Year";
-	String RealTime = "RealTime";
 	String Irregular = "Irregular";
 	Vector v = new Vector();
 	// Alphabetize by data type, as much as possible...
@@ -2200,6 +2301,214 @@ public static boolean isWISTimeSeriesDataType (	HydroBaseDMI hbdmi,
 }
 
 /**
+Returns the String name for the diversion source abbreviation using global
+data.  This is the "S" in SFUT.  Return an empty string if not found.<p>
+<p><b>REVISIT (JTS - 2004-06-21)<br></b>
+Move into HydroBase_Util.  This method is UNUSED by HydroBase right now.
+@return the String name for the diversion source abbreviation.  This is the
+"S" in SFUT.  Return an empty string if not found.
+@param source Source abbreviation.
+*/
+public static String lookupDiversionCodingSource ( String source )
+{
+	if ( source == null ) {
+		return "";
+	}
+	else if ( source.equals ( "1" ) ) {
+		return "NATURAL STREAM FLOW";
+	}
+	else if ( source.equals ( "2" ) ) {
+		return "RESERVOIR STORAGE";
+	}
+	else if ( source.equals ( "3" ) ) {
+		return "GROUND WATER (WELLS)";
+	}
+	else if ( source.equals ( "4" ) ) {
+		return "TRANSBASIN";
+	}
+	else if ( source.equals ( "5" ) ) {
+		return "NON-STREAM SOURCES";
+	}
+	else if ( source.equals ( "6" ) ) {
+		return "COMBINED";
+	}
+	else if ( source.equals ( "7" ) ) {
+		return "TRANSDISTRICT";
+	}
+	else if ( source.equals ( "8" ) ) {
+		return "RE-USED";
+	}
+	else if ( source.equals ( "9" ) ) {
+		return "MULTIPLE";
+	}
+	else if ( source.equalsIgnoreCase( "R" ) ) {
+		return "REMEASURED AND REDIVERTED";
+	}
+	else {	return "";
+	}
+}
+
+/**
+Returns the String name for the diversion type abbreviation in global data.  
+This is the  "T" in SFUT.  Return an empty string if not found.
+<p><b>REVISIT (JTS - 2004-06-21)<br></b>
+Move into HydroBase_Util.  This method is UNUSED by HydroBase right now.
+@return the String name for the diversion type abbreviation.  This is the
+"T" in SFUT.  Return an empty string if not found.
+@param type Type abbreviation.
+*/
+public static String lookupDiversionCodingType ( String type )
+{
+	if ( type == null ) {
+		return "";
+	}
+	else if ( type.equals ( "0" ) ) {
+		return "ADMINISTRATIVE RECORD ONLY";
+	}
+	else if ( type.equals ( "1" ) ) {
+		return "EXCHANGE";
+	}
+	else if ( type.equals ( "2" ) ) {
+		return "TRADE";
+	}
+	else if ( type.equals ( "3" ) ) {
+		return "CARRIER";
+	}
+	else if ( type.equals ( "4" ) ) {
+		return "ALTERNATIVE POINT OF DIVERSION";
+	}
+	else if ( type.equals ( "5" ) ) {
+		return "RE-USED";
+	}
+	else if ( type.equals ( "6" ) ) {
+		return "REPLACEMENT TO RIVER";
+	}
+	else if ( type.equals ( "7" ) ) {
+		return "RELEASED TO RIVER";
+	}
+	else if ( type.equals ( "8" ) ) {
+		return "RELEASED TO SYSTEM";
+	}
+	else if ( type.equals ( "9" ) ) {
+		return "USER-SUPPLIED INFORMATION";
+	}
+	else if ( type.equalsIgnoreCase( "A" ) ) {
+		return "AUGMENTED";
+	}
+	else if ( type.equalsIgnoreCase( "G" ) ) {
+		return "GEOTHERMAL";
+	}
+	else if ( type.equalsIgnoreCase( "S" ) ) {
+		return "RESERVOIR SUBSTITUTION";
+	}
+	else {	return "";
+	}
+}
+
+/**
+Lookup a HydroBaseDMI instance using the input name.  This is useful, for
+example, when finding a HydroBaseDMI instance matching at time series identifier
+that includes the input name.
+@return the HydroBaseDMI instance with an input name that matches the requested
+input name.  The first match is found.
+@param HydroBaseDMI_Vector List of HydroBaseDMI to search.
+@parma input_name HydroBaseDMI input name to find.
+*/
+public static HydroBaseDMI lookupHydroBaseDMI ( Vector HydroBaseDMI_Vector,
+						String input_name )
+{	int size = 0;
+	if ( HydroBaseDMI_Vector != null ) {
+		size = HydroBaseDMI_Vector.size();
+	}
+	HydroBaseDMI dmi = null;
+	for ( int i = 0; i < size; i++ ) {
+		dmi = (HydroBaseDMI)HydroBaseDMI_Vector.elementAt(i);
+		if ( dmi == null ) {
+			continue;
+		}
+		if ( dmi.getInputName().equalsIgnoreCase(input_name) ) {
+			return dmi;
+		}
+	}
+	return null;
+}
+
+/**
+Parse an SFUT string into its parts.  The string to parse has the format
+"S: F: U: T: G:" where data fields may be present after each :.  The G: format
+was added in HydroBase 20061003.  The F: in this version is a 7-digit WDID
+indicating the "from" structure.  In earlier versions, it is the ID part of the
+WDID, and the WDID is the same as the structure itself (can only record data
+movement within a water district).
+@return An array of strings, each of which is one of the SFUT fields, without
+the leading "S:", "F:", "U:", "T:" or "G:".  The parts are guaranteed to be non-null,
+but may be blank strings.
+@param sfut_string An SFUT string to parse.
+@throws Exception if an error occurs.
+*/
+public static String[] parseSFUT ( String sfut_string )
+throws Exception {	
+	String sfut_parts[] = new String[5];
+	sfut_parts[0] = "";
+	sfut_parts[1] = "";
+	sfut_parts[2] = "";
+	sfut_parts[3] = "";
+	sfut_parts[4] = "";
+	String	routine = "HydroBase_Util.parseSFUT";
+
+	if (	(sfut_string.indexOf("S:") >= 0) &&
+		(sfut_string.indexOf("F:") >= 0) &&
+		(sfut_string.indexOf("U:") >= 0) &&
+		(sfut_string.indexOf("T:") >= 0) ) {
+		// Full-style SFUT string like:
+		// S:1 F:xxx U:xxx T:xxx G:xxx
+		// Do not check for G: above because it is being phased in.
+		// First break by spaces..
+		String sfut0 = sfut_string + " ";
+		Vector sfut = StringUtil.breakStringList ( sfut0, " ",
+			StringUtil.DELIM_SKIP_BLANKS );
+		int sfut_size = sfut.size();
+		if ( sfut_size < 4 ) {
+			Message.printWarning ( 2, routine,
+			"SFUT must have at least 4 parts" );
+			return sfut_parts;
+		}
+		// Now break each field by ':' and use
+		// the second part.  Do not handle more than five parts.
+		Vector sfut2;
+		for ( int is = 0; (is < sfut_size) && (is < 5); is++ ) {
+			sfut2 = StringUtil.breakStringList (
+				sfut.elementAt(is) + ":", ":", 0 );
+			sfut_parts[is] = (String)sfut2.elementAt(1);
+			if ( sfut_parts[is] == null ) {
+				sfut_parts[is] = "";
+			}
+		}
+	}
+	else {	// Assume the simple format of:
+		// xx:xx:xx:xx
+		String sfut0 = sfut_string + ":";
+		Vector sfut =
+		StringUtil.breakStringList ( sfut0, ":", 0 );
+		if ( sfut.size() < 4 ) {
+			Message.printWarning ( 2, routine,
+			"SFUT must have 4 parts" );
+			return sfut_parts;
+		}
+		sfut_parts[0] = (String)sfut.elementAt(0);
+		sfut_parts[1] = (String)sfut.elementAt(1);
+		sfut_parts[2] = (String)sfut.elementAt(2);
+		sfut_parts[3] = (String)sfut.elementAt(3);
+		if ( sfut.size() > 4 ) {
+			// G: at end, for database after 20061003
+			sfut_parts[4] = (String)sfut.elementAt(4);
+		}
+	}
+
+	return sfut_parts;
+}
+
+/**
 Reads configuration props from the given configuration file.
 @param configurationFile the path to the CDSS configuration file to read.
 @return a PropList generated from the values in the configuration file.
@@ -2284,7 +2593,6 @@ throws Exception
 	int size = 0;
 
 	// Get the specific where clauses from the input filter...
-	Vector where_clauses = null;
 	if (	(ifp instanceof
 		HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel) ||
 		(ifp instanceof
@@ -2301,9 +2609,6 @@ throws Exception
 		HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel) ||
 		(ifp instanceof 
 			HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel) ) {
-		// Expand the where clauses for SQL use...
-		where_clauses = DMIUtil.getWhereClausesFromInputFilter (
-			hbdmi, ifp );
 	}
 	// Special cases first and then general lists...
 	if (	HydroBase_Util.
@@ -2382,7 +2687,6 @@ throws Exception
 			Vector v = new Vector();
 			int size2 = tslist.size();
 			HydroBase_StructureView view = null;
-			HydroBase_StructureIrrigSummaryTS ist = null;
 			for (int i = 0; i < size2; i++) {
 				view = (HydroBase_StructureView)tslist
 					.elementAt(i);
@@ -2440,7 +2744,6 @@ throws Exception
 				"\" vax_field=\""+ vax_field +
 				"\" data_source=\""+ data_source +"\"");
 			}
-			HydroBase_StationGeolocMeasType data = null;
 			HydroBase_StationView view = null;
 			String data_units = HydroBase_Util.
 				getTimeSeriesDataUnits (
@@ -2505,7 +2808,6 @@ throws Exception
 			if ( tslist != null ) {
 				size = tslist.size();
 			}
-			HydroBase_StructureGeolocStructMeasType data;
 			HydroBase_StructMeasTypeView view;
 			String data_units = HydroBase_Util.
 				getTimeSeriesDataUnits (
@@ -2647,212 +2949,6 @@ parts.  The first two characters will always be for the WD.
 */
 public static void setPreferredWDIDLength ( int preferred_WDID_length )
 {	__preferred_WDID_length = preferred_WDID_length;
-}
-
-/**
-Returns the String name for the diversion source abbreviation using global
-data.  This is the "S" in SFUT.  Return an empty string if not found.<p>
-<p><b>REVISIT (JTS - 2004-06-21)<br></b>
-Move into HydroBase_Util.  This method is UNUSED by HydroBase right now.
-@return the String name for the diversion source abbreviation.  This is the
-"S" in SFUT.  Return an empty string if not found.
-@param source Source abbreviation.
-*/
-public static String lookupDiversionCodingSource ( String source )
-{
-	if ( source == null ) {
-		return "";
-	}
-	else if ( source.equals ( "1" ) ) {
-		return "NATURAL STREAM FLOW";
-	}
-	else if ( source.equals ( "2" ) ) {
-		return "RESERVOIR STORAGE";
-	}
-	else if ( source.equals ( "3" ) ) {
-		return "GROUND WATER (WELLS)";
-	}
-	else if ( source.equals ( "4" ) ) {
-		return "TRANSBASIN";
-	}
-	else if ( source.equals ( "5" ) ) {
-		return "NON-STREAM SOURCES";
-	}
-	else if ( source.equals ( "6" ) ) {
-		return "COMBINED";
-	}
-	else if ( source.equals ( "7" ) ) {
-		return "TRANSDISTRICT";
-	}
-	else if ( source.equals ( "8" ) ) {
-		return "RE-USED";
-	}
-	else if ( source.equals ( "9" ) ) {
-		return "MULTIPLE";
-	}
-	else if ( source.equalsIgnoreCase( "R" ) ) {
-		return "REMEASURED AND REDIVERTED";
-	}
-	else {	return "";
-	}
-}
-
-/**
-Returns the String name for the diversion type abbreviation in global data.  
-This is the  "T" in SFUT.  Return an empty string if not found.
-<p><b>REVISIT (JTS - 2004-06-21)<br></b>
-Move into HydroBase_Util.  This method is UNUSED by HydroBase right now.
-@return the String name for the diversion type abbreviation.  This is the
-"T" in SFUT.  Return an empty string if not found.
-@param type Type abbreviation.
-*/
-public static String lookupDiversionCodingType ( String type )
-{
-	if ( type == null ) {
-		return "";
-	}
-	else if ( type.equals ( "0" ) ) {
-		return "ADMINISTRATIVE RECORD ONLY";
-	}
-	else if ( type.equals ( "1" ) ) {
-		return "EXCHANGE";
-	}
-	else if ( type.equals ( "2" ) ) {
-		return "TRADE";
-	}
-	else if ( type.equals ( "3" ) ) {
-		return "CARRIER";
-	}
-	else if ( type.equals ( "4" ) ) {
-		return "ALTERNATIVE POINT OF DIVERSION";
-	}
-	else if ( type.equals ( "5" ) ) {
-		return "RE-USED";
-	}
-	else if ( type.equals ( "6" ) ) {
-		return "REPLACEMENT TO RIVER";
-	}
-	else if ( type.equals ( "7" ) ) {
-		return "RELEASED TO RIVER";
-	}
-	else if ( type.equals ( "8" ) ) {
-		return "RELEASED TO SYSTEM";
-	}
-	else if ( type.equals ( "9" ) ) {
-		return "USER-SUPPLIED INFORMATION";
-	}
-	else if ( type.equalsIgnoreCase( "A" ) ) {
-		return "AUGMENTED";
-	}
-	else if ( type.equalsIgnoreCase( "G" ) ) {
-		return "GEOTHERMAL";
-	}
-	else if ( type.equalsIgnoreCase( "S" ) ) {
-		return "RESERVOIR SUBSTITUTION";
-	}
-	else {	return "";
-	}
-}
-
-/**
-Lookup a HydroBaseDMI instance using the input name.  This is useful, for
-example, when finding a HydroBaseDMI instance matching at time series identifier
-that includes the input name.
-@return the HydroBaseDMI instance with an input name that matches the requested
-input name.  The first match is found.
-@param HydroBaseDMI_Vector List of HydroBaseDMI to search.
-@parma input_name HydroBaseDMI input name to find.
-*/
-public static HydroBaseDMI lookupHydroBaseDMI ( Vector HydroBaseDMI_Vector,
-						String input_name )
-{	int size = 0;
-	if ( HydroBaseDMI_Vector != null ) {
-		size = HydroBaseDMI_Vector.size();
-	}
-	HydroBaseDMI dmi = null;
-	for ( int i = 0; i < size; i++ ) {
-		dmi = (HydroBaseDMI)HydroBaseDMI_Vector.elementAt(i);
-		if ( dmi == null ) {
-			continue;
-		}
-		if ( dmi.getInputName().equalsIgnoreCase(input_name) ) {
-			return dmi;
-		}
-	}
-	return null;
-}
-
-/**
-Parse an SFUT string into its parts.  The string to parse has the format
-"S: F: U: T: " where data fields may be present after each :.
-<b>REVISIT (JTS - 2004-06-21)<br></b>
-Move into HydroBase_Util.  This method is UNUSED by HydroBase right now.
-@return An array of strings, each of which is one of the SFUT fields, without
-the leading "S:", "F:", "U:" or "T:"
-@param sfut_string An SFUT string to parse.
-@throws Exception if an error occurs.
-*/
-public static String[] parseSFUT ( String sfut_string )
-throws Exception {	
-	String sfut_parts[] = new String[4];
-	sfut_parts[0] = null;
-	sfut_parts[1] = null;
-	sfut_parts[2] = null;
-	sfut_parts[3] = null;
-	String	routine = "HydroBaseDMI.parseSFUT";
-
-	if (	(sfut_string.indexOf("S:") >= 0) &&
-		(sfut_string.indexOf("F:") >= 0) &&
-		(sfut_string.indexOf("U:") >= 0) &&
-		(sfut_string.indexOf("T:") >= 0) ) {
-		// Full-style SFUT string like:
-		// S:1 F:xxx U:xxx T:xxx
-		// First break by spaces..
-		String sfut0 = sfut_string + " ";
-		Vector sfut = StringUtil.breakStringList ( sfut0, " ",
-			StringUtil.DELIM_SKIP_BLANKS );
-		if ( sfut.size() < 4 ) {
-			Message.printWarning ( 2, routine,
-			"SFUT must have 4 parts" );
-			return sfut_parts;
-		}
-		// Now break each field by ':' and use
-		// the second part...
-		Vector sfut2;
-		for ( int is = 0; is < 4; is++ ) {
-			sfut2 = StringUtil.breakStringList (
-				sfut.elementAt(is) + ":", ":", 0 );
-			if ( is == 0 ) {
-				sfut_parts[0] = (String)sfut2.elementAt(1);
-			}
-			else if ( is == 1 ) {
-				sfut_parts[1] = (String)sfut2.elementAt(1);
-			}
-			else if ( is == 2 ) {
-				sfut_parts[2] = (String)sfut2.elementAt(1);
-			}
-			else if ( is == 3 ) {
-				sfut_parts[3] = (String)sfut2.elementAt(1);
-			}
-		}
-	}
-	else {	// Assume the simple format of:
-		// xx:xx:xx:xx
-		String sfut0 = sfut_string + ":";
-		Vector sfut =
-		StringUtil.breakStringList ( sfut0, ":", 0 );
-		if ( sfut.size() < 4 ) {
-			Message.printWarning ( 2, routine,
-			"SFUT must have 4 parts" );
-			return sfut_parts;
-		}
-		sfut_parts[0] = (String)sfut.elementAt(0);
-		sfut_parts[1] = (String)sfut.elementAt(1);
-		sfut_parts[2] = (String)sfut.elementAt(2);
-		sfut_parts[3] = (String)sfut.elementAt(3);
-	}
-
-	return sfut_parts;
 }
 
 }

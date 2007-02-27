@@ -26,6 +26,7 @@
 //					* The table-specific cell renderers 
 //					  were removed and replaced with a 
 //					  single generic one.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -46,7 +47,6 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import RTi.DMI.DMIUtil;
@@ -240,10 +240,6 @@ Formats output for printing or exporting.
 public Vector formatOutput(int format) {
 	Vector v = new Vector();
 
-	Double d0 = null;
-	Double d1 = null;
-	Double d2 = null;
-	Double d3 = null;
 	String s0 = null;
 	String s1 = null;
 	String s2 = null;
@@ -355,7 +351,6 @@ private void setupGUI() {
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
         JPanel topJPanel = new JPanel();
@@ -369,40 +364,40 @@ private void setupGUI() {
 
         JLabel nameJLabel = new JLabel("Structure Name:");
         JGUIUtil.addComponent(topWJPanel, nameJLabel, 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
  
         JLabel divJLabel = new JLabel("DIV:");
         JGUIUtil.addComponent(topWJPanel, divJLabel, 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel wdJLabel = new JLabel("WD:");
         JGUIUtil.addComponent(topWJPanel, wdJLabel, 
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel idJLabel = new JLabel("ID:");
         JGUIUtil.addComponent(topWJPanel, idJLabel, 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureJTextField = new JTextField(20);
         __structureJTextField.setText(__structureName);
         __structureJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __structureJTextField, 
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(5);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __divJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(5);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __wdJTextField, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(5);
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __idJTextField, 
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         
         // Center JPanel
         JPanel centerJPanel = new JPanel();
@@ -415,38 +410,38 @@ private void setupGUI() {
         centerJPanel.add("West", centerWJPanel);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Normal Storage"), 
-		0, 2, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		0, 2, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Maximum Storage"), 
-		1, 2, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		1, 2, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Surface Area"), 
-		2, 2, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		2, 2, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Drainage Area"), 
-		3, 2, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		3, 2, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __normalJTextField = new JTextField(15);          
         __normalJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __normalJTextField, 
-		0, 3, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		0, 3, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __maxJTextField = new JTextField(15);      
         __maxJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __maxJTextField, 
-		1, 3, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		1, 3, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __surfaceAreaJTextField = new JTextField(15);      
         __surfaceAreaJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __surfaceAreaJTextField, 
-		2, 3, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		2, 3, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __drainageAreaJTextField = new JTextField(15);
         __drainageAreaJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __drainageAreaJTextField, 
-		3, 3, 1, 1, 0, 0, insetsNLNR, gbc.NONE, gbc.WEST);
+		3, 3, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JPanel timeJPanel = new JPanel();
         timeJPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         JGUIUtil.addComponent(centerWJPanel, timeJPanel, 
-		0, 5, 4, 1, 0, 0, insetsTLBR, gbc.HORIZONTAL, gbc.EAST);     
+		0, 5, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);     
 
         timeJPanel.add(new JLabel("Reservoir EOM Record Period"));
 
@@ -461,7 +456,7 @@ private void setupGUI() {
         timeJPanel.add(__toJTextField);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Capacity Table"), 
-		0, 6, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 6, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	PropList p = new PropList("HydroBase_GUI_ReservoirData.JWorksheet");
 	/*
@@ -500,7 +495,7 @@ private void setupGUI() {
 	__worksheet.setHourglassJFrame(this);
 
         JGUIUtil.addComponent(centerWJPanel, jsw, 
-		0, 7, 4, 1, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		0, 7, 4, 1, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         // Bottom JPanel
         JPanel bottomJPanel = new JPanel();
@@ -534,12 +529,11 @@ private void setupGUI() {
         JPanel bottomSSJPanel = new JPanel();
         bottomSSJPanel.setLayout(gbl);
         bottomSouthJPanel.add("South", bottomSSJPanel);
-        GridBagConstraints gbcBSS = new GridBagConstraints();
 
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSSJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbcBSS.HORIZONTAL, gbcBSS.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Frame settings
 	

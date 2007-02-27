@@ -108,6 +108,7 @@
 //					Pass JFrame to constructor.
 //					Add GeoViewUI for map interaction.
 //					Clean up code based on Eclipse feedback.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -3172,6 +3173,7 @@ If the stream_num of the requested row is DMIUtil.MISSING_INT then the first
 occurance of stream is used.  If the name cannot be located, an empty String is
 returned.
 */
+/* TODO SAM Evaluate whether needed
 private String getStream_name(int row) {
 	String streamName = "";
 	HydroBase_WISFormat wisFormat = 
@@ -3211,6 +3213,7 @@ private String getStream_name(int row) {
 	}
 	return streamName;
 }
+*/
 
 /**
 Display diversion, reservoir, and min flow reach information in the appropriate

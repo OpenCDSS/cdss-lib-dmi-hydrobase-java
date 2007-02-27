@@ -22,13 +22,12 @@
 // 2005-06-21	JTS, RTi		Supports new objects from the new
 //					well queries.
 // 2005-06-28	JTS, RTi		Removed unused DMI parameter.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Vector;
-
-import RTi.DMI.DMIUtil;
 
 /**
 This class is a table model for displaying ground water data in the 

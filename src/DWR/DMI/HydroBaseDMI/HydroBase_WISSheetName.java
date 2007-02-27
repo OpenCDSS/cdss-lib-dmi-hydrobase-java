@@ -10,11 +10,11 @@
 //					super.finalize() gets called.
 // 2005-03-09	JTS, RTi		Initial version from HydroBase_SheetName
 // 2005-07-11	JTS, RTi		Added comparable for sorting by name.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

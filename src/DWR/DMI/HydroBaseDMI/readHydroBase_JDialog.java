@@ -40,6 +40,7 @@
 //					  default.
 // 2007-02-16	SAM, RTi		Use new CommandProcessor interface.
 //					Clean up code based on Eclipse feedback.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -84,7 +85,6 @@ implements ActionListener, KeyListener, WindowListener
 {
 private SimpleJButton	__cancel_JButton = null,// Cancel Button
 			__ok_JButton = null;	// Ok Button
-private JFrame		__parent_JFrame = null;	// parent JFrame GUI class
 private readHydroBase_Command __command = null; // Command to edit
 private JTextField	__Alias_JTextField=null,// Alias for time series,
 						// alias version
@@ -463,7 +463,6 @@ throws Throwable
 	__command_JTextArea = null;
 	__command = null;
 	__ok_JButton = null;
-	__parent_JFrame = null;
 	super.finalize ();
 }
 
@@ -490,7 +489,6 @@ Instantiates the GUI components.
 */
 private void initialize ( JFrame parent, Command command )
 {	String routine = "readHydroBase_JDialog.initialize";
-	__parent_JFrame = parent;
 	__command = (readHydroBase_Command)command;
 	CommandProcessor processor = __command.getCommandProcessor();
 

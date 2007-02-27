@@ -21,6 +21,7 @@
 //					returned from station queries now.
 // 2005-05-09	JTS, RTi		All structure queries now return
 //					structure view objects.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -28,14 +29,11 @@ package DWR.DMI.HydroBaseDMI;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Point;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
-import java.awt.print.PageFormat;
 
 import java.util.Vector;
 
@@ -44,7 +42,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JViewport;
 import javax.swing.WindowConstants;
 
 import RTi.GR.GRLimits;
@@ -53,17 +50,12 @@ import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.TextResponseJDialog;
 
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.Prop;
 import RTi.Util.IO.PropList;
 
 import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
-
-import RTi.Util.Table.DataTable;
-import RTi.Util.Table.TableField;
-import RTi.Util.Table.TableRecord;
 
 /**
 This class is a GUI for graphically displaying a node diagram.
@@ -146,8 +138,7 @@ private int __wisNum = -1;
 GUI buttons.
 */
 private JButton 
-	__saveButton,
-	__syncButton;
+	__saveButton;
 
 /**
 Panel in which the drawing area is placed.
@@ -181,7 +172,6 @@ Constructor.
 */
 public HydroBase_GUI_WISDiagram(HydroBase_GUI_WISBuilder builder,
 HydroBaseDMI dmi) {
-	String routine = __CLASS + "." + __CLASS;
 	__wisBuilder = builder;
 	__dmi = dmi;
 	__mode = __NETWORK_BUILD;
@@ -201,7 +191,6 @@ Constructor.
 @param dmi the dmi to use.
 */
 public HydroBase_GUI_WISDiagram(HydroBase_GUI_WIS wis, HydroBaseDMI dmi) {
-	String routine = __CLASS + "." + __CLASS;
 	__wis = wis;
 	__dmi = dmi;
 	__mode = __NETWORK_VIEW;	
@@ -312,8 +301,8 @@ private void buildDiagram() {
 			total--;
 		}
 		holdNode = node;	
-		node = __network.getDownstreamNode(node, 
-			__network.POSITION_COMPUTATIONAL);		
+		node = HydroBase_NodeNetwork.getDownstreamNode(node, 
+			HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);		
 	}
 
 	String plural1 = "s";
@@ -356,7 +345,7 @@ private void buildDiagram() {
 	node = __network.getMostUpstreamNode();	
 
 	while (!done) {
-		type = node.getVerboseWISType(node.getType()).trim();
+		type = HydroBase_Node.getVerboseWISType(node.getType()).trim();
 		node.setWis_num(__wisNum);
 		node.setIdentifier(node.getCommonID());		
 		node.setNodeType(type);
@@ -403,8 +392,8 @@ private void buildDiagram() {
 		}
 
 		holdNode = node;	
-		node = __network.getDownstreamNode(node, 
-			__network.POSITION_COMPUTATIONAL);		
+		node = HydroBase_NodeNetwork.getDownstreamNode(node, 
+			HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);		
 	}
 
 	count = 0;
@@ -584,12 +573,6 @@ private void buildDiagram() {
 	node = __network.getMostUpstreamNode();	
 	
 	count = 0;
-	int dl = 0;	
-	int ul = 0;
-	HydroBase_Node ds = null;
-	HydroBase_Node us = null;
-	Vector dv = null;
-	Vector uv = null;
 
 	__lx = lx;
 	__by = by;
@@ -639,8 +622,8 @@ private void buildDiagram() {
 		}
 
 		holdNode = node;	
-		node = __network.getDownstreamNode(node, 
-			__network.POSITION_COMPUTATIONAL);		
+		node = HydroBase_NodeNetwork.getDownstreamNode(node, 
+			HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);		
 	}
 
 	int hSize = 1200;
@@ -649,10 +632,6 @@ private void buildDiagram() {
 	// expand the data limits outward so that the extents of the data
 	// limits fit within the printable portion of the page.  The extra
 	// space will be in the unprintable margin.
-	PageFormat pageFormat = __device.getPageFormat();
-	// the printable space on the page
-	double imageableWidth = pageFormat.getImageableWidth();
-	double imageableHeight = pageFormat.getImageableHeight();
 	/*
 	// the total space of the page
 	double totalWidth = pageFormat.getWidth();
@@ -836,6 +815,7 @@ private void closeWindow() {
 /**
 Prints out the network.  For debugging.
 */
+/* TODO SAM 2007-02-26 Evaluate whether to keep
 private void dumpNetwork() {
 	boolean done = false;
 	HydroBase_Node holdNode;
@@ -844,8 +824,8 @@ private void dumpNetwork() {
 	while (!done) {
 		holdNode = node;	
 		// get the next node
-		node = __network.getDownstreamNode(node, 
-			__network.POSITION_COMPUTATIONAL);
+		node = HydroBase_NodeNetwork.getDownstreamNode(node, 
+			HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 		if (node != holdNode) {
 			Message.printStatus(1, "","..........................");
 			Message.printStatus(1, "", "!] "+ node.toTableString());
@@ -859,16 +839,19 @@ private void dumpNetwork() {
 		}
 	}	
 }
+*/
 
 /**
 Prints out the nodes in the node array.  For debugging.
 @param nodes the node array (non-null) for which to print the nodes.
 */
+/* TODO SAM 2007-02-26 Decide whether to keep
 private void dumpNodes(HydroBase_Node[] nodes) {
 	for (int i = 0; i < nodes.length; i++) {
 		Message.printStatus(1, "", "" + nodes[i].toTableString() +"\n");
 	}
 }
+*/
 
 /**
 Cleans up member variables.
@@ -882,7 +865,6 @@ throws Throwable {
 	__wisBuilder = null;
 	__network = null;
 	__saveButton = null;
-	__syncButton = null;
 	__panel = null;
 	__jsp = null;
 	__statusField = null;
@@ -1027,8 +1009,6 @@ Turns database records in HydroBase_Nodes.
 @return an array of HydroBase_Nodes of the nodes in the database.
 */
 private HydroBase_Node[] recordsToNodes() {
-	String routine = __CLASS + ".recordsToNodes";
-
 	HydroBase_Node node = null;
 	HydroBase_WISDiagramData data = null;
 	int rows = __records.size();
@@ -1048,7 +1028,7 @@ private HydroBase_Node[] recordsToNodes() {
 			node = new HydroBase_Node();
 			node.setWis_num(i);
 			node.setIdentifier(data.getID());
-			node.setType(node.lookupType(type));
+			node.setType(HydroBase_Node.lookupType(type));
 			node.setNodeType(type);
 			node.setX(data.getX());
 			node.setY(data.getY());
@@ -1162,7 +1142,7 @@ private void saveClicked() {
 				wnd = new HydroBase_WISDiagramData();
 				wnd.setWis_num(__wisNum);
 				wnd.setID(nodes[i].getIdentifier());
-				wnd.setType(nodes[i].getVerboseWISType(
+				wnd.setType(HydroBase_Node.getVerboseWISType(
 					nodes[i].getType()));
 				xtemp = nodes[i].getX();
 				stemp = StringUtil.formatString(xtemp,"%18.6f");

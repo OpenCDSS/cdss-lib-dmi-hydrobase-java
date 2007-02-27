@@ -155,6 +155,7 @@
 //					Pass a JFrame to the constructor.
 //					Use GeoViewUI to link to map interface.
 //					Clean up code based on Eclipse feedback.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -271,11 +272,6 @@ to be considered.
 private boolean __geoViewSelectQuery = false;
 
 /**
-The parent JFrame under which this GUI is opened, for window positions.
-*/
-private JFrame __parent = null;
-
-/**
 GeoViewUI interface, for map interaction.
 */
 private GeoViewUI __geoview_ui = null;
@@ -367,7 +363,6 @@ Constructor.
 public HydroBase_GUI_StationQuery(HydroBaseDMI dmi, JFrame parent,
 GeoViewUI geoview_ui, boolean isVisible) 
 throws Exception {
-	__parent = parent;
 	__geoview_ui = geoview_ui;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());	
 	if (dmi == null) {
@@ -656,7 +651,6 @@ Clean up for garbage collection.
 */
 protected void finalize()
 throws Throwable {
-	__parent = null;
 	__mapQueryLimits = null;
 	__dmi = null;
 	__filterJPanel = null;

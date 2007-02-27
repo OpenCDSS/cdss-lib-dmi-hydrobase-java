@@ -19,6 +19,7 @@
 //					setAmt*() methods.
 // 2004-06-08	JTS, RTi		Corrected bug caused by the wrong order
 //					of parameters to TimeUtil.numDaysInMonth
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -26,11 +27,8 @@ package DWR.DMI.HydroBaseDMI;
 import java.util.Date;
 import java.util.Vector;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
-
-import RTi.Util.Message.Message;
 
 import RTi.Util.Time.TimeUtil;
 

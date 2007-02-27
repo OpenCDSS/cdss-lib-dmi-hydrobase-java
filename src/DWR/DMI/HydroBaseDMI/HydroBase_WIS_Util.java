@@ -39,6 +39,7 @@
 // 2005-05-25	JTS, RTi		Converted queries that pass in a 
 //					String date to pass in DateTimes 
 //					instead.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -50,7 +51,6 @@ import RTi.Util.Time.DateTime;
 
 import java.lang.Double;
 import java.lang.Integer;
-import java.util.Date;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -92,7 +92,6 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 	double sumR = 0.0;
 	HydroBase_WISFormat wisFormat = curNode.getWISFormat();
 	int dl = 10;
-	int previousRow = DMIUtil.MISSING_INT;
 	int row = wisFormat.getWis_row() - 1;
 	String routine = "HydroBase_WIS_Util.computeGainLoss";
 	String messageString;
@@ -219,7 +218,7 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 			previousNode = curNode;
 			previousRowType = HydroBase_GUI_WIS.STRING;
 			while(previousRowType.equals(HydroBase_GUI_WIS.STRING)){
-				previousNode = network.getUpstreamNode(
+				previousNode = HydroBase_NodeNetwork.getUpstreamNode(
 					previousNode,
 					HydroBase_NodeNetwork
 					.POSITION_REACH_NEXT );
@@ -244,8 +243,6 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 			}
 			else {	
 				wisFormatPrevious = previousNode.getWISFormat();
-				previousRow = 
-					wisFormatPrevious.getWis_row() - 1;
 				D1X = getWISFormatValue(wisFormatPrevious, 
 					HydroBase_GUI_WIS.DISTANCE)
 					- getWISFormatValue(wisFormat, 
@@ -487,9 +484,8 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 	
 			HydroBase_Node reachNode = upFlowNode;
 			HydroBase_WISFormat format = null;
-			double increment = 0.0;
 			for (curRow = upRow + 1; curRow <= downRow; curRow++) {
-				reachNode = network.getDownstreamNode(reachNode,
+				reachNode = HydroBase_NodeNetwork.getDownstreamNode(reachNode,
 				       HydroBase_NodeNetwork.POSITION_RELATIVE);
 				format = reachNode.getWISFormat();
 				rowType = format.getRow_type();

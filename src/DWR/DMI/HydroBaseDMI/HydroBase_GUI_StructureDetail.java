@@ -100,6 +100,9 @@
 // 2006-04-25	SAM, RTi		* Handle the new daily diversion filling
 //					  properties when reading time series.
 //					* Add title to daily report.
+// 2007-02-26	SAM, RTi		Update for new SFUT conventions with G and
+//					7-digit F.
+//					Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 // EndHeader
 
@@ -141,7 +144,6 @@ import RTi.TS.MonthTS;
 import RTi.TS.TS;
 import RTi.TS.TSLimits;
 import RTi.TS.TSUtil;
-import RTi.TS.YearTS;
 
 import RTi.Util.GUI.DragAndDropSimpleJList;
 import RTi.Util.GUI.DragAndDropListener;
@@ -151,7 +153,6 @@ import RTi.Util.GUI.ReportJFrame;
 import RTi.Util.GUI.ResponseJDialog; 
 import RTi.Util.GUI.SimpleJButton; 
 
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
 
 import RTi.Util.Math.MathUtil;
@@ -185,9 +186,6 @@ private final int
 	__DAILY_WC = 		1,
 	__TOTAL__MONTHLY = 	4,
 	__TOTAL_DAILY = 	5,
-	__START = 		0,
-	__END = 		1,
-	__YEAR_WARNING = 	2,
 	__BOTH_LISTS = 		0,
 	__MONTH_LIST =		1,
 	__DAY_LIST =		2;
@@ -208,8 +206,7 @@ private final String
         __MONTH = 			"Month",
         __MONTHLY = 			"Monthly",
         __DAY = 			"Day",
-        __DAILY = 			"Daily",
-        __NONE = 			"Not Available";			
+        __DAILY = 			"Daily";			
 
 /**
 Used in calculating the stats for the annual water diversion report.
@@ -372,60 +369,6 @@ public void actionPerformed(ActionEvent evt) {
 
 /**
 Add item to a JList for time series data.
-@param data HydroBase_StructMeasType object.
-@param label JLabel string (e.g., "Total Diversion").  If given as null,
-data.getIdentifier() will be used (e.g., for SFUT).
-@param list AWT JList object.
-*/
-private void addListItem(HydroBase_StructMeasType data, String label, 
-DragAndDropSimpleJList list) {
-	String routine = CLASS + ".addListItem";
-
-        // set the HydroBase_StructMeasType object information
-        HydroBase_StructMeasType dataClone = 
-		new HydroBase_StructMeasType(data);
-
-        String id = getTSIdentifier(data);
-
-        dataClone.setTSIdentifier(id);
-
-	TS ts = null;
-	try {	// Read the time series for the HydroBase_StructMeasType
-		// (header only, no data)...
-        	ts = __dmi.readTimeSeries(id, null, null, null, false, null);
-	}
-	catch (Exception e) {
-		Message.printWarning(1, routine, 
-			"Error reading time series from database.");
-		Message.printWarning(2, routine, e);
-		return;
-	}
-
-	if (ts == null) {
-		Message.printStatus(1, "", "No time series was read!");
-		return;
-	}
-
-        dataClone.setTS(ts);
-
-        __measType.addElement(dataClone);
-
-	StringBuffer buffer = new StringBuffer();
-        buffer.append(__measType.size() + ")");
-
-	if (label == null) {
-		buffer.append(" " 
-			+ data.getMeas_type() + "-" + data.getIdentifier());
-	}
-	else {	
-		buffer.append(" " + label);
-	}
-        buffer.append(", " + getPoRFraction(data));
-	list.add(buffer.toString());
-}
-
-/**
-Add item to a JList for time series data.
 @param data HydroBase_StructMeasTypeView object.
 @param label JLabel string (e.g., "Total Diversion").  If given as null,
 data.getIdentifier() will be used (e.g., for SFUT).
@@ -519,51 +462,35 @@ throws Exception {
 	if (!ts.getIdentifier().toString().equals("")) {
 		// Have SFUT to process.
 		sfut = HydroBase_Util.parseSFUT(ts.getIdentifier().toString());
-//		Message.printStatus(1, "", "SFUT: " + sfut);		
-		boolean allNull = true;
-		for (int i = 0; i < sfut.length; i++) {
-//			Message.printStatus(1, "", "SFUT[" + i + "]: " 
-//				+ sfut[i]);
-			if (sfut[i] != null) {
-				allNull = false;
-			}
-		}
-
-		if (allNull) {
-			sfut = null;
-		}
-		else {
-			sourceString 
-				= HydroBase_Util.lookupDiversionCodingSource(
-				sfut[0]);
+		sourceString 
+				= HydroBase_Util.lookupDiversionCodingSource( sfut[0]);
 			
-			useString = __dmi.lookupUseDefinitionForXUse(sfut[2]);
-			typeString = HydroBase_Util.lookupDiversionCodingType(
-				sfut[3]);
-	
-			// Need to query the FROM structure.  Do here for now
-			// but might want to do when the time series is first
-			// queried...
-			fromStructure = sfut[1];
-			if (fromStructure != "") {	
-				Object o = __dmi.readStructureViewForWDID(wd,
-					StringUtil.atoi(fromStructure));
-				if (o == null) {}
-				else {
-					HydroBase_StructureView structure 
-						= (HydroBase_StructureView)o;
-					fromStructure = structure.getStr_name();
-				}
+		useString = __dmi.lookupUseDefinitionForXUse(sfut[2]);
+		typeString = HydroBase_Util.lookupDiversionCodingType( sfut[3]);
+		// Need to query the FROM structure.  Do here for now
+		// but might want to do when the time series is first
+		// queried...
+		fromStructure = sfut[1];
+		if (fromStructure != "") {	
+			Object o = null;
+			if ( fromStructure.length() < 7 ) {
+				// Assume old database where F does not contain the WD...
+				o = __dmi.readStructureViewForWDID(wd,
+				StringUtil.atoi(fromStructure));
 			}
-			else {	
-				fromStructure = "";
+			else { // Assume new database where F does contain the WD...
+				int [] wdid_parts = HydroBase_WaterDistrict.parseWDID(fromStructure);
+				o = __dmi.readStructureViewForWDID(wdid_parts[0],wdid_parts[1]);
+			}
+			if (o == null) {}
+			else {
+				HydroBase_StructureView structure 
+					= (HydroBase_StructureView)o;
+				fromStructure = structure.getStr_name();
 			}
 		}
 	}
 
-	if (fromStructure == null) {
-		fromStructure = "";
-	}
 	if (useString == null) {
 		useString = "";
 	}
@@ -649,14 +576,8 @@ throws Exception {
 
 	// The year that is printed in the summary is actually
 	// later than the calendar for the Nov month...
-	int yearOffset = 1;
 	int monthToStart = 11;
 	int monthToEnd = 10;
-
-	// Calculate the number of years...
-	// up with the same month as the start month...
-	int num_years = (endDate.getAbsoluteMonth() 
-		- startDate.getAbsoluteMonth() + 1) / 12;
 
 	// Reuse for each month that is printed.
 	double[][] data = new double[31][12];
@@ -1062,7 +983,6 @@ public boolean dragAboutToStart() {
 	}
 	
 	HydroBase_StructMeasTypeView view = null;
-	HydroBase_StructMeasType data = null;
 	view = (HydroBase_StructMeasTypeView)selected.elementAt(0);
         id = view.getTSIdentifier();
        	measTypeTS = view.getTimeSeries();
@@ -1412,19 +1332,6 @@ private void getData(String flag) {
 /**
 Return a String of information indicating the the period of record and the
 number of measurements available.
-@param data HydroBase_StructMeasType object.
-@return the following formatted String:  PoR, meas Count/Total Count.
-*/
-private String getPoRFraction(HydroBase_StructMeasType data) {
-        String porFraction = data.getStart_year() + "-" + data.getEnd_year()
-                        + ", " + data.getMeas_count()
-                        + "/" + getTotalCount(data);
-        return porFraction;
-}
-
-/**
-Return a String of information indicating the the period of record and the
-number of measurements available.
 @param data HydroBase_StructMeasTypeView object.
 @return the following formatted String:  PoR, meas Count/Total Count.
 */
@@ -1610,34 +1517,6 @@ private Vector getStructureMeasType(int flag, String dataType) {
 /**
 Returns the total possible number of records that could occur during a given
 period.
-@param data the HydroBase_StructMeasType record for which to return the total
-count.
-@return the total possible number of records that could occur during a given
-period.
-*/
-private int getTotalCount(HydroBase_StructMeasType data) {
-        int total = DMIUtil.MISSING_INT;
-        String time_step = data.getTime_step();
-
-        if (time_step.equalsIgnoreCase(__ANNUAL)) {
-                total = (data.getEnd_year() - data.getStart_year() + 1) * 12;
-                                
-        }
-        else if (time_step.equalsIgnoreCase(__MONTHLY)) {
-                total = (data.getEnd_year() - data.getStart_year() + 1) * 12;
-                                
-        }
-        else if (time_step.equalsIgnoreCase(__DAILY)) {
-                total = TimeUtil.numDaysInMonths(1, 
-                        data.getStart_year(), 12, data.getEnd_year());
-        }
-
-        return total;
-}
-
-/**
-Returns the total possible number of records that could occur during a given
-period.
 @param data the HydroBase_StructMeasTypeView record for which to return the 
 total count.
 @return the total possible number of records that could occur during a given
@@ -1666,56 +1545,6 @@ private int getTotalCount(HydroBase_StructMeasTypeView data) {
 // REVISIT SAM 2004-12-01 - seems like a method like this should be in the
 // HydroBase_Util class
 /**
-Constructs a TSIdentifier String given a HydroBase_StructMeasType object.
-The identifiers adhere to the identifiers in the TSTool HydroBase Input Type
-appendix.
-@param data HydroBase_StructMeasType object for which to create a TSIdentifier
-String.
-@return the TSIdentifier String.
-*/
-private String getTSIdentifier(HydroBase_StructMeasType data) {
-	String id = null;
-        String type = null;
-        String time_step = data.getTime_step();
-        String sfut = data.getIdentifier();
-        long structure_num = 0;
-	
-	__structureView.getStructure_num();
-        
-	// Convert to standard TS package intervals...
-
-        if (time_step.equalsIgnoreCase(__ANNUAL)) {
-                time_step = __MONTH;
-        }
-        else if (time_step.equalsIgnoreCase(__MONTHLY)) {
-                time_step = __MONTH;
-        }
-        else if (time_step.equalsIgnoreCase(__DAILY)) {
-                time_step = __DAY;
-        }
-
-	// If the data type is DivClass or RelClass, then identifier has the
-	// SFUT...
-
-        if ( !sfut.trim().equals("")) {
-		// Need to add the SFUT to the data type...
-        	sfut = "-" + sfut;
-        }
-        
-	String wdid = null;
-
-	wdid = HydroBase_WaterDistrict.formWDID(
-		__structureView.getWD(), __structureView.getID());
-
-        id = wdid + "." + data.getData_source() + "." 
-		+ data.getMeas_type() + sfut + "." + time_step;
-
-        return id;
-}
-
-// REVISIT SAM 2004-12-01 - seems like a method like this should be in the
-// HydroBase_Util class
-/**
 Constructs a TSIdentifier String given a HydroBase_StructMeasTypeView object.
 The identifiers adhere to the identifiers in the TSTool HydroBase Input Type
 appendix.
@@ -1725,10 +1554,8 @@ TSIdentifier String.
 */
 private String getTSIdentifier(HydroBase_StructMeasTypeView data) {
 	String id = null;
-        String type = null;
         String time_step = data.getTime_step();
         String sfut = data.getIdentifier();
-        long structure_num = 0;
 	
 	__structureView.getStructure_num();
  
@@ -1774,7 +1601,6 @@ time series.
 private Vector getTSVector(String flag) {
 	String routine = "HydroBase_GUI_StructureDetail.getTSVector";
 
-        HydroBase_StructMeasType data = null;
         HydroBase_StructMeasTypeView view = null;
         Vector tsVector = new Vector(10, 5);
         Vector errorVector = new Vector(10, 5);
@@ -2047,7 +1873,6 @@ protected void setOriginalPeriodText()
                         tsVector.addElement((
 				(HydroBase_StructMeasTypeView)
        	                        selected.elementAt(i)).getTimeSeries());
-			TS ts = (TS)tsVector.elementAt(i);
                 }
 
                 try {	// Get the limits from the time series (headers only).
@@ -2133,7 +1958,6 @@ private void setupGUI() {
         
         // the following are used in the GUI layout
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
         Insets NLBR = new Insets(0,7,7,7);
         Insets NLNR = new Insets(0,7,0,7);
         Insets TLNR = new Insets(7,7,0,7);
@@ -2146,40 +1970,40 @@ private void setupGUI() {
 	getContentPane().add("North", mainIDJPanel);
                 
         JGUIUtil.addComponent(idJPanel, new JLabel("Structure Name:"), 
-                0, 0, 1, 1, 0, 0, TLNR, gbc.NONE, gbc.WEST);
+                0, 0, 1, 1, 0, 0, TLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
   
         JGUIUtil.addComponent(idJPanel, new JLabel("DIV:"), 
-                1, 0, 1, 1, 0, 0, TLNR, gbc.NONE, gbc.WEST);
+                1, 0, 1, 1, 0, 0, TLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(idJPanel,  new JLabel("WD:"), 
-                2, 0, 1, 1, 0, 0, TLNR, gbc.NONE, gbc.WEST);
+                2, 0, 1, 1, 0, 0, TLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(idJPanel, new JLabel("ID:"), 
-                3, 0, 1, 1, 0, 0, TLNR, gbc.NONE, gbc.WEST);
+                3, 0, 1, 1, 0, 0, TLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __nameJTextField = new JTextField();
         __nameJTextField.setText(" " + name + "     ");
         __nameJTextField.setEditable(false);
         JGUIUtil.addComponent(idJPanel, __nameJTextField, 
-                0, 1, 1, 1, 0, 0, NLBR, gbc.HORIZONTAL, gbc.WEST);
+                0, 1, 1, 1, 0, 0, NLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(4);
         __divJTextField.setEditable(false);
         __divJTextField.setText(div);
         JGUIUtil.addComponent(idJPanel, __divJTextField, 
-                1, 1, 1, 1, 0, 0, NLBR, gbc.NONE, gbc.WEST);
+                1, 1, 1, 1, 0, 0, NLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(4);
         __wdJTextField.setEditable(false);
         __wdJTextField.setText(wd);
         JGUIUtil.addComponent(idJPanel, __wdJTextField, 
-                2, 1, 1, 1, 0, 0, NLBR, gbc.NONE, gbc.WEST);
+                2, 1, 1, 1, 0, 0, NLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(10);
         __idJTextField.setEditable(false); 
         __idJTextField.setText(id);
         JGUIUtil.addComponent(idJPanel, __idJTextField, 
-                3, 1, 1, 1, 0, 0, NLBR, gbc.NONE, gbc.WEST);
+                3, 1, 1, 1, 0, 0, NLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         
         // Top West JPanel - for lists
         JPanel listJPanel = new JPanel();
@@ -2189,7 +2013,7 @@ private void setupGUI() {
         JGUIUtil.addComponent(listJPanel, new JLabel(
 		"Monthly Data (Count, Data Type/SFUT, Period, "
 		+ "Available):"), 
-                0, 2, 2, 1, 0, 0, NLNR, gbc.NONE, gbc.WEST);
+                0, 2, 2, 1, 0, 0, NLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	__monthJList = new DragAndDropSimpleJList(
 		DragAndDropUtil.ACTION_COPY, DragAndDropUtil.ACTION_NONE);
 
@@ -2233,17 +2057,17 @@ private void setupGUI() {
 
         JGUIUtil.addComponent(listJPanel,
 		new JScrollPane(__monthJList),
-                0, 3, 2, 1, 1, 1, NLNR, gbc.BOTH, gbc.WEST);
+                0, 3, 2, 1, 1, 1, NLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(listJPanel, new JLabel(
 		"Daily Data (Count, Data Type/SFUT, Period, "
 		+ "Available):"), 
-                3, 2, 2, 1, 0, 0, NLNR, gbc.NONE, gbc.WEST);
+                3, 2, 2, 1, 0, 0, NLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	__dayJList = new DragAndDropSimpleJList(
 		DragAndDropUtil.ACTION_COPY, DragAndDropUtil.ACTION_NONE);
         JGUIUtil.addComponent(listJPanel,
 		new JScrollPane(__dayJList),
-                3, 3, 2, 1, 1, 1, NLNR, gbc.BOTH, gbc.WEST);
+                3, 3, 2, 1, 1, 1, NLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         //
         // DAILY TIME SERIES

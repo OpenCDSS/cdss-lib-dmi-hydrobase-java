@@ -84,6 +84,7 @@
 //					Pass a JFrame to the constructor.
 //					Add GeoViewUI for map interaction.
 //					Clean up based on Eclipse feedback.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -399,7 +400,7 @@ private boolean __sheetModified = false;
 Whether the grid behavior is to display solving order.
 See the public access method.
 */
-private boolean __showGridResponse = false;
+//private boolean __showGridResponse = false;
 
 /**
 The parent JFrame running the application.
@@ -944,7 +945,6 @@ public void computeWIS() {
 
 	HydroBase_WISFormat wisFormat = null;
 	//int numRows = __worksheet.getRowCount();
-	setGridResponse(false);
         setIsModified(true);
 
 	// determine the gain/loss computation method
@@ -4251,15 +4251,6 @@ private void setFormulaReferences() {
 }
 
 /**
-Sets the __showGridResponse variable.
-@param state true if showing the grid response to calculation order,
-false otherwise.
-*/
-public void setGridResponse(boolean state) {
-	__showGridResponse = state;
-}
-
-/**
 Sets the status of the wisData row.
 @param row the row for which to set the status
 @param status true if the row has been evaluated, false otherwise.
@@ -4582,7 +4573,6 @@ public void setVisible(boolean state) {
 		__wisFormulaVector = new Vector();
 		__wisImportVector = new Vector();
 		__wisDiversionCodingVector = new Vector();
-		__showGridResponse = false;
 		__firstCalc = true;
 
 		// set date properties

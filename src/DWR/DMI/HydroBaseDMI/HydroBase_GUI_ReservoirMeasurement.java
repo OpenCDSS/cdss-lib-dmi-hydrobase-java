@@ -28,6 +28,7 @@
 //					* The table-specific cell renderers 
 //					  were removed and replaced with a 
 //					  single generic one.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -98,7 +99,6 @@ GUI buttons.
 private JButton 
 	__closeJButton,
 	__exportJButton,
-	__helpJButton,
 	__printJButton;
 
 /**
@@ -266,7 +266,6 @@ throws Throwable {
 	__dmi = null;
 	__closeJButton = null;
 	__exportJButton = null;
-	__helpJButton = null;
 	__printJButton = null;
 	__listJLabel = null;
 	__statusJTextField = null;
@@ -308,7 +307,6 @@ public Vector formatOutput(int format) {
 		v.addElement("____________________________________________"
 			+ "____________________________________");
 		// Now do the curve(skip the header)...
-		Vector strings;
 		for (int i = 0; i < size; i++) {
 			s0 = ((Date)(__worksheet.getValueAt(i, 0))).toString();
 			s1 = __worksheet.getValueAtAsString(i, 1, "%11.1f");
@@ -340,7 +338,6 @@ public Vector formatOutput(int format) {
 			+ "STORAGE(AF)" + delim + "INFLOW(AF)" + delim
 			+ "RELEASE(AF)" + delim + "EVAP LOSS(AF)" + delim);
 		// Now do the curve(skip the header)...
-		Vector strings;
 		for (int i = 0; i < size; i++) {
 			s0 = ((Date)(__worksheet.getValueAt(i, 0))).toString();
 			s1 = __worksheet.getValueAtAsString(i, 1, "%11.1f");
@@ -375,7 +372,6 @@ private void setupGUI() {
         Insets insetsTLNR = new Insets(7,7,0,7);
         Insets insetsTLBR = new Insets(7,7,7,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         addWindowListener(this);
                
@@ -390,41 +386,41 @@ private void setupGUI() {
         North_JPanel.add("West", NorthW_JPanel);
 
         JGUIUtil.addComponent(NorthW_JPanel, new JLabel("Structure Name"),
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST); 
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST); 
 
         JGUIUtil.addComponent(NorthW_JPanel, new JLabel("DIV"),
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
      
         JGUIUtil.addComponent(NorthW_JPanel, new JLabel("WD"),
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(NorthW_JPanel, new JLabel("ID"),
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureJTextField = new JTextField(__structureName);
         __structureJTextField.setEditable(false);
         JGUIUtil.addComponent(NorthW_JPanel, __structureJTextField,
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
        
         __divJTextField = new JTextField(5);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(NorthW_JPanel, __divJTextField,
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(5);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(NorthW_JPanel, __wdJTextField,
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(10);
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(NorthW_JPanel, __idJTextField,
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(NorthW_JPanel, 
 		new JLabel("See also Diversion Coding and Reservoir Release "
 		+ " data."),
-		0, 2, 6, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, 2, 6, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         // Center JPanel
         JPanel center_JPanel = new JPanel();
@@ -433,7 +429,7 @@ private void setupGUI() {
 
         __listJLabel = new JLabel(HydroBase_GUI_Util.LIST_LABEL);
         JGUIUtil.addComponent(center_JPanel, __listJLabel, 0, 0, 3, 1, 0, 0, 
-		insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	PropList p = new PropList("HydroBase_GUI_ReservoirMeasurement"
 		+ ".JWorksheet");
@@ -474,7 +470,7 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(center_JPanel, new JScrollPane(__worksheet), 
 		0, 1, 3, 3, 1, 1, 
-		insetsNLBR, gbc.BOTH, gbc.WEST);
+		insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         // Bottom JPanel
         JPanel bottom_JPanel = new JPanel();
@@ -515,7 +511,7 @@ private void setupGUI() {
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomS_JPanel, __statusJTextField, 
 		0, 1, 10, 1, 1, 0, 
-		gbc.HORIZONTAL, gbc.WEST);
+		GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 
 	String app = JGUIUtil.getAppNameForWindows();

@@ -12,11 +12,11 @@
 //					super.finalize() gets called.
 // 2005-02-23	JTS, RTi		Added rdir, rnga, tdir, tsa
 // 2005-07-11	JTS, RTi		Added strtype, wr_stream_no.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

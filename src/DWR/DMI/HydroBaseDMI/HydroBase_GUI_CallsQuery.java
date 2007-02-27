@@ -86,6 +86,7 @@
 // 2007-02-07	SAM, RTi		Remove dependences on CWRAT.
 //					Just pass a JFrame as the parent.
 //					Add GeoViewUI to the constructor to handle map interaction.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -151,9 +152,10 @@ public final static int EDIT_CALLS = 1;
 /**
 Reference to each kind of worksheet.
 */
-private final int
-	__MAIN_WORKSHEET = 0,
-	__TRIB_WORKSHEET = 1;
+// TODO SAM 2007-02-26 Evaluate if needed
+//private final int
+//	__MAIN_WORKSHEET = 0,
+//	__TRIB_WORKSHEET = 1;
 
 /**
 Misc strings.
@@ -215,7 +217,8 @@ private int __guiMode;
 The worksheet that was last-clicked in (for telling which one time series
 should be dragged from).
 */
-private int __lastClicked = -1;
+// TODO SAM 2007-02-26 Evaluate if needed
+//private int __lastClicked = -1;
 
 /**
 The label that accompanies the main table.
@@ -248,11 +251,6 @@ The HydroBase_GUI_SetCall gui that this gui can open.
 private HydroBase_GUI_SetCall __setCallGUI;
 
 /**
-The HydroBase_GUI_CallSelection gui that this gui can open.
-*/
-private HydroBase_GUI_CallSelection __selectionGUI;
-
-/**
 The date builder property list.
 */
 private PropList __dateProps;
@@ -270,11 +268,6 @@ private SimpleJButton
 	__releaseJButton,
 	__removeJButton,
 	__setJButton;
-
-/**
-Results of the calls.
-*/
-private Vector __results = null;
 
 /**
 Constructor.
@@ -428,7 +421,6 @@ protected void closeClicked() {
 Copies a call.
 */
 private void copyCall() {
-	boolean main = true;
 	HydroBase_Calls call = null;
 	int size = __mainTable.getSelectedRows().length;
 	int row = 0;
@@ -437,7 +429,6 @@ private void copyCall() {
 		call = (HydroBase_Calls)__mainTable.getRowData(row);
 	}
 	else {
-		main = false;
 		row = __tribTable.getSelectedRow();
 		call = (HydroBase_Calls)__tribTable.getRowData(row);
 	}
@@ -463,8 +454,6 @@ Vector divVector) {
 	if (results == null || results.size() == 0) {		
 		return;
 	}
-
-	__results = results;
 
         // Display results
         int main = 0;
@@ -638,7 +627,6 @@ throws Throwable {
 	__statusJTextField = null;
 	__toJTextField = null;
 	__setCallGUI = null;
-	__selectionGUI = null;
 	__dateProps = null;
 	__copyCallJButton = null;
 	__editCommentsJButton = null;
@@ -649,7 +637,6 @@ throws Throwable {
 	__releaseJButton = null;
 	__removeJButton = null;
 	__setJButton = null;
-	__results = null;
 	super.finalize();
 }
 
@@ -1082,7 +1069,7 @@ private void graphClicked() {
 
 	JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Please Wait... Retrieving data");
-	__selectionGUI = new HydroBase_GUI_CallSelection(__dmi, this, results);
+	new HydroBase_GUI_CallSelection(__dmi, this, results);
 
 	ready();   
 }
@@ -1094,7 +1081,6 @@ private void initialize() {
 	__dateProps = new PropList("Calls GUI properties");
 	__dateProps.set("DatePrecision", "Minute" );
 	__dateProps.set("DateFormat", "Y2K");
-	__results = null;
 }
 
 /**
@@ -1123,15 +1109,18 @@ public void mousePressed(MouseEvent e) {
 // uncomment the two lines below and then clicking in one table will 
 // delselect all the selected cells in the other table.
 	if (e.getComponent() == __mainTable) {
-		__lastClicked = __MAIN_WORKSHEET;
+//		 TODO SAM 2007-02-26 Evaluate if needed
+		//__lastClicked = __MAIN_WORKSHEET;
 //		__tribTable.deselectAll();
 	}
 	else if (e.getComponent() == __tribTable) {
-		__lastClicked = __TRIB_WORKSHEET;
+//		 TODO SAM 2007-02-26 Evaluate if needed
+		//__lastClicked = __TRIB_WORKSHEET;
 //		__mainTable.deselectAll();
 	}
 	else {
-		__lastClicked = -1;
+		// TODO SAM 2007-02-26 Evaluate if needed
+		//__lastClicked = -1;
 	}
 }
 

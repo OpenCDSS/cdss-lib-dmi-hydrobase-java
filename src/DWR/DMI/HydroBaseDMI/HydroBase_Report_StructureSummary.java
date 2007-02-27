@@ -78,6 +78,7 @@
 //					  for a normal year. 
 //					* Zeroes are shown now instead of being
 //					  displayed as blanks.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -142,16 +143,6 @@ private HydroBase_StructureView __view = null;
 The StructureView object that matches the structure object.
 */
 private HydroBase_StructureView __structureView;
-
-/**
-This is the value of the id for the structure being summarized.
-*/
-private int __id = DMIUtil.MISSING_INT;
-
-/**
-This is the value of the wd for the structure being summarized.
-*/
-private int __wd = DMIUtil.MISSING_INT;
 
 /**
 This String holds the rolodex number associated with the structure.  Rolodex_num
@@ -380,8 +371,7 @@ throws Exception {
 		years[i] = data.getCal_year();
 		acres[i] = data.getAcres_total();
 	}
-		
-	int count = 0;
+
 	for (int i = 0; i < size; i++) {
 		data = (HydroBase_StructureView)results.elementAt(i);
 		v = new Vector();
@@ -479,7 +469,6 @@ throws Exception {
 	__reportVector.add("");
         double curDouble;
         int curInt;
-	String curString;
 	Vector v1 = new Vector();
 	Vector v2 = new Vector();
 	Vector v3 = new Vector();
@@ -566,8 +555,7 @@ Appends to the report the query results from the rolodex query.
 @exception Exception if an error occurs
 */
 private void appendRolodexResults(HydroBase_Rolodex data)
-throws Exception {	
-        int curInt;
+throws Exception {
 	String curString;
 	String title;
 
@@ -610,10 +598,7 @@ private void appendStructureViewResults(HydroBase_StructureView data)
 throws Exception {	
 	double curDouble;
 	int curInt;
-	int id;
-	int wd;	
-	long curLong;
-	String curString;
+	long curLong;;
 	String qInfoString = "";
 	String rng;
 	String sec;
@@ -627,7 +612,6 @@ throws Exception {
         curInt = data.getWD();
         if (!DMIUtil.isMissing(curInt)) {
 		qInfoString += + curInt;
-		wd = curInt;
         }
 	__reportVector.add(qInfoString);
 
@@ -635,7 +619,6 @@ throws Exception {
         curInt = data.getID();
         if (!DMIUtil.isMissing(curInt)) {
 		qInfoString += curInt;
-		id = curInt;
         }
 	__reportVector.add(qInfoString);
  
@@ -759,8 +742,7 @@ throws Exception {
         double curDouble;
 	HydroBase_NetAmts data;
 	int curInt;
-	String curString; 
-	String qInfoString="";
+	String curString;
         Vector netFields = new Vector(10, 5);
 
         __reportVector.add(StringUtil.centerString (
@@ -939,8 +921,7 @@ throws Exception {
         Date curDate;    
         double curDouble;
 	HydroBase_Transact data;
-	String curString; 
-	String qInfoString="";
+	String curString;
         Vector transFields;
 
         transFields = new Vector(10, 5);
@@ -1110,9 +1091,7 @@ throws Exception {
 	}
 	if (DMIUtil.isMissing(id)) {
 		throw new Exception("Invalid wd value (" + id + ")");
-	}	
-	__wd = wd;
-	__id = id;
+	}
 
 	Vector v = new Vector(1);
 	v.add(HydroBase_WaterDistrict.formWDID(wd, id));
@@ -1515,7 +1494,6 @@ throws Exception {
 	s.add("------------------------------------------------");
 
 	double acres_irrig = 0;
-	int comment_year = 0;
 	String comment_string = null;
 	String not_used = null;
 
@@ -1596,7 +1574,6 @@ public Vector formatMonthlyDiversionForQINFO(Vector v,
 HydroBase_StructMeasType measType)
 throws Exception {	
 	boolean hasSFUT = false;
-	boolean yearPrinted = false;
 	boolean isRes = false;
 
 	if (v == null || v.size() == 0) {
@@ -1622,9 +1599,7 @@ throws Exception {
 	// irrigation year since that is what the diversion records use...
 	int iyear = 0;
 	HydroBase_AnnualAmt r = (HydroBase_AnnualAmt)v.elementAt(0);
-	int iyear1 = r.getIrr_year();
 	r = (HydroBase_AnnualAmt)v.elementAt(size - 1);
-	int iyear2 = r.getIrr_year();
 
 	// Size the output vector for the number of records + enough
 	// for header/footer lines...
@@ -1681,8 +1656,7 @@ throws Exception {
 	}
 
 	// Now loop trough the records and format each year...	
-	boolean have_diversion_record = false;	
-	boolean isInfreq = false;
+	boolean have_diversion_record = false;
 	boolean yearExists = false;
 	Date dt;	
 	double d;	
@@ -1742,13 +1716,10 @@ throws Exception {
 	for (int ii = 0; ii < v.size(); ii++) {
 		iyear = ((HydroBase_AnnualAmt)v.elementAt(ii)).getIrr_year();
 		// First locate the diversion record for the irrigation year...
-		isInfreq = false;
 		yearExists = false;
 		have_diversion_record = true;
-		yearPrinted = false;
 
-	if (have_diversion_record) {	
-		yearPrinted = true;
+	if (have_diversion_record) {
 		// Output the record (code not indented!)...
 		// Allocate a new array to format this record...
 		c = new Vector(22,1);

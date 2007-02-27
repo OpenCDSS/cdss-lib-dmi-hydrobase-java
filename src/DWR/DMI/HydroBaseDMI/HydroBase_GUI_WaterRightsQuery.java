@@ -119,6 +119,7 @@
 //					Pass a JFrame in the constructor.
 //					Also pass in a GeoViewAppUI instance for map interaction.
 //					Clean up code based on Eclipse feedback.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -259,9 +260,6 @@ Whether this is a transaction query.
 */
 private boolean __isTransactionQuery = false;
 
-// Parent frame, to allow chain to dialogs, etc.
-private JFrame __parent = null;
-
 // Interface to map
 private GeoViewUI __geoview_ui = null;
 
@@ -379,7 +377,6 @@ and to also not be a transaction query.
 public HydroBase_GUI_WaterRightsQuery(HydroBaseDMI dmi, JFrame parent,
 		GeoViewUI geoview_ui ) 
 throws Exception {
-	__parent = parent;
 	__geoview_ui = geoview_ui;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
 	initialize(dmi, false);
@@ -399,7 +396,6 @@ open data.
 public HydroBase_GUI_WaterRightsQuery(HydroBaseDMI dmi, int structureNum, 
 JFrame parent, GeoViewUI geoview_ui, boolean isTransactionQuery)
 throws Exception {
-	__parent = parent;
 	__geoview_ui = geoview_ui;
 	__isQueryByExample = false;
 	
@@ -756,7 +752,6 @@ Cleans up member variables.
 */
 protected void finalize()
 throws Throwable {
-	__parent = null;
 	__mapQueryLimits = null;
 	__dmi = null;
 	__netAmountsReport = null;
@@ -804,7 +799,6 @@ Formats the net amounts data for output.
 */
 public Vector formatOutputForNetAmounts(int format) 
 throws Exception {
-	boolean printColumnHeaders = false;
 
         int size = __worksheet.getRowCount();
 
@@ -861,7 +855,6 @@ throws Exception {
         }
         else {  
                 delim = HydroBase_GUI_Util.getDelimiterForFormat(format);
-		printColumnHeaders = true;
         }
 
         // Now do the body of the output...

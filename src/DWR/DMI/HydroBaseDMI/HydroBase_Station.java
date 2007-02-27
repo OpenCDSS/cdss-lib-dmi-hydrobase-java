@@ -14,11 +14,11 @@
 //					  forced if they are needed.
 // 2005-02-22	JTS, RTi		Added cooperator_id
 // 2005-04-29	JTS, RTi		Added all data members to finalize().
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

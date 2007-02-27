@@ -7,18 +7,12 @@
 // History:
 //
 // 2005-06-23	J. Thomas Sapienza, RTi	Initial version.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Date;
-import java.util.Vector;
-
-import RTi.DMI.DMIUtil;
-
 import RTi.Util.GUI.JWorksheet_AbstractRowTableModel;
-
-import RTi.Util.Time.DateTime;
 
 /**
 This class is an abstract table model defining methods that should be

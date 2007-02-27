@@ -14,12 +14,11 @@
 //					is used by TSTool.
 // 2004-05-17	JTS, RTi		* Added usgs_id.
 //					* Added usbr_id.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 import java.util.Date;

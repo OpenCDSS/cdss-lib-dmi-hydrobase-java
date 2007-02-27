@@ -16,6 +16,7 @@
 //					to 
 //					HydroBase_GUI_WISDiagramNodeProperties.
 // 2005-04-28	JTS, RTi		Added finalize().
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -31,8 +32,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import java.util.Vector;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,8 +45,6 @@ import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleJComboBox;
 
 import RTi.Util.IO.PropList;
-
-import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
 
@@ -81,11 +78,6 @@ private boolean __isAnnotation = false;
 The default background color of editable text fields.
 */
 private Color __textFieldBackground = null;
-
-/**
-The dmi to use for communicating with the database.
-*/
-private HydroBaseDMI __dmi;
 
 /**
 The GUI that instantiated this GUI.
@@ -138,7 +130,6 @@ Constructor.
 public HydroBase_GUI_WISDiagramNodeProperties(HydroBaseDMI dmi, 
 HydroBase_Device_WISDiagram parent, boolean editable, 
 HydroBase_Node node, int nodeNum, boolean isAnnotation) {
-	__dmi = dmi;
 	__parent = parent;
 	__editable = editable;
 	__node = node;
@@ -155,7 +146,6 @@ Responds to button presses.
 */
 public void actionPerformed(ActionEvent event) {
 	String command = event.getActionCommand();
-	Object o = event.getSource();
 
 	if (command.equals(__BUTTON_APPLY)) {
 		applyChanges();
@@ -275,7 +265,6 @@ Cleans up member variables.
 public void finalize()
 throws Throwable {
 	__textFieldBackground = null;
-	__dmi = null;
 	__parent = null;
 	__node = null;
 	__applyButton = null;
@@ -297,7 +286,7 @@ and closes the GUI.
 @param event that KeyEvent that happened.
 */
 public void keyPressed(KeyEvent event) {
-	if (event.getKeyCode() == event.VK_ENTER) {
+	if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 		if (__editable) {
 			applyChanges();
 		}

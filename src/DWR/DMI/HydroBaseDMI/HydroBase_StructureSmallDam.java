@@ -13,12 +13,11 @@
 //					  accordingly.
 // 2004-02-09	JTS, RTi		Renamed to match the naming scheme
 //					for classes that extend other classes.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 import java.util.Date;

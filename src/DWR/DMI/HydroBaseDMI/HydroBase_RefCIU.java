@@ -7,11 +7,11 @@
 // History:
 // 2004-07-09	J. Thomas Sapienza, RTi	Initial version.
 // 2005-02-04	JTS, RTi		Added short_desc field.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

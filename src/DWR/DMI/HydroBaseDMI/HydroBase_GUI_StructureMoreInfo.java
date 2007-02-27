@@ -56,12 +56,12 @@
 //					* The table-specific cell renderers 
 //					  were removed and replaced with a 
 //					  single generic one.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -129,7 +129,6 @@ GUI buttons.
 private JButton 
 	__closeJButton,
 	__exportJButton,
-	__helpJButton,
 	__printJButton;
 
 /**
@@ -292,7 +291,6 @@ throws Throwable {
 	__dmi = null;
 	__closeJButton = null;
 	__exportJButton = null;
-	__helpJButton = null;
 	__printJButton = null;
 	__ciuCodeJTextField = null;
 	__decreedCapacityJTextField = null;
@@ -363,7 +361,6 @@ private Vector formatOutput(int format) {
 			+ "________________________________________"
 			+ "________________________________________");
 
-	        Vector list = null;
 	        // Need to skip the first item because it is the header
 	        // information...
 
@@ -452,7 +449,6 @@ private Vector formatOutput(int format) {
 	        v.add("");
 	        v.add("INSTALLED" + delim + "MEAS DEVICE" + delim
 	        	+ "RECORDER" + delim);
-	        Vector list;
 
 		String s0 = null;
 		String s1 = null;
@@ -521,10 +517,7 @@ private void setupGUI() {
         Insets insetsNLNR = new Insets(0,7,0,7);
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
-        Insets insetsNNNR = new Insets(0,0,0,7);
-        Insets insetsNLNN = new Insets(0,7,0,0);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
         JPanel topJPanel = new JPanel();
@@ -537,38 +530,38 @@ private void setupGUI() {
         topJPanel.add("West", topLeftJPanel);
 
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("Structure Name:"),
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
   
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("DIV:"),
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topLeftJPanel,  new JLabel("WD:"),
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("ID:"),
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureNameJTextField = new JTextField(__structureName.length()
 		+ 5);
         __structureNameJTextField.setText(__structureName);
         __structureNameJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __structureNameJTextField,
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(4);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __divJTextField,
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(4);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __wdJTextField,
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(10);
         __idJTextField.setEditable(false); 
         JGUIUtil.addComponent(topLeftJPanel, __idJTextField,
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         // Center
         JPanel centerJPanel = new JPanel();
@@ -581,37 +574,37 @@ private void setupGUI() {
         centerJPanel.add("West", centerWJPanel);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Structure Type:"),
-		0, 2, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 2, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("CIU Code:"),
-		1, 2, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 2, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
    	JGUIUtil.addComponent(centerWJPanel, new JLabel("Estimated Capacity:"),
-		2, 2, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		2, 2, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Decreed Capacity:"),
-		3, 2, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		3, 2, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __structureTypeJTextField = new JTextField(15);
         __structureTypeJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, 
 		__structureTypeJTextField,
-		0, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __ciuCodeJTextField = new JTextField(3);
         __ciuCodeJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __ciuCodeJTextField,
-		1, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		1, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
    
         __estimatedCapacityJTextField = new JTextField(10);
         __estimatedCapacityJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __estimatedCapacityJTextField,
-		2, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		2, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __decreedCapacityJTextField = new JTextField(10);
         __decreedCapacityJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __decreedCapacityJTextField,
-		3, 3, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		3, 3, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Center: South JPanel
         JPanel centerSJPanel = new JPanel();
@@ -619,10 +612,10 @@ private void setupGUI() {
         centerJPanel.add("South", centerSJPanel);
 
         JGUIUtil.addComponent(centerSJPanel, new JLabel("Structure AKA:"),
-		1, 1, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(centerSJPanel, new JLabel("Equipment:"),
-		2, 1, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureAKAJList = new SimpleJList();
 
@@ -670,9 +663,9 @@ private void setupGUI() {
 
         JGUIUtil.addComponent(centerSJPanel, 
 		new JScrollPane(__structureAKAJList),
-		1, 2, 1, 1, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		1, 2, 1, 1, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         JGUIUtil.addComponent(centerSJPanel, jsw,
-		2, 2, 1, 1, 1, 1, insetsNLBR, gbc.BOTH, gbc.WEST);
+		2, 2, 1, 1, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 	
          // Bottom JPanel
         JPanel bottomJPanel = new JPanel();
@@ -760,24 +753,24 @@ private void setupGUI() {
 	__courtCaseWorksheet.setHourglassJFrame(this);
 
         JGUIUtil.addComponent(centerSJPanel, new JLabel("Mapfile Information:"),
-		1, 5, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 5, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(centerSJPanel, mapFileJSW,
 		1, 6, 1, 1, 0, 0, 0, 0, 0, 0,
-		gbc.BOTH, gbc.WEST);
+		GridBagConstraints.BOTH, GridBagConstraints.WEST);
         JGUIUtil.addComponent(centerSJPanel, 
 		new JLabel("Court Case Information:"),
-		2, 5, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 5, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(centerSJPanel, courtCaseJSW,
 		2, 6, 1, 1, 0, 0, 0, 0, 0, 0,
-		gbc.BOTH, gbc.WEST);
+		GridBagConstraints.BOTH, GridBagConstraints.WEST);
 	
 
         JGUIUtil.addComponent(bottomNorthJPanel, new JLabel("Notes:"),
-		0, 0, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.NORTHEAST);
+		0, 0, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.NORTHEAST);
 
 	__notesJList = new SimpleJList();
         JGUIUtil.addComponent(bottomNorthJPanel, new JScrollPane(__notesJList),
-		1, 0, 4, 1, 0, 0, insetsTLNR, gbc.BOTH, gbc.WEST);
+		1, 0, 4, 1, 0, 0, insetsTLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         // Bottom: South JPanel
         JPanel bottomSouthJPanel = new JPanel();
@@ -815,12 +808,11 @@ private void setupGUI() {
         JPanel bottomSSJPanel = new JPanel();
         bottomSSJPanel.setLayout(gbl);
         bottomSouthJPanel.add("South", bottomSSJPanel);
-        GridBagConstraints gbcBSS = new GridBagConstraints();
 
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSSJPanel, __statusJTextField,
-		0, 1, 10, 1, 1, 0, gbcBSS.HORIZONTAL, gbcBSS.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	String app = JGUIUtil.getAppNameForWindows();
 	if (app == null || app.trim().equals("")) {
@@ -954,11 +946,11 @@ private void submitAndDisplayGeneralCommentQuery() {
 	for (int i = 0; i < results.size(); i++) {
 		data = (HydroBase_GeneralComment)results.elementAt(i);
 
-		if (__dmi.isDatabaseVersionAtLeast(__dmi.VERSION_19990305)) {
+		if (__dmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990305)) {
 			// New database.  Allow multiple comments per structure.
 			date_entered = data.getDate_entered();
 			dt = new DateTime(date_entered);
-			dt.setPrecision(dt.PRECISION_DAY);
+			dt.setPrecision(DateTime.PRECISION_DAY);
 			
 			try {
 				listLine = DMIUtil.formatDateTime(__dmi, dt) 
@@ -1020,7 +1012,7 @@ private Vector submitMapfileQuery() {
 		}
 		else {
 			DateTime dt = new DateTime(data.getMap_file_date());
-			dt.setPrecision(dt.PRECISION_DAY);
+			dt.setPrecision(DateTime.PRECISION_DAY);
 			d.setValueAt(0, dt.toString());
 		}
 		

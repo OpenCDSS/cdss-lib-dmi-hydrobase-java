@@ -165,6 +165,7 @@
 //					Use a JFrame in the constructor.
 //					Also require an instance of GeoViewUI in the constructor.
 //					Clean up the code based on Eclipse feedback.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 // EndHeader
 
@@ -289,16 +290,6 @@ private boolean __displayStructsOnly;
 Whether this a query that should select from the GeoView display, too.
 */
 private boolean __geoViewSelectQuery = false;
-
-/**
-Used to mark which structures should be selected during a geoview select.
-Done like this to avoid changing the status of the checkboxes.
-*/
-private boolean
-	__gvsDiversion = false,
-	__gvsInstreamFlow = false,
-	__gvsReservoir = false,
-	__gvsWell = false;
 
 /**
 The main application JFrame.
@@ -554,10 +545,6 @@ Display the results of the query in the spreadsheet.
 */
 private void displayResults(Vector results) 
 throws Exception {
-	Object o = null;
-	if (__results.size() > 0) {
-		o = __results.elementAt(0);
-	}
 
 	HydroBase_TableModel_StructureGeoloc_SP tm = 
 		new HydroBase_TableModel_StructureGeoloc_SP(__results, 
@@ -1184,27 +1171,18 @@ Vector selected, boolean append) {
 	// The geographic query should be in addition to the filters...
 	//__filterJPanel.clearInput();
 	
-	__gvsDiversion = false;
-	__gvsInstreamFlow = false;
-	__gvsReservoir = false;
-	__gvsWell = false;
-
 	for (int i = 0; i < size; i++) {
 		appLayerType = (String)appLayerTypes.elementAt(i);
 		if (appLayerType.equalsIgnoreCase("Diversion")) {
-			__gvsDiversion = true;
 			viewNeeded = true;
 		}
 		else if (appLayerType.equalsIgnoreCase("InstreamFlow")) {
-			__gvsInstreamFlow = true;
 			viewNeeded = true;
 		}
 		else if (appLayerType.equalsIgnoreCase("Reservoir")) {
-			__gvsReservoir = true;
 			viewNeeded = true;
 		}
 		else if (appLayerType.equalsIgnoreCase("Well")) {
-			__gvsWell = true;
 			viewNeeded = true;
 		}
 	}

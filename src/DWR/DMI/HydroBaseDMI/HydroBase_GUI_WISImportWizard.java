@@ -28,6 +28,7 @@
 //					  were removed and replaced with a 
 //					  single generic one.
 // 2005-06-28	JTS, RTi		Removed DMI parameter from table model.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -38,17 +39,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import java.util.Vector;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -65,10 +63,8 @@ import RTi.Util.GUI.JWizard;
 import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.SimpleJList;
 import RTi.Util.GUI.ResponseJDialog;
-import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
 
-import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
 
 import RTi.Util.Message.Message;
@@ -142,11 +138,6 @@ The WISBuilder GUI that instantiated this wizard.
 private HydroBase_GUI_WISBuilder __parentGUI;
 
 /**
-WIS Import object that is being built.
-*/
-private HydroBase_WISImport	__wisImport;
-
-/**
 Column and row in which the import is being built on the WISBuilder.
 */
 private	int
@@ -171,11 +162,6 @@ private JWorksheet
 	__wisWorksheet;
 
 /**
-Unique station number for the import.
-*/
-private long __stationNum;
-
-/**
 Data source list.
 */
 private SimpleJList __sourceList;
@@ -184,13 +170,11 @@ private SimpleJList __sourceList;
 GUI combo boxes.
 */
 private SimpleJComboBox	
-	__methodSimpleJComboBox,
 	__rtEndSimpleJComboBox,
 	__rtOffsetSimpleJComboBox,
 	__rtWDSimpleJComboBox,
 	__wisDataSimpleJComboBox,
-	__wisNameSimpleJComboBox,
-	__wisTimeSimpleJComboBox;
+	__wisNameSimpleJComboBox;
 
 /**
 Vectors to hold data objects.
@@ -226,10 +210,8 @@ HydroBase_WISImport wisImport) {
 
 	__dmi = dmi;
 	__parentGUI = parent_gui;
-	__stationNum = station_num;
 	__row = row;
 	__col = col;
-	__wisImport = wisImport;
 	__infoVector = new Vector();
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
 	setupGUI();
@@ -284,18 +266,15 @@ throws Throwable {
 	__wizardCard = null;
 	__dmi = null;
 	__parentGUI = null;
-	__wisImport = null;
 	__wizardJPanel = null;
 	__rtWorksheet = null;
 	__wisWorksheet = null;
 	__sourceList = null;
-	__methodSimpleJComboBox = null;
 	__rtEndSimpleJComboBox = null;
 	__rtOffsetSimpleJComboBox = null;
 	__rtWDSimpleJComboBox = null;
 	__wisDataSimpleJComboBox = null;
 	__wisNameSimpleJComboBox = null;
-	__wisTimeSimpleJComboBox = null;
 	__infoVector = null;
 	__wisVector = null;
 	super.finalize();
@@ -312,7 +291,6 @@ protected boolean finishClicked() {
 	int offset = DMIUtil.MISSING_INT;
 	int end = DMIUtil.MISSING_INT;
         int meas_num = DMIUtil.MISSING_INT;
-        long wis_num = DMIUtil.MISSING_LONG;
 	int importWISNum = DMIUtil.MISSING_INT;
 	String importMethod = "AVE";
 	String importIdentifier = DMIUtil.MISSING_STRING;
@@ -364,7 +342,7 @@ protected boolean finishClicked() {
 	}
 
 	// Fill in the WISImport fields.
-	wisImport.setColumn(__parentGUI.getColumnType(__col));
+	wisImport.setColumn(HydroBase_GUI_WISBuilder.getColumnType(__col));
 	wisImport.setEnd_time(end);
 	wisImport.setTime_offset(offset);
 	wisImport.setMeas_num(meas_num);
@@ -403,15 +381,11 @@ private void generateWISSheets() {
 
 	Vector wds = new Vector();
 	// initialize variables
-	String where = "";
 	if (wd != null && wd.size() > 0) {
 		int size = wd.size();
 		for (int count = 0; count < size; count++) {
 			wds.add("" +  wd.elementAt(count));
 		}
-	}
-	else {
-		where = null;
 	}
 	
 	Vector results = null;
@@ -508,7 +482,7 @@ public void itemStateChanged(ItemEvent event) {
 
 	Object o = event.getItemSelectable();
 
-	if (event.getStateChange() != event.SELECTED) {
+	if (event.getStateChange() != ItemEvent.SELECTED) {
 		return;
 	}
 
@@ -603,8 +577,7 @@ Called when the next button is pressed.
 */
 protected boolean nextClicked() {
 	String 	s;
-	int	curRow,
-		step;
+	int	step;
 
 	// initialize variables
 	s = ((String)__sourceList.getSelectedItem());
@@ -707,7 +680,6 @@ Sets up the GUI.
 private void setupGUI() {
 	String routine = __CLASS + ".setupGUI";
 	// objects to be used in the GUI layout
-	GridBagConstraints gbc = new GridBagConstraints();
 	GridBagLayout gbl = new GridBagLayout();
 	Insets TNNN = new Insets(7,0,0,0);
 	Insets NLNR = new Insets(0,7,0,7);
@@ -733,7 +705,7 @@ private void setupGUI() {
 	
 	JGUIUtil.addComponent(step1JPanel, 
 		new JLabel("Available Import Sources:"), 
-		0, 0, 1, 1, 0, 0, NLNR, gbc.HORIZONTAL, gbc.EAST);
+		0, 0, 1, 1, 0, 0, NLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
 
 	__sourceList = new SimpleJList();
 	__sourceList.addMouseListener(this);
@@ -741,7 +713,7 @@ private void setupGUI() {
 	__sourceList.add(WIS);
 	__sourceList.addListSelectionListener(this);
 	JGUIUtil.addComponent(step1JPanel, new JScrollPane(__sourceList), 
-		0, 1, 1, 1, 1, 0, NLNR, gbc.BOTH, gbc.NORTHWEST);
+		0, 1, 1, 1, 1, 0, NLNR, GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);
 
 	//---------------------------------------------------------------------
 	// Step 2: RT JPanel
@@ -755,7 +727,7 @@ private void setupGUI() {
 	
 	JGUIUtil.addComponent(step2_RTJPanel, 
 		new JLabel("Step 1: Select a desired Reference Time"), 
-		0, 0, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__rtEndSimpleJComboBox = new SimpleJComboBox();
 	__rtEndSimpleJComboBox.add(CURRENT);
@@ -774,12 +746,12 @@ private void setupGUI() {
 	__rtEndSimpleJComboBox.select(0);	// select the first item
 	JGUIUtil.addComponent(step2_RTJPanel, 
 		__rtEndSimpleJComboBox, 
-		1, 0, 1, 1, 0, 0, NLNR, gbc.HORIZONTAL, gbc.CENTER);
+		1, 0, 1, 1, 0, 0, NLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 	__rtEndSimpleJComboBox.addItemListener(this);
 
 	JGUIUtil.addComponent(step2_RTJPanel, 
 		new JLabel("Step 2: Number of hours to include in the average"),
-		0, 1, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__rtOffsetSimpleJComboBox = new SimpleJComboBox();
 	for (int i = 0; i < __MIL_TIMES.length; i++) {
@@ -795,7 +767,7 @@ private void setupGUI() {
 	__rtOffsetSimpleJComboBox.select(0);	// select the first item
 	JGUIUtil.addComponent(step2_RTJPanel, 
 		__rtOffsetSimpleJComboBox, 
-		1, 1, 1, 1, 0, 0, NLNR, gbc.HORIZONTAL, gbc.CENTER);
+		1, 1, 1, 1, 0, 0, NLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 	__rtOffsetSimpleJComboBox.setEnabled(false);
 	__rtOffsetSimpleJComboBox.setEditable(false);
 	__rtOffsetSimpleJComboBox.addItemListener(this);
@@ -803,7 +775,7 @@ private void setupGUI() {
 	JGUIUtil.addComponent(step2_RTJPanel, 
 		new JLabel("Step 3: Select the desired Water "
 		+ "Divisision/District"), 
-		0, 2, 1, 1, 0, 0, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		0, 2, 1, 1, 0, 0, TNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__rtWDSimpleJComboBox = new SimpleJComboBox();
 	__rtWDSimpleJComboBox.addItemListener(this);
@@ -821,11 +793,11 @@ private void setupGUI() {
 
 	JGUIUtil.addComponent(step2_RTJPanel, 
 		__rtWDSimpleJComboBox, 
-		1, 2, 1, 1, 0, 0, TLNR, gbc.HORIZONTAL, gbc.CENTER);
+		1, 2, 1, 1, 0, 0, TLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 
 	JGUIUtil.addComponent(step2_RTJPanel, 
 		new JLabel("Step 4: Select the correct Station"), 
-		0, 3, 2, 1, 0, 0, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		0, 3, 2, 1, 0, 0, TNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	PropList p = new PropList("HydroBase_GUI_WISImportWizard.JWorksheet");
 /*
@@ -873,7 +845,7 @@ private void setupGUI() {
 	__rtWorksheet.addMouseListener(this);
 
 	JGUIUtil.addComponent(step2_RTJPanel, rtJSW,
-		0, 4, 2, 1, 1, 1, NLNR, gbc.BOTH, gbc.NORTHWEST);
+		0, 4, 2, 1, 1, 1, NLNR, GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);
 
 	//---------------------------------------------------------------------
 	// Step 2: WIS JPanel
@@ -884,17 +856,17 @@ private void setupGUI() {
 	
 	JGUIUtil.addComponent(step2_WISJPanel, 
 		new JLabel("Step 1: Select the desired WIS"), 
-		0, 0, 1, 1, 0, 0, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 0, 0, TNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	__wisNameSimpleJComboBox = new SimpleJComboBox();
 	__wisNameSimpleJComboBox.add("Select a Water Information Sheet ");
 	__wisNameSimpleJComboBox.addItemListener(this);
 	JGUIUtil.addComponent(step2_WISJPanel, 
 		__wisNameSimpleJComboBox, 
-		1, 0, 1, 1, 1, 0, TLNR, gbc.HORIZONTAL, gbc.CENTER);
+		1, 0, 1, 1, 1, 0, TLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 
 	JGUIUtil.addComponent(step2_WISJPanel, 
 		new JLabel("Step 2: Select a desired Data Type"), 
-		0, 1, 1, 1, 0, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	__wisDataSimpleJComboBox = new SimpleJComboBox();
 	__wisDataSimpleJComboBox.add(HydroBase_GUI_WIS.POINT_FLOW);
 	__wisDataSimpleJComboBox.add(HydroBase_GUI_WIS.NATURAL_FLOW);
@@ -909,11 +881,11 @@ private void setupGUI() {
 	__wisDataSimpleJComboBox.addItemListener(this);
 	JGUIUtil.addComponent(step2_WISJPanel, 
 		__wisDataSimpleJComboBox, 
-		1, 1, 1, 1, 0, 0, NLNR, gbc.HORIZONTAL, gbc.CENTER);
+		1, 1, 1, 1, 0, 0, NLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 
 	JGUIUtil.addComponent(step2_WISJPanel, 
 		new JLabel("Step 3: Select the correct Row Label"), 
-		0, 2, 2, 1, 0, 0, TNNN, gbc.HORIZONTAL, gbc.WEST);
+		0, 2, 2, 1, 0, 0, TNNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	int[] wisWidths = null;
 	JScrollWorksheet wisJSW = null;
@@ -940,7 +912,7 @@ private void setupGUI() {
 	__wisWorksheet.addMouseListener(this);
 
 	JGUIUtil.addComponent(step2_WISJPanel, wisJSW, 
-		0, 4, 2, 1, 1, 1, NLNR, gbc.BOTH, gbc.NORTHWEST);
+		0, 4, 2, 1, 1, 1, NLNR, GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);
 
 	// Frame settings
 	pack();
@@ -976,10 +948,8 @@ Shows the wizard and changes to the necessary cell information.
 */
 public void setVisible(long station_num, int row, int col, 
 HydroBase_WISImport wisImport) {
-	__stationNum = station_num;
 	__row = row;
 	__col = col;
-	__wisImport = wisImport;
         setVisible(true);
 }
 
@@ -1029,9 +999,6 @@ private void submitRTQuery() {
 		setReady(__statusJTextField);
 		return;
 	}
-
-	Vector whereClause = new Vector();
-	Vector orderBy = new Vector();
 
 	Vector results = null;
 	try {

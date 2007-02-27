@@ -124,8 +124,6 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.awt.Font;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -137,8 +135,6 @@ import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import RTi.DMI.DMIUtil;
@@ -154,11 +150,7 @@ import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleFileFilter;
 import RTi.Util.GUI.SimpleJComboBox;
 
-import RTi.Util.Help.URLHelp;
-
 import RTi.Util.IO.IOUtil;
-import RTi.Util.IO.Prop;
-import RTi.Util.IO.PropList;
 import RTi.Util.IO.SecurityCheck;
 
 import RTi.Util.Message.Message;
@@ -230,7 +222,8 @@ private final static int __NUM_TRIPLETS = 6;
 /**
 The user number of the user for which preferences were read from the database.
 */
-private static int __userNum = DMIUtil.MISSING_INT;
+// TODO SAM 2007-02-26 Evaluate whether needed.
+//private static int __userNum = DMIUtil.MISSING_INT;
 
 /**
 The active water division.
@@ -599,7 +592,6 @@ public static Vector generateWaterDistricts(HydroBaseDMI dmi, boolean ignore) {
 		"28,40,41,42,59,60,61,62,63,68,73,36,37,38,39,45,50,51,52," +
 		"53,70,72,43,44,47,54,55,56,57,58,29,30,31,32,33,34,46,69," +
 		"71,77,78,";       
-	       	String curToken;
 		Vector v = StringUtil.breakStringList(districts.trim(), ",", 
 			StringUtil.DELIM_SKIP_BLANKS);
 	        return v;		
@@ -623,7 +615,6 @@ public static Vector generateWaterDistricts(HydroBaseDMI dmi, boolean ignore) {
 		dmi.setPreferenceValue("WD." + getActiveWaterDivision() +
 			".DistrictSelect",districts);
 	}
-       	String curToken;
 	Vector v = StringUtil.breakStringList(districts.trim(), ",", 
 		StringUtil.DELIM_SKIP_BLANKS);
         return v;
@@ -1454,7 +1445,6 @@ queries.
 public static Vector getWhereClausesFromInputFilter (HydroBaseDMI dmi,
 InputFilter_JPanel panel, String tableName, int form) 
 throws Exception {
-	String routine = "HydroBase_GUI_Util.getWhereClausesFromInputFilter";
 	// Loop through each filter group.  There will be one where clause per
 	// filter group.
 
@@ -1787,7 +1777,7 @@ throws Exception {
 	// Make sure to add the "Entire State" option at the bottom of the list
 	// if it is requested.
 	if (includeAllDivisions 
-	    && dmi.getDatabaseVersion() >= dmi.VERSION_20050701) {
+	    && dmi.getDatabaseVersion() >= HydroBaseDMI.VERSION_20050701) {
 		comboBox.add(_ALL_DIVISIONS);
 	}
 

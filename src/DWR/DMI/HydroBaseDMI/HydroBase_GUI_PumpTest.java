@@ -30,6 +30,7 @@
 //					  Site ID fields.
 //					* Reorganized the layout of other 
 //					  fields.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -47,7 +48,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import java.util.Vector;
-import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -61,7 +61,6 @@ import RTi.DMI.DMIUtil;
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleJButton;
 
-import RTi.Util.IO.ExportJGUI;
 import RTi.Util.IO.PrintJGUI;
 
 import RTi.Util.Message.Message;
@@ -95,7 +94,6 @@ GUI buttons.
 private JButton 
 	__closeJButton,
 	__exportJButton,
-	__helpJButton,
 	__printJButton;
 
 /**
@@ -105,11 +103,6 @@ private JCheckBox
 	__monJCheckBox,
 	__multJCheckBox,
 	__obsJCheckBox;
-
-/**
-Frame that instantiated this gui.
-*/
-private JFrame __parent;
 
 /**
 GUI text fields.
@@ -124,8 +117,6 @@ private JTextField
 	__nameJTextField,
 	__permitInfoJTextField,
 	__pmJTextField,
-	__ptmonJTextField,
-	__ptobsJTextField,
 	__ptsourceJTextField,
 	__pttypeJTextField,
 	__q10JTextField,
@@ -157,7 +148,6 @@ to display in the GUI.
 */
 public HydroBase_GUI_PumpTest(JFrame parent, 
 HydroBase_GroundWaterWellsPumpingTest hydroBasePumpTestView) {
-        __parent = parent;
         __hydroBasePumpTestView = hydroBasePumpTestView;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
         setupViewGUI();
@@ -232,12 +222,10 @@ throws Throwable {
 	__hydroBasePumpTestView = null;
 	__closeJButton = null;
 	__exportJButton = null;
-	__helpJButton = null;
 	__printJButton = null;
 	__monJCheckBox = null;
 	__multJCheckBox = null;
 	__obsJCheckBox = null;
-	__parent = null;
 	__basetestintJTextField = null;
 	__drawdownJTextField = null;
 	__idJTextField = null;
@@ -245,8 +233,6 @@ throws Throwable {
 	__leakanceJTextField = null;
 	__nameJTextField = null;
 	__pmJTextField = null;
-	__ptmonJTextField = null;
-	__ptobsJTextField = null;
 	__ptsourceJTextField = null;
 	__pttypeJTextField = null;
 	__q10JTextField = null;
@@ -283,19 +269,13 @@ private void setupViewGUI() {
 	int y=0;
 
         // objects used throughout the GUI layout
-        Insets insetsTLBR = new Insets(7,7,7,7);
         Insets insetsTLNN = new Insets(7,7,0,0);
         Insets insetsTNNN = new Insets(14,0,0,0);
         Insets insetsTNBN = new Insets(14,0,14,0);
         Insets insetsNLNR = new Insets(0,7,0,7);
-        Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         Insets insetsTNNR = new Insets(7,0,0,7);
-        Insets insetsNNNR = new Insets(0,0,0,7);
-        Insets insetsNLNN = new Insets(0,7,0,0);
-        Insets insetsTLNB = new Insets(7,7,0,14);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         addWindowListener(this);
 
@@ -307,18 +287,18 @@ private void setupViewGUI() {
         JPanel panel_0 = new JPanel();
         panel_0.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, panel_0, 0, 0, 1, 1, 0, 0, 
-		insetsTNNN, gbc.NONE, gbc.WEST);
+		insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(panel_0, new JLabel("WD:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(panel_0, new JLabel("ID:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(panel_0, new JLabel("Loc Num:"),
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(panel_0, new JLabel("Site ID"),
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	JGUIUtil.addComponent(panel_0, new JLabel("Permit Info"),
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	y++;
 	x = 0;
@@ -326,7 +306,7 @@ private void setupViewGUI() {
         __wdJTextField.setText("" + __hydroBasePumpTestView.getWD());
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_0, __wdJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(6);
 	if (__hydroBasePumpTestView.getID() < 0) {
@@ -337,19 +317,19 @@ private void setupViewGUI() {
 	}
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_0, __idJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__locNumJTextField = new JTextField(20);
 	__locNumJTextField.setText("" + __hydroBasePumpTestView.getLoc_num());
 	__locNumJTextField.setEditable(false);
 	JGUIUtil.addComponent(panel_0, __locNumJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	__siteIDJTextField = new JTextField(10);
 	__siteIDJTextField.setText("" + __hydroBasePumpTestView.getSite_id());
 	__siteIDJTextField.setEditable(false);
 	JGUIUtil.addComponent(panel_0, __siteIDJTextField,
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	String s = "";
 	int i = __hydroBasePumpTestView.getPermitno();
@@ -375,12 +355,12 @@ private void setupViewGUI() {
 	__permitInfoJTextField.setText(s);
 	__permitInfoJTextField.setEditable(false);
 	JGUIUtil.addComponent(panel_0, __permitInfoJTextField,	
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	x = 0;
 	y++;
         JGUIUtil.addComponent(panel_0, new JLabel("Name:"), 
-		x, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x = 0;
 	y++;
@@ -388,7 +368,7 @@ private void setupViewGUI() {
         __nameJTextField.setText("" + __hydroBasePumpTestView.getStr_name());
         __nameJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_0, __nameJTextField, 
-		x++, y, 3, 1, 1, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 3, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	y++;
 	x=0;
@@ -396,31 +376,31 @@ private void setupViewGUI() {
         JPanel panel_location = new JPanel();
         panel_location.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, panel_location, 0, 1, 1, 1, 0, 0, 
-		insetsTNNR, gbc.NONE, gbc.WEST);
+		insetsTNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(panel_location, new JLabel("PM:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
   
         JGUIUtil.addComponent(panel_location, new JLabel("TWN:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	x++;
 
         JGUIUtil.addComponent(panel_location, new JLabel("RNG:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	x++;
 
         JGUIUtil.addComponent(panel_location, new JLabel("SEC:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x++;
         JGUIUtil.addComponent(panel_location, new JLabel("1/4:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(panel_location, new JLabel("1/4 1/4:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(panel_location, new JLabel("1/4 1/4 1/4:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x=0;
 	y++;
@@ -428,61 +408,61 @@ private void setupViewGUI() {
         __pmJTextField.setText("" + __hydroBasePumpTestView.getPM());
         __pmJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __pmJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __tsJTextField = new JTextField();
         __tsJTextField.setText("" + __hydroBasePumpTestView.getTS());
         __tsJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __tsJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __tdirJTextField = new JTextField(2);
         __tdirJTextField.setText("" + __hydroBasePumpTestView.getTdir());
         __tdirJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __tdirJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __rngJTextField = new JTextField();
         __rngJTextField.setText("" + __hydroBasePumpTestView.getRng());
         __rngJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __rngJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __rdirJTextField = new JTextField(2);
         __rdirJTextField.setText("" + __hydroBasePumpTestView.getRdir());
         __rdirJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __rdirJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __secJTextField = new JTextField();
         __secJTextField.setText("" + __hydroBasePumpTestView.getSec());
         __secJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __secJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __secaJTextField = new JTextField(2);
         __secaJTextField.setText("" + __hydroBasePumpTestView.getSeca());
         __secaJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __secaJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __q160JTextField = new JTextField(3);
         __q160JTextField.setText("" + __hydroBasePumpTestView.getQ160());
         __q160JTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __q160JTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __q40JTextField = new JTextField(4);
         __q40JTextField.setText("" + __hydroBasePumpTestView.getQ40());
         __q40JTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __q40JTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __q10JTextField = new JTextField(4);
         __q10JTextField.setText("" + __hydroBasePumpTestView.getQ10());
         __q10JTextField.setEditable(false);
         JGUIUtil.addComponent(panel_location, __q10JTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // JPanel 1:  tswl fgwl, testq, testing, testdate, ptsource, pttype
         JPanel panel_1 = new JPanel();
@@ -490,13 +470,13 @@ private void setupViewGUI() {
 
 	x=0;
         JGUIUtil.addComponent(panel_1, new JLabel("Test Type:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(panel_1, new JLabel("Data Source:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(panel_1, new JLabel("Test Date:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(panel_1, new JLabel("Test Duration (hrs):"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	y++;
 	x=0;
@@ -504,14 +484,14 @@ private void setupViewGUI() {
         __pttypeJTextField.setText("" + __hydroBasePumpTestView.getPttype());
         __pttypeJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __pttypeJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __ptsourceJTextField = new JTextField();
         __ptsourceJTextField.setText("" 
 		+ __hydroBasePumpTestView.getPtsource());
         __ptsourceJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __ptsourceJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __testdateJTextField = new JTextField();
 	if (__hydroBasePumpTestView.getTestdate()!= null)
@@ -519,7 +499,7 @@ private void setupViewGUI() {
 		+ __hydroBasePumpTestView.getTestdate());
         __testdateJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __testdateJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __testtimeJTextField = new JTextField();
 	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTesttime())) {
@@ -528,24 +508,24 @@ private void setupViewGUI() {
 	}
         __testtimeJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __testtimeJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topJPanel, panel_1, 0, 2, 1, 1, 0, 0, 
-		insetsTNNN, gbc.NONE, gbc.WEST);
+		insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	y++;
 	x=0;
         JGUIUtil.addComponent(panel_1, new JLabel("Static Level (ft):"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
   
         JGUIUtil.addComponent(panel_1, new JLabel("Final Level (ft):"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(panel_1, new JLabel("Water Level Change (ft):"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(panel_1, new JLabel("Average Flow (gpm):"), 
-		x++, y++, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 
 	x=0;
@@ -556,7 +536,7 @@ private void setupViewGUI() {
 	}
         __tswlJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __tswlJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __tfwlJTextField = new JTextField();
 	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTfwl())) {
@@ -565,7 +545,7 @@ private void setupViewGUI() {
 	}
         __tfwlJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __tfwlJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __drawdownJTextField = new JTextField();
 	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getDrawdown())) {
@@ -574,7 +554,7 @@ private void setupViewGUI() {
 	}
         __drawdownJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __drawdownJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __testqJTextField = new JTextField();
 	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTestq())) {
@@ -583,16 +563,16 @@ private void setupViewGUI() {
 	}
         __testqJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __testqJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	x=0;
         JGUIUtil.addComponent(panel_1, new JLabel("Top of Test Interval (ft):"),
-		x++, y, 2, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 2, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x++;
         JGUIUtil.addComponent(panel_1, 
 		new JLabel("Base of Test Interval (ft):"),
-		x++, y++, 2, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y++, 2, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x=0;
         __toptestintJTextField = new JTextField();
@@ -602,7 +582,7 @@ private void setupViewGUI() {
 	}
         __toptestintJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __toptestintJTextField, 
-		x++, y, 2, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 2, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	x++;
         __basetestintJTextField = new JTextField();
 
@@ -612,27 +592,27 @@ private void setupViewGUI() {
 	}
         __basetestintJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_1, __basetestintJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // JPanel 2:  trans, k, storativity, leakance
         JPanel panel_2 = new JPanel();
         panel_2.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, panel_2, 0, 3, 1, 1, 0, 0, 
-		insetsTNNN, gbc.NONE, gbc.WEST);
+		insetsTNNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	x=0;
         JGUIUtil.addComponent(panel_2, new JLabel("Transmissivity (gpd/ft):"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
   
         JGUIUtil.addComponent(panel_2, new JLabel(
 		"Hydraulic Conductivity (ft/d):"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(panel_2, new JLabel("Storativity:"), 
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(panel_2, new JLabel("Leakance:"), 
-		x++, y++, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 
 	x=0;
@@ -643,7 +623,7 @@ private void setupViewGUI() {
 	}
         __transJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_2, __transJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __kJTextField = new JTextField();
 	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getK())) {
@@ -652,7 +632,7 @@ private void setupViewGUI() {
 	}
         __kJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_2, __kJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __storativityJTextField = new JTextField();
 	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getStorativity())) {
@@ -662,7 +642,7 @@ private void setupViewGUI() {
 	}
         __storativityJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_2, __storativityJTextField, 
-		x++, y, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __leakanceJTextField = new JTextField();
 	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getLeakance())) {
@@ -672,13 +652,13 @@ private void setupViewGUI() {
 	}
         __leakanceJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_2, __leakanceJTextField, 
-		x++, y++, 1, 1, 0, 0, insetsNLNR, gbc.HORIZONTAL, gbc.WEST);
+		x++, y++, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // JPanel 3:  ptmon, ptobs, ptmultiple
         JPanel panel_3 = new JPanel();
         panel_3.setLayout(gbl);
         JGUIUtil.addComponent(topJPanel, panel_3, 0, 4, 1, 1, 0, 0, 
-		insetsTNBN, gbc.NONE, gbc.WEST);
+		insetsTNBN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	// since disabling checkboxes sets the text to light gray(hard to 
 	// read and unnecessary in this case), each checkbox will be followed
@@ -695,9 +675,9 @@ private void setupViewGUI() {
 	__monJCheckBox = new JCheckBox("", checkIt);
 	__monJCheckBox.setEnabled(false);
         JGUIUtil.addComponent(panel_3, __monJCheckBox,
-		x++, y, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(panel_3, new JLabel("Includes Monitor Well"),
-		x++, y, 1, 1, 0, 0, insetsTNNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
   
 	checkValue = __hydroBasePumpTestView.getPtobs();
 	if (checkValue == 0) {
@@ -709,9 +689,9 @@ private void setupViewGUI() {
 	__obsJCheckBox = new JCheckBox("",checkIt);
 	__obsJCheckBox.setEnabled(false);
         JGUIUtil.addComponent(panel_3, __obsJCheckBox,
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(panel_3, new JLabel("Includes Observed Well"),
-		x++, y, 1, 1, 0, 0, insetsTNNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	checkValue = __hydroBasePumpTestView.getPtmultiple();
 	if (checkValue == 0) {
@@ -723,9 +703,9 @@ private void setupViewGUI() {
 	__multJCheckBox = new JCheckBox("", checkIt);
 	__multJCheckBox.setEnabled(false);
         JGUIUtil.addComponent(panel_3, __multJCheckBox,
-		x++, y, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(panel_3, new JLabel("Multiple Tests Available"),
-		x++, y, 1, 1, 0, 0, insetsTNNR, gbc.NONE, gbc.WEST);
+		x++, y, 1, 1, 0, 0, insetsTNNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         // Center
         JPanel centerJPanel = new JPanel();
@@ -766,7 +746,7 @@ private void setupViewGUI() {
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(statusJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Frame settings
 	if (	(JGUIUtil.getAppNameForWindows() == null) ||

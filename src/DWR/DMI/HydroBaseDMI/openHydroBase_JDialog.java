@@ -33,6 +33,7 @@
 //					  the server in the server name combo
 //					  box is requeried to see the databases
 //					  available.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -118,7 +119,6 @@ private String
 
 private SimpleJButton	__cancel_JButton = null,	// Cancel Button
 			__ok_JButton = null;		// Ok Button
-private JFrame		__parent_JFrame = null;		// parent JFrame
 private JTextArea	__command_JTextArea = null;	// Command as JTextArea
 private SimpleJComboBox	__OdbcDsn_JComboBox = null;	// Field for OdbcDsn
 private SimpleJComboBox __DatabaseServer_JComboBox=null;
@@ -330,7 +330,6 @@ throws Throwable
 	__command_JTextArea = null;
 	__command = null;
 	__ok_JButton = null;
-	__parent_JFrame = null;
 	__databaseType_JComboBox = null;
 	__holdServer = null;
 	__holdName = null;
@@ -346,8 +345,7 @@ Instantiates the GUI components.
 @param command Command to edit.
 */
 private void initialize ( JFrame parent, Command command )
-{	__parent_JFrame = parent;
-	__command = (openHydroBase_Command)command;
+{	__command = (openHydroBase_Command)command;
 
 	readConfigurationFile();
 
@@ -360,46 +358,45 @@ private void initialize ( JFrame parent, Command command )
 
 	JPanel main_JPanel = new JPanel();
 	main_JPanel.setLayout( new GridBagLayout() );
-	GridBagConstraints gbc = new GridBagConstraints();
 	getContentPane().add ( "North", main_JPanel );
 	int y = 0;
 
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"This command opens a connection to a HydroBase database," +
 		" closing the previous connection with the same input name." ),
-		0, y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"This is useful, for example, when making connections to more "+
 		"than one HydroBase database, or running in batch mode."),
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"The RunMode can also be set to control whether the command " +
 		"is run in batch mode, in interactive sessions, or both."),
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"The connection can be made either by specifying a database " +
 		"server/name for SQL Server,"),
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"or an ODBC Data Source Name (DSN) for a Microsoft Access " +
 		"HydroBase database."),
-		0, ++y, 7, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(main_JPanel, new JLabel("Database type:"),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__databaseType_JComboBox = new SimpleJComboBox();
 	__databaseType_JComboBox.add(__TYPE_ACCESS);
 	__databaseType_JComboBox.add(__TYPE_SQLSERVER);
 	__databaseType_JComboBox.addActionListener(this);
 	JGUIUtil.addComponent(main_JPanel, __databaseType_JComboBox,
-		1, y, 1, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Indicates whether a database server/name or ODBC DSN is " +
 		"specified."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ( "ODBC DSN:" ),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__OdbcDsn_JComboBox = new SimpleJComboBox ( false );
 	// Get the data source names from the system...
 	__available_OdbcDsn = DMIUtil.getDefinedOdbcDsn ( true );
@@ -418,50 +415,50 @@ private void initialize ( JFrame parent, Command command )
 	__OdbcDsn_JComboBox.setData ( __available_OdbcDsn );
 	__OdbcDsn_JComboBox.addItemListener ( this );
         JGUIUtil.addComponent(main_JPanel, __OdbcDsn_JComboBox,
-		1, y, 1, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Only used with Microsoft Access."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ( "Database server:" ),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	String prototype = "[No HydroBase databases available]";
 	__DatabaseServer_JComboBox = new SimpleJComboBox(__serverNames, true);
 	__DatabaseServer_JComboBox.setPrototypeDisplayValue(prototype);
 	__DatabaseServer_JComboBox.addTextFieldKeyListener(this);
 	__DatabaseServer_JComboBox.addItemListener(this);
         JGUIUtil.addComponent(main_JPanel, __DatabaseServer_JComboBox,
-		1, y, 1, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Only used with SQL Server."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ( "Database name:" ),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__DatabaseName_JComboBox = new SimpleJComboBox(true);
 	__DatabaseName_JComboBox.setPrototypeDisplayValue(prototype);
 	__DatabaseName_JComboBox.addTextFieldKeyListener(this);
 	__DatabaseName_JComboBox.addItemListener(this);
         JGUIUtil.addComponent(main_JPanel, __DatabaseName_JComboBox,
-		1, y, 1, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Only used with SQL Server."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ( "Input name:" ),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__InputName_JTextField = new JTextField ( "", 20 );
 	__InputName_JTextField.addKeyListener ( this );
         JGUIUtil.addComponent(main_JPanel, __InputName_JTextField,
-		1, y, 1, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Input name for connection, to be used with time series " +
 		"(optional)."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Use stored procedures?:" ),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__UseStoredProcedures_JComboBox = new SimpleJComboBox ( false );
 	__UseStoredProcedures_JComboBox.add ( "" );
 	__UseStoredProcedures_JComboBox.add ( __command._True );
@@ -469,13 +466,13 @@ private void initialize ( JFrame parent, Command command )
 	__UseStoredProcedures_JComboBox.select ( 0 );
 	__UseStoredProcedures_JComboBox.addItemListener ( this );
         JGUIUtil.addComponent(main_JPanel, __UseStoredProcedures_JComboBox,
-		1, y, 1, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Default is true for SQL Server, ignored for Access."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ( "Run Mode:" ),
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__RunMode_JComboBox = new SimpleJComboBox ( false );
 	__RunMode_JComboBox.add ( "" );
 	__RunMode_JComboBox.add ( __command._BatchOnly );
@@ -483,20 +480,20 @@ private void initialize ( JFrame parent, Command command )
 	__RunMode_JComboBox.add ( __command._GUIOnly );
 	__RunMode_JComboBox.addItemListener ( this );
         JGUIUtil.addComponent(main_JPanel, __RunMode_JComboBox,
-		1, y, 1, 1, 1, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		1, y, 1, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
        	JGUIUtil.addComponent(main_JPanel, new JLabel (
 		"Default is GUI and batch mode."),
-		3, y, 2, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.WEST);
+		3, y, 2, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(main_JPanel, new JLabel ( "Command:" ), 
-		0, ++y, 1, 1, 0, 0, insetsTLBR, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__command_JTextArea = new JTextArea (2,60);
 	__command_JTextArea.setLineWrap ( true );
 	__command_JTextArea.setWrapStyleWord ( true );
 	__command_JTextArea.setEditable ( false );
 	JGUIUtil.addComponent(main_JPanel,
 		new JScrollPane ( __command_JTextArea ),
-		1, y, 6, 2, 1, 0, insetsTLBR, gbc.BOTH, gbc.WEST);
+		1, y, 6, 2, 1, 0, insetsTLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	// determine whether the database is making a connection to an access
 	// database or not.
@@ -545,7 +542,7 @@ private void initialize ( JFrame parent, Command command )
 	y += 2;	// Text area had 2 rows.
 	button_JPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         JGUIUtil.addComponent(main_JPanel, button_JPanel, 
-		0, y, 8, 1, 1, 0, insetsTLBR, gbc.HORIZONTAL, gbc.CENTER);
+		0, y, 8, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
 
 	button_JPanel.add (__cancel_JButton = new SimpleJButton("Cancel",this));
 	button_JPanel.add ( __ok_JButton = new SimpleJButton("OK", this) );
@@ -592,7 +589,7 @@ Respond to KeyEvents.
 public void keyPressed ( KeyEvent event )
 {	int code = event.getKeyCode();
 
-	if ( code == event.VK_ENTER ) {
+	if ( code == KeyEvent.VK_ENTER ) {
 		refresh ();
 	}
 }

@@ -61,6 +61,7 @@
 // 2005-04-28	JTS, RTi		Added all data members to finalize().
 // 2005-12-21	JTS, RTi		&, < and > in any node IDs are now
 //					escaped.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 // EndHeader
 
@@ -759,7 +760,6 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 	if (__symbol == null) {
 		int style = GRSymbol.TYPE_POLYGON;
 		GRColor black = GRColor.black;
-		GRColor white = GRColor.white;
 		
 		if (__nodeType.equalsIgnoreCase("Reservoir")) {
 			__symbol = new GRSymbol(GRSymbol.SYM_FRTRI,
@@ -861,12 +861,6 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 				height = limits.getHeight();
 			}
 			width += 4 + limits.getWidth();
-		}
-	}
-	else {
-		if (__label != null) {
-			GRLimits limits = GRDrawingAreaUtil.getTextExtents(da, 
-				label, GRUnits.DEVICE);	
 		}
 	}
 	
@@ -1040,8 +1034,6 @@ Draws this node on the specified drawing area.
 @param da the drawing area on which to draw the node.
 */
 public void draw(GRJComponentDrawingArea da) {
-	String routine = "HydroBase_Node.draw";
-
 	if (!__boundsCalculated) {
 		calculateBounds(da);
 	}

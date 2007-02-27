@@ -22,6 +22,7 @@
 //					stored procedures.
 // 2005-05-09	JTS, RTi		All structure queries now return
 //					structure view objects.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -208,7 +209,6 @@ private Vector formatOutput(int format) {
 		v.addElement(new String("Well data not loaded in HydroBase"));
 	}
 	else {	
-		char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
 		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
 		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
@@ -246,7 +246,6 @@ private void setupGUI() {
         Insets insetsNLBR = new Insets(0,7,7,7);
         Insets insetsTLNR = new Insets(7,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
         JPanel topJPanel = new JPanel();
@@ -257,49 +256,48 @@ private void setupGUI() {
         JPanel topWJPanel = new JPanel();
         topWJPanel.setLayout(gbl);
         topJPanel.add("West", topWJPanel);
-        GridBagConstraints gbcTW = new GridBagConstraints();
 
         JLabel nameJLabel = new JLabel("Structure Name:");
         JGUIUtil.addComponent(topWJPanel, nameJLabel, 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbcTW.NONE, gbcTW.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
  
         JLabel divJLabel = new JLabel("DIV:");
         JGUIUtil.addComponent(topWJPanel, divJLabel, 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbcTW.NONE, gbcTW.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel wdJLabel = new JLabel("WD:");
         JGUIUtil.addComponent(topWJPanel, wdJLabel, 
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbcTW.NONE, gbcTW.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel idJLabel = new JLabel("ID:");
         JGUIUtil.addComponent(topWJPanel, idJLabel, 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbcTW.NONE, gbcTW.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureJTextField = new JTextField();
         __structureJTextField.setText(__structureName);
         __structureJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __structureJTextField, 
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbcTW.HORIZONTAL, gbcTW.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(5);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __divJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbcTW.NONE, gbcTW.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(5);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __wdJTextField, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbcTW.NONE, gbcTW.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(5);
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __idJTextField, 
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbcTW.NONE, gbcTW.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JPanel timeJPanel = new JPanel();
 	timeJPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         JGUIUtil.addComponent(topWJPanel, timeJPanel, 
-		0, 2, 4, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.EAST);
+		0, 2, 4, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
 
 	timeJPanel.add(new JLabel("Currently there is no additional"
 		+ " information for Wells."));
@@ -340,7 +338,7 @@ private void setupGUI() {
         __statusJTextField = new JTextField(); 
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSSJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
       
         // Frame settings
         setTitle("Well Data");

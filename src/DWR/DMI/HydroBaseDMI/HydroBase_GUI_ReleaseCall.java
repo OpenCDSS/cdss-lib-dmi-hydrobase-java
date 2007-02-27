@@ -25,6 +25,7 @@
 //					procedures.
 // 2005-02-23	JTS, RTi		readCallsListForCall_num() was changed
 //					to readCallsForCall_num().
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -317,13 +318,9 @@ private void setupGUI() {
 	addWindowListener(this);
 
 	// objects used throughout the GUI layout
-        Insets insetsTLBR = new Insets(7,7,7,7);
-	Insets insetsNLNR = new Insets(0,7,0,7);
-        Insets insetsNLBR = new Insets(0,7,7,7);
 	Insets insetsTLNR = new Insets(7,7,0,7);
 	Insets insetsTLNN = new Insets(7,7,0,0);
        	GridBagLayout gbl = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
 	
 	JPanel northJPanel = new JPanel();
 	getContentPane().add("North", northJPanel);
@@ -335,7 +332,7 @@ private void setupGUI() {
 	int y = 0;
 	JGUIUtil.addComponent(releaseJPanel, 
 		new JLabel("Structure: " + __call.getStrname()),
-		0, y, 3, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.WEST);
+		0, y, 3, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	Date date = __call.getApro_date();
 	String dateString = "";
@@ -354,11 +351,11 @@ private void setupGUI() {
 		StringUtil.formatString(
 		__call.getAdminno(),"%11.5f")+
 		", Appropriation Date=" + dateString),
-		0, ++y, 3, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.WEST);
+		0, ++y, 3, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(releaseJPanel, 
 		new JLabel("Set Comments: " + __call.getSet_comments()),
-		0, ++y, 3, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.WEST);
+		0, ++y, 3, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	date = __call.getDate_time_set();
 	dateString = "";
@@ -374,27 +371,27 @@ private void setupGUI() {
 	}
 	JGUIUtil.addComponent(releaseJPanel, 
 		new JLabel("Set Date/Time: " + dateString),
-		0, ++y, 3, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.WEST);
+		0, ++y, 3, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	JGUIUtil.addComponent(releaseJPanel, 
 		new JLabel("Release Date/Time:"),
-		0, ++y, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__releaseDateJTextField = new JTextField(17);
 	__releaseDateJTextField.setEditable(false);
 	JGUIUtil.addComponent(releaseJPanel, 
 		__releaseDateJTextField,
-		1, y, 1, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	SimpleJButton releaseDate = new SimpleJButton(__BUTTON_RELEASE_DATE, 
 		this);
 	releaseDate.setToolTipText("Set the time for the release.");
 	JGUIUtil.addComponent(releaseJPanel, releaseDate,
-		2, y, 1, 1, 0, 0, insetsTLNR, gbc.BOTH, gbc.EAST);
+		2, y, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.BOTH, GridBagConstraints.EAST);
 
 	JGUIUtil.addComponent(releaseJPanel, 
 		new JLabel("Release Comment:"),
-		0, ++y, 1, 1, 0, 0, insetsTLNN, gbc.NONE, gbc.EAST);
+		0, ++y, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__releaseCommentJTextField = new JTextField(15);
 	if (!DMIUtil.isMissing(__call.getRelease_comments())) {
@@ -403,7 +400,7 @@ private void setupGUI() {
 	}
 	JGUIUtil.addComponent(releaseJPanel, 
 		__releaseCommentJTextField,
-		1, y, 2, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.WEST);
+		1, y, 2, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	JPanel buttonJPanel = new JPanel();
 	buttonJPanel.setLayout(new FlowLayout());
@@ -423,7 +420,7 @@ private void setupGUI() {
 	__statusJTextField.setText(
 		"Please verify the release date/time and comments");
 	JGUIUtil.addComponent(southSJPanel, __statusJTextField, 
-		0, 0, 1, 1, 1, 0, gbc.HORIZONTAL, gbc.WEST);
+		0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	pack();
 	setResizable(false);
@@ -453,7 +450,6 @@ public void setVisible(boolean state) {
 		__dateProps.set("DateFormat", "Y2K");
 
 		// get the current system time and diplay it
-		DateTime tsDate = new DateTime();
 		__releaseDateJTextField.setText(
 			(new DateTime(DateTime.DATE_CURRENT)).toString(
 			DateTime.FORMAT_YYYY_MM_DD_HH_mm));

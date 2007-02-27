@@ -11,6 +11,7 @@
 //					super.finalize() gets called.
 // 2004-09-22	SAM, RTi		Add well_to_parcel _cal_year and
 //					_parcel_id, for current database.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 // REVISIT SAM 2004-09-22 This class does not follow the standard of having
@@ -18,7 +19,6 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

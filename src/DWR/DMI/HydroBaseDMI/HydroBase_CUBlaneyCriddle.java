@@ -13,15 +13,11 @@
 // 2003-02-23	SAM, RTi		Change cropgrowthcoeff to cropgrowcoeff
 //					as per the true field definition.
 // 2003-02-25	J. Thomas Sapienza, RTi	Fleshed out toString() method.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.io.IOException;
-
-import java.util.Vector;
-
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 

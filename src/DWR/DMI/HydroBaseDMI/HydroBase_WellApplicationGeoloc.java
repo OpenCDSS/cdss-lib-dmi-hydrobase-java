@@ -10,12 +10,11 @@
 // 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
 //					super.finalize() gets called.
 // 2003-02-25	JTS, RTi		Fleshed out the toString() method.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 import java.util.Date;

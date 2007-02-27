@@ -18,15 +18,12 @@
 //					  acres by the irrigation percent.
 //					* Add a column with the total by
 //					  structure for the year.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Vector;
-
-import RTi.DMI.DMIUtil;
-
-import RTi.Util.Time.DateTime;
 
 /**
 This class is a table model for displaying net amounts data in the 

@@ -9,6 +9,7 @@
 // 2005-01-10	J. Thomas Sapienza, RTi	Initial version.
 // 2005-02-01	JTS, RTi		Renamed from
 //					HydroBase_InputFilter_JPanel_CropGrowth
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -37,8 +38,6 @@ types.  Cannot be null.
 */
 public HydroBase_GUI_CropGrowth_InputFilter_JPanel(HydroBaseDMI dmi,
 Vector methods) {
-	String rd = dmi.getRightIdDelim();
-	String ld = dmi.getLeftIdDelim();
 
 	Vector filters = new Vector();
 

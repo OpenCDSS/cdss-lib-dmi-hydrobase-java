@@ -22,6 +22,7 @@
 // 2005-05-25	JTS, RTi		readCallsList() now passes in a 
 //					DateTime object for the date.
 // 2006-05-25	JTS, RTi		Cleaned up code that needed revisited.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -40,7 +41,6 @@ import java.awt.event.MouseMotionListener;
 
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
 import java.util.Vector;
@@ -440,7 +440,6 @@ Responds to popup menu clicks.
 @param event the ActionEvent that happened.
 */
 public void actionPerformed(ActionEvent event) {
-	String routine = CLASS + ".actionPerformed";
 	String action = event.getActionCommand();
 
 	if (action.equals(__MENU_ADD_ANNOTATION)) {
@@ -1084,19 +1083,6 @@ private int findNodeAtXY(double x, double y) {
 }
 
 /**
-Returns the node with the specified identifier.
-@param identifier the identifier of the node to return.
-*/
-private HydroBase_Node findNodeByIdentifier(String identifier) {
-	for (int i = 0; i < __nodes.length; i++) {
-		if (__nodes[i].getIdentifier().equals(identifier)) {
-			return __nodes[i];
-		}
-	}
-	return null;
-}
-
-/**
 Forces the display to repaint itself.
 */
 public void forceRepaint() {
@@ -1224,7 +1210,6 @@ Creates a unique name for a proplist.
 private String getUniquePropListName(int num) {
 	int size = __annotations.size();
 	PropList p = null;
-	String s = null;
 	boolean match = false;
 	HydroBase_Node node = null;
 	while (true) {
@@ -1297,20 +1282,6 @@ public boolean isDirty() {
 	for (int i = 0; i < size; i++) {
 		node = (HydroBase_Node)__annotations.elementAt(i);
 		if (node.isDirty()) {
-			return true;
-		}
-	}
-	return false;
-}
-
-/**
-Checks to see if any nodes have the specified annotation unique ID.
-@param id the id to check
-@return true if any other nodes have that identifier, false if not.
-*/
-private boolean labelNodeIdentifierExists(String id) {
-	for (int i = 0; i < __nodes.length; i++) {
-		if (__nodes[i].getIdentifier().equals(id)) {
 			return true;
 		}
 	}
@@ -1616,9 +1587,6 @@ public void paint(Graphics g) {
 
 		setAntiAlias(true);
 		drawDiagram();
-
-		GRLimits draw = __drawingArea.getDrawingLimits();
-		GRLimits data = __drawingArea.getDataLimits();
 	
 		setAntiAlias(true);
 		// draw the nodes -- if they are visible
@@ -1795,7 +1763,6 @@ Prints a page.
 Printable.PAGE_EXISTS if a page should be printed.
 */
 public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
-	String routine = "HydroBase_Device_WISDiagram.print";
 	if (pageIndex > 0) {
 		return NO_SUCH_PAGE;
 	}
@@ -1901,10 +1868,7 @@ private String queryRight(HydroBase_Node node) {
 	
 	try {
 		int[] wdid = HydroBase_WaterDistrict.parseWDID(id);
-		String date = __parent.getWIS().getAdminDateTimeString(
-			DateTime.FORMAT_YYYY_MM_DD);
 		Vector where = new Vector();
-		Vector order = new Vector();
 
 		where.add("net_rate_abs > 0");
 		where.add("wd = " + wdid[0]);
@@ -1988,7 +1952,7 @@ public void setNetwork(HydroBase_NodeNetwork network) {
 			done = true;
 		}		
 
-		type = node.getVerboseWISType(node.getType()).trim();
+		type = HydroBase_Node.getVerboseWISType(node.getType()).trim();
 
 		if (!type.equalsIgnoreCase("Annotation")
 		    && !type.equalsIgnoreCase("Stream")
@@ -1998,8 +1962,8 @@ public void setNetwork(HydroBase_NodeNetwork network) {
 		}
 
 		holdNode = node;	
-		node = network.getDownstreamNode(node, 
-			network.POSITION_COMPUTATIONAL);		
+		node = HydroBase_NodeNetwork.getDownstreamNode(node, 
+			HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);		
 		if (node == holdNode) {
 			done = true;
 		}			

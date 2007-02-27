@@ -86,6 +86,7 @@
 //					and was corrected.
 // 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
 //					Just pass a JFrame in the constructor.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 //-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -193,11 +194,6 @@ Used when setting up the GUI to ignore any actions that might call
 "checkChanged", such as when lists and combo boxes are being populated.
 */
 private boolean __ignoreChanges = false;
-
-/**
-Object that instantiated this class, for window positioning.
-*/
-private JFrame __parent = null;
 
 /**
 GeoViewUI interface for map interaction.
@@ -465,7 +461,6 @@ throws Exception {
 	}
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
         __dmi = dmi;
-	__parent = parent;
 	__geoview_ui = geoview_ui;
 	__options_ui = options_ui;
 
@@ -937,7 +932,6 @@ Clean up for garbage collection.
 */
 protected void finalize()
 throws Throwable {
-	__parent = null;
 	__dmi = null;
 	__applyJButton = null;
 	__cancelJButton = null;

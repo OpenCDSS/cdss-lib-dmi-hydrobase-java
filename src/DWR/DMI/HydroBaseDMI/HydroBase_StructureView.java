@@ -13,12 +13,11 @@
 //					HydroBase_StructureIrrigSummaryTS
 //					class.
 // 2005-08-03	JTS, RTi		Class is now sortable.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 import java.util.Date;

@@ -12,11 +12,10 @@
 //					that extend other classes.
 // 2005-03-09	JTS, RTi		Initial version from 
 //					HydroBase_SheetNameSpecialData
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
-import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 import java.util.Date;

@@ -23,19 +23,17 @@
 // 2005-02-23	JTS, RTi		Removed getOrderVector.
 // 2005-04-28	JTS, RTi		Added finalize().
 // 2005-07-11	JTS, RTi		Stopped using transact.x* fields.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
 
 import RTi.Util.IO.IOUtil;
-
-import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
 
@@ -228,7 +226,6 @@ adj_type + "," + status_type + "," + transfer_type + "," + assoc_type
 */
 private String createStringAdjType(HydroBase_Transact n)
 throws Exception {
-	int index=0;
 	String finalAdjType = new String();
 
 	String adj_type = n.getAdj_type();

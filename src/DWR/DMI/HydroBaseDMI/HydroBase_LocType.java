@@ -11,11 +11,11 @@
 // 2003-10-01	JTS, RTi		Loc type variables were declared static!
 //					Causing all sorts of weird problems --
 //					corrected.
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
