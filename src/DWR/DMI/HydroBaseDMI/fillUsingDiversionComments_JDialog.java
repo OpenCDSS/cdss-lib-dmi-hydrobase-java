@@ -8,7 +8,9 @@
 // 2007-01-25	Kurt Tometich, RTi		Initial Version.
 // 2007-01-29	KAT, RTi		Added components needed for new CIU
 //							parameters -> FillUsingCIU and FillUsingCIUFlag.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.		
+// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
+// 2007-03-02	SAM, RTi		Add notes to dialog for CIU.
+//							Use JTextArea for command.
 // ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
@@ -31,6 +33,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import java.util.Vector;
@@ -52,7 +56,7 @@ private String __FALSE = "False";
 private fillUsingDiversionComments_Command __command = null;
 private SimpleJButton	__cancel_JButton = null,// Cancel Button
 						__ok_JButton = null;	// Ok Button
-private JTextField	__command_JTextField= null;// Command as JTextField
+private JTextArea	__command_JTextArea= null;// Command as JTextArea
 private SimpleJComboBox	__TSID_JComboBox = null;// Field for time series alias
 private SimpleJComboBox	__RecalcLimits_JComboBox = null;
 						// Field for recalculation indicator
@@ -188,7 +192,7 @@ throws Throwable
 	__FillUsingCIUFlag_JTextField = null;
 	__FillUsingCIU_JComboBox = null;
 	__cancel_JButton = null;
-	__command_JTextField = null;
+	__command_JTextArea = null;
 	__ok_JButton = null;
 	super.finalize ();
 }
@@ -234,12 +238,16 @@ private void initialize ( JFrame parent, Command command )
 	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"The recalculate limits flag, if set to True, will cause the " +
-	"average to be recalculated, for use in other fill commands."), 
+	"average to be recalculated, for use in other fill commands (see CIU note below)."), 
 	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"For example, use True with a fillUsingDiversionComments() " +
 	"command immediately after reading diversions."), 
 	0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    JGUIUtil.addComponent(main_JPanel, new JLabel (
+    "If the \"currently in use\" (CIU) flag is used for filling, additional zeros " +
+    "will be added and limits are recalculated a specific way (see documentation)."), 
+    0, ++y, 7, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
     JGUIUtil.addComponent(main_JPanel, new JLabel (
 	"Time series to fill:" ), 
@@ -309,11 +317,11 @@ private void initialize ( JFrame parent, Command command )
        JGUIUtil.addComponent(main_JPanel, __FillFlag_JTextField,
     1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
-    "1-character (or \"Auto\") flag to indicate fill."), 
+    "1-character (or \"Auto\") flag on values to indicate fill."), 
     3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     
     JGUIUtil.addComponent(main_JPanel, new JLabel (
-	"Fill Using CUI:"), 
+	"Fill using CIU:"), 
 	0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	__FillUsingCIU_JComboBox = new SimpleJComboBox ( false );
 	__FillUsingCIU_JComboBox.addItem ( __TRUE );
@@ -325,14 +333,14 @@ private void initialize ( JFrame parent, Command command )
 	"Use currently in use information."), 
 	3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     
-    JGUIUtil.addComponent(main_JPanel, new JLabel ( "Fill Using CIU flag:" ), 
+    JGUIUtil.addComponent(main_JPanel, new JLabel ( "Fill using CIU flag:" ), 
     0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
     __FillUsingCIUFlag_JTextField = new JTextField ( 5 );
     __FillUsingCIUFlag_JTextField.addKeyListener ( this );
     JGUIUtil.addComponent(main_JPanel, __FillUsingCIUFlag_JTextField,
     1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
-    "1-character (or \"Auto\") flag to indicate fill."), 
+    "1-character (or \"Auto\") flag on values to indicate fill."), 
     3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     
     JGUIUtil.addComponent(main_JPanel, new JLabel (
@@ -345,14 +353,16 @@ private void initialize ( JFrame parent, Command command )
     JGUIUtil.addComponent(main_JPanel, __RecalcLimits_JComboBox,
 	1, y, 2, 1, 1, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
     JGUIUtil.addComponent(main_JPanel, new JLabel(
-	"Recalculate original data limits after fill?"), 
+	"Recalculate original data limits after fill (CIU does automatically)?"), 
 	3, y, 4, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
     JGUIUtil.addComponent(main_JPanel, new JLabel ( "Command:" ), 
 	0, ++y, 1, 1, 0, 0, insetsTLBR, GridBagConstraints.NONE, GridBagConstraints.EAST);
-	__command_JTextField = new JTextField ( 55 );
-	__command_JTextField.setEditable ( false );
-	JGUIUtil.addComponent(main_JPanel, __command_JTextField,
+	__command_JTextArea = new JTextArea (2,60);
+	__command_JTextArea.setLineWrap ( true );
+	__command_JTextArea.setWrapStyleWord ( true );
+	__command_JTextArea.setEditable ( false );
+	JGUIUtil.addComponent(main_JPanel, new JScrollPane(__command_JTextArea),
 	1, y, 6, 1, 1, 0, insetsTLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// Refresh the contents...
@@ -498,7 +508,7 @@ private void refresh()
 	props.add ( "FillUsingCIU=" + FillUsingCIU );
 	props.add ( "FillUsingCIUFlag=" + FillUsingCIUFlag );
 	props.add ( "RecalcLimits=" + RecalcLimits);
-	__command_JTextField.setText( __command.toString ( props ) );
+	__command_JTextArea.setText( __command.toString ( props ) );
 	
 	}
 	catch ( Exception e ) {
