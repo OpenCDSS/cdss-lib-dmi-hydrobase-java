@@ -276,7 +276,7 @@ private void initialize ( JFrame parent, Command command )
     	Message.printWarning ( 1,
     		"fillUsingDiversionComments_JDialog.initialize",
     		"You must define time series before inserting a " +
-    		"fillInterpolate() command." );
+    		"fillUsingDiversionComments() command." );
     	response ( false );
     }
     else {

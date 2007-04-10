@@ -14,9 +14,10 @@
 //							findNearestDataPoint() to decrease
 //							duplication of code needed in the runCommand()
 //							method.
-// 2008-02-08	SAM, RTi			Remove dependency on TSCommandProcessor,
+// 2007-02-08	SAM, RTi			Remove dependency on TSCommandProcessor,
 //						instead using the more general CommandProcessor
 //						interface.
+// 2007-03-12	SAM, RTi		Fix bug in handling null CIU flag.
 //------------------------------------------------------------------------------
 // EndHeader
 
@@ -499,7 +500,7 @@ CommandWarningException, CommandException
 			// set the fill value
 			String fillValue = "0";
 			String fillFlag = "";
-			if( FillUsingCIUFlag != null || !FillUsingCIUFlag.equals("")) {
+			if( (FillUsingCIUFlag != null) && !FillUsingCIUFlag.equals("")) {
 				if( FillUsingCIUFlag.equals( "Auto" )) {
 					fillFlag = ciu;
 				}
