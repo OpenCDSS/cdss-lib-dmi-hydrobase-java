@@ -6,8 +6,8 @@
 	<classpathentry kind="lib" path="externals/xerces.jar"/>
 	<classpathentry kind="lib" path="externals/StateMod/StateMod_142.jar"/>
 	<classpathentry kind="lib" path="externals/RTi_Common/RTi_Common_142.jar" sourcepath="/RTi_Common/src"/>
-	<classpathentry kind="lib" path="lib/msbase.jar"/>
-	<classpathentry kind="lib" path="lib/mssqlserver.jar"/>
-	<classpathentry kind="lib" path="lib/msutil.jar"/>
+	<classpathentry kind="lib" path="/TSTool/externals/Microsoft_SQL_Server_Java_ODBC_Driver/msbase.jar"/>
+	<classpathentry kind="lib" path="/TSTool/externals/Microsoft_SQL_Server_Java_ODBC_Driver/mssqlserver.jar"/>
+	<classpathentry kind="lib" path="/TSTool/externals/Microsoft_SQL_Server_Java_ODBC_Driver/msutil.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
