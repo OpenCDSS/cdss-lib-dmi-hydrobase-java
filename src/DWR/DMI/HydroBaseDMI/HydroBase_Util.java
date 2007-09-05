@@ -73,6 +73,7 @@
 // 2007-02-26	SAM, RTi		Update parseSFUT() to handle G:
 //					Clean up code based on Eclipse feedback.
 //					Reorder some code to be alphabetical.
+// 2007-04-29	SAM, RTi		Add AdminFlow data type for time series.
 //------------------------------------------------------------------------------
 // EndHeader
 
@@ -522,7 +523,24 @@ public final static String [] convertToHydroBaseMeasType (
 	// Order by data types and group when multiple time series are in the
 	// same table...
 
-	if ( data_type.equalsIgnoreCase("Battery") ) {
+	if(data_type.equalsIgnoreCase("AdminFlow") ||
+			data_type.equalsIgnoreCase("AdminFlowMax") ||
+			data_type.equalsIgnoreCase("AdminFlowMin") ) {
+			// All these match the AdminFlow meas_type...
+			hb[0] = "AdminFlow";
+			if (	interval.equalsIgnoreCase("RealTime") ||
+				interval.equalsIgnoreCase("Irregular") ) {
+				hb[0] = "RT_rate";
+				if ( sub_data_type.length() > 0 ) {
+					// Assume that the vax_field is accurate...
+					hb[1] = sub_data_type;
+				}
+				else {	hb[1] = "DISCHRG";	// Assume this
+				}
+				hb[2] = "Real-time";
+			}
+	}
+	else if ( data_type.equalsIgnoreCase("Battery") ) {
 		hb[0] = "RT_Misc";
 		hb[1] = "BATTERY";
 		hb[2] = "Real-time";
@@ -1549,6 +1567,22 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 							// Time step:  Day
 	}
 	if ( (include_types&DATA_TYPE_STATION_STREAM) > 0 ) {
+		// AdminFlow was added in 2007 for administrative gages - it has the
+		// same data types as the main Streamflow...
+		try {
+		if ( hdmi.isVersionAtLeast(HydroBaseDMI.VERSION_20070502) ) {
+			prefix = "";
+			if ( add_group ) {
+				prefix = "AdminFlow - ";
+			}
+			types.addElement ( prefix + "AdminFlow" );
+			types.addElement ( prefix + "AdminFlowMax" );
+			types.addElement ( prefix + "AdminFlowMin" );
+		}
+		}
+		catch ( Exception e ) {
+			// Don't add AdminFlow
+		}
 		prefix = "";
 		if ( add_group ) {
 			prefix = "Stream - ";
@@ -1557,7 +1591,8 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 							// "NaturalFlow" is
 							// better.
 							// Time step:  Month
-		types.addElement ( prefix + "NaturalFlow" );
+		// Removed 2007-04-29 Based on State removing from HydroBase
+		//types.addElement ( prefix + "NaturalFlow" );
 							// Proposed
 		//types.addElement ( "RT_Rate" );	// "Streamflow" with a
 							// "realtime" time step
@@ -1740,7 +1775,25 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 		IN = "IN", KM = "KM",
 		KPA = "KPA", MJM2 = "MJ/M2", PERSONS = "PERSONS",
 		UNKNOWN = "", VOLT = "VOLT";
-	if ( data_type.startsWith("CropArea") ) {
+	if ( data_type.equalsIgnoreCase("AdminFlow") ) {
+		if ( interval.equalsIgnoreCase("Month") ) {
+			return ACFT;
+		}
+		else if ( interval.equalsIgnoreCase("Day") ||
+			interval.equalsIgnoreCase("RealTime") ||
+			interval.equalsIgnoreCase("Irregular")) {
+			return CFS;
+		}
+	}
+	else if ( data_type.equalsIgnoreCase("AdminFlowMax") &&
+			interval.equalsIgnoreCase("Month") ) {
+			return CFS;
+		}
+		else if ( data_type.equalsIgnoreCase("AdminFlowMin") &&
+			interval.equalsIgnoreCase("Month") ) {
+			return CFS;
+		}
+	else if ( data_type.startsWith("CropArea") ) {
 		return ACRE;
 	}
 	else if ( data_type.equalsIgnoreCase("Battery") ) {
@@ -1850,7 +1903,8 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 			return ACFT;
 		}
 		else if ( interval.equalsIgnoreCase("Day") ||
-			interval.equalsIgnoreCase("RealTime") ) {
+			interval.equalsIgnoreCase("RealTime") ||
+			interval.equalsIgnoreCase("Irregular")) {
 			return CFS;
 		}
 	}
@@ -1935,7 +1989,16 @@ public static Vector getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 	String Irregular = "Irregular";
 	Vector v = new Vector();
 	// Alphabetize by data type, as much as possible...
-	if ( data_type.equalsIgnoreCase("Agstats") ) {
+	if ( data_type.equalsIgnoreCase("AdminFlow") ) {
+		v.addElement ( Day );
+		v.addElement ( Month );
+		v.addElement ( Irregular );  // Real-time
+	}
+	else if ( data_type.equalsIgnoreCase("AdminFlowMax") ||
+			data_type.equalsIgnoreCase("AdminFlowMin") ) {
+			v.addElement ( Month );
+		}
+	else if ( data_type.equalsIgnoreCase("Agstats") ) {
 		v.addElement ( Year );
 	}
 	else if ( data_type.startsWith("CropArea") ) {
@@ -2770,25 +2833,6 @@ throws Exception
 				tslist.add(new HydroBase_StationGeolocMeasType(
 					view));
 			}
-			/*(
-			}
-			else {
-			for ( int i = 0; i < size; i++ ) {
-				data = (HydroBase_StationGeolocMeasType)
-					tslist.elementAt(i);
-				// Set to the value used in TSTool...
-				if ( data.getVax_field().length() > 0 ){
-					data.setMeas_type(
-					data_type + "-" +
-					data.getVax_field() );
-				}
-				else {	data.setMeas_type ( data_type);
-				}
-				data.setTime_step ( time_step );
-				data.setData_units ( data_units );
-			}
-			}
-			*/
 		}
 		catch ( Exception e ) {
 			message = "Error getting station time series " +
@@ -2836,26 +2880,6 @@ throws Exception
 					HydroBase_StructureGeolocStructMeasType(
 					view));
 			}
-/*			
-			}
-			else {
-			for ( int i = 0; i < size; i++ ) {
-				data = (
-				HydroBase_StructureGeolocStructMeasType)
-					tslist.elementAt(i);
-				// Set to the value used in TSTool...
-				if ( data.getIdentifier().length() > 0){
-					// Merged SFUT...
-					data.setMeas_type(
-					data_type + "-" + data.getIdentifier());
-				}
-				else {	data.setMeas_type( data_type);
-				}
-				data.setTime_step(time_step);
-				data.setData_units ( data_units );
-			}
-			}
-*/
 			if (	data_type.equals("WellLevel")
 				&& time_step.equalsIgnoreCase("Day")){
 				// Add the common identifiers to the
@@ -2875,7 +2899,6 @@ throws Exception
 			throw new Exception ( message );
 		}
 	}
-	// XJTSX
 	else if (meas_type.equalsIgnoreCase("WellLevel")) {
 		try {	// Note multiple SFUT and data sources
 			// can be returned below...

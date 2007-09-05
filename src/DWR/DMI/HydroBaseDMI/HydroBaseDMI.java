@@ -758,6 +758,12 @@
 //					In particular, handle SFUT with G: at end and F: that
 //					is 7-digit, padded with zeros.
 //					Clean up code based on Eclipse feedback.
+// 2007-04-16	SAM, RTi		Update to specify optional calendar year when
+//					reading parcel_use and structure data.
+// 2007-05-02	SAM, RTi		Update to handle HydroBase 20070502 release.
+//					Include administrative flows.
+//					Add query for usp_Developer_FLEX_codes to help with
+//					version checks.
 // ----------------------------------------------------------------------------
 // EndHeader
 
@@ -893,10 +899,21 @@ public class HydroBaseDMI
 extends DMI 
 implements TSProductAnnotationProvider, TSProductDMI {
 
-// HydroBase release dates.  The design version is first, followed by
-// the release date.
+/**
+HydroBase release dates.  The value of each integer is the design version,
+followed by the release date.
+These values must be hanled in determineDatabaseVersion() and
+isVersionAtLeast().
+*/
+
+public final static long VERSION_20070525 = 2007052520070525L;
+public final static long VERSION_LATEST = VERSION_20070525;
+
+public final static long VERSION_20070502 = 2007050220070502L;
+
+public final static long VERSION_20070416 = 2007041620070416L;
+
 public final static long VERSION_20061003 = 2006100320070201L;
-public final static long VERSION_LATEST = VERSION_20061003;
 
 public final static long VERSION_20051115 = 2005111520051115L;
 
@@ -1074,6 +1091,9 @@ private final int __S_CG_CU_MOD_HARGREAVES_FOR_METHOD_DESC = 423;
 private final int __S_CG_CU_PENMAN_MONTEITH = 441;
 private final int __S_CG_CU_PENMAN_MONTEITH_FOR_METHOD_DESC = 443;
 
+//DailyAdminFlow
+protected final int __S_DAILY_ADMIN_FLOW = 460;
+
 // daily_amt
 private final int __S_DAILY_AMT = 480;
 
@@ -1119,6 +1139,9 @@ private final int __S_DAM_OUTLET = 740;
 // dam_spillway
 private final int __S_DAM_SPILLWAY = 760;
 
+// developer flex codes
+private final int __S_DEVELOPER_FLEX_CODES = 750;
+
 // dbversion
 private final int __S_DBVERSION = 780;
 private final int __S_DBVERSION_FOR_VERSION_TYPE = 781;
@@ -1163,9 +1186,12 @@ private final int __S_MF_REACH = 1240;
 protected final int __S_MONTHLY_TOTAL_EVAP = 1280;
 
 // monthly_flow
+protected final int __S_MONTHLY_MAX_ADMIN_FLOW = 1290;
 protected final int __S_MONTHLY_MAX_FLOW = 1300;
 protected final int __S_MONTHLY_MIN_FLOW = 1301;
+protected final int __S_MONTHLY_MIN_ADMIN_FLOW = 1310;
 protected final int __S_MONTHLY_TOTAL_FLOW = 1302;
+protected final int __S_MONTHLY_TOTAL_ADMIN_FLOW = 1311;
 
 // monthly_nflow
 protected final int __S_MONTHLY_TOTAL_NFLOW = 1320;
@@ -1189,6 +1215,7 @@ private final int __S_NET_AMTS_FOR_WD_ID = 1401;
 private final int __S_PARCEL_USE_TS = 1410;
 private final int __S_PARCEL_USE_TS_DISTINCT = 1412;
 private final int __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN = 1411;
+private final int __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR = 1413;
 
 // person_details
 private final int __S_PERSON_DETAILS = 1420;
@@ -2798,7 +2825,7 @@ throws Exception {
 			select.addField("dam_spillway.sply_type");
 			select.addField("dam_spillway.sply_code");
 			select.addTable("dam_spillway");
-			break;	
+			break;
 		case __S_DBVERSION:
 		case __S_DBVERSION_FOR_VERSION_TYPE:
 			select = (DMISelectStatement)statement;
@@ -3156,6 +3183,7 @@ throws Exception {
 			select.addTable("parcel_use_ts");
 			break;					
 		case __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN:
+		case __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR:
 			select = (DMISelectStatement)statement;
 			select.addField("parcel_use_ts.parcel_num");
 			select.addField("parcel_use_ts.div");
@@ -5773,7 +5801,10 @@ throws Exception {
 			break;
 		case __S_DBVERSION_FOR_VERSION_TYPE:
 			name = "usp_CDSS_DBVersion_Sel_ByVersionType";
-			break;			
+			break;
+		case __S_DEVELOPER_FLEX_CODES:
+			name = "usp_Developer_FLEX_codes";
+			break;
 		case __S_DIVERSION_COMMENT:
 			name = "usp_CDSS_DiversionComment_Sel_By_Meas_num";
 			break;
@@ -5815,6 +5846,10 @@ throws Exception {
 		case __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN:
 			name = 
 		   "usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_Structure_num";
+			break;
+		case __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR:
+			name = 
+		   "usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear";
 			break;
 		case __S_PERSON_DETAILS:
 			name = "usp_CDSS_PersonDetails_Sel_By_Structure_num";
@@ -6622,8 +6657,20 @@ public void determineDatabaseVersion() {
 	boolean version_found = false;
 	long version = VERSION_UNKNOWN;
 	try {
+		// VERSION_20070525
+		if (isVersionAtLeast(VERSION_20070525)) {
+			version = VERSION_20070525;
+		}
+		// VERSION_20070502
+		else if (isVersionAtLeast(VERSION_20070502)) {
+			version = VERSION_20070502;
+		}
+		// VERSION_20070416
+		else if (isVersionAtLeast(VERSION_20070416)) {
+			version = VERSION_20070416;
+		}
 		// VERSION_20061003
-		if (isVersionAtLeast(VERSION_20061003)) {
+		else if (isVersionAtLeast(VERSION_20061003)) {
 			version = VERSION_20061003;
 		}
 		// VERSION_20051115
@@ -7698,7 +7745,16 @@ throws Exception {
 			+ version);
 	}
 
-	if (version == VERSION_20061003) {
+	if (version == VERSION_20070525 ) {
+		return isVersion20070525();
+	}
+	else if (version == VERSION_20070502) {
+		return isVersion20070502();
+	}
+	else if (version == VERSION_20070416) {
+		return isVersion20070416();
+	}
+	else if (version == VERSION_20061003) {
 		return isVersion20061003();
 	}
 	else if (version == VERSION_20051115) {
@@ -7742,7 +7798,7 @@ throws Exception {
 	}
 	else {
 		// Unknown version...
-		Message.printWarning(2, routine, "Unknown database version.");
+		Message.printWarning(2, routine, "Unknown HydroBase database version: " + version );
 		return false;
 	}
 }
@@ -8435,7 +8491,7 @@ The 2006-10-03 database includes the following change:<p>
 <ul>
 <li>The view vw_CDSS_CUPopulation was added.</li>
 </ul><p>
-@return true if the version matches the 2005-11-15 version.
+@return true if the version matches the 2006-10-03 version.
 */
 public boolean isVersion20061003 ()
 throws Exception {
@@ -8444,6 +8500,129 @@ throws Exception {
 		return true;
 	}
 	return false;
+}
+
+/**
+Check the database version to see if it matches the 2007-04-16 database,
+which includes the following changes:<p>
+<ul>
+<li>The stored procedure usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear was added.</li>
+</ul><p>
+@return true if the version matches the 2007-04-16 version.
+*/
+private boolean isVersion20070416 ()
+throws Exception {
+	String routine = "HydroBaseDMI.isVersion20070416";
+	if (!DMIUtil.databaseHasStoredProcedure(this,"usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear")){
+		if (Message.isDebugOn) {
+			Message.printDebug(10, routine,
+				"Stored procedure " +
+				"usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear " +
+				" was not found.");
+		}
+		return false;
+	}
+
+	return true;
+}
+
+/**
+Check the database version to see if it matches the 2007-05-02 database,
+which includes the following changes:<p>
+<ul>
+<li>The view vw_CDSS_DailyAdminFlow was added.</li>
+<li>The view number for vw_CDSS_DailyAdminFlow is available in the internal
+view lookup table in HydroBase.</li>
+</ul><p>
+@return true if the version matches the 2007-05-02 version.
+*/
+private boolean isVersion20070502 ()
+throws Exception {
+	String routine = "HydroBaseDMI.isVersion20070502";
+	// Checking for a view is treated like checking for a table...
+	if ( !DMIUtil.databaseHasTable(this,"vw_CDSS_DailyAdminFlow") ) {
+		if ( Message.isDebugOn ) {
+			Message.printDebug ( 1, routine,
+				"HydroBase does not have view vw_CDSS_DailyAdminFlow - not version 20070502");
+		}
+		return false;
+	}
+	/* TODO SAM 2007-05-11 Need to get this to work.  Need to pass
+	'CDSS' as the only parameter to the stored procedure.
+	if ( !isViewNumberAvailable ( "113" ) ) {
+		if ( Message.isDebugOn ) {
+			Message.printDebug ( 1, routine,
+				"HydroBase does not have view 113 - not version 20070502");
+		}
+		return false;
+	}
+	*/
+
+	return true;
+}
+
+/**
+Check the database version to see if it matches the 2007-05-25 database,
+which includes the following changes:<p>
+<ul>
+<li>The view vw_CDSS_WellsWellToParcel includes the yield_apex column.</li>
+</ul><p>
+@return true if the version matches the 2007-05-02 version.
+*/
+private boolean isVersion20070525 ()
+throws Exception {
+	String routine = "HydroBaseDMI.isVersion20070525";
+	if (!DMIUtil.databaseTableHasColumn(this, "vw_CDSS_WellsWellToParcel", "yield_apex")) {
+		if (Message.isDebugOn) {
+			Message.printDebug(30, routine,
+				"vw_CDSS_WellsWellToParcel does not have yield_apex: "
+				+ "not 20070525 version");
+		}
+		return false;
+	}
+
+	return true;
+}
+
+/**
+Determine whether a view number is available in HydroBase for use with its SPFLEX
+features.  The usp_Developer_FLEX_codes stored procedure is executed and
+the "View Code" column is checked for the requested number.
+@param view View number as a String (later may allow view name).
+*/
+private boolean isViewNumberAvailable ( String view )
+{	int view_int = -1;
+    if ( StringUtil.isInteger(view) ) {
+		// Checking the view number
+		view_int = StringUtil.atoi ( view );
+	}
+    boolean found_view = false;	// Whether view is found
+	DMISelectStatement q = new DMISelectStatement(this);
+	try {
+		if (canSetUpStoredProcedure(q,__S_DEVELOPER_FLEX_CODES)) {
+			ResultSet rs = dmiSelect(q);
+			int i = 0;
+			while (rs.next()) {
+				// First column is view code.
+				i = rs.getInt(1);
+				if (!rs.wasNull()) {
+					if ( view_int == i ) {
+						found_view = true;
+						break;
+					}
+				}
+			}
+			closeResultSet(rs, __lastStatement);
+			return found_view;
+		}
+		else {
+			return false;			
+		}
+	}
+	catch (Exception e) {
+		Message.printWarning(2, "HydroBaseDMI.isViewNumberAvailable", e);
+		return false;
+	}
 }
 
 /**
@@ -10566,6 +10745,10 @@ throws Exception {
 		String viewName = null;
 		int orderNumber = -1;
 		switch (sqlNumber) {
+			case __S_DAILY_ADMIN_FLOW:
+				viewName = "vw_CDSS_DailyAdminFlow";
+				orderNumber = 113;
+				break;
 			case __S_DAILY_EVAP:
 				viewName = "vw_CDSS_DailyEVAP";
 				orderNumber = 64;
@@ -11472,8 +11655,7 @@ public void readGlobalData () {
 		__MeasType_Vector = new Vector();
 	}
 
-	// Read the distinct Meas_type.  No predefined query is set up for this
-	// limited task so do all the work here.
+	// Read the currently in use types.
 	try {
 		__RefCIU_Vector = readRefCIUList();
 	}
@@ -12026,6 +12208,18 @@ throws Exception {
 		int orderNumber = -1;
 
 		switch(sqlNumber) {
+			case __S_MONTHLY_MAX_ADMIN_FLOW:
+				viewName = "vw_CDSS_MonthlyAdminFlow_MaxQ";
+				orderNumber = 114;
+				break;
+			case __S_MONTHLY_MIN_ADMIN_FLOW:
+				viewName = "vw_CDSS_MonthlyAdminFlow_MinQ";
+				orderNumber = 115;
+				break;
+			case __S_MONTHLY_TOTAL_ADMIN_FLOW:
+				viewName = "vw_CDSS_MonthlyAdminFlow_TotalAF";
+				orderNumber = 116;
+				break;
 			case __S_MONTHLY_TOTAL_EVAP:
 				viewName = "vw_CDSS_MonthlyEvap";
 				orderNumber = 56;
@@ -12103,8 +12297,11 @@ throws Exception {
 			case __S_MONTHLY_TOTAL_EVAP:
 				v = toMonthlyEvapList(rs);
 				break;
+			case __S_MONTHLY_MAX_ADMIN_FLOW:
 			case __S_MONTHLY_MAX_FLOW:
+			case __S_MONTHLY_MIN_ADMIN_FLOW:
 			case __S_MONTHLY_MIN_FLOW:
+			case __S_MONTHLY_TOTAL_ADMIN_FLOW:
 			case __S_MONTHLY_TOTAL_FLOW:
 				v = toMonthlyFlowList(rs, sqlNumber);
 				break;
@@ -12683,9 +12880,36 @@ The stored procedure that corresponds to this query is:<ul>
 public Vector readParcelUseTSStructureToParcelListForStructure_num(
 int structure_num) 
 throws Exception {
+	return readParcelUseTSStructureToParcelListForStructure_numCal_year (
+		structure_num, -999 );
+}
+
+/**
+Reads all record from the parcel use ts structure join table that have the
+specified structure_num, for the given calendar year.
+This method is used by:<ul>
+<li>StateDMI for processing well data.</li>
+</ul>
+<p><b>Stored Procedure</b><p>
+The stored procedure that corresponds to this query is:<ul>
+<li>usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear</li>
+</ul>
+@param structure_num the structure_num for which to query the database.
+@param cal_year Calendar year for which to query the database.
+@return a Vector of HydroBase_ParcelUseTSStructureToParcel objects.
+@throws Exception if an error occurs.
+*/
+public Vector readParcelUseTSStructureToParcelListForStructure_numCal_year(
+int structure_num, int cal_year) 
+throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
-	buildSQL(q, __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN);
-	q.addWhereClause("structure_to_parcel.structure_num = "+ structure_num);
+	buildSQL(q, __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR);
+	if ( structure_num > 0 ) {
+		q.addWhereClause("structure_to_parcel.structure_num = "+ structure_num);
+	}
+	if ( cal_year > 0 ) {
+		q.addWhereClause("parcel_use_ts.cal_year = "+ cal_year);
+	}
 	q.addOrderByClause("parcel_use_ts.parcel_num");
 	q.addOrderByClause("parcel_use_ts.cal_year");
 	q.addOrderByClause("parcel_use_ts.parcel_id");
@@ -16161,7 +16385,7 @@ throws Exception, NoDataFoundException
 	}
 
 	// Set the time series dates from available header information (may be
-	// reset below when data are read.
+	// reset below when data are read).
 
 	if (req_date1 != null) {
 		ts.setDate1 ( req_date1);
@@ -16265,7 +16489,50 @@ throws Exception, NoDataFoundException
 	// is an integer (fast check).
 
 	Vector v = null;	// Vector of time series data records.
-	if (	(interval_base == TimeInterval.YEAR) &&
+	if ((interval_base == TimeInterval.DAY) &&
+			data_type.equalsIgnoreCase("AdminFlow")) {
+			ts.setDataUnits (
+				HydroBase_Util.getTimeSeriesDataUnits (
+				this, data_type, interval ));
+			ts.setDataUnitsOriginal ( ts.getDataUnits());
+			ts.setInputName ( "HydroBase DailyAdminFlow.day*");
+			v = readDailyStationData ( __S_DAILY_ADMIN_FLOW,
+						mt_meas_num, req_date1, req_date2);
+	}
+	else if ((interval_base == TimeInterval.MONTH) &&
+			data_type.equalsIgnoreCase("AdminFlow")) {
+
+			ts.setDataUnits (
+				HydroBase_Util.getTimeSeriesDataUnits (
+				this, data_type, interval ));
+			ts.setDataUnitsOriginal ( ts.getDataUnits());
+			ts.setInputName ( "HydroBase MonthlyAdminFlow.total_q_af");
+			v = readMonthlyStationData ( __S_MONTHLY_TOTAL_ADMIN_FLOW,
+						mt_meas_num, req_date1, req_date2);
+	}
+	else if ((interval_base == TimeInterval.MONTH) &&
+			data_type.equalsIgnoreCase("AdminFlowMax")) {
+
+			ts.setDataUnits (
+				HydroBase_Util.getTimeSeriesDataUnits (
+				this, data_type, interval ));
+			ts.setDataUnitsOriginal ( ts.getDataUnits());
+			ts.setInputName ( "HydroBase MonthlyAdminFlow.max_q_cfs");
+			v = readMonthlyStationData ( __S_MONTHLY_MAX_ADMIN_FLOW,
+						mt_meas_num, req_date1, req_date2);
+	}
+	else if ((interval_base == TimeInterval.MONTH) &&
+			data_type.equalsIgnoreCase("AdminFlowMin")) {
+
+			ts.setDataUnits (
+				HydroBase_Util.getTimeSeriesDataUnits (
+				this, data_type, interval ));
+			ts.setDataUnitsOriginal ( ts.getDataUnits());
+			ts.setInputName ( "HydroBase MonthlyAdminFlow.min_q_cfs");
+			v = readMonthlyStationData ( __S_MONTHLY_MIN_ADMIN_FLOW,
+						mt_meas_num, req_date1, req_date2);
+	}
+	else if (	(interval_base == TimeInterval.YEAR) &&
 		data_type.equalsIgnoreCase("CropArea")) {
 		// Units determined from data below.
 		ts.setInputName (
@@ -16932,7 +17199,8 @@ throws Exception, NoDataFoundException
 	}
 	// Real-time data...
 	else if ((interval_base == TimeInterval.IRREGULAR) &&
-		(data_type.equalsIgnoreCase("Battery") ||
+		(data_type.equalsIgnoreCase("AdminFlow") ||
+		data_type.equalsIgnoreCase("Battery") ||
 		data_type.equalsIgnoreCase("PoolElev") ||
 		data_type.equalsIgnoreCase("Precip") ||
 		data_type.equalsIgnoreCase("Release") ||
@@ -16981,7 +17249,37 @@ throws Exception, NoDataFoundException
 					// be managed in memory.
 	int data_flag_length = 0;	// Length of data flags.
 
-	if (	(interval_base == TimeInterval.YEAR) &&
+	if ((interval_base == TimeInterval.MONTH) &&
+		(data_type.equalsIgnoreCase("AdminFlow") ||
+		data_type.equalsIgnoreCase("AdminFlowMax") ||
+		data_type.equalsIgnoreCase("AdminFlowMin"))) {
+		// Get the first and last dates...
+		HydroBase_MonthlyFlow data =
+			(HydroBase_MonthlyFlow)v.elementAt(0);
+		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
+		data_date1.setYear ( data.getCal_year());
+		data_date1.setMonth ( data.getCal_mon_num());
+		data = (HydroBase_MonthlyFlow)v.elementAt(size - 1);
+		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
+		data_date2.setYear ( data.getCal_year());
+		data_date2.setMonth ( data.getCal_mon_num());
+	}
+	else if ((interval_base == TimeInterval.DAY) &&
+		data_type.equalsIgnoreCase("AdminFlow")) {
+		// Get the first and last dates...
+		HydroBase_DailyTS data =
+			(HydroBase_DailyTS)v.elementAt(0);
+		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
+		data_date1.setYear ( data.getCal_year());
+		data_date1.setMonth ( data.getCal_mon_num());
+		data_date1.setDay ( 1);
+		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
+		data_date2.setYear ( data.getCal_year());
+		data_date2.setMonth ( data.getCal_mon_num());
+		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
+	}
+	else if (	(interval_base == TimeInterval.YEAR) &&
 		data_type.equalsIgnoreCase("CropArea")) {
 		// Get the first and last dates...
 		HydroBase_AgriculturalNASSCropStats data =
@@ -17535,7 +17833,8 @@ throws Exception, NoDataFoundException
 	}
 	// Real-time data...
 	else if ((interval_base == TimeInterval.IRREGULAR) &&
-		(data_type.equalsIgnoreCase("Battery") ||
+		(data_type.equalsIgnoreCase("AdminFlow") ||
+		data_type.equalsIgnoreCase("Battery") ||
 		data_type.equalsIgnoreCase("PoolElev") ||
 		data_type.equalsIgnoreCase("Precip") ||
 		data_type.equalsIgnoreCase("Release") ||
@@ -17604,7 +17903,70 @@ throws Exception, NoDataFoundException
 	// convenient.  All real-time data types are at the bottom and share
 	// code...
 
-	if (	(interval_base == TimeInterval.YEAR) &&
+	if ((interval_base == TimeInterval.MONTH) &&
+			data_type.equalsIgnoreCase("AdminFlow")) {
+			HydroBase_MonthlyFlow data;
+			for ( int i = 0; i < size; i++) {
+				// Loop through and assign the data...
+				data = (HydroBase_MonthlyFlow)v.elementAt(i);
+				date.setYear ( data.getCal_year());
+				date.setMonth ( data.getCal_mon_num());
+				value = data.getTotal_q_af();
+				if (!DMIUtil.isMissing(value)) {
+					ts.setDataValue ( date, value);
+				}
+			}
+		}
+		else if ((interval_base == TimeInterval.DAY) &&
+			data_type.equalsIgnoreCase("AdminFlow")) {
+			HydroBase_DailyTS data;
+			// Loop through each month...
+			for ( int i = 0; i < size; i++) {
+				// Loop through and assign the data...
+				data = (HydroBase_DailyTS)v.elementAt(i);
+				date.setYear ( data.getCal_year());
+				date.setMonth ( data.getCal_mon_num());
+				ndays = TimeUtil.numDaysInMonth ( date);
+				for ( iday = 1; iday <= ndays; iday++) {
+					date.setDay ( iday);
+					value = data.getDay ( iday);
+					//Message.printStatus ( 2, routine,
+					//"Date:  " + date + " value: " + value);
+					if (!DMIUtil.isMissing(value)) {
+						ts.setDataValue ( date, value);
+					}
+				}
+			}
+		}
+		else if ((interval_base == TimeInterval.MONTH) &&
+			data_type.equalsIgnoreCase("AdminFlowMax")) {
+			HydroBase_MonthlyFlow data;
+			for ( int i = 0; i < size; i++) {
+				// Loop through and assign the data...
+				data = (HydroBase_MonthlyFlow)v.elementAt(i);
+				date.setYear ( data.getCal_year());
+				date.setMonth ( data.getCal_mon_num());
+				value = data.getMax_q_cfs();
+				if (!DMIUtil.isMissing(value)) {
+					ts.setDataValue ( date, value);
+				}
+			}
+		}
+		else if ((interval_base == TimeInterval.MONTH) &&
+			data_type.equalsIgnoreCase("AdminFlowMin")) {
+			HydroBase_MonthlyFlow data;
+			for ( int i = 0; i < size; i++) {
+				// Loop through and assign the data...
+				data = (HydroBase_MonthlyFlow)v.elementAt(i);
+				date.setYear ( data.getCal_year());
+				date.setMonth ( data.getCal_mon_num());
+				value = data.getMin_q_cfs();
+				if (!DMIUtil.isMissing(value)) {
+					ts.setDataValue ( date, value);
+				}
+			}
+		}
+	else if (	(interval_base == TimeInterval.YEAR) &&
 		data_type.equalsIgnoreCase("CropArea")) {
 		HydroBase_AgriculturalNASSCropStats data;
 		String flag;
@@ -18792,7 +19154,8 @@ throws Exception, NoDataFoundException
 	}
 	// Realtime data...
 	else if ((interval_base == TimeInterval.IRREGULAR) &&
-		(data_type.equalsIgnoreCase("Battery") ||
+		(data_type.equalsIgnoreCase("AdminFlow") ||
+		data_type.equalsIgnoreCase("Battery") ||
 		data_type.equalsIgnoreCase("PoolElev") ||
 		data_type.equalsIgnoreCase("Precip") ||
 		data_type.equalsIgnoreCase("Release") ||
@@ -22417,6 +22780,7 @@ private void setupViewNumbersHashtable() {
 	__viewNumbers.put("vw_CDSS_CUPenmanMonteith", "15");
 	__viewNumbers.put("vw_CDSS_CUPopulation", "107");
 	__viewNumbers.put("vw_CDSS_CUPopulation_Distinct", "112");
+	__viewNumbers.put("vw_CDSS_DailyAdminFlow", "113");
 	__viewNumbers.put("vw_CDSS_DailyAmt", "16");
 	__viewNumbers.put("vw_CDSS_DailyEVAP", "63");
 	__viewNumbers.put("vw_CDSS_DailyFlow", "66");
@@ -22430,6 +22794,9 @@ private void setupViewNumbersHashtable() {
 	__viewNumbers.put("vw_CDSS_DailyWC", "17");
 	__viewNumbers.put("vw_CDSS_Frost_Dates", "18");
 	__viewNumbers.put("vw_CDSS_Irrig_Summary_TS", "19");
+	__viewNumbers.put("vw_CDSS_MonthlyAdminFlow_MaxQ", "114");
+	__viewNumbers.put("vw_CDSS_MonthlyAdminFlow_MinQ", "115");
+	__viewNumbers.put("vw_CDSS_MonthlyAdminFlow_TotalAF", "116");
 	__viewNumbers.put("vw_CDSS_MonthlyEvap", "55");
 	__viewNumbers.put("vw_CDSS_MonthlyFlow_MaxQ", "53");
 	__viewNumbers.put("vw_CDSS_MonthlyFlow_MinQ", "54");
@@ -29113,10 +29480,13 @@ throws Exception {
 		d = rs.getDouble(index++);
 		if (!rs.wasNull()) {
 			switch(sqlNumber) {
+				case __S_MONTHLY_MAX_ADMIN_FLOW:
 				case __S_MONTHLY_MAX_FLOW:
 					data.setMax_q_cfs(d);	break;
+				case __S_MONTHLY_MIN_ADMIN_FLOW:
 				case __S_MONTHLY_MIN_FLOW:
 					data.setMin_q_cfs(d);	break;
+				case __S_MONTHLY_TOTAL_ADMIN_FLOW:
 				case __S_MONTHLY_TOTAL_FLOW:
 					data.setTotal_q_af(d);	break;
 				default:
@@ -36158,6 +36528,8 @@ throws Exception {
 	float f;
 	Date dt;
 	int[] wdid = null;
+	
+	long version = getDatabaseVersion();
 
 	while (rs.next()) {
 		index = 1;
@@ -36201,6 +36573,12 @@ throws Exception {
 		f = rs.getFloat(index++);
 		if (!rs.wasNull()) {
 			data.setYield(f);
+		}
+		if ( version >= VERSION_20070525 ) {
+			f = rs.getFloat(index++);
+			if (!rs.wasNull()) {
+				data.setYield_apex(f);
+			}
 		}
 		dt = rs.getDate(index++);
 		if (!rs.wasNull()) {
@@ -36277,6 +36655,8 @@ throws Exception {
 	String s;
 	float f;
 	Date dt;
+	
+	long version = getDatabaseVersion();
 
 	while (rs.next()) {
 		index = 1;
@@ -36320,6 +36700,12 @@ throws Exception {
 		f = rs.getFloat(index++);
 		if (!rs.wasNull()) {
 			data.setYield(f);
+		}
+		if ( version >= VERSION_20070525 ) {
+			f = rs.getFloat(index++);
+			if (!rs.wasNull()) {
+				data.setYield_apex(f);
+			}
 		}
 		dt = rs.getDate(index++);
 		if (!rs.wasNull()) {
@@ -36402,6 +36788,8 @@ throws Exception {
 	double d;
 	float f;
 	Date dt;
+	
+	long version = getDatabaseVersion();
 
 	while (rs.next()) {
 		index = 1;
@@ -36445,6 +36833,12 @@ throws Exception {
 		f = rs.getFloat(index++);
 		if (!rs.wasNull()) {
 			data.setYield(f);
+		}
+		if ( version >= VERSION_20070525 ) {
+			f = rs.getFloat(index++);
+			if (!rs.wasNull()) {
+				data.setYield_apex(f);
+			}
 		}
 		dt = rs.getDate(index++);
 		if (!rs.wasNull()) {
@@ -36538,6 +36932,8 @@ throws Exception {
 	double d;
 	float f;
 	Date dt;
+	
+	long version = getDatabaseVersion();
 
 	while (rs.next()) {
 		index = 1;
@@ -36581,6 +36977,12 @@ throws Exception {
 		f = rs.getFloat(index++);
 		if (!rs.wasNull()) {
 			data.setYield(f);
+		}
+		if ( version >= VERSION_20070525 ) {
+			f = rs.getFloat(index++);
+			if (!rs.wasNull()) {
+				data.setYield_apex(f);
+			}
 		}
 		dt = rs.getDate(index++);
 		if (!rs.wasNull()) {

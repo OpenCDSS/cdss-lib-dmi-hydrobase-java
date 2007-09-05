@@ -14,7 +14,7 @@
 // 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
 // ----------------------------------------------------------------------------
 
-// REVISIT SAM 2004-09-22 This class does not follow the standard of having
+// TODO SAM 2004-09-22 This class does not follow the standard of having
 // a base class and derived classes for the joined objects.
 
 package DWR.DMI.HydroBaseDMI;
@@ -25,7 +25,7 @@ import RTi.DMI.DMIUtil;
 import java.util.Date;
 
 /**
-Class to store data from the HydroBase wells table.
+Class to store data from the HydroBase wells table and related parcel tables.
 */
 public class HydroBase_Wells 
 extends DMIDataObject {
@@ -40,6 +40,7 @@ protected String _permitsuf = 		DMIUtil.MISSING_STRING;
 protected String _permitrpl = 		DMIUtil.MISSING_STRING;
 protected String _well_name = 		DMIUtil.MISSING_STRING;
 protected float _yield = 		DMIUtil.MISSING_FLOAT;
+protected float _yield_apex = 		DMIUtil.MISSING_FLOAT;
 protected Date _perm_date = 		DMIUtil.MISSING_DATE;
 protected Date _appr_date = 		DMIUtil.MISSING_DATE;
 protected int _tperf = 			DMIUtil.MISSING_INT;
@@ -410,6 +411,14 @@ public float getYield() {
 }
 
 /**
+Returns _yield_apex
+@return _yield_apex
+*/
+public float getYield_apex() {
+	return _yield_apex;
+}
+
+/**
 Sets _appr_date
 @param appr_date value to put into _appr_date
 */
@@ -736,6 +745,14 @@ public void setYield(float yield) {
 	_yield = yield;
 }
 
+/**
+Sets _yield_apex
+@param yield_apex value to put into _yield_apex
+*/
+public void setYield_apex(float yield_apex) {
+	_yield_apex = yield_apex;
+}
+
 /** 
 returns a string representation of this object
 @return a string representation of this object
@@ -751,7 +768,8 @@ public String toString() {
 		"Permitsuf:      " + _permitsuf + "\n" + 
 		"Permitrpl:      " + _permitrpl + "\n" + 
 		"Well_name:      " + _well_name + "\n" + 
-		"Yield:          " + _yield + "\n" + 
+		"Yield:          " + _yield + "\n" +
+		"Yield_apex:     " + _yield_apex + "\n" + 
 		"Perm_date:      " + _perm_date + "\n" + 
 		"Appr_date:      " + _appr_date + "\n" + 
 		"Tperf:          " + _tperf + "\n" + 

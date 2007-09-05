@@ -916,7 +916,8 @@ CommandWarningException, CommandException
 		for ( int i = 0; i < size; i++ ) {
 			PropList request_params = new PropList ( "" );
 			request_params.setUsingObject ( "TS", tslist.elementAt(i) );
-			request_params.setUsingObject ( "Index", new Integer(vsize + 1) );
+			// Index is zero based...
+			request_params.setUsingObject ( "Index", new Integer(vsize + i) );
 			try {
 				_processor.processRequest( "SetTimeSeries", request_params);
 			}
@@ -924,7 +925,8 @@ CommandWarningException, CommandException
 				Message.printWarning(warning_level,
 						MessageUtil.formatMessageTag( command_tag, ++warning_count),
 						routine, "Error requesting SetTimeSeries(Index=" + (vsize + 1) +
-						"\" from processor." );
+						"\") from processor." );
+				Message.printWarning ( 3, routine, e );
 			}
 		}
 	}
