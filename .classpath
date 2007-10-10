@@ -9,5 +9,5 @@
 	<classpathentry kind="lib" path="externals/msbase.jar"/>
 	<classpathentry kind="lib" path="externals/mssqlserver.jar"/>
 	<classpathentry kind="lib" path="externals/msutil.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="build"/>
 </classpath>
