@@ -379,6 +379,7 @@
 </target>
 
 <target name="compile-java" depends="compile"/>
+<target name="test-product"/>
 
 </project>
 
