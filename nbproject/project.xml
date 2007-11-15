@@ -6,7 +6,7 @@
             <!-- Do not use Project Properties customizer when editing this file manually. -->
             <name>HydrobaseDMI</name>
             <properties>
-                <property name="ant.script">conf/cbuild.xml</property>
+                <property name="ant.script">conf/build.xml</property>
                 <property-file>conf/product-user.properties</property-file>
                 <property-file>conf/product.properties</property-file>
             </properties>
