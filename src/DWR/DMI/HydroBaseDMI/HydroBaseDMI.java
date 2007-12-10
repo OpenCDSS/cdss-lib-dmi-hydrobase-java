@@ -17247,15 +17247,13 @@ throws Exception, NoDataFoundException
 					// dates if available.
 	boolean has_data_flags = false;	// Indicate whether data flags should
 					// be managed in memory.
-	int data_flag_length = 0;	// Length of data flags.
 
 	if ((interval_base == TimeInterval.MONTH) &&
 		(data_type.equalsIgnoreCase("AdminFlow") ||
 		data_type.equalsIgnoreCase("AdminFlowMax") ||
 		data_type.equalsIgnoreCase("AdminFlowMin"))) {
 		// Get the first and last dates...
-		HydroBase_MonthlyFlow data =
-			(HydroBase_MonthlyFlow)v.elementAt(0);
+		HydroBase_MonthlyFlow data = (HydroBase_MonthlyFlow)v.elementAt(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17886,9 +17884,9 @@ throws Exception, NoDataFoundException
 			ts.setDate2Original(new DateTime(data_date2));
 		}
 	}
-	if (has_data_flags) {
-		ts.hasDataFlags ( has_data_flags, data_flag_length);
-	}
+    
+    // Allocate the data space for the time series.  If data flags are used, the information will
+    // have been specified above.
 	ts.allocateDataSpace();
 
 	// Now transfer the data records into the time series.  This depends on
