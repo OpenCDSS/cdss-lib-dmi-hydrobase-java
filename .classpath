@@ -7,7 +7,7 @@
 	<classpathentry kind="lib" path="externals/msbase.jar"/>
 	<classpathentry kind="lib" path="externals/mssqlserver.jar"/>
 	<classpathentry kind="lib" path="externals/msutil.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/RTi_COMMON"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/StateMod"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/RTi_Common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
