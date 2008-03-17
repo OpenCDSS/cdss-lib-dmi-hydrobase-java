@@ -236,16 +236,20 @@ import java.io.PrintWriter;
 import java.util.Hashtable;
 import java.util.Vector;
 
+/* FIXME SAM 2008-03-15 This code is now in StateMod_NodeNetwork - clean up more later
 import org.apache.xerces.parsers.DOMParser;
+*/
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 //TODO SAM 2007-02-18 Need to remove circular dependencey with StateMod
+/* FIXME SAM 2008-03-15 This code is now in StateMod_NodeNetwork - clean up more later
 import DWR.StateMod.StateMod_DataSet;
 import DWR.StateMod.StateMod_PrfGageData;
 import DWR.StateMod.StateMod_RiverNetworkNode;
+*/
 
 import RTi.DMI.DMIUtil;
 
@@ -1354,6 +1358,7 @@ Creates a HydroBase_NodeNetwork from a Vector of StateMod_RiverNetworkNodes.
 REVISIT (JTS - 2004-07-03)<br>
 Should not be a static returning a method, I think ...
 */
+/* FIXME SAM 2008-03-15 This code is now in StateMod_NodeNetwork - clean up more later
 public static HydroBase_NodeNetwork createFromStateModVector(Vector nodes) {
 	int size = nodes.size();
 	
@@ -1391,6 +1396,7 @@ public static HydroBase_NodeNetwork createFromStateModVector(Vector nodes) {
 	network.calculateNetworkNodeData(v, false);
 	return network;
 }
+*/
 
 /**
 Create the indented river network as a vector of strings
@@ -1681,6 +1687,7 @@ The output contains only actual nodes.  Therefore, confluence nodes are
 skipped.
 @return the Vector of StateMod_RiverNodeNetwork nodes.
 */
+/* FIXME SAM 2008-03-15 This code is now in StateMod_NodeNetwork - clean up more later
 public Vector createStateModRiverNetwork() {
 	boolean done = false;
 	HydroBase_Node holdNode = null;
@@ -1796,7 +1803,7 @@ public Vector createStateModRiverNetwork() {
 				if (	node_downstream.getType() ==
 					HydroBase_Node.NODE_TYPE_XCONFLUENCE ) {
 					// Get node to check...
-					/* Use for debugging
+					xxxxx/ * Use for debugging
 					HydroBase_Node temp_node;
 					temp_node=
 						getDownstreamNode(node,
@@ -1809,7 +1816,7 @@ public Vector createStateModRiverNetwork() {
 						temp_node.
 						getDownstreamNode() );
 					}
-					*/
+					xxxx* /
 					if (	node_downstream ==
 						getDownstreamNode(node,
 						POSITION_REACH).
@@ -1865,6 +1872,7 @@ public Vector createStateModRiverNetwork() {
 	}
 	return v;	
 }
+*/
 
 /**
 Removes a node from the network, and maintains the connections between the 
@@ -3828,8 +3836,11 @@ HydroBase_Node node, Vector prfGageData, boolean recursing) {
 		// admin tool now that we are using baseflow nodes...
 		else if (((nodePt.getType() == HydroBase_Node.NODE_TYPE_FLOW)
 			&& nodePt.isBaseflow())
+			/* FIXME SAM 2008-03-15 This code is now in StateMod_NodeNetwork - clean up more later
 			|| (StateMod_PrfGageData.isSetprfTarget(
-			nodePt.getCommonID(), prfGageData) >= 0)) {
+			nodePt.getCommonID(), prfGageData) >= 0))
+			*/
+		){
 			// We are in a reach.  If this is a flow node, then
 			// update the list and return since we are done with
 			// the reach(tributary)...
@@ -6983,6 +6994,7 @@ or not.  Does not matter if reading from an XML file.
 @return the network read from the file.
 @throws Exception if an error occurs.
 */
+/* FIXME SAM 2008-03-15 This code is now in StateMod_NodeNetwork - clean up more later
 public static HydroBase_NodeNetwork readStateModNetworkFile(String filename, 
 HydroBaseDMI dmi, boolean skipBlankNodes) 
 throws Exception {
@@ -6996,12 +7008,14 @@ throws Exception {
 	}
 	return network;
 }
+*/
 
 /**
 Reads a HydroBase_NodeNetwork from an XML Network file.
 @param filename the name of the file to read.
 @return the network read from the file.
 */
+/* FIXME SAM 2008-03-15 This code is now in StateMod_NodeNetwork - clean up more later
 public static HydroBase_NodeNetwork readXMLNetworkFile(String filename) 
 throws Exception {
 	String routine = "StateCU_DataSet.readXMLFile";
@@ -7084,6 +7098,7 @@ throws Exception {
 
 	return network;
 }
+*/
 
 /**
 Build a network linked-list from an array of WIS format rows.
