@@ -3887,7 +3887,6 @@ HydroBase_Node node, Vector prfGageData, boolean recursing) {
 	return upstreamFlowNodes;
 }
 
-
 /**
 Format the WDID, accounting for padded zeros, etc., for StateMod files.
 This is used instead of the code in HydroBase_WaterDistrict because it makes
