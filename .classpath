@@ -4,8 +4,8 @@
 	<classpathentry kind="src" path="test/unit/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/RTi_Common"/>
-	<classpathentry kind="lib" path="lib/Microsoft_SQL_Server_Java_ODBC_Driver/msbase.jar"/>
-	<classpathentry kind="lib" path="lib/Microsoft_SQL_Server_Java_ODBC_Driver/mssqlserver.jar"/>
-	<classpathentry kind="lib" path="lib/Microsoft_SQL_Server_Java_ODBC_Driver/msutil.jar"/>
+	<classpathentry kind="lib" path="lib/Microsoft_SQL_Server_JDBC/msbase.jar"/>
+	<classpathentry kind="lib" path="lib/Microsoft_SQL_Server_JDBC/mssqlserver.jar"/>
+	<classpathentry kind="lib" path="lib/Microsoft_SQL_Server_JDBC/msutil.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
