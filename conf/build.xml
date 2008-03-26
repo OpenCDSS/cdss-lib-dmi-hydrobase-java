@@ -1,4 +1,4 @@
-<project name="HydroBaseDMI" default="compile-java" basedir="../">
+<project name="HydroBaseDMI" default="compile" basedir="../">
     
     <import file="../../rtibuild/common-build.xml"/>
     
