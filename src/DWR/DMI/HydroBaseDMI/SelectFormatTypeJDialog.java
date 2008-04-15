@@ -126,7 +126,7 @@ private void initialize(Vector formats) {
 	pack();
 	setResizable(false);	
 	JGUIUtil.center(this);
-	show();
+	setVisible(true);
 }
 	
 }

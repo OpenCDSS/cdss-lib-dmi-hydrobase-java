@@ -75,15 +75,14 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME 
 		+ "." + ld;
 
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,	null, null, false));
 
 	filter = new InputFilter("Adj Date",
 		tableName + "adj_date" + rd, "adj_date", StringUtil.TYPE_STRING,
 		null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
 	filters.add(filter);
 
 	filters.add(new InputFilter("Adj Type",
@@ -96,9 +95,9 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	filter = new InputFilter("Apro Date",
 		tableName + "apro_date" + rd, "apro_date", 
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	Vector counties = dmi.getCountyRef();
@@ -143,10 +142,10 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 		null, null, false);
 	// all constraints other than EQUALS are removed because PLSS Locations
 	// are compared in a special way
-	filter.removeConstraint(filter.INPUT_ONE_OF);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
 	// the PLSS Location text field is not editable because users must go
 	// through the PLSS Location JDialog to build a location
 	filter.setInputJTextFieldEditable(false);
@@ -165,9 +164,9 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	filter = new InputFilter("Padj Date",
 		tableName + "padj_date" + rd, "padj_date",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);				
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);				
 	filters.add(filter);
 
 	filters.add(new InputFilter("Prior Case Number",

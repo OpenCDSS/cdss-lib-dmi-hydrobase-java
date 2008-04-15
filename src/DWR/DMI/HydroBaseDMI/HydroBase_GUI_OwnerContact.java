@@ -682,7 +682,7 @@ private void setupGUI() {
         setTitle("Owner/Contact Data");
         pack();        
         JGUIUtil.center(this);
-        show();
+        setVisible(true);
 
 	if (widths != null) {
 		__worksheet.setColumnWidths(widths);
@@ -693,8 +693,7 @@ private void setupGUI() {
 Submits a query for contact data and displays the data in the GUI.
 */
 private void submitAndDisplayContactQuery() {
-	String routine = "HydroBase_GUI_OwnerContact"
-		+ ".submitAndDisplayContactQuery";
+	String routine = "HydroBase_GUI_OwnerContact.submitAndDisplayContactQuery";
 	JGUIUtil.setWaitCursor(this, true);
 	
 	Vector results = null;

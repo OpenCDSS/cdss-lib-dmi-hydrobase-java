@@ -59,10 +59,10 @@ MouseListener listener) {
 		null, null, false);
 	// all constraints other than EQUALS are removed because PLSS Locations
 	// are compared in a special way
-	filter.removeConstraint(filter.INPUT_ONE_OF);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
 	// the PLSS Location text field is not editable because users must go
 	// through the PLSS Location JDialog to build a location
 	filter.setInputJTextFieldEditable(false);

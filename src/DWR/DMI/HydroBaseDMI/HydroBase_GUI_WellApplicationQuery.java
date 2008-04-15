@@ -768,9 +768,8 @@ throws Exception {
 		return;
 	}		
 
-	// Make the structure window go to the top so that it is obvious what
-	// is going on.
-	show();
+	// Make the structure window go to the top so that it is obvious what is going on.
+	setVisible(true);
 	toFront();
 
 	JGUIUtil.setWaitCursor(this, true);

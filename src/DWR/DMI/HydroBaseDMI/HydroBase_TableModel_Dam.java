@@ -243,7 +243,7 @@ public Object getValueAt(int row, int col) {
 				case COL_DATE:	
 					DateTime dti = new DateTime(
 						i.getInspect_date());
-					dti.setPrecision(dti.PRECISION_DAY);
+					dti.setPrecision(DateTime.PRECISION_DAY);
 					return dti.toString();
 				case COL_INSPECTOR:	
 					return i.getInspect_login();
@@ -284,7 +284,7 @@ public Object getValueAt(int row, int col) {
 				case COL_EMERGENCY_DATE:	
 					DateTime dto = new DateTime(
 						e.getEp_date());
-					dto.setPrecision(dto.PRECISION_DAY);
+					dto.setPrecision(DateTime.PRECISION_DAY);
 					return dto.toString();
 				case COL_EMERGENCY_PLAN:	
 					return e.getEplan();

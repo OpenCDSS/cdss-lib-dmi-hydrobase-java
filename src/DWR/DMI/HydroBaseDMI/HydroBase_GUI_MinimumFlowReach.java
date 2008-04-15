@@ -264,7 +264,6 @@ private void setupGUI() {
         Insets insetsTLNR = new Insets(7,7,0,7);
         Insets insetsNNNR = new Insets(0,0,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
         JPanel topJPanel = new JPanel();
@@ -278,40 +277,40 @@ private void setupGUI() {
 
         JLabel nameJLabel = new JLabel("Structure Name:");
         JGUIUtil.addComponent(topWJPanel, nameJLabel, 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
  
         JLabel divJLabel = new JLabel("DIV:");
         JGUIUtil.addComponent(topWJPanel, divJLabel, 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel wdJLabel = new JLabel("WD:");
         JGUIUtil.addComponent(topWJPanel, wdJLabel, 
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JLabel idJLabel = new JLabel("ID:");
         JGUIUtil.addComponent(topWJPanel, idJLabel, 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureJTextField = new JTextField();
         __structureJTextField.setText(" " + __structureName + "   ");
         __structureJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __structureJTextField, 
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(5);
         __divJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __divJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(5);
         __wdJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __wdJTextField, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(5);
         __idJTextField.setEditable(false);
         JGUIUtil.addComponent(topWJPanel, __idJTextField, 
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
         
         // Center JPanel
         JPanel centerJPanel = new JPanel();
@@ -324,20 +323,20 @@ private void setupGUI() {
         centerJPanel.add("West", centerWJPanel);
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Minimum Flow Rate:"), 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.EAST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __minFlowJTextField = new JTextField(20);
         __minFlowJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __minFlowJTextField, 
-		1, 0, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST); 
+		1, 0, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
 
         JGUIUtil.addComponent(centerWJPanel, new JLabel("Minimum Volume:"), 
-		0, 1, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.EAST);
+		0, 1, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __minVolJTextField = new JTextField(20);
         __minVolJTextField.setEditable(false);
         JGUIUtil.addComponent(centerWJPanel, __minVolJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNNNR, gbc.HORIZONTAL, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Bottom JPanel
         JPanel bottomJPanel = new JPanel();
@@ -372,12 +371,11 @@ private void setupGUI() {
         JPanel bottomSSJPanel = new JPanel();
         bottomSSJPanel.setLayout(gbl);
         bottomSouthJPanel.add("South", bottomSSJPanel);
-        GridBagConstraints gbcBSS = new GridBagConstraints();
 
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSSJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbcBSS.HORIZONTAL, gbcBSS.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
       
         // Frame settings
         pack(); 

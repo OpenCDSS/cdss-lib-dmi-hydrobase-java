@@ -827,7 +827,7 @@ private void setupGUI() {
 	setSize(getWidth() + 235, getHeight());
 	JGUIUtil.center(this);
 
-	show();
+	setVisible(true);
 
 	if (widths != null) {
 		__equipmentWorksheet.setColumnWidths(widths);

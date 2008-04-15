@@ -282,7 +282,6 @@ private void setupGUI() {
 	Insets insetsNLBR = new Insets(0,7,7,7);
 	Insets insetsTLNR = new Insets(7,7,0,7);
         GridBagLayout gbl = new GridBagLayout();
-        GridBagConstraints gbc = new GridBagConstraints();
 
         // Top JPanel
         JPanel topJPanel = new JPanel();
@@ -295,42 +294,42 @@ private void setupGUI() {
         topJPanel.add("West", topLeftJPanel);
  
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("Structure Name:"), 
-		0, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		0, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
            
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("DIV:"), 
-		1, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		1, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("WD:"), 
-		2, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		2, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
   
         JGUIUtil.addComponent(topLeftJPanel, new JLabel("ID:"), 
-		3, 0, 1, 1, 0, 0, insetsTLNR, gbc.NONE, gbc.WEST);
+		3, 0, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __structureJTextField = new JTextField();
 	__structureJTextField.setText(__strName);
 	__structureJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __structureJTextField, 
-		0, 1, 1, 1, 0, 0, insetsNLBR, gbc.HORIZONTAL, gbc.WEST);
+		0, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __divJTextField = new JTextField(5);
 	__divJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __divJTextField, 
-		1, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		1, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __wdJTextField = new JTextField(5);
 	__wdJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __wdJTextField, 
-		2, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		2, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
         __idJTextField = new JTextField(5);
 	__idJTextField.setEditable(false);
         JGUIUtil.addComponent(topLeftJPanel, __idJTextField, 
-		3, 1, 1, 1, 0, 0, insetsNLBR, gbc.NONE, gbc.WEST);
+		3, 1, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
  
 	JPanel timeJPanel = new JPanel();
 	timeJPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         JGUIUtil.addComponent(topLeftJPanel, timeJPanel, 
-		0, 2, 4, 1, 0, 0, insetsTLNR, gbc.HORIZONTAL, gbc.EAST);
+		0, 2, 4, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
 
 	timeJPanel.add(new JLabel("Currently there is no additional"
 		+ " information for Headgates."));
@@ -367,12 +366,11 @@ private void setupGUI() {
         JPanel bottomSouthSouthJPanel = new JPanel();
         bottomSouthSouthJPanel.setLayout(gbl);
         bottomSouthJPanel.add("South", bottomSouthSouthJPanel);
-        GridBagConstraints gbcBS = new GridBagConstraints();
 
         __statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
         JGUIUtil.addComponent(bottomSouthSouthJPanel, __statusJTextField, 
-		0, 1, 10, 1, 1, 0, gbcBS.HORIZONTAL, gbcBS.WEST);
+		0, 1, 10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Frame settings
         String rest = "Structure Data - Headgate Detail - "

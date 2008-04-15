@@ -60,17 +60,17 @@ MouseListener listener) {
 	filter = new InputFilter("ABCODate",
 		wellTableName + "abcodate" + rd, "abcodate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filter = new InputFilter("ABRDate",
 		wellTableName + "abrdate" + rd, "abrdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filters.add(new InputFilter("Abreq",
@@ -86,9 +86,9 @@ MouseListener listener) {
 	filter = new InputFilter("Actdate",
 		wellTableName + "actdate" + rd, "actdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);				
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);				
 	filters.add(filter);
 
 	filters.add(new InputFilter("Aquifer 1",
@@ -134,9 +134,9 @@ MouseListener listener) {
 	filter = new InputFilter("EXDate",
 		wellTableName + "exdate" + rd, "exdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);				
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);				
 	filters.add(filter);
 
 	filters.add(new InputFilter("Filing",
@@ -167,33 +167,33 @@ MouseListener listener) {
 	filter = new InputFilter("NBUDate",
 		wellTableName + "nbudate" + rd, "nbudate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filter = new InputFilter("NPDate",
 		wellTableName + "npdate" + rd, "npdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filter = new InputFilter("NWCDate",
 		wellTableName + "nwcdate" + rd, "nwcdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);		
 
 	filter = new InputFilter("Notice date",
 		wellTableName + "noticedate" + rd, "noticedate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filters.add(new InputFilter("Parcel size",
@@ -215,10 +215,10 @@ MouseListener listener) {
 		null, null, false);
 	// all constraints other than EQUALS are removed because PLSS Locations
 	// are compared in a special way
-	filter.removeConstraint(filter.INPUT_ONE_OF);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
 	// the PLSS Location text field is not editable because users must go
 	// through the PLSS Location JDialog to build a location
 	filter.setInputJTextFieldEditable(false);
@@ -237,9 +237,9 @@ MouseListener listener) {
 	filter = new InputFilter("PCDate",
 		wellTableName + "pcdate" + rd, "pcdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filters.add(new InputFilter("PDepth",
@@ -249,9 +249,9 @@ MouseListener listener) {
 	filter = new InputFilter("PIDate",
 		wellTableName + "pidate" + rd, "pidate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filters.add(new InputFilter("PYield",
@@ -270,17 +270,17 @@ MouseListener listener) {
 	filter = new InputFilter("SADate",
 		wellTableName + "sadate" + rd, "sadate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);		
 
 	filter = new InputFilter("SBUDate",
 		wellTableName + "sbudate" + rd, "sbudate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filters.add(new InputFilter("Statcode",
@@ -290,9 +290,9 @@ MouseListener listener) {
 	filter = new InputFilter("Statdate",
 		wellTableName + "statdate" + rd, "statdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);		
 
 	filters.add(new InputFilter("Statute",
@@ -311,9 +311,9 @@ MouseListener listener) {
 	filter = new InputFilter("Trandate",
 		wellTableName + "trandate" + rd, "trandate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filters.add(new InputFilter("Use 1",
@@ -338,17 +338,17 @@ MouseListener listener) {
 	filter = new InputFilter("WADate",
 		wellTableName + "wadate" + rd, "wadate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filter = new InputFilter("WCDate",
 		wellTableName + "wcdate" + rd, "wcdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
 	filters.add(new InputFilter("WD",

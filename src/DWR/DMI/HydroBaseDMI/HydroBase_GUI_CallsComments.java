@@ -324,7 +324,7 @@ private void setupGUI() {
 
 	JGUIUtil.center(this);
 
-	show();
+	setVisible(true);
 }
 
 }

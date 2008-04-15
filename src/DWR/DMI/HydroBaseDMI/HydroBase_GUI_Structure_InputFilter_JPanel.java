@@ -97,7 +97,7 @@ MouseListener listener) {
 	InputFilter filter = new InputFilter("CIU",
 		structureTableName + "ciu" + rd, "ciu", 
 		StringUtil.TYPE_STRING, v1, v2, false);
-	filter.setNumberInputJComboBoxRows(filter.JCOMBOBOX_ROWS_DISPLAY_ALL);
+	filter.setNumberInputJComboBoxRows(InputFilter.JCOMBOBOX_ROWS_DISPLAY_ALL);
 	filters.add(filter);
 
 /*
@@ -132,10 +132,10 @@ MouseListener listener) {
 		null, null, false);
 	// all constraints other than EQUALS are removed because PLSS Locations
 	// are compared in a special way
-	filter.removeConstraint(filter.INPUT_ONE_OF);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
 	// the PLSS Location text field is not editable because users must go
 	// through the PLSS Location JDialog to build a location
 	filter.setInputJTextFieldEditable(false);
@@ -187,7 +187,7 @@ MouseListener listener) {
 	filter = new InputFilter("Structure Type",
 		structureTableName + "str_type" + rd, "str_type", 
 		StringUtil.TYPE_STRING, v1, v2, false);
-	filter.setNumberInputJComboBoxRows(filter.JCOMBOBOX_ROWS_DISPLAY_ALL);
+	filter.setNumberInputJComboBoxRows(InputFilter.JCOMBOBOX_ROWS_DISPLAY_ALL);
 	filters.add(filter);
 
 	v1 = new Vector();
@@ -255,7 +255,7 @@ MouseListener listener) {
 	InputFilter filter = new InputFilter("CIU",
 		structureTableName + "ciu" + rd, "ciu", 
 		StringUtil.TYPE_STRING, v1, v2, false);
-	filter.setNumberInputJComboBoxRows(filter.JCOMBOBOX_ROWS_DISPLAY_ALL);
+	filter.setNumberInputJComboBoxRows(InputFilter.JCOMBOBOX_ROWS_DISPLAY_ALL);
 	filters.add(filter);
 
 	filters.add(new InputFilter("Decreed rate (abs)",
@@ -301,10 +301,10 @@ MouseListener listener) {
 		null, null, false);
 	// all constraints other than EQUALS are removed because PLSS Locations
 	// are compared in a special way
-	filter.removeConstraint(filter.INPUT_ONE_OF);
-	filter.removeConstraint(filter.INPUT_STARTS_WITH);
-	filter.removeConstraint(filter.INPUT_ENDS_WITH);
-	filter.removeConstraint(filter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
+	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
+	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
 	// the PLSS Location text field is not editable because users must go
 	// through the PLSS Location JDialog to build a location
 	filter.setInputJTextFieldEditable(false);
@@ -360,7 +360,7 @@ MouseListener listener) {
 	filter = new InputFilter("Structure Type",
 		structureTableName + "str_type" + rd, "str_type", 
 		StringUtil.TYPE_STRING, v1, v2, false);
-	filter.setNumberInputJComboBoxRows(filter.JCOMBOBOX_ROWS_DISPLAY_ALL);
+	filter.setNumberInputJComboBoxRows(InputFilter.JCOMBOBOX_ROWS_DISPLAY_ALL);
 	filters.add(filter);
 
 	v1 = new Vector();

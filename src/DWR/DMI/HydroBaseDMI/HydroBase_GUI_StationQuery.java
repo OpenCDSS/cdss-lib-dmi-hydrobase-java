@@ -1508,9 +1508,8 @@ throws Exception {
 	// set meas fields
 	String measType = __dtypeJComboBoxString;
 
-	// Make the structure window go to the top so that it is obvious what
-	// is going on.
-	show();
+	// Make the structure window go to the top so that it is obvious what is going on.
+	setVisible(true);
 	toFront();
 
         String status = "Please Wait... Retrieving Data";
