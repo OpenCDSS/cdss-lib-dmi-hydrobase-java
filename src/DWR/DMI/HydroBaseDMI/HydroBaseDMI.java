@@ -7424,8 +7424,7 @@ throws Exception {
 Looks up a view with a given name in the view name to view number hashtable.
 If the view name cannot be found, an exception will be thrown.  Otherwise,
 the internal number of the view used by SPFlex will be returned.
-@param viewName the name of the view to look up in the view name to view number
-hashtable.
+@param viewName the name of the view to look up in the view name to view number hashtable.
 @return the internal number of the view used by the SPFlex stored procedure.
 @throws Exception if the view name cannot be found in the hash table.
 */
@@ -7433,8 +7432,7 @@ private String getViewNumber(String viewName)
 throws Exception {
 	String s = (String)(__viewNumbers.get(viewName));
 	if (s == null) {
-		throw new Exception("View '" + viewName + "' could not be "
-			+ "found in the view-to-number lookup.");
+		throw new Exception("View '" + viewName + "' could not be found in the view-to-number lookup.");
 	}
 	return s;
 }
@@ -11754,11 +11752,9 @@ This method uses the following stored procedure:<p>
 @return a HydroBase_GroundWaterWellsView object.
 @throws Exception if an error occurs.
 */
-public HydroBase_GroundWaterWellsView readGroundWaterWellMeasType(
-String identifier)
+public HydroBase_GroundWaterWellsView readGroundWaterWellMeasType(String identifier)
 throws Exception {
-	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-		null, null);
+	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
 		
 	String[] triplet = null;
 
@@ -11771,9 +11767,7 @@ throws Exception {
 	}
 
 	HydroBase_GUI_Util.fillSPParameters(parameters, 
-		getViewNumber(
-		"vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType"),
-		83, null);
+		getViewNumber("vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType"),83, null);
 
 	ResultSet rs = runSPFlex(parameters);
 	Vector v = toGroundWaterWellMeasTypeList(rs);
@@ -16114,7 +16108,7 @@ throws Exception, NoDataFoundException
 		// First get the structure because the structure_num is
 		// needed...
 
-		// REVISIT (SAM 2004-01-14) START
+		// TODO (SAM 2004-01-14) START
 		//	- Fix when well data redesign is done
 		// If the data type is "WellLevel" and time step is "Day", then
 		// the incoming data type may be a USGS, USGS, or WDID id.
@@ -16123,34 +16117,30 @@ throws Exception, NoDataFoundException
 		// structure table.  There are not a lot of these time series 
 		// so doing an extra lookup here is not much of a penalty.
 
-		if (	data_type.equals("WellLevel") &&
-			interval.equalsIgnoreCase("Day")) {
-			// First try to get an unpermitted_wells record matching
-			// the USGS id...
+		if ( data_type.equals("WellLevel") && interval.equalsIgnoreCase("Day")) {
+			// First try to get an unpermitted_wells record matching the USGS id...
 			HydroBase_GroundWaterWellsView tempWell = null;
 			if (data_source.equalsIgnoreCase("USGS")) {
-				tempWell = readUnpermittedWells(-999,
-					tsident.getLocation(), null);
+				tempWell = readUnpermittedWells(-999, tsident.getLocation(), null);
 			}
 			else if (data_source.equalsIgnoreCase("USBR")) {
-				tempWell = readUnpermittedWells(-999,
-					null, tsident.getLocation());
+				tempWell = readUnpermittedWells(-999, null, tsident.getLocation());
 			}
 			if (tempWell != null) {
-				// An unpermitted well was found so try to get
-				// the structure for it (so the WDID can be
-				// determined)...
-				HydroBase_StructureView well_str =
-				      readStructureViewForStructure_num(
-					tempWell.getStructure_num());
+				// An unpermitted well was found so try to get the structure for it (so the WDID can be determined)...
+			   	HydroBase_StructureView well_str = readStructureViewForStructure_num(tempWell.getStructure_num());
 				wdid_parts = new int[2];
 				wdid_parts[0] = well_str.getWD();
 				wdid_parts[1] = well_str.getID();
+				Message.printStatus(2, routine, "For WellLevel, found unpermitted well for data source \"" +
+				    data_source + "\", location \"" + tsident.getLocation() + "\", wd=" + wdid_parts[0] +
+	                ", id=" + wdid_parts[1] );
 			}
 			else {
-				// No unpermitted well so the original WDID is
-				// OK and will be processed below...
+				// No unpermitted well so the original WDID is OK and will be processed below...
 				wdid = tsident.getLocation();
+				Message.printStatus(2, routine, "For WellLevel, found NO unpermitted well for data source \"" +
+	                    data_source + "\", location \"" + tsident.getLocation() + "\", using WDID=\"" + wdid + "\"" );
 			}
 		}
 		else {
@@ -16215,8 +16205,7 @@ throws Exception, NoDataFoundException
 	// added this because WellLevel as a MeasType was not being recognized
 	// as one of the structure time series data types.
 	else if (meas_type.equalsIgnoreCase("WellLevel")) {
-		// REVISIT (SAM 2004-01-14) START
-		//	- Fix when well data redesign is done
+		// TODO (SAM 2004-01-14) START - Fix when well data redesign is done
 		// If the data type is "WellLevel" and time step is "Day", then
 		// the incoming data type may be a USGS, USGS, or WDID id.
 		// Until HydroBase is redesigned, a work-around is in place
@@ -16224,12 +16213,15 @@ throws Exception, NoDataFoundException
 		// structure table.  There are not a lot of these time series 
 		// so doing an extra lookup here is not much of a penalty.
 
-		// First try to get an unpermitted_wells record matching
-		// the USGS id...
+		// First try to get an unpermitted_wells record matching the USGS id...
 
 //Message.printStatus(1, "", "TSLOC: " + tsident.getLocation());
 		
 		well = readGroundWaterWellMeasType(tsident.getLocation());
+		if ( well == null ) {
+		    message = "Cannot determine groundwater well measurement type for \"" + tsident.getLocation() + "\"";
+		    Message.printWarning ( 2, routine, message );
+		}
 
 //Message.printStatus(1, "", "WELL? " + well);
 
@@ -17132,28 +17124,25 @@ throws Exception, NoDataFoundException
 		v = readDailyStationData ( __S_DAILY_VP,
 					mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("WellLevel")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("WellLevel")) {
+	    // TODO SAM 2008-05-12 Why the XJTSX comments?
 		// XJTSX
 		if (getDatabaseVersion() < VERSION_20050701) {
 		// XJTSX
-			ts.setDataUnits (
-				HydroBase_Util.getTimeSeriesDataUnits (
-				this, data_type, interval ));
+		    Message.printStatus ( 2, routine, "Reading well level data using structure meas_num (OLD database) " +
+		            str_mt_v.getMeas_num() );
+			ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
 			ts.setDataUnitsOriginal ( ts.getDataUnits());
 			ts.setInputName ( "HydroBase well_meas.wat_level");
-			v = readWellMeasList (str_mt_v.getMeas_num(),
-				req_date1,req_date2);
+			v = readWellMeasList ( str_mt_v.getMeas_num(), req_date1,req_date2);
 		}
 		// XJTSX
 		else {
-			ts.setDataUnits (
-				HydroBase_Util.getTimeSeriesDataUnits (
-				this, data_type, interval ));
+		    Message.printStatus ( 2, routine, "Reading well level data using well meas_num " + well.getWell_meas_num() );
+			ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
 			ts.setDataUnitsOriginal ( ts.getDataUnits());
 			ts.setInputName ( "HydroBase well_meas.wat_level");
-			v = readWellMeasList (well.getWell_meas_num(),
-				req_date1, req_date2);
+			v = readWellMeasList (well.getWell_meas_num(), req_date1, req_date2);
 		}
 		// XJTSX
 		
@@ -20672,12 +20661,10 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_WellMeas objects.
 @throws Exception if an error occurs.
 */
-public Vector readWellMeasList(int meas_num, DateTime req_date1, 
-DateTime req_date2) 
+public Vector readWellMeasList(int meas_num, DateTime req_date1, DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
 
 		String[] triplet = null;
 	
@@ -20701,24 +20688,19 @@ throws Exception {
 				triplet = new String[3];
 				triplet[0] = "meas_date";
 				triplet[1] = "GE";
-				triplet[2] = "" + DMIUtil.formatDateTime(this,
-					req_date1);
-				HydroBase_GUI_Util.addTriplet(parameters, 
-					triplet);
+				triplet[2] = "" + DMIUtil.formatDateTime(this, req_date1);
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);
 			}
 			else {
 				DateTime req_date1_copy=new DateTime(req_date1);
-				req_date1_copy.setPrecision(
-					DateTime.PRECISION_DAY);
+				req_date1_copy.setPrecision( DateTime.PRECISION_DAY);
 				req_date1_copy.setDay(1);
 			
 				triplet = new String[3];
 				triplet[0] = "meas_date";
 				triplet[1] = "GE";
-				triplet[2] = "" + DMIUtil.formatDateTime(this,
-					req_date1_copy);
-				HydroBase_GUI_Util.addTriplet(parameters, 
-					triplet);			
+				triplet[2] = "" + DMIUtil.formatDateTime(this, req_date1_copy);
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);			
 			}
 		}
 
@@ -20727,31 +20709,23 @@ throws Exception {
 				triplet = new String[3];
 				triplet[0] = "meas_date";
 				triplet[1] = "LE";
-				triplet[2] = "" + DMIUtil.formatDateTime(this,
-					req_date2);
-				HydroBase_GUI_Util.addTriplet(parameters, 
-					triplet);			
+				triplet[2] = "" + DMIUtil.formatDateTime(this, req_date2);
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);			
 			}
 			else {
 				DateTime req_date2_copy=new DateTime(req_date2);
-				req_date2_copy.setPrecision( 
-					DateTime.PRECISION_DAY);
-				req_date2_copy.setDay(
-					TimeUtil.numDaysInMonth(
-					req_date2_copy));
+				req_date2_copy.setPrecision( DateTime.PRECISION_DAY);
+				req_date2_copy.setDay(TimeUtil.numDaysInMonth(req_date2_copy));
 			
 				triplet = new String[3];
 				triplet[0] = "meas_date";
 				triplet[1] = "LE";
-				triplet[2] = "" + DMIUtil.formatDateTime(this,
-					req_date2_copy);
-				HydroBase_GUI_Util.addTriplet(parameters, 
-					triplet);			
+				triplet[2] = "" + DMIUtil.formatDateTime(this, req_date2_copy);
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);			
 			}
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_WellMeas"), 0, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_WellMeas"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
 		Vector v = toWellMeasSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -20762,39 +20736,25 @@ throws Exception {
 		buildSQL(q, __S_WELL_MEAS);
 		q.addWhereClause("well_meas.meas_num=" + meas_num);
 		if (req_date1 != null) {
-			if (req_date1.getPrecision() 
-				== DateTime.PRECISION_DAY) {
-				q.addWhereClause("well_meas.meas_date >=" +
-				DMIUtil.formatDateTime(this,req_date1));
+			if (req_date1.getPrecision() == DateTime.PRECISION_DAY) {
+				q.addWhereClause("well_meas.meas_date >=" +	DMIUtil.formatDateTime(this,req_date1));
 			}
 			else {
-				DateTime req_date1_copy 
-					= new DateTime ( req_date1);
-				req_date1_copy.setPrecision ( 
-					DateTime.PRECISION_DAY);
+				DateTime req_date1_copy = new DateTime ( req_date1);
+				req_date1_copy.setPrecision ( DateTime.PRECISION_DAY);
 				req_date1_copy.setDay ( 1);
-				q.addWhereClause("well_meas.meas_date >=" +
-					DMIUtil.formatDateTime(this,
-					req_date1_copy));
+				q.addWhereClause("well_meas.meas_date >=" +	DMIUtil.formatDateTime(this, req_date1_copy));
 			}
 		}
 		if (req_date2 != null) {
-			if (req_date2.getPrecision() 
-				== DateTime.PRECISION_DAY) {
-				q.addWhereClause("well_meas.meas_date <=" +
-					DMIUtil.formatDateTime(this,req_date2));
+			if (req_date2.getPrecision() == DateTime.PRECISION_DAY) {
+				q.addWhereClause("well_meas.meas_date <=" +	DMIUtil.formatDateTime(this,req_date2));
 			}
 			else {
-				DateTime req_date2_copy 
-					= new DateTime ( req_date2);
-				req_date2_copy.setPrecision ( 
-					DateTime.PRECISION_DAY);
-				req_date2_copy.setDay (
-					TimeUtil.numDaysInMonth(
-					req_date2_copy));
-				q.addWhereClause("well_meas.meas_date <=" +
-					DMIUtil.formatDateTime(this,
-					req_date2_copy));
+				DateTime req_date2_copy = new DateTime ( req_date2);
+				req_date2_copy.setPrecision ( DateTime.PRECISION_DAY);
+				req_date2_copy.setDay ( TimeUtil.numDaysInMonth( req_date2_copy));
+				q.addWhereClause("well_meas.meas_date <=" + DMIUtil.formatDateTime(this, req_date2_copy));
 			}
 		}
 		q.addOrderByClause("well_meas.meas_date");
@@ -22815,9 +22775,7 @@ private void setupViewNumbersHashtable() {
 		__viewNumbers.put("vw_CDSS_GroundWaterWellsDrillersKSum", "79");
 		__viewNumbers.put("vw_CDSS_GroundWaterWellsGeophlogs", "76");
 		__viewNumbers.put("vw_CDSS_GroundWaterWellsPumpingTests","77");
-		__viewNumbers.put(
-			"vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType",
-			"78");
+		__viewNumbers.put("vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType","78");
 		__viewNumbers.put("vw_CDSS_GroundWaterWellsVolcanics", "80");
 	}
 
