@@ -902,7 +902,7 @@ implements TSProductAnnotationProvider, TSProductDMI {
 /**
 HydroBase release dates.  The value of each integer is the design version,
 followed by the release date.
-These values must be hanled in determineDatabaseVersion() and
+These values must be handled in determineDatabaseVersion() and
 isVersionAtLeast().
 */
 
@@ -1567,7 +1567,7 @@ Water districts sorted by division.
 private Vector __WaterDistrictsByDiv_Vector = null;
 
 /**
-Water disitricts from structures.
+Water districts from structures.
 */
 private Vector __WaterDistrictsFromStructures_Vector = null;
 
@@ -1592,7 +1592,7 @@ connection.  If null, the default system login is used ("guest").
 @param system_password If not null, this is used as the system password to make
 the connection.  If null, the default system password is used ("guest").
 */
-public HydroBaseDMI (	String database_engine, String odbc_name,
+public HydroBaseDMI ( String database_engine, String odbc_name,
 			String system_login, String system_password )
 throws Exception {
 	this(database_engine, odbc_name, system_login, system_password, false);
@@ -1609,15 +1609,14 @@ connection.  If null, the default system login is used ("guest").
 the connection.  If null, the default system password is used ("guest").
 @param useStoredProcedures specifies whether stored procedures should be used.
 */
-public HydroBaseDMI (	String database_engine, String odbc_name,
+public HydroBaseDMI ( String database_engine, String odbc_name,
 			String system_login, String system_password,
 			boolean useStoredProcedures)
 throws Exception
 {	// Use the default system login and password
 	super ( database_engine, odbc_name, system_login, system_password );
 
-	// Turn off printing of the Stored Procedure or SQL string to 
-	// Debug 30, for the sake of security. 
+	// Turn off printing of the Stored Procedure or SQL string to Debug 30, for the sake of security. 
 	__printQueryStrings = false;
 
 	setUseStoredProcedures(useStoredProcedures);
@@ -1655,8 +1654,7 @@ throws Exception
 		dumpSQLOnExecution(false);
 	}
 
-	// Turn back on printing of Stored Procedure or SQL strings to 
-	// Debug 30.
+	// Turn back on printing of Stored Procedure or SQL strings to Debug 30.
 	__printQueryStrings = true;
 }
 
@@ -1665,10 +1663,8 @@ Constructor for a database server and database name, to use an automatically
 created URL to connect to a database that does not use stored procedures.
 @param database_engine The database engine to use (see the DMI constructor).
 If null, default to "SQLServer2000".
-@param database_server The IP address or DSN-resolvable database server
-machine name.
-@param database_name The database name on the server.  If null, default to
-"HydroBase".
+@param database_server The IP address or DSN-resolvable database server machine name.
+@param database_name The database name on the server.  If null, default to "HydroBase".
 @param port Port number used by the database.  If negative, default to that for
 the database engine.
 @param system_login If not null, this is used as the system login to make the
@@ -1676,23 +1672,18 @@ connection.  If null, the default system login is used ("guest").
 @param system_password If not null, this is used as the system password to make
 the connection.  If null, the default system password is used ("guest").
 */
-public HydroBaseDMI (	String database_engine, String database_server,
-			String database_name, int port,
-			String system_login, String system_password )
+public HydroBaseDMI ( String database_engine, String database_server,
+			String database_name, int port, String system_login, String system_password )
 throws Exception {
-	this(database_engine, database_server, database_name, port,
-		system_login, system_password, false);
+	this(database_engine, database_server, database_name, port, system_login, system_password, false);
 }
 
 /** 
-Constructor for a database server and database name, to use an automatically
-created URL.
+Constructor for a database server and database name, to use an automatically created URL.
 @param database_engine The database engine to use (see the DMI constructor).
 If null, default to "SQLServer2000".
-@param database_server The IP address or DSN-resolvable database server
-machine name.
-@param database_name The database name on the server.  If null, default to
-"HydroBase".
+@param database_server The IP address or DSN-resolvable database server machine name.
+@param database_name The database name on the server.  If null, default to "HydroBase".
 @param port Port number used by the database.  If negative, default to that for
 the database engine.
 @param system_login If not null, this is used as the system login to make the
@@ -1701,7 +1692,7 @@ connection.  If null, the default system login is used ("guest").
 the connection.  If null, the default system password is used ("guest").
 @param useStoredProcedures specifies whether stored procedures should be used.
 */
-public HydroBaseDMI (	String database_engine, String database_server,
+public HydroBaseDMI ( String database_engine, String database_server,
 			String database_name, int port,
 			String system_login, String system_password,
 			boolean useStoredProcedures)
@@ -1759,8 +1750,7 @@ throws Exception
 }
 
 /** 
-Constructor for a database server and database name, to use an automatically
-created URL.
+Constructor for a database server and database name, to use an automatically created URL.
 @param props a PropList containing properties controlling how to connect
 to the database.  The following properties are available:<p>
 <table>
@@ -1784,7 +1774,8 @@ crdss (if not using stored procedures)</td></tr>
 crdss3nt (if not using stored procedures)</td></tr>
 <tr>
 <td>HydroBase.Port</td><td>1433, then 21784 (if connecting to a remote server)
-<p>21784, then 1433 (if connecting to a local machine)</td></tr>
+<p>21784, then 1433 (if connecting to a local machine).  1433 is the default for
+full SQL Server whereas 21784 is used for SQL Server Express and the older MSDE.</td></tr>
 </table>
 */
 public HydroBaseDMI(PropList props) 
@@ -1811,16 +1802,13 @@ throws Exception {
 		database_engine = props.getValue("HydroBase.DatabaseEngine");
 		database_server = props.getValue("HydroBase.DatabaseServer");
 		database_name = props.getValue("HydroBase.DatabaseName");
-		useStoredProceduresS = props.getValue(
-			"HydroBase.UseStoredProcedures");
+		useStoredProceduresS = props.getValue("HydroBase.UseStoredProcedures");
 		system_login = props.getValue("HydroBase.SystemLogin");
 		system_password = props.getValue("HydroBase.SystemPassword");
 		portS = props.getValue("HydroBase.Port");
 
-		defaultDatabase_name = props.getValue(
-			"HydroBase.DefaultDatabaseName");
-		defaultServer_name = props.getValue(
-			"HydroBase.DefaultServerName");
+		defaultDatabase_name = props.getValue("HydroBase.DefaultDatabaseName");
+		defaultServer_name = props.getValue("HydroBase.DefaultServerName");
 	}
 	
 	if (database_engine == null) {
@@ -1830,8 +1818,7 @@ throws Exception {
 	if (database_server == null) {
 		if (defaultServer_name == null) {
 			throw new Exception("No HydroBase.DefaultServerName or "
-				+ "HydroBase.DatabaseServer property set in "
-				+ "configuration file.");
+				+ "HydroBase.DatabaseServer property set in configuration file.");
 		}
 		else {
 			database_server = defaultServer_name;
@@ -1879,22 +1866,21 @@ throws Exception {
 	}
 	else {
 		if (database_server.equalsIgnoreCase(HydroBase_Util.LOCAL)
-		    || IOUtil.getProgramHost().equalsIgnoreCase(
-		    database_server)) {
-		    	// connecting to the local machine.  Try the MSDE 
-			// port first.
+		    || IOUtil.getProgramHost().equalsIgnoreCase( database_server)) {
+		    // Connecting to the local machine.  Try the SQL Server Express/MSDE port first and 
+		    // full SQL Server port second.  Also get the specific machine name instead of "local".
 			database_server = IOUtil.getProgramHost();
 			__localPorts = new int[2];
-			__localPorts[0] = 21784;
+			__localPorts[0] = 21784; // MSDE or SQL Server Express
 			__localPorts[1] = 1433;
 			port = __localPorts[0];
 		}
 		else {
-		    	// connecting to a remote machine.  Try the SQL 
-			// Server port first.
+		    // Connecting to a remote machine.  Try the SQL Server port first assuming a
+		    // full server (like at the State).
 			__localPorts = new int[2];
 			__localPorts[0] = 1433;
-			__localPorts[1] = 21784;
+			__localPorts[1] = 21784; // MSDE
 			port = __localPorts[0];
 		}
 	}
@@ -1904,11 +1890,15 @@ throws Exception {
 	
 	setUseStoredProcedures(useStoredProcedures);
 
-	// Turn back on printing of Stored Procedure or SQL strings to 
-	// Debug 30.
+	// Turn back on printing of Stored Procedure or SQL strings to Debug 30.
 	__printQueryStrings = true;
 }
 
+// TODO SAM 2008-05-29 Evaluate using for all constructors.
+/**
+Port numbers to check to handle MSDE, SQL Server Express and full SQL server in connections.
+This is currently only used when the HydroBaseDMI(PropList) constructor is used.
+*/
 private static int[] __localPorts = null;
 
 // A METHODS
@@ -8910,11 +8900,15 @@ stored procedure databases the view numbers hashtable can be set up.
 super.open() is called first in this method, prior to any other setup.
 */
 public void open() 
-throws Exception, java.sql.SQLException {
+throws Exception, java.sql.SQLException
+{
+    // Try opening a connection using the first port number (SQL Server)...
 	if (__localPorts == null) {
+	    // Open using the default information.
 		super.open();
 	}
 	else {
+	    // Try opening a connection using the second port number (older MSDE)...
 		try {
 			super.open();
 		}
