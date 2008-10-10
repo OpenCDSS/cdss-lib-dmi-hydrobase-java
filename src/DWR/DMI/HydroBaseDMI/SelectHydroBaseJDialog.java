@@ -135,9 +135,9 @@ import RTi.Util.String.StringUtil;
 
 /**
 This SelectHydroBaseJDialog class provides the user with an interface to
-select a HydroBase host and ODBC connection.  Several interface components can
-be optionally displayed to allow user login and password and selection of a
-water division.  A summary of the components and behavior is:
+select a HydroBase host and database name (or ODBC connection if used with Access).
+Several interface components can optionally be displayed to allow user login and
+password and selection of a water division.  A summary of the components and behavior is:
 <pre>
 Login:              Optional user login name (system login is defaulted
                     internally) - default is "guest"
@@ -146,12 +146,12 @@ Connection:         Database connection (local or remote)
 Database Hostname:  If connection is "local" this will be "localpc"
                     If connection is "remote" this will be a server machine.
 Database Name:      The name of the database to which to connect.
+Model:              Optional model to use to configure menus (used with StateDMI).
 Water Division:     Optional water division used to control map and
-                    interface - default is "DEFAULT".
+                    interface - default is "DEFAULT" (used with StateView).
 </pre>
 */
-public class SelectHydroBaseJDialog 
-extends JDialog
+public class SelectHydroBaseJDialog extends JDialog
 implements ActionListener, KeyListener, ItemListener, WindowListener {
 
 /**
@@ -204,8 +204,7 @@ Default hostname when making a local Microsoft Access connection.
 private final String __LOCALPC = "localpc";
 
 /**
-Default string that shows up if a server has no database that match 
-HydroBase*.
+Default string that shows up if a server has no database that match HydroBase*.
 */
 private final String __NO_DATABASES = "[No HydroBase databases available]";
 
@@ -227,6 +226,18 @@ Whether to ignore action events or not.
 private boolean __ignoreAction = false;
 
 /**
+Models to show if __showModels = true.
+*/
+private String __MODEL_StateCU = "StateCU";
+private String __MODEL_StateMod = "StateMod";
+
+/**
+Whether to display the models for users to select from - used by StateDMI since it
+has separate StateCU and StateMod looks.
+*/
+private boolean __showModels = false;
+
+/**
 Whether to display the water divisions for users to select from.
 */
 private boolean __showWaterDivisions = false;
@@ -237,8 +248,7 @@ Whether the user name / password combo should be entered and validated.
 private boolean __validateLogin = false;
 
 /**
-A hashtable for typing server names to Vectors of the databases available 
-in the server.
+A hashtable for typing server names to Vectors of the databases available in the server.
 */
 private Hashtable __databaseNames = null;
 
@@ -305,6 +315,11 @@ The combo box from which the name of the host computer is selected.
 private SimpleJComboBox	__hostnameJComboBox = null;
 
 /**
+The combo box for choosing the model.
+*/
+private SimpleJComboBox	__modelJComboBox = null;
+
+/**
 The combo box for choosing the water division to use by default.
 */
 private SimpleJComboBox	__waterDivisionJComboBox = null;
@@ -341,6 +356,11 @@ The division that the user selected to use.
 private String __selectedDivision = null;
 
 /**
+The model that the user selected to use.
+*/
+private String __selectedModel = __MODEL_StateCU;
+
+/**
 A list of available ODBC DSNs.
 */
 private Vector __available_OdbcDsn = null;
@@ -351,8 +371,7 @@ The names of the servers that can appear in the server combo box.
 private Vector __serverNames = null;
 
 /**
-The username that was automatically detected by trying to create a connection
-to a database.
+The username that was automatically detected by trying to create a connection to a database.
 */
 private String __detectedUsername = null;
 
@@ -363,8 +382,7 @@ to a database.
 private String __detectedPassword = null;
 
 /**
-The port that was automatically detected by trying to create a connection to 
-a database.
+The port that was automatically detected by trying to create a connection to a database.
 */
 private int __detectedPort = -1;
 
@@ -378,8 +396,8 @@ be available to the calling code (it will be null if the login failed).
 "ShowWaterDivisions"=true|false, "DatabaseHost"=localhost,
 "ArchiveDatabaseHost"=remoteHost).
 */
-public SelectHydroBaseJDialog(JFrame parent, HydroBaseDMI hbdmi,
-PropList props) {	
+public SelectHydroBaseJDialog(JFrame parent, HydroBaseDMI hbdmi, PropList props)
+{	
 	super(parent, true);
 
 	JGUIUtil.setWaitCursor(this, true);
@@ -443,8 +461,7 @@ private void cancelClicked() {
 }
 
 /**
-Check the database version.  If it is not recognized, print a warning for the
-user.
+Check the database version.  If it is not recognized, print a warning for the user.
 @param hbdmi HydroBaseDMI instance to check version.
 */
 private void checkDatabaseVersion(HydroBaseDMI hbdmi) {
@@ -479,20 +496,20 @@ private void checkServer(String server) {
 	if (!__useSPJCheckBox.isSelected()) {
 		usernames[0] = "crdss";	
 		passwords[0] = "crdss3nt";    
-		ports[0] = 	21784;
+		ports[0] = 21784;
 
 		usernames[1] = "crdss";	
 		passwords[1] = "crdss3nt";    
-		ports[1] = 	1433;
+		ports[1] = 1433;
 	}
 	else {
 		usernames[0] = "cdss";
 		passwords[0] = "cdss%tools";
-		ports[0] = 	21784;
+		ports[0] = 21784;
 		
 		usernames[1] = "cdss";	
 		passwords[1] = "cdss%tools";  
-		ports[1] = 	1433;
+		ports[1] = 1433;
 	}
 
 	GenericDMI dmi = null;
@@ -536,8 +553,7 @@ private void checkServer(String server) {
 		int size = v.size();
 
 		if (size == 0) {
-			// no database found -- this should NEVER happen,
-			// but just in case ...
+			// no database found -- this should NEVER happen, but just in case ...
 			v.add(__NO_DATABASES);
 			__databaseNamesJComboBox.add(__NO_DATABASES);
 			__databaseNames.put(server, v);
@@ -591,8 +607,7 @@ private void closeDialog() {
 }
 
 /**
-Handle a change in the connection choice (ie, from remote to local, or vice
-versa).
+Handle a change in the connection choice (ie, from remote to local, or vice versa).
 @param connection If null, the code is assumed to be called after a graphical
 interface interaction.  If specified, the connection is forced to select as if
 the user had done so (used in initialization).
@@ -605,8 +620,7 @@ private void connectionSelected(String connection) {
 		catch (Exception e) {
 			// This should NOT happen.
 			Message.printWarning(2, "SelectHydrobaseJDialog",
-				"Unable to select \"" + connection 
-				+ "\" in list.");
+				"Unable to select \"" + connection + "\" in list.");
 		}
 	}
 
@@ -627,8 +641,7 @@ private void connectionSelected(String connection) {
 		}
 		else {	
 			// add all the servers from the server name vectors,
-			// and select the one that matches the hbdmi's
-			// server (if the dmi is not null).
+			// and select the one that matches the hbdmi's server (if the dmi is not null).
 			String server = null;
 			if (__hbdmi != null) {
 				server = __hbdmi.getDatabaseServer();
@@ -640,10 +653,8 @@ private void connectionSelected(String connection) {
 				s = (String)__serverNames.elementAt(i);
 				__hostnameJComboBox.addItem(s);
 
-				// make sure the dmi's server is the 
-				// selected one, if it is in the list
-				if (__hbdmi != null && server != null
-				    && server.equalsIgnoreCase(s)) {
+				// make sure the dmi's server is the selected one, if it is in the list
+				if (__hbdmi != null && server != null && server.equalsIgnoreCase(s)) {
 					__hostnameJComboBox.setSelectedIndex(i);
 				}
 			}
@@ -679,8 +690,7 @@ private void connectionSelected(String connection) {
 		__odbcDSNJComboBox.setEnabled(true);
 		__odbcDSNJComboBox.removeAllItems();
 		
-		if (__available_OdbcDsn == null
-		    || __available_OdbcDsn.size() == 0) {
+		if (__available_OdbcDsn == null || __available_OdbcDsn.size() == 0) {
 			__odbcDSNJComboBox.addItem("Unable to Determine");
 		}
 		else {	
@@ -694,10 +704,8 @@ private void connectionSelected(String connection) {
 				odbc = (String)__available_OdbcDsn.elementAt(i);
 				__odbcDSNJComboBox.addItem(odbc);
 
-				// Try to default to the existing DMI
-				// selection
-				if (__hbdmi != null && dmiName != null 
-				    && dmiName.equalsIgnoreCase(odbc)) {
+				// Try to default to the existing DMI selection
+				if (__hbdmi != null && dmiName != null && dmiName.equalsIgnoreCase(odbc)) {
 					__odbcDSNJComboBox.setSelectedIndex(i);
 				}
 			}
@@ -795,8 +803,7 @@ private void findDatabaseNames() {
 		// instance is running -- see if port 21784 can be locked by
 		// Java.  If it can, then the port is open and SQL Server is
 		// probably (99.99999% of the time) not running.  Otherwise,
-		// SQL Server is probably (99.99999% of the time) up on that
-		// port.
+		// SQL Server is probably (99.99999% of the time) up on that port.
 		if (IOUtil.isPortOpen(21784)) {
 			__databaseNamesJComboBox.removeAllItems();
 			__databaseNamesJComboBox.add(__NO_DATABASES);
@@ -834,19 +841,27 @@ public static String getDefaultLogin() {
 }
 
 /**
-Returns the division selected in the dialog.
-@return the division selected in the dialog.
-*/
-public String getSelectedDivision() {
-	return __selectedDivision;
-}
-
-/**
 Returns the default password for this dialog.
 @return the default password for this dialog.
 */
 public static String getDefaultPassword() {
 	return "guest";
+}
+
+/**
+Returns the model selected in the dialog.
+@return the model selected in the dialog.
+*/
+public String getSelectedModel() {
+	return __selectedModel;
+}
+
+/**
+Returns the division selected in the dialog.
+@return the division selected in the dialog.
+*/
+public String getSelectedDivision() {
+	return __selectedDivision;
 }
 
 /**
@@ -866,6 +881,16 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 		}
 	}
 	
+	prop_value = props.getValue("ShowModels");
+	if (prop_value != null) {
+		if (prop_value.equalsIgnoreCase("true")) {
+			__showModels = true;
+		}
+		else {	
+			__showModels = false;
+		}
+	}
+	
 	prop_value = props.getValue("ShowWaterDivisions");
 	if (prop_value != null) {
 		if (prop_value.equalsIgnoreCase("true")) {
@@ -878,7 +903,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 
 	// For now hard-code.  Later need to find a way to put in a Jar so that
 	// "outside" users do not see the remote host...
-	// REVISIT (JTS - 2005-06-08)
+	// TODO (JTS - 2005-06-08)
 	// I don'lt understand the above comment, but perhaps it's something 
 	// that should be done in the future.
 
@@ -938,11 +963,9 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 			}
 
 			if (!found) {
-				// the dbhost was not found in the host list,
-				// so add to the list and sort
+				// the dbhost was not found in the host list, so add to the list and sort
 				__serverNames.addElement(__dbhost);
-				__serverNames = StringUtil.sortStringList(
-					__serverNames);
+				__serverNames = StringUtil.sortStringList( __serverNames);
 			}
 
 			__defaultServerName = __dbhost;
@@ -984,18 +1007,18 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 			0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	}
 	
-        __loginJTextField = new JTextField(25);
+    __loginJTextField = new JTextField(25);
 	__loginJTextField.addKeyListener(this);
 	__loginJTextField.setText(userLogin);
 	if (__validateLogin) {
-	        JGUIUtil.addComponent(northWJPanel, __loginJTextField, 
-			1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+        JGUIUtil.addComponent(northWJPanel, __loginJTextField, 
+		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 
 	// Password
 	if (__validateLogin) {
-	        JGUIUtil.addComponent(northWJPanel, new JLabel("Password:"), 
-			0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
+        JGUIUtil.addComponent(northWJPanel, new JLabel("Password:"), 
+		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	}
 	
 	__passwordJPasswordField = new JPasswordField(25);
@@ -1024,11 +1047,11 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 		// Local and remote hosts (remote will be the default)
 		__connectionJComboBox.addItem(__LOCAL);
 		__connectionJComboBox.addItem(__REMOTE);
-			__connectionJComboBox.setSelectedIndex(1);
+		__connectionJComboBox.setSelectedIndex(1);
 	}
 	
-       	JGUIUtil.addComponent(northWJPanel, __connectionJComboBox, 
-		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+   	JGUIUtil.addComponent(northWJPanel, __connectionJComboBox, 
+	1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 		
 	// Add a listener so can enable/disable the data source name:
 	__connectionJComboBox.addItemListener(this);
@@ -1038,7 +1061,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 
 	// Define because below set invisible if an Applet
 	JLabel hostname_JLabel = new JLabel("Database Hostname:");
-       	JGUIUtil.addComponent(northWJPanel, hostname_JLabel,
+   	JGUIUtil.addComponent(northWJPanel, hostname_JLabel,
 		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	// The contents will be set in "connectionSelected"
@@ -1046,7 +1069,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__hostnameJComboBox.setEditable(true);
 	__hostnameJComboBox.addKeyListener(this);
 	__hostnameJComboBox.addActionAndKeyListeners(this, this);
-       	JGUIUtil.addComponent(northWJPanel, __hostnameJComboBox, 
+    JGUIUtil.addComponent(northWJPanel, __hostnameJComboBox, 
 		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	// Add the data source (only enabled if using a local database).
@@ -1100,7 +1123,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 
 	// Items will be added to this in "connectionSelected"
 	__odbcDSNsJLabel = new JLabel("Database ODBC DSNs:");
-       	JGUIUtil.addComponent(northWJPanel, __odbcDSNsJLabel, 
+   	JGUIUtil.addComponent(northWJPanel, __odbcDSNsJLabel, 
 		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		
 	__odbcDSNJComboBox = new SimpleJComboBox();
@@ -1110,11 +1133,11 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Set to the longest available ODBC DSN so switching between remote and
 	// local does not hide components...
 	__odbcDSNJComboBox.setPrototypeDisplayValue(longest_odbc);
-       	JGUIUtil.addComponent(northWJPanel, __odbcDSNJComboBox,
+   	JGUIUtil.addComponent(northWJPanel, __odbcDSNJComboBox,
 		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__databaseNamesJLabel = new JLabel("Database Names:");
-       	JGUIUtil.addComponent(northWJPanel, __databaseNamesJLabel, 
+   	JGUIUtil.addComponent(northWJPanel, __databaseNamesJLabel, 
 		0, y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		
 	__databaseNamesJComboBox = new SimpleJComboBox();
@@ -1124,16 +1147,30 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Set to the longest available ODBC DSN so switching between remote and
 	// local does not hide components...
 	__databaseNamesJComboBox.setPrototypeDisplayValue(longest_odbc);
-       	JGUIUtil.addComponent(northWJPanel, __databaseNamesJComboBox,
+   	JGUIUtil.addComponent(northWJPanel, __databaseNamesJComboBox,
 		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	
 	__odbcDSNsJLabel.setVisible(false);
 	__odbcDSNJComboBox.setVisible(false);
 	
+	if (__showModels) {
+		JGUIUtil.addComponent(northWJPanel,	new JLabel("Model (for menu configuration):"),
+		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
+		// Always add the full list of choices...
+		__modelJComboBox = new SimpleJComboBox(false);	// Not editable
+		__modelJComboBox.addItem(__MODEL_StateCU);
+		__modelJComboBox.addItem(__MODEL_StateMod);
+		__modelJComboBox.select(__MODEL_StateCU);
+		__modelJComboBox.setToolTipText ( "Menus will be configured appropriate for the model.  "
+				+ "Use the File menu to switch between models.");
+		__modelJComboBox.addItemListener(this);
+   		JGUIUtil.addComponent(northWJPanel, __modelJComboBox, 
+			1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+	}	
+	
 	if (__showWaterDivisions) {
-       		JGUIUtil.addComponent(northWJPanel,
-			new JLabel("Water Division (2):"),
-			0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
+   		JGUIUtil.addComponent(northWJPanel,	new JLabel("Water Division (2):"),
+		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	}
 
 	// Always add the full list of choices...
@@ -1149,15 +1186,14 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__waterDivisionJComboBox.addItem(DIV_DEFAULT);
 	
 	if (__showWaterDivisions) {
-       		JGUIUtil.addComponent(northWJPanel, __waterDivisionJComboBox, 
-			1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+   		JGUIUtil.addComponent(northWJPanel, __waterDivisionJComboBox, 
+		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 	
 	try {	
 		// For now select the default - in the future pass in the
 		// default from the application in a constructor property.
-		// REVISIT (JTS - 2005-06-08)
-		// still interested in doing this?
+		// TODO (JTS - 2005-06-08) still interested in doing this?
 		if (__defaultDiv != null) {
 			__waterDivisionJComboBox.setSelectedItem(__defaultDiv);
 		}
@@ -1175,24 +1211,20 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Useful instructions as footnotes.
 
 	if (__validateLogin) {
-        	JGUIUtil.addComponent(northWJPanel, new JLabel(
-			"(1) Use \"guest\" for the login and password "
-			+ "for general use."), 
+      	JGUIUtil.addComponent(northWJPanel, new JLabel(
+			"(1) Use \"guest\" for the login and password for general use."), 
 			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        	JGUIUtil.addComponent(northWJPanel, new JLabel(
-			"State of Colorado users who update HydroBase "
-			+ "have accounts."), 
+       	JGUIUtil.addComponent(northWJPanel, new JLabel(
+			"State of Colorado users who update HydroBase have accounts."), 
 			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 	
 	if (__showWaterDivisions) {
-        	JGUIUtil.addComponent(northWJPanel, new JLabel(
-			"(2) Select a water division to optimize map "
-			+ "displays and menu choices."),
+       	JGUIUtil.addComponent(northWJPanel, new JLabel(
+			"(2) Select a water division to optimize map displays and menu choices."),
 			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        	JGUIUtil.addComponent(northWJPanel, new JLabel(
-			"The value may be reset if using a local database "
-			+ "with only one division."),
+       	JGUIUtil.addComponent(northWJPanel, new JLabel(
+			"The value may be reset if using a local database with only one division."),
 			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 
@@ -1220,8 +1252,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__okJButton.addKeyListener(this);
 	southNJPanel.add(__okJButton);
 
-	__cancelJButton = new SimpleJButton(__BUTTON_CANCEL, __BUTTON_CANCEL,
-		this);
+	__cancelJButton = new SimpleJButton(__BUTTON_CANCEL, __BUTTON_CANCEL, this);
 	__cancelJButton.addKeyListener(this);
 	southNJPanel.add(__cancelJButton);
 
@@ -1234,8 +1265,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__useSPJCheckBox = new JCheckBox((String)null);
 	__useSPJCheckBox.setSelected(true);
 	if ( IOUtil.testing() ) {
-			// Actually show the checkbox.  Otherwise it is invisible
-			// but selected.
+			// Actually show the checkbox.  Otherwise it is invisible but selected.
 		__useSPJCheckBox.setToolTipText("<html>Check this box to log into the "
 				+ "database as the 'cdss' user.<br>Unchecking this box will "
 				+ "cause the 'crdss' login to be used.</html>");
@@ -1261,9 +1291,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// frame settings        
 	setTitle("Select HydroBase");
 	if (__validateLogin) {
-		__statusJTextField.setText(
-			"Enter login information and select the HydroBase "
-			+ "to open.");
+		__statusJTextField.setText( "Enter login information and select the HydroBase to open.");
 	}
 	else {	
 		__statusJTextField.setText("Select the HydroBase to open.");
@@ -1273,8 +1301,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	JGUIUtil.center(this);
 	setResizable(false);
 
-	// Force the dialog fields to refresh to react to the initial
-	// settings...
+	// Force the dialog fields to refresh to react to the initial settings...
 	if (__defaultOdbcDsn != null) {
 		__connectionJComboBox.select(__LOCAL);
 		connectionSelected(__LOCAL);
@@ -1318,6 +1345,9 @@ public void itemStateChanged(ItemEvent event) {
 			__useSPJCheckBox.setEnabled(true);
 		}
 	}
+	else if (objectID == __modelJComboBox) {
+		__selectedModel = __modelJComboBox.getSelected();
+	}
 }
 
 /**
@@ -1328,8 +1358,7 @@ public void keyPressed(KeyEvent event) {
 	int code = event.getKeyCode(); 
 	// enter key is the same as ok
 	if (code == KeyEvent.VK_ENTER) {
-		if (__hostnameJComboBox.getSelected().trim().equalsIgnoreCase(
-		    __lastSelectedServer)) {
+		if (__hostnameJComboBox.getSelected().trim().equalsIgnoreCase(__lastSelectedServer)) {
 			okClicked();
 		}
 		else {
@@ -1416,8 +1445,7 @@ private void okClicked() {
 /**
 Attempt to use the information in the dialog to try to instantiate a new
 HydroBaseDMI instance.
-@return HydroBaseDMI instance for the new connection, or null if the connection
-failed.
+@return HydroBaseDMI instance for the new connection, or null if the connection failed.
 */
 private HydroBaseDMI openDatabase() 
 throws Exception {
@@ -1425,8 +1453,7 @@ throws Exception {
 	String message = null;
 
 	// Fill information in a new HydroBaseDMI instance.  Intantiating using
-	// no arguments defaults the system login and system password to the
-	// correct values.
+	// no arguments defaults the system login and system password to the correct values.
 
 	HydroBaseDMI hbdmi = null;
 
@@ -1434,11 +1461,9 @@ throws Exception {
 
 	String OdbcDsn =((String)__odbcDSNJComboBox.getSelectedItem()).trim();
 	String host = ((String)__hostnameJComboBox.getSelected()).trim();
-	String databaseName = ((String)__databaseNamesJComboBox.getSelected())
-		.trim();
+	String databaseName = ((String)__databaseNamesJComboBox.getSelected()).trim();
 
-	// Sometimes due to an older configuration file the following will 
-	// occur:
+	// Sometimes due to an older configuration file the following will occur:
 	if (host.equalsIgnoreCase("local")) {
 		host = IOUtil.getProgramHost();
 	}
@@ -1449,8 +1474,7 @@ throws Exception {
 	}
 	else {	
 		// Remote database.  Use the specified host but default the
-		// other information.  The database name is defaulted
-		// internally.
+		// other information.  The database name is defaulted internally.
 
 /*
 Message.printStatus(2, "", "Logging in with:");
@@ -1460,14 +1484,12 @@ Message.printStatus(2, "", "  Password: " + __detectedPassword);
 */
 
 		if (!__useSPJCheckBox.isSelected()) {
-			hbdmi = new HydroBaseDMI("SQLServer2000",
-				host, databaseName, __detectedPort,
+			hbdmi = new HydroBaseDMI("SQLServer2000", host, databaseName, __detectedPort,
 				__detectedUsername, __detectedPassword);
 		}
 		else {
 			hbdmi = new HydroBaseDMI("SQLServer2000",
-				host, databaseName, __detectedPort,
-				__detectedUsername, __detectedPassword,
+				host, databaseName, __detectedPort,	__detectedUsername, __detectedPassword,
 				true);
 		}	
 	}
@@ -1476,7 +1498,7 @@ Message.printStatus(2, "", "  Password: " + __detectedPassword);
 
 	try {	
 		if (__connectionJComboBox.getSelectedItem().equals(__LOCAL)) {
-                	message = "Establishing local connection...";
+             message = "Establishing local connection...";
 		}
 		else {	
 			message = "Establishing Remote connection...";
@@ -1485,14 +1507,11 @@ Message.printStatus(2, "", "  Password: " + __detectedPassword);
 		hbdmi.open();
 	}
 	catch (Exception e) {
-		Message.printWarning(2, "SelectHydrobaseJDialog.openDatabase",
-			e);
+		Message.printWarning(2, "SelectHydrobaseJDialog.openDatabase", e);
 		if (__connectionJComboBox.getSelectedItem().equals(__REMOTE)) {
-			message = "Cannot connect to the remote"
-			+ " database on \"" + host + "\"."
+			message = "Cannot connect to the remote database on \"" + host + "\"."
 			+ "\nOne possible cause is that the computer is not "
-			+ "connected to the Internet.  The host name may also "
-			+ "be incorrect.";
+			+ "connected to the Internet.  The host name may also be incorrect.";
 		}
 		else {	
 			message = "Cannot connect to the local database.\n"
@@ -1501,8 +1520,7 @@ Message.printStatus(2, "", "  Password: " + __detectedPassword);
 		}
 		
 		Message.printWarning(1, routine, message);
-		__statusJTextField.setText(
-			"HydroBase connection failed.  Ready");
+		__statusJTextField.setText( "HydroBase connection failed.  Ready");
 		hbdmi = null;
 		return null;
 	}
@@ -1512,11 +1530,9 @@ Message.printStatus(2, "", "  Password: " + __detectedPassword);
 	String userLogin = "";
 	String userPassword = "";
 	if (__validateLogin) {
-		// Validation is requested so use the the values from the
-		// dialog...
+		// Validation is requested so use the the values from the dialog...
 		userLogin = __loginJTextField.getText().trim();
-		userPassword = new String(
-			__passwordJPasswordField.getPassword()).trim();
+		userPassword = new String( __passwordJPasswordField.getPassword()).trim();
 		// Need to check the HydroBase "user_security" table.
 		// For now just let the user login.
 	}
@@ -1542,20 +1558,17 @@ Reads the configuration file.
 */
 private void readConfigurationFile() {
 	__configurationProps = new PropList("Config");
-	__configurationProps.setPersistentName(
-		IOUtil.getApplicationHomeDir() + File.separator
-		+ "system" + File.separator + "CDSS.cfg");
+	__configurationProps.setPersistentName(	IOUtil.getApplicationHomeDir() +
+		File.separator + "system" + File.separator + "CDSS.cfg");
 	try {
 		__configurationProps.readPersistent();
 	}
 	catch (Exception e) {
 		// ignore -- probably a file not found error, in which 
-		// the result is the same as an empty file: an empty
-		// proplist.
+		// the result is the same as an empty file: an empty proplist.
 	}
 
-	String serverNames = __configurationProps.getValue(
-		"HydroBase.ServerNames");
+	String serverNames = __configurationProps.getValue( "HydroBase.ServerNames");
 	if (serverNames == null) {
 		__serverNames = new Vector();
 		if (IOUtil.testing()) {
@@ -1566,8 +1579,7 @@ private void readConfigurationFile() {
 		}
 
 		// if SQL Server is running locally (eg, MSDE), 
-		// add the local machine to the list of serves that
-		// can be connected to.
+		// add the local machine to the list of serves that can be connected to.
 		if (!IOUtil.isPortOpen(21784)) {
 			__serverNames.add("local");
 		}
@@ -1589,8 +1601,7 @@ private void readConfigurationFile() {
 
 	__serverNames = StringUtil.sortStringList(__serverNames);
 
-	String defaultServerName = __configurationProps.getValue(
-		"HydroBase.DefaultServerName");
+	String defaultServerName = __configurationProps.getValue( "HydroBase.DefaultServerName");
 	if (defaultServerName == null) {
 		if (IOUtil.testing()) {
 			__defaultServerName = "hbserver";
@@ -1603,8 +1614,7 @@ private void readConfigurationFile() {
 		__defaultServerName = defaultServerName;
 	}
 
-	String defaultDatabaseName = __configurationProps.getValue(
-		"HydroBase.DefaultDatabaseName");
+	String defaultDatabaseName = __configurationProps.getValue( "HydroBase.DefaultDatabaseName");
 	if (defaultDatabaseName == null) {
 		__defaultDatabaseName = __HYDROBASE;
 	}
@@ -1639,10 +1649,8 @@ private void select(SimpleJComboBox comboBox) {
 	if (!comboBox.isEditable()) {
 		return;
 	}
-	((JTextComponent)(comboBox.getEditor()).getEditorComponent())
-		.setCaretPosition(0);
-	((JTextComponent)(comboBox.getEditor()).getEditorComponent())
-		.selectAll();
+	((JTextComponent)(comboBox.getEditor()).getEditorComponent()).setCaretPosition(0);
+	((JTextComponent)(comboBox.getEditor()).getEditorComponent()).selectAll();
 }
 
 /**
@@ -1704,24 +1712,19 @@ division is being accessed.
 private void setWaterDivisionFromLogin() {
 	if (__connectionJComboBox.getSelectedItem().equals(__REMOTE)) {
 		if (__defaultDiv != null) {
-			__waterDivisionJComboBox.setSelectedItem(
-				__defaultDiv);
+			__waterDivisionJComboBox.setSelectedItem(__defaultDiv);
 		}
 		else {
 			if (__selectedDivision != null) {
-				__waterDivisionJComboBox
-					.setSelectedPrefixItem(
-					__selectedDivision);
+				__waterDivisionJComboBox.setSelectedPrefixItem(__selectedDivision);
 			}
 			else {
-				__waterDivisionJComboBox.setSelectedItem(
-					DIV_DEFAULT);
+				__waterDivisionJComboBox.setSelectedItem( DIV_DEFAULT);
 			}
 		}
 	}
 	else {	
-		// Local database.  See if the data source name has any
-		// indication of the water division.
+		// Local database.  See if the data source name has any indication of the water division.
 		String dsn = __odbcDSNJComboBox.getSelected().trim();
 		String water_division = DIV_DEFAULT;
 		if (StringUtil.indexOfIgnoreCase(dsn,"Div1",0) >= 0) {
@@ -1747,12 +1750,10 @@ private void setWaterDivisionFromLogin() {
 		}
 		if (__showWaterDivisions) {
 			if (__defaultDiv != null) {
-				__waterDivisionJComboBox.setSelectedItem(
-					__defaultDiv);		
+				__waterDivisionJComboBox.setSelectedItem(__defaultDiv);		
 			}
 			else {
-				__waterDivisionJComboBox.setSelectedItem (
-					water_division );
+				__waterDivisionJComboBox.setSelectedItem ( water_division );
 			}
 		}
 	}
