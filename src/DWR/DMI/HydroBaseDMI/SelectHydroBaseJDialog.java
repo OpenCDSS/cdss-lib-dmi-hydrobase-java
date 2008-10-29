@@ -921,8 +921,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// connection type so that other information can cascade...
 
 	if (__hbdmi == null) {
-		// This is the first time a database connection has been
-		// defined.
+		// This is the first time a database connection has been defined.
 		if (__serverNames.size() == 0) {
 			// Assume a local only connection
 			connection = __LOCAL;
@@ -936,8 +935,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 		userPassword = getDefaultPassword();
 	}
 	else {	
-		// A previous connection is in effect.  Use the host information
-		// from that connection.
+		// A previous connection is in effect.  Use the host information from that connection.
 		__dbhost = __hbdmi.getDatabaseServer();
 		
 		if (__dbhost.equalsIgnoreCase(__LOCALPC)) {
@@ -1391,8 +1389,7 @@ private void ok(boolean ok) {
 
 /**
 Use the information in the dialog to try to instantiate a new HydroBaseDMI
-instance.  If successful, save the new HydroBaseDMI information and close the
-dialog.
+instance.  If successful, save the new HydroBaseDMI information and close the dialog.
 */
 private void okClicked() {
 	String routine = "SelectHydroBaseJDialog.okClicked";
@@ -1415,8 +1412,7 @@ private void okClicked() {
 	if (hbdmi != null) {
 		checkDatabaseVersion(hbdmi);
 		
-		// Save the connection.  The calling code can retrieve this to
-		// store for additional queries.
+		// Save the connection.  The calling code can retrieve this to store for additional queries.
 		__hbdmi = hbdmi;
 
 		__selectedDivision = __waterDivisionJComboBox.getSelected();
@@ -1426,8 +1422,7 @@ private void okClicked() {
 			div = DIV_DEFAULT;
 		}
 		else {
-			// trim everything off after the DIVX (e.g., 
-			// DIVX - Blah blah, trim off " - Blah blah"
+			// trim everything off after the DIVX (e.g., DIVX - Blah blah, trim off " - Blah blah"
 			div = __selectedDivision.substring(0, 4);
 		}
 		
@@ -1443,8 +1438,7 @@ private void okClicked() {
 }
 
 /**
-Attempt to use the information in the dialog to try to instantiate a new
-HydroBaseDMI instance.
+Attempt to use the information in the dialog to try to instantiate a new HydroBaseDMI instance.
 @return HydroBaseDMI instance for the new connection, or null if the connection failed.
 */
 private HydroBaseDMI openDatabase() 
@@ -1452,7 +1446,7 @@ throws Exception {
 	String routine = "SelectHydroBaseJDialog.openDataBase";
 	String message = null;
 
-	// Fill information in a new HydroBaseDMI instance.  Intantiating using
+	// Fill information in a new HydroBaseDMI instance.  Instantiating using
 	// no arguments defaults the system login and system password to the correct values.
 
 	HydroBaseDMI hbdmi = null;
@@ -1501,7 +1495,7 @@ Message.printStatus(2, "", "  Password: " + __detectedPassword);
              message = "Establishing local connection...";
 		}
 		else {	
-			message = "Establishing Remote connection...";
+			message = "Establishing remote connection...";
 		}
 		__statusJTextField.setText(message);
 		hbdmi.open();
@@ -1542,13 +1536,11 @@ Message.printStatus(2, "", "  Password: " + __detectedPassword);
 		userPassword = getDefaultPassword();
 	}
 	
-	// Note that these are not used to make the connection but can be used
-	// later for validation, etc.
+	// Note that these are not used to make the connection but can be used later for validation, etc.
 	hbdmi.setUserLogin(userLogin);
 	hbdmi.setUserPassword(userPassword);
 
-	// Need to enable reading the "user_preferences" table to set user
-	// preferences after login.
+	// Need to enable reading the "user_preferences" table to set user preferences after login.
 
 	return hbdmi;
 }
@@ -1656,8 +1648,7 @@ private void select(SimpleJComboBox comboBox) {
 /**
 Sets the default ODBC DSN that will be selected when the dialog is opened.
 If the default ODBC DSN is not null, then when this dialog opens it will
-be set up to make a local connection with the default ODBC DSN set as the
-default selection.
+be set up to make a local connection with the default ODBC DSN set as the default selection.
 @param defaultOdbcDsn the default ODBC DSN to connect to.
 */
 public static void setDefaultOdbcDsn(String defaultOdbcDsn) {
