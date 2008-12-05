@@ -11,6 +11,7 @@
 //-----------------------------------------------------------------------------
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIDataObject;
@@ -238,9 +239,9 @@ HydroBase_WISMath objects.
 @param flag UNIQUE_ID if parsing unique ids, LABEL if parsing row labels.
 @return a Vector of HydroBase_WISMath objects.
 */
-public static Vector parseFormula(String formula, int flag) {
+public static List parseFormula(String formula, int flag) {
 	// initialize variables
-	Vector parse = new Vector();
+	List parse = new Vector();
 	int size = formula.length();
 
 	if (flag == LABEL) {
@@ -330,7 +331,7 @@ public static Vector parseFormula(String formula, int flag) {
 						wisMath.setColumnType(
 							curTerm.trim());
 					}
-					parse.addElement(wisMath);
+					parse.add(wisMath);
 					break;
 				}
 				// for interior terms...
@@ -365,7 +366,7 @@ public static Vector parseFormula(String formula, int flag) {
 						wisMath.setColumnType(
 							curTerm.trim());
 					}
-					parse.addElement(wisMath);
+					parse.add(wisMath);
 					i--;	
 				}
 				// for terms preceeding the '.'...
@@ -385,12 +386,12 @@ HydroBase_WISMath objects.
 @param formula the formula String.
 @return a Vector of HydroBase_WISMath objects.
 */
-public static Vector parseFormulaAsLabel(String formula) {
+public static List parseFormulaAsLabel(String formula) {
 	HydroBase_WISMath wisMath;
 	boolean endOfTerm;
 	String curTerm = null;
 	String curChar = null;
-	Vector parse = new Vector();
+	List parse = new Vector();
 	int size = formula.length();
 
 	// loop over formula String
@@ -415,7 +416,7 @@ public static Vector parseFormulaAsLabel(String formula) {
 				// formula String final terms....
 				if (i == size) {
 					wisMath.setLabel(curTerm);
-					parse.addElement(wisMath);
+					parse.add(wisMath);
 					endOfTerm = true;
 					break;
 				}
@@ -424,7 +425,7 @@ public static Vector parseFormulaAsLabel(String formula) {
 				// interior terms....
 				if (isAnOperator(curChar)) {
 					wisMath.setLabel(curTerm);
-					parse.addElement(wisMath);
+					parse.add(wisMath);
 					endOfTerm = true;
 					i--;	
 				}

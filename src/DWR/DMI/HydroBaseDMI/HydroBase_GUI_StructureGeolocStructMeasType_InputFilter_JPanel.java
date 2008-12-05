@@ -23,6 +23,7 @@ package DWR.DMI.HydroBaseDMI;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -76,57 +77,57 @@ public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel (
 throws Exception
 {	// Fill in the county for input filters...
 
-	Vector county_data_Vector = hbdmi.getCountyRef();
-	Vector county_Vector = new Vector ( county_data_Vector.size() );
-	Vector county_internal_Vector = new Vector ( county_data_Vector.size());
+	List county_data_Vector = hbdmi.getCountyRef();
+	List county_Vector = new Vector ( county_data_Vector.size() );
+	List county_internal_Vector = new Vector ( county_data_Vector.size());
 	HydroBase_CountyRef county;
 	int size = county_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		county = (HydroBase_CountyRef)county_data_Vector.elementAt(i);
-		county_Vector.addElement (
+		county = (HydroBase_CountyRef)county_data_Vector.get(i);
+		county_Vector.add (
 			county.getCounty() + ", " + county.getST() );
-		county_internal_Vector.addElement (county.getCounty() );
+		county_internal_Vector.add (county.getCounty() );
 	}
 
 	// Fill in the water district data for input filters...
 
-	Vector district_data_Vector = hbdmi.getWaterDistricts();
-	Vector district_Vector = new Vector ( district_data_Vector.size() );
-	Vector district_internal_Vector=new Vector(district_data_Vector.size());
+	List district_data_Vector = hbdmi.getWaterDistricts();
+	List district_Vector = new Vector ( district_data_Vector.size() );
+	List district_internal_Vector=new Vector(district_data_Vector.size());
 	HydroBase_WaterDistrict wd;
 	size = district_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		wd = (HydroBase_WaterDistrict)district_data_Vector.elementAt(i);
-		district_Vector.addElement (wd.getWD() + " - "+wd.getWd_name());
-		district_internal_Vector.addElement ("" + wd.getWD() );
+		wd = (HydroBase_WaterDistrict)district_data_Vector.get(i);
+		district_Vector.add (wd.getWD() + " - "+wd.getWd_name());
+		district_internal_Vector.add ("" + wd.getWD() );
 	}
 
 	// Fill in the division data for input filters...
 
-	Vector division_data_Vector = hbdmi.getWaterDivisions();
-	Vector division_Vector = new Vector ( 7 );
-	Vector division_internal_Vector = new Vector ( 7 );
+	List division_data_Vector = hbdmi.getWaterDivisions();
+	List division_Vector = new Vector ( 7 );
+	List division_internal_Vector = new Vector ( 7 );
 	HydroBase_WaterDivision div;
 	size = division_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		div =(HydroBase_WaterDivision)division_data_Vector.elementAt(i);
-		division_Vector.addElement (div.getDiv() + " - " +
+		div =(HydroBase_WaterDivision)division_data_Vector.get(i);
+		division_Vector.add (div.getDiv() + " - " +
 			div.getDiv_name());
-		division_internal_Vector.addElement ("" + div.getDiv() );
+		division_internal_Vector.add ("" + div.getDiv() );
 	}
 
-	Vector input_filters = new Vector(8);
-	input_filters.addElement ( new InputFilter (
+	List input_filters = new Vector(8);
+	input_filters.add ( new InputFilter (
 		"", "", StringUtil.TYPE_STRING,
 		null, null, true ) );	// Blank to disable filter
 		
-	Vector v1 = new Vector();
-	Vector v2 = new Vector();
-	Vector cius = hbdmi.getCIUVector();
+	List v1 = new Vector();
+	List v2 = new Vector();
+	List cius = hbdmi.getCIUVector();
 	size = cius.size();
 	HydroBase_RefCIU ciu = null;
 	for (int i = 0; i < size; i++) {
-		ciu = (HydroBase_RefCIU)cius.elementAt(i);
+		ciu = (HydroBase_RefCIU)cius.get(i);
 		v1.add(ciu.getCode() + " - " + ciu.getDescription());
 		v2.add(ciu.getCode());
 	}
@@ -136,38 +137,38 @@ throws Exception
 		StringUtil.TYPE_STRING,
 		county_Vector, county_internal_Vector, true );
 	filter.setTokenInfo(",",0);
-	input_filters.addElement ( filter );
+	input_filters.add ( filter );
 	
 	filter = new InputFilter (
 		"District", "geoloc.wd", "wd",
 		StringUtil.TYPE_INTEGER,
 		district_Vector, district_internal_Vector, true );
 	filter.setTokenInfo("-",0);
-	input_filters.addElement ( filter );
+	input_filters.add ( filter );
 
 	filter = new InputFilter (
 		"Division", "geoloc.div", "div",
 		StringUtil.TYPE_INTEGER,
 		division_Vector, division_internal_Vector, true );
 	filter.setTokenInfo("-",0);
-	input_filters.addElement ( filter );
+	input_filters.add ( filter );
 	
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Elevation", "geoloc.elev", "elev",
 		StringUtil.TYPE_DOUBLE,
 		null, null, true ) );	
 	
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"HUC", "geoloc.huc", "huc",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );
 
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Latitude", "geoloc.latdecdeg", "latdecdeg",
 		StringUtil.TYPE_DOUBLE,
 		null, null, true ) );	
 		
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Longitude", "geoloc.longdecdeg", "longdecdeg",
 		StringUtil.TYPE_DOUBLE,
 		null, null, true ) );	
@@ -206,18 +207,18 @@ throws Exception
 			StringUtil.TYPE_DOUBLE, null, null, false));
 	}
 
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Structure ID", "structure.id", "id",
 		StringUtil.TYPE_INTEGER,
 		null, null, true ) );
 		
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Structure Name", "structure.str_name", "str_name",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );
 
 	if ( include_SFUT ) {
-		input_filters.addElement ( new InputFilter (
+		input_filters.add ( new InputFilter (
 			"SFUT", "struct_meas_type.identifier", "identifier",
 			StringUtil.TYPE_STRING,
 			null, null, true ) );
@@ -226,12 +227,12 @@ throws Exception
 	v1 = new Vector();
 	v1.add("1");
 
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"UTM X", "geoloc.utm_x", "utm_x",
 		StringUtil.TYPE_DOUBLE,
 		null, null, true ) );		
 
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"UTM Y", "geoloc.utm_y", "utm_y",
 		StringUtil.TYPE_DOUBLE,
 		null, null, true ) );		

@@ -42,6 +42,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -181,7 +182,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -202,7 +203,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -218,7 +219,7 @@ in the Vector.
 @param v a non-null, non-empty Vector of GenericWorksheetData objects.
 @return a Generic_TableModel for displaying the given data.
 */
-private Generic_TableModel buildTableModel(Vector v) {
+private Generic_TableModel buildTableModel(List v) {
 	try {
 		Generic_TableModel model = new Generic_TableModel(v);
 
@@ -255,8 +256,8 @@ private void closeClicked() {
 This function displays the query results within the appropriate GUI objects.
 @param results Vector containing the results from the query
 */
-private void displayResults(Vector results) {
-	Vector v = resultsToGenericData(results);
+private void displayResults(List results) {
+	List v = resultsToGenericData(results);
 
 	Generic_TableModel model = buildTableModel(v);
 
@@ -266,7 +267,7 @@ private void displayResults(Vector results) {
 
 	if (__dmi.useStoredProcedures()) {
 	        HydroBase_WISDailyWC data 
-			= (HydroBase_WISDailyWC)results.elementAt(0);
+			= (HydroBase_WISDailyWC)results.get(0);
 	        __unitsJTextField.setText("" + data.getUnit());
 	
 		Generic_CellRenderer renderer = new Generic_CellRenderer(model);
@@ -275,7 +276,7 @@ private void displayResults(Vector results) {
 		__worksheet.setColumnWidths(renderer.getColumnWidths());
 	}
 	else {
-	        HydroBase_DailyWC data =(HydroBase_DailyWC)results.elementAt(0);
+	        HydroBase_DailyWC data =(HydroBase_DailyWC)results.get(0);
 	        __unitsJTextField.setText("" + data.getUnit());
 	
 		Generic_CellRenderer renderer = new Generic_CellRenderer(model);
@@ -309,9 +310,9 @@ Formats output for printing or export.
 @param format format delimiter flag defined in this class
 @return returns a formatted Vector for exporting, printing, etc..
 */
-public Vector formatOutput(int format) {
+public List formatOutput(int format) {
 	String routine = CLASS + ".formatOutput";
-	Vector v = new Vector();
+	List v = new Vector();
 
 	// First get the multilist back as strings...
 	int size = __worksheet.getRowCount();
@@ -409,13 +410,13 @@ public Vector formatOutput(int format) {
 	}
 	else {	
 		char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			__structureJTextField.getText(),
 			__divJTextField.getText(),
 			__wdJTextField.getText(),
 			__idJTextField.getText(), format));
-		v.addElement("");
+		v.add("");
 		// Now format the list by just spitting back what is in
 		// the multilist...
 		String s;		
@@ -426,7 +427,7 @@ public Vector formatOutput(int format) {
 					.toString() + delim;
 			}
 			s += __worksheet.getValueAtAsString(i, 38);
-			v.addElement(s);
+			v.add(s);
 		}
 	}
 
@@ -439,16 +440,16 @@ GenericWorksheetData objects.
 @param results the non-null, non-empty Vector of HydroBase_DailyWC objects.
 @return a Vector of GenericWorksheetData objects.
 */
-private Vector resultsToGenericData(Vector results) {
+private List resultsToGenericData(List results) {
 	if (__dmi.useStoredProcedures()) {
-		Vector v = new Vector();
+		List v = new Vector();
 		int size = results.size();
 		HydroBase_WISDailyWC result = null;
 		GenericWorksheetData data = null;
 		double d;
 		String s;
 	        for (int i = 0; i < size; i++) {
-	                result = (HydroBase_WISDailyWC)results.elementAt(i);
+	                result = (HydroBase_WISDailyWC)results.get(i);
 			data = new GenericWorksheetData(39);
 			data.setValueAt(0, "" + result.getIrr_year());
 			data.setValueAt(1, "" + result.getIrr_mon());
@@ -478,14 +479,14 @@ private Vector resultsToGenericData(Vector results) {
 		return v;	
 	}
 	else {
-		Vector v = new Vector();
+		List v = new Vector();
 		int size = results.size();
 		HydroBase_DailyWC result = null;
 		GenericWorksheetData data = null;
 		double d;
 		String s;
 	        for (int i = 0; i < size; i++) {
-	                result = (HydroBase_DailyWC)results.elementAt(i);
+	                result = (HydroBase_DailyWC)results.get(i);
 			data = new GenericWorksheetData(39);
 			data.setValueAt(0, "" + result.getIrr_year());
 			data.setValueAt(1, "" + result.getIrr_mon());
@@ -689,7 +690,7 @@ private void submitQuery() {
 		__idJTextField.setText("" + curInt);
 	}        
 
-	Vector results = null;
+	List results = null;
 	try {
 		results = 
 		 	__dmi.readDailyWCListForStructure_numRecordType(

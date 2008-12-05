@@ -14,7 +14,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying national agstats data.
@@ -39,13 +39,12 @@ public final static int
 	COL_FLAG = 	5;
 
 /**
-Constructor.  This builds the Model for displaying the given agstats
-results.
+Constructor.  This builds the Model for displaying the given agstats results.
 @param results the results that will be displayed in the table.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_AgriculturalNASSCropStats(Vector results) 
+public HydroBase_TableModel_AgriculturalNASSCropStats(List results) 
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -150,8 +149,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -161,8 +159,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_AgriculturalNASSCropStats n 
-		= (HydroBase_AgriculturalNASSCropStats)_data.elementAt(row);
+	HydroBase_AgriculturalNASSCropStats n = (HydroBase_AgriculturalNASSCropStats)_data.get(row);
 	switch (col) {
 		case COL_ST:		return n.getST();
 		case COL_COUNTY:	return n.getCounty();

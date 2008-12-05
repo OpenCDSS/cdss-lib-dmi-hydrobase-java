@@ -62,6 +62,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -173,7 +174,7 @@ int structureNum) {
 	}				
 
 	try {
-		Vector v = 
+		List v = 
 			__dmi.
 			readParcelUseTSStructureToParcelListForStructure_num(
 			__structureNum);
@@ -210,7 +211,7 @@ public void actionPerformed(ActionEvent e) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -229,7 +230,7 @@ public void actionPerformed(ActionEvent e) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -274,8 +275,8 @@ throws Throwable {
 Formats the data on the form for output to a file or the printer.
 @param format the format delimiter flag to use for delimiting fields.
 */
-public Vector formatOutput(int format) {
-	Vector v = new Vector();
+public List formatOutput(int format) {
+	List v = new Vector();
 	int size = __worksheet.getRowCount();
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
@@ -616,7 +617,7 @@ private void submitAndDisplayIrrigSummaryStructureQuery() {
 	String routine = "HydroBase_GUI_IrrigatedAcres"
 		+ ".submitAndDisplayIrrigSummaryStructureQuery";
 
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readStructureIrrigSummaryListForStructure_num(
 			__structureNum);
@@ -636,7 +637,7 @@ private void submitAndDisplayIrrigSummaryStructureQuery() {
         double curDouble;
 
 	HydroBase_StructureView iss 
-		= (HydroBase_StructureView)results.elementAt(0);
+		= (HydroBase_StructureView)results.get(0);
     
 	curDouble = iss.getTia_gis();
 	if (!DMIUtil.isMissing(curDouble)) {

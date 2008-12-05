@@ -12,7 +12,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying reservoir measurement information.
@@ -37,17 +37,15 @@ public final static int
 	COL_EVAP_LOSS = 	5;
 
 /**
-Constructor.  This builds the Model for displaying the given reservoir 
-measurement data.
+Constructor.  This builds the Model for displaying the given reservoir measurement data.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_ReservoirMeasurement(Vector results) 
+public HydroBase_TableModel_ReservoirMeasurement(List results) 
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_ReservoirMeasurement "
-			+ "constructor.");
+			+ "HydroBase_TableModel_ReservoirMeasurement constructor.");
 	}
 	_rows = results.size();
 	_data = results;
@@ -122,8 +120,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -133,7 +130,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_ResMeas r = (HydroBase_ResMeas)_data.elementAt(row);
+	HydroBase_ResMeas r = (HydroBase_ResMeas)_data.get(row);
 	switch (col) {
 		case COL_DATE:		return r.getDate_time();
 		case COL_GAGE_HEIGHT:	return new Double(r.getGage_height());

@@ -10,10 +10,10 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
-This class is a table model for displaying colorado agstats data.
+This class is a table model for displaying Colorado agstats data.
 */
 public class HydroBase_TableModel_AgriculturalCASSLivestockStats 
 extends HydroBase_TableModel {
@@ -35,17 +35,15 @@ public final static int
 	COL_HEAD = 		5;
 
 /**
-Constructor.  This builds the Model for displaying the given agstats
-results.
+Constructor.  This builds the Model for displaying the given agstats results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_AgriculturalCASSLivestockStats(Vector results)
+public HydroBase_TableModel_AgriculturalCASSLivestockStats(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_AgriculturalCASSLivestockStats "
-			+ "constructor.");
+			+ "HydroBase_TableModel_AgriculturalCASSLivestockStats constructor.");
 	}
 	_rows = results.size();
 	_data = results;
@@ -60,8 +58,7 @@ throws Throwable {
 }
 
 /**
-From AbstractTableModel.  Returns the class of the data stored in a given
-column.
+From AbstractTableModel.  Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
 public Class getColumnClass (int columnIndex) {
@@ -160,7 +157,7 @@ public Object getValueAt(int row, int col) {
 	}
 
 	HydroBase_AgriculturalCASSLivestockStats c 
-		= (HydroBase_AgriculturalCASSLivestockStats)_data.elementAt(row);
+		= (HydroBase_AgriculturalCASSLivestockStats)_data.get(row);
 	switch (col) {
 		case COL_ST:		return c.getSt();
 		case COL_COUNTY:	return c.getCounty();

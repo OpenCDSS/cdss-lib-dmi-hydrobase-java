@@ -84,6 +84,7 @@ import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -396,7 +397,7 @@ private String __waterString;
 /**
 Vector of nodes directly upstream of this node.
 */
-private Vector __upstream;
+private List __upstream;
 
 //--------------------------------------------------------------------------
 // Data members used solely with the network drawing code.
@@ -536,7 +537,7 @@ private String __downstreamNodeID = null;
 /**
 The ids of all the nodes immediately upstream of this node.
 */
-private Vector __upstreamNodeIDs = null;
+private List __upstreamNodeIDs = null;
 //--------------------------------------------------------------------------
 
 /**
@@ -575,11 +576,10 @@ public boolean addDownstreamNode(HydroBase_Node downstream_node) {
 		// find the element to reset...
 		int pos = __downstream.getUpstreamNodePosition(getCommonID());
 		if (pos >= 0) {
-			Vector downstreamUpstream =
+			List downstreamUpstream =
 				__downstream.getUpstreamNodes();
 			if (downstreamUpstream != null) {
-				downstreamUpstream.setElementAt(downstream_node,
-					pos);
+				downstreamUpstream.set(pos,downstream_node);
 			}
 		}
 		// Connect the new downstream node to this node.
@@ -659,7 +659,7 @@ public boolean addUpstreamNode(HydroBase_Node upstream_node) {
 		__upstream = new Vector();
 	}
 
-	__upstream.addElement(upstream_node);
+	__upstream.add(upstream_node);
 
 	// Make so the upstream node has this node as its downstream node...
 	upstream_node.setDownstreamNode(this);
@@ -1014,9 +1014,9 @@ public boolean deleteUpstreamNode(HydroBase_Node upstream_node) {
 
 	for (int i = 0; i < __upstream.size(); i++) {
 		if (upstream_node.equals(
-			(HydroBase_Node)__upstream.elementAt(i))) {
+			(HydroBase_Node)__upstream.get(i))) {
 			// We have found a match.  Delete the element...
-			__upstream.removeElementAt(i);
+			__upstream.remove(i);
 			return true;
 		}
 	}
@@ -1732,7 +1732,7 @@ public String[] getUpstreamNodeIDs() {
 	}
 	String[] ids = new String[size];
 	for (int i = 0; i < size; i++) {
-		ids[i] = (String)__upstreamNodeIDs.elementAt(i);
+		ids[i] = (String)__upstreamNodeIDs.get(i);
 	}
 	return ids;
 }
@@ -1751,7 +1751,7 @@ public String[] getUpstreamNodesIDs() {
 
 	String[] ids = new String[__upstream.size()];
 	for (int i = 0; i < __upstream.size(); i++) {
-		ids[i] =((HydroBase_Node)__upstream.elementAt(i)).getCommonID();
+		ids[i] =((HydroBase_Node)__upstream.get(i)).getCommonID();
 	}
 	return ids;
 }
@@ -1921,7 +1921,7 @@ public HydroBase_Node getUpstreamNode(int position) {
 		return null;
 	}
 	// Return the requested one...
-	return(HydroBase_Node)__upstream.elementAt(position);
+	return(HydroBase_Node)__upstream.get(position);
 }
 
 /**
@@ -1937,7 +1937,7 @@ public int getUpstreamNodePosition(String commonID) {
 	HydroBase_Node upstream;
 	for (int i = 0; i < size; i++) {
 		// Return the first one that matches...
-		upstream = (HydroBase_Node)__upstream.elementAt(i);
+		upstream = (HydroBase_Node)__upstream.get(i);
 		if (commonID.equalsIgnoreCase(upstream.getCommonID())) {
 			return i;
 		}
@@ -1949,7 +1949,7 @@ public int getUpstreamNodePosition(String commonID) {
 Returns the Vector of upstream nodes.
 @return the Vector of upstream nodes.
 */
-public Vector getUpstreamNodes() {
+public List getUpstreamNodes() {
 	return __upstream;
 }
 
@@ -2154,7 +2154,7 @@ diagramming tools.
 @param pos the position at which to insert the node.
 */
 public void insertUpstreamNode(HydroBase_Node node, int pos) {
-	__upstream.insertElementAt(node, pos);
+	__upstream.add(pos,node);
 }
 
 /**
@@ -2163,10 +2163,9 @@ diagramming tools.
 @param nodes a non-null Vector of nodes to be inserted upstream of this node.
 @param pos the position at which to insert the nodes.
 */
-public void insertUpstreamNodes(Vector nodes, int pos) {
+public void insertUpstreamNodes(List nodes, int pos) {
 	for (int i = nodes.size() - 1; i >= 0; i--) {
-		__upstream.insertElementAt((HydroBase_Node)nodes.elementAt(i), 
-			pos);
+		__upstream.add(pos,(HydroBase_Node)nodes.get(i));
 	}
 }
 
@@ -2422,9 +2421,9 @@ public boolean parseAreaPrecip(String string0) {
 	}
 	else if (nfields == 2) {
 		// Assume that we have a valid theOperator and do the math...
-		Vector v = StringUtil.breakStringList(string, " \t", 0);
-		area = (String)v.elementAt(0);
-		precip = (String)v.elementAt(1);
+		List v = StringUtil.breakStringList(string, " \t", 0);
+		area = (String)v.get(0);
+		precip = (String)v.get(1);
 		double a = (new Double(area)).doubleValue();
 		double p = (new Double(precip)).doubleValue();
 		double water = 0;
@@ -2482,7 +2481,7 @@ code.
 @param pos the position in the __upstream Vector of the node to be removed.
 */
 public void removeUpstreamNode(int pos) {	
-	__upstream.removeElementAt(pos);
+	__upstream.remove(pos);
 }
 
 /**
@@ -2492,7 +2491,7 @@ network drawing code.
 @param pos the position in the __upstream Vector of the node to be replaced.
 */
 public void replaceUpstreamNode(HydroBase_Node node, int pos) {
-	__upstream.setElementAt(node, pos);
+	__upstream.set(pos,node);
 }
 
 /**
@@ -3012,7 +3011,7 @@ diagramming tools.
 @param v the Vector of upstream nodes.  If null, then there are no nodes
 upstream of this node.
 */
-public void setUpstreamNodes(Vector v) {
+public void setUpstreamNodes(List v) {
 	__upstream = v;
 }
 

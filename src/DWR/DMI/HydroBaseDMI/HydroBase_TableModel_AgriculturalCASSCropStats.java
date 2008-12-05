@@ -13,10 +13,10 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
-This class is a table model for displaying colorado agstats data.
+This class is a table model for displaying Colorado agstats data.
 */
 public class HydroBase_TableModel_AgriculturalCASSCropStats 
 extends HydroBase_TableModel {
@@ -45,12 +45,11 @@ public final static int
 	COL_PRODUCTIONUNIT = 	12;
 
 /**
-Constructor.  This builds the Model for displaying the given agstats
-results.
+Constructor.  This builds the Model for displaying the given agstats results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_AgriculturalCASSCropStats(Vector results)
+public HydroBase_TableModel_AgriculturalCASSCropStats(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -70,8 +69,7 @@ throws Throwable {
 }
 
 /**
-From AbstractTableModel.  Returns the class of the data stored in a given
-column.
+From AbstractTableModel.  Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
 public Class getColumnClass (int columnIndex) {
@@ -156,8 +154,7 @@ public int[] getColumnWidths() {
 Returns the format that the specified column should be displayed in when
 the table is being displayed in the given table format. 
 @param column column for which to return the format.
-@return the format (as used by StringUtil.formatString() in which to display the
-column.
+@return the format (as used by StringUtil.formatString() in which to display the column.
 */
 public String getFormat(int column) {
 	switch (column) {
@@ -186,8 +183,7 @@ public int getRowCount() {
 }
 
 /**
-From AbstractTableModel.  Returns the data that should be placed in the JTable
-at the given row and column.
+From AbstractTableModel.  Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -197,8 +193,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_AgriculturalCASSCropStats c 
-		= (HydroBase_AgriculturalCASSCropStats)_data.elementAt(row);
+	HydroBase_AgriculturalCASSCropStats c = (HydroBase_AgriculturalCASSCropStats)_data.get(row);
 	switch (col) {
 		case COL_ST:		return c.getST();
 		case COL_COUNTY:	return c.getCounty();

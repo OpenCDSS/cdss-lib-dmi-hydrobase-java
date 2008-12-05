@@ -27,11 +27,10 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
-This class is a table model for displaying ground water data in the 
-HydroBase_GUI_GroundWater GUI.
+This class is a table model for displaying ground water data in the HydroBase_GUI_GroundWater GUI.
 */
 public class HydroBase_TableModel_WellMeas 
 extends HydroBase_TableModel {
@@ -56,17 +55,15 @@ public final static int
 	COL_END = 	8;
 
 /**
-Constructor.  This builds the Model for displaying the given ground water 
-results.
+Constructor.  This builds the Model for displaying the given ground water results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_WellMeas(Vector results)
+public HydroBase_TableModel_WellMeas(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_WellMeas "
-			+ "constructor.");
+			+ "HydroBase_TableModel_WellMeas constructor.");
 	}
 	
 	_rows = results.size();
@@ -159,8 +156,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -170,9 +166,8 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_StructureGeolocStructMeasTypeView g = 
-		(HydroBase_StructureGeolocStructMeasTypeView)
-	_data.elementAt(row);
+	HydroBase_StructureGeolocStructMeasTypeView g = (HydroBase_StructureGeolocStructMeasTypeView)
+	_data.get(row);
 	switch (col) {
 		case COL_WD:		
 			return new Integer(g.getWD());

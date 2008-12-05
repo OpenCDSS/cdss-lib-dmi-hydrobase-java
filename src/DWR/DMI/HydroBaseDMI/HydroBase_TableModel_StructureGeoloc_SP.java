@@ -18,7 +18,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying structure geoloc data in the 
@@ -75,7 +75,7 @@ results.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_StructureGeoloc_SP(Vector results, HydroBaseDMI dmi)
+public HydroBase_TableModel_StructureGeoloc_SP(List results, HydroBaseDMI dmi)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -344,8 +344,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -355,8 +354,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_StructureView sv 
-		= (HydroBase_StructureView)_data.elementAt(row);
+	HydroBase_StructureView sv = (HydroBase_StructureView)_data.get(row);
 	switch (col) {
 		case COL_DIV:
 			return new Integer(sv.getDiv());

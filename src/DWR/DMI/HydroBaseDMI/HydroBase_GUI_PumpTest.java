@@ -47,6 +47,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -178,7 +179,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -199,7 +200,7 @@ public void actionPerformed(ActionEvent event) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -785,26 +786,26 @@ public void setVisible(boolean state) {
 Formats the output for an export or a print.
 @param format the format in which the output should be formatted.
 */
-public Vector formatOutput(int format) {
-	Vector v = new Vector(30, 5);
+public List formatOutput(int format) {
+	List v = new Vector(30, 5);
 
         char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);
 
-        v.addElement("WD" + delim + "ID" + delim + "Loc Num" + delim 
+        v.add("WD" + delim + "ID" + delim + "Loc Num" + delim 
 		+ "Site ID" + delim + "Permit Info");
-        v.addElement(__wdJTextField.getText() + delim + 
+        v.add(__wdJTextField.getText() + delim + 
 		__idJTextField.getText() + delim + __locNumJTextField.getText()
 		+ delim + __siteIDJTextField.getText() + delim
 		+ __permitInfoJTextField.getText());
 
-	v.addElement("Name");
-	v.addElement(__nameJTextField.getText());
+	v.add("Name");
+	v.add(__nameJTextField.getText());
 
-        v.addElement("");
-	v.addElement("PM" + delim + "TWN" + delim + "NS" + delim + "RNG" 
+        v.add("");
+	v.add("PM" + delim + "TWN" + delim + "NS" + delim + "RNG" 
 		+ delim + "EW" + delim + "SEC" + delim + "SECA" 
 		+ delim + "" + delim + "Q160" + delim + "Q40" + delim + "Q10");
-        v.addElement(__pmJTextField.getText() + delim 
+        v.add(__pmJTextField.getText() + delim 
 		+ __tsJTextField.getText() + delim + __tdirJTextField.getText()
 		+ delim + __rngJTextField.getText() + __rdirJTextField.getText()
 		+ delim + __secJTextField.getText() + delim
@@ -813,39 +814,39 @@ public Vector formatOutput(int format) {
 		+ __q40JTextField.getText() + delim 
 		+ __q10JTextField.getText());
 
-        v.addElement("");
-	v.addElement("Static Level (ft)" + delim + "Final Level (ft)" + delim
+        v.add("");
+	v.add("Static Level (ft)" + delim + "Final Level (ft)" + delim
 			+ "Water Level Change (ft)" + delim 
 			+ "Average Flow (gpm)");
-        v.addElement(__tswlJTextField.getText() + delim +
+        v.add(__tswlJTextField.getText() + delim +
                 	__tfwlJTextField.getText() + delim +
                 	__drawdownJTextField.getText() + delim +
                 	__testqJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Duration (hrs)" + delim +	"Test Date" + delim 
+        v.add("");
+	v.add("Duration (hrs)" + delim +	"Test Date" + delim 
 		+ "Data Source" + delim + "Test Type");
-        v.addElement(__testtimeJTextField.getText() + delim
+        v.add(__testtimeJTextField.getText() + delim
 		+ __testdateJTextField.getText() + delim
 		+ __ptsourceJTextField.getText() + delim 
 		+ __pttypeJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Top of Test Interval" + delim + "Base of Test Interval");
-        v.addElement(__toptestintJTextField.getText() + delim 
+        v.add("");
+	v.add("Top of Test Interval" + delim + "Base of Test Interval");
+        v.add(__toptestintJTextField.getText() + delim 
 		+ __basetestintJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Transmissivity (gpd/ft)" + delim + "Hydraulic " + 
+        v.add("");
+	v.add("Transmissivity (gpd/ft)" + delim + "Hydraulic " + 
 		"Conductivity (ft/d)" + delim + "Storativity" + delim
 		+ "Leakance");
-        v.addElement(__transJTextField.getText() + delim 
+        v.add(__transJTextField.getText() + delim 
 		+ __kJTextField.getText() + delim 
 		+ __storativityJTextField.getText() + delim 
 		+ __leakanceJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Includes Monitor Well" + delim 
+        v.add("");
+	v.add("Includes Monitor Well" + delim 
 		+ "Includes Observed Well" + delim +"Multiple Tests Available");
 
 	String mult = null;
@@ -873,7 +874,7 @@ public Vector formatOutput(int format) {
 		mon = "[ ]";
 	}
 
-	v.addElement(mon + delim + obs + delim + mult);
+	v.add(mon + delim + obs + delim + mult);
 
         return v;
 }

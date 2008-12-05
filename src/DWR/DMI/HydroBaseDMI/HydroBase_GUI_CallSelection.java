@@ -85,6 +85,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -166,13 +167,13 @@ private final String __BUTTON_HELP = 		"Help";
 /**
 Vector that holds the results that are displayed.
 */
-private Vector __results = null;
+private List __results = null;
 
 /**
 HydroBase_GUI_CallSelection constructor
 */
 public HydroBase_GUI_CallSelection(HydroBaseDMI dmi, 
-HydroBase_GUI_CallsQuery parent, Vector results) {
+HydroBase_GUI_CallsQuery parent, List results) {
 	// don't want a modal dialog
 	super (parent, false);
 
@@ -253,7 +254,7 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 	String dataStringAdminNum = null;
 	String stringAdminNum = StringUtil.formatString(adminNum,"%11.5f");
 	for (i = 0; i < size; i++) {
-		call = (HydroBase_Calls)__results.elementAt(i);
+		call = (HydroBase_Calls)__results.get(i);
 		dataStringAdminNum = StringUtil.formatString(
 			call.getAdminno(), "%11.5f");
 		if ((call.getWD()== wd) && (call.getID()== id)
@@ -314,7 +315,7 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 	DateTime endDate = null;
 	DateTime startDate = null;
 	for (; i < size; i++) {
-		call = (HydroBase_Calls)__results.elementAt(i);
+		call = (HydroBase_Calls)__results.get(i);
 		dataStringAdminNum = StringUtil.formatString(
 			call.getAdminno(),"%11.5f");
 		if ((call.getWD() != wd) || (call.getID() != id)
@@ -436,10 +437,10 @@ private void graphClicked() {
         __statusJTextField.setText("Please Wait... Displaying View");
 
 	// add the TS objects to a vector for displaying and update
-	Vector tsVector = new Vector(size);
+    List tsVector = new Vector(size);
 
 	int value = 1;
-	Vector tokens = null;
+	List tokens = null;
 	int[] wdid_tokens = null;
 	double adminNum;
 
@@ -452,9 +453,9 @@ private void graphClicked() {
 		// series...
 		tokens = StringUtil.breakStringList(strings[i], ",", 0);
 		wdid_tokens = HydroBase_WaterDistrict.parseWDID(
-			(String)tokens.elementAt(0));
+			(String)tokens.get(0));
 		adminNum = StringUtil.atod(
-			((String)tokens.elementAt(tokens.size()- 1)).trim());
+			((String)tokens.get(tokens.size()- 1)).trim());
 		// With the RTi graphing, it automatically puts the time series
 		// in the right order for a period graph so use "1" as the data
 		// value, indicating the call is on.
@@ -479,7 +480,7 @@ private void graphClicked() {
 		ts.setLegend(legend);
 		legend = null;
 
-		tsVector.addElement(ts);
+		tsVector.add(ts);
 		// Set the symbol to be a plus size of 1 pixel to force the
 		// line to be seen.
 		tsview_props.set("Data 1." + tsVector.size()
@@ -668,7 +669,7 @@ private void setupGUI() {
 	// Do the following once to get a count on the number of calls for use
 	// in the legends...
 	for (int i = 0; i < size; i++) {
-		call = (HydroBase_Calls)__results.elementAt(i);
+		call = (HydroBase_Calls)__results.get(i);
 		if ((call.getWD()!= wd) || (call.getID()!= id) ||
 		    (call.getAdminno() != adminNum)) {
 			// New record...
@@ -684,7 +685,7 @@ private void setupGUI() {
 	id = 0;
 	adminNum = 0.0;
 	for (int i = 0; i < size; i++) {
-		call = (HydroBase_Calls)__results.elementAt(size - i - 1);
+		call = (HydroBase_Calls)__results.get(size - i - 1);
 		if ((call.getWD()!= wd) || (call.getID()!= id) ||
 	            (call.getAdminno() != adminNum)) {
 			// New record...

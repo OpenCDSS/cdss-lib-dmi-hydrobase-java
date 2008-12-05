@@ -48,7 +48,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
@@ -444,7 +444,7 @@ private void registerClicked() {
 			}
 
 			int guestUserNum = userSecurity.getUser_num();
-			Vector results = null;
+			List results = null;
 			try {
 			results = 
 			__dmi.readUserPreferencesListForUser_num(
@@ -464,7 +464,7 @@ private void registerClicked() {
 			for (int i = 0; i < size; i++) {
 				HydroBase_UserPreferences prefData = 
 					(HydroBase_UserPreferences)
-					results.elementAt(i);
+					results.get(i);
 				if (__dmi.isDatabaseVersionAtLeast(
 					HydroBaseDMI.VERSION_19990305)) {
 					// New database does not have

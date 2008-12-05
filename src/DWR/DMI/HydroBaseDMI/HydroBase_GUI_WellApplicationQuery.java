@@ -97,6 +97,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -266,7 +267,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -319,7 +320,7 @@ protected void closeClicked() {
 Display the results of the query in the spreadsheet.  
 @param results the results to display in the spreadsheet.
 */
-private void displayResults(Vector results) 
+private void displayResults(List results) 
 throws Exception {
 	HydroBase_TableModel_WellApplicationView tm = 
 		new HydroBase_TableModel_WellApplicationView(results);
@@ -342,11 +343,11 @@ private void enableMapLayers() {
 		Message.printStatus(1, "",
 			"Turning on structure GIS layer types.");
 			
-		Vector enabled_appLayerTypes = new Vector();
-		enabled_appLayerTypes.addElement("WellPermit");
+		List enabled_appLayerTypes = new Vector();
+		enabled_appLayerTypes.add("WellPermit");
 		
 		// Base layers are always visible...
-		enabled_appLayerTypes.addElement("BaseLayer");
+		enabled_appLayerTypes.add("BaseLayer");
 		__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(
 			enabled_appLayerTypes, false);
 		enabled_appLayerTypes = null;
@@ -386,8 +387,8 @@ Responsible for formatting output.
 @param format format delimiter flag defined in this class
 @return ormatted Vector for exporting, printing, etc..
 */
-public Vector formatOutput(int format) {	
-        Vector v = new Vector(50, 50);
+public List formatOutput(int format) {	
+	List v = new Vector(50, 50);
         int numCols = __worksheet.getColumnCount();
         int numRows = __worksheet.getRowCount();
         String rowString;
@@ -398,7 +399,7 @@ public Vector formatOutput(int format) {
        	for (int j = 1; j < numCols; j++) {
 		rowString += __worksheet.getColumnName(j, true) + "" + delim;
 	}
-	v.addElement(rowString);
+	v.add(rowString);
 		
 	Object o = null;
        
@@ -413,7 +414,7 @@ public Vector formatOutput(int format) {
                         	rowString += "" + o.toString() + delim;
 			}
                 }
-                v.addElement(rowString);
+                v.add(rowString);
         }
         return v;
 }
@@ -429,19 +430,19 @@ public String geoViewGetLabel(GeoRecord record) {
 /**
 Does nothing.
 */
-public void geoViewInfo(GRShape devlimits, GRShape datalimits, Vector selected)
+public void geoViewInfo(GRShape devlimits, GRShape datalimits, List selected)
 {}
 
 /**
 Does nothing.
 */
-public void geoViewInfo(GRPoint devlimits, GRPoint datalimits, Vector selected)
+public void geoViewInfo(GRPoint devlimits, GRPoint datalimits, List selected)
 {}
 
 /**
 Does nothing.
 */
-public void geoViewInfo(GRLimits devlimits, GRLimits datalimits,Vector selected)
+public void geoViewInfo(GRLimits devlimits, GRLimits datalimits,List selected)
 {}
 
 /**
@@ -458,19 +459,19 @@ even if it is invisible.  This will ensure that the method is called as a
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRShape devlimits, GRShape datalimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	String routine = "geoViewSelect";
 	// Figure out which app layer types are selected.  If one that is
 	// applicable to this GUI, execute a query...
 
-	Vector appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree()
+	List appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree()
 		.getSelectedAppLayerTypes(true);
 	int size = appLayerTypes.size();
 	String appLayerType = null;
 	boolean view_needed = false;
 
 	for (int i = 0; i < size; i++) {
-		appLayerType =(String)appLayerTypes.elementAt(i);
+		appLayerType =(String)appLayerTypes.get(i);
 		if (appLayerType.equalsIgnoreCase("WellPermit")) {
 			// Make sure the headgate checkbox is selected...
 			view_needed = true;
@@ -519,7 +520,7 @@ even if it is invisible.  This will ensure that the method is called as a
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRPoint devlimits, GRPoint datalimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	geoViewSelect(devlimits, datalimits, selected, append);
 }
 
@@ -532,7 +533,7 @@ even if it is invisible.  This will ensure that the method is called as a
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRLimits devlimits, GRLimits datalimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	geoViewSelect(devlimits, datalimits, selected, append);
 }
 
@@ -549,9 +550,9 @@ public void geoViewZoom(GRLimits devlimits, GRLimits datalimits) {}
 /**
 Return a Vector with the visible AppLayerType.
 */
-private Vector getVisibleAppLayerType() {
-	Vector appLayerTypes = new Vector(1);
-	appLayerTypes.addElement("WellPermit");
+private List getVisibleAppLayerType() {
+	List appLayerTypes = new Vector(1);
+	appLayerTypes.add("WellPermit");
 	return appLayerTypes;
 }
 
@@ -619,12 +620,12 @@ public void mouseReleased(MouseEvent event) {
 		if (row == 1) {
 			__viewJButton.setEnabled(true);
 			if (__geoview_ui.isMapVisible()) {
-				Vector v = __geoview_ui.getGeoViewJPanel()
+				List v = __geoview_ui.getGeoViewJPanel()
 					.getEnabledAppLayerTypes();
 				if (v != null) {
 					int size = v.size();
 					for (int i = 0; i < size; i++) {
-						if (((String)v.elementAt(i))
+						if (((String)v.get(i))
 							.equalsIgnoreCase(
 							"Well")) {
 							__selectOnMapJButton
@@ -672,7 +673,7 @@ GeoView Project as AppJoinField="receipt".
 */
 private void selectOnMap() {
 	int size = __worksheet.getRowCount();
-	Vector idlist = new Vector(size);
+	List idlist = new Vector(size);
         __statusJTextField.setText("Selecting and zooming to well permits "
 		+ "map.  Please wait...");
 	JGUIUtil.setWaitCursor(this, true);
@@ -700,7 +701,7 @@ private void selectOnMap() {
 		idlist.add(wav.getReceipt());
 	}
 	
-	Vector matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
+	List matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 				getVisibleAppLayerType(), idlist, true,
 				0.5, 0.5);
 	int matches = 0;
@@ -778,7 +779,7 @@ throws Exception {
         __statusJTextField.setText(status);	
 
 	StopWatch sw = new StopWatch();
-	Vector v = null;	
+	List v = null;	
 	try {
 		sw.start();
 		v = __dmi.readWellApplicationGeolocList(

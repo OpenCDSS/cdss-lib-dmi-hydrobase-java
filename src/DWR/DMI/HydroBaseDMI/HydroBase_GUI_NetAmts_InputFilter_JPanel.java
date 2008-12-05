@@ -23,6 +23,7 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.awt.event.MouseListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
@@ -70,7 +71,7 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 
 	InputFilter filter = null;
 
-	Vector filters = new Vector();
+	List filters = new Vector();
 
 	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME 
 		+ "." + ld;
@@ -100,13 +101,13 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
-	Vector counties = dmi.getCountyRef();
+	List counties = dmi.getCountyRef();
 	HydroBase_CountyRef county = null;
 	int size = counties.size();
-	Vector v1 = new Vector();
-	Vector v2 = new Vector();
+	List v1 = new Vector();
+	List v2 = new Vector();
 	for (int i = 0; i < size; i++) {
-		county = (HydroBase_CountyRef)counties.elementAt(i);
+		county = (HydroBase_CountyRef)counties.get(i);
 		if (county.getCty() > 0) {
 			v1.add(county.getCounty());
 			v2.add("" + county.getCty());
@@ -176,12 +177,12 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 		tableName + "id" + rd, "id", StringUtil.TYPE_INTEGER,
 		null, null, false));
 
-	Vector strTypes = dmi.getStrTypesVector();
+	List strTypes = dmi.getStrTypesVector();
 	HydroBase_StrType strType = null;
 	v1 = new Vector();
 	v2 = new Vector();
 	for (int i = 0; i < strTypes.size(); i++) {
-		strType = (HydroBase_StrType)strTypes.elementAt(i);
+		strType = (HydroBase_StrType)strTypes.get(i);
 		v1.add(strType.getStr_type() + " - " 
 			+ strType.getStr_type_desc());
 		v2.add(strType.getStr_type());
@@ -223,7 +224,7 @@ private void setupStructureFilter(HydroBaseDMI dmi) {
 
 	InputFilter filter = null;
 
-	Vector filters = new Vector();
+	List filters = new Vector();
 
 	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME 
 		+ "." + ld;

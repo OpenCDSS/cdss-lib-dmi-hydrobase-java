@@ -79,6 +79,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -193,7 +194,7 @@ private String __tableLabelString = null;
 Vector to hold two-element arrays of strings.  [0] contains the actual method
 name, capitalized etc.  [1] contains the pretty-looking method name.
 */
-private Vector __methods = null;
+private List __methods = null;
 
 /**
 Constructor.
@@ -206,12 +207,12 @@ public HydroBase_GUI_OtherQuery(HydroBaseDMI dmi) {
 
 	try {
 		__methods = new Vector();
-		Vector v = __dmi.readCUMethodList(true);
+		List v = __dmi.readCUMethodList(true);
 		int size = v.size();
 		HydroBase_CUMethod m = null;
 		String[] record = null;
 		for (int i = 0; i < size; i++) {
-			m = (HydroBase_CUMethod)v.elementAt(i);
+			m = (HydroBase_CUMethod)v.get(i);
 			record = new String[2];
 			record[0] = m.getMethod_desc();
 			record[1] = m.getMethod_desc().trim();
@@ -259,7 +260,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -278,7 +279,7 @@ public void actionPerformed(ActionEvent evt) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -344,7 +345,7 @@ private void dataTypeJComboBoxClicked() {
 Displays results from queries in the table.
 @param results the results to display in the table.
 */
-private void displayResults(Vector results) {
+private void displayResults(List results) {
 	String routine = "displayResults";
         String dtype = __dataTypeJComboBox.getSelected().trim();
 	try {
@@ -420,7 +421,7 @@ CUModHargreaves, [2] contains the Vector of records read from CUPenmanMonteith.
 @return the number of records read in by the database in total of all three
 Vectors.
 */
-private int formatCropGrowthReport(Vector[] vectors) {
+private int formatCropGrowthReport(List[] vectors) {
 	if (vectors == null) {
 		return -1;
 	}
@@ -443,17 +444,17 @@ private int formatCropGrowthReport(Vector[] vectors) {
 
 	int recordCount = 0;
 	
-	Vector strings = new Vector();
+	List strings = new Vector();
 	strings.add("Crop Growth Characteristics by Consumptive Use (CU) "
 		+ "Method");
-	Vector blaney = vectors[0];
+	List blaney = vectors[0];
 	String current = "";
 	if (blaney != null && blaney.size() > 0) {
 		int size = blaney.size();
 		recordCount += size;
 		HydroBase_CUBlaneyCriddle bc = null;
 		for (int i = 0; i < size; i++) {
-			bc = (HydroBase_CUBlaneyCriddle)blaney.elementAt(i);
+			bc = (HydroBase_CUBlaneyCriddle)blaney.get(i);
 			if (!current.equals(bc.getMethod_desc())) {
 				strings.add("");
 				current = bc.getMethod_desc();
@@ -472,7 +473,7 @@ private int formatCropGrowthReport(Vector[] vectors) {
 		}
 	}
 
-	Vector hargreaves = vectors[1];
+	List hargreaves = vectors[1];
 	if (hargreaves != null && hargreaves.size() > 0) {
 		int size = hargreaves.size();
 		recordCount += size;
@@ -491,13 +492,13 @@ private int formatCropGrowthReport(Vector[] vectors) {
 			+ "----------" );
 		
 		for (int i = 0; i < size; i++) {
-			mh = (HydroBase_CUModHargreaves)hargreaves.elementAt(i);
+			mh = (HydroBase_CUModHargreaves)hargreaves.get(i);
 			strings.add(formatCUModHargreaves(mh));
 		}		
 	}
 
 	current = "";
-	Vector penman = vectors[2];
+	List penman = vectors[2];
 	if (penman != null && penman.size() > 0) {
 		int size = penman.size();
 		recordCount += size;
@@ -514,7 +515,7 @@ private int formatCropGrowthReport(Vector[] vectors) {
 		
 		
 		for (int i = 0; i < size; i++) {
-			pm = (HydroBase_CUPenmanMonteith)penman.elementAt(i);
+			pm = (HydroBase_CUPenmanMonteith)penman.get(i);
 			strings.add(formatCUPenmanMonteith(pm));
 		}		
 	}
@@ -713,7 +714,7 @@ Responsible for formatting output.
 @param format format delimiter flag defined in this class
 @return formatted Vector for exporting, printing, etc..
 */
-private Vector formatOutput(int format) {
+private List formatOutput(int format) {
         int size = __worksheet.getRowCount();
         if (size == 0) {
                 return new Vector();
@@ -725,11 +726,11 @@ private Vector formatOutput(int format) {
 	int colCount = __worksheet.getColumnCount();
 	String s = "";			
 
-	Vector v = new Vector();
+	List v = new Vector();
 	for (int j = 0; j < colCount; j++) {
 		s += __worksheet.getColumnName(j, true) + delim;
 	}
-	v.addElement(s);
+	v.add(s);
 
 	int[] selected = __worksheet.getSelectedRows();
 	int length = selected.length;
@@ -753,7 +754,7 @@ private Vector formatOutput(int format) {
 				o = __worksheet.getValueAtAsString(i, j);
 				s += o + delim;
 			}
-			v.addElement(s);			
+			v.add(s);			
 		}
 	}
 
@@ -998,7 +999,7 @@ private void submitQuery() {
 
 	StopWatch sw = new StopWatch();
 	sw.start();
-	Vector results = null;
+	List results = null;
         __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);	
 	int records = 0;
 	try {

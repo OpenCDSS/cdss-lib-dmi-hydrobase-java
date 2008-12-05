@@ -110,6 +110,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -302,7 +303,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -321,7 +322,7 @@ public void actionPerformed(ActionEvent evt) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -427,7 +428,7 @@ display the results in by seeing what data type is selected from the
 data type combo box.
 @param results vector data from a query
 */
-private void displayResults(Vector results) {
+private void displayResults(List results) {
 	String routine = "displayResults";
         String dtype  = __dataTypeJComboBox.getSelected().trim();
 
@@ -624,7 +625,7 @@ Responsible for formatting output.
 @param format format delimiter flag defined in this class
 @return formatted Vector for exporting, printing, etc..
 */
-private Vector formatOutput(int format) {
+private List formatOutput(int format) {
         int size = __worksheet.getRowCount();
         if (size == 0) {
                 return new Vector();
@@ -636,11 +637,11 @@ private Vector formatOutput(int format) {
 	int colCount = __worksheet.getColumnCount();
 	String s = "";			
 
-	Vector v = new Vector();
+	List v = new Vector();
 	for (int j = 0; j < colCount; j++) {
 		s += __worksheet.getColumnName(j, true) + delim;
 	}
-	v.addElement(s);
+	v.add(s);
 
 	boolean isSelected = false;
 	int[] selected = __worksheet.getSelectedRows();
@@ -665,7 +666,7 @@ private Vector formatOutput(int format) {
 				d = "" + __worksheet.getValueAtAsString(i, j);
 				s += d + delim;
 			}
-			v.addElement(s);			
+			v.add(s);			
 		}
 	}
 
@@ -684,7 +685,7 @@ private void generateGeophlogsReport() {
 	
 	int well_num = wellView.getWell_num();
 
-	Vector v = null;
+	List v = null;
 
 	try {
 		v = __dmi.readGeophlogsListForWell_num(well_num);
@@ -694,7 +695,7 @@ private void generateGeophlogsReport() {
 		Message.printWarning(2, routine, e);
 	}	
 
-	Vector report = new Vector();
+	List report = new Vector();
 
         PropList reportProps = new PropList("ReportJFrame.props");
         reportProps.set("TotalWidth=750");
@@ -758,7 +759,7 @@ private void generateGeophlogsReport() {
 	report.add(line);
 
 	for (i = 0; i < size; i++) {
-		data = (HydroBase_GroundWaterWellsGeophlogs)v.elementAt(i);
+		data = (HydroBase_GroundWaterWellsGeophlogs)v.get(i);
 
 		aquifer = data.getAquifer_name();
 		if (DMIUtil.isMissing(aquifer)) {
@@ -1130,7 +1131,7 @@ private void submitQuery() {
         String dtype = __dataTypeJComboBox.getSelected().trim();
 	__worksheet.clear();
 	
-	Vector results = new Vector();
+	List results = new Vector();
 	StopWatch sw = new StopWatch();
 
 	if (!__selectedFilterJPanel.checkInput(true)) {
@@ -1349,7 +1350,7 @@ private void viewClicked() {
 			return;
 		}
 
-		Vector tslist = new Vector(num_selected);
+		List tslist = new Vector(num_selected);
 		String wdid = null;
 		String tsid = null;
 		JGUIUtil.setWaitCursor(this, true);
@@ -1420,7 +1421,7 @@ private void viewClicked() {
 					+ ".SymbolStyle=Plus" );
 				props.set("Data 1." + (row + 1) 
 					+ ".SymbolSize=5" );
-				tslist.addElement(ts);
+				tslist.add(ts);
 			} 
 			catch (Exception e) {
 				Message.printWarning(2, routine,

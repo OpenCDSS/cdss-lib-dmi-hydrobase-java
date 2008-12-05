@@ -29,6 +29,7 @@
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -152,23 +153,23 @@ private String[] __districtWhere = null;
 /**
 This is the Vector that holds all the lines of the report.
 */
-private Vector __reportVector = null;
+private List __reportVector = null;
 
 /**
 This is the Vector that holds the results of the query that will be used
 to fill out the reports.
 */
-private Vector __results = null;
+private List __results = null;
 
 /**
 Vector of results from a query of the str_ype table.
 */
-private Vector __strtypesVector = null;
+private List __strtypesVector = null;
 
 /**
 Vector of results from a query of the use table.
 */
-private Vector __useVector = null;
+private List __useVector = null;
 
 /**
 Constructor.  The constructor queries the database for the results that will
@@ -332,16 +333,16 @@ throws Exception {
 
 	// loop through each record and print its information
 	for (int i=0; i<size; i++) {
-		node = (HydroBase_Transact)__results.elementAt(i);
+		node = (HydroBase_Transact)__results.get(i);
 		// print first line - always
-		__reportVector.addElement(getTransactionLine(node, reportType));
+		__reportVector.add(getTransactionLine(node, reportType));
 	
 		if (reportType >= EXTENDED_1) {		
 			// print the comment(if available)for extended 
 			// reports on the second line
 			comment = node.getAction_comment();
 			if (!DMIUtil.isMissing(comment)) {
-				__reportVector.addElement(
+				__reportVector.add(
 					"                             " 
 					+ comment);
 			}		
@@ -374,22 +375,22 @@ Gets a data line for a transaction report.
 private String getTransactionLine(HydroBase_Transact n, int reportType)
 throws Exception {
 	int maxUseLength = 10;
-	Vector v = new Vector(100, 10);
+	List v = new Vector(100, 10);
 	boolean isExtended = false;
 	if (reportType >= EXTENDED_1) {
 		isExtended = true;
 	}	
 
-	v.addElement(format(n.getWD()));
-	v.addElement(format(n.getID()));
-	v.addElement(n.getWr_name());
+	v.add(format(n.getWD()));
+	v.add(format(n.getID()));
+	v.add(n.getWr_name());
 
 	// create structure type string
-	v.addElement(createStructureType(n.getStrtype()));
+	v.add(createStructureType(n.getStrtype()));
 
-	v.addElement(format(n.getWr_stream_no()));
-	v.addElement(n.getWd_stream_name());
-	v.addElement(format(n.getCty()));
+	v.add(format(n.getWr_stream_no()));
+	v.add(n.getWd_stream_name());
+	v.add(format(n.getCty()));
 
 	String q10 = new String(n.getQ10());
 	String q40 = new String(n.getQ40());
@@ -403,89 +404,89 @@ throws Exception {
 	if (DMIUtil.isMissing(q160)) {
 		q160 = "  ";
 	}
-	v.addElement(q10 + q40 + q160);
-	v.addElement(format(n.getSec()));
-	v.addElement(n.getTS() + " " + n.getTdir());
-	v.addElement(n.getRng() + " " + n.getRdir());
-	v.addElement(n.getPM());
-	v.addElement(translateNewToReport(n.getUse(), maxUseLength));
+	v.add(q10 + q40 + q160);
+	v.add(format(n.getSec()));
+	v.add(n.getTS() + " " + n.getTdir());
+	v.add(n.getRng() + " " + n.getRdir());
+	v.add(n.getPM());
+	v.add(translateNewToReport(n.getUse(), maxUseLength));
 
 	if (DMIUtil.isMissing(n.getRate_amt())) {
-		v.addElement(format(n.getVol_amt(), "%12.4f"));
-		v.addElement(getUnit("A"));
+		v.add(format(n.getVol_amt(), "%12.4f"));
+		v.add(getUnit("A"));
 	}
 	else {
-		v.addElement(format(n.getRate_amt(), "%12.4f"));
-		v.addElement(getUnit("C"));
+		v.add(format(n.getRate_amt(), "%12.4f"));
+		v.add(getUnit("C"));
 	}
 
-	v.addElement(createStringAdjType(n));
+	v.add(createStringAdjType(n));
 
 	if (!DMIUtil.isMissing(n.getAdj_date())) {
-		v.addElement((new DateTime(n.getAdj_date())).
+		v.add((new DateTime(n.getAdj_date())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {
-		v.addElement("");
+		v.add("");
 	}
 
 	if (!DMIUtil.isMissing(n.getPadj_date())) {
-		v.addElement((new DateTime(n.getPadj_date())).
+		v.add((new DateTime(n.getPadj_date())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {
-		v.addElement("");
+		v.add("");
 	}
 
 	if (!DMIUtil.isMissing(n.getApro_date())) {
-		v.addElement((new DateTime(n.getApro_date())).
+		v.add((new DateTime(n.getApro_date())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {
-		v.addElement("");
+		v.add("");
 	}
 
-	v.addElement(format(n.getOrder_no()));
+	v.add(format(n.getOrder_no()));
 
 	double admin_no = n.getAdmin_no();
 
 	if (admin_no == __lastAdminNum) {
-		v.addElement(new String(format(admin_no, "%11.5f")+ "*"));
+		v.add(new String(format(admin_no, "%11.5f")+ "*"));
 	}
 	else {
-		v.addElement(new String(format(admin_no, "%11.5f")));
+		v.add(new String(format(admin_no, "%11.5f")));
 	}
 	// keep track of the last admin number
 	__lastAdminNum = admin_no;
 
-	v.addElement(n.getPrior_no());
-	v.addElement(n.getCase_no());
-	v.addElement(n.getAug_role());
+	v.add(n.getPrior_no());
+	v.add(n.getCase_no());
+	v.add(n.getAug_role());
 
 	// create alter ID
 	if (n.getTransfer_type()!= null) {
-		v.addElement(format(n.getTran_wd())+ format(n.getTran_id()));
+		v.add(format(n.getTran_wd())+ format(n.getTran_id()));
 	}
 	else if (n.getAssoc_type()!= null) {
-		v.addElement(format(n.getAssoc_wd())+ format(n.getAssoc_id()));
+		v.add(format(n.getAssoc_wd())+ format(n.getAssoc_id()));
 	}
 	else {
-		v.addElement("");
+		v.add("");
 	}
 
 	if (isExtended) {
-		v.addElement(format(n.getPlan_wd())+ format(n.getPlan_id()));
-		v.addElement(n.getLast_due_dil());
+		v.add(format(n.getPlan_wd())+ format(n.getPlan_id()));
+		v.add(n.getLast_due_dil());
 		if (n.getAction_update()!= null) {
-			v.addElement((new DateTime(n.getAction_update())).
+			v.add((new DateTime(n.getAction_update())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 		}
 		else {	
-			v.addElement("");
+			v.add("");
 		}
 	}
 	else {
-		v.addElement(n.getAction_comment());
+		v.add(n.getAction_comment());
 	}
 
 	if (isExtended) {
@@ -505,10 +506,10 @@ Returns a header for a transaction report.
 the first values in the report vector.
 @throws Exception if an error occurs.
 */
-private Vector getTransactionReportHeader(int reportType)
+private List getTransactionReportHeader(int reportType)
 throws Exception {
-	Vector v = new Vector(17, 1);
-	Vector report = new Vector();
+	List v = new Vector(17, 1);
+	List report = new Vector();
 
 	boolean isExtended = false;
 	if (reportType >= EXTENDED_1) {
@@ -561,91 +562,91 @@ throws Exception {
 	// 
 	// explanation of codes header
 	//
-	report.addElement(
+	report.add(
 		"                              START --> W A T E R  " +
 		"R I G H T S  R E P O R T");
-	report.addElement(
+	report.add(
 		"                                           " + 
 		((new DateTime(new Date())).
 		toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY)));
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement(
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add(
 		"                                Title:         " +
 		region);
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement(
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add(
 		"---------------------------------------------" +
 		"------------------------------" +
 		"-------------------------------------------" +
 		"--------------------------------");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("         E X P L A N A T I O N  O F  " +
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("         E X P L A N A T I O N  O F  " +
 		"C O D E S");
-	report.addElement("");
-	report.addElement("");
-	report.addElement(
+	report.add("");
+	report.add("");
+	report.add(
 		"         Struct Type: D ditch, E seep, " +
 		"L pipeline, M mine, O other, P pump, R reservoir, " +
 		"S spring, W well, Z power plant, * means more than " +
 		"three structure types are decreed");
-	report.addElement("");
-	report.addElement("");
-	report.addElement(
+	report.add("");
+	report.add("");
+	report.add(
 		"         Use Codes:   A augmentation, B basin " +
 		"export, C commercial, D domestic, E evaporation, " +
 		"F fire, f forest, G geothermal, H household use " +
 		"only, I irrigation,");
-	report.addElement("");
-	report.addElement(
+	report.add("");
+	report.add(
 		"                      K snowmaking, M municipal, " +
 		"m minimum streamflow, N industrial, O other, P " +
 		"fishery, p power generation, R recreation, r " +
 		"recharge, S stock,");
-	report.addElement("");
-	report.addElement(
+	report.add("");
+	report.add(
 		"                      W wildlife, X all beneficial " +
 		"uses, * means more than three uses are decreed");
-	report.addElement("");
-	report.addElement("");
-	report.addElement(
+	report.add("");
+	report.add("");
+	report.add(
 	"         Adj Type:    AB abandoned, AP alternate " +
 	"point, C conditional, CA conditional made absolute, " +
 	"EX exchange, O original, S supplemental, TF " +
 	"transfer from, TT transfer to");
-	report.addElement("");
-	report.addElement("");
-	report.addElement(
+	report.add("");
+	report.add("");
+	report.add(
 		"         Admin Number is a number developed by " +
 		"DWR to provide a simple and efficient method of " +
 		"ranking decrees in order of seniority.");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
-	report.addElement("");
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("");
+	report.add("");
 
 	//
 	// column header
 	//
-	report.addElement(region + "    " +
+	report.add(region + "    " +
 		((new DateTime(new Date())).
 		toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY))+
 		"                                                   " + 
 		"                      " + typeString +
 		"   W A T E R   R I G H T S   R E P O R T");
-	report.addElement("");
+	report.add("");
 
 	// NOTE:
 	// some of the column titles are left justified, some are right
@@ -653,74 +654,74 @@ throws Exception {
 	// justication are handled with the format string.  To center,
 	// I have specified left justification
 	// in the format string and added spaces preceeding
-	// the word itself in the following addElements.  
+	// the word itself in the following adds.  
 	//
 
 	// add column titles, line 1
-	v.addElement("WD");
-	v.addElement("ID");
-	v.addElement("NAME OF STRUCTURE");
-	v.addElement("STRUCTURE");
-	v.addElement("-------- STREAM --------");
-	v.addElement("--- L O C A T I O N  ---");
-	v.addElement("  USE");
-	v.addElement("DECREED");
-	v.addElement("U");
-	v.addElement("ADJ");
-	v.addElement("   ADJ");
-	v.addElement("PREV ADJ");
-	v.addElement("  APPROP");
-	v.addElement("O");
-	v.addElement("   ADMIN");
-	v.addElement(" PRIOR");
-	v.addElement("COURT");
-	v.addElement("P");
-	v.addElement(" ALTER");
+	v.add("WD");
+	v.add("ID");
+	v.add("NAME OF STRUCTURE");
+	v.add("STRUCTURE");
+	v.add("-------- STREAM --------");
+	v.add("--- L O C A T I O N  ---");
+	v.add("  USE");
+	v.add("DECREED");
+	v.add("U");
+	v.add("ADJ");
+	v.add("   ADJ");
+	v.add("PREV ADJ");
+	v.add("  APPROP");
+	v.add("O");
+	v.add("   ADMIN");
+	v.add(" PRIOR");
+	v.add("COURT");
+	v.add("P");
+	v.add(" ALTER");
 	if (isExtended) {
-		v.addElement("PLAN");
-		v.addElement("LAST");
-		v.addElement("LAST");
+		v.add("PLAN");
+		v.add("LAST");
+		v.add("LAST");
 	}
 	else {
-		v.addElement("COMMENTS");
+		v.add("COMMENTS");
 	}
 
-	report.addElement(StringUtil.formatString(v, topHeader));
+	report.add(StringUtil.formatString(v, topHeader));
 
 	// add column titles, line 2
-	v.removeAllElements();
-	v.addElement("");
-	v.addElement("");
-	v.addElement("");
-	v.addElement("TYPE");
-	v.addElement(" #   NAME");
-	v.addElement("Cty Q-Q-Q Sec TS  Rng  PM");
-	v.addElement(" CODE");
-	v.addElement("AMOUNT");
-	v.addElement("");
-	v.addElement("TYP");
-	v.addElement("   DATE");
-	v.addElement("   DATE");
-	v.addElement("   DATE");
-	v.addElement("#");
-	v.addElement("   NUMBER");
-	v.addElement("  NO");
-	v.addElement("CASE");
-	v.addElement("A");
-	v.addElement("  ID");
+	v.clear();
+	v.add("");
+	v.add("");
+	v.add("");
+	v.add("TYPE");
+	v.add(" #   NAME");
+	v.add("Cty Q-Q-Q Sec TS  Rng  PM");
+	v.add(" CODE");
+	v.add("AMOUNT");
+	v.add("");
+	v.add("TYP");
+	v.add("   DATE");
+	v.add("   DATE");
+	v.add("   DATE");
+	v.add("#");
+	v.add("   NUMBER");
+	v.add("  NO");
+	v.add("CASE");
+	v.add("A");
+	v.add("  ID");
 	if (isExtended) {
-		v.addElement("ID");
-		v.addElement("DILIGENCE");
-		v.addElement("UPDATE");
+		v.add("ID");
+		v.add("DILIGENCE");
+		v.add("UPDATE");
 	}
 	else {
-		v.addElement("");
+		v.add("");
 	}
 
-	report.addElement(StringUtil.formatString(v, topHeader));
+	report.add(StringUtil.formatString(v, topHeader));
 	
 	// add ---
-	report.addElement(dividerLine);
+	report.add(dividerLine);
 	return report;
 }
 
@@ -761,7 +762,7 @@ throws Exception {
 Returns the report that was generated.
 @return the report that was generated.
 */
-public Vector getReport() {
+public List getReport() {
 	return __reportVector;
 }
 
@@ -782,7 +783,7 @@ throws Exception {
 	int size = __strtypesVector.size();
 
 	for (int i = 0; i < size; i++) {
-		hbst = (HydroBase_StrType)(__strtypesVector.elementAt(i));
+		hbst = (HydroBase_StrType)(__strtypesVector.get(i));
 
 		if (hbst.getStr_type().equalsIgnoreCase(structureType)) {
 			return hbst.getRpt_code();
@@ -845,7 +846,7 @@ throws Exception {
 	}
 	int size = __useVector.size();
 	for (int i = 0; i < size; i++) {
-		HydroBase_Use u = (HydroBase_Use)__useVector.elementAt(i);
+		HydroBase_Use u = (HydroBase_Use)__useVector.get(i);
 		if (u.getUse().equalsIgnoreCase(s)) {
 			return i;
 		}
@@ -879,7 +880,7 @@ throws Exception {
 		int index = lookupUsingUse(use); 
 		if (index >= 0) {
 			report += ((HydroBase_Use)
-				__useVector.elementAt(index)).getRpt_code();
+				__useVector.get(index)).getRpt_code();
 		}
 
 		if (report.length() == (maxLength)) {

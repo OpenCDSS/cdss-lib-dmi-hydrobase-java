@@ -21,7 +21,7 @@
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
@@ -60,7 +60,7 @@ Constructor.  This builds the Model for displaying the given calls.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Calls(Vector results) 
+public HydroBase_TableModel_Calls(List results) 
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -173,7 +173,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_Calls c = (HydroBase_Calls)_data.elementAt(row);
+	HydroBase_Calls c = (HydroBase_Calls)_data.get(row);
 	Date d;
 	switch (col) {
 		case COL_START:		

@@ -17,7 +17,7 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.awt.Color;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
@@ -68,12 +68,11 @@ Constructor.  This builds the Model for displaying the wis data.
 @param editable whether the data can be edited or not.
 @throws Exception if invalid data were passed in.
 */
-public HydroBase_TableModel_WIS(Vector data, HydroBase_GUI_WIS wis,
+public HydroBase_TableModel_WIS(List data, HydroBase_GUI_WIS wis,
 boolean editable)
 throws Exception {
 	if (data == null) {
-		throw new Exception ("Invalid data Vector passed to " 
-			+ "HydroBase_TableModel_WIS constructor.");
+		throw new Exception ("Invalid data Vector passed to HydroBase_TableModel_WIS constructor.");
 	}
 	_rows = data.size();
 	_data = data;
@@ -225,8 +224,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -241,7 +239,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_WISData w = (HydroBase_WISData)_data.elementAt(row);
+	HydroBase_WISData w = (HydroBase_WISData)_data.get(row);
 	switch (col) {
 		case HydroBase_GUI_WIS.ROW_LABEL_COL:	
 			return w.getRow_label();
@@ -346,7 +344,7 @@ public boolean isCellEditable(int rowIndex, int columnIndex) {
 
 public void setValueAt(Object o, int row, int col) {
 	// o will always be passed in as a String -- convert accordingly
-	HydroBase_WISData w = (HydroBase_WISData)_data.elementAt(row);
+	HydroBase_WISData w = (HydroBase_WISData)_data.get(row);
 	boolean valueSet = false;
 	boolean commentSet = false;
 	switch (col) {

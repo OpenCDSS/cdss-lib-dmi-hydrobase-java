@@ -49,6 +49,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -365,7 +366,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 
 	 		// First format the output...
-			Vector outputStrings = formatOutput();
+			List outputStrings = formatOutput();
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -377,7 +378,7 @@ public void actionPerformed(ActionEvent event) {
         }
         else if ("Print".equals(actionCommand)) {
 		try {
-			Vector outputStrings = formatOutput();
+			List outputStrings = formatOutput();
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -572,160 +573,160 @@ throws Throwable {
 Formats the data for output as export or print.
 @return a Vector of strings, each of which is a line in the GUI.
 */
-public Vector formatOutput() {
-	Vector v = new Vector(30, 5);
-	Vector tmpV = new Vector(10,5);
+public List formatOutput() {
+	List v = new Vector(30, 5);
+	List tmpV = new Vector(10,5);
 
 	if (__table == NET_AMOUNTS) {
-		v.addElement("Water Right - Net Amounts");
+		v.add("Water Right - Net Amounts");
 	}
 	else {
-		v.addElement("Water Right - Transaction");
+		v.add("Water Right - Transaction");
 	}
 
-	v.addElement("Water Right Name");
-	v.addElement(__wrnameJTextField.getText());
+	v.add("Water Right Name");
+	v.add(__wrnameJTextField.getText());
 
-        v.addElement("");
-	v.addElement("DIV   WD    ID");
-	tmpV.removeAllElements();
-	tmpV.addElement(__divJTextField.getText());
-	tmpV.addElement(__wdJTextField.getText());
-	tmpV.addElement(__idJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-6.6s%-6.6s%-6.6s"));
+        v.add("");
+	v.add("DIV   WD    ID");
+	tmpV.clear();
+	tmpV.add(__divJTextField.getText());
+	tmpV.add(__wdJTextField.getText());
+	tmpV.add(__idJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-6.6s%-6.6s%-6.6s"));
 
-        v.addElement("");
-	v.addElement("Water Source");
-	v.addElement(__sourceJTextField.getText());
+        v.add("");
+	v.add("Water Source");
+	v.add(__sourceJTextField.getText());
 
-        v.addElement("");
-	v.addElement("County");
-	v.addElement(__countyJTextField.getText());
-	v.addElement("Location Coordinates");
-	v.addElement(
+        v.add("");
+	v.add("County");
+	v.add(__countyJTextField.getText());
+	v.add("Location Coordinates");
+	v.add(
 		"PM    TWN   TDIR   RNG   RDIR   SEC   SECA  Q160  Q40   Q10");
-	tmpV.removeAllElements();
-	tmpV.addElement(__pmJTextField.getText());
-	tmpV.addElement(__twnJTextField.getText());
-	tmpV.addElement(__tdirJTextField.getText());
-	tmpV.addElement(__rngJTextField.getText());
-	tmpV.addElement(__rdirJTextField.getText());
-	tmpV.addElement(__secJTextField.getText());
-	tmpV.addElement(__secaJTextField.getText());
-	tmpV.addElement(__q160JTextField.getText());
-	tmpV.addElement(__q40JTextField.getText());
-	tmpV.addElement(__q10JTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, 
+	tmpV.clear();
+	tmpV.add(__pmJTextField.getText());
+	tmpV.add(__twnJTextField.getText());
+	tmpV.add(__tdirJTextField.getText());
+	tmpV.add(__rngJTextField.getText());
+	tmpV.add(__rdirJTextField.getText());
+	tmpV.add(__secJTextField.getText());
+	tmpV.add(__secaJTextField.getText());
+	tmpV.add(__q160JTextField.getText());
+	tmpV.add(__q40JTextField.getText());
+	tmpV.add(__q10JTextField.getText());
+	v.add(StringUtil.formatString(tmpV, 
 		"%-6.6s%-6.6s%-6.6s%-6.6s%-6.6s%-6.6s%-6.6s%-6.6s"));
 
-	v.addElement("");
-	v.addElement(
+	v.add("");
+	v.add(
 		"Adjudication Date   Prior Adj Date   Appropriation Date");
-	tmpV.removeAllElements();
-	tmpV.addElement(__adjDateJTextField.getText());
-	tmpV.addElement(__padjDateJTextField.getText());
-	tmpV.addElement(__aproDateJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-20.20s%-17.17s%s"));
+	tmpV.clear();
+	tmpV.add(__adjDateJTextField.getText());
+	tmpV.add(__padjDateJTextField.getText());
+	tmpV.add(__aproDateJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-20.20s%-17.17s%s"));
 
-	v.addElement("");
+	v.add("");
 	if (__table == NET_AMOUNTS) {
-		v.addElement(
+		v.add(
 		"Administration No   Order No         Prior/Case No");
 	}
 	else {	
-		v.addElement(
+		v.add(
 		"Administration No   Order No         Prior No");
 	}
-	tmpV.removeAllElements();
-	tmpV.addElement(__adminNoJTextField.getText());
-	tmpV.addElement(__orderNoJTextField.getText());
-	tmpV.addElement(__priorNoJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-20.20s%-17.17s%s"));
+	tmpV.clear();
+	tmpV.add(__adminNoJTextField.getText());
+	tmpV.add(__orderNoJTextField.getText());
+	tmpV.add(__priorNoJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-20.20s%-17.17s%s"));
 
-	v.addElement("");
-	v.addElement(
+	v.add("");
+	v.add(
 		"Adjudication Type   Use Type         Struct Type");
-	tmpV.removeAllElements();
-	tmpV.addElement(__adjTypeJTextField.getText());
-	tmpV.addElement(__useTypeJTextField.getText());
-	tmpV.addElement(__structTypeJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-20.20s%-17.17s%s"));
+	tmpV.clear();
+	tmpV.add(__adjTypeJTextField.getText());
+	tmpV.add(__useTypeJTextField.getText());
+	tmpV.add(__structTypeJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-20.20s%-17.17s%s"));
 
 	if (__table == NET_AMOUNTS)
 	{
-	v.addElement("");
-	v.addElement("Rate Abs (cfs):         Vol Abs (acft)");
-	tmpV.removeAllElements();
-	tmpV.addElement(__rateAbsJTextField.getText().trim());
-	tmpV.addElement(__volAbsJTextField.getText().trim());
-	v.addElement(StringUtil.formatString(tmpV, "%-24.24s%s"));
+	v.add("");
+	v.add("Rate Abs (cfs):         Vol Abs (acft)");
+	tmpV.clear();
+	tmpV.add(__rateAbsJTextField.getText().trim());
+	tmpV.add(__volAbsJTextField.getText().trim());
+	v.add(StringUtil.formatString(tmpV, "%-24.24s%s"));
 
-	v.addElement("");
-	v.addElement("Rate Cond (cfs):        Vol Cond (acft)");
-	tmpV.removeAllElements();
-	tmpV.addElement(__rateCondJTextField.getText().trim());
-	tmpV.addElement(__volCondJTextField.getText().trim());
-	v.addElement(StringUtil.formatString(tmpV, "%-24.24s%s"));
+	v.add("");
+	v.add("Rate Cond (cfs):        Vol Cond (acft)");
+	tmpV.clear();
+	tmpV.add(__rateCondJTextField.getText().trim());
+	tmpV.add(__volCondJTextField.getText().trim());
+	v.add(StringUtil.formatString(tmpV, "%-24.24s%s"));
 
-	v.addElement("");
-	v.addElement("Rate Apex (cfs)        Vol Apex (acft)");
-	tmpV.removeAllElements();
-	tmpV.addElement(__rateApexJTextField.getText().trim());
-	tmpV.addElement(__volApexJTextField.getText().trim());
-	v.addElement(StringUtil.formatString(tmpV, "%-24.24s%s"));
+	v.add("");
+	v.add("Rate Apex (cfs)        Vol Apex (acft)");
+	tmpV.clear();
+	tmpV.add(__rateApexJTextField.getText().trim());
+	tmpV.add(__volApexJTextField.getText().trim());
+	v.add(StringUtil.formatString(tmpV, "%-24.24s%s"));
 	}
 	else {
 		// if (__table == TRANSACT)
-	v.addElement("");
-	v.addElement("Rate Amt (cfs)         Vol Amt (acft)");
-	tmpV.removeAllElements();
-	tmpV.addElement(__rateAmtJTextField.getText().trim());
-	tmpV.addElement(__volAmtJTextField.getText().trim());
-	v.addElement(StringUtil.formatString(tmpV, "%-24.24s%s"));
+	v.add("");
+	v.add("Rate Amt (cfs)         Vol Amt (acft)");
+	tmpV.clear();
+	tmpV.add(__rateAmtJTextField.getText().trim());
+	tmpV.add(__volAmtJTextField.getText().trim());
+	v.add(StringUtil.formatString(tmpV, "%-24.24s%s"));
 
-	v.addElement("");
-	v.addElement("Aband       Status      Case No");
-	tmpV.removeAllElements();
-	tmpV.addElement(__abandJTextField.getText());
-	tmpV.addElement(__wrstatusJTextField.getText());
-	tmpV.addElement(__caseNoJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
+	v.add("");
+	v.add("Aband       Status      Case No");
+	tmpV.clear();
+	tmpV.add(__abandJTextField.getText());
+	tmpV.add(__wrstatusJTextField.getText());
+	tmpV.add(__caseNoJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
 
-	v.addElement("");
-	v.addElement("Assoc Type  Assoc WD    Assoc ID");
-	tmpV.removeAllElements();
-	tmpV.addElement(__assocTypeJTextField.getText());
-	tmpV.addElement(__assocWDJTextField.getText());
-	tmpV.addElement(__assocIDJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
+	v.add("");
+	v.add("Assoc Type  Assoc WD    Assoc ID");
+	tmpV.clear();
+	tmpV.add(__assocTypeJTextField.getText());
+	tmpV.add(__assocWDJTextField.getText());
+	tmpV.add(__assocIDJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
 
-	v.addElement("");
-	v.addElement("Aug Role    Plan WD     Plan ID");
-	tmpV.removeAllElements();
-	tmpV.addElement(__augRoleJTextField.getText());
-	tmpV.addElement(__planWDJTextField.getText());
-	tmpV.addElement(__planIDJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
+	v.add("");
+	v.add("Aug Role    Plan WD     Plan ID");
+	tmpV.clear();
+	tmpV.add(__augRoleJTextField.getText());
+	tmpV.add(__planWDJTextField.getText());
+	tmpV.add(__planIDJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
 
-	v.addElement("");
-	v.addElement("Trans Type  Trans WD    Trans ID");
-	tmpV.removeAllElements();
-	tmpV.addElement(__transTypeJTextField.getText());
-	tmpV.addElement(__tranWDJTextField.getText());
-	tmpV.addElement(__tranIDJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
+	v.add("");
+	v.add("Trans Type  Trans WD    Trans ID");
+	tmpV.clear();
+	tmpV.add(__transTypeJTextField.getText());
+	tmpV.add(__tranWDJTextField.getText());
+	tmpV.add(__tranIDJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
 
-	v.addElement("");
-	v.addElement("LastDueDil  Action Update");
-	tmpV.removeAllElements();
-	tmpV.addElement(__lastDueDilJTextField.getText());
-	tmpV.addElement(__actionUpdateJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-12.12s%s"));
+	v.add("");
+	v.add("LastDueDil  Action Update");
+	tmpV.clear();
+	tmpV.add(__lastDueDilJTextField.getText());
+	tmpV.add(__actionUpdateJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-12.12s%s"));
 	}
 
-	v.addElement("");
-	v.addElement("Action Comment");
-	v.addElement(__actionCommentJTextArea.getText());
+	v.add("");
+	v.add("Action Comment");
+	v.add(__actionCommentJTextArea.getText());
 
         return v;
 }

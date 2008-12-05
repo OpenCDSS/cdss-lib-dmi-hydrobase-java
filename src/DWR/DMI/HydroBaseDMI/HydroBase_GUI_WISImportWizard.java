@@ -45,6 +45,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JLabel;
@@ -179,7 +180,7 @@ private SimpleJComboBox
 /**
 Vectors to hold data objects.
 */
-private	Vector
+private	List
 	__infoVector,
 	__wisVector;
 
@@ -377,18 +378,18 @@ private void generateWISSheets() {
 	__wisNameSimpleJComboBox.removeAll();
 
 	// get the water districts as selected from user preferences
-	Vector wd = HydroBase_GUI_Util.generateWaterDistricts(__dmi);
+	List wd = HydroBase_GUI_Util.generateWaterDistricts(__dmi);
 
-	Vector wds = new Vector();
+	List wds = new Vector();
 	// initialize variables
 	if (wd != null && wd.size() > 0) {
 		int size = wd.size();
 		for (int count = 0; count < size; count++) {
-			wds.add("" +  wd.elementAt(count));
+			wds.add("" +  wd.get(count));
 		}
 	}
 	
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readWISSheetNameList(wds, true);
 	}
@@ -408,18 +409,18 @@ private void generateWISSheets() {
 	// the sheet name and most recent date into the SimpleJComboBox object 
 	// and Vector accordingly.
 	int size = results.size();
-	__wisVector.removeAllElements();
+	__wisVector.clear();
 	HydroBase_WISSheetName wis = null;
 	String recentSheet = null;
 	String curSheet = null;
 	for (int count = 0; count < size; count++) {
-		wis = (HydroBase_WISSheetName)results.elementAt(count);
+		wis = (HydroBase_WISSheetName)results.get(count);
 
 		curSheet = wis.getSheet_name();
 		
 		if (!curSheet.equals(recentSheet)) {
 			__wisNameSimpleJComboBox.add(curSheet);
-			__wisVector.addElement(wis);
+			__wisVector.add(wis);
 			recentSheet = curSheet;
 		}
 	}
@@ -445,7 +446,7 @@ private String getInfoString() {
 
 	// return the correct info string based on wizard step.
 	int i = getWizardStep();
-	s = (String)__infoVector.elementAt(i - 1);
+	s = (String)__infoVector.get(i - 1);
 
 	return s;
 }
@@ -697,7 +698,7 @@ private void setupGUI() {
 		+ "process of\nimporting a Data Source into the Water "
 		+ "Information Sheet. Select from\nthe available Data Sources "
 		+ "displayed in the list and then proceed.\n";
-	__infoVector.addElement(info);
+	__infoVector.add(info);
 
 	JPanel step1JPanel = new JPanel();
 	step1JPanel.setLayout(gbl);
@@ -719,7 +720,7 @@ private void setupGUI() {
 	// Step 2: RT JPanel
 	//---------------------------------------------------------------------
 	info = "Select a Data Source from the list and then proceed.\n";
-	__infoVector.addElement(info);
+	__infoVector.add(info);
 
 	JPanel step2_RTJPanel = new JPanel();
 	step2_RTJPanel.setLayout(gbl);
@@ -1000,7 +1001,7 @@ private void submitRTQuery() {
 		return;
 	}
 
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readStationGeolocMeasTypeList(null,
 			district, null, "%RT_rate%", null, null, null, "1",
@@ -1036,10 +1037,10 @@ private void submitWISQuery() {
         JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Forming row label list...");
 
-	int wisNum = ((HydroBase_WISSheetName)__wisVector.elementAt(
+	int wisNum = ((HydroBase_WISSheetName)__wisVector.get(
 		__wisNameSimpleJComboBox.getSelectedIndex())).getWis_num();
 
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readWISFormatList(wisNum, 
 			HydroBase_GUI_WIS.STRING, null);

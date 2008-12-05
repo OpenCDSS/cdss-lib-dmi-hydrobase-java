@@ -16,6 +16,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
@@ -40,7 +41,7 @@ public HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel (
 throws Exception
 {	// For now do these queries here with available low-level code...
 
-	Vector v = hbdmi.readAgriculturalNASSCropStatsList (
+	List v = hbdmi.readAgriculturalNASSCropStatsList (
 					null,	// Where clauses
 					null,	// county
 					null,	// commodity
@@ -51,38 +52,38 @@ throws Exception
 	if ( v != null ) {
 		size = v.size();
 	}
-	Vector commodity_Vector = new Vector();
+	List commodity_Vector = new Vector();
 	String commodity;
 	HydroBase_AgriculturalNASSCropStats agstats = null;
 	int commodity_size = 0, j = 0;
 	boolean found = false;
 	for ( int i = 0; i < size; i++ ) {
-		agstats = (HydroBase_AgriculturalNASSCropStats)v.elementAt(i);
+		agstats = (HydroBase_AgriculturalNASSCropStats)v.get(i);
 		commodity = agstats.getCommodity();
 		commodity_size = commodity_Vector.size();
 		found = false;
 		for ( j = 0; j < commodity_size; j++ ) {
 			if (	commodity.equalsIgnoreCase(
-				(String)commodity_Vector.elementAt(j))){
+				(String)commodity_Vector.get(j))){
 				found = true;
 				break;
 			}
 		}
 		if ( !found ) {
-			commodity_Vector.addElement(commodity);
+			commodity_Vector.add(commodity);
 		}
 	}
 
-	Vector county_data_Vector = hbdmi.getCountyRef();
-	Vector county_Vector = new Vector ( county_data_Vector.size() );
-	Vector county_internal_Vector = new Vector ( county_data_Vector.size());
+	List county_data_Vector = hbdmi.getCountyRef();
+	List county_Vector = new Vector ( county_data_Vector.size() );
+	List county_internal_Vector = new Vector ( county_data_Vector.size());
 	size = county_data_Vector.size();
 	HydroBase_CountyRef county;
 	for ( int i = 0; i < size; i++ ) {
-		county = (HydroBase_CountyRef)county_data_Vector.elementAt(i);
-		county_Vector.addElement (
+		county = (HydroBase_CountyRef)county_data_Vector.get(i);
+		county_Vector.add (
 			county.getCounty() + ", " + county.getST() );
-		county_internal_Vector.addElement (county.getCounty() );
+		county_internal_Vector.add (county.getCounty() );
 	}
 
 	// REVISIT - remove hard-code later
@@ -90,8 +91,8 @@ throws Exception
 	//st_Vector.addElement ( "CO" );
 	//Vector st_internal_Vector = new Vector(1);
 	//st_internal_Vector.addElement ( "CO" );
-	Vector input_filters = new Vector(8);
-	input_filters.addElement ( new InputFilter ( "", "",
+	List input_filters = new Vector(8);
+	input_filters.add ( new InputFilter ( "", "",
 			StringUtil.TYPE_STRING,
 			null, null, true ) );	// Blank to disable filter
 	//filter = new InputFilter (
@@ -106,8 +107,8 @@ throws Exception
 		StringUtil.TYPE_STRING,
 		county_Vector, county_internal_Vector, true );
 	filter.setTokenInfo(",",0);	// Counties show name, state
-	input_filters.addElement ( filter );
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( filter );
+	input_filters.add ( new InputFilter (
 		"Commodity", "agricultural_nass_crop_stats.commodity",
 		"commodity",
 		StringUtil.TYPE_STRING,

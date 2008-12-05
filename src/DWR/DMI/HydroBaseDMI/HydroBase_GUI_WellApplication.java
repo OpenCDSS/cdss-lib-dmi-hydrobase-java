@@ -35,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -182,7 +183,7 @@ public void actionPerformed(ActionEvent event) {
         else if (actionCommand.equals(__BUTTON_EXPORT)) {
 		try {
 	 		// First format the output...
-			Vector outputStrings = formatOutput(
+			List outputStrings = formatOutput(
 				HydroBase_GUI_Util.SCREEN_VIEW);
  			// Now export, letting the user decide the file...
 			ExportJGUI.export(this, outputStrings);			
@@ -197,7 +198,7 @@ public void actionPerformed(ActionEvent event) {
         else if (actionCommand.equals(__BUTTON_PRINT)) {
 		try {
 	 		// First format the output...
-			Vector outputStrings = formatOutput(
+			List outputStrings = formatOutput(
 				HydroBase_GUI_Util.SCREEN_VIEW);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
@@ -302,172 +303,172 @@ Formats the data for output.
 SUMMARY) or a flag that specifies the delimiter to use.
 @return a formatted Vector for exporting, printing, etc..
 */
-public Vector formatOutput(int FORMAT) {
-	Vector v = new Vector();
-	Vector tmpV = new Vector();
+public List formatOutput(int FORMAT) {
+	List v = new Vector();
+	List tmpV = new Vector();
 
         char delim = HydroBase_GUI_Util.getDelimiterForFormat(FORMAT);
 
 /*
-	v.addElement("Name");
-	v.addElement(__xrefOwnerNameJTextField.getText());
+	v.add("Name");
+	v.add(__xrefOwnerNameJTextField.getText());
 
-        v.addElement("");
-	v.addElement("City");
-	v.addElement(__xrefCityJTextField.getText());
+        v.add("");
+	v.add("City");
+	v.add(__xrefCityJTextField.getText());
 */
-        v.addElement("");
-	v.addElement("Case No             XRef#");
-	v.addElement(StringUtil.formatString(
+        v.add("");
+	v.add("Case No             XRef#");
+	v.add(StringUtil.formatString(
 		__caseNoJTextField.getText(), "%-20.20s")
 		+ __wellxNoJTextField.getText() + " "
 		+ __wellxSufJTextField.getText() + " "
 		+ __wellxRplJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Well Name");
-	v.addElement(__wellNameJTextField.getText());
+        v.add("");
+	v.add("Well Name");
+	v.add(__wellNameJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Statute");
-	v.addElement(__statuteJTextField.getText());
+        v.add("");
+	v.add("Statute");
+	v.add(__statuteJTextField.getText());
 
 /*
-        v.addElement("");
-	v.addElement("County");
-	v.addElement(__xrefCtyJTextField.getText());
+        v.add("");
+	v.add("County");
+	v.add(__xrefCtyJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Location Coordinates");
-	v.addElement(__xrefLocationJTextField.getText());
+        v.add("");
+	v.add("Location Coordinates");
+	v.add(__xrefLocationJTextField.getText());
 */
 
-        v.addElement("");
-	v.addElement("Subdivision Name");
-	v.addElement(__subdivNameJTextField.getText());
+        v.add("");
+	v.add("Subdivision Name");
+	v.add(__subdivNameJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Lot     Block   Filing");
-	tmpV.addElement(__lotJTextField.getText());
-	tmpV.addElement(__blockJTextField.getText());
-	tmpV.addElement(__filingJTextField.getText());
-	v.addElement(StringUtil.formatString(tmpV, "%-8.8s%-8.8s%s"));
+        v.add("");
+	v.add("Lot     Block   Filing");
+	tmpV.add(__lotJTextField.getText());
+	tmpV.add(__blockJTextField.getText());
+	tmpV.add(__filingJTextField.getText());
+	v.add(StringUtil.formatString(tmpV, "%-8.8s%-8.8s%s"));
 
-        v.addElement("");
-	v.addElement("Parcel ID");
-	v.addElement(__parcelNoJTextField.getText());
+        v.add("");
+	v.add("Parcel ID");
+	v.add(__parcelNoJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Acres in Tract");
-	v.addElement(__parcelSizeJTextField.getText());
+        v.add("");
+	v.add("Acres in Tract");
+	v.add(__parcelSizeJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Use 1");
-	v.addElement(__use1JTextField.getText());
+        v.add("");
+	v.add("Use 1");
+	v.add(__use1JTextField.getText());
 
-        v.addElement("");
-	v.addElement("Use 2");
-	v.addElement(__use2JTextField.getText());
+        v.add("");
+	v.add("Use 2");
+	v.add(__use2JTextField.getText());
 
-        v.addElement("");
-	v.addElement("Use 3");
-	v.addElement(__use3JTextField.getText());
+        v.add("");
+	v.add("Use 3");
+	v.add(__use3JTextField.getText());
 
-        v.addElement("");
-	v.addElement("Area Irrigated");
-	v.addElement(__areaIrrJTextField.getText().trim() + " "
+        v.add("");
+	v.add("Area Irrigated");
+	v.add(__areaIrrJTextField.getText().trim() + " "
 		+ __irrMeasJTextField.getText());
 
-        v.addElement("");
-	v.addElement("          Pump Rate   Acre Feet   Depth (ft)");
-	tmpV.removeAllElements();
-	tmpV.addElement(__pyieldJTextField.getText());
-	tmpV.addElement(__pacreftJTextField.getText());
-	tmpV.addElement(__pdepthJTextField.getText());
-	v.addElement("Proposed  "
+        v.add("");
+	v.add("          Pump Rate   Acre Feet   Depth (ft)");
+	tmpV.clear();
+	tmpV.add(__pyieldJTextField.getText());
+	tmpV.add(__pacreftJTextField.getText());
+	tmpV.add(__pdepthJTextField.getText());
+	v.add("Proposed  "
 		+ StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
-	tmpV.removeAllElements();
-	tmpV.addElement(__yieldJTextField.getText());
-	tmpV.addElement(__acreFtJTextField.getText());
-	tmpV.addElement(__depthJTextField.getText());
-	v.addElement("Actual    "
+	tmpV.clear();
+	tmpV.add(__yieldJTextField.getText());
+	tmpV.add(__acreFtJTextField.getText());
+	tmpV.add(__depthJTextField.getText());
+	v.add("Actual    "
 		+ StringUtil.formatString(tmpV, "%-12.12s%-12.12s%s"));
 
-        v.addElement("");
-	v.addElement("Elevation Top       Bottom    Water Level");
-	tmpV.removeAllElements ();
-	tmpV.addElement(__elevJTextField.getText());
-	tmpV.addElement(__tperfJTextField.getText());
-	tmpV.addElement(__bperfJTextField.getText());
-	tmpV.addElement(__levelJTextField.getText());
-	v.addElement(StringUtil.formatString(
+        v.add("");
+	v.add("Elevation Top       Bottom    Water Level");
+	tmpV.clear ();
+	tmpV.add(__elevJTextField.getText());
+	tmpV.add(__tperfJTextField.getText());
+	tmpV.add(__bperfJTextField.getText());
+	tmpV.add(__levelJTextField.getText());
+	v.add(StringUtil.formatString(
 		tmpV, "%-10.10s%-10.10s%-10.10s%-10.10s"));
 
-        v.addElement("");
-	v.addElement("Aquifers");
-	v.addElement(__aquifer1JTextField.getText());
-	v.addElement(__aquifer2JTextField.getText());
+        v.add("");
+	v.add("Aquifers");
+	v.add(__aquifer1JTextField.getText());
+	v.add(__aquifer2JTextField.getText());
 
-        v.addElement("");
-	v.addElement("Driller        Pump");
-	v.addElement(StringUtil.formatString(
+        v.add("");
+	v.add("Driller        Pump");
+	v.add(StringUtil.formatString(
 		__drillerLicJTextField.getText(), "%-15.15s")
 		+ __pumpLicJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Flow Meter  Geo.Log   Qual  Abandon");
-	tmpV.removeAllElements ();
-	tmpV.addElement(JGUIUtil.toString(__meterJCheckBox));
-	tmpV.addElement(JGUIUtil.toString(__logJCheckBox));
-	tmpV.addElement(JGUIUtil.toString(__qualJCheckBox));
-	tmpV.addElement(JGUIUtil.toString(__abreqJCheckBox));
-	v.addElement(StringUtil.formatString(
+        v.add("");
+	v.add("Flow Meter  Geo.Log   Qual  Abandon");
+	tmpV.clear ();
+	tmpV.add(JGUIUtil.toString(__meterJCheckBox));
+	tmpV.add(JGUIUtil.toString(__logJCheckBox));
+	tmpV.add(JGUIUtil.toString(__qualJCheckBox));
+	tmpV.add(JGUIUtil.toString(__abreqJCheckBox));
+	v.add(StringUtil.formatString(
 		tmpV, "%-12.12s%-10.10s%-6.6s%s"));
 
-        v.addElement("");
-	v.addElement("Comment");
-	v.addElement(__commentJTextField.getText());
+        v.add("");
+	v.add("Comment");
+	v.add(__commentJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Receipt");
-	v.addElement(__receiptJTextField.getText());
+        v.add("");
+	v.add("Receipt");
+	v.add(__receiptJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Permit");
-	v.addElement(__permitNoJTextField.getText() + " " +
+        v.add("");
+	v.add("Permit");
+	v.add(__permitNoJTextField.getText() + " " +
 		__permitSufJTextField.getText() + " "
 		+ __permitRplJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Div: " + __divJTextField.getText() + delim
+        v.add("");
+	v.add("Div: " + __divJTextField.getText() + delim
 		+ "WD: " + __wdJTextField.getText());
-	v.addElement("Bas: " + __basinJTextField.getText() + delim
+	v.add("Bas: " + __basinJTextField.getText() + delim
 		+ "MD: " + __mdJTextField.getText());
-	v.addElement("Eng: " + __engineerJTextField.getText() + delim
+	v.add("Eng: " + __engineerJTextField.getText() + delim
 		+ "User: " + __userJTextField.getText());
 
-        v.addElement("");
-	v.addElement("Act: " + __actCodeJTextField.getText() + delim
+        v.add("");
+	v.add("Act: " + __actCodeJTextField.getText() + delim
 		+ __actDateJTextField.getText());
-	v.addElement("Stat: " + __statCodeJTextField.getText() + delim
+	v.add("Stat: " + __statCodeJTextField.getText() + delim
 		+ __statDateJTextField.getText());
-	v.addElement("Tran: " + __tranCodeJTextField.getText() + delim
+	v.add("Tran: " + __tranCodeJTextField.getText() + delim
 		+ __tranDateJTextField.getText());
 
-        v.addElement("");
-	v.addElement("NP:" + delim + delim + __npDateJTextField.getText());
-	v.addElement("EX:" + delim + delim + __exDateJTextField.getText());
-	v.addElement("Notice:" + delim + __noticeDateJTextField.getText());
-	v.addElement("WA:" + delim + delim + __waDateJTextField.getText());
-	v.addElement("WC:" + delim + delim + __wcDateJTextField.getText());
-	v.addElement("NWC:" + delim + delim + __nwcDateJTextField.getText());
-	v.addElement("PI:" + delim + delim + __piDateJTextField.getText());
-	v.addElement("PC:" + delim + delim + __pcDateJTextField.getText());
-	v.addElement("SA:" + delim + delim + __saDateJTextField.getText());
-	v.addElement("SBU:" + delim + delim + __sbuDateJTextField.getText());
-	v.addElement("NBU:" + delim + delim + __nbuDateJTextField.getText());
-	v.addElement("ABR:" + delim + delim + __abrDateJTextField.getText());
-	v.addElement("ABCO:" + delim + delim + __abcoDateJTextField.getText());
+        v.add("");
+	v.add("NP:" + delim + delim + __npDateJTextField.getText());
+	v.add("EX:" + delim + delim + __exDateJTextField.getText());
+	v.add("Notice:" + delim + __noticeDateJTextField.getText());
+	v.add("WA:" + delim + delim + __waDateJTextField.getText());
+	v.add("WC:" + delim + delim + __wcDateJTextField.getText());
+	v.add("NWC:" + delim + delim + __nwcDateJTextField.getText());
+	v.add("PI:" + delim + delim + __piDateJTextField.getText());
+	v.add("PC:" + delim + delim + __pcDateJTextField.getText());
+	v.add("SA:" + delim + delim + __saDateJTextField.getText());
+	v.add("SBU:" + delim + delim + __sbuDateJTextField.getText());
+	v.add("NBU:" + delim + delim + __nbuDateJTextField.getText());
+	v.add("ABR:" + delim + delim + __abrDateJTextField.getText());
+	v.add("ABCO:" + delim + delim + __abcoDateJTextField.getText());
 
         return v;
 }

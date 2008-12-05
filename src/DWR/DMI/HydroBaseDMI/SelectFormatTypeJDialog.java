@@ -22,7 +22,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.Util.GUI.JGUIUtil;
 
@@ -44,7 +44,7 @@ private int __selected = HydroBase_GUI_Util.CANCEL;
 The list of possible formats.  Each element in the vector will be placed onto
 a single button.
 */
-private Vector __formats = null;
+private List __formats = null;
 
 /**
 Constructor.  
@@ -53,7 +53,7 @@ Constructor.
 on a JButton.  If this is null or empty, an exception will be thrown.
 @throws exception if an error occurs.
 */
-public SelectFormatTypeJDialog(JFrame parent, Vector formats) 
+public SelectFormatTypeJDialog(JFrame parent, List formats) 
 throws Exception {
 	super ( parent, true );
 	if (formats == null || formats.size() == 0) {
@@ -71,7 +71,7 @@ public void actionPerformed(ActionEvent evt) {
 	String command = evt.getActionCommand();
 
 	for (int i = 0; i < __formats.size(); i++) {
-		if (command.equals(((String)__formats.elementAt(i)))) {
+		if (command.equals(((String)__formats.get(i)))) {
 			__selected = i;
 			closeDialog();
 		}
@@ -101,7 +101,7 @@ Initializes and builds the GUI.
 @param formats the Vector of formats, each of which will be placed on a 
 JButton.
 */
-private void initialize(Vector formats) {
+private void initialize(List formats) {
 	setTitle("Select format to print");
 	setModal(true);
 		
@@ -110,12 +110,12 @@ private void initialize(Vector formats) {
 	getContentPane().setLayout(new GridLayout(0, 1, 10, 10));
 
 	for (int i = 0; i < formats.size(); i++) {
-		String formatName = (String)formats.elementAt(i);
+		String formatName = (String)formats.get(i);
 		if (formatName.equals("")) {
 			// skip it, but continue counting
 		}
 		else {
-			JButton j = new JButton(((String)formats.elementAt(i)));
+			JButton j = new JButton(((String)formats.get(i)));
 			j.addActionListener(this);
 			getContentPane().add(j);
 		}

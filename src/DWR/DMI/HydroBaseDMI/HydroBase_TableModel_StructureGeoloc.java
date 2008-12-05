@@ -21,7 +21,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying sttructure geoloc data in the 
@@ -63,13 +63,12 @@ information).
 private HydroBaseDMI __dmi = null;
 
 /**
-Constructor.  This builds the Model for displaying the given structure geoloc 
-results.
+Constructor.  This builds the Model for displaying the given structure geoloc results.
 @param results the results that will be displayed in the table.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_StructureGeoloc(Vector results, HydroBaseDMI dmi) 
+public HydroBase_TableModel_StructureGeoloc(List results, HydroBaseDMI dmi) 
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -269,8 +268,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -280,8 +278,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_StructureGeoloc r = 
-		(HydroBase_StructureGeoloc)_data.elementAt(row);
+	HydroBase_StructureGeoloc r = (HydroBase_StructureGeoloc)_data.get(row);
 	switch (col) {
 		case COL_WD:		return new Integer(r.getWD());
 		case COL_ID:		return new Integer(r.getID());

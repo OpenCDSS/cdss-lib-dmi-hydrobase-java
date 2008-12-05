@@ -47,6 +47,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -200,7 +201,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -221,7 +222,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -506,8 +507,8 @@ throws Throwable {
 Responsible for formatting output.
 @param format the format in which to format the output.
 */
-public Vector formatOutput(int format) {
-       Vector v = new Vector(10, 5);
+public List formatOutput(int format) {
+	List v = new Vector(10, 5);
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
                 String ns = "";
@@ -518,20 +519,20 @@ public Vector formatOutput(int format) {
                 if (__ewCoordJTextField.getText().length() > 0) {
                         ew = __ewCoordJTextField.getText().length() + " EW";
                 }
-                v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+                v.add(HydroBase_GUI_Util.formatStructureHeader(
                         __structureNameJTextField.getText(),
                         __divJTextField.getText(),
                         __wdJTextField.getText(),
                         __idJTextField.getText(), format));
-                v.addElement("");
-                v.addElement("   STATE: " 
+                v.add("");
+                v.add("   STATE: " 
 			+ StringUtil.formatString(__stateJTextField.getText(), 
 			"%-7.7s") + "            COUNTY: " 
 			+ __countyJTextField.getText());
-                v.addElement("  STREAM: " +__streamNameJTextField.getText());
-                v.addElement("  STREAM MILE: " 
+                v.add("  STREAM: " +__streamNameJTextField.getText());
+                v.add("  STREAM MILE: " 
 			+ __streamMileJTextField.getText());
-                v.addElement("LOCATION: TOWNSHIP " + __twnJTextField.getText() 
+                v.add("LOCATION: TOWNSHIP " + __twnJTextField.getText() 
 			+ __nsCoordJTextField.getText()
 			+ " RANGE " + __rngJTextField.getText() 
 			+ __ewCoordJTextField.getText()
@@ -540,32 +541,32 @@ public Vector formatOutput(int format) {
 			+ __q160JTextField.getText() + " " 
 			+ __q40JTextField.getText() + " " 
 			+ __q10JTextField.getText() + " " + ns + ew);
-                v.addElement("LATITUDE: " 
+                v.add("LATITUDE: " 
 			+StringUtil.formatString(__latitudeJTextField.getText(),
                 	"%-16.16s") + " LONGITUDE: " 
 			+ __longitudeJTextField.getText());
-		v.addElement("UTM X: "
+		v.add("UTM X: "
 			+ StringUtil.formatString(__utmXJTextField.getText(),
 			"%-16.16s") + " UTM Y: "
 			+ __utmYJTextField.getText());
         }
         else {  
 		char delim = HydroBase_GUI_Util.getDelimiterForFormat(format); 
-                v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-                v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+                v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+                v.add(HydroBase_GUI_Util.formatStructureHeader(
                         __structureNameJTextField.getText(),
                         __divJTextField.getText(),
                         __wdJTextField.getText(),
                         __idJTextField.getText(), format));
-                v.addElement("");
-                v.addElement("STATE" + delim + "COUNTY" + delim + "STREAM" 
+                v.add("");
+                v.add("STATE" + delim + "COUNTY" + delim + "STREAM" 
 			+ delim + "STREAM MILE" + delim + "PM" + delim + "TS" 
 			+ delim + "RNG" + delim + "SEC" + delim + "HALFSEC" 
 			+ delim + "1/4" + delim + "1/4 1/4" + delim 
 			+ "1/4 1/4 1/4"
 			+ delim + "NS" + delim + "EW" + delim + "LAT" + delim 
 			+ "LON" + delim + "UTMX" + delim + "UTMY" + delim);
-                v.addElement(__stateJTextField.getText() + delim 
+                v.add(__stateJTextField.getText() + delim 
 			+ __countyJTextField.getText() + delim 
 			+ __streamNameJTextField.getText() + delim 
 			+ __streamMileJTextField.getText() + delim 

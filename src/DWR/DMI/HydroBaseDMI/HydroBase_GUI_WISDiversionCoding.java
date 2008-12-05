@@ -58,6 +58,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -234,7 +235,7 @@ private String __wisCellContents = "";
 /**
 Previous diversion coding records for the cell being edited.
 */
-private Vector __previousRecords;
+private List __previousRecords;
 
 /**
 Constructor.
@@ -249,7 +250,7 @@ edited.
 */
 public HydroBase_GUI_WISDiversionCoding(HydroBaseDMI dmi, 
 HydroBase_GUI_WIS wisGUI, HydroBase_WISSheetName wis, DateTime detailDateTime, 
-int wisRow, int wisCol, Vector previousRecords, boolean editable) {
+int wisRow, int wisCol, List previousRecords, boolean editable) {
 	__dmi = dmi;
 	__wisRow = wisRow;
 	__wisCol = wisCol;
@@ -370,11 +371,11 @@ All values are returned, whether modified or not.  Use isModified() to determine
 whether data have been modified for the cell.
 @return Vector of HydroBase_WISDailyWC or null if no data.
 */
-public Vector getDiversionCoding() {
-	Vector v = __worksheet.getAllData();
-	Vector v2 = new Vector();
+public List getDiversionCoding() {
+	List v = __worksheet.getAllData();
+	List v2 = new Vector();
 	for (int i = 0; i < (v.size() - 1); i++) {
-		v2.add(v.elementAt(i));
+		v2.add(v.get(i));
 	}
 	return v2;
 }
@@ -668,7 +669,7 @@ private void setupGUI() {
 Sets up the combo boxes for the worksheet columns.
 */
 private void setupWorksheetColumns() {
-	Vector source = new Vector();
+	List source = new Vector();
 	source.add(_SOURCE_1);
 	source.add(_SOURCE_2);
 	source.add(_SOURCE_3);
@@ -681,7 +682,7 @@ private void setupWorksheetColumns() {
 	source.add(_SOURCE_R);
 	__worksheet.setColumnJComboBoxValues(1, source);
 
-	Vector use = new Vector();
+	List use = new Vector();
 	use.add(_USE_0);
 	use.add(_USE_1);
 	use.add(_USE_2);
@@ -707,7 +708,7 @@ private void setupWorksheetColumns() {
 	use.add(_USE_W);
 	__worksheet.setColumnJComboBoxValues(3, use);
 
-	Vector type = new Vector();
+	List type = new Vector();
 	type.add(_TYPE_0);
 	type.add(_TYPE_1);
 	type.add(_TYPE_2);
@@ -722,7 +723,7 @@ private void setupWorksheetColumns() {
 	type.add(_TYPE_S);
 	__worksheet.setColumnJComboBoxValues(4, type);
 		
-	Vector obs = new Vector();
+	List obs = new Vector();
 	obs.add(_OBS_U);
 	obs.add(_OBS_AST);
 	obs.add(_OBS_CARRY_FORWARD);
@@ -797,7 +798,7 @@ private void viewHistoryClicked() {
 		}
 	}
 
-	Vector records = null;
+	List records = null;
 	try {
 		records = __dmi.readWISDailyWCList(
 			__wisGUI.getWISNumber(), wis_column, wd, id,
@@ -812,22 +813,22 @@ private void viewHistoryClicked() {
 
 	// Now format the output...
 
-	Vector report_Vector = new Vector(100);
-	report_Vector.addElement("");
-	report_Vector.addElement("WIS Diversion Coding History");
-	report_Vector.addElement("");
-	report_Vector.addElement("Water District:  " + wd);
-	report_Vector.addElement("Structure:  " + id + " (" 
+	List report_Vector = new Vector(100);
+	report_Vector.add("");
+	report_Vector.add("WIS Diversion Coding History");
+	report_Vector.add("");
+	report_Vector.add("Water District:  " + wd);
+	report_Vector.add("Structure:  " + id + " (" 
 		+ __wisGUI.getRow_label(__wisRow) + ")");
 
 
-	report_Vector.addElement("");
-	report_Vector.addElement("Diversion coding currently being edited for "
+	report_Vector.add("");
+	report_Vector.add("Diversion coding currently being edited for "
 		+ __detailDateTime.toString(DateTime.FORMAT_YYYY_MM_DD));
-	report_Vector.addElement("");
-	report_Vector.addElement("                        Source  " 
+	report_Vector.add("");
+	report_Vector.add("                        Source  " 
 		+ "  From     Use     Type    Obs       Value");
-	report_Vector.addElement("                        ------  " 
+	report_Vector.add("                        ------  " 
 		+ "--------  ------  ------  ------  -----------");
 
 	String date_string = 
@@ -837,7 +838,7 @@ private void viewHistoryClicked() {
 	int nrows = __worksheet.getRowCount();
 	for (int row = 0; row < nrows; row++) {
 		wis_date_string = "  current ";
-		report_Vector.addElement("                        " 
+		report_Vector.add("                        " 
 			+ __worksheet.getValueAtAsString(row, 1, "%6.6s")
 			+ "  " + StringUtil.formatString(
 			__worksheet.getValueAtAsString(row, 2, "%8d"), "%8.8s")
@@ -853,20 +854,20 @@ private void viewHistoryClicked() {
 			+ " CFS");
 	}
 /*
-	report_Vector.addElement("                                       "
+	report_Vector.add("                                       "
 		+ "                           "
 		+ StringUtil.formatString(
 		StringUtil.formatString(getTotalAmount(), "%6.2f"), "%6.6s")
 		+ " CFS");
 */
-	report_Vector.addElement("");
-	report_Vector.addElement("");
-	report_Vector.addElement("Diversion coding history in HydroBase:");
-	report_Vector.addElement("");
-	report_Vector.addElement("            WIS");
-	report_Vector.addElement("Date        Save Date   Source  " 
+	report_Vector.add("");
+	report_Vector.add("");
+	report_Vector.add("Diversion coding history in HydroBase:");
+	report_Vector.add("");
+	report_Vector.add("            WIS");
+	report_Vector.add("Date        Save Date   Source  " 
 		+ "  From     Use     Type    Obs       Value");
-	report_Vector.addElement("----------  ----------  ------  " 
+	report_Vector.add("----------  ----------  ------  " 
 		+ "--------  ------  ------  ------  -----------");
 
 	// First list the current contents of the dialog...
@@ -882,7 +883,7 @@ private void viewHistoryClicked() {
 	HydroBase_WISDailyWC record = null;
 	boolean date_printed = false;
 	HydroBase_WISComments wis_comment = null;
-	Vector wis_comments = null;
+	List wis_comments = null;
 	DateTime wis_set_DateTime = null;
 	// First loop through days...
 	for (; d.greaterThanOrEqualTo(start_DateTime); d.addDay(-1)) {
@@ -891,7 +892,7 @@ private void viewHistoryClicked() {
 		// loop through all of them for each day...
 		date_printed = false;
 		for (int i = (size - 1); i >= 0; i--) {
-			record = (HydroBase_WISDailyWC)records.elementAt(i);
+			record = (HydroBase_WISDailyWC)records.get(i);
 			if (	record.getCal_year() != d.getYear()
 				|| record.getCal_mon() != d.getMonth()
 				|| DMIUtil.isMissing(
@@ -920,7 +921,7 @@ private void viewHistoryClicked() {
 					else {	
 						wis_comment = 
 							(HydroBase_WISComments)
-							wis_comments.elementAt(
+							wis_comments.get(
 							0);
 						wis_set_DateTime = new DateTime(
 							wis_comment
@@ -936,7 +937,7 @@ private void viewHistoryClicked() {
 					wis_date_string = "          ";
 				}
 			}
-			report_Vector.addElement(
+			report_Vector.add(
 				date_string + "  "
 				+ wis_date_string + "  "
 				+ StringUtil.formatString(

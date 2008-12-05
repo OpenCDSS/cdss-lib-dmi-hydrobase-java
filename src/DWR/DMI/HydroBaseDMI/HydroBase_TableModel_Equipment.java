@@ -15,7 +15,7 @@
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import RTi.Util.Time.DateTime;
 
@@ -41,12 +41,11 @@ public final static int
 	COL_RECORDER = 		4;
 
 /**
-Constructor.  This builds the Model for displaying the given equipment 
-results.
+Constructor.  This builds the Model for displaying the given equipment results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Equipment(Vector results)
+public HydroBase_TableModel_Equipment(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -133,7 +132,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_Equipment e = (HydroBase_Equipment)_data.elementAt(row);
+	HydroBase_Equipment e = (HydroBase_Equipment)_data.get(row);
 	switch (col) {
 		case COL_EQUIP_NUM:		
 			return new Integer(e.getEquip_num());	

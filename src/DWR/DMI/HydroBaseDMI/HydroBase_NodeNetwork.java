@@ -234,6 +234,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 /* FIXME SAM 2008-03-15 This code is now in StateMod_NodeNetwork - clean up more later
@@ -526,55 +527,55 @@ private String __title;
 /**
 Used in reading in an XML file.
 */
-private static Vector __aggregateAnnotations = null;
+private static List __aggregateAnnotations = null;
 
 /**
 Vector for aggregating layout information when reading statically from the
 XML files.
 */
-private static Vector __aggregateLayouts = null;
+private static List __aggregateLayouts = null;
 
 /**
 Used in reading in an XML file.
 */
-private static Vector __aggregateLinks = null;
+private static List __aggregateLinks = null;
 
 /**
 Contains the nodes read from an XML file.  This is a static data member because
 the method used to read in an XML file and create a network is static.
 */
-private static Vector __aggregateNodes;
+private static List __aggregateNodes;
 
 /**
 Vector of the annotations that are drawn with this network.
 */
-private Vector __annotations = null;
+private List __annotations = null;
 
 /**
 Network labels.
 */
-private static Vector __labels = new Vector(10, 10);
+private static List __labels = new Vector(10, 10);
 
 /**
 Vector for holding layouts read in from an XML file. 
 */
-private Vector __layouts = null;
+private List __layouts = null;
 
 /**
 Vector of links between nodes that are drawn with this network.
 */
-private Vector __links = null;
+private List __links = null;
 
 /**
 The list of nodes in the network.  These nodes are those that cannot be fully 
 processed.  When fully processed, the nodes end up in __nodeHead. 
 */
-private Vector __nodes = null;	
+private List __nodes = null;	
 
 /**
 Label carrier commands.
 */
-private Vector __plotCommands = null;
+private List __plotCommands = null;
 
 // Inner class to store river data for plotting...
 
@@ -689,7 +690,7 @@ boolean isBaseflow, boolean isImport) {
 	HydroBase_Node ds = null;
 	HydroBase_Node us = null;
 	HydroBase_Node node = getMostUpstreamNode();
-	Vector v = new Vector();
+	List v = new Vector();
 
 	// loop through the network and do two things:
 	// 1) add all the nodes to a Vector so that they can easily be
@@ -846,7 +847,7 @@ boolean isBaseflow, boolean isImport) {
 	// the nodes upstream of the node to be added need their serial 
 	// counter decremented.
 	for (int i = 0; i < v.size(); i++) {
-		node = (HydroBase_Node)v.elementAt(i);
+		node = (HydroBase_Node)v.get(i);
 		if (node.getComputationalOrder() >= comp) {
 			node.setComputationalOrder(
 				node.getComputationalOrder() + 1);
@@ -883,7 +884,7 @@ boolean isBaseflow, boolean isImport) {
 			// reach off the downstream node.
 			int max = 0;
 			for (int i = 0; i < v.size(); i++) {
-				node = (HydroBase_Node)v.elementAt(i);
+				node = (HydroBase_Node)v.get(i);
 				if (node.getReachCounter() > max) {
 					max = node.getReachCounter();
 				}
@@ -907,7 +908,7 @@ boolean isBaseflow, boolean isImport) {
 		addNode.setReachCounter(reach);
 	
 		for (int i = 0; i < v.size(); i++) {
-			node = (HydroBase_Node)v.elementAt(i);
+			node = (HydroBase_Node)v.get(i);
 			if (node.getReachCounter() == reach) {
 				if (node.getNodeInReachNumber() >= nodeNum) {
 					node.setNodeInReachNumber(
@@ -924,14 +925,14 @@ Adds plot commands to the plot commands Vector.
 @param plotCommands a Vector of plot commands, each of which will be added
 to the plot commands Vector.
 */
-public void addPlotCommands(Vector plotCommands) {
+public void addPlotCommands(List plotCommands) {
 	if (plotCommands == null) {
 		return;
 	}
 
 	int size = plotCommands.size();
 	for (int i = 0; i < size; i++) {
-		__plotCommands.add(plotCommands.elementAt(i));
+		__plotCommands.add(plotCommands.get(i));
 	}
 }
 
@@ -949,7 +950,7 @@ private static HydroBase_NodeNetwork buildNetworkFromXMLNodes() {
 	// performance will be impacted by all the casts.  
 	HydroBase_Node[] nodes = new HydroBase_Node[size];
 	for (int i = 0; i < size; i++) {
-		nodes[i] = (HydroBase_Node)__aggregateNodes.elementAt(i);
+		nodes[i] = (HydroBase_Node)__aggregateNodes.get(i);
 		nodes[i].setInWIS(false);
 	}
 
@@ -987,7 +988,7 @@ private static HydroBase_NodeNetwork buildNetworkFromXMLNodes() {
 
 	// put the nodes back in a Vector for placement back into the 
 	// node network.
-	Vector v = new Vector();
+	List v = new Vector();
 	for (int i = 0; i < size; i++) {
 		v.add(nodes[i]);
 	}
@@ -1007,20 +1008,20 @@ StateMod_RiverNodeNetwork Vector.
 most-downstream node in the network (the END node).  If false, the the END
 node is the last node in the Vector.
 */
-public void calculateNetworkNodeData(Vector nodesV, boolean endFirst) {
+public void calculateNetworkNodeData(List nodesV, boolean endFirst) {
 	// first put the nodes into an array for easy and quick traversal. 
 	// In the array, make sure the END node is always the first one found.
 	int size = nodesV.size();
 	HydroBase_Node[] nodes = new HydroBase_Node[size];
 	if (endFirst) {
 		for (int i = 0; i < size; i++) {
-			nodes[i] = (HydroBase_Node)nodesV.elementAt(i);
+			nodes[i] = (HydroBase_Node)nodesV.get(i);
 		}
 	}
 	else {
 		int count = 0;
 		for (int i = size - 1; i >= 0; i--) {
-			nodes[count++] = (HydroBase_Node)nodesV.elementAt(i);
+			nodes[count++] = (HydroBase_Node)nodesV.get(i);
 		}
 	}
 
@@ -1119,7 +1120,7 @@ public void calculateNetworkNodeData(Vector nodesV, boolean endFirst) {
 		}
 	}
 	
-	Vector networkV = new Vector(size);
+	List networkV = new Vector(size);
 	for (int i = size - 1; i >= 0; i--) {
 		networkV.add(nodes[i]);		
 	}
@@ -1318,7 +1319,7 @@ private String checkUniqueID(String id, boolean first) {
 Converts old-style baseflow nodes into new style nodes.
 */
 public void convertNodeTypes() {
-	Vector nodes = new Vector();
+	List nodes = new Vector();
 	String routine = "HydroBase_NodeNetwork.convertNodeTypes";
 	HydroBase_Node node = getMostUpstreamNode();	
 	while (true) {
@@ -1331,7 +1332,7 @@ public void convertNodeTypes() {
 
 	int size = nodes.size();
 	for (int i = 0; i < size; i++) {
-		node = (HydroBase_Node)nodes.elementAt(i);
+		node = (HydroBase_Node)nodes.get(i);
 		if (node.getType() == HydroBase_Node.NODE_TYPE_BASEFLOW) {
 			node.setType(HydroBase_Node.NODE_TYPE_OTHER);
 			node.setIsBaseflow(true);
@@ -1402,11 +1403,11 @@ public static HydroBase_NodeNetwork createFromStateModVector(Vector nodes) {
 Create the indented river network as a vector of strings
 @return Vector of String containing output.
 */
-public Vector createIndentedRiverNetworkStrings() {
+public List createIndentedRiverNetworkStrings() {
 	int dl = 30;
 	String routine = 
 		"HydroBase_NodeNetwork.createIndentedRiverNetworkStrings";
-	Vector v = new Vector(50, 20);
+	List v = new Vector(50, 20);
 	v.add("# Stream Network Data");
 	v.add("#");
 	v.add("# Data fields are:");
@@ -1496,10 +1497,10 @@ public boolean createIndentedRiverNetworkFile(String basename) {
 		return false;
 	}
 
-	Vector v = createIndentedRiverNetworkStrings();
+	List v = createIndentedRiverNetworkStrings();
 	int size = v.size();
 	for (int i = 0; i < size; i++) {
-		orderfp.println((String)v.elementAt(i));
+		orderfp.println((String)v.get(i));
 	}
 	orderfp.flush();
 	orderfp.close();
@@ -1885,7 +1886,7 @@ Inefficient!!  This could really be improved.
 public void deleteNode(String id) {
 	boolean done = false;
 	HydroBase_Node node = getMostUpstreamNode();
-	Vector v = new Vector();
+	List v = new Vector();
 
 	// first loop through all the nodes and put them in a Vector so that
 	// they can be accessed via a random access method.  
@@ -1930,7 +1931,7 @@ public void deleteNode(String id) {
 	// loop through the vector and put the nodes into the array for
 	// even faster access.
 	for (int i = 0; i < size; i++) {
-		node = (HydroBase_Node)v.elementAt(i);
+		node = (HydroBase_Node)v.get(i);
 		
 		if (IOUtil.testing()) {
 			Message.printStatus(2, "", "  TSC (" 
@@ -2036,7 +2037,7 @@ public void deleteNode(String id) {
 	}
 	*/
 
-	Vector tempV = new Vector();
+	List tempV = new Vector();
 	for (int i = 0; i < delUsid.length; i++) {
 		for (int j = 0; j < size; j++) {
 			if (nodes[j].getCommonID().equals(delUsid[i])) {
@@ -2056,7 +2057,7 @@ public void deleteNode(String id) {
 
 	int[] serials = new int[tempV.size()];
 	for (int i = 0; i < serials.length; i++) {
-		serials[i] = ((HydroBase_Node)tempV.elementAt(i)).getSerial();
+		serials[i] = ((HydroBase_Node)tempV.get(i)).getSerial();
 	}
 
 	int[] order = new int[serials.length];
@@ -2068,7 +2069,7 @@ public void deleteNode(String id) {
 
 	int tn = 1;
 	for (int i = 0; i < order.length; i++) {
-		tempNode = (HydroBase_Node)tempV.elementAt(order[i]);
+		tempNode = (HydroBase_Node)tempV.get(order[i]);
 		tempNode.setTributaryNumber(tn++);
 	}
 
@@ -2571,7 +2572,7 @@ private void fillMainStemLocations() {
 	int dl = 0;
 	int upstreamInvalidCount = 0;
 	int validCount = 0;
-	Vector dv;
+	List dv;
 
 	while (!done) {
 		if (node.getReachLevel() != 1) {
@@ -2596,8 +2597,8 @@ private void fillMainStemLocations() {
 				// See the docs for getValidDownstreamNode() to 
 				// understand the returned values.
 				dv = getValidDownstreamNode(node, true);
-				ds = (HydroBase_Node)dv.elementAt(0);
-				dl = ((Integer)dv.elementAt(1)).intValue();
+				ds = (HydroBase_Node)dv.get(0);
+				dl = ((Integer)dv.get(1)).intValue();
  
 				// if the distance to the first valid downstream
 				// node is greater than 1 then there are nodes 
@@ -3205,13 +3206,13 @@ private int findHighestUpstreamSerial(HydroBase_Node node, int highest) {
 		highest = serial;
 	}
 
-	Vector v = node.getUpstreamNodes();
+	List v = node.getUpstreamNodes();
 	if (v != null) {
 		int size = v.size();
 		int temp = -1;
 		HydroBase_Node tempNode = null;
 		for (int i = 0; i < size; i++) {
-			tempNode = (HydroBase_Node)v.elementAt(i);
+			tempNode = (HydroBase_Node)v.get(i);
 			temp = findHighestUpstreamSerial(tempNode, highest);
 			if (temp > highest) {
 				highest = temp;
@@ -3668,9 +3669,9 @@ internally.
 @param recursing false if calling from outside this method, true if calling 
 recursively.
 */
-public Vector findUpstreamFlowNodes(Vector upstreamFlowNodes,
+public List findUpstreamFlowNodes(List upstreamFlowNodes,
 HydroBase_Node node, boolean recursing) {
-	return findUpstreamFlowNodes(upstreamFlowNodes, node, (Vector)null, 
+	return findUpstreamFlowNodes(upstreamFlowNodes, node, (List)null, 
 		recursing);
 }
 
@@ -3689,8 +3690,8 @@ functionality when processing StateMod_StreamEstimate_Coefficients in StateDMI.
 @param recursing false if calling from outside this method, true if calling 
 recursively.
 */
-public Vector findUpstreamFlowNodes(Vector upstreamFlowNodes,
-HydroBase_Node node, Vector prfGageData, boolean recursing) {
+public List findUpstreamFlowNodes(List upstreamFlowNodes,
+HydroBase_Node node, List prfGageData, boolean recursing) {
 	String routine = "HydroBase_NodeNetwork.findUpstreamFlowNodes";
 
 	boolean	didRecurse = false;
@@ -3964,7 +3965,7 @@ public String formatWDID(String wd, String id, int nodeType) {
 Returns the Vector of annotations that accompany this network.
 @return the Vector of annotations that accompany this network.  Can be null.
 */
-public Vector getAnnotations() {
+public List getAnnotations() {
 	return __annotations;
 }
 
@@ -3973,8 +3974,8 @@ Returns a Vector of all the nodes in the network that are baseflow nodes.
 @return a Vector of all the nodes that are baseflow nodes.  The Vector is
 guaranteed to be non-null.
 */
-public Vector getBaseflowNodes() {
-	Vector v = new Vector();
+public List getBaseflowNodes() {
+	List v = new Vector();
 
 	HydroBase_Node node = getMostUpstreamNode();
 	// REVISIT -- eliminate the need for hold nodes -- they signify an
@@ -4341,7 +4342,7 @@ public GRLimits getExtents() {
 Returns the layout Vector read in from XML. 
 @return the layout Vector read in from XML.  Can be null.
 */
-public Vector getLayouts() {
+public List getLayouts() {
 	return __layouts;
 }
 
@@ -4379,7 +4380,7 @@ public double getLegendY() {
 Returns the Vector of links between nodes in the network.
 @return the Vector of links between nodes in the network.
 */
-public Vector getLinks() {
+public List getLinks() {
 	return __links;
 }
 
@@ -4419,8 +4420,8 @@ Returns a Vector of Strings, each of which is a line telling how many of
 a certain kind of node is present in the network.  
 @return a Vector of Strings, guaranteed to be non-null.
 */
-public Vector getNodeCountsVector() {
-	Vector v = new Vector();
+public List getNodeCountsVector() {
+	List v = new Vector();
 	int total = 11;
 	int[] types = new int[total];
 	types[0] = HydroBase_Node.NODE_TYPE_BASEFLOW;
@@ -4463,10 +4464,10 @@ performance.
 @return a Vector of all identifiers in the network given the types of interest.
 @exception Exception if there is an error during the search.
 */
-public Vector getNodeIdentifiersByType(int[] nodeTypes)
+public List getNodeIdentifiersByType(int[] nodeTypes)
 throws Exception {
 	String routine = "HydroBase_NodeNetwork.getNodeIdentifiersByType";
-	Vector ids = new Vector();
+	List ids = new Vector();
 
 	try {	// Main try for method
 
@@ -4480,7 +4481,7 @@ throws Exception {
 	int nodeType = 0;
 	int nnodeTypes = nodeTypes.length;
 	String commonID = null;
-	Vector v = null;
+	List v = null;
 
 	// Traverse from upstream to downstream...
 	for (nodePt = getUpstreamNode(getDownstreamNode(__nodeHead,
@@ -4522,7 +4523,7 @@ throws Exception {
 				// ISF or other modified identifier is used...
 				v = StringUtil.breakStringList(commonID,
 					".", 0);
-				ids.add((String)v.elementAt(0));
+				ids.add((String)v.get(0));
 				// Note that if the _Dwn convention is used,
 				// then the structure should be found when the
 				// upstream terminus is queried and the
@@ -4601,8 +4602,8 @@ which are only used in the network diagram).
 @return a Vector of all the nodes that are the specified type.  The Vector is
 guaranteed to be non-null and is in the order upstream to downstream.
 */
-public Vector getNodesForType(int type)
-{	Vector v = new Vector();
+public List getNodesForType(int type)
+{	List v = new Vector();
 
 	HydroBase_Node node = getMostUpstreamNode();
 	// REVISIT -- eliminate the need for hold nodes -- they signify an
@@ -4673,14 +4674,14 @@ element), and the second element is an Integer of the distance from node
 to the downstream node.  If none can be found, the first element is null and
 the second is -1.
 */
-private Vector getValidDownstreamNode(HydroBase_Node node, boolean main) {
+private List getValidDownstreamNode(HydroBase_Node node, boolean main) {
 	boolean done = false;
 	HydroBase_Node ds = null;
 	HydroBase_Node temp = null;
 	int count = 1;
 	int reachLevel = node.getReachLevel();
 	int currReach = reachLevel - 1;
-	Vector v = new Vector();
+	List v = new Vector();
 	
 	ds = getDownstreamNode(node, POSITION_RELATIVE);	
 
@@ -5560,7 +5561,7 @@ boolean skipBlankNodes) {
 	String	message, 
 		nodeID, 
 		token0;
-	Vector	list, 
+	List	list, 
 		tokens;
 
 	__closeCount = 0;	// Number of closing curly-braces.
@@ -5617,7 +5618,7 @@ boolean skipBlankNodes) {
 		// ------------------------------------------------------------
 		// Now evaluate node-level commands...
 		// ------------------------------------------------------------
-		token0 = new String((String)tokens.elementAt(0));
+		token0 = new String((String)tokens.get(0));
 		if (Message.isDebugOn) {
 			Message.printDebug(dl, routine,
 				"token[0]=\"" + token0 + "\"");
@@ -5627,7 +5628,7 @@ boolean skipBlankNodes) {
 			continue;
 		}
 		if (token0.equalsIgnoreCase("DISTRICT")) {
-			wd = new String((String)tokens.elementAt(1));
+			wd = new String((String)tokens.get(1));
 			Message.printStatus(2, routine,
 				"Water district specified as " + wd);
 			//HMPrintWarning(1, routine,
@@ -5636,8 +5637,8 @@ boolean skipBlankNodes) {
 			continue;
 		}
 		else if (token0.equalsIgnoreCase("FONT")) {
-			setFont((String)tokens.elementAt(1),
-				StringUtil.atod((String)tokens.elementAt(2)));
+			setFont((String)tokens.get(1),
+				StringUtil.atod((String)tokens.get(2)));
 			continue;
 		}
 		else if (token0.equalsIgnoreCase("TEXT")) {
@@ -5652,12 +5653,12 @@ boolean skipBlankNodes) {
 			Message.printWarning(1, routine, message);
 			printCheck(routine, 'W', message);
 			setNodeDiam(StringUtil.atod(
-				(String)tokens.elementAt(1)));
+				(String)tokens.get(1)));
 			continue;
 		}
 		else if (token0.equalsIgnoreCase("NODEDIAM")) {
 			setNodeDiam(StringUtil.atod(
-				(String)tokens.elementAt(1)));
+				(String)tokens.get(1)));
 			continue;
 		}
 		else if (token0.equalsIgnoreCase("{")) {
@@ -5722,16 +5723,16 @@ boolean skipBlankNodes) {
 			// be called when recursing).
 
 			// with graphing
-			river.id = new String((String)tokens.elementAt(1));
+			river.id = new String((String)tokens.get(1));
 			Message.printStatus(2, routine, "Starting stream \"" 
 				+ river.id 
 				+ "\".  Building network upstream...");
 			numRiverNodes = StringUtil.atoi((String)
-				tokens.elementAt(2));
+				tokens.get(2));
 			river_dx = StringUtil.atod((String)
-				tokens.elementAt(3));
+				tokens.get(3));
 			river_dy = StringUtil.atod((String)
-				tokens.elementAt(4));
+				tokens.get(4));
 			river.strx = x;
 			river.stry = y;
 			river.endx = x + river_dx;
@@ -5753,7 +5754,7 @@ boolean skipBlankNodes) {
 					"Resetting dx,dy to " + dx + "," + dy);
 			}
 			// Save the reach label...
-			storeLabel((String)tokens.elementAt(1), x, y,
+			storeLabel((String)tokens.get(1), x, y,
 				(x + river_dx),(y + river_dy));
 			// Plot the line for the river reach in the old plot
 			// file.  The nodes will plot on top and clear the line
@@ -5883,7 +5884,7 @@ boolean skipBlankNodes) {
 				if (Message.isDebugOn) {
 					Message.printDebug(1, routine,
 						"Added node \"" 
-						+ (String)tokens.elementAt(0)
+						+ (String)tokens.get(0)
 						+ "\" nodeInReach=" 
 						+ node.getNodeInReachNumber() 
 						+ " reachnum=" 
@@ -5943,7 +5944,7 @@ boolean skipBlankNodes) {
 					"Processing node " + (__nodeCount - 1) 
 					+ ": " + token0);
 				// Get the node type. 
-				String token1 = (String)tokens.elementAt(1);
+				String token1 = (String)tokens.get(1);
 				if (token1.equalsIgnoreCase("BLANK")) {
 					node.setType(HydroBase_Node.NODE_TYPE_BLANK);
 				}
@@ -6018,7 +6019,7 @@ boolean skipBlankNodes) {
 				}
 				// Now process the area*precip information...
 				if (!node.parseAreaPrecip(
-  				    (String)tokens.elementAt(2))) {
+  				    (String)tokens.get(2))) {
 					message = "Error processing area*"
 						+ "precip info for \""
 						+ node.getNetID() + "\"";
@@ -6028,7 +6029,7 @@ boolean skipBlankNodes) {
 				}
 				if (numTokens >= 4) {
 					dir = StringUtil.atoi(
-						(String)tokens.elementAt(3));
+						(String)tokens.get(3));
 				}
 				else {	
 					Message.printWarning(1, routine,
@@ -6041,9 +6042,9 @@ boolean skipBlankNodes) {
 				// (it is optional)...
 				if (numTokens >= 5) {
 					node.setDescription(
-						(String)tokens.elementAt(4));
+						(String)tokens.get(4));
 					node.setUserDescription(
-						(String)tokens.elementAt(4));
+						(String)tokens.get(4));
 				}
 				// Else defaults are empty descriptions.
 			}
@@ -6104,7 +6105,7 @@ boolean skipBlankNodes) {
 					node.getNetID(), ".", 0);
 				nlist = list.size();
 				if (nlist >= 1) {
-					nodeID = (String)list.elementAt(0);
+					nodeID = (String)list.get(0);
 				}
 				else {	
 					nodeID = new String(node.getNetID());
@@ -6698,13 +6699,13 @@ in calling code).
 @return the tokens from the line
 @throws IOException if there is an error reading the line from the file.
 */
-public Vector readMakenetLineTokens(BufferedReader netfp) throws IOException {
+public List readMakenetLineTokens(BufferedReader netfp) throws IOException {
 	String routine = "HydroBase_NodeNetwork.readMakenetLineTokens";
 	int	commentIndex = 0,
 		dl = 50, 
 		numTokens;
 	String lineString;
-	Vector tokens;
+	List tokens;
 
 	while (true) {
 		try {	
@@ -6828,7 +6829,7 @@ String filename, boolean skipBlankNodes) {
 		numnodes, 
 		reachLevel = 0;		
 	String token0;
-	Vector tokens;
+	List tokens;
 
 	// Set the database information...
 	if (dmi != null && dmi.isOpen()) {
@@ -6865,7 +6866,7 @@ String filename, boolean skipBlankNodes) {
 			// Blank line...
 			continue;
 		}
-		token0 = (String)tokens.elementAt(0);
+		token0 = (String)tokens.get(0);
 		if (Message.isDebugOn) {
 			Message.printDebug(10, routine,
 				"token[0]=\"" + token0 + "\"");
@@ -6912,11 +6913,11 @@ String filename, boolean skipBlankNodes) {
 				Message.printDebug(dl, routine,
 				"Found RIVER command");
 			}
-			numnodes = StringUtil.atoi((String)tokens.elementAt(2));
-			x0 = StringUtil.atod((String)tokens.elementAt(3));
-			y0 = StringUtil.atod((String)tokens.elementAt(4));
-			x1 = StringUtil.atod((String)tokens.elementAt(5));
-			y1 = StringUtil.atod((String)tokens.elementAt(6));
+			numnodes = StringUtil.atoi((String)tokens.get(2));
+			x0 = StringUtil.atod((String)tokens.get(3));
+			y0 = StringUtil.atod((String)tokens.get(4));
+			x1 = StringUtil.atod((String)tokens.get(5));
+			y1 = StringUtil.atod((String)tokens.get(6));
 
 			// Calculate the spacing of nodes on the main stem...
 			dx = (x1 - x0)/(double)(numnodes - 1);
@@ -6931,13 +6932,13 @@ String filename, boolean skipBlankNodes) {
 					"Found TITLE command");
 			}
 			__fontSize = StringUtil.atod((String)
-				tokens.elementAt(1));
-			__titleX = StringUtil.atod((String)tokens.elementAt(2));
-			__titleY = StringUtil.atod((String)tokens.elementAt(3));
-			__title = new String((String)tokens.elementAt(4));
+				tokens.get(1));
+			__titleX = StringUtil.atod((String)tokens.get(2));
+			__titleY = StringUtil.atod((String)tokens.get(3));
+			__title = new String((String)tokens.get(4));
 			for (int i = 5; i < numTokens; i++) {
 				__title = __title + " ";
-				__title = __title + (String)tokens.elementAt(i);
+				__title = __title + (String)tokens.get(i);
 			}
 			addLabel(__titleX, __titleY, __fontSize,
 				GRText.LEFT | GRText.BOTTOM, __title);
@@ -7106,7 +7107,7 @@ first vector element.
 @param wisRows Empty Vector to fill with nodes.
 @return true if successful, false if not
 */
-public boolean readWISFormatNetwork(Vector wisRows) {
+public boolean readWISFormatNetwork(List wisRows) {
 	return readWISFormatNetwork(wisRows, 0);
 }
 
@@ -7121,13 +7122,13 @@ processed first.  If 1, for example, the second row is processed.
 Use 1 to skip the header row.
 @return true if successful, false if not
 */
-public boolean readWISFormatNetwork(Vector wisRows, int rowOffset) {
+public boolean readWISFormatNetwork(List wisRows, int rowOffset) {
 // REVISIT (JTS - 2003-10-21)
 // lots of sections of code in this routine that were commented out in the
 // original code.  Should be checked over.
 	String routine = "HydroBase_NodeNetwork.readWISFormatNetwork";
 	int dl = 30;
-	Vector nodelist = new Vector();
+	List nodelist = new Vector();
 	try { 	// main try...
 
 	// First check to make sure that there are data to work with...
@@ -7156,7 +7157,7 @@ public boolean readWISFormatNetwork(Vector wisRows, int rowOffset) {
 		node = new HydroBase_Node();
 		node.setInWIS(true);
 		// Now set as much of the node information as we can...
-		currentRow = (HydroBase_WISFormat)wisRows.elementAt(i);
+		currentRow = (HydroBase_WISFormat)wisRows.get(i);
 		node.setType(currentRow.getRow_type());
 		node.setStreamMile(currentRow.getStr_mile());
 		node.setLink(currentRow.getWdwater_link());
@@ -7486,7 +7487,7 @@ the node._upstream_order information
 			Message.printStatus(2, routine,
 				"Do not know how to handle mixed-stream WIS "
 				+ "format for node \""
-				+ ((HydroBase_Node)__nodes.elementAt(k))
+				+ ((HydroBase_Node)__nodes.get(k))
 				.getCommonID() + "\"");				
 			}
 		}
@@ -7506,7 +7507,7 @@ the node._upstream_order information
 	int jsize = nodelist.size();
 	HydroBase_Node nodePt;
 	for (int j = 0; j < jsize; j++) {
-		nodePt = (HydroBase_Node)nodelist.elementAt(j);
+		nodePt = (HydroBase_Node)nodelist.get(j);
 		if (Message.isDebugOn) {
 			Message.printDebug(dl, routine, nodePt.toString());
 		}
@@ -7554,7 +7555,7 @@ Sets the annotations associated with this network.
 @param annotations the Vector of annotations associated with this network. 
 Can be null.
 */
-public void setAnnotations(Vector annotations) {
+public void setAnnotations(List annotations) {
 	__annotations = annotations;
 }
 
@@ -7630,7 +7631,7 @@ public void setLabelType(int label_type) {
 Sets the layout Vector read in from XML.
 @param layouts the layout Vector read in from XML.  Can be null.
 */
-protected void setLayouts(Vector layouts) {
+protected void setLayouts(List layouts) {
 	__layouts = layouts;
 }
 
@@ -7649,7 +7650,7 @@ public void setLegendPosition(double legendX, double legendY) {
 Sets the Vector of links between nodes in the network.
 @param links the Vector of links between nodes in the network.  Can be null.
 */
-public void setLinks(Vector links) {
+public void setLinks(List links) {
 	__links = links;
 }
 
@@ -7659,14 +7660,14 @@ The nodes are checked to see which one is the head of the network and that node
 is stored internally as __nodeHead.
 @param v the Vector of nodes that comprise a network.
 */
-private void setNetworkFromNodes(Vector v) {
+private void setNetworkFromNodes(List v) {
 	__nodes = v;
 	__nodeCount = v.size();
 
 	HydroBase_Node node = null;
 	HydroBase_Node ds = null;
 	for (int i = 0; i < __nodeCount; i++) {
-		node = (HydroBase_Node)v.elementAt(i);
+		node = (HydroBase_Node)v.get(i);
 		ds = node.getDownstreamNode();
 		
 		if (ds == null 
@@ -7709,7 +7710,7 @@ throws Exception
 		streamName,
 		userDesc,
 		wdid;
-	Vector	idList = null,
+	List	idList = null,
 		permitList = new Vector(),
 		statList = null,
 		structList = null,
@@ -8016,7 +8017,7 @@ throws Exception
 				geoloc_num = -1;
 				for (i = 0; i < nstructList; i++) {
 					structure = (HydroBase_StructureView)
-					structList.elementAt(i);
+					structList.get(i);
 					if ((structure.getWD() == wd) 
 					    && (structure.getID() == id)) {
 						// Found the structure...
@@ -8035,7 +8036,7 @@ throws Exception
 				nwaterList = waterList.size();
 				for (i = 0; i < nwaterList; i++) {
 					wdwater = (HydroBase_StructureWDWater)
-					waterList.elementAt(i);
+					waterList.get(i);
 					if ((wdwater.getWD() == wd) 
 					    && (wdwater.getID() == id)) {
 						// Found the stream...
@@ -8116,12 +8117,12 @@ throws Exception
 				// used)...
 				if ((i_structList >= 0) 
 				    && (type != HydroBase_Node.NODE_TYPE_ISF)) {
-					structList.removeElementAt(
+					structList.remove(
 						i_structList);
 				}
 				if ((i_waterList >= 0) 
 				    && (type != HydroBase_Node.NODE_TYPE_ISF)) {
-					waterList.removeElementAt(
+					waterList.remove(
 						i_waterList);
 				}
 			}
@@ -8137,7 +8138,7 @@ throws Exception
 				geoloc_num = -1;
 				for (i = 0; i < nstructList; i++) {
 					structure = (HydroBase_StructureView)
-					structList.elementAt(i);
+					structList.get(i);
 					if ((structure.getWD() == wd) 
 					    && (structure.getID() == id)) {
 						// Found the structure...
@@ -8180,7 +8181,7 @@ throws Exception
 				// used)...
 				if ((i_structList >= 0) 
 				    && (type != HydroBase_Node.NODE_TYPE_ISF)) {
-					structList.removeElementAt(
+					structList.remove(
 						i_structList);
 				}
 			}
@@ -8203,7 +8204,7 @@ throws Exception
 			// typically be many WEL nodes, this should not
 			// be that much of a hit...
 			try {
-			permitList.removeAllElements();
+			permitList.clear();
 			permitList.add(nodePt.getCommonID());
 			if (__isDatabaseUp) {
 				wellApplications = 
@@ -8223,7 +8224,7 @@ throws Exception
 				// What came back has to be the permit...
 				well_applicationView 
 					= (HydroBase_WellApplicationView)
-					wellApplications.elementAt(0);
+					wellApplications.get(0);
 				desc = well_applicationView.getWell_name();
 				geoloc_num 
 					= well_applicationView.getGeoloc_num();
@@ -8289,7 +8290,7 @@ throws Exception
 				geoloc_num = -1;
 				for (i = 0; i < nstationList; i++) {
 					view = (HydroBase_StationView)
-					statList.elementAt(i);
+					statList.get(i);
 					if (view.getStation_id()
 					    .equalsIgnoreCase(nodePt
 					    .getCommonID())) {
@@ -8334,7 +8335,7 @@ throws Exception
 				// Now remove from the station list so searches
 				// are faster...
 				if (i_stationList >= 0) {
-					statList.removeElementAt(i_stationList);
+					statList.remove(i_stationList);
 				}
 			}
 			else if (__isDatabaseUp && __createOutputFiles) {
@@ -8350,7 +8351,7 @@ throws Exception
 				if (__dmi.useStoredProcedures()) {
 				for (i = 0; i < nstationList; i++) {
 					view = (HydroBase_StationView)
-					statList.elementAt(i);
+					statList.get(i);
 					if (view.getStation_id()
 					    .equalsIgnoreCase(
 					    nodePt.getCommonID())) {
@@ -8383,7 +8384,7 @@ throws Exception
 				else {
 				for (i = 0; i < nstationList; i++) {
 					station = (HydroBase_Station)
-					statList.elementAt(i);
+					statList.get(i);
 					if (station.getStation_id()
 					    .equalsIgnoreCase(
 					    nodePt.getCommonID())) {
@@ -8418,7 +8419,7 @@ throws Exception
 				nodePt.setDBY(coords[1]);
 				// Can now remove from the list...
 				if (i_stationList >= 0) {
-					statList.removeElementAt(
+					statList.remove(
 						i_stationList);
 				}
 			}
@@ -8575,29 +8576,12 @@ Writes a Vector of HydroBase_Node Objects to a list file.
 @param update if true, an existing file will be updated and its header 
 maintained.  Otherwise the file will be overwritten.
 @param nodes Vector of HydroBase_Node to write.
-@deprecated Use the overloaded version with comments.
-@throws Exception if an error occurs.
-*/
-public static void writeListFile (	String filename, String delimiter, 
-					boolean update, Vector nodes )
-throws Exception
-{	// Write without comments...
-	writeListFile ( filename, delimiter, update, nodes, null );
-}
-
-/**
-Writes a Vector of HydroBase_Node Objects to a list file.
-@param filename the name of the file to write.
-@param delimiter the delimiter to use for separating fields.
-@param update if true, an existing file will be updated and its header 
-maintained.  Otherwise the file will be overwritten.
-@param nodes Vector of HydroBase_Node to write.
 @param comments Comment strings to add to the header (null or zero length if no
 comments should be added).
 @throws Exception if an error occurs.
 */
 public static void writeListFile (	String filename, String delimiter, 
-					boolean update, Vector nodes,
+					boolean update, List nodes,
 					String [] comments )
 throws Exception
 {	int size = 0;
@@ -8644,7 +8628,7 @@ throws Exception
 		out.println(buffer.toString());
 		
 		for (int i = 0; i < size; i++) {
-			node = (HydroBase_Node)nodes.elementAt(i);
+			node = (HydroBase_Node)nodes.get(i);
 			
 			line[0] = StringUtil.formatString(node.getCommonID(),
 				formats[0]).trim();
@@ -8691,27 +8675,6 @@ throws Exception {
 }
 
 /**
-JTS -- THIS WILL BE REMOVED
-@deprecated use one of the more complete ones or the simple one
-2005-04-18 still deprecated
-*/
-public void writeXML(String filename, GRLimits limits, Vector layouts) 
-throws Exception {
-	writeXML(filename, limits, layouts, null, null);
-}
-
-/**
-JTS -- THIS WILL BE REMOVED
-@deprecated use one of the more complete ones or the simple one
-2005-04-18 still deprecated
-*/
-public void writeXML(String filename, GRLimits limits, Vector layouts,
-Vector annotations, Vector links) 
-throws Exception {
-	writeXML(filename, limits, layouts, annotations, links, null);
-}
-
-/**
 Writes the network out as an XML network file.  This method will be used
 primarily by programs that need to write out a new XML network, or which
 read in an old (non-XML) network file and want to write out an XML version.
@@ -8736,8 +8699,8 @@ automatically placed on the network next time the network is opened from the
 file.
 @throws Exception if there is an error writing the network.
 */
-public void writeXML(String filename, GRLimits limits, Vector layouts,
-Vector annotations, Vector links, GRLimits legendLimits) 
+public void writeXML(String filename, GRLimits limits, List layouts,
+		List annotations, List links, GRLimits legendLimits) 
 throws Exception {
 	filename = IOUtil.getPathUsingWorkingDir(filename);
 	if (limits == null) {
@@ -9145,7 +9108,7 @@ format =
 		String sFontSize = null;
 		String sNodeSize = null;
 		for (int i = 0; i < size; i++) {
-			layout = (PropList)layouts.elementAt(i);
+			layout = (PropList)layouts.get(i);
 			id = layout.getValue("ID");
 			isDefault = layout.getValue("IsDefault");
 			paperFormat = layout.getValue("PaperSize");
@@ -9196,7 +9159,7 @@ format =
 		int size = annotations.size();
 		PropList p = null;
 		for (int i = 0; i < size; i++) {
-			node = (HydroBase_Node)annotations.elementAt(i);
+			node = (HydroBase_Node)annotations.get(i);
 			p = (PropList)node.getAssociatedObject();
 			out.print("    <Annotation" + n);
 			out.print("         ShapeType=\"Text\"" + n);
@@ -9226,7 +9189,7 @@ format =
 		int size = links.size();
 		PropList p = null;
 		for (int i = 0; i < size; i++) {
-			p = (PropList)links.elementAt(i);
+			p = (PropList)links.get(i);
 			out.print("    <Link" + n);
 			out.print("         ShapeType=\"Link\"" + n);
 			out.print("         LineStyle=\"Dashed\"" + n);

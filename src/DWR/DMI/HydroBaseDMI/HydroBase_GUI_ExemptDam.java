@@ -33,6 +33,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -161,7 +162,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -182,7 +183,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -231,41 +232,41 @@ throws Throwable {
 Formats output for printing or export.
 @param format the format in which to format the output.
 */
-private Vector formatOutput(int format) {
-	Vector v = new Vector();
+private List formatOutput(int format) {
+	List v = new Vector();
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement("");
-		v.addElement("                                            "
+		v.add("");
+		v.add("                                            "
 			+ "      EXEMPT DAM DATA");
-		v.addElement("RECEIPT:                      "
+		v.add("RECEIPT:                      "
 			+ HydroBase_GUI_Util.trimText(__receiptJTextField));
-		v.addElement("DATE APPLICATION APPROVED:    "
+		v.add("DATE APPLICATION APPROVED:    "
 			+ HydroBase_GUI_Util.trimText(__dateAppJTextField));
-		v.addElement("DATE CONSTRUCTION COMP.:      "
+		v.add("DATE CONSTRUCTION COMP.:      "
 			+ HydroBase_GUI_Util.trimText(__dateConstJTextField));
-		v.addElement("DRAINAGE AREA:                "
+		v.add("DRAINAGE AREA:                "
 			+ HydroBase_GUI_Util.trimText(__drainageJTextField));
-		v.addElement("HEIGHT OF DAM:                "
+		v.add("HEIGHT OF DAM:                "
 			+ HydroBase_GUI_Util.trimText(__damHeightJTextField));
-		v.addElement("HEIGHT OF SPILLWAY:           "
+		v.add("HEIGHT OF SPILLWAY:           "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__spillHeightJTextField),
 			"%-20.20s") + "SIZE OF OUTLET:        "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__sizeOutJTextField),"%s"));
-		v.addElement("WIDTH OF SPILLWAY:            "
+		v.add("WIDTH OF SPILLWAY:            "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__spillWidthJTextField),
 			"%-20.20s") + "TYPE OF OUTLET:        "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__typeOutJTextField),"%s"));
-		v.addElement("TANK CAPACITY:                "
+		v.add("TANK CAPACITY:                "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__capacityJTextField),
 			"%-20.20s") + "TITLE NUMBER:          "
@@ -275,21 +276,21 @@ private Vector formatOutput(int format) {
 	}
 	else {		
 		char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement("");
-		v.addElement("RECEIPT" + delim + "DATE APPLICATION APPROVED" 
+		v.add("");
+		v.add("RECEIPT" + delim + "DATE APPLICATION APPROVED" 
 			+ delim + "DATE CONSTRUCTION COMP." + delim 
 			+ "DRAINAGE AREA" + delim + "DAM TYPE" + delim 
 			+ "HEIGHT OF DAM" + delim + "HEIGHT OF SPILLWAY" 
 			+ delim + "WIDTH OF SPILLWAY" + delim 
 			+ "SIZE OF OUTLET" + delim + "TYPE OF OUTLET" + delim 
 			+ "TAKE CAPACITY" + delim + "TITLE NUMBER" + delim);
-		v.addElement(
+		v.add(
 			HydroBase_GUI_Util.trimText(__receiptJTextField) 
 			+ delim
 			+ HydroBase_GUI_Util.trimText(__dateAppJTextField) 

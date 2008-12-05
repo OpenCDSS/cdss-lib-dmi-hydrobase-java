@@ -12,6 +12,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
@@ -33,7 +34,7 @@ queries.
 */
 public HydroBase_GUI_CUPopulation_InputFilter_JPanel ( HydroBaseDMI hbdmi )
 throws Exception
-{	Vector v = hbdmi.readCUPopulationList (
+{	List v = hbdmi.readCUPopulationList (
 		(InputFilter_JPanel)null,	// Where clauses
 					null,	// area_type
 					null,	// area_name
@@ -45,15 +46,15 @@ throws Exception
 	if ( v != null ) {
 		size = v.size();
 	}
-	Vector area_type_Vector = new Vector();
-	Vector area_name_Vector = new Vector();
-	Vector pop_type_Vector = new Vector();
+	List area_type_Vector = new Vector();
+	List area_name_Vector = new Vector();
+	List pop_type_Vector = new Vector();
 	String area_type, area_name, pop_type;
 	HydroBase_CUPopulation cupop = null;
 	int area_type_size = 0, area_name_size = 0, pop_type_size = 0, j = 0;
 	boolean found = false;
 	for ( int i = 0; i < size; i++ ) {
-		cupop = (HydroBase_CUPopulation)v.elementAt(i);
+		cupop = (HydroBase_CUPopulation)v.get(i);
 		area_type = cupop.getArea_type();
 		area_name = cupop.getArea_name();
 		pop_type = cupop.getPop_type();
@@ -63,54 +64,54 @@ throws Exception
 		found = false;
 		for ( j = 0; j < area_type_size; j++ ) {
 			if (	area_type.equalsIgnoreCase(
-				(String)area_type_Vector.elementAt(j))){
+				(String)area_type_Vector.get(j))){
 				found = true;
 				break;
 			}
 		}
 		if ( !found ) {
-			area_type_Vector.addElement(area_type);
+			area_type_Vector.add(area_type);
 		}
 		found = false;
 		for ( j = 0; j < area_name_size; j++ ) {
 			if (	area_name.equalsIgnoreCase(
-				(String)area_name_Vector.elementAt(j))){
+				(String)area_name_Vector.get(j))){
 				found = true;
 				break;
 			}
 		}
 		if ( !found ) {
-			area_name_Vector.addElement(area_name);
+			area_name_Vector.add(area_name);
 		}
 		found = false;
 		for ( j = 0; j < pop_type_size; j++ ) {
 			if (	pop_type.equalsIgnoreCase(
-				(String)pop_type_Vector.elementAt(j))){
+				(String)pop_type_Vector.get(j))){
 				found = true;
 				break;
 			}
 		}
 		if ( !found ) {
-			pop_type_Vector.addElement(pop_type);
+			pop_type_Vector.add(pop_type);
 		}
 	}
 
-	Vector input_filters = new Vector(3);
-	input_filters.addElement ( new InputFilter ( "", "",
+	List input_filters = new Vector(3);
+	input_filters.add ( new InputFilter ( "", "",
 			StringUtil.TYPE_STRING,
 			null, null, true ) );	// Blank to disable filter
 	// REVISIT SAM 2006-11-03
 	// Really need to have area_name cause a cascading filter on
 	// area_name choices, but don't have a way to do this right now.
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Area Type", "CUPopulation.area_type", "area_type",
 		StringUtil.TYPE_STRING,
 		area_type_Vector, area_type_Vector, true ) );
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Area Name", "CUPopulation.area_name", "area_name",
 		StringUtil.TYPE_STRING,
 		area_name_Vector, area_name_Vector, true ) );
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Population Type", "CUPopulation.pop_type", "pop_type",
 		StringUtil.TYPE_STRING,
 		pop_type_Vector, pop_type_Vector, true ) );

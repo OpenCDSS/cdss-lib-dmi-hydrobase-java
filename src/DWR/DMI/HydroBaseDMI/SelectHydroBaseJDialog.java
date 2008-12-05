@@ -117,6 +117,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -363,12 +364,12 @@ private String __selectedModel = __MODEL_StateCU;
 /**
 A list of available ODBC DSNs.
 */
-private Vector __available_OdbcDsn = null;
+private List __available_OdbcDsn = null;
 
 /**
 The names of the servers that can appear in the server combo box.
 */
-private Vector __serverNames = null;
+private List __serverNames = null;
 
 /**
 The username that was automatically detected by trying to create a connection to a database.
@@ -546,10 +547,10 @@ private void checkServer(String server) {
 	
 		Connection c = dmi.getConnection();
 		DatabaseMetaData dmd = c.getMetaData();
-		Vector v = DMIUtil.processResultSet(dmd.getCatalogs());
+		List v = DMIUtil.processResultSet(dmd.getCatalogs());
 		dmi.close();
 		__databaseNamesJComboBox.removeAllItems();
-		Vector v2 = null;
+		List v2 = null;
 		int size = v.size();
 
 		if (size == 0) {
@@ -563,10 +564,10 @@ private void checkServer(String server) {
 		
 		String s = null;
 		int count = 0;
-		Vector v3 = new Vector();
+		List v3 = new Vector();
 		for (i = 0; i < size; i++) {
-			v2 = (Vector)v.elementAt(i);
-			s = (String)v2.elementAt(0);
+			v2 = (List)v.get(i);
+			s = (String)v2.get(0);
 			s = s.trim();
 
 			// only add those database that start with "HydroBase"
@@ -590,7 +591,7 @@ private void checkServer(String server) {
 	}
 	catch (Exception e) {
 		__databaseNamesJComboBox.removeAllItems();
-		Vector v = new Vector();
+		List v = new Vector();
 		v.add(__NO_DATABASES);
 		__databaseNamesJComboBox.add(__NO_DATABASES);
 		ok(false);
@@ -650,7 +651,7 @@ private void connectionSelected(String connection) {
 			int size = __serverNames.size();
 			String s = null;
 			for (int i = 0; i < size; i++) {
-				s = (String)__serverNames.elementAt(i);
+				s = (String)__serverNames.get(i);
 				__hostnameJComboBox.addItem(s);
 
 				// make sure the dmi's server is the selected one, if it is in the list
@@ -701,7 +702,7 @@ private void connectionSelected(String connection) {
 				dmiName = __hbdmi.getDatabaseName();
 			}
 			for (int i = 0; i < size; i++) {
-				odbc = (String)__available_OdbcDsn.elementAt(i);
+				odbc = (String)__available_OdbcDsn.get(i);
 				__odbcDSNJComboBox.addItem(odbc);
 
 				// Try to default to the existing DMI selection
@@ -770,12 +771,12 @@ private void findDatabaseNames() {
 	// first check to see if the database names have been cached from the
 	// database server.  If so, use the cached copy rather than going out
 	// to the server again.
-	Vector v = (Vector)__databaseNames.get(s);
+	List v = (List)__databaseNames.get(s);
 	if (v != null) {
 		int size = v.size();
 		__databaseNamesJComboBox.removeAllItems();
 		for (int i = 0; i < size; i++) {
-			s = (String)v.elementAt(i);
+			s = (String)v.get(i);
 			__databaseNamesJComboBox.add(s);
 		}
 		
@@ -953,7 +954,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 			String host = null;
 
 			for (int i = 0; i < size; i++ ) {
-				host = (String)__serverNames.elementAt(i);
+				host = (String)__serverNames.get(i);
 				if (host.equalsIgnoreCase(__dbhost)) {
 					found = true;
 					break;
@@ -962,7 +963,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 
 			if (!found) {
 				// the dbhost was not found in the host list, so add to the list and sort
-				__serverNames.addElement(__dbhost);
+				__serverNames.add(__dbhost);
 				__serverNames = StringUtil.sortStringList( __serverNames);
 			}
 
@@ -1073,14 +1074,14 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Add the data source (only enabled if using a local database).
 	// Get the data source names from the system.
 
-	Vector available_OdbcDsn = DMIUtil.getDefinedOdbcDsn(true);
+    List available_OdbcDsn = DMIUtil.getDefinedOdbcDsn(true);
 	int size = available_OdbcDsn.size();
 	String s = null;
 	__available_OdbcDsn = new Vector();
 
 	// Only add DSNs that have "HydroBase" in the name.
 	for (int i = 0; i < size; i++) {
-		s = (String)available_OdbcDsn.elementAt(i);
+		s = (String)available_OdbcDsn.get(i);
 		if (StringUtil.indexOfIgnoreCase(s, __DEFAULT_ODBC_DSN, 0)> -1){
 			__available_OdbcDsn.add(s);
 		}
@@ -1095,7 +1096,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	if (__defaultOdbcDsn != null) {
 		boolean found = false;
 		for (int i = 0; i < size; i++) {
-			s = (String)__available_OdbcDsn.elementAt(i);
+			s = (String)__available_OdbcDsn.get(i);
 			if (s.equals(__defaultOdbcDsn)) {
 				found = true;
 			}
@@ -1110,7 +1111,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	String longest_odbc = "Unable to Determine";
 	String odbc;
 	for (int i = 0; i < size; i++) {
-		odbc = (String)__available_OdbcDsn.elementAt(i);
+		odbc = (String)__available_OdbcDsn.get(i);
 		if (odbc.length() > longest_odbc.length()) {
 			longest_odbc = odbc;
 		}
@@ -1583,12 +1584,12 @@ private void readConfigurationFile() {
 	int size = __serverNames.size();
 	String s = null;
 	for (int i = 0; i < size; i++) {
-		s = (String)__serverNames.elementAt(i);
+		s = (String)__serverNames.get(i);
 		if (s.equalsIgnoreCase("local")) {
 			s = IOUtil.getProgramHost();
 		}
 		s = s.toLowerCase().trim();
-		__serverNames.setElementAt(s, i);
+		__serverNames.set(i,s);
 	}
 
 	__serverNames = StringUtil.sortStringList(__serverNames);

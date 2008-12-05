@@ -773,6 +773,7 @@ import java.sql.ResultSet;
 
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMI;
@@ -884,7 +885,7 @@ added to an existing table:<p>
 sections for the appropriate table.  Do not forget to wrap this new code
 with tests for the proper version (DMI.isDatabaseVersionAtLeast())</li>
 <li>if, for the table XXXX, a method exists like:<br>
-<code>private Vector toXXXXList</code><br>
+<code>private List toXXXXList</code><br>
 then add the field to the Vector-filling code in this method</li>
 <li>go to the HydroBase_XXXX.java object that represents the table for
 which this field was added.  Add the data member for the field, 
@@ -1494,93 +1495,93 @@ private String __userSecurityPermissions = __NO_PERMISSIONS;
 /**
 Vector of TSProductAnnotationProviders.
 */
-private Vector __providers = new Vector();
+private List __providers = new Vector();
 
 /**
 Distinct Aquifers from the refAquifer table.
 */
-private Vector __AquiferRef_Vector = null;
+private List __AquiferRef_Vector = null;
 
 /**
 Distinct CU Methods from the CU_Blaney_Criddle table.
 */
-private Vector __BlaneyCriddleCUMethod_Vector = null;
+private List __BlaneyCriddleCUMethod_Vector = null;
 
 /**
 Distinct counties from the refCounty table.
 */
-private Vector __CountyRef_Vector = null;
+private List __CountyRef_Vector = null;
 
 /**
 Distinct CU Methods from the cropchar table.
 */
-private Vector __CropcharCUMethod_Vector = null;
+private List __CropcharCUMethod_Vector = null;
 
 /**
 Crops from the refCrop table.
 */
-private Vector __CropRef_Vector = null;
+private List __CropRef_Vector = null;
 
 /**
 HUC from Geoloc.HUC
 */
-private Vector __HUC_Vector = null;
+private List __HUC_Vector = null;
 
 /**
 Location types from the refLocType table.
 */
-private Vector __LocTypes_Vector = null;
+private List __LocTypes_Vector = null;
 
 /**
 Distinct meas types.
 */
-private Vector __MeasType_Vector = null;
+private List __MeasType_Vector = null;
 
 /**
 CIUs from the refCIU table.
 */
-private Vector __RefCIU_Vector = null;
+private List __RefCIU_Vector = null;
 
 /**
 Structure types from the refStrType table.
 */
-private Vector __StrTypes_Vector = null;
+private List __StrTypes_Vector = null;
 
 /**
 Distinct StructMeasTypes.
 */
-private Vector __StructMeasType_Vector = null;
+private List __StructMeasType_Vector = null;
 
 /**
 Use types from the refUseType table.
 */
-private Vector __UseTypes_Vector = null;
+private List __UseTypes_Vector = null;
 
 /**
 Water districts data.
 */
-private Vector __WaterDistricts_Vector = null;
+private List __WaterDistricts_Vector = null;
 
 /**
 Water districts sorted by division.
 */
-private Vector __WaterDistrictsByDiv_Vector = null;
+private List __WaterDistrictsByDiv_Vector = null;
 
 /**
 Water districts from structures.
 */
-private Vector __WaterDistrictsFromStructures_Vector = null;
+private List __WaterDistrictsFromStructures_Vector = null;
 
 /**
 Water divisions data.
 */
-private Vector __WaterDivisions_Vector = null;
+private List __WaterDivisions_Vector = null;
 
 /**
 This Vector will contain HydroBase_Structure objects, UNLESS stored procedures
 are being used, in which case it will contain HydroBase_StructureView objects.
 */
-private Vector __WISStructures_Vector = null;
+private List __WISStructures_Vector = null;
 
 /** 
 Constructor for a predefined ODBC DSN that does not enable Stored Procedures.
@@ -6852,7 +6853,7 @@ throws Throwable {
 Returns this DMI's annotation providers.
 @return this DMI's annotation providers.
 */
-public Vector getAnnotationProviderChoices() {	
+public List getAnnotationProviderChoices() {	
 	return __providers;
 }
 
@@ -6860,7 +6861,7 @@ public Vector getAnnotationProviderChoices() {
 Returns the global aquifer data.
 @return the global aquifer data.
 */
-public Vector getAquiferRef() {	
+public List getAquiferRef() {	
 	String routine = "getAquiferRef";
 	if (__AquiferRef_Vector == null) {
 		try {
@@ -6885,7 +6886,7 @@ CU method descriptions from the cu_blaney_criddle table.
 This is used by StateDMI.
 @return the global BlaneyCriddleCUMethod data.
 */
-public Vector getBlaneyCriddleCUMethod() {
+public List getBlaneyCriddleCUMethod() {
 	String routine = "getBlaneyCriddleCUMethod";
 	if (__BlaneyCriddleCUMethod_Vector == null) { 
 		try {
@@ -6910,7 +6911,7 @@ public Vector getBlaneyCriddleCUMethod() {
 Returns the Vector of global CIU reference data.
 @return the Vector of global CIU reference data.
 */
-public Vector getCIUVector() {
+public List getCIUVector() {
 	String routine = "getCIUVector";
 	if (__RefCIU_Vector == null) {
 		try {
@@ -6934,7 +6935,7 @@ Returns the global CountyRef data.
 This is used by StateDMI.
 @return the global CountyRef data.
 */
-public Vector getCountyRef() {	
+public List getCountyRef() {	
 	String routine = "getCountyRef";
 	if (__CountyRef_Vector == null) {
 		try {
@@ -6959,7 +6960,7 @@ CU method descriptions from the cropchar table.
 This is used by StateDMI.
 @return the global CropcharCUMethod data.
 */
-public Vector getCropcharCUMethod() {
+public List getCropcharCUMethod() {
 	String routine = "GetCropcharCUMethod";
 	if (__CropcharCUMethod_Vector == null) {
 		try {
@@ -6984,7 +6985,7 @@ Returns the global CropRef data.
 This is used by StateDMI.
 @return the global CropRef data.
 */
-public Vector getCropRef() {
+public List getCropRef() {
 	String routine = "getCropRef";
 	if (__CropRef_Vector == null) {
 		try {
@@ -7016,8 +7017,8 @@ information about the connection.
 <li>database revision history</li>
 </ul>
 */
-public Vector getDatabaseProperties () {
-	Vector v = new Vector();
+public List getDatabaseProperties () {
+	List v = new Vector();
 	v.add("HydroBase Database Host: " + getDatabaseServer());
 	if (getODBCName() != null) {
 		v.add("ODBC Data Source Name:  " +
@@ -7043,7 +7044,7 @@ public Vector getDatabaseProperties () {
 	else {
 		v.add("Time series product annotation provider choices:");
 		for (int i = 0; i < __providers.size(); i++) {
-			v.add("   " + __providers.elementAt(i));
+			v.add("   " + __providers.get(i));
 		}
 	}
 
@@ -7056,11 +7057,11 @@ public Vector getDatabaseProperties () {
 	v.add("");
 	
 	HydroBase_WaterDistrict hbwd;
-	Vector waterDistricts = getWaterDistricts();
+	List waterDistricts = getWaterDistricts();
 	int size = waterDistricts.size();
 	for (int i = 0; i < size; i++) {
 		hbwd = (HydroBase_WaterDistrict)waterDistricts
-			.elementAt(i);
+			.get(i);
 		v.add("   " + hbwd.getWD() + " - " + hbwd.getWd_name());
 	}
 
@@ -7068,7 +7069,7 @@ public Vector getDatabaseProperties () {
 	v.add("Database history (most recent at top):");
 	v.add("");
 	try {
-		Vector v2 = readDBVersionListForVersionType ( null);
+		List v2 = readDBVersionListForVersionType ( null);
 		size = 0;
 		if (v2 != null) {
 			size = v2.size();
@@ -7076,7 +7077,7 @@ public Vector getDatabaseProperties () {
 		HydroBase_DBVersion ver = null;
 		DateTime dt;
 		for ( int i = 0; i < size; i++) {
-			ver = (HydroBase_DBVersion)v2.elementAt(i);
+			ver = (HydroBase_DBVersion)v2.get(i);
 			dt = new DateTime ( ver.getVersion_date());
 			v.add("" +
 				dt.toString(DateTime.FORMAT_YYYY_MM_DD) + " " +
@@ -7101,6 +7102,7 @@ public String getDMIName() {
 }
 
 /**
+FIXME SAM 2008-12-04 Need to enable if going to be used.
 Returns the global HUC data. <p>
 Called by:<ul>
 <li>StateDMI</li>
@@ -7108,7 +7110,7 @@ Called by:<ul>
 </ul>
 @return the global HUC data.
 */
-public Vector getHUC() {
+public List getHUC() {
 	if (__HUC_Vector == null) {
 		__HUC_Vector = new Vector();
 	}
@@ -7140,7 +7142,7 @@ public String getLatestVersionString() {
 		}
 		// Else, check the version...
 		try {
-			Vector results =
+			List results =
 				readDBVersionListForVersionType("design");
 			if (results == null) {
 				return "Unable to determine database version.";
@@ -7149,13 +7151,13 @@ public String getLatestVersionString() {
 				return "Unable to determine database version.";
 			}
 			__design_version = ((HydroBase_DBVersion)
-				results.elementAt(0)).getVersion_id();
+				results.get(0)).getVersion_id();
 		}
 		catch (Exception e) {
 			return "Unable to determine database version.";
 		}
 		try {
-			Vector results =readDBVersionListForVersionType("data");
+			List results =readDBVersionListForVersionType("data");
 			if (results == null) {
 				return "Unable to determine database version.";
 			}
@@ -7163,7 +7165,7 @@ public String getLatestVersionString() {
 				return "Unable to determine database version.";
 			}
 			__data_version = ((HydroBase_DBVersion)
-				results.elementAt(0)).getVersion_id();
+				results.get(0)).getVersion_id();
 		}
 		catch (Exception e) {
 			return "Unable to determine database version.";
@@ -7183,11 +7185,11 @@ when a connection is made to the database.
 */
 public String getLocationTypeDescription(String locationType) {
 	HydroBase_LocType locType;
-	Vector locTypes = getLocTypesVector();
+	List locTypes = getLocTypesVector();
 	int size = locTypes.size();
 
 	for (int i = 0; i < size; i++) {
-		locType = (HydroBase_LocType)(locTypes.elementAt(i));
+		locType = (HydroBase_LocType)(locTypes.get(i));
 		if (locType.getLoc_type().equals(locationType)) {
 			return locType.getLoc_type_desc();
 		}
@@ -7195,7 +7197,7 @@ public String getLocationTypeDescription(String locationType) {
 	return " ";
 }
 
-public Vector getLocTypesVector() {
+public List getLocTypesVector() {
 	String routine = "getLocTypesVector";
 	if (__LocTypes_Vector == null) {
 		try {
@@ -7218,7 +7220,7 @@ public Vector getLocTypesVector() {
 Returns the global distinct MeasType data.
 @return the global distinct MeasType data.
 */
-public Vector getMeasType() {
+public List getMeasType() {
 	String routine = "getMeasType";
 	if (__MeasType_Vector == null) {
 		try {
@@ -7276,7 +7278,7 @@ public String getPreferenceValue(String variable) {
 Returns the Vector of structure types stored in global data.
 @return the Vector of structure types stored in global data.
 */
-public Vector getStrTypesVector() {
+public List getStrTypesVector() {
 	String routine = "getStrTypesVector";
 	if (__StrTypes_Vector == null) {
 		try {
@@ -7299,7 +7301,7 @@ public Vector getStrTypesVector() {
 Returns the global distinct StructMeasType data.
 @return the global distinct StructMeasType data.
 */
-public Vector getStructMeasType () {
+public List getStructMeasType () {
 	String routine = "getStructMeasType";
 	if (__StructMeasType_Vector == null) {
 		try {
@@ -7329,11 +7331,11 @@ a user logs into the database.
 */
 public String getStructureTypeDescription (String structureType) {
 	HydroBase_StrType strType;
-	Vector strTypes = getStrTypesVector();
+	List strTypes = getStrTypesVector();
 	int size = strTypes.size();
 
 	for (int i = 0; i < size; i++) {
-		strType = (HydroBase_StrType)(strTypes.elementAt(i));
+		strType = (HydroBase_StrType)(strTypes.get(i));
 		if (strType.getStr_type().equals(structureType)) {
 			return  strType.getStr_type_desc();
 		}
@@ -7353,7 +7355,7 @@ public int getUserNum() {
 Returns the global __UseTypes_Vector data.
 @return the __UseTypes_Vector.
 */
-public Vector getUseTypes() {
+public List getUseTypes() {
 	String routine = "getUseTypes";
 	if (__UseTypes_Vector == null) {
 		try {
@@ -7444,7 +7446,7 @@ public String[] getWaterDistrictWhereClause(SimpleJComboBox choice,
 String table, boolean displayWarning, boolean checkData)
 throws Exception {
 	String function = "HydroBaseGUI.getDistrictWhereClause()";
-	Vector whereClauses = new Vector();
+	List whereClauses = new Vector();
 
 	String[] ret = new String[2];
 
@@ -7527,7 +7529,7 @@ throws Exception {
 	if (!hasData) {
 		String items = "";
 		for (int i = 0; i < notFound.size(); i++) {
-			items += ("\n   " +(String)notFound.elementAt(i));
+			items += ("\n   " +(String)notFound.get(i));
 		}
 
 		if (displayWarning) {
@@ -7556,7 +7558,7 @@ string ("") if unknown.
 */
 public String getWaterDistrictName ( int wd )
 throws Exception {
-	Vector waterDistricts = getWaterDistricts();
+	List waterDistricts = getWaterDistricts();
 	// If the global data are available, use it....
 	int size = 0;
 	if (waterDistricts != null) {
@@ -7565,7 +7567,7 @@ throws Exception {
 	}
 	HydroBase_WaterDistrict hwd;
 	for ( int i = 0; i < size; i++) {
-		hwd = (HydroBase_WaterDistrict)waterDistricts.elementAt(i);
+		hwd = (HydroBase_WaterDistrict)waterDistricts.get(i);
 		if (hwd.getWD() == wd) {
 			return hwd.getWd_name();
 		}
@@ -7578,7 +7580,7 @@ Return the global list of water districts objects, sorted by water district
 number.
 @return the global list of water districts objects.
 */
-public Vector getWaterDistricts() {
+public List getWaterDistricts() {
 	String routine = "getWaterDistricts";
 	if (__WaterDistricts_Vector == null) {
 		try {
@@ -7597,7 +7599,7 @@ public Vector getWaterDistricts() {
 	return __WaterDistricts_Vector;
 }
 
-public Vector getWaterDistrictsByDiv() {
+public List getWaterDistrictsByDiv() {
 	String routine = "getWaterDistrictsByDiv";
 	if (__WaterDistrictsByDiv_Vector == null) {
 		// read the water district by div data
@@ -7617,7 +7619,7 @@ public Vector getWaterDistrictsByDiv() {
 	return __WaterDistrictsByDiv_Vector;
 }
 
-public Vector getWaterDistrictsFromStructures() {
+public List getWaterDistrictsFromStructures() {
 	String routine = "getWaterDistrictsFromStructures";
 	if (__WaterDistrictsFromStructures_Vector == null) {
 		// read the water district by div data
@@ -7642,7 +7644,7 @@ Return the global list of water division objects, sorted by water division
 number.
 @return the global list of water division objects.
 */
-public Vector getWaterDivisions() {
+public List getWaterDivisions() {
 	String routine = "getWaterDivisions";
 	if (__WaterDivisions_Vector == null) {
 		try {
@@ -7665,7 +7667,7 @@ public Vector getWaterDivisions() {
 Returns the Vector of WIS Structures stored in global data.
 @return the Vector of Wis Structures.
 */
-public Vector getWISStructuresVector() {
+public List getWISStructuresVector() {
 	return __WISStructures_Vector;
 }
 
@@ -7694,10 +7696,10 @@ public boolean hasPermission(String s) {
 	else if (__userSecurityPermissions.equals(__ALL_PERMISSIONS)) {
 		return true;
 	}
-	Vector v = StringUtil.breakStringList(__userSecurityPermissions, ",",0);
+	List v = StringUtil.breakStringList(__userSecurityPermissions, ",",0);
 	int size = v.size();
 	for (int i = 0; i < size; i++) {
-		if (((String)v.elementAt(i)).trim().equals(s)) {
+		if (((String)v.get(i)).trim().equals(s)) {
 			return true;
 		}
 	}
@@ -8650,11 +8652,11 @@ by which water districts were returned from a distinct query on the
 HydroBase_Structures list.
 */
 public boolean isWaterDistrictAvailable(Integer num) {
-	Vector v = getWaterDistrictsFromStructures();
+	List v = getWaterDistrictsFromStructures();
 	int size = v.size();
 
 	for (int i = 0; i < size; i++) {
-		if (num.equals((Integer)v.elementAt(i))) {
+		if (num.equals((Integer)v.get(i))) {
 			return true;
 		}
 	}
@@ -8672,13 +8674,13 @@ __CountyRef_Vector, using global data.
 @return the county name associated with the given county id.
 */
 public String lookupCountyName(int countyID) {
-	Vector v = getCountyRef();
+	List v = getCountyRef();
 	if (v == null) {
 		return null;
 	}
 	HydroBase_CountyRef c = null;
 	for (int i = 0; i < v.size(); i++) {
-		c = (HydroBase_CountyRef)v.elementAt(i);
+		c = (HydroBase_CountyRef)v.get(i);
 		if (c.getCty() == countyID) {
 			return c.getCounty();
 		}
@@ -8694,10 +8696,10 @@ found.
 */
 public String lookupCIUDescription(String code) {
 	HydroBase_RefCIU ref = null;
-	Vector refCIU = getCIUVector();
+	List refCIU = getCIUVector();
 	int size = refCIU.size();
 	for (int i = 0; i < size; i++) {
-		ref = (HydroBase_RefCIU)refCIU.elementAt(i);
+		ref = (HydroBase_RefCIU)refCIU.get(i);
 		if (ref.getCode().equalsIgnoreCase(code)) {
 			return ref.getDescription();
 		}
@@ -8793,10 +8795,10 @@ data.
 public String lookupUseDefinitionForXUse(String xuse) 
 throws Exception {
 	HydroBase_Use u = null;
-	Vector useTypes = getUseTypes();
+	List useTypes = getUseTypes();
 	int size = useTypes.size();
 	for (int i = 0; i < size; i++) {
-		u = (HydroBase_Use)useTypes.elementAt(i);
+		u = (HydroBase_Use)useTypes.get(i);
 		if (u.getXuse().equalsIgnoreCase(xuse)) {
 			return u.getUse_def();
 		}
@@ -8814,10 +8816,10 @@ data.
 public String lookupUseDefinitionForUse(String use) 
 throws Exception {
 	HydroBase_Use u = null;
-	Vector useTypes = getUseTypes();
+	List useTypes = getUseTypes();
 	int size = useTypes.size();
 	for (int i = 0; i < size; i++) {
-		u = (HydroBase_Use)useTypes.elementAt(i);
+		u = (HydroBase_Use)useTypes.get(i);
 		if (u.getUse().equalsIgnoreCase(use)) {
 			return u.getUse_def();
 		}
@@ -8831,15 +8833,15 @@ Returns the list of all water districts given a division using global data.
 @return The list of all water districts given a division.
 @throws Exception if an error occurs.
 */
-public Vector lookupWaterDistrictsForDivision(int div)
+public List lookupWaterDistrictsForDivision(int div)
 throws Exception {
 	HydroBase_WaterDistrict w;
-	Vector waterDistrictsByDiv = getWaterDistrictsByDiv();
+	List waterDistrictsByDiv = getWaterDistrictsByDiv();
 	int size = waterDistrictsByDiv.size();
-	Vector waterDistricts = new Vector();	
+	List waterDistricts = new Vector();	
 	for (int i = 0; i < size; i++) {
 		w = (HydroBase_WaterDistrict)
-			waterDistrictsByDiv.elementAt(i);
+			waterDistrictsByDiv.get(i);
 		if (w.getDiv() == div) {
 			// Add to the list...
 			waterDistricts.add(w);
@@ -8857,11 +8859,11 @@ Returns the water district value associated with a wd using global data.
 public HydroBase_WaterDistrict lookupWaterDistrictForWD(int wd)
 throws Exception {
 	HydroBase_WaterDistrict w;
-	Vector waterDistrictsByDiv = getWaterDistrictsByDiv();
+	List waterDistrictsByDiv = getWaterDistrictsByDiv();
 	int size = waterDistrictsByDiv.size();
 	for (int i = 0; i < size; i++) {
 		w = (HydroBase_WaterDistrict)
-			waterDistrictsByDiv.elementAt(i);
+			waterDistrictsByDiv.get(i);
 		if (w.getWD() == wd) {
 			return w;
 		}
@@ -8878,11 +8880,11 @@ Returns the water division for a district using global data, or -1 if not found.
 public int lookupWaterDivisionForDistrict(int district)
 throws Exception {
 	HydroBase_WaterDistrict w;		
-	Vector waterDistrictsByDiv = getWaterDistrictsByDiv();
+	List waterDistrictsByDiv = getWaterDistrictsByDiv();
 	int size = waterDistrictsByDiv.size();
 	for (int i = 0; i < size; i++) {
 		w = (HydroBase_WaterDistrict)
-			waterDistrictsByDiv.elementAt(i);
+			waterDistrictsByDiv.get(i);
 		if (w.getWD() == district) {
 			return w.getDiv();
 		}
@@ -8971,7 +8973,7 @@ state/county/commodity/practice records will be returned.
 @return a Vector of HydroBase_Agstats.
 @throws Exception if an error occurs.
 */
-public Vector readAgriculturalCASSCropStatsList(InputFilter_JPanel panel,
+public List readAgriculturalCASSCropStatsList(InputFilter_JPanel panel,
 String county, String commodity, String practice, DateTime req_date1, 
 DateTime req_date2, boolean distinct) 
 throws Exception {
@@ -9026,7 +9028,7 @@ throws Exception {
 				"vw_CDSS_AgriculturalCASSCropStats_Distinct"), 
 				2, null);
 			ResultSet rs = runSPFlex(parameters);
-			Vector v = toAgriculturalCASSCropStatsSPList(rs, true);
+			List v = toAgriculturalCASSCropStatsSPList(rs, true);
 			closeResultSet(rs, __lastStatement);
 			return v;					
 		}
@@ -9036,7 +9038,7 @@ throws Exception {
 				"vw_CDSS_AgriculturalCASSCropStats"), 
 				1, null);
 			ResultSet rs = runSPFlex(parameters);
-			Vector v = toAgriculturalCASSCropStatsSPList(rs, false);
+			List v = toAgriculturalCASSCropStatsSPList(rs, false);
 			closeResultSet(rs, __lastStatement);
 			return v;					
 		}		
@@ -9050,7 +9052,7 @@ throws Exception {
 		else {
 			buildSQL(q, __S_AGRICULTURAL_CASS_CROP_STATS);
 		}
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel);		
 		if (wheres != null) {
@@ -9096,7 +9098,7 @@ throws Exception {
 		}
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toAgriculturalCASSCropStatsList(rs, distinct);
+		List v = toAgriculturalCASSCropStatsList(rs, distinct);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9125,7 +9127,7 @@ state/county/commodity/type records will be returned.
 @return a Vector of HydroBase_Agstats.
 @throws Exception if an error occurs.
 */
-public Vector readAgriculturalCASSLivestockStatsList(InputFilter_JPanel panel,
+public List readAgriculturalCASSLivestockStatsList(InputFilter_JPanel panel,
 String county, String commodity, String type, DateTime req_date1, 
 DateTime req_date2, boolean distinct ) 
 throws Exception {
@@ -9180,7 +9182,7 @@ throws Exception {
 				"vw_CDSS_AgriculturalCASSLivestockStats_Distinct"), 
 				111, null);
 			ResultSet rs = runSPFlex(parameters);
-			Vector v = toAgriculturalCASSLivestockStatsSPList(rs,
+			List v = toAgriculturalCASSLivestockStatsSPList(rs,
 				true);
 			closeResultSet(rs, __lastStatement);
 			return v;					
@@ -9192,7 +9194,7 @@ throws Exception {
 				"vw_CDSS_AgriculturalCASSLivestockStats"), 
 				-999, null);
 			ResultSet rs = runSPFlex(parameters);
-			Vector v = toAgriculturalCASSLivestockStatsSPList(rs,
+			List v = toAgriculturalCASSLivestockStatsSPList(rs,
 				false);
 			closeResultSet(rs, __lastStatement);
 			return v;					
@@ -9208,7 +9210,7 @@ throws Exception {
 			buildSQL(q, 
 				__S_AGRICULTURAL_CASS_LIVESTOCK_STATS);
 		}
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel);		
 		if (wheres != null) {
@@ -9254,7 +9256,7 @@ throws Exception {
 		}
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toAgriculturalCASSLivestockStatsList(rs, distinct);
+		List v = toAgriculturalCASSLivestockStatsList(rs, distinct);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9284,7 +9286,7 @@ state/county/commodity/practice records will be returned.
 @return a Vector of HydroBase_Agstats.
 @throws Exception if an error occurs.
 */
-public Vector readAgriculturalNASSCropStatsList(InputFilter_JPanel panel,
+public List readAgriculturalNASSCropStatsList(InputFilter_JPanel panel,
 String county, String commodity, DateTime req_date1, DateTime req_date2, 
 boolean distinct) 
 throws Exception {
@@ -9332,7 +9334,7 @@ throws Exception {
 				"vw_CDSS_AgriculturalNASSCropStats_Distinct"), 
 				4, null);
 			ResultSet rs = runSPFlex(parameters);
-			Vector v = toAgriculturalNASSCropStatsSPList(rs, true);
+			List v = toAgriculturalNASSCropStatsSPList(rs, true);
 			closeResultSet(rs, __lastStatement);
 			return v;			
 		}
@@ -9342,7 +9344,7 @@ throws Exception {
 				"vw_CDSS_AgriculturalNASSCropStats"), 
 				3, null);
 			ResultSet rs = runSPFlex(parameters);
-			Vector v = toAgriculturalNASSCropStatsSPList(rs, false);
+			List v = toAgriculturalNASSCropStatsSPList(rs, false);
 			closeResultSet(rs, __lastStatement);
 			return v;				
 		}		
@@ -9356,7 +9358,7 @@ throws Exception {
 		else {
 			buildSQL(q, __S_AGRICULTURAL_NASS_CROP_STATS);
 		}
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel);		
 		if (wheres != null) {
@@ -9398,7 +9400,7 @@ throws Exception {
 		}
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toAgriculturalNASSCropStatsList(rs, distinct);
+		List v = toAgriculturalNASSCropStatsList(rs, distinct);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9420,7 +9422,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_AnnualAmt objects.
 @throws Exception if an error occurs.
 */
-public Vector readAnnualAmtList(int meas_num, DateTime req_date1,
+public List readAnnualAmtList(int meas_num, DateTime req_date1,
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -9452,7 +9454,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Annual_Amt"), 5, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toAnnualAmtList(rs);
+		List v = toAnnualAmtList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -9472,7 +9474,7 @@ throws Exception {
 		}
 		q.addOrderByClause("annual_amt.irr_year");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toAnnualAmtList(rs);
+		List v = toAnnualAmtList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9493,7 +9495,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_ResEOM objects.
 @throws Exception if an error occurs.
 */
-public Vector readAnnualResList(int meas_num, DateTime req_date1,
+public List readAnnualResList(int meas_num, DateTime req_date1,
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -9525,7 +9527,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Annual_Res"), 6, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toAnnualResSPList(rs);
+		List v = toAnnualResSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -9541,7 +9543,7 @@ throws Exception {
 		}
 		q.addOrderByClause("annual_res.irr_year");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toAnnualResList(rs);
+		List v = toAnnualResList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9562,7 +9564,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_AnnualWC objects.
 @throws Exception if an error occurs.
 */
-public Vector readAnnualWCList(int meas_num, DateTime req_date1,
+public List readAnnualWCList(int meas_num, DateTime req_date1,
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -9594,7 +9596,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Annual_WC"), 7, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toAnnualWCList(rs);
+		List v = toAnnualWCList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -9614,7 +9616,7 @@ throws Exception {
 		}
 		q.addOrderByClause("annual_wc.irr_year");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toAnnualWCList(rs);
+		List v = toAnnualWCList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9625,7 +9627,7 @@ Reads all the Aquifer records from the database.
 @return a Vector of HydroBase_Aquifer objects.
 @throws Exception if an error occurs.
 */
-public Vector readAquiferRefList() 
+public List readAquiferRefList() 
 throws Exception {
 	if (!__useSP) {
 		return new Vector();
@@ -9638,7 +9640,7 @@ throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_AQUIFER);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toAquiferList(rs);
+	List v = toAquiferList(rs);
 	closeResultSet(rs, q);
 	return v;
 }
@@ -9656,14 +9658,14 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_Area_cap
 @throws Exception if an error occurs.
 */
-public Vector readAreaCapListForStructure_num(int structure_num)
+public List readAreaCapListForStructure_num(int structure_num)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_AREA_CAP);
 	q.addWhereClause("area_cap.structure_num = " + structure_num);
 	q.addOrderByClause("area_cap.volume");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toAreaCapList(rs);
+	List v = toAreaCapList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -9700,13 +9702,13 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Calls"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toCallsSPList(rs);
+		List v = toCallsSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		if (v == null || v.size() == 0) {
 			return null;
 		}
 		else {
-			return (HydroBase_Calls)v.elementAt(0);
+			return (HydroBase_Calls)v.get(0);
 		}
 	}
 	else {
@@ -9714,13 +9716,13 @@ throws Exception {
 		buildSQL(q, __S_CALLS);
 		q.addWhereClause("calls.call_num = " + call_num);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toCallsList(rs, false);
+		List v = toCallsList(rs, false);
 		closeResultSet(rs);
 		if (v == null || v.size() == 0) {
 			return null;
 		}
 		else {
-			return (HydroBase_Calls)v.elementAt(0);
+			return (HydroBase_Calls)v.get(0);
 		}
 	}
 }
@@ -9737,13 +9739,13 @@ This uses the following view:<p><ul>
 @param divs a Vector of Strings, each of which is the number of a division.
 @return a Vector of HydroBase_Calls objects.
 */
-public Vector readCallsListForDiv(Vector divs, boolean distinct)
+public List readCallsListForDiv(List divs, boolean distinct)
 throws Exception {
 	int size = divs.size();
 	int size2 = -1;
 	String s = null;
-	Vector v = null;
-	Vector results = new Vector();
+	List v = null;
+	List results = new Vector();
 
 	if (divs.size() == 7) {
 		// all divisions are being queried
@@ -9751,12 +9753,12 @@ throws Exception {
 	}
 
 	for (int i = 0; i < size; i++) {
-		s = (String)divs.elementAt(i);
+		s = (String)divs.get(i);
 		v = readCallsListForDiv(StringUtil.atoi(s), distinct);
 		size2 = v.size();
 		for (int j = 0; j < size2; j++) {
-			if (v.elementAt(j) != null) {
-				results.add(v.elementAt(j));
+			if (v.get(j) != null) {
+				results.add(v.get(j));
 			}
 		}
 	}
@@ -9776,7 +9778,7 @@ This uses the following view:<p><ul>
 @param div the div for which to query calls
 @return a Vector of HydroBase_Calls objects.
 */
-public Vector readCallsListForDiv(int div, boolean distinct)
+public List readCallsListForDiv(int div, boolean distinct)
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -9808,7 +9810,7 @@ Doug said this is always included in the query
 				getViewNumber("vw_CDSS_Calls"), 0, null);
 		}
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = null;
+		List v = null;
 		if (distinct) {
 			v = toCallsSPDistinctList(rs);
 		}
@@ -9824,7 +9826,7 @@ Doug said this is always included in the query
 		q.addWhereClause("calls.div = " + div);
 		q.addWhereClause("calls.deleted LIKE 'N'");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toCallsList(rs, false);
+		List v = toCallsList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9844,7 +9846,7 @@ HydroBase_GUI_CallsQuery.EDIT_CALLS, which tells how to set up some where
 clauses.
 @return a Vector of HydroBase_Calls objects.
 */
-public Vector readCallsListForSetReleaseDates(DateTime startDate,
+public List readCallsListForSetReleaseDates(DateTime startDate,
 DateTime endDate, int mode) 
 throws Exception {
 	if (__useSP) {
@@ -9862,7 +9864,7 @@ throws Exception {
 		q.addWhereClause("end_date = " + end);
 
 		ResultSet rs = dmiSelect(q);
-		Vector v = toCallsSPList(rs);
+		List v = toCallsSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -9905,7 +9907,7 @@ throws Exception {
 		}
 	
 		ResultSet rs = dmiSelect(q);
-		Vector v = toCallsList(rs, false);
+		List v = toCallsList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9919,7 +9921,7 @@ This method is used by:<ul>
 <p><b>Stored Procedures</b><p>
 @return a Vector of HydroBase_Calls objects.
 */
-public Vector readCallsListForWISDiagram(int wd, int id, DateTime datetime)
+public List readCallsListForWISDiagram(int wd, int id, DateTime datetime)
 throws Exception {
 	DateTime dt = new DateTime(datetime);
 	dt.setPrecision(DateTime.FORMAT_YYYY_MM_DD);
@@ -9931,7 +9933,7 @@ throws Exception {
 		q.addWhereClause("wd = " + wd);
 		q.addWhereClause("id = " + id);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toCallsSPList(rs);
+		List v = toCallsSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -9959,7 +9961,7 @@ throws Exception {
 		q.addWhereClause("wd = " + wd);
 		q.addWhereClause("id = " + id);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toCallsList(rs, false);
+		List v = toCallsList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -9979,13 +9981,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_Contact objects.
 @throws Exception if an error occurs.
 */
-public Vector readContactListForRolodex_num(int rolodex_num)
+public List readContactListForRolodex_num(int rolodex_num)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_CONTACT);
 	q.addWhereClause("contact.rolodex_num = " + rolodex_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toContactSPList(rs);
 		closeResultSet(rs, q);
@@ -10008,7 +10010,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_CountyRef.
 @throws Exception if an error occurs.
 */
-public Vector readCountyRefList()
+public List readCountyRefList()
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_REF_COUNTY);
@@ -10018,7 +10020,7 @@ throws Exception {
 	}	
 	q.addOrderByClause(table + ".county");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toCountyRefList (rs);
+	List v = toCountyRefList (rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -10041,14 +10043,14 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_CourtCase objects.
 @throws Exception if an error occurs.
 */
-public Vector readCourtCaseListForStructure_num(int structure_num)
+public List readCourtCaseListForStructure_num(int structure_num)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_COURTCASE_FOR_STRUCTURE_NUM);
 	q.addWhereClause("courtcase.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
 	// checked stored procedure
-	Vector v = toCourtCaseList(rs);
+	List v = toCourtCaseList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -10079,7 +10081,7 @@ values.  if specified as false, perform a full query.
 @return a Vector of HydroBase_CUCropchar.
 @throws Exception if an error occurs.
 */
-public Vector readCropcharListForMethodDesc(String method_desc,
+public List readCropcharListForMethodDesc(String method_desc,
 boolean distinct)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -10090,13 +10092,13 @@ throws Exception {
 		q.addOrderByClause("cropchar.method_desc");
 		if (__useSP) {
 			ResultSet rs = dmiSelect(q);
-			Vector v = toCropcharDistinctSPList(rs);
+			List v = toCropcharDistinctSPList(rs);
 			closeResultSet(rs, q);
 			return v;	
 		}
 		else {
 			ResultSet rs = dmiSelect(q);
-			Vector v = toCropcharList(rs, distinct);
+			List v = toCropcharList(rs, distinct);
 			closeResultSet(rs);
 			return v;
 		}
@@ -10122,7 +10124,7 @@ throws Exception {
 				getViewNumber("vw_CDSS_Cropchar"), 
 				8, null);
 			ResultSet rs = runSPFlex(parameters);
-			Vector v = toCropcharSPList(rs);
+			List v = toCropcharSPList(rs);
 			closeResultSet(rs, __lastStatement);
 			return v;
 		}
@@ -10137,7 +10139,7 @@ throws Exception {
 			}
 			q.addOrderByClause("cropchar.cropname");
 			ResultSet rs = dmiSelect(q);
-			Vector v = toCropcharList(rs, distinct);
+			List v = toCropcharList(rs, distinct);
 			closeResultSet(rs);
 			return v;		
 		}
@@ -10156,7 +10158,7 @@ This uses the following view:<p><ul>
 @return a Vector of HydroBase_CUCropchar.
 @throws Exception if an error occurs.
 */
-public Vector readCropcharList()
+public List readCropcharList()
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -10169,7 +10171,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Cropchar"), 8, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toCropcharList(rs, false);
+		List v = toCropcharList(rs, false);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -10179,7 +10181,7 @@ throws Exception {
 		q.addWhereClause("cropchar.lengthofseason > 0");	
 		q.addOrderByClause("cropchar.cropname");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toCropcharList (rs, false);
+		List v = toCropcharList (rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -10201,14 +10203,14 @@ three queries are executed
 @return an array of Vectors, one element for each query performed.
 @throws Exception if there is an error reading the database.
 */
-public Vector[] readCropGrowthList(InputFilter_JPanel panel, String method)
+public List[] readCropGrowthList(InputFilter_JPanel panel, String method)
 throws Exception {
 	if (!__useSP) {
 		return readCropGrowthList(method);
 	}
 	else {
 		ResultSet rs = null;
-		Vector[] varray = new Vector[3];
+		List[] varray = new Vector[3];
 
 		boolean doAll = false;
 		if (method.equals("*")) {
@@ -10273,7 +10275,7 @@ three queries are executed
 @return an array of Vectors, one element for each query performed.
 @throws Exception if there is an error reading the database.
 */
-public Vector[] readCropGrowthList(String method)
+public List[] readCropGrowthList(String method)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 
@@ -10282,7 +10284,7 @@ throws Exception {
 		return null;
 	}
 	else {
-		Vector[] vectors = new Vector[3];
+		List[] vectors = new List[3];
 		vectors[0] = vectors[1] = vectors[2] = null;
 		ResultSet rs = null;
 		boolean doAll = false;
@@ -10304,7 +10306,7 @@ throws Exception {
 			q.addOrderByClause("cu_blaney_criddle.curve_type");
 			q.addOrderByClause("cu_blaney_criddle.curve_value");
 			rs = dmiSelect(q);
-			Vector v = toCUBlaneyCriddleList(rs, false);
+			List v = toCUBlaneyCriddleList(rs, false);
 			vectors[0] = v;
 		}
 
@@ -10322,7 +10324,7 @@ throws Exception {
 			q.addOrderByClause("cu_method.method_desc");
 			q.addOrderByClause("crop.cropname");
 			rs = dmiSelect(q);
-			Vector v = toCUModHargreavesList(rs);
+			List v = toCUModHargreavesList(rs);
 			vectors[1] = v;
 		}		
 
@@ -10342,7 +10344,7 @@ throws Exception {
 			q.addOrderByClause("cu_penman_monteith.growthstage_no");
 			q.addOrderByClause("cu_penman_monteith.curve_value");
 			rs = dmiSelect(q);
-			Vector v = toCUPenmanMonteithList(rs);
+			List v = toCUPenmanMonteithList(rs);
 			vectors[2] = v;
 		}
 		return vectors;
@@ -10360,13 +10362,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_CropRef objects.
 @throws Exception if an error occurs.
 */
-public Vector readCropRefList() 
+public List readCropRefList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_CROP_REF);
 	q.addOrderByClause("crop_ref.crop_desc");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toCropRefList(rs);
+	List v = toCropRefList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -10396,7 +10398,7 @@ values.  if specified as false, perform a full query.
 @return a Vector of HydroBase_CUPenmanMonteith.
 @throws Exception if an error occurs.
 */
-public Vector readCUBlaneyCriddleListForMethodDesc (	String method_desc,
+public List readCUBlaneyCriddleListForMethodDesc (	String method_desc,
 							boolean distinct ) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -10406,13 +10408,13 @@ throws Exception {
 		q.addOrderByClause("cu_method.method_desc");
 		if (__useSP) {
 			ResultSet rs = dmiSelect(q);
-			Vector v = toCUBlaneyCriddleDistinctSPList(rs);
+			List v = toCUBlaneyCriddleDistinctSPList(rs);
 			closeResultSet(rs, q);
 			return v;
 		}
 		else {
 			ResultSet rs = dmiSelect(q);
-			Vector v = toCUBlaneyCriddleList(rs, distinct);
+			List v = toCUBlaneyCriddleList(rs, distinct);
 			closeResultSet(rs);
 			return v;
 		}
@@ -10438,7 +10440,7 @@ throws Exception {
 				getViewNumber("vw_CDSS_CUBlaneyCriddle"), 
 				9, null);
 			ResultSet rs = runSPFlex(parameters);
-			Vector v = toCUBlaneyCriddleSPList(rs);
+			List v = toCUBlaneyCriddleSPList(rs);
 			closeResultSet(rs, __lastStatement);
 			return v;
 		}
@@ -10456,7 +10458,7 @@ throws Exception {
 			q.addOrderByClause("cu_blaney_criddle.curve_value");
 			q.addOrderByClause("cu_method.method_desc");
 			ResultSet rs = dmiSelect(q);
-			Vector v = toCUBlaneyCriddleList(rs, distinct);
+			List v = toCUBlaneyCriddleList(rs, distinct);
 			closeResultSet(rs);
 			return v;	
 		}
@@ -10475,13 +10477,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_CUCoeff
 @throws Exception if an error occurs.
 */
-public Vector readCUCoeffList() 
+public List readCUCoeffList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_CU_COEFF);
 	q.addOrderByClause("cu_coeff.consuse");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toCUCoeffList(rs);
+	List v = toCUCoeffList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -10505,7 +10507,7 @@ The stored procedures that correspond to these queries are:<ul>
 @return a Vector of HydroBase_CUMethod.
 @throws Exception if an error occurs.
 */
-public Vector readCUMethodList(boolean distinct)
+public List readCUMethodList(boolean distinct)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	q.addOrderByClause("cu_method.method_desc");
@@ -10517,7 +10519,7 @@ throws Exception {
 		q.addOrderByClause("cu_method.method_num");
 	}
 	ResultSet rs = dmiSelect(q);
-	Vector v = toCUMethodList(rs, distinct);
+	List v = toCUMethodList(rs, distinct);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -10551,7 +10553,7 @@ area_type/area_name/pop_type records will be returned.
 @return a Vector of HydroBase_CUPopulation.
 @throws Exception if an error occurs.
 */
-public Vector readCUPopulationList(InputFilter_JPanel panel,
+public List readCUPopulationList(InputFilter_JPanel panel,
 String area_type, String area_name, String pop_type, DateTime req_date1, 
 DateTime req_date2, boolean distinct) 
 throws Exception {
@@ -10609,7 +10611,7 @@ throws Exception {
 			getViewNumber(
 			"vw_CDSS_CUPopulation_Distinct"), 112, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toCUPopulationList(rs, true);
+		List v = toCUPopulationList(rs, true);
 		closeResultSet(rs, __lastStatement);
 		return v;					
 	}
@@ -10618,7 +10620,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber( "vw_CDSS_CUPopulation"), -999, null );
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toCUPopulationList(rs, false);
+		List v = toCUPopulationList(rs, false);
 		closeResultSet(rs, __lastStatement);
 		return v;					
 	}		
@@ -10637,7 +10639,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_DailyAmt objects.
 @throws Exception if an error occurs.
 */
-public Vector readDailyAmtList(int meas_num, DateTime req_date1,
+public List readDailyAmtList(int meas_num, DateTime req_date1,
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -10669,7 +10671,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_DailyAmt"), 10, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toDailyAmtList(rs);
+		List v = toDailyAmtList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -10688,7 +10690,7 @@ throws Exception {
 		q.addOrderByClause("daily_amt.cal_year");
 		q.addOrderByClause("daily_amt.cal_mon");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toDailyAmtList(rs);
+		List v = toDailyAmtList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -10730,7 +10732,7 @@ This method uses the following views:<p><ul>
 @return a Vector of HydroBase_X objects.
 @throws Exception if an error occurs.
 */
-protected Vector readDailyStationData(int sqlNumber, int meas_num,
+protected List readDailyStationData(int sqlNumber, int meas_num,
 DateTime req_date1, DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -10810,7 +10812,7 @@ throws Exception {
 			getViewNumber(viewName), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
 
-		Vector v = null;
+		List v = null;
 		if (sqlNumber == __S_DAILY_PCPN) {
 			v = toDailyPcpnSPList(rs);
 		}
@@ -10835,7 +10837,7 @@ throws Exception {
 		q.addOrderByClause("cal_year");
 		q.addOrderByClause("cal_mon_num");
 		ResultSet rs = dmiSelect(q);
-		Vector v = null;
+		List v = null;
 		if (sqlNumber == __S_DAILY_PCPN) {
 			v = toDailyPcpnList(rs);
 		}
@@ -10859,7 +10861,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_DailyWC objects.
 @throws Exception if an error occurs.
 */
-public Vector readDailyWCList(	int meas_num, DateTime req_date1,
+public List readDailyWCList(	int meas_num, DateTime req_date1,
 				DateTime req_date2 ) 
 throws Exception {
 	if (__useSP) {
@@ -10891,7 +10893,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_DailyWC"), 11, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toDailyWCSPList(rs);
+		List v = toDailyWCSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -10911,7 +10913,7 @@ throws Exception {
 		q.addOrderByClause("daily_wc.cal_mon");	
 		q.addOrderByClause("daily_wc.s");
 		ResultSet rs = dmiSelect(q);	
-		Vector v = toDailyWCList(rs);
+		List v = toDailyWCList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -10933,7 +10935,7 @@ returned.  Otherwise, releases will be returned.
 if a stored procedure is executed.
 @throws Exception if an error occurs.
 */
-public Vector readDailyWCListForStructure_numRecordType(int structure_num,
+public List readDailyWCListForStructure_numRecordType(int structure_num,
 String recordType)
 throws Exception {
 	if (__useSP) {
@@ -10957,7 +10959,7 @@ throws Exception {
 		}
 	
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toDailyWCSPList(rs);
+		List v = toDailyWCSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -10983,7 +10985,7 @@ throws Exception {
 		q.addOrderByClause("daily_wc.s");
 
 		ResultSet rs = dmiSelect(q);	
-		Vector v = toDailyWCList(rs);
+		List v = toDailyWCList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -11009,7 +11011,7 @@ throws Exception {
 	buildSQL(q, __S_DAM);
 	q.addWhereClause("structure.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toDamSPList(rs);
 		closeResultSet(rs, q);
@@ -11021,7 +11023,7 @@ throws Exception {
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_StructureDam)(v.elementAt(0));
+	return (HydroBase_StructureDam)(v.get(0));
 }
 
 /**
@@ -11037,13 +11039,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_DamInspection objects
 @throws Exception if an error occurs.
 */
-public Vector readDamInspectionListForStructure_num(int structure_num) 
+public List readDamInspectionListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_DAM_INSPECTION);
 	q.addWhereClause("dam_inspection.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toDamInspectionSPList(rs);
 		closeResultSet(rs, q);
@@ -11067,13 +11069,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_DamOutlet objects.
 @throws Exception if an error occurs.
 */
-public Vector readDamOutletListForStructure_num(int structure_num) 
+public List readDamOutletListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_DAM_OUTLET);
 	q.addWhereClause("dam_outlet.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toDamOutletList(rs);
+	List v = toDamOutletList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -11096,13 +11098,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_DamSpillway objects.
 @throws Exception if an error occurs.
 */
-public Vector readDamSpillwayListForStructure_num(int structure_num) 
+public List readDamSpillwayListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_DAM_SPILLWAY);
 	q.addWhereClause("dam_spillway.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toDamSpillwayList(rs);
+	List v = toDamSpillwayList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -11127,7 +11129,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of objects of type HydroBase_DBVersion.
 @throws Exception if an error occurs.
 */
-public Vector readDBVersionListForVersionType ( String version_type )
+public List readDBVersionListForVersionType ( String version_type )
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	if (version_type != null) {
@@ -11140,7 +11142,7 @@ throws Exception {
 	}
 	q.addOrderByClause("db_version.version_date DESC");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toDBVersionList (rs);
+	List v = toDBVersionList (rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -11167,7 +11169,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_DiversionComment objects.
 @throws Exception if an error occurs.
 */
-public Vector readDiversionCommentList(	int meas_num, DateTime req_date1,
+public List readDiversionCommentList(	int meas_num, DateTime req_date1,
 					DateTime req_date2 ) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -11190,7 +11192,7 @@ throws Exception {
 	//}
 	q.addOrderByClause("diversion_comment.comm_date");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toDiversionCommentList(rs);
+	List v = toDiversionCommentList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -11213,14 +11215,14 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_DiversionComment objects.
 @throws Exception if an error occurs.
 */
-public Vector readDiversionCommentListForStructure_num(int structure_num) 
+public List readDiversionCommentListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_DIVERSION_COMMENT_FOR_STRUCTURE_NUM);
 	q.addWhereClause("diversion_comment.structure_num = " + structure_num);
 	q.addOrderByClause("diversion_comment.comm_date");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toDiversionCommentList(rs);
+	List v = toDiversionCommentList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -11243,13 +11245,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_EmergencyPlan objects.
 @throws Exception if an error occurs.
 */
-public Vector readEmergencyPlanListForStructure_num(int structure_num) 
+public List readEmergencyPlanListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_EMERGENCY_PLAN);
 	q.addWhereClause("emergency_plan.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toEmergencyPlanList(rs);
+	List v = toEmergencyPlanList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -11278,7 +11280,7 @@ throws Exception {
 	buildSQL(q, __S_EQUIPMENT);
 	q.addWhereClause("equipment.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toEquipmentSPList(rs);
 		closeResultSet(rs, q);
@@ -11288,7 +11290,7 @@ throws Exception {
 		closeResultSet(rs);
 	}
 	if (v.size() > 0) {
-		return (HydroBase_Equipment)v.elementAt(0);
+		return (HydroBase_Equipment)v.get(0);
 	}
 	else {
 		return null;
@@ -11310,7 +11312,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_FrostDates objects.
 @throws Exception if an error occurs.
 */
-public Vector readFrostDatesList(int meas_num, DateTime req_date1,
+public List readFrostDatesList(int meas_num, DateTime req_date1,
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -11342,7 +11344,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Frost_Dates"), 14, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toFrostDatesSPList(rs);
+		List v = toFrostDatesSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -11360,7 +11362,7 @@ throws Exception {
 		}
 		q.addOrderByClause("frost_dates.cal_year");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toFrostDatesList(rs);
+		List v = toFrostDatesList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -11378,7 +11380,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_GeneralComment objects.
 @throws Exception if an error occurs.
 */
-public Vector readGeneralCommentListForStructure_num(int structure_num) 
+public List readGeneralCommentListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_GENERAL_COMMENT);
@@ -11387,7 +11389,7 @@ throws Exception {
 		q.addOrderByClause("general_comment.date_entered DESC");
 	}
 	ResultSet rs = dmiSelect(q);
-	Vector v = toGeneralCommentList(rs);
+	List v = toGeneralCommentList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -11419,7 +11421,7 @@ throws Exception {
 	buildSQL(q, __S_GEOLOC);
 	q.addWhereClause("geoloc.geoloc_num = " + geoloc_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toGeolocSPList(rs);
 		closeResultSet(rs, q);
@@ -11431,7 +11433,7 @@ throws Exception {
 	if (v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_Geoloc)v.elementAt(0);
+	return (HydroBase_Geoloc)v.get(0);
 }
 
 /**
@@ -11446,13 +11448,13 @@ This method uses the following stored procedure:<p>
 @return a Vector of HydroBase_GroundWaterWellsGeophlogs Objects.
 @throws Exception if an error occurs.
 */
-public Vector readGeophlogsListForWell_num(int well_num) 
+public List readGeophlogsListForWell_num(int well_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_GEOPHLOGS);
 	q.addWhereClause("well_num = " + well_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toGeophlogsList(rs);
+	List v = toGeophlogsList(rs);
 	closeResultSet(rs, q);
 	return v;
 }
@@ -11691,7 +11693,7 @@ This method used the following view:<p>
 @return a Vector of HydroBase_GroundWaterWellsDrillersKSum Objects.
 @throws Exception if an error occurs.
 */
-public Vector readGroundWaterWellsDrillersKSumList(InputFilter_JPanel panel,
+public List readGroundWaterWellsDrillersKSumList(InputFilter_JPanel panel,
 String[] districtWhere) 
 throws Exception {
 	// SP only
@@ -11702,7 +11704,7 @@ throws Exception {
 		getViewNumber(
 		"vw_CDSS_GroundWaterWellsDrillersKSum"), 84, null);
 	ResultSet rs = runSPFlex(parameters);
-	Vector v = toGroundWaterWellsDrillersKSumList(rs);
+	List v = toGroundWaterWellsDrillersKSumList(rs);
 	closeResultSet(rs, __lastStatement);
 	return v;					
 }
@@ -11719,7 +11721,7 @@ This method used the following view:<p>
 @return a Vector of HydroBase_GroundWaterWellsView Objects.
 @throws Exception if an error occurs.
 */
-public Vector readGroundWaterWellsGeophlogsList(InputFilter_JPanel panel,
+public List readGroundWaterWellsGeophlogsList(InputFilter_JPanel panel,
 String[] districtWhere) 
 throws Exception {
 	// SP only
@@ -11730,7 +11732,7 @@ throws Exception {
 		getViewNumber(
 		"vw_CDSS_GroundWaterWellsGeophlogs"), 82, null);
 	ResultSet rs = runSPFlex(parameters);
-	Vector v = toGroundWaterWellsGeophlogsList(rs);
+	List v = toGroundWaterWellsGeophlogsList(rs);
 	closeResultSet(rs, __lastStatement);
 	return v;					
 }
@@ -11764,14 +11766,14 @@ throws Exception {
 		getViewNumber("vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType"),83, null);
 
 	ResultSet rs = runSPFlex(parameters);
-	Vector v = toGroundWaterWellMeasTypeList(rs);
+	List v = toGroundWaterWellMeasTypeList(rs);
 	closeResultSet(rs, __lastStatement);
 
 	if (v == null || v.size() == 0) {
 		return null;
 	}
 	else {
-		return (HydroBase_GroundWaterWellsView)v.elementAt(0);
+		return (HydroBase_GroundWaterWellsView)v.get(0);
 	}
 }
 
@@ -11817,14 +11819,14 @@ throws Exception {
 		"vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType"),
 		83, null);
 	ResultSet rs = runSPFlex(parameters);
-	Vector v = toGroundWaterWellMeasTypeList(rs);
+	List v = toGroundWaterWellMeasTypeList(rs);
 	closeResultSet(rs, __lastStatement);
 
 	if (v == null || v.size() == 0) {
 		return null;
 	}
 	else {
-		return (HydroBase_GroundWaterWellsView)v.elementAt(0);
+		return (HydroBase_GroundWaterWellsView)v.get(0);
 	}
 }
 
@@ -11842,7 +11844,7 @@ This method uses the following view:<p><ul>
 HydroBase_StructureGeolocStructMeasTypeView objects.
 @throws Exception if there is an error running the query.
 */
-public Vector readGroundWaterWellsMeasTypeList(InputFilter_JPanel panel, 
+public List readGroundWaterWellsMeasTypeList(InputFilter_JPanel panel, 
 String[] districtWhere)
 throws Exception {
 	if (getDatabaseVersion() < VERSION_20050701) {
@@ -11857,7 +11859,7 @@ throws Exception {
 	    "vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType"),
 		83, null);
 	ResultSet rs = runSPFlex(parameters);
-	Vector v = toGroundWaterWellMeasTypeList(rs);
+	List v = toGroundWaterWellMeasTypeList(rs);
 	closeResultSet(rs, __lastStatement);
 	return v;
 }
@@ -11881,7 +11883,7 @@ VERSION_20050701)</li></ul>
 objects.
 @throws Exception if there is an error running the query.
 */
-public Vector readGroundWaterWellsPumpingTestList(InputFilter_JPanel panel, 
+public List readGroundWaterWellsPumpingTestList(InputFilter_JPanel panel, 
 String[] districtWhere)
 throws Exception {
 	if (__useSP) {
@@ -11901,12 +11903,12 @@ throws Exception {
 		}
 			
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toGroundWaterWellsPumpingTestList(rs);
+		List v = toGroundWaterWellsPumpingTestList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
 	else {
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel, HydroBase_GUI_Util._GEOLOC_TABLE_NAME,
 			HydroBase_GUI_Util.GROUND_WATER);
@@ -11918,12 +11920,12 @@ throws Exception {
 		if (wheres != null) {
 			int size = wheres.size();
 			for (int i = 0; i < size; i++) {
-				q.addWhereClause((String)wheres.elementAt(i));
+				q.addWhereClause((String)wheres.get(i));
 			}
 		}
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toGroundWaterWellsPumpingTestList(rs);
+		List v = toGroundWaterWellsPumpingTestList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -11941,7 +11943,7 @@ This method used the following view:<p>
 @return a Vector of HydroBase_GroundWaterWellsVolcanics Objects.
 @throws Exception if an error occurs.
 */
-public Vector readGroundWaterWellsVolcanicsList(InputFilter_JPanel panel,
+public List readGroundWaterWellsVolcanicsList(InputFilter_JPanel panel,
 String[] districtWhere) 
 throws Exception {
 	// SP only
@@ -11952,7 +11954,7 @@ throws Exception {
 		getViewNumber(
 		"vw_CDSS_GroundWaterWellsVolcanics"), 85, null);
 	ResultSet rs = runSPFlex(parameters);
-	Vector v = toGroundWaterWellsVolcanicsList(rs);
+	List v = toGroundWaterWellsVolcanicsList(rs);
 	closeResultSet(rs, __lastStatement);
 	return v;					
 }
@@ -11966,12 +11968,12 @@ This method is used by:<ul>
 @return a Vector of HydroBase_LocType objects.
 @throws Exception if an error occurs.
 */
-public Vector readLocTypeList() 
+public List readLocTypeList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_LOC_TYPE);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toLocTypeList(rs);
+	List v = toLocTypeList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -11993,13 +11995,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_Mapfile objects.
 @throws Exception if an error occurs.
 */
-public Vector readMapfileListForStructure_num(int structure_num) 
+public List readMapfileListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_MAPFILE);
 	q.addWhereClause("mapfile.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toMapfileSPList(rs);
 		closeResultSet(rs, q);
@@ -12023,13 +12025,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_MeasTypes.
 @throws Exception if there are any errors.
 */
-public Vector readMeasTypeDistinctList()
+public List readMeasTypeDistinctList()
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_MEAS_TYPE_DISTINCT);
 	q.addOrderByClause("meas_type.meas_type");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toMeasTypeDistinctList(rs);	
+	List v = toMeasTypeDistinctList(rs);	
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -12057,7 +12059,7 @@ be used.
 @return a Vector of HydroBase_MeasTypes.
 @throws Exception if there are any errors.
 */
-public Vector readMeasTypeList(int station_num, String meas_type, 
+public List readMeasTypeList(int station_num, String meas_type, 
 String vax_field, String time_step, String data_source)
 throws Exception {
 	if (__useSP) {
@@ -12108,7 +12110,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_StationMeasType"), 70, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStationMeasTypeSPList(rs, false);
+		List v = toStationMeasTypeSPList(rs, false);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -12138,7 +12140,7 @@ throws Exception {
 		q.addOrderByClause("station.station_num");
 		q.addOrderByClause("meas_type.meas_num");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStationMeasTypeSPList(rs, false);
+		List v = toStationMeasTypeSPList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -12185,7 +12187,7 @@ This method uses the following views:<p><ul>
 @return a Vector of HydroBase_X objects.
 @throws Exception if an error occurs.
 */
-protected Vector readMonthlyStationData(int sqlNumber, int meas_num,
+protected List readMonthlyStationData(int sqlNumber, int meas_num,
 DateTime req_date1, DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -12279,7 +12281,7 @@ throws Exception {
 			getViewNumber(viewName), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
 
-		Vector v = null;
+		List v = null;
 
 		switch(sqlNumber) {
 			case __S_MONTHLY_TOTAL_EVAP:
@@ -12327,7 +12329,7 @@ throws Exception {
 		q.addOrderByClause("cal_year");
 		q.addOrderByClause("cal_mon_num");
 		ResultSet rs = dmiSelect(q);
-		Vector v = null;
+		List v = null;
 		switch(sqlNumber) {
 			case __S_MONTHLY_TOTAL_PCPN:
 				v = toMonthlyPcpnList(rs);		break;
@@ -12369,14 +12371,14 @@ will not be included.
 @return a Vector of HydroBase_NetAmts objects.
 @throws Exception if an error occurs.
 */
-public Vector readNetAmtsList(int structure_num, int wd, int id, 
-boolean positiveNetRateAbs, Vector orderBys, boolean old)
+public List readNetAmtsList(int structure_num, int wd, int id, 
+boolean positiveNetRateAbs, List orderBys, boolean old)
 throws Exception {
 	return readNetAmtsList(structure_num, wd, id, positiveNetRateAbs,
 		null);
 }
 
-public Vector readNetAmtsList(int structure_num, int wd, int id, 
+public List readNetAmtsList(int structure_num, int wd, int id, 
 boolean positiveNetRateAbs, String orderCode)
 throws Exception {
 	if (__useSP) {
@@ -12432,7 +12434,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_NetAmts"), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toNetAmtsSPList(rs);
+		List v = toNetAmtsSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -12470,7 +12472,7 @@ throws Exception {
 
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toNetAmtsList(rs);
+		List v = toNetAmtsList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -12493,7 +12495,7 @@ when coming from HydroBase_Report_NetAmts.  If -1, ignored.
 @return a Vector of HydroBase_NetAmts objects.
 @throws Exception if there is an error running the query.
 */
-public Vector readNetAmtsList(InputFilter_JPanel panel, 
+public List readNetAmtsList(InputFilter_JPanel panel, 
 String[] districtWhere, GRLimits mapQueryLimits, int type)
 throws Exception {
 	if (__useSP) {
@@ -12514,15 +12516,15 @@ throws Exception {
 			mapQueryLimits);
 
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toNetAmtsSPList(rs);
+		List v = toNetAmtsSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
 	else {
-		Vector orderBys 
+		List orderBys 
 			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
 			panel, false);
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel, HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME,
 			HydroBase_GUI_Util.WATER_RIGHT);
@@ -12560,23 +12562,23 @@ returned.  Can be null.
 @return a Vector of HydroBase_NetAmts objects.
 @throws Exception if an error occurs.
 */
-public Vector readNetAmtsList(Vector where, Vector order) 
+public List readNetAmtsList(List where, List order) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_NET_AMTS);
 	if (where != null) {
 		for (int i = 0; i < where.size(); i++) {
 			q.addWhereClause(convertCounty(
-				(String)where.elementAt(i)));
+				(String)where.get(i)));
 		}
 	}
 	if (order != null) {
 		for (int i = 0; i < order.size(); i++) {
-			q.addOrderByClause((String)order.elementAt(i));
+			q.addOrderByClause((String)order.get(i));
 		}
 	}
 	ResultSet rs = dmiSelect(q);
-	Vector v = toNetAmtsList(rs);
+	List v = toNetAmtsList(rs);
 	closeResultSet(rs);
 	return v;
 }
@@ -12599,7 +12601,7 @@ ignore.
 @return a Vector of HydroBase_ParcelUseTS objects.  The objects are sorted by
 div, parcel_id, and cal_year.
 */
-public Vector readParcelUseTSList(int cal_year, int div, int parcel_id,
+public List readParcelUseTSList(int cal_year, int div, int parcel_id,
 String land_use, String irrig_type, DateTime req_date1, DateTime req_date2)
 throws Exception {
 	if (__useSP) {
@@ -12667,7 +12669,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Parcel_Use_TS"), 18, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toParcelUseTSList(rs, false);
+		List v = toParcelUseTSList(rs, false);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -12708,7 +12710,7 @@ throws Exception {
 		}
 	
 		ResultSet rs = dmiSelect(q);
-		Vector v = toParcelUseTSList(rs, false);
+		List v = toParcelUseTSList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -12725,7 +12727,7 @@ This method is used by StateDMI.
 @return a Vector of Integers, each of which is a unique calendar year for the
 specified div (or all divs), sorted ascending.
 */
-public Vector readParcelUseTSDistinctCalYearsList(int div)
+public List readParcelUseTSDistinctCalYearsList(int div)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_PARCEL_USE_TS_DISTINCT);
@@ -12744,7 +12746,7 @@ throws Exception {
 	}
 
 	ResultSet rs = dmiSelect(q);
-	Vector v = toParcelUseTSList(rs, true);
+	List v = toParcelUseTSList(rs, true);
 
 	if (__useSP) {
 		closeResultSet(rs, q);
@@ -12755,9 +12757,9 @@ throws Exception {
 
 	int size = v.size();
 	HydroBase_ParcelUseTS p = null;
-	Vector calYears = new Vector();
+	List calYears = new Vector();
 	for (int i = 0; i < size; i++) {
-		p = (HydroBase_ParcelUseTS)v.elementAt(i);
+		p = (HydroBase_ParcelUseTS)v.get(i);
 		calYears.add(new Integer(p.getCal_year()));
 	}
 	return calYears;
@@ -12782,13 +12784,13 @@ ignore.
 @return a Vector of HydroBase_ParcelUseTS objects.  The objects are sorted by
 div, parcel_id, and cal_year.
 */
-public Vector readParcelUseTSListForParcelList(int div, int[] parcel_id,
+public List readParcelUseTSListForParcelList(int div, int[] parcel_id,
 String land_use, String irrig_type, DateTime req_date1, DateTime req_date2 )
 throws Exception {
 	if (__useSP) {
 		int size = 0;
-		Vector results = new Vector();
-		Vector v = null;
+		List results = new Vector();
+		List v = null;
 
 		if (parcel_id.length == 0) {
 			return readParcelUseTSList(-999, div, -999,
@@ -12801,7 +12803,7 @@ throws Exception {
 					req_date2);
 				size = v.size();
 				for (int j = 0; j < size; j++) {
-					results.add(v.elementAt(j));
+					results.add(v.get(j));
 				}
 			}
 			return results;
@@ -12844,7 +12846,7 @@ throws Exception {
 		}
 	
 		ResultSet rs = dmiSelect(q);
-		Vector v = toParcelUseTSList(rs, false);
+		List v = toParcelUseTSList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -12865,7 +12867,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_ParcelUseTSStructureToParcel objects.
 @throws Exception if an error occurs.
 */
-public Vector readParcelUseTSStructureToParcelListForStructure_num(
+public List readParcelUseTSStructureToParcelListForStructure_num(
 int structure_num) 
 throws Exception {
 	return readParcelUseTSStructureToParcelListForStructure_numCal_year (
@@ -12887,7 +12889,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_ParcelUseTSStructureToParcel objects.
 @throws Exception if an error occurs.
 */
-public Vector readParcelUseTSStructureToParcelListForStructure_numCal_year(
+public List readParcelUseTSStructureToParcelListForStructure_numCal_year(
 int structure_num, int cal_year) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -12903,7 +12905,7 @@ throws Exception {
 	q.addOrderByClause("parcel_use_ts.parcel_id");
 	q.addOrderByClause("parcel_use_ts.land_use");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toParcelUseTSStructureToParcelList(rs);
+	List v = toParcelUseTSStructureToParcelList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -12933,7 +12935,7 @@ throws Exception {
 	buildSQL(q, __S_PERSON_DETAILS);
 	q.addWhereClause("structure.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toPersonDetailsList(rs);
+	List v = toPersonDetailsList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -12943,7 +12945,7 @@ throws Exception {
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_PersonDetails)(v.elementAt(0));
+	return (HydroBase_PersonDetails)(v.get(0));
 }
 
 /**
@@ -12957,12 +12959,12 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_RefCIUs
 @throws Exception if an error occurs.
 */
-public Vector readRefCIUList() 
+public List readRefCIUList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_REF_CIU);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toRefCIUList(rs);
+	List v = toRefCIUList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -12986,7 +12988,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_ResEOM objects.
 @throws Exception if an error occurs.
 */
-public Vector readResEOMList (	int meas_num, DateTime req_date1,
+public List readResEOMList (	int meas_num, DateTime req_date1,
 				DateTime req_date2 ) 
 throws Exception {
 	if (__useSP) {
@@ -13018,7 +13020,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Res_EOM"), 20, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toResEOMSPList(rs);
+		List v = toResEOMSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -13037,7 +13039,7 @@ throws Exception {
 		q.addOrderByClause("res_eom.cal_year");
 		q.addOrderByClause("res_eom.cal_mon_num");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toResEOMList(rs);
+		List v = toResEOMList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -13057,7 +13059,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_ResMeas objects.
 @throws Exception if an error occurs.
 */
-public Vector readResMeasList(int meas_num, DateTime req_date1, 
+public List readResMeasList(int meas_num, DateTime req_date1, 
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -13127,7 +13129,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Res_Meas"), 21, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toResMeasList(rs);
+		List v = toResMeasList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -13171,7 +13173,7 @@ throws Exception {
 		}
 		q.addOrderByClause("res_meas.date_time");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toResMeasList(rs);
+		List v = toResMeasList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -13188,7 +13190,7 @@ This method uses the following views:<p><ul>
 @return a Vector of HydroBase_ResMeas objects.
 @throws Exception if an error occurs.
 */
-public Vector readResMeasListForStructure_num(int structure_num)
+public List readResMeasListForStructure_num(int structure_num)
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -13203,7 +13205,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Res_Meas"), 21, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toResMeasList(rs);
+		List v = toResMeasList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -13213,7 +13215,7 @@ throws Exception {
 		q.addWhereClause("res_meas.structure_num = " + structure_num);
 		q.addOrderByClause("res_meas.date_time");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toResMeasList(rs);
+		List v = toResMeasList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -13238,7 +13240,7 @@ throws Exception {
 	buildSQL(q, __S_ROLODEX_FOR_ROLODEX_NUM);
 	q.addWhereClause("rolodex.rolodex_num = " + rolodex_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toRolodexSPList(rs);
 		closeResultSet(rs, q);
@@ -13248,7 +13250,7 @@ throws Exception {
 		closeResultSet(rs);
 	}
 	if (v.size() > 0) {
-		return (HydroBase_Rolodex)v.elementAt(0);
+		return (HydroBase_Rolodex)v.get(0);
 	}
 	else {
 		return null;
@@ -13282,7 +13284,7 @@ throws Exception {
 	}
 	q.addWhereClause("person_details.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toRolodexSPList(rs);
 		closeResultSet(rs, q);
@@ -13293,7 +13295,7 @@ throws Exception {
 	}
 
 	if (v.size() > 0) {
-		return (HydroBase_Rolodex)v.elementAt(0);
+		return (HydroBase_Rolodex)v.get(0);
 	}
 	else {
 		return null;
@@ -13316,7 +13318,7 @@ returned.  If false, they won't be.
 @return a Vector of HydroBase_RTMeas objects.
 @throws Exception if an error occurs.
 */
-public Vector readRTMeasList(int meas_num, DateTime req_date1,
+public List readRTMeasList(int meas_num, DateTime req_date1,
 DateTime req_date2, boolean useFlaggedData, boolean missingAmt)
 throws Exception {
 	if (__useSP) {
@@ -13367,7 +13369,7 @@ throws Exception {
 			getViewNumber("vw_CDSS_RealTime_Telemetry"), 
 			25, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toRTMeasList(rs);
+		List v = toRTMeasList(rs);
 		closeResultSet(rs, null);
 		return v;
 	}
@@ -13392,7 +13394,7 @@ throws Exception {
 		}
 		q.addOrderByClause("date_time");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toRTMeasList(rs);
+		List v = toRTMeasList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -13412,7 +13414,7 @@ This is called by:<ul>
 @param req_date2 If not null, specify the end date for the query.
 @throws Exception if an error occurs. 
 */
-public Vector readSnowCrseList(int meas_num, DateTime req_date1,
+public List readSnowCrseList(int meas_num, DateTime req_date1,
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
@@ -13450,7 +13452,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_SnowCrse"), 22, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toSnowCrseSPList(rs);
+		List v = toSnowCrseSPList(rs);
 		closeResultSet(rs, null);
 		return v;
 	}
@@ -13468,7 +13470,7 @@ throws Exception {
 		q.addOrderByClause("snow_crse.cal_year");
 		q.addOrderByClause("snow_crse.cal_mon_num");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toSnowCrseList(rs);
+		List v = toSnowCrseList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -13493,13 +13495,13 @@ throws Exception {
 	buildSQL(q, __S_STATION_FOR_STATION_ID);
 	q.addWhereClause("station.station_id = '" + station_id + "'");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStationList(rs);
+	List v = toStationList(rs);
 	closeResultSet(rs);
 	if ((v == null) || (v.size() == 0)) {
 		return null;
 	}
 	else {
-		return (HydroBase_Station)v.elementAt(0);
+		return (HydroBase_Station)v.get(0);
 	}
 }
 
@@ -13512,14 +13514,14 @@ This method is used by:<ul>
 @return a Vector of HydroBase_Station objects.
 @throws Exception if an error occurs.
 */
-public Vector readStationListForStation_idList(Vector ids) 
+public List readStationListForStation_idList(List ids) 
 throws Exception {
 	String station = "";
 	int size = ids.size();
-	Vector results = new Vector();
+	List results = new Vector();
 	Object o = null;
 	for (int i = 0; i < size; i++) {
-		station = (String)ids.elementAt(0);
+		station = (String)ids.get(0);
 		if (__useSP) {
 			o = readStationViewForStation_id(station);
 			if (o != null) {
@@ -13550,7 +13552,7 @@ wildcard pattern).
 @return a Vector of HydroBase_CUClimWts objects.
 @throws Exception if an error occurs.
 */
-public Vector readStationGeolocCUClimWtsListForCountyAndHydrounit(
+public List readStationGeolocCUClimWtsListForCountyAndHydrounit(
 String county, String hydrounit) 
 throws Exception {
 	if (__useSP) {
@@ -13578,7 +13580,7 @@ throws Exception {
 			getViewNumber("vw_CDSS_StationCUClimWts"), 23, 
 			null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStationGeolocCUClimWtsSPList(rs);
+		List v = toStationGeolocCUClimWtsSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -13599,7 +13601,7 @@ throws Exception {
 		q.addOrderByClause("cu_clim_wts.county");
 		q.addOrderByClause("cu_clim_wts.hydrounit");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStationGeolocCUClimWtsList(rs);
+		List v = toStationGeolocCUClimWtsList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -13625,7 +13627,7 @@ throws Exception {
 	buildSQL(q, __S_STATION_GEOLOC_FOR_STATION_ID);
 	q.addWhereClause("station.station_id = '" + station_id + "'");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStationGeolocList(rs);
+	List v = toStationGeolocList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -13636,7 +13638,7 @@ throws Exception {
 		return null;
 	}
 	else {
-		return (HydroBase_StationGeoloc)v.elementAt(0);
+		return (HydroBase_StationGeoloc)v.get(0);
 	}
 }
 
@@ -13665,7 +13667,7 @@ to read all).
 objects.
 @throws Exception if an error occurs.
 */
-public Vector readStationGeolocMeasTypeList(InputFilter_JPanel panel, 
+public List readStationGeolocMeasTypeList(InputFilter_JPanel panel, 
 String[] districtWhere, GRLimits mapQueryLimits, String meas_type, 
 String time_step, String vax_field, String data_source, String transmit,
 boolean meas_typeContains)
@@ -13724,7 +13726,7 @@ throws Exception {
 			getViewNumber("vw_CDSS_StationMeasType"), 24, 
 			mapQueryLimits);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStationMeasTypeSPList(rs, false);
+		List v = toStationMeasTypeSPList(rs, false);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -13768,7 +13770,7 @@ throws Exception {
 //		q.addOrderByClauses(orderBys);
 
 		if (panel != null) {
-			Vector where_clauses 
+			List where_clauses 
 				= DMIUtil.getWhereClausesFromInputFilter(
 					this, panel);		
 			// Add additional where clauses...
@@ -13780,7 +13782,7 @@ throws Exception {
 			}
 			for (int i = 0; i < where_clauses.size(); i++) {
 				q.addWhereClause(convertCounty(
-					(String)where_clauses.elementAt(i)));
+					(String)where_clauses.get(i)));
 			}
 		}
 
@@ -13792,7 +13794,7 @@ throws Exception {
 //		q.addOrderByClause("station.station_id");
 
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStationMeasTypeSPList(rs, false);
+		List v = toStationMeasTypeSPList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -13818,7 +13820,7 @@ be null.
 @deprecated (JTS - 2006-05-25) I don't believe this method is used anymore.
 If anything compiles and sees this deprecation, mark this method as used.
 */
-public Vector readStationGeolocMeasTypeListForWD(int wd, String meas_type, 
+public List readStationGeolocMeasTypeListForWD(int wd, String meas_type, 
 String time_step, String vax_field, String data_source, boolean distinct) 
 throws Exception {
 	if (__useSP) {
@@ -13886,7 +13888,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber(viewName), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStationMeasTypeSPList(rs, distinct);
+		List v = toStationMeasTypeSPList(rs, distinct);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
@@ -13936,7 +13938,7 @@ throws Exception {
 		q.addOrderByClause("meas_type.meas_type");
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStationMeasTypeSPList(rs, distinct);
+		List v = toStationMeasTypeSPList(rs, distinct);
 		closeResultSet(rs);
 		return v;
 	}
@@ -13957,7 +13959,7 @@ This method uses the following view:<p><ul>
 */
 public HydroBase_StationView readStationViewForStation_id(String station_id) 
 throws Exception {
-	Vector v = null;
+	List v = null;
 	
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -13994,7 +13996,7 @@ throws Exception {
 		return null;
 	}
 	else {
-		return (HydroBase_StationView)v.elementAt(0);
+		return (HydroBase_StationView)v.get(0);
 	}
 }
 
@@ -14004,9 +14006,9 @@ Reads all station views with the given WD.
 @return a Vector HydroBase_StationView objects.
 @throws Exception if an error occurs.
 */
-public Vector readStationViewListForWD(int wd) 
+public List readStationViewListForWD(int wd) 
 throws Exception {
-	Vector v = null;
+	List v = null;
 	
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -14055,7 +14057,7 @@ throws Exception {
 	buildSQL(q, __S_STREAM_FOR_STREAM_NUM);
 	q.addWhereClause("stream.stream_num = " + stream_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toStreamSPList(rs);
 		closeResultSet(rs, q);
@@ -14067,7 +14069,7 @@ throws Exception {
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_Stream)v.elementAt(0);
+	return (HydroBase_Stream)v.get(0);
 }
 
 /**
@@ -14089,7 +14091,7 @@ The stored procedures that correspond to these query are:<ul>
 @return an HydroBase_Stream objects or null if none couldbe found.
 @throws Exception if an error occurs.
 */
-public Vector readStreamListForWDStr_trib_to(int wd, int str_trib_to) 
+public List readStreamListForWDStr_trib_to(int wd, int str_trib_to) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	if (!DMIUtil.isMissing(str_trib_to)) {
@@ -14102,7 +14104,7 @@ throws Exception {
 	q.addWhereClause("legacy_stream.wd = " + wd);
 	q.addOrderByClause("stream.stream_name");
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toStreamSPList(rs);
 		closeResultSet(rs, q);
@@ -14129,7 +14131,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_StrType objects.
 @throws Exception if an error occurs.
 */
-public Vector readStrTypeList() 
+public List readStrTypeList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_STR_TYPE);
@@ -14140,7 +14142,7 @@ throws Exception {
 		q.addOrderByClause("str_type.str_type");
 	}
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStrTypeList(rs);
+	List v = toStrTypeList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -14160,12 +14162,12 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_StructMeasTypes
 @throws Exception if an error occurs.
 */
-public Vector readStructMeasTypeDistinctList()
+public List readStructMeasTypeDistinctList()
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_STRUCT_MEAS_TYPE_DISTINCT_2);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructMeasTypeDistinctList(rs);
+	List v = toStructMeasTypeDistinctList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -14196,7 +14198,7 @@ the identifier string, as needed.
 null or blank.
 @return a Vector of HydroBase_StructMeasType objects.
 */
-public Vector readStructMeasTypeListForStructure_num(int structure_num, 
+public List readStructMeasTypeListForStructure_num(int structure_num, 
 String meas_type, String identifier, String time_step, String data_source) 
 throws Exception {
 	return readStructMeasTypeListForWDIDStructure_num ( -1, -1, structure_num,
@@ -14228,7 +14230,7 @@ the identifier string, as needed.
 null or blank.
 @return a Vector of HydroBase_StructMeasType objects.
 */
-private Vector readStructMeasTypeListForWDIDStructure_num(int wd, int id,
+private List readStructMeasTypeListForWDIDStructure_num(int wd, int id,
 int structure_num, 
 String meas_type, String identifier, String time_step, String data_source) 
 throws Exception {
@@ -14276,7 +14278,7 @@ throws Exception {
 			27, null);
 		ResultSet rs = runSPFlex(parameters);
 		// use the toStructureStructMeas...
-		Vector v = toStructMeasTypeSPList(rs);
+		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
@@ -14302,7 +14304,7 @@ throws Exception {
 		}
 		q.addOrderByClause("struct_meas_type.meas_type");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructMeasTypeSPList(rs);
+		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -14324,7 +14326,7 @@ The following views are used by this method:<p><ul>
 stored procedures.
 @return a Vector of HydroBase_StructMeasType objects.
 */
-public Vector readStructMeasTypeListForStructure_num(int structure_num,
+public List readStructMeasTypeListForStructure_num(int structure_num,
 boolean distinct) 
 throws Exception {
 	if (__useSP) {
@@ -14342,7 +14344,7 @@ throws Exception {
 			27, null);
 		ResultSet rs = runSPFlex(parameters);
 		// use the toStructureStructMeas...
-		Vector v = toStructMeasTypeSPList(rs);
+		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
@@ -14358,7 +14360,7 @@ throws Exception {
 		q.addWhereClause("structure.structure_num = " + structure_num);
 		q.addOrderByClause("struct_meas_type.identifier");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructMeasTypeSPList(rs);
+		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -14379,7 +14381,7 @@ The following views are used by this method:<p><ul>
 @param meas_type the meas_type for which to read data.  Cannot be null.
 @return a Vector of HydroBase_StructMeasType objects.
 */
-public Vector readStructMeasTypeListForStructure_numMeas_type(int structure_num,
+public List readStructMeasTypeListForStructure_numMeas_type(int structure_num,
 String meas_type) 
 throws Exception {
 	if (__useSP) {
@@ -14403,7 +14405,7 @@ throws Exception {
 			27, null);
 		ResultSet rs = runSPFlex(parameters);
 		// use the toStructureStructMeas...
-		Vector v = toStructMeasTypeSPList(rs);
+		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 
@@ -14416,7 +14418,7 @@ throws Exception {
 			+ meas_type + "'");
 		q.addOrderByClause("struct_meas_type.identifier");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructMeasTypeSPList(rs);
+		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -14435,13 +14437,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_StructureAKA objects.
 @throws Exception if an error occurs.
 */
-public Vector readStructureAKAListForStructure_num(int structure_num) 
+public List readStructureAKAListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_STRUCTURE_AKA);
 	q.addWhereClause("structure.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toStructureAKASPList(rs);
 		closeResultSet(rs, q);
@@ -14465,16 +14467,16 @@ no data are available.
 */
 public HydroBase_StructureGeoloc readStructureGeolocForWDID(int wd, int id) 
 throws Exception {
-	Vector v = new Vector(1);
+	List v = new Vector(1);
 	// It is a little inefficient to form one string since the called method
 	// will just split it out again, but do it this way for now.
 	v.add(HydroBase_WaterDistrict.formWDID(wd,id));
-	Vector v2 = readStructureGeolocListForWDIDList(v);
+	List v2 = readStructureGeolocListForWDIDList(v);
 	if ((v2 == null) || (v2.size() == 0)) {
 		return null;
 	}
 	// There should never be more than one entry...
-	return (HydroBase_StructureGeoloc)v2.elementAt(0);
+	return (HydroBase_StructureGeoloc)v2.get(0);
 }
 
 /**
@@ -14490,7 +14492,7 @@ to query.
 Objects (depending on whether SPFlex was called). 
 @throws Exception if there is an error running the query.
 */
-public Vector readStructureGeolocList(InputFilter_JPanel panel, 
+public List readStructureGeolocList(InputFilter_JPanel panel, 
 String[] districtWhere, GRLimits mapQueryLimits)
 throws Exception {
 	if (__useSP) {
@@ -14500,7 +14502,7 @@ throws Exception {
 			getViewNumber("vw_CDSS_Structure"), 73, 
 			mapQueryLimits);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
@@ -14508,7 +14510,7 @@ throws Exception {
 //		Vector orderBys 
 //			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
 //			panel, false);
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel, HydroBase_GUI_Util._GEOLOC_TABLE_NAME,
 			HydroBase_GUI_Util.STRUCTURE);
@@ -14521,14 +14523,14 @@ throws Exception {
 		if (wheres != null) {
 			size = wheres.size();
 			for (int i = 0; i < size; i++) {
-				q.addWhereClause((String)wheres.elementAt(i));
+				q.addWhereClause((String)wheres.get(i));
 			}
 		}
 //		if (orderBys != null) {
 //			size = orderBys.size();
 //			for (int i = 0; i < size; i++) {
 //				q.addOrderByClause(
-//					(String)orderBys.elementAt(i));
+//					(String)orderBys.get(i));
 //			}
 //		}
 
@@ -14536,7 +14538,7 @@ throws Exception {
 		q.addOrderByClause("structure.structure_num");
 		q.addOrderByClause("structure.geoloc_num");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -14553,7 +14555,7 @@ no data are available.  Note that if the database is using stored procedures,
 these data should be sorted by WDID ascending.
 @throws Exception if an error occurs.
 */
-public Vector readStructureGeolocListForWDIDList(Vector WDIDs) 
+public List readStructureGeolocListForWDIDList(List WDIDs) 
 throws Exception {
 	String routine = "HydroBaseDMI.readStructureGeolocListForWDIDs";
 	int size = 0;
@@ -14570,18 +14572,17 @@ throws Exception {
 	int count = 0;
 	if (	getDatabaseEngine().equalsIgnoreCase("Access") &&
 		(size > maxquery)) {
-		Vector someWDIDs = new Vector();
-		Vector v = new Vector();	// returned data
-		Vector somev;
+		List someWDIDs = new Vector();
+		List v = new Vector();	// returned data
+		List somev;
 		int somesize;
 		for ( int i = 1; i <= size; i++) {
 			// Put together a short list (account for zero index)...
-			someWDIDs.add(WDIDs.elementAt(i - 1));
+			someWDIDs.add(WDIDs.get(i - 1));
 			++count;
 			if ((count == maxquery) || (i == size)) {
 				// Time to do a new query...
-				somev = readStructureGeolocListForWDIDList (
-					someWDIDs);
+				somev = readStructureGeolocListForWDIDList ( someWDIDs);
 				// Append the list to the main list to be
 				// returned...
 				somesize = 0;
@@ -14589,10 +14590,10 @@ throws Exception {
 					somesize = somev.size();
 				}
 				for ( int j = 0; j < somesize; j++) {
-					v.add(somev.elementAt(j));
+					v.add(somev.get(j));
 				}
 				// Reset for the next query...
-				someWDIDs.removeAllElements();
+				someWDIDs.clear();
 				count = 0;
 			}
 		}
@@ -14611,7 +14612,7 @@ throws Exception {
 	String wdid = null;
 	count = 0;
 	for (int i = 0; i < size; i++) {
-		wdid = (String)WDIDs.elementAt(i);
+		wdid = (String)WDIDs.get(i);
 
 		try {
 			wdid_parts = HydroBase_WaterDistrict.parseWDID(
@@ -14637,7 +14638,7 @@ throws Exception {
 	q.addOrderByClause("structure.id");
 
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructureGeolocForWDIDList (rs);
+	List v = toStructureGeolocForWDIDList (rs);
 	closeResultSet(rs);
 	return v;
 }
@@ -14652,7 +14653,7 @@ This method cals readStructureViewForWDID() and uses its SP.
 no data are available.
 @throws Exception if an error occurs.
 */
-public Vector readStructureViewListForWDIDList(Vector WDIDs) 
+public List readStructureViewListForWDIDList(List WDIDs) 
 throws Exception {
 	String routine = "HydroBaseDMI.readStructureGeolocListForWDIDs";
 	int size = 0;
@@ -14665,9 +14666,9 @@ throws Exception {
 
 	int [] wdid_parts = new int[2];
 	String wdid = null;
-	Vector results = new Vector();
+	List results = new Vector();
 	for (int i = 0; i < size; i++) {
-		wdid = (String)WDIDs.elementAt(i);
+		wdid = (String)WDIDs.get(i);
 		try {
 			wdid_parts = HydroBase_WaterDistrict.parseWDID(
 				wdid,wdid_parts);
@@ -14697,7 +14698,7 @@ This method uses the following views:<p><ul>
 @return a Vector of HydroBase_StructureIrrigSummary objects.
 @throws Exception if an error occurs.
 */
-public Vector readStructureIrrigSummaryListForStructure_num(int structure_num) 
+public List readStructureIrrigSummaryListForStructure_num(int structure_num) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -14712,7 +14713,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Structure"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -14721,7 +14722,7 @@ throws Exception {
 		buildSQL(q, __S_STRUCTURE_VIEW);
 		q.addWhereClause("structure.structure_num = " + structure_num);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -14747,12 +14748,12 @@ throws Exception {
 	q.addWhereClause("structure.wd = " + wd);
 	q.addWhereClause("structure.id = " + id);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructureIrrigSummaryList(rs);
+	List v = toStructureIrrigSummaryList(rs);
 	closeResultSet(rs);
 	if ((v == null) || (v.size() == 0)) {
 		return null;
 	}
-	return (HydroBase_StructureIrrigSummary)v.elementAt(0);
+	return (HydroBase_StructureIrrigSummary)v.get(0);
 }
 
 /**
@@ -14780,8 +14781,8 @@ The objects are sorted by year, structure identifier (WDID), and
 land_use (crops).
 @throws Exception if an error occurs
 */
-public Vector readStructureIrrigSummaryTSList(InputFilter_JPanel panel,
-Vector orderby_clauses, int structure_num, int wd, int id, String str_name,
+public List readStructureIrrigSummaryTSList(InputFilter_JPanel panel,
+List orderby_clauses, int structure_num, int wd, int id, String str_name,
 String land_use, DateTime req_date1, DateTime req_date2, boolean distinct ) 
 throws Exception {
 	if (__useSP) {
@@ -14856,7 +14857,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber(viewName), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStructureIrrigSummaryTSSPList(rs, distinct);
+		List v = toStructureIrrigSummaryTSSPList(rs, distinct);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -14872,7 +14873,7 @@ throws Exception {
 				__S_STRUCTURE_IRRIG_SUMMARY_TS_VIEW);
 		}
 	
-		Vector where_clauses = null;
+		List where_clauses = null;
 		if (panel != null) {
 			where_clauses 
 				= HydroBase_GUI_Util
@@ -14922,7 +14923,7 @@ throws Exception {
 		}
 	
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructureIrrigSummaryTSSPList(rs, distinct);	
+		List v = toStructureIrrigSummaryTSSPList(rs, distinct);	
 		closeResultSet(rs);
 		return v;
 	}
@@ -14946,8 +14947,8 @@ The objects are sorted by year, structure identifier (WDID), and
 landuse (crops).
 @throws Exception if an error occurs
 */
-public Vector readStructureIrrigSummaryTSList (InputFilter_JPanel panel,
-Vector orderby_clauses, int structure_num, Vector wdids, String str_name,
+public List readStructureIrrigSummaryTSList (InputFilter_JPanel panel,
+		List orderby_clauses, int structure_num, List wdids, String str_name,
 String landuse, DateTime req_date1, DateTime req_date2, boolean distinct ) 
 throws Exception {
 	String routine = "readStructureIrrigSummaryTSList";
@@ -14955,13 +14956,13 @@ throws Exception {
 	int size = 0;
 	int vsize = 0;
 	String wdid = null;
-	Vector v = null;
-	Vector results = new Vector();
+	List v = null;
+	List results = new Vector();
 	
 	if (wdids != null) {
 		size = wdids.size();
 		for (int i = 0; i < size; i++) {
-			wdid = (String)wdids.elementAt(i);
+			wdid = (String)wdids.get(i);
 			try {
 				wdid_parts = HydroBase_WaterDistrict.parseWDID(
 					wdid, wdid_parts);
@@ -14981,7 +14982,7 @@ throws Exception {
 
 				vsize = v.size();
 				for (int j = 0; j < vsize; j++) {
-					results.add(v.elementAt(j));
+					results.add(v.get(j));
 				}
 			}
 		}
@@ -15005,14 +15006,14 @@ This method uses the following stored procedures:<p><ul>
 @return a Vector of Integers, each of which is a unique wd.
 @throws Exception if an error occurs.
 */
-public Vector readStructureDistinctWDList() 
+public List readStructureDistinctWDList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_STRUCTURE_DISTINCT_WD);
 	q.selectDistinct(true);
 	q.addOrderByClause("structure.wd");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructureDistinctWDList(rs);
+	List v = toStructureDistinctWDList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -15021,9 +15022,9 @@ throws Exception {
 	}
 
 	HydroBase_Structure data = null;
-	Vector wdv = new Vector(v.size());
+	List wdv = new Vector(v.size());
 	for (int i = 0; i < v.size(); i++) {
-		data = (HydroBase_Structure)v.elementAt(i);
+		data = (HydroBase_Structure)v.get(i);
 		wdv.add(new Integer(data.getWD()));
 	}
 	return wdv;
@@ -15053,12 +15054,12 @@ throws Exception {
 	buildSQL(q, __S_STRUCTURE_FOR_STRUCTURE_NUM);
 	q.addWhereClause("structure.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructureList(rs);	
+	List v = toStructureList(rs);	
 	closeResultSet(rs);
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_Structure)v.elementAt(0);	
+	return (HydroBase_Structure)v.get(0);	
 }
 
 /**
@@ -15083,13 +15084,13 @@ throws Exception {
 	q.addWhereClause("Structure.wd = " + wd);
 	q.addWhereClause("Structure.id = " + id);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructureList (rs);
+	List v = toStructureList (rs);
 	closeResultSet(rs);
 
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_Structure)v.elementAt(0);
+	return (HydroBase_Structure)v.get(0);
 }
 
 /**
@@ -15108,15 +15109,14 @@ be null.
 HydroBase_StructureView records if stored procedures are being used.
 @throws Exception if an error occurs.
 */
-public Vector readStructureListForStructure_nums(Vector structureNums, 
-Vector order) 
+public List readStructureListForStructure_nums(List structureNums, List order) 
 throws Exception {
 	if (__useSP) {
 		String num = null;
 		int size = structureNums.size();
-		Vector results = new Vector();
+		List results = new Vector();
 		for (int i = 0; i < size; i++) {
-			num = (String)structureNums.elementAt(i);
+			num = (String)structureNums.get(i);
 			results.add(readStructureViewForStructure_num(
 				StringUtil.atoi(num)));
 		}
@@ -15126,22 +15126,22 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_STRUCTURE);
 
-		Vector wheres = new Vector();
+		List wheres = new Vector();
 		int size = structureNums.size();
 		for (int i = 0; i < size; i++) {
 			wheres.add("structure_num = " 
-				+ structureNums.elementAt(i));
+				+ structureNums.get(i));
 		}
                 q.addWhereClause(DMIUtil.getOrClause(wheres));
 
 		if (order != null) {
 			size = order.size();
 			for (int i = 0; i < size; i++) {
-				q.addOrderByClause((String)order.elementAt(i));
+				q.addOrderByClause((String)order.get(i));
 			}
 		}
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructureList(rs);
+		List v = toStructureList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -15180,10 +15180,10 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Structure"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		if (v.size() > 0) {
-			return (HydroBase_StructureView)v.elementAt(0);
+			return (HydroBase_StructureView)v.get(0);
 		}
 		else {
 			return null;
@@ -15194,13 +15194,13 @@ throws Exception {
 		buildSQL (q, __S_STRUCTURE_VIEW);
 		q.addWhereClause("Structure.structure_num= " + structure_num);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs);
 	
 		if (v == null || v.size() == 0) {
 			return null;
 		}
-		return (HydroBase_StructureView)v.elementAt(0);
+		return (HydroBase_StructureView)v.get(0);
 	}
 }
 
@@ -15240,10 +15240,10 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Structure"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		if (v.size() > 0) {
-			return (HydroBase_StructureView)v.elementAt(0);
+			return (HydroBase_StructureView)v.get(0);
 		}
 		else {
 			return null;
@@ -15259,13 +15259,13 @@ throws Exception {
 		q.addWhereClause("Structure.wd = " + wd);
 		q.addWhereClause("Structure.id = " + id);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs);
 	
 		if (v == null || v.size() == 0) {
 			return null;
 		}
-		return (HydroBase_StructureView)v.elementAt(0);	
+		return (HydroBase_StructureView)v.get(0);	
 	}
 }
 
@@ -15279,11 +15279,11 @@ This method is used by:<ul>
 @return a Vector of objects of type HydroBase_Structure
 @throws Exception if an error occurs.
 */
-public Vector readStructureListForWDIDs(Vector WDIDs) 
+public List readStructureListForWDIDs(List WDIDs) 
 throws Exception {
 	String routine = "HydroBaseDMI.readStructureListForWDIDs";
 
-	Vector results = new Vector();
+	List results = new Vector();
 	
 	int size = WDIDs.size();
 	int [] wdid_parts = new int[2];
@@ -15292,7 +15292,7 @@ throws Exception {
 
 	if (__useSP) {
 		for (int i = 0; i < size; i++) {
-			wdid = (String)WDIDs.elementAt(i);
+			wdid = (String)WDIDs.get(i);
 			if (StringUtil.isLong(wdid) 
 			    || StringUtil.isInteger(wdid)) {
 				try {
@@ -15319,7 +15319,7 @@ throws Exception {
 	}
 	else {
 		for (int i = 0; i < size; i++) {
-			wdid = (String)WDIDs.elementAt(i);
+			wdid = (String)WDIDs.get(i);
 			if (StringUtil.isLong(wdid) 
 			    || StringUtil.isInteger(wdid)) {
 				try {
@@ -15375,10 +15375,10 @@ throws Exception {
 	buildSQL(q, __S_STRUCTURE_GEOLOC_FOR_STRUCTURE_NUM);
 	q.addWhereClause("structure.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructureGeolocList(rs);
+	List v = toStructureGeolocList(rs);
 	closeResultSet(rs);
 	if (v.size() > 0) {
-		return (HydroBase_StructureGeoloc)v.elementAt(0);
+		return (HydroBase_StructureGeoloc)v.get(0);
 	}
 	else {
 		return null;
@@ -15402,7 +15402,7 @@ HydroBase_StructureGeolocStructMeasTypeView objects.
 @throws Exception if there is an error running the query.
 @deprecated rename!
 */
-public Vector readUnpermittedWellStructMeasTypeList(InputFilter_JPanel panel, 
+public List readUnpermittedWellStructMeasTypeList(InputFilter_JPanel panel, 
 String[] districtWhere)
 throws Exception {
 	if (__useSP) {
@@ -15421,12 +15421,12 @@ throws Exception {
 				83, null);
 		}
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toGroundWaterWellMeasTypeList(rs);
+		List v = toGroundWaterWellMeasTypeList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
 	else {
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel, HydroBase_GUI_Util._GEOLOC_TABLE_NAME,
 			HydroBase_GUI_Util.GROUND_WATER);
@@ -15439,7 +15439,7 @@ throws Exception {
 		if (wheres != null) {
 			for (int i = 0; i < wheres.size(); i++) {
 				q.addWhereClause(
-					(String)wheres.elementAt(i));
+					(String)wheres.get(i));
 			}
 		}
 		q.addOrderByClause("structure.wd");
@@ -15448,7 +15448,7 @@ throws Exception {
 
 		ResultSet rs = dmiSelect(q);
 		// Not a distinct query...
-		Vector v = toGroundWaterWellMeasTypeList(rs);
+		List v = toGroundWaterWellMeasTypeList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -15473,7 +15473,7 @@ read all).
 @throws Exception if an error occurs.
 @junit do it view
 */
-public Vector readStructureGeolocStructMeasTypeList(InputFilter_JPanel panel, 
+public List readStructureGeolocStructMeasTypeList(InputFilter_JPanel panel, 
 String meas_type, String time_step)
 throws Exception {
 	if (__useSP) {
@@ -15500,7 +15500,7 @@ throws Exception {
 			getViewNumber("vw_CDSS_StructureStructMeasType"), 
 			74, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStructMeasTypeSPList(rs);
+		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -15517,14 +15517,14 @@ throws Exception {
 				+ time_step+"'");
 		}
 
-		Vector wheres
+		List wheres
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel);
 
 		if (wheres != null) {
 			for (int i = 0; i < wheres.size(); i++) {
 				q.addWhereClause(
-					(String)wheres.elementAt(i));
+					(String)wheres.get(i));
 			}
 		}
 		q.addOrderByClause("structure.wd");
@@ -15533,7 +15533,7 @@ throws Exception {
 
 		ResultSet rs = dmiSelect(q);
 		// Not a distinct query...
-		Vector v = toStructMeasTypeSPList(rs);
+		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -15542,7 +15542,7 @@ throws Exception {
 /**
 @deprecated use readStructureViewListForWDStream_numStr_type instead.
 */
-public Vector readStructureGeolocListForWDStream_numStr_type(int wd, 
+public List readStructureGeolocListForWDStream_numStr_type(int wd, 
 long stream_num, String str_type)
 throws Exception {
 	return readStructureViewListForWDStream_numStr_type(wd, stream_num,
@@ -15567,7 +15567,7 @@ will not be used.  If set to -1, NULL stream nums will be return.
 @return a Vector of HydroBase_StructureGeoloc objects.
 @throws Exception if an error occurs.
 */
-public Vector readStructureViewListForWDStream_numStr_type(int wd, 
+public List readStructureViewListForWDStream_numStr_type(int wd, 
 long stream_num, String str_type)
 throws Exception {
 	if (__useSP) {
@@ -15603,7 +15603,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Structure"), 29, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -15622,7 +15622,7 @@ throws Exception {
 		}
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toStructureSPList(rs);
+		List v = toStructureSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -15640,13 +15640,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_StructureMFReach objects.
 @throws Exception if an error occurs.
 */
-public Vector readStructureMFReachListForStructure_num(int structure_num) 
+public List readStructureMFReachListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_MF_REACH);
 	q.addWhereClause("structure.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toStructureMFReachSPList(rs);
 		closeResultSet(rs, q);
@@ -15680,7 +15680,7 @@ throws Exception {
 	buildSQL(q, __S_RESERVOIR_FOR_STRUCTURE_NUM);
 	q.addWhereClause("reservoir.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toStructureReservoirSPList(rs);
 		closeResultSet(rs, q);
@@ -15692,7 +15692,7 @@ throws Exception {
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_StructureReservoir)(v.elementAt(0));
+	return (HydroBase_StructureReservoir)(v.get(0));
 }
 
 /**
@@ -15719,7 +15719,7 @@ throws Exception {
 	q.addWhereClause("structure.id = " + id);
 	
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toStructureReservoirSPList(rs);
 		closeResultSet(rs, q);
@@ -15731,7 +15731,7 @@ throws Exception {
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_StructureReservoir)v.elementAt(0);
+	return (HydroBase_StructureReservoir)v.get(0);
 }
 
 /**
@@ -15754,7 +15754,7 @@ throws Exception {
 	buildSQL(q, __S_SMALL_DAM);
 	q.addWhereClause("structure.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = null;
+	List v = null;
 	if (__useSP) {
 		v = toStructureSmallDamSPList(rs);
 		closeResultSet(rs, q);
@@ -15766,7 +15766,7 @@ throws Exception {
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_StructureSmallDam)(v.elementAt(0));
+	return (HydroBase_StructureSmallDam)(v.get(0));
 }
 
 /**
@@ -15777,15 +15777,15 @@ This method is used by:<ul>
 </ul>
 @throws Exception if an error occurs.
 */
-public Vector readStructureWDWaterListForStructureIDs(Vector ids) 
+public List readStructureWDWaterListForStructureIDs(List ids) 
 throws Exception {
-	Vector results = new Vector();
+	List results = new Vector();
 	int size = ids.size();
 	Object o = null;
 	int[] wdid = null;
 	for (int i = 0; i < size; i++) {
 		wdid = HydroBase_WaterDistrict.parseWDID(
-			(String)ids.elementAt(i));
+			(String)ids.get(i));
 		if (__useSP) {
 			o = readStructureViewForWDID(wdid[0], wdid[1]);
 		}
@@ -15815,13 +15815,13 @@ throws Exception {
 	q.addWhereClause("structure.wd = " + wd + " AND structure.id = "
 			+ id);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructureWDWaterList(rs);
+	List v = toStructureWDWaterList(rs);
 	closeResultSet(rs);
 	if (v == null || v.size() == 0) {
 		return null;
 	}
 	else {
-		return (HydroBase_StructureWDWater)v.elementAt(0);
+		return (HydroBase_StructureWDWater)v.get(0);
 	}
 }
 
@@ -15918,12 +15918,12 @@ throws Exception, NoDataFoundException
 	// Make sure that no invalid properties have been specified (this should
 	// also occur in higher level code (e.g., for DMI commands)...
 
-	Vector valid_props = new Vector ();
-	valid_props.addElement ( "FillDailyDiv" );
-	valid_props.addElement ( "FillDailyDivFlag" );
-	valid_props.addElement ( "FillUsingDivComments" );
-	valid_props.addElement ( "FillUsingDivCommentsFlag" );
-	Vector warnings = props.validatePropNames (
+	List valid_props = new Vector ();
+	valid_props.add ( "FillDailyDiv" );
+	valid_props.add ( "FillDailyDivFlag" );
+	valid_props.add ( "FillUsingDivComments" );
+	valid_props.add ( "FillUsingDivCommentsFlag" );
+	List warnings = props.validatePropNames (
 					valid_props,	// These are supported
 					null,		// Deprecated props
 					null,		// Deprecated notes
@@ -15938,7 +15938,7 @@ throws Exception, NoDataFoundException
 		warning.append ( "Trying to read HydroBase time series using " +
 		"invalid properties:" );
 		for ( int i = 0; i < size; i++ ) {
-			warning.append ( "\n" + warnings.elementAt(i) );
+			warning.append ( "\n" + warnings.get(i) );
 		}
 		Message.printWarning ( 3, routine, warning.toString() );
 		throw new HydroBaseException (
@@ -15965,11 +15965,11 @@ throws Exception, NoDataFoundException
 	String cupop_area_type = "";			//CUPopulation area type
 	String cupop_area_name = "";			//CUPopulation area name
 	String cupop_pop_type = "";			//CUPopulation pop. type
-	Vector sheet_names = null;			// Vector of sheet_name
+	List sheet_names = null;			// Vector of sheet_name
 							// needed to get list
 							// of wis_num for data
 							// queries.
-	Vector wis_formats = null;			// The list of formats
+	List wis_formats = null;			// The list of formats
 							// describing the rows
 							// of interest.
 	String wis_sheet_name = "";			// WIS sheet name, used
@@ -16077,7 +16077,7 @@ throws Exception, NoDataFoundException
 			throw new Exception ( message);
 		}
 		// Next get the meas_type for the station...
-		Vector mts = readMeasTypeList(staView.getStation_num(), 
+		List mts = readMeasTypeList(staView.getStation_num(), 
 			meas_type, vax_field, time_step, data_source);
 		if ((mts == null) || (mts.size() == 0)) {
 			message = "Unable to find meas_type for \"" +
@@ -16089,7 +16089,7 @@ throws Exception, NoDataFoundException
 			throw new Exception ( message);
 		}
 		mtsView = (HydroBase_StationView)
-			mts.elementAt(0);
+			mts.get(0);
 		mt_start_year = mtsView.getStart_year();
 		mt_end_year = mtsView.getEnd_year();
 		mt_meas_num = mtsView.getMeas_num();
@@ -16169,7 +16169,7 @@ throws Exception, NoDataFoundException
 		String identifier_adjusted = HydroBase_Util.adjustSFUTForHydroBaseVersion(
 				this,wdid_parts[0],wdid_parts[1],identifier);
 		// Next get the struct_meas_type for the structure...
-		Vector mts = readStructMeasTypeListForStructure_num
+		List mts = readStructMeasTypeListForStructure_num
 			(strView.getStructure_num(), meas_type,
 			identifier_adjusted,time_step, data_source);
 		if ((mts == null) || (mts.size() == 0)) {
@@ -16189,7 +16189,7 @@ throws Exception, NoDataFoundException
 			throw new NoDataFoundException(message);
 		}
 		str_mt_v = (HydroBase_StructMeasTypeView)
-			mts.elementAt(0);
+			mts.get(0);
 		mt_start_year = str_mt_v.getStart_year();
 		mt_end_year = str_mt_v.getEnd_year();
 		ts.setIdentifier(tsident_string);
@@ -16301,8 +16301,7 @@ throws Exception, NoDataFoundException
 		wis_sheet_name = ts.getIdentifier().getScenario();
 		// Read the sheet names to get the sheet number.  The wis_num is
 		// used to join WIS tables...
-		sheet_names = readWISSheetNameList(-999, -999, wis_sheet_name, 
-			null);
+		sheet_names = readWISSheetNameList(-999, -999, wis_sheet_name, null);
 		if ((sheet_names == null) || (sheet_names.size() == 0)) {
 			message = "Unable to find sheet_name for \"" +
 				tsident_string + "\" sheet name =\"" +
@@ -16315,11 +16314,11 @@ throws Exception, NoDataFoundException
 		// wis_row needed to query the wis_data table later.  It also
 		// provides the row label for the description.
 		int wis_size = sheet_names.size();
-		Vector wisNums = new Vector();
-		Vector identifiers = new Vector();
+		List wisNums = new Vector();
+		List identifiers = new Vector();
 		for ( int iwis = 0; iwis < wis_size; iwis++) {
 			wisNums.add("" + ((HydroBase_WISSheetName)
-				sheet_names.elementAt(iwis)).getWis_num());
+				sheet_names.get(iwis)).getWis_num());
 			identifiers.add(tsident.getLocation());
 		}
 		wis_formats = readWISFormatListForWis_numIdentifierList(
@@ -16336,20 +16335,20 @@ throws Exception, NoDataFoundException
 		// with the current sheet since the records are not sorted by
 		// date.
 		ts.setDescription (
-			((HydroBase_WISFormat)wis_formats.elementAt(0)).
+			((HydroBase_WISFormat)wis_formats.get(0)).
 			getRow_label());
 		// Read the vector of wis_comments for the sheet name, in order
 		// to get available dates...
-		Vector temp = readWISSheetNameList(DMIUtil.MISSING_INT,
+		List temp = readWISSheetNameList(DMIUtil.MISSING_INT,
 			DMIUtil.MISSING_INT, wis_sheet_name, null);
-		Vector wis_nums	= new Vector();
+		List wis_nums	= new Vector();
 		int sz = temp.size();
 		HydroBase_WISSheetName wss = null;
 		for (int i = 0; i < sz; i++) {
-			wss = (HydroBase_WISSheetName)temp.elementAt(i);
+			wss = (HydroBase_WISSheetName)temp.get(i);
 			wis_nums.add("" + wss.getWis_num());
 		}
-		Vector wis_comments = readWISCommentsList(wis_nums, null);
+		List wis_comments = readWISCommentsList(wis_nums, null);
 		if ((wis_comments == null) || (wis_comments.size() == 0)) {
 			message = "Unable to find wis_comments for \"" +
 				tsident_string + "\" sheet name =\"" +
@@ -16358,9 +16357,9 @@ throws Exception, NoDataFoundException
 			throw new Exception ( message);
 		}
 		db_DateTime1 = new DateTime ( ((HydroBase_WISComments)
-			wis_comments.elementAt(0)).getSet_date());
+			wis_comments.get(0)).getSet_date());
 		db_DateTime2 = new DateTime ( ((HydroBase_WISComments)
-			wis_comments.elementAt(wis_comments.size() - 1)).
+			wis_comments.get(wis_comments.size() - 1)).
 			getSet_date());
 	}
 	else {
@@ -16474,7 +16473,7 @@ throws Exception, NoDataFoundException
 	// List alphabetized by data type but check the interval first since it
 	// is an integer (fast check).
 
-	Vector v = null;	// Vector of time series data records.
+	List v = null;	// Vector of time series data records.
 	if ((interval_base == TimeInterval.DAY) &&
 			data_type.equalsIgnoreCase("AdminFlow")) {
 			ts.setDataUnits (
@@ -17166,16 +17165,16 @@ throws Exception, NoDataFoundException
 		int wis_size = sheet_names.size();
 		// Now query for the data records from the wis_data table
 		// corresponding to the wis_num and wis_row pairs..
-		Vector wisNums = new Vector();
-		Vector wisRows = new Vector();
+		List wisNums = new Vector();
+		List wisRows = new Vector();
 		HydroBase_WISFormat format = null;
 		for ( int iwis = 0; iwis < wis_size; iwis++) {
-			format = (HydroBase_WISFormat)wis_formats.elementAt(
+			format = (HydroBase_WISFormat)wis_formats.get(
 				iwis);
 			wisNums.add("" + format.getWis_num());
 			wisRows.add("" + format.getWis_row());
 		}
-		Vector order = new Vector();
+		List order = new Vector();
 		order.add("wis_data.set_date");
 		v = readWISDataListForWis_numWis_rowList(wisNums, wisRows,
 			order);
@@ -17236,11 +17235,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("AdminFlowMax") ||
 		data_type.equalsIgnoreCase("AdminFlowMin"))) {
 		// Get the first and last dates...
-		HydroBase_MonthlyFlow data = (HydroBase_MonthlyFlow)v.elementAt(0);
+		HydroBase_MonthlyFlow data = (HydroBase_MonthlyFlow)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
-		data = (HydroBase_MonthlyFlow)v.elementAt(size - 1);
+		data = (HydroBase_MonthlyFlow)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17249,12 +17248,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("AdminFlow")) {
 		// Get the first and last dates...
 		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.elementAt(0);
+			(HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data = (HydroBase_DailyTS)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17264,11 +17263,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("CropArea")) {
 		// Get the first and last dates...
 		HydroBase_AgriculturalNASSCropStats data =
-			(HydroBase_AgriculturalNASSCropStats)v.elementAt(0);
+			(HydroBase_AgriculturalNASSCropStats)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
-		data = (HydroBase_AgriculturalNASSCropStats)v.elementAt(size-1);
+		data = (HydroBase_AgriculturalNASSCropStats)v.get(size-1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
@@ -17277,11 +17276,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("CropAreaPlanted"))) {
 		// Get the first and last dates...
 		HydroBase_AgriculturalCASSCropStats data =
-			(HydroBase_AgriculturalCASSCropStats)v.elementAt(0);
+			(HydroBase_AgriculturalCASSCropStats)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
-		data = (HydroBase_AgriculturalCASSCropStats)v.elementAt(size-1);
+		data = (HydroBase_AgriculturalCASSCropStats)v.get(size-1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
@@ -17295,22 +17294,22 @@ throws Exception, NoDataFoundException
 		if (getDatabaseVersion() < VERSION_20050701) {		
 			HydroBase_StructureIrrigSummaryTS data =
 				(HydroBase_StructureIrrigSummaryTS)
-				v.elementAt(0);
+				v.get(0);
 			data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 			data_date1.setYear ( data.getCal_year());
 			// Set the units here also
-			data = (HydroBase_StructureIrrigSummaryTS)v.elementAt(
+			data = (HydroBase_StructureIrrigSummaryTS)v.get(
 				size - 1);
 			data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 			data_date2.setYear ( data.getCal_year());
 		}
 		else {
 			HydroBase_StructureView data =
-				(HydroBase_StructureView)v.elementAt(0);
+				(HydroBase_StructureView)v.get(0);
 			data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 			data_date1.setYear ( data.getCal_year());
 			// Set the units here also
-			data = (HydroBase_StructureView)v.elementAt(size - 1);
+			data = (HydroBase_StructureView)v.get(size - 1);
 			data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 			data_date2.setYear ( data.getCal_year());
 		}		
@@ -17320,11 +17319,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("IDivClass")) ) {
 		// Get the first and last dates...
 		HydroBase_AnnualWC data =
-			(HydroBase_AnnualWC)v.elementAt(0);
+			(HydroBase_AnnualWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
-		data = (HydroBase_AnnualWC)v.elementAt(size - 1);
+		data = (HydroBase_AnnualWC)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
@@ -17333,12 +17332,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("DivClass")) {
 		// Get the first and last dates...
 		HydroBase_DailyWC data =
-			(HydroBase_DailyWC)v.elementAt(0);
+			(HydroBase_DailyWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyWC)v.elementAt(size - 1);
+		data = (HydroBase_DailyWC)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
@@ -17349,10 +17348,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("IDivClass")) ) {
 		// Get the first and last dates...
 		HydroBase_AnnualWC data =
-			(HydroBase_AnnualWC)v.elementAt(0);
+			(HydroBase_AnnualWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
-		data = (HydroBase_AnnualWC)v.elementAt(size - 1);
+		data = (HydroBase_AnnualWC)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
 	}
@@ -17360,12 +17359,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("DivComment")) {
 		// Get the first and last dates...
 		HydroBase_DiversionComment data =
-			(HydroBase_DiversionComment)v.elementAt(0);
+			(HydroBase_DiversionComment)v.get(0);
 		// Dates are typically Oct 31 of the irrigation year.
 		// Therefore the year corresponds to the irrigation year.
 		data_date1 = new DateTime(data.getComm_date());
 		data_date1.setPrecision ( DateTime.PRECISION_YEAR);
-		data = (HydroBase_DiversionComment)v.elementAt(size - 1);
+		data = (HydroBase_DiversionComment)v.get(size - 1);
 		data_date2 = new DateTime(data.getComm_date());
 		data_date2.setPrecision ( DateTime.PRECISION_YEAR);
 	}
@@ -17374,11 +17373,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("IDivTotal")) ) {
 		// Get the first and last dates...
 		HydroBase_AnnualAmt data =
-			(HydroBase_AnnualAmt)v.elementAt(0);
+			(HydroBase_AnnualAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
-		data = (HydroBase_AnnualAmt)v.elementAt(size - 1);
+		data = (HydroBase_AnnualAmt)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
@@ -17387,12 +17386,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("DivTotal")) {
 		// Get the first and last dates...
 		HydroBase_DailyAmt data =
-			(HydroBase_DailyAmt)v.elementAt(0);
+			(HydroBase_DailyAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyAmt)v.elementAt(size - 1);
+		data = (HydroBase_DailyAmt)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
@@ -17403,10 +17402,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("IDivTotal")) ) {
 		// Get the first and last dates...
 		HydroBase_AnnualAmt data =
-			(HydroBase_AnnualAmt)v.elementAt(0);
+			(HydroBase_AnnualAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
-		data = (HydroBase_AnnualAmt)v.elementAt(size - 1);
+		data = (HydroBase_AnnualAmt)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
 	}
@@ -17414,11 +17413,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("EvapPan")) {
 		// Get the first and last dates...
 		HydroBase_MonthlyEvap data =
-			(HydroBase_MonthlyEvap)v.elementAt(0);
+			(HydroBase_MonthlyEvap)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
-		data = (HydroBase_MonthlyEvap)v.elementAt(size - 1);
+		data = (HydroBase_MonthlyEvap)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17427,12 +17426,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("EvapPan")) {
 		// Get the first and last dates...
 		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.elementAt(0);
+			(HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data = (HydroBase_DailyTS)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17445,10 +17444,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("FrostDateL28S"))) {
 		// Get the first and last dates...
 		HydroBase_FrostDates data =
-			(HydroBase_FrostDates)v.elementAt(0);
+			(HydroBase_FrostDates)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
-		data = (HydroBase_FrostDates)v.elementAt(size - 1);
+		data = (HydroBase_FrostDates)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
@@ -17456,11 +17455,11 @@ throws Exception, NoDataFoundException
 		(data_type.equalsIgnoreCase("HumanPopulation") ) ) {
 		// Get the first and last dates...
 		HydroBase_CUPopulation data =
-			(HydroBase_CUPopulation)v.elementAt(0);
+			(HydroBase_CUPopulation)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
-		data = (HydroBase_CUPopulation)v.elementAt(size-1);
+		data = (HydroBase_CUPopulation)v.get(size-1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
@@ -17469,12 +17468,12 @@ throws Exception, NoDataFoundException
 		// Get the first and last dates...
 		HydroBase_AgriculturalCASSLivestockStats data =
 			(HydroBase_AgriculturalCASSLivestockStats)
-			v.elementAt(0);
+			v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		data = (HydroBase_AgriculturalCASSLivestockStats)
-			v.elementAt(size-1);
+			v.get(size-1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
@@ -17482,11 +17481,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("NaturalFlow")) {
 		// Get the first and last dates...
 		HydroBase_MonthlyNflow data =
-			(HydroBase_MonthlyNflow)v.elementAt(0);
+			(HydroBase_MonthlyNflow)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
-		data = (HydroBase_MonthlyNflow)v.elementAt(size - 1);
+		data = (HydroBase_MonthlyNflow)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17495,11 +17494,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Precip")) {
 		// Get the first and last dates...
 		HydroBase_MonthlyPcpn data =
-			(HydroBase_MonthlyPcpn)v.elementAt(0);
+			(HydroBase_MonthlyPcpn)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
-		data = (HydroBase_MonthlyPcpn)v.elementAt(size - 1);
+		data = (HydroBase_MonthlyPcpn)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17508,12 +17507,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Precip")) {
 		// Get the first and last dates...
 		HydroBase_DailyPcpn data =
-			(HydroBase_DailyPcpn)v.elementAt(0);
+			(HydroBase_DailyPcpn)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyPcpn)v.elementAt(size - 1);
+		data = (HydroBase_DailyPcpn)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17524,11 +17523,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("IRelClass")) ) {
 		// Get the first and last dates...
 		HydroBase_AnnualWC data =
-			(HydroBase_AnnualWC)v.elementAt(0);
+			(HydroBase_AnnualWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
-		data = (HydroBase_AnnualWC)v.elementAt(size - 1);
+		data = (HydroBase_AnnualWC)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
@@ -17537,12 +17536,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("RelClass")) {
 		// Get the first and last dates...
 		HydroBase_DailyWC data =
-			(HydroBase_DailyWC)v.elementAt(0);
+			(HydroBase_DailyWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyWC)v.elementAt(size - 1);
+		data = (HydroBase_DailyWC)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
@@ -17553,10 +17552,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("IRelClass")) ) {
 		// Get the first and last dates...
 		HydroBase_AnnualWC data =
-			(HydroBase_AnnualWC)v.elementAt(0);
+			(HydroBase_AnnualWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
-		data = (HydroBase_AnnualWC)v.elementAt(size - 1);
+		data = (HydroBase_AnnualWC)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
 	}
@@ -17565,11 +17564,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("IRelTotal")) ) {
 		// Get the first and last dates...
 		HydroBase_AnnualAmt data =
-			(HydroBase_AnnualAmt)v.elementAt(0);
+			(HydroBase_AnnualAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
-		data = (HydroBase_AnnualAmt)v.elementAt(size - 1);
+		data = (HydroBase_AnnualAmt)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
@@ -17578,12 +17577,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("RelTotal")) {
 		// Get the first and last dates...
 		HydroBase_DailyAmt data =
-			(HydroBase_DailyAmt)v.elementAt(0);
+			(HydroBase_DailyAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyAmt)v.elementAt(size - 1);
+		data = (HydroBase_DailyAmt)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
@@ -17594,10 +17593,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("IRelTotal")) ) {
 		// Get the first and last dates...
 		HydroBase_AnnualAmt data =
-			(HydroBase_AnnualAmt)v.elementAt(0);
+			(HydroBase_AnnualAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
-		data = (HydroBase_AnnualAmt)v.elementAt(size - 1);
+		data = (HydroBase_AnnualAmt)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
 	}
@@ -17605,11 +17604,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("ResEOM")) {
 		// Get the first and last dates...
 		HydroBase_ResEOM data =
-			(HydroBase_ResEOM)v.elementAt(0);
+			(HydroBase_ResEOM)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
-		data = (HydroBase_ResEOM)v.elementAt(size - 1);
+		data = (HydroBase_ResEOM)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17618,10 +17617,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("ResEOY")) {
 		// Get the first and last dates...
 		HydroBase_AnnualRes data =
-			(HydroBase_AnnualRes)v.elementAt(0);
+			(HydroBase_AnnualRes)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
-		data = (HydroBase_AnnualRes)v.elementAt(size - 1);
+		data = (HydroBase_AnnualRes)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
 	}
@@ -17633,10 +17632,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase ( "ResMeasStorage" ))) {
 		// Get the first and last dates...
 		HydroBase_ResMeas data =
-			(HydroBase_ResMeas)v.elementAt(0);
+			(HydroBase_ResMeas)v.get(0);
 		data_date1 = new DateTime ( data.getDate_time());
 		data_date1.setPrecision ( DateTime.PRECISION_DAY);
-		data = (HydroBase_ResMeas)v.elementAt(size - 1);
+		data = (HydroBase_ResMeas)v.get(size - 1);
 		data_date2 = new DateTime ( data.getDate_time());
 		data_date2.setPrecision ( DateTime.PRECISION_DAY);
 	}
@@ -17644,11 +17643,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Snow")) {
 		// Get the first and last dates...
 		HydroBase_MonthlySnow data =
-			(HydroBase_MonthlySnow)v.elementAt(0);
+			(HydroBase_MonthlySnow)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
-		data = (HydroBase_MonthlySnow)v.elementAt(size - 1);
+		data = (HydroBase_MonthlySnow)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17657,12 +17656,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Snow")) {
 		// Get the first and last dates...
 		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.elementAt(0);
+			(HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data = (HydroBase_DailyTS)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17673,12 +17672,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("SnowCourseSWE"))) {
 		// Get the first and last dates...
 		HydroBase_SnowCrse data =
-			(HydroBase_SnowCrse)v.elementAt(0);
+			(HydroBase_SnowCrse)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_SnowCrse)v.elementAt(size - 1);
+		data = (HydroBase_SnowCrse)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17688,12 +17687,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Solar")) {
 		// Get the first and last dates...
 		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.elementAt(0);
+			(HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data = (HydroBase_DailyTS)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17705,11 +17704,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("StreamflowMin"))) {
 		// Get the first and last dates...
 		HydroBase_MonthlyFlow data =
-			(HydroBase_MonthlyFlow)v.elementAt(0);
+			(HydroBase_MonthlyFlow)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
-		data = (HydroBase_MonthlyFlow)v.elementAt(size - 1);
+		data = (HydroBase_MonthlyFlow)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17718,12 +17717,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Streamflow")) {
 		// Get the first and last dates...
 		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.elementAt(0);
+			(HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data = (HydroBase_DailyTS)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17734,12 +17733,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("TempMin"))) {
 		// Get the first and last dates...
 		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.elementAt(0);
+			(HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data = (HydroBase_DailyTS)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17751,11 +17750,11 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("TempMeanMin"))) {
 		// Get the first and last dates...
 		HydroBase_MonthlyTemp data =
-			(HydroBase_MonthlyTemp)v.elementAt(0);
+			(HydroBase_MonthlyTemp)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
-		data = (HydroBase_MonthlyTemp)v.elementAt(size - 1);
+		data = (HydroBase_MonthlyTemp)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17764,12 +17763,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("VaporPressure")) {
 		// Get the first and last dates...
 		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.elementAt(0);
+			(HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data = (HydroBase_DailyTS)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17779,10 +17778,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("WellLevel")) {
 		// Get the first and last dates...
 		HydroBase_WellMeas data =
-			(HydroBase_WellMeas)v.elementAt(0);
+			(HydroBase_WellMeas)v.get(0);
 		data_date1 = new DateTime ( data.getMeas_date());
 		data_date1.setPrecision ( DateTime.PRECISION_DAY);
-		data = (HydroBase_WellMeas)v.elementAt(size - 1);
+		data = (HydroBase_WellMeas)v.get(size - 1);
 		data_date2 = new DateTime ( data.getMeas_date());
 		data_date2.setPrecision ( DateTime.PRECISION_DAY);
 	}
@@ -17790,12 +17789,12 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Wind")) {
 		// Get the first and last dates...
 		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.elementAt(0);
+			(HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
 		data_date1.setDay ( 1);
-		data = (HydroBase_DailyTS)v.elementAt(size - 1);
+		data = (HydroBase_DailyTS)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
@@ -17805,10 +17804,10 @@ throws Exception, NoDataFoundException
 		data_type.regionMatches(true,0,"WIS",0,3)) {
 		// Get the first and last dates...
 		HydroBase_WISData data =
-			(HydroBase_WISData)v.elementAt(0);
+			(HydroBase_WISData)v.get(0);
 		data_date1 = new DateTime ( data.getSet_date(),
 			DateTime.PRECISION_DAY);
-		data = (HydroBase_WISData)v.elementAt(size - 1);
+		data = (HydroBase_WISData)v.get(size - 1);
 		data_date2 = new DateTime ( data.getSet_date(),
 			DateTime.PRECISION_DAY);
 	}
@@ -17827,10 +17826,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("WellLevel"))) {
 		// Get the first and last dates...
 		HydroBase_RTMeas data =
-			(HydroBase_RTMeas)v.elementAt(0);
+			(HydroBase_RTMeas)v.get(0);
 		data_date1 = new DateTime ( data.getDate_time());
 		data_date1.setPrecision ( DateTime.PRECISION_MINUTE);
-		data = (HydroBase_RTMeas)v.elementAt(size - 1);
+		data = (HydroBase_RTMeas)v.get(size - 1);
 		data_date2 = new DateTime ( data.getDate_time());
 		data_date2.setPrecision ( DateTime.PRECISION_MINUTE);
 		// Units are found here also...
@@ -17889,7 +17888,7 @@ throws Exception, NoDataFoundException
 			HydroBase_MonthlyFlow data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_MonthlyFlow)v.elementAt(i);
+				data = (HydroBase_MonthlyFlow)v.get(i);
 				date.setYear ( data.getCal_year());
 				date.setMonth ( data.getCal_mon_num());
 				value = data.getTotal_q_af();
@@ -17904,7 +17903,7 @@ throws Exception, NoDataFoundException
 			// Loop through each month...
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_DailyTS)v.elementAt(i);
+				data = (HydroBase_DailyTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				date.setMonth ( data.getCal_mon_num());
 				ndays = TimeUtil.numDaysInMonth ( date);
@@ -17924,7 +17923,7 @@ throws Exception, NoDataFoundException
 			HydroBase_MonthlyFlow data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_MonthlyFlow)v.elementAt(i);
+				data = (HydroBase_MonthlyFlow)v.get(i);
 				date.setYear ( data.getCal_year());
 				date.setMonth ( data.getCal_mon_num());
 				value = data.getMax_q_cfs();
@@ -17938,7 +17937,7 @@ throws Exception, NoDataFoundException
 			HydroBase_MonthlyFlow data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_MonthlyFlow)v.elementAt(i);
+				data = (HydroBase_MonthlyFlow)v.get(i);
 				date.setYear ( data.getCal_year());
 				date.setMonth ( data.getCal_mon_num());
 				value = data.getMin_q_cfs();
@@ -17956,7 +17955,7 @@ throws Exception, NoDataFoundException
 			// that have a flag of "" or "0" since other flag values
 			// indicate missing or problematic data...
 			data = (HydroBase_AgriculturalNASSCropStats)
-				v.elementAt(i);
+				v.get(i);
 			date.setYear ( data.getCal_year());
 			value = data.getAg_amt();
 			flag = data.getFlag();
@@ -17972,7 +17971,7 @@ throws Exception, NoDataFoundException
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
 			data = (HydroBase_AgriculturalCASSCropStats)
-				v.elementAt(i);
+				v.get(i);
 			date.setYear ( data.getCal_year());
 			value = data.getHarvested();
 			if (!DMIUtil.isMissing(value)) {
@@ -17986,7 +17985,7 @@ throws Exception, NoDataFoundException
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
 			data = (HydroBase_AgriculturalCASSCropStats)
-				v.elementAt(i);
+				v.get(i);
 			date.setYear ( data.getCal_year());
 			value = data.getPlanted();
 			if (!DMIUtil.isMissing(value)) {
@@ -18001,7 +18000,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureIrrigSummaryTS)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_total();
 				if (!DMIUtil.isMissing(value)) {
@@ -18014,7 +18013,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureView)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_total();
 				if (!DMIUtil.isMissing(value)) {
@@ -18030,7 +18029,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureIrrigSummaryTS)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_drip();
 				if (!DMIUtil.isMissing(value)) {
@@ -18043,7 +18042,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureView)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_drip();
 				if (!DMIUtil.isMissing(value)) {
@@ -18059,7 +18058,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureIrrigSummaryTS)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_flood();
 				if (!DMIUtil.isMissing(value)) {
@@ -18072,7 +18071,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureView)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_flood();
 				if (!DMIUtil.isMissing(value)) {
@@ -18088,7 +18087,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureIrrigSummaryTS)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_furrow();
 				if (!DMIUtil.isMissing(value)) {
@@ -18101,7 +18100,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureView)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_furrow();
 				if (!DMIUtil.isMissing(value)) {
@@ -18117,7 +18116,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureIrrigSummaryTS)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_sprinkler();
 				if (!DMIUtil.isMissing(value)) {
@@ -18130,7 +18129,7 @@ throws Exception, NoDataFoundException
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
 				data = (HydroBase_StructureView)
-				v.elementAt(i);
+				v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_sprinkler();
 				if (!DMIUtil.isMissing(value)) {
@@ -18147,7 +18146,7 @@ throws Exception, NoDataFoundException
 		HydroBase_AnnualWC data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_AnnualWC)v.elementAt(i);
+			data = (HydroBase_AnnualWC)v.get(i);
 			date.setYear ( data.getIrr_year() -1);
 			date.setMonth ( 11);
 			value = data.getAmt_nov();
@@ -18219,7 +18218,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyWC)v.elementAt(i);
+			data = (HydroBase_DailyWC)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -18248,7 +18247,7 @@ throws Exception, NoDataFoundException
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data - only interested
 			// in the annual amount...
-			data = (HydroBase_AnnualWC)v.elementAt(i);
+			data = (HydroBase_AnnualWC)v.get(i);
 			date.setYear ( data.getIrr_year());
 			value = data.getAnn_amt();
 			quality = data.getQuality();
@@ -18270,7 +18269,7 @@ throws Exception, NoDataFoundException
 		"Data from diversion_comment (year is irrigation year) ...");
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DiversionComment)v.elementAt(i);
+			data = (HydroBase_DiversionComment)v.get(i);
 			dt = new DateTime(data.getComm_date());
 			dt.setPrecision (DateTime.PRECISION_DAY);
 			value = data.getAcres_irrig();
@@ -18307,7 +18306,7 @@ throws Exception, NoDataFoundException
 		HydroBase_AnnualAmt data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_AnnualAmt)v.elementAt(i);
+			data = (HydroBase_AnnualAmt)v.get(i);
 			date.setYear ( data.getIrr_year() -1);
 			date.setMonth ( 11);
 			value = data.getAmt_nov();
@@ -18379,7 +18378,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyAmt)v.elementAt(i);
+			data = (HydroBase_DailyAmt)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -18408,7 +18407,7 @@ throws Exception, NoDataFoundException
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data - only interested
 			// in the annual amount...
-			data = (HydroBase_AnnualAmt)v.elementAt(i);
+			data = (HydroBase_AnnualAmt)v.get(i);
 			date.setYear ( data.getIrr_year());
 			value = data.getAnn_amt();
 			quality = data.getQuality();
@@ -18426,7 +18425,7 @@ throws Exception, NoDataFoundException
 		HydroBase_MonthlyEvap data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyEvap)v.elementAt(i);
+			data = (HydroBase_MonthlyEvap)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_evap();
@@ -18441,7 +18440,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyTS)v.elementAt(i);
+			data = (HydroBase_DailyTS)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -18462,7 +18461,7 @@ throws Exception, NoDataFoundException
 		Date date2;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_FrostDates)v.elementAt(i);
+			data = (HydroBase_FrostDates)v.get(i);
 			date.setYear ( data.getCal_year());
 			date2 = data.getL28s();
 			if (date2 != null) {
@@ -18478,7 +18477,7 @@ throws Exception, NoDataFoundException
 		Date date2;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_FrostDates)v.elementAt(i);
+			data = (HydroBase_FrostDates)v.get(i);
 			date.setYear ( data.getCal_year());
 			date2 = data.getL32s();
 			if (date2 != null) {
@@ -18494,7 +18493,7 @@ throws Exception, NoDataFoundException
 		Date date2;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_FrostDates)v.elementAt(i);
+			data = (HydroBase_FrostDates)v.get(i);
 			date.setYear ( data.getCal_year());
 			date2 = data.getF32f();
 			if (date2 != null) {
@@ -18510,7 +18509,7 @@ throws Exception, NoDataFoundException
 		Date date2;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_FrostDates)v.elementAt(i);
+			data = (HydroBase_FrostDates)v.get(i);
 			date.setYear ( data.getCal_year());
 			date2 = data.getF28f();
 			if (date2 != null) {
@@ -18525,7 +18524,7 @@ throws Exception, NoDataFoundException
 		HydroBase_CUPopulation data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_CUPopulation)v.elementAt(i);
+			data = (HydroBase_CUPopulation)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = (double)data.getPopulation();
 			if (!DMIUtil.isMissing(value)) {
@@ -18539,7 +18538,7 @@ throws Exception, NoDataFoundException
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
 			data = (HydroBase_AgriculturalCASSLivestockStats)
-				v.elementAt(i);
+				v.get(i);
 			date.setYear ( data.getCal_year());
 			value = (double)data.getHead();
 			if (!DMIUtil.isMissing(value)) {
@@ -18552,7 +18551,7 @@ throws Exception, NoDataFoundException
 		HydroBase_MonthlyNflow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyNflow)v.elementAt(i);
+			data = (HydroBase_MonthlyNflow)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_q_af();
@@ -18567,7 +18566,7 @@ throws Exception, NoDataFoundException
 		boolean units_set = false;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyPcpn)v.elementAt(i);
+			data = (HydroBase_MonthlyPcpn)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_pcpn();
@@ -18589,7 +18588,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyPcpn)v.elementAt(i);
+			data = (HydroBase_DailyPcpn)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -18618,7 +18617,7 @@ throws Exception, NoDataFoundException
 		HydroBase_ResEOM data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_ResEOM)v.elementAt(i);
+			data = (HydroBase_ResEOM)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_af();
@@ -18632,7 +18631,7 @@ throws Exception, NoDataFoundException
 		HydroBase_AnnualRes data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_AnnualRes)v.elementAt(i);
+			data = (HydroBase_AnnualRes)v.get(i);
 			date.setYear ( data.getIrr_year());
 			value = data.getAnn_amt();
 			if (!DMIUtil.isMissing(value)) {
@@ -18645,7 +18644,7 @@ throws Exception, NoDataFoundException
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_ResMeas)v.elementAt(i);
+			data = (HydroBase_ResMeas)v.get(i);
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getGage_height ();
@@ -18661,7 +18660,7 @@ throws Exception, NoDataFoundException
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_ResMeas)v.elementAt(i);
+			data = (HydroBase_ResMeas)v.get(i);
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getEvap_loss_amt ();
@@ -18677,7 +18676,7 @@ throws Exception, NoDataFoundException
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_ResMeas)v.elementAt(i);
+			data = (HydroBase_ResMeas)v.get(i);
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getFill_amt ();
@@ -18693,7 +18692,7 @@ throws Exception, NoDataFoundException
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_ResMeas)v.elementAt(i);
+			data = (HydroBase_ResMeas)v.get(i);
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getRelease_amt ();
@@ -18709,7 +18708,7 @@ throws Exception, NoDataFoundException
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_ResMeas)v.elementAt(i);
+			data = (HydroBase_ResMeas)v.get(i);
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getStorage_amt ();
@@ -18725,7 +18724,7 @@ throws Exception, NoDataFoundException
 		HydroBase_MonthlySnow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlySnow)v.elementAt(i);
+			data = (HydroBase_MonthlySnow)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_snow();
@@ -18740,7 +18739,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyTS)v.elementAt(i);
+			data = (HydroBase_DailyTS)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -18762,7 +18761,7 @@ throws Exception, NoDataFoundException
 		// Data records are monthly but data are actually daily...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_SnowCrse)v.elementAt(i);
+			data = (HydroBase_SnowCrse)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			day = data.getDay();
@@ -18785,7 +18784,7 @@ throws Exception, NoDataFoundException
 		// Data records are monthly but data are actually daily...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_SnowCrse)v.elementAt(i);
+			data = (HydroBase_SnowCrse)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			day = data.getDay();
@@ -18807,7 +18806,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyTS)v.elementAt(i);
+			data = (HydroBase_DailyTS)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -18827,7 +18826,7 @@ throws Exception, NoDataFoundException
 		HydroBase_MonthlyFlow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyFlow)v.elementAt(i);
+			data = (HydroBase_MonthlyFlow)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_q_af();
@@ -18842,7 +18841,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyTS)v.elementAt(i);
+			data = (HydroBase_DailyTS)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -18862,7 +18861,7 @@ throws Exception, NoDataFoundException
 		HydroBase_MonthlyFlow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyFlow)v.elementAt(i);
+			data = (HydroBase_MonthlyFlow)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getMax_q_cfs();
@@ -18876,7 +18875,7 @@ throws Exception, NoDataFoundException
 		HydroBase_MonthlyFlow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyFlow)v.elementAt(i);
+			data = (HydroBase_MonthlyFlow)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getMin_q_cfs();
@@ -18891,7 +18890,7 @@ throws Exception, NoDataFoundException
 		boolean units_set = false;	// Units are in data records
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyTemp)v.elementAt(i);
+			data = (HydroBase_MonthlyTemp)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getMean_t();
@@ -18911,7 +18910,7 @@ throws Exception, NoDataFoundException
 		boolean units_set = false;	// Units are in data records
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyTemp)v.elementAt(i);
+			data = (HydroBase_MonthlyTemp)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getAvg_max_t();
@@ -18931,7 +18930,7 @@ throws Exception, NoDataFoundException
 		boolean units_set = false;	// Units are in data records
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_MonthlyTemp)v.elementAt(i);
+			data = (HydroBase_MonthlyTemp)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getAvg_min_t();
@@ -18953,7 +18952,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyTS)v.elementAt(i);
+			data = (HydroBase_DailyTS)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -18979,7 +18978,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyTS)v.elementAt(i);
+			data = (HydroBase_DailyTS)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -19025,7 +19024,7 @@ throws Exception, NoDataFoundException
 
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_WellMeas)v.elementAt(i);
+			data = (HydroBase_WellMeas)v.get(i);
 			date = new DateTime ( data.getMeas_date());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 
@@ -19046,7 +19045,7 @@ throws Exception, NoDataFoundException
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_DailyTS)v.elementAt(i);
+			data = (HydroBase_DailyTS)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			ndays = TimeUtil.numDaysInMonth ( date);
@@ -19096,7 +19095,7 @@ throws Exception, NoDataFoundException
 		// Loop through each record...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_WISData)v.elementAt(i);
+			data = (HydroBase_WISData)v.get(i);
 			date = new DateTime ( data.getSet_date(),
 				DateTime.PRECISION_DAY);
 			if (pos == 0) {
@@ -19148,7 +19147,7 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("WellLevel"))) {
 		HydroBase_RTMeas data;
 		for ( int i = 0; i < size; i++) {
-			data = (HydroBase_RTMeas)v.elementAt(i);
+			data = (HydroBase_RTMeas)v.get(i);
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_MINUTE);
 			// Set all data, even missing...
@@ -19168,8 +19167,8 @@ throws Exception, NoDataFoundException
 		// added above so manipulate to add at the end...
 
 		// Get old comments so they can be added at the end...
-		Vector old_header = ts.getComments();
-		Vector header = new Vector ( 10, 5);
+		List old_header = ts.getComments();
+		List header = new Vector ( 10, 5);
 		header.add (
 		"Station and time series information from HydroBase "+
 		"determined at time of query:" );
@@ -19322,7 +19321,7 @@ throws Exception, NoDataFoundException
 			size = old_header.size();
 			for ( int i = 0; i < size; i++) {
 				ts.addToComments (
-				(String) old_header.elementAt(i));
+				(String) old_header.get(i));
 			}
 		}
 	}
@@ -19330,9 +19329,9 @@ throws Exception, NoDataFoundException
 		// Set comments for structure data.  Crop types will have a
 		// null str_mt since they are not managed in struct_meas_type...
 		// Get old comments so they can be added at the end...
-		Vector old_header = ts.getComments();
+		List old_header = ts.getComments();
 
-		Vector header = new Vector ( 10, 5);
+		List header = new Vector ( 10, 5);
 		header.add (
 		"Structure and time series information from HydroBase...");
 		header.add (
@@ -19410,7 +19409,7 @@ throws Exception, NoDataFoundException
 			size = old_header.size();
 			for ( int i = 0; i < size; i++) {
 				ts.addToComments (
-				(String) old_header.elementAt(i));
+				(String) old_header.get(i));
 			}
 		}
 	}	
@@ -19419,9 +19418,9 @@ throws Exception, NoDataFoundException
 		// Set comments for structure data.  Crop types will have a
 		// null str_mt since they are not managed in struct_meas_type...
 		// Get old comments so they can be added at the end...
-		Vector old_header = ts.getComments();
+		List old_header = ts.getComments();
 
-		Vector header = new Vector ( 10, 5);
+		List header = new Vector ( 10, 5);
 		header.add (
 		"Structure and time series information from HydroBase...");
 		header.add (
@@ -19500,7 +19499,7 @@ throws Exception, NoDataFoundException
 			size = old_header.size();
 			for ( int i = 0; i < size; i++) {
 				ts.addToComments (
-				(String) old_header.elementAt(i));
+				(String) old_header.get(i));
 			}
 		}
 	}	
@@ -19578,7 +19577,7 @@ to query.
 @return a Vector of HydroBase_Transact objects.
 @throws Exception if there is an error running the query.
 */
-public Vector readTransactList(InputFilter_JPanel panel, 
+public List readTransactList(InputFilter_JPanel panel, 
 String[] districtWhere, GRLimits mapQueryLimits)
 throws Exception {
 	return readTransactList(panel, districtWhere, mapQueryLimits, -1);
@@ -19601,7 +19600,7 @@ group to use).
 @return a Vector of HydroBase_Transact objects.
 @throws Exception if there is an error running the query.
 */
-public Vector readTransactList(InputFilter_JPanel panel, 
+public List readTransactList(InputFilter_JPanel panel, 
 String[] districtWhere, GRLimits mapQueryLimits, int type)
 throws Exception {
 	if (__useSP) {
@@ -19643,12 +19642,12 @@ throws Exception {
 			getViewNumber("vw_CDSS_Transact"), orderNumber, 
 			mapQueryLimits);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toTransactSPList(rs);
+		List v = toTransactSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
 	else {
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel, HydroBase_GUI_Util._TRANS_TABLE_NAME,
 			HydroBase_GUI_Util.WATER_RIGHT);
@@ -19661,7 +19660,7 @@ throws Exception {
 		int size = wheres.size();
 		for (int i = 0; i < size; i++) {
 			q.addWhereClause(convertCounty(
-				(String)wheres.elementAt(i)));
+				(String)wheres.get(i)));
 		}
 
 		switch (type) {
@@ -19716,7 +19715,7 @@ throws Exception {
 		}
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toTransactList(rs);
+		List v = toTransactList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -19734,7 +19733,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_Transact objects.
 @throws Exception if an error occurs.
 */
-public Vector readTransactListForStructure_num(int structure_num) 
+public List readTransactListForStructure_num(int structure_num) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -19749,7 +19748,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Transact"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toTransactSPList(rs);
+		List v = toTransactSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -19758,7 +19757,7 @@ throws Exception {
 		q.addWhereClause("transact.structure_num = " + structure_num);
 		buildSQL(q, __S_TRANSACT_FOR_STRUCTURE_NUM);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toTransactList(rs);
+		List v = toTransactList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -19803,13 +19802,13 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_TSProduct"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toTSProductSPList(rs);
+		List v = toTSProductSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		if (v == null || v.size() == 0) {
 			return null;
 		}
 		else {
-			return (HydroBase_TSProduct)v.elementAt(0);
+			return (HydroBase_TSProduct)v.get(0);
 		}
 	}
 	else {
@@ -19820,19 +19819,19 @@ throws Exception {
 		q.addWhereClause("TSProduct.user_num = " + user_num);
 	
 		ResultSet rs = dmiSelect(q);
-		Vector v = toTSProductList(rs);
+		List v = toTSProductList(rs);
 		closeResultSet(rs);
 	
 		if (v == null || v.size() == 0) {
 			return null;
 		}
 		else {
-			return (HydroBase_TSProduct)v.elementAt(0);
+			return (HydroBase_TSProduct)v.get(0);
 		}
 	}
 }
 
-public Vector readTSProductDMITSProductList(boolean newProduct) {
+public List readTSProductDMITSProductList(boolean newProduct) {
 	try {
 		return 
 		      readTSProductListForTSProduct_numProductGroup_numUser_num(
@@ -19863,7 +19862,7 @@ missing, then tsproduct_num MUST be missing.
 @return a Vector of matching HydroBase_TSProduct records.
 @throws Exception if an error occurs.
 */
-public Vector readTSProductListForTSProduct_numProductGroup_numUser_num(
+public List readTSProductListForTSProduct_numProductGroup_numUser_num(
 int tsproduct_num, int productgroup_num, int user_num) 
 throws Exception {
 	if (__useSP) {
@@ -19901,7 +19900,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_TSProduct"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toTSProductSPList(rs);
+		List v = toTSProductSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -19932,7 +19931,7 @@ throws Exception {
 		q.addWhereClause("TSProduct.user_num = " + user_num);
 	
 		ResultSet rs = dmiSelect(q);
-		Vector v = toTSProductList(rs);
+		List v = toTSProductList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -19952,7 +19951,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of the matching HydroBase_TSProductProps records.
 @throws Exception if an error occurs.
 */
-public Vector readTSProductPropsListForTSProduct_num(int tsproduct_num) 
+public List readTSProductPropsListForTSProduct_num(int tsproduct_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_TSPRODUCTPROPS);
@@ -19963,7 +19962,7 @@ throws Exception {
 	q.addWhereClause("TSProductProps.tsproduct_num = " + tsproduct_num);
 	ResultSet rs = dmiSelect(q);
 	// checked the stored procedure
-	Vector v = toTSProductPropsList(rs);
+	List v = toTSProductPropsList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -19996,7 +19995,7 @@ will not be used.
 public HydroBase_GroundWaterWellsView readUnpermittedWells(
 int structure_num, String usgs_id, String usbr_id) 
 throws Exception {
-	Vector v = null;
+	List v = null;
 
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -20073,7 +20072,7 @@ throws Exception {
 	}
 	else {
 		return (HydroBase_GroundWaterWellsView)
-			v.elementAt(0);
+			v.get(0);
 	}	
 }
 
@@ -20088,12 +20087,12 @@ The stored procedure that corresponds to this query is:<ul>
 </ul>
 @return a Vector of HydroBase_Use objects.
 */
-public Vector readUseList() 
+public List readUseList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_USE);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toUseList(rs);
+	List v = toUseList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -20116,14 +20115,14 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_UserPreferences objects.
 @throws Exception if an error occurs.
 */
-public Vector readUserPreferencesListForUser_num(int user_num)
+public List readUserPreferencesListForUser_num(int user_num)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_USER_PREFERENCES);
 	q.addWhereClause("user_security.user_num = " + user_num);
 
 	ResultSet rs = dmiSelect(q);
-	Vector v = toUserPreferencesList(rs);
+	List v = toUserPreferencesList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -20167,7 +20166,7 @@ throws Exception {
 	__userNum = us.getUser_num();
 	__userSecurityPermissions = us.getPermissions();
 		
-	Vector v = readUserPreferencesListForUser_num(__userNum);
+	List v = readUserPreferencesListForUser_num(__userNum);
 	
 	if (v == null) {
 		throw new Exception("Unable to read user preferences from "
@@ -20182,7 +20181,7 @@ throws Exception {
 	int size = v.size();
 	for (int i = 0; i < size; i++) {
 		HydroBase_UserPreferences up = 
-			(HydroBase_UserPreferences)v.elementAt(i);
+			(HydroBase_UserPreferences)v.get(i);
 		pref = up.getPreference();
 		prefValue = up.getPref_value();
 		Prop prop = new Prop(pref, i, prefValue, 
@@ -20222,7 +20221,7 @@ throws Exception {
 	q.addWhereClause("user_security.password like '" + password + "'");
 	q.addWhereClause("user_security.application = '" + application + "'");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toUserSecurityList(rs);
+	List v = toUserSecurityList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -20235,7 +20234,7 @@ throws Exception {
 	__printQueryStrings = true;
 
 	if (v.size() != 0) {
-		return (HydroBase_UserSecurity)v.elementAt(0);
+		return (HydroBase_UserSecurity)v.get(0);
 	}
 	else {
 		return null;
@@ -20266,7 +20265,7 @@ throws Exception {
 
 	ResultSet rs = dmiSelect(q);
 	// checked the stored procedure
-	Vector v = toUserSecurityList(rs);
+	List v = toUserSecurityList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -20279,7 +20278,7 @@ throws Exception {
 	__printQueryStrings = true;
 	
 	if (v.size() != 0) {
-		return (HydroBase_UserSecurity)v.elementAt(0);
+		return (HydroBase_UserSecurity)v.get(0);
 	}
 	else {
 		return null;
@@ -20301,7 +20300,7 @@ false, it is just sorted by water district.
 @return a Vector of HydroBase_WaterDistrict objects.
 @throws Exception if an error occurs.
 */
-public Vector readWaterDistrictList(boolean byDivision) 
+public List readWaterDistrictList(boolean byDivision) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	if (byDivision) {
@@ -20313,7 +20312,7 @@ throws Exception {
 	}
 	q.addOrderByClause("water_district.wd");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toWaterDistrictList(rs);
+	List v = toWaterDistrictList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -20335,13 +20334,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_WaterDivision objects.
 @throws Exception if an error occurs.
 */
-public Vector readWaterDivisionList () 
+public List readWaterDivisionList () 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_WATER_DIVISION);
 	q.addOrderByClause("water_division.div");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toWaterDivisionList(rs);
+	List v = toWaterDivisionList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -20397,7 +20396,7 @@ silly NoStructureJoin stuff.
 @return a Vector HydroBase_WDWater objects.
 @throws Exception if an error occurs.
 */
-public Vector readWDWaterListForWDWater_num(int wdwater_num)
+public List readWDWaterListForWDWater_num(int wdwater_num)
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -20411,7 +20410,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WDWater"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWDWaterSPList(rs);
+		List v = toWDWaterSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20420,7 +20419,7 @@ throws Exception {
 		buildSQL(q, __S_WD_WATER_NO_STRUCTURE);
 		q.addWhereClause("wdwater_num = " + wdwater_num);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWDWaterList(rs);
+		List v = toWDWaterList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -20438,7 +20437,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_WellApplication objects.
 @throws Exception if an error occurs.
 */
-public Vector readWellApplicationList(String permitno, 
+public List readWellApplicationList(String permitno, 
 String permitrpl, String permitsuf)
 throws Exception {
 	if (__useSP) {
@@ -20473,7 +20472,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WellApplications"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWellApplicationSPList(rs);
+		List v = toWellApplicationSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20493,7 +20492,7 @@ throws Exception {
 				+ permitrpl + "'");
 		}
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWellApplicationSPList(rs);
+		List v = toWellApplicationSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}	
@@ -20509,9 +20508,9 @@ This method is used by:<ul>
 @return a Vector of HydroBase_WellApplication objects.
 @throws Exception if an error occurs.
 */
-public Vector readWellApplicationListForPermitData(Vector permitData) 
+public List readWellApplicationListForPermitData(List permitData) 
 throws Exception {
-	Vector results = new Vector();
+	List results = new Vector();
 	Object o;
 	if (permitData != null) {
 		boolean isPermit = false;
@@ -20521,13 +20520,13 @@ throws Exception {
 			permitrpl = null,
 			permitsuf = null,
 			where = "";
-		Vector v = null;
+		List v = null;
 		for (int i = 0; i < size; i++) {
 			if (i > 0) {
 				where += " OR ";
 			}
 			isPermit = true;
-			compos = (String)permitData.elementAt(i);
+			compos = (String)permitData.get(i);
 			if (compos.length() > 0) {
 				// Check for invalid permit identifier...
 				if (compos.charAt(0) == 'P') {
@@ -20554,13 +20553,13 @@ throws Exception {
 				permitsuf = "";
 				permitrpl = "";
 				if (v.size() > 0) {
-					permitno = (String)v.elementAt(0);
+					permitno = (String)v.get(0);
 				}
 				if (v.size() > 1) {
-					permitsuf = (String)v.elementAt(1);
+					permitsuf = (String)v.get(1);
 				}
 				if (v.size() > 2) {
-					permitrpl = (String)v.elementAt(2);
+					permitrpl = (String)v.get(2);
 				}
 				if (!StringUtil.isInteger(permitno)) {
 					isPermit = false;
@@ -20594,7 +20593,7 @@ to query.
 Objects, depending on whether SPFlex was used or not.
 @throws Exception if there is an error running the query.
 */
-public Vector readWellApplicationGeolocList(InputFilter_JPanel panel, 
+public List readWellApplicationGeolocList(InputFilter_JPanel panel, 
 String[] districtWhere, GRLimits mapQueryLimits)
 throws Exception {
 	if (__useSP) {
@@ -20604,15 +20603,15 @@ throws Exception {
 			getViewNumber("vw_CDSS_WellApplications"), 0, 
 			mapQueryLimits);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWellApplicationSPList(rs);
+		List v = toWellApplicationSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
 	else {
-		Vector orderBys 
+		List orderBys 
 			= HydroBase_GUI_Util.getOrderBysFromInputFilter_JPanel(
 			panel, false);
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel);
 		if (districtWhere != null) {
@@ -20623,19 +20622,19 @@ throws Exception {
 		if (wheres != null) {
 			int size = wheres.size();
 			for (int i = 0; i < size; i++) {
-				q.addWhereClause((String)wheres.elementAt(i));
+				q.addWhereClause((String)wheres.get(i));
 			}
 		}
 		if (orderBys != null) {
 			int size = orderBys.size();
 			for (int i = 0; i < size; i++) {
 				q.addOrderByClause(
-					(String)orderBys.elementAt(i));
+					(String)orderBys.get(i));
 			}
 		}	
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWellApplicationSPList(rs);
+		List v = toWellApplicationSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -20655,7 +20654,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_WellMeas objects.
 @throws Exception if an error occurs.
 */
-public Vector readWellMeasList(int meas_num, DateTime req_date1, DateTime req_date2) 
+public List readWellMeasList(int meas_num, DateTime req_date1, DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
@@ -20721,7 +20720,7 @@ throws Exception {
 
 		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_WellMeas"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWellMeasSPList(rs);
+		List v = toWellMeasSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20753,7 +20752,7 @@ throws Exception {
 		}
 		q.addOrderByClause("well_meas.meas_date");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWellMeasList(rs);
+		List v = toWellMeasList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -20770,7 +20769,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_Wells objects.
 @throws Exception if an error occurs.
 */
-public Vector readWellsList() 
+public List readWellsList() 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -20778,7 +20777,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_Wells"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWellsSPList(rs);
+		List v = toWellsSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20786,7 +20785,7 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WELLS);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWellsList(rs, __S_WELLS);
+		List v = toWellsList(rs, __S_WELLS);
 		closeResultSet(rs);
 		return v;
 	}
@@ -20804,7 +20803,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_Wells objects.
 @throws Exception if an error occurs.
 */
-public Vector readWellsWellToLayerList() 
+public List readWellsWellToLayerList() 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -20812,7 +20811,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WellsWellToLayer"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWellsWellToLayerSPList(rs);
+		List v = toWellsWellToLayerSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20820,7 +20819,7 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WELLS_LAYER);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWellsList(rs, __S_WELLS_LAYER);
+		List v = toWellsList(rs, __S_WELLS_LAYER);
 		closeResultSet(rs);
 		return v;
 	}
@@ -20848,7 +20847,7 @@ change the following to use -999 instead of -1
 @param div If >= 0, the div will be used to filter the query.
 @throws Exception if an error occurs.
 */
-public Vector readWellsWellToParcelList(int parcel_id, int cal_year, int div) 
+public List readWellsWellToParcelList(int parcel_id, int cal_year, int div) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -20886,7 +20885,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WellsWellToParcel"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWellsWellToParcelSPList(rs);
+		List v = toWellsWellToParcelSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20904,7 +20903,7 @@ throws Exception {
 			q.addWhereClause("well_to_parcel.div=" + div);
 		}
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWellsList(rs, __S_WELLS_PARCEL);
+		List v = toWellsList(rs, __S_WELLS_PARCEL);
 		closeResultSet(rs);
 		return v;
 	}
@@ -20922,7 +20921,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_Wells objects.
 @throws Exception if an error occurs.
 */
-public Vector readWellsWellToStructureList() 
+public List readWellsWellToStructureList() 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -20930,7 +20929,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WellsWellToStructure"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWellsWellToStructureSPList(rs);
+		List v = toWellsWellToStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20938,7 +20937,7 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WELLS_STRUCTURE);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWellsList(rs, __S_WELLS_STRUCTURE);
+		List v = toWellsList(rs, __S_WELLS_STRUCTURE);
 		closeResultSet(rs);
 		return v;
 	}
@@ -20956,7 +20955,7 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_Wells objects.
 @throws Exception if an error occurs.
 */
-public Vector readWellsWellToParcelWellToStructureList() 
+public List readWellsWellToParcelWellToStructureList() 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -20965,7 +20964,7 @@ throws Exception {
 			getViewNumber(
 			"vw_CDSS_WellsWellToParcelWellToStructure"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWellsWellToParcelWellToStructureSPList(rs);
+		List v = toWellsWellToParcelWellToStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20973,7 +20972,7 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WELLS_PARCEL_STRUCTURE);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWellsList(rs, __S_WELLS_PARCEL_STRUCTURE);
+		List v = toWellsList(rs, __S_WELLS_PARCEL_STRUCTURE);
 		closeResultSet(rs);
 		return v;
 	}
@@ -20996,7 +20995,7 @@ null, it will not be used.
 @return a Vector of HydroBase_WISComments objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISCommentsList(Vector wis_nums, DateTime set_date)
+public List readWISCommentsList(List wis_nums, DateTime set_date)
 throws Exception {
 	if (wis_nums == null) {
 		return readWISCommentsList(-999, set_date);
@@ -21006,18 +21005,18 @@ throws Exception {
 	int size2 = -1;
 	int wis_num = -1;
 	String s = null;
-	Vector v = null;
+	List v = null;
 
-	Vector results = new Vector();
+	List results = new Vector();
 	
 	for (int i = 0; i < size; i++) {
-		s = (String)wis_nums.elementAt(i);
+		s = (String)wis_nums.get(i);
 		wis_num = StringUtil.atoi(s);
 		v = readWISCommentsList(wis_num, set_date);
 		size2 = v.size();
 		for (int j = 0; j < size2; j++) {
-			if (v.elementAt(j) != null) {
-				results.add(v.elementAt(j));
+			if (v.get(j) != null) {
+				results.add(v.get(j));
 			}
 		}
 	}
@@ -21043,7 +21042,7 @@ null, it will not be used.
 @return a Vector of HydroBase_WISComments objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISCommentsList(int wis_num, DateTime set_date) 
+public List readWISCommentsList(int wis_num, DateTime set_date) 
 throws Exception {	
 	return readWISCommentsList(wis_num, set_date, -1);
 }
@@ -21070,7 +21069,7 @@ null, it will not be used.
 @return a Vector of HydroBase_WISComments objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISCommentsList(int wis_num, DateTime set_date, 
+public List readWISCommentsList(int wis_num, DateTime set_date, 
 int orderNumber) 
 throws Exception {	
 	if (__useSP) {
@@ -21104,7 +21103,7 @@ throws Exception {
 			getViewNumber("vw_CDSS_WISComments"), orderNumber, 
 			null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWISCommentsList(rs);
+		List v = toWISCommentsList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -21122,7 +21121,7 @@ throws Exception {
 			q.addOrderByClause("set_date DESC");
 		}
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWISCommentsList(rs);
+		List v = toWISCommentsList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -21160,7 +21159,7 @@ Hydrobase_GUI_WISDiversionCoding.
 @return a Vector of HydroBase_DailyWC objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISDailyWCList(int wis_num, String wis_column, int wd,
+public List readWISDailyWCList(int wis_num, String wis_column, int wd,
 int id, DateTime detailDate, String s, int f, String u,
 String t, int queryType) 
 throws Exception {
@@ -21295,7 +21294,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WISDailyWC"), 37, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWISDailyWCSPList(rs);
+		List v = toWISDailyWCSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;		
 	}
@@ -21348,7 +21347,7 @@ throws Exception {
 		q.addOrderByClause("wis_daily_wc.irr_year");
 		q.addOrderByClause("wis_daily_wc.irr_mon");	
 		ResultSet rs = dmiSelect(q);	
-		Vector v = toWISDailyWCList(rs);
+		List v = toWISDailyWCList(rs);
 		closeResultSet(rs);
 	
 		if (v == null || v.size() == 0) {
@@ -21360,7 +21359,7 @@ throws Exception {
 		}
 	
 		int size = v.size();
-		HydroBase_WISDailyWC wdw = (HydroBase_WISDailyWC)v.elementAt(
+		HydroBase_WISDailyWC wdw = (HydroBase_WISDailyWC)v.get(
 			size - 1);
 
 		// Now have the latest results.  Requery using the latest date,
@@ -21453,14 +21452,14 @@ throws Exception {
 		getViewNumber("vw_CDSS_WISDailyWC"), 37, null);
 	ResultSet rs = runSPFlex(parameters);
 		// use the toStructureStructMeas...
-	Vector v = toWISDailyWCSPList(rs);
+	List v = toWISDailyWCSPList(rs);
 	closeResultSet(rs, __lastStatement);
 
 	if (v == null || v.size() == 0) {
 		return -1;
 	}
 	else {
-		HydroBase_WISDailyWC wc = (HydroBase_WISDailyWC)v.elementAt(0);
+		HydroBase_WISDailyWC wc = (HydroBase_WISDailyWC)v.get(0);
 		return wc.getMeas_num();
 	}
 }
@@ -21483,24 +21482,24 @@ elements.
 @return a Vector of HydroBase_WISData objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISDataListForWis_numWis_rowList(Vector wisNums, 
-Vector wisRows, Vector order) 
+public List readWISDataListForWis_numWis_rowList(List wisNums, 
+List wisRows, List order) 
 throws Exception {
 	if (__useSP) {
 		int size = wisNums.size();
 		int vsize = 0;
 		String wisNum = null;
 		String wisRow = null;
-		Vector results = new Vector();
-		Vector v = null;
+		List results = new Vector();
+		List v = null;
 		for (int i = 0; i < size; i++) {
-			wisNum = (String)wisNums.elementAt(i);
-			wisRow = (String)wisRows.elementAt(i);
+			wisNum = (String)wisNums.get(i);
+			wisRow = (String)wisRows.get(i);
 			v = readWISDataList(StringUtil.atoi(wisNum), null,
 				StringUtil.atoi(wisRow));
 			vsize = v.size();
 			for (int j = 0; j < vsize; j++) {
-				results.add(v.elementAt(j));
+				results.add(v.get(j));
 			}
 		}
 		return results;
@@ -21517,9 +21516,9 @@ throws Exception {
 				whereb.append(" OR ");
 			}
 			whereb.append("(wis_data.wis_num=" 
-				+ (String)wisNums.elementAt(iwis)
+				+ (String)wisNums.get(iwis)
 				+ " AND wis_data.wis_row=" 
-				+ (String)wisRows.elementAt(iwis) + ")");
+				+ (String)wisRows.get(iwis) + ")");
 		}
 		whereb.append(")");
 		q.addWhereClause(whereb.toString());
@@ -21527,11 +21526,11 @@ throws Exception {
 		if (order != null) {
 			size = order.size();
 				for (int i = 0; i < size; i++) {
-				q.addOrderByClause((String)order.elementAt(i));
+				q.addOrderByClause((String)order.get(i));
 			}
 		}	
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWISDataList(rs);
+		List v = toWISDataList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -21554,7 +21553,7 @@ not be included.
 @return a Vector of HydroBase_WISData objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISDataList(int wis_num, DateTime set_date, int wis_row) 
+public List readWISDataList(int wis_num, DateTime set_date, int wis_row) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -21590,7 +21589,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WISData"), 39, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWISDataList(rs);
+		List v = toWISDataList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -21611,7 +21610,7 @@ throws Exception {
 		}
 		q.addOrderByClause("wis_data.wis_row");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWISDataList(rs);
+		List v = toWISDataList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -21630,13 +21629,13 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_WISDiagramData objects, or null if none were read.
 @throws an Exception if an error occurs.
 */
-public Vector readWISDiagramDataListForWis_num(int wis_num) 
+public List readWISDiagramDataListForWis_num(int wis_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_WIS_DIAGRAM_DATA);
 	q.addWhereClause("wis_diagram_data.wis_num = " + wis_num);
 	ResultSet rs = dmiSelect(q);
-	Vector v = toWISDiagramDataList(rs);
+	List v = toWISDiagramDataList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -21668,13 +21667,13 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WISFormat"), 40, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWISFormatSPList(rs);
+		List v = toWISFormatSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		if (v == null || v.size() == 0) {
 			return null;
 		}
 		else {
-			return (HydroBase_WISFormat)v.elementAt(0);
+			return (HydroBase_WISFormat)v.get(0);
 		}
 	}
 	else {
@@ -21683,13 +21682,13 @@ throws Exception {
 		q.addWhereClause("wis_format.wis_num = " + wis_num);
 		q.addWhereClause("wis_format.wis_row = " + wis_row);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWISFormatList(rs);
+		List v = toWISFormatList(rs);
 		closeResultSet(rs);
 		if (v == null || v.size() == 0) {
 			return null;
 		}
 		else {
-			return (HydroBase_WISFormat)v.elementAt(0);
+			return (HydroBase_WISFormat)v.get(0);
 		}		
 	}
 }
@@ -21712,7 +21711,7 @@ will not be included.
 @return a Vector of HydroBase_WISFormat objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISFormatList(int wis_num, String row_type, String identifier)
+public List readWISFormatList(int wis_num, String row_type, String identifier)
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -21746,7 +21745,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WISFormat"), 40, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWISFormatSPList(rs);
+		List v = toWISFormatSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -21766,7 +21765,7 @@ throws Exception {
 		}
 		q.addOrderByClause("wis_format.wis_row");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWISFormatList(rs);
+		List v = toWISFormatList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -21783,23 +21782,23 @@ This method is used by:<ul>
 @return a Vector of HydroBase_WISFormat objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISFormatListForWis_numList(Vector wisNums)
+public List readWISFormatListForWis_numList(List wisNums)
 throws Exception {
 	if (__useSP) {
 		int size = wisNums.size();
 		int vsize = -1;
 		String s = null;
-		Vector results = new Vector();
-		Vector v = null;
+		List results = new Vector();
+		List v = null;
 
 		for (int i = 0; i < size; i++) {
-			s = (String)wisNums.elementAt(i);
+			s = (String)wisNums.get(i);
 			v = readWISFormatList(StringUtil.atoi(s),
 				"wdid:", true, "Other");
 
 			vsize = v.size();
 			for (int j = 0; j < vsize; j++) {
-				results.add(v.elementAt(j));
+				results.add(v.get(j));
 			}
 		}
 		return results;
@@ -21812,9 +21811,9 @@ throws Exception {
                 int size = wisNums.size();
 		String s = null;
 		int wisNum = -1;
-		Vector wheres = new Vector();
+		List wheres = new Vector();
                 for (int i = 0; i < size; i++) {
-                        s = (String)wisNums.elementAt(i);
+                        s = (String)wisNums.get(i);
                         wisNum = StringUtil.atoi(s);
                         if (!DMIUtil.isMissing(wisNum)) {
                                 wheres.add("wis_format.wis_num = "
@@ -21828,7 +21827,7 @@ throws Exception {
                 String orString = DMIUtil.getOrClause(wheres);
 		q.addWhereClause(orString);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWISFormatList(rs);
+		List v = toWISFormatList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -21846,24 +21845,24 @@ This method is used by:<ul>
 @return a Vector of HydroBase_WISFormat objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISFormatListForWis_numIdentifierList(Vector wisNums, 
-Vector identifiers) 
+public List readWISFormatListForWis_numIdentifierList(List wisNums, 
+List identifiers) 
 throws Exception {
 	if (__useSP) {
 		int size = wisNums.size();
 		int vsize = -1;
 		String s = null;
-		Vector results = new Vector();
-		Vector v = null;
+		List results = new Vector();
+		List v = null;
 
 		for (int i = 0; i < size; i++) {
-			s = (String)wisNums.elementAt(i);
+			s = (String)wisNums.get(i);
 			v = readWISFormatList(StringUtil.atoi(s),
-				(String)identifiers.elementAt(i), false, null);
+				(String)identifiers.get(i), false, null);
 
 			vsize = v.size();
 			for (int j = 0; j < vsize; j++) {
-				results.add(v.elementAt(j));
+				results.add(v.get(j));
 			}
 		}
 		return results;
@@ -21877,11 +21876,11 @@ throws Exception {
 		String s = null;
 		int wisNum = -1;
 		String identifier = null;
-		Vector wheres = new Vector();
+		List wheres = new Vector();
                 for (int i = 0; i < size; i++) {
-                        s = (String)wisNums.elementAt(i);
+                        s = (String)wisNums.get(i);
                         wisNum = StringUtil.atoi(s);
-			identifier = (String)identifiers.elementAt(i);
+			identifier = (String)identifiers.get(i);
                         if (!DMIUtil.isMissing(wisNum)) {
                                 wheres.add("wis_format.wis_num = "
 					+ wisNum 
@@ -21893,7 +21892,7 @@ throws Exception {
                 String orString = DMIUtil.getOrClause(wheres);
 		q.addWhereClause(orString);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toWISFormatList(rs);
+		List v = toWISFormatList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -21914,7 +21913,7 @@ match.  If false, it will be a "Match" match.
 @return a Vector of HydroBase_WISFormat objects.
 @throws Exception if an error occurs.
 */
-private Vector readWISFormatList(int wis_num, String identifier, 
+private List readWISFormatList(int wis_num, String identifier, 
 boolean idStart, String notRow)
 throws Exception {
 	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -21951,7 +21950,7 @@ throws Exception {
 	HydroBase_GUI_Util.fillSPParameters(parameters, 
 		getViewNumber("vw_CDSS_WISFormat"), 0, null);
 	ResultSet rs = runSPFlex(parameters);
-	Vector v = toWISFormatSPList(rs);
+	List v = toWISFormatSPList(rs);
 	closeResultSet(rs, __lastStatement);
 	return v;
 }
@@ -21969,14 +21968,14 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_WISFormula objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISFormulaListForWis_num(int wis_num) 
+public List readWISFormulaListForWis_num(int wis_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_WIS_FORMULA);
 	q.addWhereClause("wis_formula.wis_num = " + wis_num);
 	ResultSet rs = dmiSelect(q);
 	// checked stored procedure
-	Vector v = toWISFormulaList(rs);
+	List v = toWISFormulaList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -21999,14 +21998,14 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_WISImport objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISImportListForWis_num(int wis_num) 
+public List readWISImportListForWis_num(int wis_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_WIS_IMPORT);
 	q.addWhereClause("wis_import.wis_num = " + wis_num);
 	ResultSet rs = dmiSelect(q);
 	// checked stored procedure
-	Vector v = toWISImportList(rs);
+	List v = toWISImportList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -22035,7 +22034,7 @@ used.
 @return a Vector of HydroBase_WISSheetName objects.
 @throws Exception if an error occurs
 */
-public Vector readWISSheetNameList(int wd, int wis_num, String sheet_name,
+public List readWISSheetNameList(int wd, int wis_num, String sheet_name,
 DateTime effective_date) 
 throws Exception {
 	return readWISSheetNameList(wd, wis_num, sheet_name, effective_date,
@@ -22063,7 +22062,7 @@ by effective_date DESC.
 @return a Vector of HydroBase_WISSheetName objects.
 @throws Exception if an error occurs
 */
-public Vector readWISSheetNameList(int wd, int wis_num, String sheet_name,
+public List readWISSheetNameList(int wd, int wis_num, String sheet_name,
 DateTime effective_date, boolean orderDescEffectiveDate) 
 throws Exception {
 	if (__useSP) {
@@ -22115,7 +22114,7 @@ throws Exception {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
 			getViewNumber("vw_CDSS_WISSheetName"), orderNum, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWISSheetNameSPList(rs);
+		List v = toWISSheetNameSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
@@ -22150,7 +22149,7 @@ throws Exception {
 		}
 		
 		ResultSet rs = dmiSelect(q);
-		Vector v = toSheetNameList(rs, __S_WIS_SHEET_NAME_FOR_WIS_NUM);
+		List v = toSheetNameList(rs, __S_WIS_SHEET_NAME_FOR_WIS_NUM);
 		closeResultSet(rs);	
 		return v;
 	}
@@ -22167,22 +22166,22 @@ district for which to return distinct sheets.
 @return a Vector of HydroBase_WISSheetName objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISSheetNameDistinctList(Vector wds) 
+public List readWISSheetNameDistinctList(List wds) 
 throws Exception {
-	Vector results = new Vector();
+	List results = new Vector();
 	int size = wds.size();
 	int size2 = -1;
-	Vector v = null;
+	List v = null;
 	String s = null;
 	int wd = -1;
 	for (int i = 0; i < size; i++) {
-		s = (String)wds.elementAt(i);
+		s = (String)wds.get(i);
 		wd = StringUtil.atoi(s);
 		v = readWISSheetNameDistinctList(wd);
 		size2 = v.size();
 		for (int j = 0; j < size2; j++) {
-			if (v.elementAt(j) != null) {
-				results.add(v.elementAt(j));
+			if (v.get(j) != null) {
+				results.add(v.get(j));
 			}
 		}
 	}
@@ -22203,7 +22202,7 @@ not be used.
 @return a Vector of HydroBase_WISSheetName objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISSheetNameDistinctList(int wd) 
+public List readWISSheetNameDistinctList(int wd) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
@@ -22223,7 +22222,7 @@ throws Exception {
 			null);
 
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWISSheetNameDistinctSPList(rs);
+		List v = toWISSheetNameDistinctSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
@@ -22241,7 +22240,7 @@ throws Exception {
 //	        q.addOrderByClause("effective_date DESC");
 		q.selectDistinct(true);
 		ResultSet rs = dmiSelect(q);
-		Vector v = toSheetNameList(rs, __S_WIS_SHEET_NAME_DISTINCT);
+		List v = toSheetNameList(rs, __S_WIS_SHEET_NAME_DISTINCT);
 		closeResultSet(rs);	
 		return v;
 	}
@@ -22258,7 +22257,7 @@ district for which to return distinct sheets.
 @return a Vector of HydroBase_WISSheetName objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISSheetNameList(Vector wds) 
+public List readWISSheetNameList(List wds) 
 throws Exception {
 	return readWISSheetNameList(wds, false);
 }
@@ -22276,23 +22275,23 @@ by effective_date, descending.
 @return a Vector of HydroBase_WISSheetName objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISSheetNameList(Vector wds, boolean orderDescEffectiveDate) 
+public List readWISSheetNameList(List wds, boolean orderDescEffectiveDate) 
 throws Exception {
-	Vector results = new Vector();
+	List results = new Vector();
 	int size = wds.size();
 	int size2 = -1;
-	Vector v = null;
+	List v = null;
 	String s = null;
 	int wd = -1;
 	for (int i = 0; i < size; i++) {
-		s = (String)wds.elementAt(i);
+		s = (String)wds.get(i);
 		wd = StringUtil.atoi(s);
 		v = readWISSheetNameList(wd, -999, null, null,
 			orderDescEffectiveDate);
 		size2 = v.size();
 		for (int j = 0; j < size2; j++) {
-			if (v.elementAt(j) != null) {
-				results.add(v.elementAt(j));
+			if (v.get(j) != null) {
+				results.add(v.get(j));
 			}
 		}
 	}
@@ -22315,7 +22314,7 @@ it will not be used.
 @return a Vector of HydroBase_WISSheetName objects.
 @throws Exception if an error occurs.
 */
-public Vector readWISSheetNameWISFormatListDistinct(
+public List readWISSheetNameWISFormatListDistinct(
 InputFilter_JPanel panel)
 throws Exception {
 	if (__useSP) {
@@ -22326,7 +22325,7 @@ throws Exception {
 			getViewNumber("vw_CDSS_WISSheetNameWISFormat"), 
 			41, null);
 		ResultSet rs = runSPFlex(parameters);
-		Vector v = toWISSheetNameWISFormatSPList(rs);
+		List v = toWISSheetNameWISFormatSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -22334,13 +22333,13 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WIS_SHEET_NAME_WIS_FORMAT_DISTINCT);
 		int size = 0;
-		Vector wheres 
+		List wheres 
 			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
 			this, panel);		
 		if (wheres != null) {
 			size = wheres.size();
 			for (int i = 0; i < size; i++) {
-				q.addWhereClause((String)wheres.elementAt(i));
+				q.addWhereClause((String)wheres.get(i));
 			}
 		}
 		String table = "wis_sheet_name";
@@ -22349,7 +22348,7 @@ throws Exception {
 		}		
 		q.addOrderByClause(table + ".sheet_name");
 		ResultSet rs = dmiSelect(q);
-		Vector v = toSheetNameWISFormatList(rs,
+		List v = toSheetNameWISFormatList(rs,
 			__S_WIS_SHEET_NAME_WIS_FORMAT_DISTINCT);
 		closeResultSet(rs);
 		return v;
@@ -22369,15 +22368,15 @@ This method is used by:<ul>
 @return returns a Vector of HydroBase_Structure Objects
 @throws Exception if an error occurs.
 */
-public Vector readWISStructuresList()
+public List readWISStructuresList()
 throws Exception {
 	if (__useSP) {
 
-	Vector wds = HydroBase_GUI_Util.generateWaterDistricts(this, false);
+		List wds = HydroBase_GUI_Util.generateWaterDistricts(this, false);
 	StringBuffer clause = new StringBuffer();
 	int size = wds.size();
 	for (int i = 0; i < size; i++) {
-		clause.append((String)wds.elementAt(i));
+		clause.append((String)wds.get(i));
 		if (i < (size - 1)) {
 			clause.append(",");
 		}
@@ -22394,7 +22393,7 @@ throws Exception {
 
 	HydroBase_GUI_Util.fillSPParameters(parameters, "82", -999, null);
 	ResultSet rs = runSPFlex(parameters);
-	Vector v = toStructureSPList(rs);
+	List v = toStructureSPList(rs);
 	closeResultSet(rs, __lastStatement);
 	__WISStructures_Vector = v;
 	return v;
@@ -22409,9 +22408,9 @@ throws Exception {
 	HydroBase_WISSheetName wisData;
 
         // initialize variables
-        Vector structureNums = null;
+        List structureNums = null;
 
-	Vector wds = HydroBase_GUI_Util.generateWaterDistricts(this, false);
+        List wds = HydroBase_GUI_Util.generateWaterDistricts(this, false);
 /*
         //concatenate 'wd = ' for each element in the wd Vector
 	Vector wds = new Vector();
@@ -22420,24 +22419,24 @@ throws Exception {
 	HydroBase_WaterDistrict hbwd = null;
         for (int i = 0; i < wdVectorSize; i++) {
 		hbwd = (HydroBase_WaterDistrict)
-			waterDistricts.elementAt(i);
+			waterDistricts.get(i);
 		wds.add("" + hbwd.getWD());
         }
 */
         // build or clause for the water districts
-        Vector wisResults = readWISSheetNameList(wds);
+        List wisResults = readWISSheetNameList(wds);
 
         // get the unique wisNums from the HBWISQuery
         // and build where clause for HBWISFormatRowQuery
 	int curInt;
-        Vector wisNums = null;
+        List wisNums = null;
         if (wisResults != null) {
         if (!wisResults.isEmpty()) {
                 isWISResults = true;
                 int size = wisResults.size();
                 wisNums = new Vector(size);
                 for (int i = 0; i < size; i++) {
-                        wisData=(HydroBase_WISSheetName)wisResults.elementAt(i);
+                        wisData=(HydroBase_WISSheetName)wisResults.get(i);
                         curInt = wisData.getWis_num();
                         if (!DMIUtil.isMissing(curInt)) {
                                 wisNums.add("" + curInt);
@@ -22449,8 +22448,7 @@ throws Exception {
         // construct and submit HBWISFormatRowQuery using the unique wisNums
         if (isWISResults) {
                 isFormatResults = true;
-                Vector formatResults = readWISFormatListForWis_numList(
-			wisNums);
+                List formatResults = readWISFormatListForWis_numList(wisNums);
          
                 if (formatResults != null) {
                 if (!formatResults.isEmpty()) {
@@ -22458,7 +22456,7 @@ throws Exception {
                         structureNums = new Vector(size, 5);
                         for (int i = 0; i < size; i++) {
                                 formatData = (HydroBase_WISFormat)
-					formatResults.elementAt(i);
+					formatResults.get(i);
                                 curInt = formatData.getStructure_num();
                                 if (!DMIUtil.isMissing(curInt)) {
                                         structureNums.add("" + curInt);
@@ -22468,8 +22466,8 @@ throws Exception {
                 }
         }
         // construct and submit HBStructureQuery using the structureNums
-	Vector structureResults = null;
-	Vector orderBy = new Vector();
+	List structureResults = null;
+	List orderBy = new Vector();
         if (isFormatResults) {
                 orderBy.add("wd");
                 orderBy.add("str_name");
@@ -22607,10 +22605,9 @@ public boolean saveUserPreferences() {
 	String prefName;
 	String prefValue;
 
-	Vector dbProps = new Vector();
+	List dbProps = new Vector();
 	try {
-		dbProps = readUserPreferencesListForUser_num(
-			__userNum);
+		dbProps = readUserPreferencesListForUser_num(__userNum);
 	}
 	catch (Exception e) {
 		Message.printWarning(2, "writeUserPreferences", e);
@@ -22634,7 +22631,7 @@ public boolean saveUserPreferences() {
 			insert = true;
 			for (int j = 0; j < dbPropsSize; j++) {
 				up = (HydroBase_UserPreferences)
-					dbProps.elementAt(j);
+					dbProps.get(j);
 				if (up.getPreference().trim().equalsIgnoreCase(
 					prefName)) {
 					insert = false;
@@ -22839,10 +22836,10 @@ Translate a ResultSet to HydroBase_AgriculturalCASSCropStats objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_AgriculturalCASSCropStats.
 */
-private Vector toAgriculturalCASSCropStatsList(ResultSet rs, boolean distinct)
+private List toAgriculturalCASSCropStatsList(ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_AgriculturalCASSCropStats data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -22919,10 +22916,10 @@ Translate a ResultSet to HydroBase_AgriculturalCASSCropStats objects.
 @param distinct whether it is a distinct query or not
 @return a Vector of HydroBase_AgriculturalCASSCropStats.
 */
-private Vector toAgriculturalCASSCropStatsSPList(ResultSet rs, boolean distinct)
+private List toAgriculturalCASSCropStatsSPList(ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_AgriculturalCASSCropStats data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -22999,11 +22996,11 @@ Translate a ResultSet to HydroBase_AgriculturalCASSLivestockStats objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_AgriculturalLivestockCropStats.
 */
-private Vector toAgriculturalCASSLivestockStatsList(
+private List toAgriculturalCASSLivestockStatsList(
 	ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_AgriculturalCASSLivestockStats data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -23054,11 +23051,11 @@ Translate a ResultSet to HydroBase_AgriculturalCASSLivestockStats objects.
 @param distinct whether it is a distinct query or not
 @return a Vector of HydroBase_AgriculturalCASSLivestockStats.
 */
-private Vector toAgriculturalCASSLivestockStatsSPList(
+private List toAgriculturalCASSLivestockStatsSPList(
 	ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_AgriculturalCASSLivestockStats data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -23106,10 +23103,10 @@ Translate a ResultSet to HydroBase_AgriculturalNASSCropStats objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_AgriculturalNASSCropStats.
 */
-private Vector toAgriculturalNASSCropStatsList(ResultSet rs, boolean distinct)
+private List toAgriculturalNASSCropStatsList(ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_AgriculturalNASSCropStats data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -23158,10 +23155,10 @@ HydroBase_AgriculturalNASSCropStats objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_AgriculturalNASSCropStats.
 */
-private Vector toAgriculturalNASSCropStatsSPList(ResultSet rs, boolean distinct)
+private List toAgriculturalNASSCropStatsSPList(ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_AgriculturalNASSCropStats data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -23210,10 +23207,10 @@ Translate a ResultSet to HydroBase_AnnualAmt objects.
 @return a Vector of HydroBase_AnnualAmt
 @throws Exception if an error occurs.
 */
-private Vector toAnnualAmtList (ResultSet rs) 
+private List toAnnualAmtList (ResultSet rs) 
 throws Exception {
 	HydroBase_AnnualAmt data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -23353,10 +23350,10 @@ Translate a ResultSet to HydroBase_AnnualResobjects.
 @return a Vector of HydroBase_ResMeas
 @throws Exception if an error occurs.
 */
-private Vector toAnnualResList (ResultSet rs) 
+private List toAnnualResList (ResultSet rs) 
 throws Exception {
 	HydroBase_AnnualRes data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -23406,10 +23403,10 @@ Translate a ResultSet from a view to HydroBase_AnnualResobjects.
 @return a Vector of HydroBase_ResMeas
 @throws Exception if an error occurs.
 */
-private Vector toAnnualResSPList (ResultSet rs) 
+private List toAnnualResSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_AnnualRes data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -23459,10 +23456,10 @@ Translate a ResultSet to HydroBase_AnnualWC objects.
 @return a Vector of HydroBase_AnnualWC
 @throws Exception if an error occurs.
 */
-private Vector toAnnualWCList (ResultSet rs) 
+private List toAnnualWCList (ResultSet rs) 
 throws Exception {
 	HydroBase_AnnualWC data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -23618,10 +23615,10 @@ Translates a ResultSet to HydroBase_Aquifer objects.
 @return a Vector of HydroBase_Aquifer.
 @throws Exception if an error occurs.
 */
-private Vector toAquiferList(ResultSet rs)
+private List toAquiferList(ResultSet rs)
 throws Exception {
 	HydroBase_Aquifer data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -23654,10 +23651,10 @@ Translate a ResultSet to HydroBase_AreaCap objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_AreaCap
 */
-private Vector toAreaCapList(ResultSet rs) 
+private List toAreaCapList(ResultSet rs) 
 throws Exception {
 	HydroBase_AreaCap data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -23715,10 +23712,10 @@ Translate a ResultSet to HydroBase_Calls objects.
 @return a Vector of HydroBase_Calls
 @throws Exception if an error occurs.
 */
-private Vector toCallsList (ResultSet rs, boolean distinct) 
+private List toCallsList (ResultSet rs, boolean distinct) 
 throws Exception {
 	HydroBase_Calls data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -23836,10 +23833,10 @@ Translate a ResultSet from a stored procedure to HydroBase_Calls objects.
 @return a Vector of HydroBase_Calls
 @throws Exception if an error occurs.
 */
-private Vector toCallsSPList (ResultSet rs) 
+private List toCallsSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_Calls data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -23947,10 +23944,10 @@ Translate a ResultSet from a stored procedure to HydroBase_Calls objects.
 @return a Vector of HydroBase_Calls
 @throws Exception if an error occurs.
 */
-private Vector toCallsSPDistinctList (ResultSet rs) 
+private List toCallsSPDistinctList (ResultSet rs) 
 throws Exception {
 	HydroBase_Calls data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -23998,10 +23995,10 @@ Translate a ResultSet to HydroBase_Contact objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_Contact.
 */
-private Vector toContactList(ResultSet rs) 
+private List toContactList(ResultSet rs) 
 throws Exception {
 	HydroBase_Contact data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24070,10 +24067,10 @@ Translate a ResultSet to HydroBase_Contact objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_Contact.
 */
-private Vector toContactSPList(ResultSet rs) 
+private List toContactSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_Contact data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24122,10 +24119,10 @@ Translate a ResultSet to HydroBase_CountyRef objects.
 @return a Vector of HydroBase_CountyRef.
 @throws Exception if an error occurs.
 */
-private Vector toCountyRefList (ResultSet rs) 
+private List toCountyRefList (ResultSet rs) 
 throws Exception {
 	HydroBase_CountyRef data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24173,10 +24170,10 @@ Translate a ResultSet to HydroBase_CourtCase objects.
 @return a Vector of HydroBase_CourtCase
 @throws Exception if an error occurs.
 */
-private Vector toCourtCaseList (ResultSet rs) 
+private List toCourtCaseList (ResultSet rs) 
 throws Exception {
 	HydroBase_CourtCase data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24225,10 +24222,10 @@ Translate a ResultSet to HydroBase_CropRef objects.
 @return a Vector of HydroBase_CropRef
 @throws Exception if an error occurs.
 */
-private Vector toCropRefList (ResultSet rs) 
+private List toCropRefList (ResultSet rs) 
 throws Exception {
 	HydroBase_CropRef data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	String s;
@@ -24259,10 +24256,10 @@ is occurring.
 @return a Vector of HydroBase_Cropchar.
 @throws Exception if an error occurs.
 */
-private Vector toCropcharList(ResultSet rs, boolean distinct ) 
+private List toCropcharList(ResultSet rs, boolean distinct ) 
 throws Exception {
 	HydroBase_Cropchar data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24371,10 +24368,10 @@ Translate a ResultSet from a view to HydroBase_Cropchar objects.
 @return a Vector of HydroBase_Cropchar.
 @throws Exception if an error occurs.
 */
-private Vector toCropcharSPList(ResultSet rs)
+private List toCropcharSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Cropchar data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24478,10 +24475,10 @@ is occurring.
 @return a Vector of HydroBase_Cropchar.
 @throws Exception if an error occurs.
 */
-private Vector toCropcharDistinctSPList(ResultSet rs)
+private List toCropcharDistinctSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Cropchar data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	String s;
@@ -24505,10 +24502,10 @@ Convert a ResultSet to a Vector of HydroBase_CUBlaneyCriddle
 objects.
 @return a Vector of HydroBase_CUBlaneyCriddle
 */
-private Vector toCUBlaneyCriddleList(ResultSet rs, boolean distinct ) 
+private List toCUBlaneyCriddleList(ResultSet rs, boolean distinct ) 
 throws Exception {
 	HydroBase_CUBlaneyCriddle data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24559,10 +24556,10 @@ Convert a ResultSet to a Vector of HydroBase_CUBlaneyCriddle
 objects.
 @return a Vector of HydroBase_CUBlaneyCriddle
 */
-private Vector toCUBlaneyCriddleDistinctSPList(ResultSet rs)
+private List toCUBlaneyCriddleDistinctSPList(ResultSet rs)
 throws Exception {
 	HydroBase_CUBlaneyCriddle data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	String s;
@@ -24584,10 +24581,10 @@ Convert a ResultSet to a Vector of HydroBase_CUBlaneyCriddle
 @param rs ResultSet from a query
 @return a Vector of HydroBase_CUBlaneyCriddle
 */
-private Vector toCUBlaneyCriddleSPList(ResultSet rs)
+private List toCUBlaneyCriddleSPList(ResultSet rs)
 throws Exception {
 	HydroBase_CUBlaneyCriddle data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24632,10 +24629,10 @@ Translates a ResultSet into a Vector of HydroBase_CUCoeff objects.
 @param rs the resultset to translate
 @return a Vector of HydroBase_CUCoeff objects
 */
-private Vector toCUCoeffList (ResultSet rs) 
+private List toCUCoeffList (ResultSet rs) 
 throws Exception {
 	HydroBase_CUCoeff data = null;
- 	Vector v = new Vector();
+ 	List v = new Vector();
 	int index = 1;
 	int i;
 	String s;
@@ -24673,10 +24670,10 @@ Translate a ResultSet to HydroBase_CUMethod objects.
 @return a Vector of HydroBase_CUMethod.
 @throws Exception if an error occurs.
 */
-private Vector toCUMethodList (ResultSet rs, boolean distinct) 
+private List toCUMethodList (ResultSet rs, boolean distinct) 
 throws Exception {
 	HydroBase_CUMethod data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24709,10 +24706,10 @@ Convert a ResultSet to a Vector of HydroBase_CUModHargreaves.
 @param rs ResultSet from a query
 @return a Vector of HydroBase_CUModHargreaves
 */
-private Vector toCUModHargreavesList(ResultSet rs) 
+private List toCUModHargreavesList(ResultSet rs) 
 throws Exception {
 	HydroBase_CUModHargreaves data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24783,10 +24780,10 @@ of HydroBase_CUModHargreaves.
 @param rs ResultSet from a query
 @return a Vector of HydroBase_CUModHargreaves
 */
-private Vector toCUModHargreavesSPList(ResultSet rs) 
+private List toCUModHargreavesSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_CUModHargreaves data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24856,10 +24853,10 @@ Convert a ResultSet to a Vector of HydroBase_CUPenmanMonteith
 @param rs ResultSet from a query
 @return a Vector of HydroBase_CUPenmanMonteith
 */
-private Vector toCUPenmanMonteithList(ResultSet rs) 
+private List toCUPenmanMonteithList(ResultSet rs) 
 throws Exception {
 	HydroBase_CUPenmanMonteith data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24905,10 +24902,10 @@ of HydroBase_CUPenmanMonteith
 @param rs ResultSet from a query
 @return a Vector of HydroBase_CUPenmanMonteith
 */
-private Vector toCUPenmanMonteithSPList(ResultSet rs) 
+private List toCUPenmanMonteithSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_CUPenmanMonteith data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24953,10 +24950,10 @@ Translate a ResultSet to HydroBase_CUPopulation objects.
 @param rs ResultSet to translate.
 @return a Vector of HydroBase_CUPopulation.
 */
-private Vector toCUPopulationList( ResultSet rs, boolean distinct)
+private List toCUPopulationList( ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_CUPopulation data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -25001,10 +24998,10 @@ Translate a ResultSet to HydroBase_DailyAmt objects.
 @return a Vector of HydroBase_DailyAmt
 @throws Exception if an error occurs.
 */
-private Vector toDailyAmtList (ResultSet rs) 
+private List toDailyAmtList (ResultSet rs) 
 throws Exception {
 	HydroBase_DailyAmt data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -25086,10 +25083,10 @@ Translate a ResultSet to HydroBase_DailyWC objects.
 @return a Vector of HydroBase_DailyWC
 @throws Exception if an error occurs.
 */
-private Vector toDailyWCList(ResultSet rs) 
+private List toDailyWCList(ResultSet rs) 
 throws Exception {
 	HydroBase_DailyWC data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -25426,10 +25423,10 @@ Translate a ResultSet to HydroBase_DailyWC objects.
 @return a Vector of HydroBase_DailyWC
 @throws Exception if an error occurs.
 */
-private Vector toDailyWCSPList(ResultSet rs) 
+private List toDailyWCSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_DailyWC data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -25766,10 +25763,10 @@ Translate a ResultSet to HydroBase_DailyPcpn objects.
 @return a Vector of HydroBase_DailyPcpn
 @throws Exception if an error occurs.
 */
-private Vector toDailyPcpnList (ResultSet rs)
+private List toDailyPcpnList (ResultSet rs)
 throws Exception {
 	HydroBase_DailyPcpn data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i, iday;
@@ -25848,10 +25845,10 @@ Translate a ResultSet to HydroBase_DailyTS objects.
 @return a Vector of HydroBase_DailyTS
 @throws Exception if an error occurs.
 */
-private Vector toDailyTSList(ResultSet rs, int sqlNumber) 
+private List toDailyTSList(ResultSet rs, int sqlNumber) 
 throws Exception {
 	HydroBase_DailyTS data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -25937,10 +25934,10 @@ Translate a ResultSet to HydroBase_DailyTS objects.
 @return a Vector of HydroBase_DailyTS
 @throws Exception if an error occurs.
 */
-private Vector toDailyPcpnSPList(ResultSet rs)
+private List toDailyPcpnSPList(ResultSet rs)
 throws Exception {
 	HydroBase_DailyPcpn data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26002,10 +25999,10 @@ Translate a ResultSet to HydroBase_DailyTS objects.
 @return a Vector of HydroBase_DailyTS
 @throws Exception if an error occurs.
 */
-private Vector toDailyTSSPList(ResultSet rs)
+private List toDailyTSSPList(ResultSet rs)
 throws Exception {
 	HydroBase_DailyTS data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26067,10 +26064,10 @@ Translate a ResultSet to HydroBase_StructureDam objects.
 @return a Vector of HydroBase_StructureDam
 @throws Exception if an error occurs.
 */
-private Vector toDamList (ResultSet rs) 
+private List toDamList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureDam data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26281,10 +26278,10 @@ HydroBase_StructureDam objects.
 @return a Vector of HydroBase_StructureDam
 @throws Exception if an error occurs.
 */
-private Vector toDamSPList (ResultSet rs) 
+private List toDamSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureDam data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26476,10 +26473,10 @@ Translate a ResultSet to HydroBase_DamInspection objects.
 @return a Vector of HydroBase_DamInspection
 @throws Exception if an error occurs.
 */
-private Vector toDamInspectionList (ResultSet rs) 
+private List toDamInspectionList (ResultSet rs) 
 throws Exception {
 	HydroBase_DamInspection data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26531,10 +26528,10 @@ HydroBase_DamInspection objects.
 @return a Vector of HydroBase_DamInspection
 @throws Exception if an error occurs.
 */
-private Vector toDamInspectionSPList (ResultSet rs) 
+private List toDamInspectionSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_DamInspection data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26585,10 +26582,10 @@ Translate a ResultSet to HydroBase_DamOutlet objects.
 @return a Vector of HydroBase_DamOutlet
 @throws Exception if an error occurs.
 */
-private Vector toDamOutletList (ResultSet rs) 
+private List toDamOutletList (ResultSet rs) 
 throws Exception {
 	HydroBase_DamOutlet data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26647,10 +26644,10 @@ Translate a ResultSet to HydroBase_DamSpillway objects.
 @return a Vector of HydroBase_DamSpillway
 @throws Exception if an error occurs.
 */
-private Vector toDamSpillwayList (ResultSet rs) 
+private List toDamSpillwayList (ResultSet rs) 
 throws Exception {
 	HydroBase_DamSpillway data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26711,10 +26708,10 @@ throws Exception {
 Convert a ResultSet to a Vector of HydroBase_DBVersion.
 @param rs ResultSet from a db_version table query.
 */
-private Vector toDBVersionList (ResultSet rs) 
+private List toDBVersionList (ResultSet rs) 
 throws Exception {
 	HydroBase_DBVersion data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26755,10 +26752,10 @@ Translate a ResultSet to HydroBase_DiversionComment objects.
 @return a Vector of HydroBase_DiversionComment
 @throws Exception if an error occurs.
 */
-private Vector toDiversionCommentList (ResultSet rs) 
+private List toDiversionCommentList (ResultSet rs) 
 throws Exception {
 	HydroBase_DiversionComment data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26809,10 +26806,10 @@ Translate a ResultSet to HydroBase_EmergencyPlan objects.
 @return a Vector of HydroBase_EmergencyPlan
 @throws Exception if an error occurs.
 */
-private Vector toEmergencyPlanList (ResultSet rs) 
+private List toEmergencyPlanList (ResultSet rs) 
 throws Exception {
 	HydroBase_EmergencyPlan data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26851,10 +26848,10 @@ Translate a ResultSet to HydroBase_Equipment objects.
 @return a Vector of HydroBase_Equipment
 @throws Exception if an error occurs.
 */
-private Vector toEquipmentList (ResultSet rs) 
+private List toEquipmentList (ResultSet rs) 
 throws Exception {
 	HydroBase_Equipment data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26901,10 +26898,10 @@ Translate a ResultSet from a stored procedure to HydroBase_Equipment objects.
 @return a Vector of HydroBase_Equipment
 @throws Exception if an error occurs.
 */
-private Vector toEquipmentSPList (ResultSet rs) 
+private List toEquipmentSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_Equipment data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -26947,10 +26944,10 @@ Translate a ResultSet to HydroBase_FrostDates objects.
 @return a Vector of HydroBase_FrostDates
 @throws Exception if an error occurs.
 */
-private Vector toFrostDatesList (ResultSet rs) 
+private List toFrostDatesList (ResultSet rs) 
 throws Exception {
 	HydroBase_FrostDates data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -27000,10 +26997,10 @@ Translate a ResultSet from a stored procedure to HydroBase_FrostDates objects.
 @return a Vector of HydroBase_FrostDates
 @throws Exception if an error occurs.
 */
-private Vector toFrostDatesSPList (ResultSet rs) 
+private List toFrostDatesSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_FrostDates data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -27053,10 +27050,10 @@ Translate a ResultSet to HydroBase_GeneralComment objects.
 @return a Vector of HydroBase_GeneralComment
 @throws Exception if an error occurs.
 */
-private Vector toGeneralCommentList (ResultSet rs) 
+private List toGeneralCommentList (ResultSet rs) 
 throws Exception {
 	HydroBase_GeneralComment data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -27110,10 +27107,10 @@ Translate a ResultSet to HydroBase_Geoloc objects.
 @return a Vector of HydroBase_Geoloc
 @throws Exception if an error occurs.
 */
-private Vector toGeolocList (ResultSet rs) 
+private List toGeolocList (ResultSet rs) 
 throws Exception {
 	HydroBase_Geoloc data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -27304,10 +27301,10 @@ Translate a ResultSet from a stored procedure to HydroBase_Geoloc objects.
 @return a Vector of HydroBase_Geoloc
 @throws Exception if an error occurs.
 */
-private Vector toGeolocSPList (ResultSet rs) 
+private List toGeolocSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_Geoloc data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -27482,10 +27479,10 @@ Translate a ResultSet to HydroBase_GroundWaterWellsGeophlogs objects
 @return a Vector of HydroBase_GroundWaterWellsGeophlogs
 @throws Exception if an error occurs.
 */
-private Vector toGeophlogsList(ResultSet rs)
+private List toGeophlogsList(ResultSet rs)
 throws Exception {
 	HydroBase_GroundWaterWellsGeophlogs data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	boolean b;
@@ -27545,10 +27542,10 @@ Translate a ResultSet to HydroBase_GroundWaterWellsDrillersKSum objects.
 @return a Vector of HydroBase_GroundWaterWellsDrillersKSum
 @throws Exception if an error occurs.
 */
-private Vector toGroundWaterWellsDrillersKSumList(ResultSet rs) 
+private List toGroundWaterWellsDrillersKSumList(ResultSet rs) 
 throws Exception {
 	HydroBase_GroundWaterWellsDrillersKSum data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	double d;
@@ -27923,10 +27920,10 @@ Translate a ResultSet to HydroBase_GroundWaterWellsPumpingTest objects.
 @return a Vector of HydroBase_GroundWaterWellsPumpTest
 @throws Exception if an error occurs.
 */
-private Vector toGroundWaterWellsPumpingTestList (ResultSet rs) 
+private List toGroundWaterWellsPumpingTestList (ResultSet rs) 
 throws Exception {
 	HydroBase_GroundWaterWellsPumpingTest data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -28424,10 +28421,10 @@ tables into a Vector of HydroBase_GroundWaterWellsView objects.
 @return a Vector of HydroBase_GroundWaterWellsView Objects.
 @throws Exception if an error occurs.
 */
-private Vector toGroundWaterWellsGeophlogsList(ResultSet rs) 
+private List toGroundWaterWellsGeophlogsList(ResultSet rs) 
 throws Exception {
 	HydroBase_GroundWaterWellsGeophlogs data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	Date dt;
@@ -28712,10 +28709,10 @@ Translate a ResultSet to HydroBase_GroundWaterWellsVolcanics objects.
 @return a Vector of HydroBase_GroundWaterWellsVolcanics
 @throws Exception if an error occurs.
 */
-private Vector toGroundWaterWellsVolcanicsList(ResultSet rs) 
+private List toGroundWaterWellsVolcanicsList(ResultSet rs) 
 throws Exception {
 	HydroBase_GroundWaterWellsVolcanics data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	double d;
@@ -28990,10 +28987,10 @@ Translate a ResultSet to HydroBase_LocType objects.
 @return a Vector of HydroBase_LocType
 @throws Exception if an error occurs.
 */
-private Vector toLocTypeList (ResultSet rs) 
+private List toLocTypeList (ResultSet rs) 
 throws Exception {
 	HydroBase_LocType data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	String s;
@@ -29022,10 +29019,10 @@ Translate a ResultSet to HydroBase_Mapfile objects.
 @return a Vector of HydroBase_Mapfile
 @throws Exception if an error occurs.
 */
-private Vector toMapfileList (ResultSet rs) 
+private List toMapfileList (ResultSet rs) 
 throws Exception {
 	HydroBase_Mapfile data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29076,10 +29073,10 @@ Translate a ResultSet from a stored procedure to HydroBase_Mapfile objects.
 @return a Vector of HydroBase_Mapfile
 @throws Exception if an error occurs.
 */
-private Vector toMapfileSPList (ResultSet rs) 
+private List toMapfileSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_Mapfile data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29130,10 +29127,10 @@ Translate a ResultSet to HydroBase_MeasType objects.
 @return a Vector of HydroBase_MeasType
 @throws Exception if an error occurs.
 */
-private Vector toMeasTypeDistinctList(ResultSet rs) 
+private List toMeasTypeDistinctList(ResultSet rs) 
 throws Exception {
 	HydroBase_MeasType data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	String s;
 
@@ -29167,10 +29164,10 @@ Translate a ResultSet to HydroBase_MonthlyPcpn objects.
 @return a Vector of HydroBase_MonthlyPcpn
 @throws Exception if an error occurs.
 */
-private Vector toMonthlyPcpnList (ResultSet rs) 
+private List toMonthlyPcpnList (ResultSet rs) 
 throws Exception {
 	HydroBase_MonthlyPcpn data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29221,10 +29218,10 @@ Translate a ResultSet to HydroBase_MonthlyTemp objects.
 @return a Vector of HydroBase_MonthlyTemp
 @throws Exception if an error occurs.
 */
-private Vector toMonthlyTempList (ResultSet rs, int sqlNumber) 
+private List toMonthlyTempList (ResultSet rs, int sqlNumber) 
 throws Exception {
 	HydroBase_MonthlyTemp data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29286,10 +29283,10 @@ Translate a ResultSet to HydroBase_MonthlyEvap objects.
 @return a Vector of HydroBase_MonthlyEvap
 @throws Exception if an error occurs.
 */
-private Vector toMonthlyEvapList (ResultSet rs) 
+private List toMonthlyEvapList (ResultSet rs) 
 throws Exception {
 	HydroBase_MonthlyEvap data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29340,10 +29337,10 @@ Translate a ResultSet to HydroBase_MonthlySnow objects.
 @return a Vector of HydroBase_MonthlySnow
 @throws Exception if an error occurs.
 */
-private Vector toMonthlySnowList (ResultSet rs) 
+private List toMonthlySnowList (ResultSet rs) 
 throws Exception {
 	HydroBase_MonthlySnow data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29394,10 +29391,10 @@ Translate a ResultSet to HydroBase_MonthlyFlow objects.
 @return a Vector of HydroBase_MonthlyFlow
 @throws Exception if an error occurs.
 */
-private Vector toMonthlyFlowList (ResultSet rs, int sqlNumber) 
+private List toMonthlyFlowList (ResultSet rs, int sqlNumber) 
 throws Exception {
 	HydroBase_MonthlyFlow data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29458,10 +29455,10 @@ Translate a ResultSet to HydroBase_MonthlyNflow objects.
 @return a Vector of HydroBase_MonthlyNflow
 @throws Exception if an error occurs.
 */
-private Vector toMonthlyNflowList (ResultSet rs) 
+private List toMonthlyNflowList (ResultSet rs) 
 throws Exception {
 	HydroBase_MonthlyNflow data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29508,10 +29505,10 @@ Translate a ResultSet to HydroBase_NetAmts objects.
 @return a Vector of HydroBase_NetAmts
 @throws Exception if an error occurs.
 */
-private Vector toNetAmtsList (ResultSet rs) 
+private List toNetAmtsList (ResultSet rs) 
 throws Exception {
 	HydroBase_NetAmts data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29733,10 +29730,10 @@ Translate a ResultSet from a NetAmts SPFlex query to HydroBase_NetAmts objects.
 @return a Vector of HydroBase_NetAmts
 @throws Exception if an error occurs.
 */
-private Vector toNetAmtsSPList (ResultSet rs) 
+private List toNetAmtsSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_NetAmts data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -29944,10 +29941,10 @@ Translate a ResultSet to HydroBase_ParcelUseTS objects.
 @return a Vector of HydroBase_ParcelUseTS
 @throws Exception if an error occurs.
 */
-private Vector toParcelUseTSList (ResultSet rs, boolean distinct) 
+private List toParcelUseTSList (ResultSet rs, boolean distinct) 
 throws Exception {
 	HydroBase_ParcelUseTS data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30005,10 +30002,10 @@ Translate a ResultSet to HydroBase_ParcelUseTSStructureToParcel objects.
 @return a Vector of HydroBase_ParcelUseTS
 @throws Exception if an error occurs.
 */
-private Vector toParcelUseTSStructureToParcelList (ResultSet rs) 
+private List toParcelUseTSStructureToParcelList (ResultSet rs) 
 throws Exception {
 	HydroBase_ParcelUseTSStructureToParcel data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30074,10 +30071,10 @@ Translate a ResultSet to HydroBase_PersonDetails objects.
 @return a Vector of HydroBase_PersonDetails
 @throws Exception if an error occurs.
 */
-private Vector toPersonDetailsList (ResultSet rs) 
+private List toPersonDetailsList (ResultSet rs) 
 throws Exception {
 	HydroBase_PersonDetails data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30141,10 +30138,10 @@ Translate a ResultSet to HydroBase_RefCIU objects.
 @return a Vector of HydroBase_ResEOM
 @throws Exception if an error occurs.
 */
-private Vector toRefCIUList(ResultSet rs)
+private List toRefCIUList(ResultSet rs)
 throws Exception {
 	HydroBase_RefCIU data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	String s;
 
@@ -30186,10 +30183,10 @@ Translate a ResultSet to HydroBase_ResEOM objects.
 @return a Vector of HydroBase_ResEOM
 @throws Exception if an error occurs.
 */
-private Vector toResEOMList (ResultSet rs) 
+private List toResEOMList (ResultSet rs) 
 throws Exception {
 	HydroBase_ResEOM data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30240,10 +30237,10 @@ Translate a ResultSet from a stored procedure to HydroBase_ResEOM objects.
 @return a Vector of HydroBase_ResEOM
 @throws Exception if an error occurs.
 */
-private Vector toResEOMSPList (ResultSet rs) 
+private List toResEOMSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_ResEOM data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30294,10 +30291,10 @@ Translate a ResultSet to HydroBase_ResMeas objects.
 @return a Vector of HydroBase_ResMeas
 @throws Exception if an error occurs.
 */
-private Vector toResMeasList (ResultSet rs) 
+private List toResMeasList (ResultSet rs) 
 throws Exception {
 	HydroBase_ResMeas data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30352,10 +30349,10 @@ Translate a ResultSet to HydroBase_Rolodex objects.
 @return a Vector of HydroBase_Rolodex
 @throws Exception if an error occurs.
 */
-private Vector toRolodexList (ResultSet rs) 
+private List toRolodexList (ResultSet rs) 
 throws Exception {
 	HydroBase_Rolodex data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30466,10 +30463,10 @@ Translate a ResultSet from a stored procedure to HydroBase_Rolodex objects.
 @return a Vector of HydroBase_Rolodex
 @throws Exception if an error occurs.
 */
-private Vector toRolodexSPList (ResultSet rs) 
+private List toRolodexSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_Rolodex data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30551,10 +30548,10 @@ Translate a ResultSet to HydroBase_RTMeas objects.
 @return a Vector of HydroBase_RTMeas
 @throws Exception if an error occurs.
 */
-private Vector toRTMeasList (ResultSet rs) 
+private List toRTMeasList (ResultSet rs) 
 throws Exception {
 	HydroBase_RTMeas data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30603,10 +30600,10 @@ Translate a ResultSet to HydroBase_WISSheetName objects.
 @return a Vector of HydroBase_WISSheetName
 @throws Exception if an error occurs.
 */
-private Vector toSheetNameList (ResultSet rs, int type) 
+private List toSheetNameList (ResultSet rs, int type) 
 throws Exception {
 	HydroBase_WISSheetName data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30670,10 +30667,10 @@ Translate a ResultSet to HydroBase_WISSheetNameWISFormat objects.
 @return a Vector of HydroBase_WISSheetName
 @throws Exception if an error occurs.
 */
-private Vector toSheetNameWISFormatList (ResultSet rs, int type) 
+private List toSheetNameWISFormatList (ResultSet rs, int type) 
 throws Exception {
 	HydroBase_WISSheetNameWISFormat data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	String s;
@@ -30705,10 +30702,10 @@ Translate a ResultSet to HydroBase_SnowCrse objects.
 @return a Vector of HydroBase_SnowCrse
 @throws Exception if an error occurs.
 */
-private Vector toSnowCrseList (ResultSet rs) 
+private List toSnowCrseList (ResultSet rs) 
 throws Exception {
 	HydroBase_SnowCrse data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30775,10 +30772,10 @@ Translate a ResultSet to HydroBase_SnowCrse objects.
 @return a Vector of HydroBase_SnowCrse
 @throws Exception if an error occurs.
 */
-private Vector toSnowCrseSPList (ResultSet rs) 
+private List toSnowCrseSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_SnowCrse data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30845,10 +30842,10 @@ Translate a ResultSet to HydroBase_Station objects.
 @return a Vector of HydroBase_Station
 @throws Exception if an error occurs.
 */
-private Vector toStationList (ResultSet rs) 
+private List toStationList (ResultSet rs) 
 throws Exception {
 	HydroBase_Station data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30922,10 +30919,10 @@ Translate a ResultSet to HydroBase_StationGeoloc objects.
 @return a Vector of HydroBase_StationGeoloc
 @throws Exception if an error occurs.
 */
-private Vector toStationGeolocList (ResultSet rs)
+private List toStationGeolocList (ResultSet rs)
 throws Exception {
 	HydroBase_StationGeoloc data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -31141,10 +31138,10 @@ objects.
 @param rs the resultset to translate
 @return a Vector of HydroBase_StationGeolocCUClimWts objects
 */
-private Vector toStationGeolocCUClimWtsList (ResultSet rs) 
+private List toStationGeolocCUClimWtsList (ResultSet rs) 
 throws Exception {
 	HydroBase_StationGeolocCUClimWts data = null;
- 	Vector v = new Vector();
+ 	List v = new Vector();
 	int index = 1;
 	int i;
 	String s;
@@ -31196,10 +31193,10 @@ HydroBase_StationGeolocCUClimWts objects.
 @param rs the resultset to translate
 @return a Vector of HydroBase_StationGeolocCUClimWts objects
 */
-private Vector toStationGeolocCUClimWtsSPList (ResultSet rs) 
+private List toStationGeolocCUClimWtsSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_StationGeolocCUClimWts data = null;
- 	Vector v = new Vector();
+ 	List v = new Vector();
 	int index = 1;
 	int i;
 	String s;
@@ -31331,10 +31328,10 @@ Translate a ResultSet to HydroBase_StationView objects.
 @throws Exception if an error occurs.
 @param distinct whether this is a distinct query or not
 */
-private Vector toStationSPList(ResultSet rs)
+private List toStationSPList(ResultSet rs)
 throws Exception {
 	HydroBase_StationView data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -31463,10 +31460,10 @@ Translate a ResultSet to HydroBase_StationView objects.
 @throws Exception if an error occurs.
 @param distinct whether this is a distinct query or not
 */
-private Vector toStationMeasTypeSPList(ResultSet rs, boolean distinct)
+private List toStationMeasTypeSPList(ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_StationView data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -31633,10 +31630,10 @@ Translate a ResultSet to HydroBase_StrType objects.
 @return a Vector of HydroBase_StrType
 @throws Exception if an error occurs.
 */
-private Vector toStrTypeList (ResultSet rs) 
+private List toStrTypeList (ResultSet rs) 
 throws Exception {
 	HydroBase_StrType data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	String s;
@@ -31669,10 +31666,10 @@ Translate a ResultSet to HydroBase_Stream objects.
 @return a Vector of HydroBase_Stream
 @throws Exception if an error occurs.
 */
-private Vector toStreamList (ResultSet rs) 
+private List toStreamList (ResultSet rs) 
 throws Exception {
 	HydroBase_Stream data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -31711,10 +31708,10 @@ Translate a ResultSet from a stored procedure to HydroBase_Stream objects.
 @return a Vector of HydroBase_Stream
 @throws Exception if an error occurs.
 */
-private Vector toStreamSPList (ResultSet rs) 
+private List toStreamSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_Stream data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -31753,10 +31750,10 @@ Translate a ResultSet to HydroBase_StructMeasType objects.
 @return a Vector of HydroBase_StructMeasType
 @throws Exception if an error occurs.
 */
-private Vector toStructMeasTypeDistinctList(ResultSet rs) 
+private List toStructMeasTypeDistinctList(ResultSet rs) 
 throws Exception {
 	HydroBase_StructMeasType data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	String s;
 
@@ -31787,10 +31784,10 @@ Translate a ResultSet to HydroBase_StructMeasTypeView objects.
 @return a Vector of HydroBase_StructMeasType
 @throws Exception if an error occurs.
 */
-private Vector toStructMeasTypeSPList (ResultSet rs)
+private List toStructMeasTypeSPList (ResultSet rs)
 throws Exception {
 	HydroBase_StructMeasTypeView data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -31991,10 +31988,10 @@ Translate a ResultSet to HydroBase_StructureAKA objects.
 @return a Vector of HydroBase_StructureAKA
 @throws Exception if an error occurs.
 */
-private Vector toStructureAKAList (ResultSet rs) 
+private List toStructureAKAList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureAKA data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -32039,10 +32036,10 @@ Translate a ResultSet from a stored procedure to HydroBase_StructureAKA objects.
 @return a Vector of HydroBase_StructureAKA
 @throws Exception if an error occurs.
 */
-private Vector toStructureAKASPList (ResultSet rs) 
+private List toStructureAKASPList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureAKA data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -32087,10 +32084,10 @@ Translate a ResultSet to HydroBase_StructureIrrigSummary objects.
 @return a Vector of HydroBase_StructureIrrigSummary
 @throws Exception if an error occurs.
 */
-private Vector toStructureIrrigSummaryList (ResultSet rs) 
+private List toStructureIrrigSummaryList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureIrrigSummary data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -32195,10 +32192,10 @@ Translate a ResultSet to HydroBase_StructureIrrigSummaryTS objects.
 @return a Vector of HydroBase_StructureIrrigSummaryTS.
 @throws Exception if an error occurs.
 */
-private Vector toStructureIrrigSummaryTSList (ResultSet rs, int sqlcode ) 
+private List toStructureIrrigSummaryTSList (ResultSet rs, int sqlcode ) 
 throws Exception {
 	HydroBase_StructureIrrigSummaryTS data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -32326,10 +32323,10 @@ Translate a ResultSet from a view to HydroBase_StructureIrrigSummaryTS objects.
 @return a Vector of HydroBase_StructureView.
 @throws Exception if an error occurs.
 */
-private Vector toStructureIrrigSummaryTSSPList(ResultSet rs, boolean distinct)
+private List toStructureIrrigSummaryTSSPList(ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_StructureView data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -32606,9 +32603,9 @@ throws Exception {
 Convert a ResultSet to a Vector of HydroBase_Structure
 @param rs ResultSet from a Structure table query.
 */
-private Vector toStructureList (ResultSet rs) throws Exception {
+private List toStructureList (ResultSet rs) throws Exception {
 	HydroBase_Structure data = null;
- 	Vector v = new Vector();
+ 	List v = new Vector();
 	int index = 1;
 	int i;
 	String s;
@@ -32694,10 +32691,10 @@ Translate a ResultSet to HydroBase_StructureMFReach objects.
 @return a Vector of HydroBase_StructureMFReach
 @throws Exception if an error occurs.
 */
-private Vector toStructureMFReachList (ResultSet rs) 
+private List toStructureMFReachList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureMFReach data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -32808,10 +32805,10 @@ to HydroBase_StructureMFReach objects.
 @return a Vector of HydroBase_StructureMFReach
 @throws Exception if an error occurs.
 */
-private Vector toStructureMFReachSPList (ResultSet rs) 
+private List toStructureMFReachSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureMFReach data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -32862,10 +32859,10 @@ Translate a ResultSet to HydroBase_StructureReservoir objects.
 @return a Vector of HydroBase_StructureReservoir
 @throws Exception if an error occurs.
 */
-private Vector toStructureReservoirList(ResultSet rs) 
+private List toStructureReservoirList(ResultSet rs) 
 throws Exception {
 	HydroBase_StructureReservoir data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -32943,10 +32940,10 @@ to HydroBase_StructureReservoir objects.
 @return a Vector of HydroBase_StructureReservoir
 @throws Exception if an error occurs.
 */
-private Vector toStructureReservoirSPList (ResultSet rs) 
+private List toStructureReservoirSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureReservoir data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -33004,10 +33001,10 @@ Translate a ResultSet to HydroBase_StructureSmallDam objects.
 @return a Vector of HydroBase_StructureSmallDam
 @throws Exception if an error occurs.
 */
-private Vector toStructureSmallDamList (ResultSet rs) 
+private List toStructureSmallDamList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureSmallDam data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -33167,10 +33164,10 @@ to HydroBase_StructureSmallDam objects.
 @return a Vector of HydroBase_StructureSmallDam
 @throws Exception if an error occurs.
 */
-private Vector toStructureSmallDamSPList (ResultSet rs) 
+private List toStructureSmallDamSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureSmallDam data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -33262,10 +33259,10 @@ Translate a ResultSet to HydroBase_StructureUnpermittedWells objects.
 @return a Vector of HydroBase_StructureUnpermittedWells
 @throws Exception if an error occurs.
 */
-private Vector toStructureUnpermittedWellsList (ResultSet rs) 
+private List toStructureUnpermittedWellsList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureUnpermittedWells data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -33351,10 +33348,10 @@ Translate a ResultSet to HydroBase_StructureView objects.
 @return a Vector of HydroBase_WISData
 @throws Exception if an error occurs.
 */
-public Vector toStructureSPList(ResultSet rs)
+public List toStructureSPList(ResultSet rs)
 throws Exception {
 	HydroBase_StructureView data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	double d;
@@ -33672,10 +33669,10 @@ Translate a ResultSet to HydroBase_Structure objects.
 @return a Vector of HydroBase_Structure
 @throws Exception if an error occurs.
 */
-private Vector toStructureDistinctWDList (ResultSet rs) 
+private List toStructureDistinctWDList (ResultSet rs) 
 throws Exception {
 	HydroBase_Structure data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -33700,10 +33697,10 @@ Translate a ResultSet to HydroBase_StructureGeoloc objects.
 @return a Vector of HydroBase_StructureGeoloc
 @throws Exception if an error occurs.
 */
-private Vector toStructureGeolocForWDIDList (ResultSet rs) 
+private List toStructureGeolocForWDIDList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureGeoloc data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -33952,10 +33949,10 @@ Translate a ResultSet to HydroBase_StructureGeoloc objects.
 @return a Vector of HydroBase_StructureGeoloc
 @throws Exception if an error occurs.
 */
-private Vector toStructureGeolocList (ResultSet rs) 
+private List toStructureGeolocList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureGeoloc data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -34211,10 +34208,10 @@ Translate a ResultSet to HydroBase_Transact objects.
 @return a Vector of HydroBase_Transact
 @throws Exception if an error occurs.
 */
-private Vector toTransactList(ResultSet rs)
+private List toTransactList(ResultSet rs)
 throws Exception {
 	HydroBase_Transact data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -34452,10 +34449,10 @@ Translate a ResultSet from a stored procedure to HydroBase_Transact objects.
 @return a Vector of HydroBase_Transact
 @throws Exception if an error occurs.
 */
-private Vector toTransactSPList(ResultSet rs) 
+private List toTransactSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_Transact data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -34679,10 +34676,10 @@ Translate a ResultSet to HydroBase_TSProduct objects.
 @return a Vector of HydroBase_TSProduct
 @throws Exception if an error occurs.
 */
-private Vector toTSProductList(ResultSet rs) 
+private List toTSProductList(ResultSet rs) 
 throws Exception {
 	HydroBase_TSProduct data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -34723,10 +34720,10 @@ Translate a ResultSet from a stored procedure to HydroBase_TSProduct objects.
 @return a Vector of HydroBase_TSProduct
 @throws Exception if an error occurs.
 */
-private Vector toTSProductSPList(ResultSet rs) 
+private List toTSProductSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_TSProduct data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -34771,10 +34768,10 @@ Translate a ResultSet to HydroBase_TSProductProps objects.
 @return a Vector of HydroBase_TSProductProps
 @throws Exception if an error occurs.
 */
-private Vector toTSProductPropsList(ResultSet rs) 
+private List toTSProductPropsList(ResultSet rs) 
 throws Exception {
 	HydroBase_TSProductProps data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -34811,10 +34808,10 @@ Translate a ResultSet to HydroBase_StructureWDWater objects.
 @return a Vector of HydroBase_StructureWDWater
 @throws Exception if an error occurs.
 */
-private Vector toStructureWDWaterList (ResultSet rs) 
+private List toStructureWDWaterList (ResultSet rs) 
 throws Exception {
 	HydroBase_StructureWDWater data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -34877,10 +34874,10 @@ Translate a ResultSet to HydroBase_StructureGeolocStructMeasTypeView objects.
 @return a Vector of HydroBase_StructureGeolocStructMeasTypeView
 @throws Exception if an error occurs.
 */
-private Vector toGroundWaterWellMeasTypeList(ResultSet rs) 
+private List toGroundWaterWellMeasTypeList(ResultSet rs) 
 throws Exception {
 	HydroBase_GroundWaterWellsView data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -35265,10 +35262,10 @@ Translate a ResultSet to HydroBase_Use objects.
 @return a Vector of HydroBase_Use
 @throws Exception if an error occurs.
 */
-private Vector toUseList (ResultSet rs) 
+private List toUseList (ResultSet rs) 
 throws Exception {
 	HydroBase_Use data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	String s;
@@ -35309,10 +35306,10 @@ Translate a ResultSet to HydroBase_UserPreferences objects.
 @return a Vector of HydroBase_UserPreferences
 @throws Exception if an error occurs.
 */
-private Vector toUserPreferencesList (ResultSet rs) 
+private List toUserPreferencesList (ResultSet rs) 
 throws Exception {
 	HydroBase_UserPreferences data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -35354,10 +35351,10 @@ Translate a ResultSet to HydroBase_UserSecurity objects.
 @return a Vector of HydroBase_UserSecurity
 @throws Exception if an error occurs.
 */
-private Vector toUserSecurityList (ResultSet rs) 
+private List toUserSecurityList (ResultSet rs) 
 throws Exception {
 	HydroBase_UserSecurity data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -35415,10 +35412,10 @@ Translate a ResultSet to HydroBase_WaterDistrict objects.
 @return a Vector of HydroBase_WaterDistrict
 @throws Exception if an error occurs.
 */
-private Vector toWaterDistrictList (ResultSet rs) 
+private List toWaterDistrictList (ResultSet rs) 
 throws Exception {
 	HydroBase_WaterDistrict data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -35452,10 +35449,10 @@ Translate a ResultSet to HydroBase_WaterDivision objects.
 @return a Vector of HydroBase_WaterDivision
 @throws Exception if an error occurs.
 */
-private Vector toWaterDivisionList (ResultSet rs) 
+private List toWaterDivisionList (ResultSet rs) 
 throws Exception {
 	HydroBase_WaterDivision data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -35485,10 +35482,10 @@ Translate a ResultSet to HydroBase_WDWater objects.
 @return a Vector of HydroBase_WDWater
 @throws Exception if an error occurs.
 */
-private Vector toWDWaterList (ResultSet rs) 
+private List toWDWaterList (ResultSet rs) 
 throws Exception {
 	HydroBase_WDWater data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -35538,10 +35535,10 @@ Translate a ResultSet from a stored procedure to HydroBase_WDWater objects.
 @return a Vector of HydroBase_WDWater
 @throws Exception if an error occurs.
 */
-private Vector toWDWaterSPList(ResultSet rs) 
+private List toWDWaterSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_WDWater data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -35592,10 +35589,10 @@ Translate a ResultSet to HydroBase_WellApplicationView objects.
 @return a Vector of HydroBase_WellApplicationView
 @throws Exception if an error occurs.
 */
-private Vector toWellApplicationSPList (ResultSet rs) 
+private List toWellApplicationSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_WellApplicationView data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -36001,10 +35998,10 @@ Translate a ResultSet to HydroBase_WellMeas objects.
 @return a Vector of HydroBase_WellMeas
 @throws Exception if an error occurs.
 */
-private Vector toWellMeasList (ResultSet rs) 
+private List toWellMeasList (ResultSet rs) 
 throws Exception {
 	HydroBase_WellMeas data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -36096,10 +36093,10 @@ Translate a ResultSet to HydroBase_WellMeas objects.
 @return a Vector of HydroBase_WellMeas
 @throws Exception if an error occurs.
 */
-private Vector toWellMeasSPList (ResultSet rs) 
+private List toWellMeasSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_WellMeas data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -36243,10 +36240,10 @@ Translate a ResultSet to HydroBase_Wells objects.
 @return a Vector of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private Vector toWellsList (ResultSet rs, int sqlNumber) 
+private List toWellsList (ResultSet rs, int sqlNumber) 
 throws Exception {
 	HydroBase_Wells data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	if (	sqlNumber != __S_WELLS &&
@@ -36467,10 +36464,10 @@ Translate a ResultSet to HydroBase_Wells objects.
 @return a Vector of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private Vector toWellsSPList(ResultSet rs)
+private List toWellsSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Wells data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -36595,10 +36592,10 @@ Translate a ResultSet to HydroBase_Wells objects.
 @return a Vector of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private Vector toWellsWellToLayerSPList(ResultSet rs)
+private List toWellsWellToLayerSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Wells data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -36727,10 +36724,10 @@ Translate a ResultSet from a result set to HydroBase_Wells objects.
 @return a Vector of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private Vector toWellsWellToParcelSPList(ResultSet rs)
+private List toWellsWellToParcelSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Wells data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -36871,10 +36868,10 @@ Translate a ResultSet to HydroBase_Wells objects.
 @return a Vector of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private Vector toWellsWellToParcelWellToStructureSPList(ResultSet rs)
+private List toWellsWellToParcelWellToStructureSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Wells data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -37040,10 +37037,10 @@ Translate a ResultSet to HydroBase_Wells objects.
 @return a Vector of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private Vector toWellsWellToStructureSPList(ResultSet rs)
+private List toWellsWellToStructureSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Wells data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 
 	int i;
@@ -37185,10 +37182,10 @@ Translate a ResultSet to HydroBase_WISComments objects.
 @return a Vector of HydroBase_WISComments
 @throws Exception if an error occurs.
 */
-private Vector toWISCommentsList (ResultSet rs) 
+private List toWISCommentsList (ResultSet rs) 
 throws Exception {
 	HydroBase_WISComments data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -37227,10 +37224,10 @@ Translate a ResultSet to HydroBase_WISDailyWC objects.
 @return a Vector of HydroBase_WISDailyWC
 @throws Exception if an error occurs.
 */
-private Vector toWISDailyWCList(ResultSet rs) 
+private List toWISDailyWCList(ResultSet rs) 
 throws Exception {
 	HydroBase_WISDailyWC data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -37580,10 +37577,10 @@ Translate a ResultSet from a stored procedure to HydroBase_WISDailyWC objects.
 @return a Vector of HydroBase_WISDailyWC
 @throws Exception if an error occurs.
 */
-private Vector toWISDailyWCSPList(ResultSet rs) 
+private List toWISDailyWCSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_WISDailyWC data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -37941,10 +37938,10 @@ Translate a ResultSet to HydroBase_WISData objects.
 @return a Vector of HydroBase_WISData
 @throws Exception if an error occurs.
 */
-private Vector toWISDataList (ResultSet rs) 
+private List toWISDataList (ResultSet rs) 
 throws Exception {
 	HydroBase_WISData data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -38028,10 +38025,10 @@ Translate a ResultSet to HydroBase_WISFormat objects.
 @return a Vector of HydroBase_WISFormat
 @throws Exception if an error occurs.
 */
-private Vector toWISFormatList (ResultSet rs) 
+private List toWISFormatList (ResultSet rs) 
 throws Exception {
 	HydroBase_WISFormat data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -38102,10 +38099,10 @@ Translate a ResultSet from a stored procedure to HydroBase_WISFormat objects.
 @return a Vector of HydroBase_WISFormat
 @throws Exception if an error occurs.
 */
-private Vector toWISFormatSPList(ResultSet rs) 
+private List toWISFormatSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_WISFormat data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -38176,10 +38173,10 @@ Translate a ResultSet to HydroBase_WISFormula objects.
 @return a Vector of HydroBase_WISFormula
 @throws Exception if an error occurs.
 */
-private Vector toWISFormulaList (ResultSet rs) 
+private List toWISFormulaList (ResultSet rs) 
 throws Exception {
 	HydroBase_WISFormula data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -38221,10 +38218,10 @@ Translate a ResultSet to HydroBase_WISImport objects.
 @return a Vector of HydroBase_WISImport
 @throws Exception if an error occurs.
 */
-private Vector toWISImportList (ResultSet rs) 
+private List toWISImportList (ResultSet rs) 
 throws Exception {
 	HydroBase_WISImport data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -38290,10 +38287,10 @@ Translate a ResultSet to HydroBase_WISDiagramData objects.
 @return a Vector of HydroBase_WISDiagramData
 @throws Exception if an error occurs.
 */
-private Vector toWISDiagramDataList(ResultSet rs) 
+private List toWISDiagramDataList(ResultSet rs) 
 throws Exception {
 	HydroBase_WISDiagramData data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -38333,10 +38330,10 @@ to HydroBase_WISSheetNameWISFormat objects.
 @return a Vector of HydroBase_WISSheetName
 @throws Exception if an error occurs.
 */
-private Vector toWISSheetNameWISFormatSPList (ResultSet rs) 
+private List toWISSheetNameWISFormatSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_WISSheetNameWISFormat data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	String s;
@@ -38368,10 +38365,10 @@ Translate a ResultSet to HydroBase_WISSheetName objects.
 @return a Vector of HydroBase_WISSheetName
 @throws Exception if an error occurs.
 */
-private Vector toWISSheetNameSPList (ResultSet rs) 
+private List toWISSheetNameSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_WISSheetName data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -38423,10 +38420,10 @@ Translate a ResultSet to HydroBase_WISSheetName objects.
 @return a Vector of HydroBase_WISSheetName
 @throws Exception if an error occurs.
 */
-private Vector toWISSheetNameDistinctSPList (ResultSet rs) 
+private List toWISSheetNameDistinctSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_WISSheetName data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -39188,7 +39185,7 @@ public boolean writeTSProduct(TSProduct product) {
 	// Now write all the properties from the TSProduct to the database.
 	// returns all the properties, even the override properties, in one
 	// single Vector.
-	Vector v = product.getAllProps();
+	List v = product.getAllProps();
 
 	int count = 0;		// used to keep track of the sequence number
 				// of the property in the database
@@ -39198,7 +39195,7 @@ public boolean writeTSProduct(TSProduct product) {
 	try {
 		// loop through and write almost all of them out.
 		for (int i = 0; i < size; i++) {
-			p = (Prop)v.elementAt(i);
+			p = (Prop)v.get(i);
 			if (p.getHowSet() == Prop.SET_AS_RUNTIME_DEFAULT) {
 				// do not store properties that are runtime
 				// defaults.  They will be set automatically
@@ -39355,7 +39352,7 @@ public boolean writeTSProduct(TSProduct product) {
 
 	// returns all the properties, even the override properties, in one
 	// single Vector.
-	Vector v = product.getAllProps();
+	List v = product.getAllProps();
 
 	int count = 0;		// used to keep track of the sequence number
 				// of the property in the database
@@ -39365,7 +39362,7 @@ public boolean writeTSProduct(TSProduct product) {
 	try {
 		// loop through and write almost all of them out.
 		for (int i = 0; i < size; i++) {
-			p = (Prop)v.elementAt(i);
+			p = (Prop)v.get(i);
 			if (p.getHowSet() == Prop.SET_AS_RUNTIME_DEFAULT) {
 				// do not store properties that are runtime
 				// defaults.  They will be set automatically
@@ -39879,7 +39876,7 @@ protected final int _S_STATION_GEOLOC = 1641;
 /**
 @deprecated use readStationGeolocForStation_id().
 */
-public Vector readStationGeolocListForStationIDs ( Vector stationid_Vector ) 
+public List readStationGeolocListForStationIDs ( List stationid_Vector ) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, _S_STATION_GEOLOC);
@@ -39895,12 +39892,12 @@ throws Exception {
 			b.append(" OR ");
 		}
 		b.append("(station.station_id = '" +
-			stationid_Vector.elementAt(i) + "')");
+			stationid_Vector.get(i) + "')");
 	}
 	b.append(")");
 	q.addWhereClause(b.toString());
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStationGeolocList(rs);
+	List v = toStationGeolocList(rs);
 	closeResultSet(rs);
 	return v;
 }
@@ -39908,8 +39905,8 @@ throws Exception {
 /**
 @deprecated use the other readParcelUseTSListForParcelList
 */
-public Vector readParcelUseTSListForParcelList(Vector where_clauses,
-Vector orderby_clauses, int div, int [] parcel_id, String land_use,
+public List readParcelUseTSListForParcelList(List where_clauses,
+List orderby_clauses, int div, int [] parcel_id, String land_use,
 String irrig_type, DateTime req_date1, DateTime req_date2)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -39956,7 +39953,7 @@ throws Exception {
 	}
 
 	ResultSet rs = dmiSelect(q);
-	Vector v = toParcelUseTSList(rs, false);
+	List v = toParcelUseTSList(rs, false);
 	closeResultSet(rs);
 	return v;
 }
@@ -39966,7 +39963,7 @@ throws Exception {
 readNetAmtsList(int structure_num, int wd, int id, boolean positiveNetRateAbs, 
 Vector orderBys)
 */
-public Vector readNetAmtsList(int wd, int id ) 
+public List readNetAmtsList(int wd, int id ) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_NET_AMTS_FOR_WD_ID);
@@ -39974,7 +39971,7 @@ throws Exception {
 	q.addWhereClause("net_amts.id=" + id);
 	q.addOrderByClause("net_amts.admin_no");
 	ResultSet rs = dmiSelect(q);
-	Vector v = toNetAmtsList(rs);
+	List v = toNetAmtsList(rs);
 	closeResultSet(rs);
 	return v;
 }
@@ -39982,20 +39979,20 @@ throws Exception {
 /**
 @deprecated use readStructureReservoirForWDID().
 */
-public Vector readStructureReservoirListForWDIDList(Vector ids) 
+public List readStructureReservoirListForWDIDList(List ids) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_RESERVOIR);
 	String wdid;
 	boolean isWDID = false;
-	Vector v;
+	List v;
 	int structureCount = 0;
 	String where = "";
 	if (ids == null) {
 		return new Vector();
 	}
 	for (int i = 0; i < ids.size(); i++) {
-		wdid = (String)ids.elementAt(i);
+		wdid = (String)ids.get(i);
 		isWDID = true;
 		int[] pwi = HydroBase_WaterDistrict.parseWDID(wdid);
 
@@ -40025,8 +40022,8 @@ throws Exception {
 readParcelUseTSList(int cal_year, int div, int parcel_id,
 String land_use, String irrig_type, DateTime req_date1, DateTime req_date2)
 */
-public Vector readParcelUseTSList(Vector where_clauses,
-Vector orderby_clauses, int cal_year, int div, int parcel_id, String land_use,
+public List readParcelUseTSList(List where_clauses,
+List orderby_clauses, int cal_year, int div, int parcel_id, String land_use,
 String irrig_type, DateTime req_date1, DateTime req_date2)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -40066,18 +40063,18 @@ throws Exception {
 	}
 
 	ResultSet rs = dmiSelect(q);
-	Vector v = toParcelUseTSList(rs, false);
+	List v = toParcelUseTSList(rs, false);
 	closeResultSet(rs);
 	return v;
 }
 
 /**
 @deprecated use one of the other versions, such as:
-public Vector readStructureIrrigSummaryTSList(InputFilter_JPanel panel,
+public List readStructureIrrigSummaryTSList(InputFilter_JPanel panel,
 Vector orderby_clauses, int structure_num, int wd, int id, String str_name,
 String land_use, DateTime req_date1, DateTime req_date2, boolean distinct ) 
 */
-public Vector readStructureIrrigSummaryTSListForWDIDListLand_usePeriod (
+public List readStructureIrrigSummaryTSListForWDIDListLand_usePeriod (
 					Vector wdidList, String landuse,
 					DateTime req_date1, DateTime req_date2) 
 throws Exception {
@@ -40090,7 +40087,7 @@ throws Exception {
 	String wdid = null;
 	int count = 0;
 	for (int i = 0; i < size; i++) {
-		wdid = (String)wdidList.elementAt(i);
+		wdid = (String)wdidList.get(i);
 		try {
 			pwdid = HydroBase_WaterDistrict.parseWDID(wdid);
 		}
@@ -40124,7 +40121,7 @@ throws Exception {
 	q.addOrderByClause("irrig_summary_ts.cal_year");
 
 	ResultSet rs = dmiSelect(q);
-	Vector v = toStructureIrrigSummaryTSList(rs, 
+	List v = toStructureIrrigSummaryTSList(rs, 
 		__S_STRUCTURE_IRRIG_SUMMARY_TS_JOIN);
 	closeResultSet(rs);
 	return v;
@@ -40181,7 +40178,7 @@ throws Exception {
 		+ "AND structure.id = " + id);
 
 	HydroBase_StructureView data = null;
-	Vector v = new Vector();
+	List v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -40243,7 +40240,7 @@ throws Exception {
 		return null;
 	}
 	else {
-		return (HydroBase_StructureView)v.elementAt(0);
+		return (HydroBase_StructureView)v.get(0);
 	}
 }
 

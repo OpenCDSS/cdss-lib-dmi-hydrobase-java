@@ -108,6 +108,7 @@ import java.awt.event.WindowListener;
 
 import java.io.File;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -987,7 +988,7 @@ private void generateDistricts() {
 	int size = divisions.length;
 	
 	HydroBase_WaterDistrict data;
-	Vector v;
+	List v;
 	int vsize;
 	int wd;	
 	String star = "";
@@ -997,7 +998,7 @@ private void generateDistricts() {
 		vsize = v.size();
 		for (int i = 0; i < vsize; i++) {
 			star = " ";
-			data = (HydroBase_WaterDistrict)v.elementAt(i);
+			data = (HydroBase_WaterDistrict)v.get(i);
 			wd = data.getWD();
 			// Place an(*)before available districts found
 			// in the database.
@@ -1059,13 +1060,13 @@ public void getDistricts() {
         String dis = __dmi.getPreferenceValue("WD." 
 		+ HydroBase_GUI_Util.getActiveWaterDivision()
 		+ ".DistrictSelect");
-	Vector v = StringUtil.breakStringList(dis.trim(), ",", 0);
+        List v = StringUtil.breakStringList(dis.trim(), ",", 0);
         String curItem = "";             
 	int numRows = __districtJList.getItemCount();
 	int size = v.size();
         // loop over all the tokens
         for (int i = 0; i < size; i++) {
-        	String curToken = (String)v.elementAt(i);
+        	String curToken = (String)v.get(i);
 		// loop over all rows in the __districtJList object
 		for (int curRow = 0; curRow < numRows; curRow++) {
 			curItem = (String)__districtJList.getItem(curRow);
@@ -1104,12 +1105,12 @@ public void getDivisions() {
 		selected = new int[0];
 	}
 	else {
-		Vector v = StringUtil.breakStringList(div.trim(), ",", 0);
+		List v = StringUtil.breakStringList(div.trim(), ",", 0);
 	
 		int size = v.size();
 		selected = new int[size];
 	        for (int i = 0; i < size; i++) {
-			String s = (String)v.elementAt(i);
+			String s = (String)v.get(i);
 			if (s != null && s != "" && !s.equals(__NONE)) {
 				int n = (Integer.parseInt(s) - 1);
 	        		selected[i] = n;
@@ -1132,8 +1133,8 @@ selected water districts.
 private void generateWIS() 
 throws Exception {
         // initialize variables
-        Vector whereClause = new Vector(10, 5);
-	Vector orderBy = new Vector(10, 5);
+	List whereClause = new Vector(10, 5);
+	List orderBy = new Vector(10, 5);
        
         // process query
 	JGUIUtil.setWaitCursor(this, true);
@@ -1143,17 +1144,17 @@ throws Exception {
         // results Vector contains the query results
 	String wd = getWD();
 	if (wd != null) {
-		whereClause.addElement(wd);
+		whereClause.add(wd);
 	}
-	orderBy.addElement("sheet_name");
-        Vector results = __dmi.readWISSheetNameDistinctList(-1);
+	orderBy.add("sheet_name");
+	List results = __dmi.readWISSheetNameDistinctList(-1);
 
 	__wisJComboBox.add(__NONE);
         if (results.size() > 0 && results != null) {
       	        int size = results.size(); 
                	for (int i = 0; i < size; i++) {
                        	HydroBase_WISSheetName data = 
-				(HydroBase_WISSheetName)results.elementAt(i);
+				(HydroBase_WISSheetName)results.get(i);
                         __wisJComboBox.add(data.getSheet_name());
        	        }
         }
@@ -1167,11 +1168,11 @@ Returns the list of selected water districts in the water districts filter.
 @return the list of selected water districts in the water districts filter.
 */
 public String [] getSelectedDistricts() {
-	Vector v = __districtJList.getSelectedItems();
+	List v = __districtJList.getSelectedItems();
 	int size = v.size();
 	String arr[] = new String[size];
 	for (int i = 0; i < size; i++) {
-		arr[i] = (String)v.elementAt(i);
+		arr[i] = (String)v.get(i);
 	}
 	return arr;
 }
@@ -1186,15 +1187,15 @@ user preferences.
 private String getWD() {
 	// initialize variables
 	String wdWhere = null;
-	Vector select = __districtJList.getSelectedItems(); 
+	List select = __districtJList.getSelectedItems(); 
                                
 	//concatenate 'wd = ' for each element in the Vector
 	if (select != null) {
 		int size = select.size();
-		Vector orClause = new Vector(size, 5);
+		List orClause = new Vector(size, 5);
 		for (int i = 0; i < size; i++) {
-        		orClause.addElement("wd = " 
-				+ ((String)select.elementAt(i)).
+        		orClause.add("wd = " 
+				+ ((String)select.get(i)).
 				   substring(5,7).trim());
 		}
 		wdWhere = DMIUtil.getOrClause(orClause);

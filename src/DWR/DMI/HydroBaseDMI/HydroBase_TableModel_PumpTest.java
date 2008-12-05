@@ -12,7 +12,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
@@ -57,12 +57,11 @@ Number of columns in the table model.
 private final static int __COLUMNS = 21;
 
 /**
-Constructor.  This builds the Model for displaying the given pump test 
-results.
+Constructor.  This builds the Model for displaying the given pump test results.
 @param results the results that will be displayed in the table.
 @throws Exception if invalid results were passed in.
 */
-public HydroBase_TableModel_PumpTest(Vector results)
+public HydroBase_TableModel_PumpTest(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -194,8 +193,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -205,8 +203,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_GroundWaterWellsPumpingTest p 
-		= (HydroBase_GroundWaterWellsPumpingTest)_data.elementAt(row);
+	HydroBase_GroundWaterWellsPumpingTest p = (HydroBase_GroundWaterWellsPumpingTest)_data.get(row);
 	switch (col) {
 		case COL_WD:		return new Integer(p.getWD());
 		case COL_ID:		return new Integer(p.getID());

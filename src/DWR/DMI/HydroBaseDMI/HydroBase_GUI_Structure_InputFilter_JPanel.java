@@ -25,6 +25,7 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.awt.event.MouseListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -70,21 +71,21 @@ MouseListener listener) {
 	String rd = dmi.getRightIdDelim();
 	String ld = dmi.getLeftIdDelim();
 
-	Vector filters = new Vector();
+	List filters = new Vector();
 
-	Vector v1 = null;
-	Vector v2 = null;
+	List v1 = null;
+	List v2 = null;
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
 		null, null, false));
 
 	v1 = new Vector();
 	v2 = new Vector();
-	Vector cius = dmi.getCIUVector();
+	List cius = dmi.getCIUVector();
 	int size = cius.size();
 	HydroBase_RefCIU ciu = null;
 	for (int i = 0; i < size; i++) {
-		ciu = (HydroBase_RefCIU)cius.elementAt(i);
+		ciu = (HydroBase_RefCIU)cius.get(i);
 		v1.add(ciu.getCode() + " - " + ciu.getDescription());
 		v2.add(ciu.getCode());
 	}
@@ -170,14 +171,14 @@ MouseListener listener) {
 		structureTableName + "str_name" + rd, "str_name", 
 		StringUtil.TYPE_STRING, null, null, false));
 	
-	Vector structureTypes = dmi.getStrTypesVector();
+	List structureTypes = dmi.getStrTypesVector();
 	HydroBase_StrType type = null;
 	size = structureTypes.size();
 	v1 = new Vector();
 	v2 = new Vector();
 
 	for (int i = 0; i < size; i++) {
-		type = (HydroBase_StrType)structureTypes.elementAt(i);
+		type = (HydroBase_StrType)structureTypes.get(i);
 		if (DMIUtil.isMissing(type.getRpt_code())) {
 			v1.add(type.getStr_type_desc());
 			v2.add(type.getStr_type());
@@ -228,10 +229,10 @@ MouseListener listener) {
 	String rd = dmi.getRightIdDelim();
 	String ld = dmi.getLeftIdDelim();
 
-	Vector filters = new Vector();
+	List filters = new Vector();
 
-	Vector v1 = null;
-	Vector v2 = null;
+	List v1 = null;
+	List v2 = null;
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
 		null, null, false));
@@ -243,11 +244,11 @@ MouseListener listener) {
 
 	v1 = new Vector();
 	v2 = new Vector();
-	Vector cius = dmi.getCIUVector();
+	List cius = dmi.getCIUVector();
 	int size = cius.size();
 	HydroBase_RefCIU ciu = null;
 	for (int i = 0; i < size; i++) {
-		ciu = (HydroBase_RefCIU)cius.elementAt(i);
+		ciu = (HydroBase_RefCIU)cius.get(i);
 		v1.add(ciu.getCode() + " - " + ciu.getShort_desc());
 		v2.add(ciu.getCode());
 	}
@@ -343,14 +344,14 @@ MouseListener listener) {
 		structureTableName + "str_name" + rd, "str_name", 
 		StringUtil.TYPE_STRING, null, null, false));
 	
-	Vector structureTypes = dmi.getStrTypesVector();
+	List structureTypes = dmi.getStrTypesVector();
 	HydroBase_StrType type = null;
 	size = structureTypes.size();
 	v1 = new Vector();
 	v2 = new Vector();
 
 	for (int i = 0; i < size; i++) {
-		type = (HydroBase_StrType)structureTypes.elementAt(i);
+		type = (HydroBase_StrType)structureTypes.get(i);
 		if (DMIUtil.isMissing(type.getRpt_code())) {
 			v1.add(type.getStr_type_desc());
 			v2.add(type.getStr_type());

@@ -178,6 +178,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -337,7 +338,7 @@ private String __timestepJComboBoxString;
 /**
 Vector of results from the queries that are executed.
 */
-private Vector __results = null;
+private List __results = null;
 
 /**
 Create the interface and make visible.
@@ -409,7 +410,7 @@ public void actionPerformed(ActionEvent evt) {
 			int format = new Integer(eff[1]).intValue();
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		 		// First format the output...
-				Vector outputStrings = formatOutput(format);
+				List outputStrings = formatOutput(format);
 	 			// Now export, letting the user decide 
 				// the file...
 				HydroBase_GUI_Util.export(this, eff[0], 
@@ -447,7 +448,7 @@ public void actionPerformed(ActionEvent evt) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -497,7 +498,7 @@ private void dataTypeJComboBoxClicked() {
 
 	// let's set the time step options and data type modifier options
 	__timeStepJComboBox.removeAll();
-	Vector v = HydroBase_Util.getTimeSeriesTimeSteps(__dmi, dtype,
+	List v = HydroBase_Util.getTimeSeriesTimeSteps(__dmi, dtype,
 		HydroBase_Util.DATA_TYPE_STATION_ALL);
 	__timeStepJComboBox.setData(v);
 	if (__timeStepJComboBox.getItemCount() > 0) {
@@ -624,7 +625,7 @@ private void enableMapLayers() {
 		Message.printStatus(1, "",
 			"Turning on station GIS layer types.");
 			
-		Vector enabledAppLayerTypes = new Vector();
+		List enabledAppLayerTypes = new Vector();
 		enabledAppLayerTypes.add("Climate");
 		enabledAppLayerTypes.add("Streamflow");
 		enabledAppLayerTypes.add("Temperature");
@@ -678,8 +679,8 @@ Responsible for formatting output.
 @param format format delimiter flag defined in this class
 @return ormatted Vector for exporting, printing, etc..
 */
-private Vector formatOutput(int format) {
-        Vector v = new Vector(50, 50);
+private List formatOutput(int format) {
+	List v = new Vector(50, 50);
         int numCols = __worksheet.getColumnCount();
         int numRows = __worksheet.getRowCount();
         String rowString;
@@ -741,13 +742,13 @@ Do nothing.  REVISIT - Should this do the same as a select?
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewInfo(GRShape devlimits, GRShape datalimits,
-Vector selected) {}
+		List selected) {}
 
 public void geoViewInfo(GRPoint devlimits, GRPoint datalimits, 
-Vector selected) {}
+		List selected) {}
 
 public void geoViewInfo(GRLimits devlimits, GRLimits datalimits,
-Vector selected) {}
+		List selected) {}
 
 /**
 If a selection is made from the map, query the database for region that was
@@ -759,13 +760,13 @@ listener from the GeoView.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRShape devlimits, GRShape datalimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	String routine = "geoViewSelect";
 
 	// Figure out which app layer types are selected.  If one that is
 	// applicable to this GUI, execute a query...
 
-	Vector appLayerTypes = __geoview_ui.getGeoViewJPanel(
+	List appLayerTypes = __geoview_ui.getGeoViewJPanel(
 		).getLegendJTree().getSelectedAppLayerTypes(true);
 	int size = appLayerTypes.size();
 	String app_layer_type;
@@ -778,7 +779,7 @@ Vector selected, boolean append) {
 		return;
 	}
 	
-	app_layer_type = (String)appLayerTypes.elementAt(0);
+	app_layer_type = (String)appLayerTypes.get(0);
 
 	String[] vals = null;
 	
@@ -862,13 +863,13 @@ Vector selected, boolean append) {
 }
 
 public void geoViewSelect(GRPoint devlimits, GRPoint datalimits, 
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, 
 		append);
 }
 
 public void geoViewSelect(GRLimits devlimits, GRLimits datalimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, 
 		append);
 }
@@ -888,8 +889,8 @@ public void geoViewZoom (GRLimits devlim, GRLimits datalim ) {}
 Returns a Vector with the visible App Layer Type.
 @return a Vector with the visible App Layer Type.
 */
-private Vector getVisibleAppLayerType() {
-	Vector appLayerTypes = new Vector(2);
+private List getVisibleAppLayerType() {
+	List appLayerTypes = new Vector(2);
 	if (	parseDataType(__dataTypeJComboBox.getSelected()).equals(
 			__DTYP_STREAM) ||
 		parseDataType(__dataTypeJComboBox.getSelected()).equals(
@@ -917,7 +918,7 @@ private Vector getVisibleAppLayerType() {
 Display a station summary.
 @param tsVector Vector of time series to display.
 */
-private void getSummary(Vector tsVector) {
+private void getSummary(List tsVector) {
 	String  routine = "getSummary";
 
 	if (tsVector == null) {
@@ -957,12 +958,12 @@ private void getSummary(Vector tsVector) {
 
         // display the summary
 
-        Vector summary = null;
+        List summary = null;
 	boolean frost = false;
 	try {   
 		// If frost dates, get the time series using special code.
 		// Otherwise, use the generic code...
-		TS ts = (TS)tsVector.elementAt(0);
+		TS ts = (TS)tsVector.get(0);
 		if (ts == null) {
 			return;
 		}
@@ -1204,7 +1205,7 @@ private void setupGUI(boolean isVisible) {
 		0, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__dataTypeJComboBox = new SimpleJComboBox();
-	Vector v = HydroBase_Util.getTimeSeriesDataTypes(__dmi,
+	List v = HydroBase_Util.getTimeSeriesDataTypes(__dmi,
 		HydroBase_Util.DATA_TYPE_STATION_ALL, true);
 	__dataTypeJComboBox.setData(v);
 	__dataTypeJComboBox.select(HydroBase_Util.getDefaultTimeSeriesDataType(
@@ -1410,7 +1411,7 @@ GeoView Project as AppJoinField="wd,id".
 */
 private void selectOnMap() {
 	int size = __worksheet.getRowCount();
-	Vector idlist = new Vector(size);
+	List idlist = new Vector(size);
         __statusJTextField.setText(
 		"Selecting and zooming to stations on map.  Please wait...");
 	JGUIUtil.setWaitCursor(this, true);
@@ -1441,7 +1442,7 @@ private void selectOnMap() {
 	}
 	// Select the features, specifying the AppLayerType corresponding to the
 	// currently selected data type, and zoom to the selected shapes...
-	Vector matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
+	List matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 			getVisibleAppLayerType(),
 			idlist, true, .05, .05);
 	int matches = 0;
@@ -1525,7 +1526,7 @@ throws Exception {
         	String time_step = hbMt[2];
 
 		sw.start();
-		Vector v = __dmi.readStationGeolocMeasTypeList(
+		List v = __dmi.readStationGeolocMeasTypeList(
 				__filterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, 
@@ -1626,7 +1627,7 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 	props.set("DisplayStationsCombined", "true");
    
         String display  = viewJComboBox;
-	Vector selectedResults = new Vector(10, 10);
+        List selectedResults = new Vector(10, 10);
         int[] rows = __worksheet.getSelectedRows();
  
  	JGUIUtil.setWaitCursor(this, true);
@@ -1670,13 +1671,13 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 			periodProps.set("DatePrecision", "Year");
 		}
 		periodProps.set("DateFormat", "Y2K");
-		Vector tsV = new Vector(selectedResults.size(), 1);
+		List tsV = new Vector(selectedResults.size(), 1);
 		String alias;
 		String location;
 		for (int i = 0; i < selectedResults.size(); i++) {
 			HydroBase_StationView data = 
 				(HydroBase_StationView)
-				selectedResults.elementAt(i);
+				selectedResults.get(i);
 
 			ts = new TS();
 			if (data.getStation_id().length() == 0) {
@@ -1731,13 +1732,13 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 			date1 = limits.getDate1();
 			date2 = limits.getDate2();
 		}
-		tsV.removeAllElements();
+		tsV.clear();
 		String timestep = "";
 		String id = null;
 		for (int i = 0; i < selectedResults.size(); i++) {
 			HydroBase_StationView data = 
 				(HydroBase_StationView)
-				selectedResults.elementAt(i);
+				selectedResults.get(i);
         		timestep = __timestepJComboBoxString;
 
 			id = data.getStation_id() + "."
@@ -1774,9 +1775,9 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 			ready();
 			return;
 		}
-		props.set("DataUnits",((TS)tsV.elementAt(0)).getDataUnits());
+		props.set("DataUnits",((TS)tsV.get(0)).getDataUnits());
 		props.set("YAxisJLabelString", 
-			((TS)tsV.elementAt(0)).getDataUnits());
+			((TS)tsV.get(0)).getDataUnits());
 		try {	
 			// Set properties common to all views...
 			PropList tsview_props = new PropList("tsview");

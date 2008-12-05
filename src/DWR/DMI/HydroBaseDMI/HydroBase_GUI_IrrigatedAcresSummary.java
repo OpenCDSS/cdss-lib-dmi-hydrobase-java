@@ -36,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -156,7 +157,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -177,7 +178,7 @@ public void actionPerformed(ActionEvent event) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -200,7 +201,7 @@ This function displays the requested irrigated acres summary query in the
 components on the gui.
 @param results Vector containing the results from the query
 */
-private void displayResults(Vector results) {
+private void displayResults(List results) {
 	String routine = CLASS + ".displayResults";
 	Object o = null;
 	try {
@@ -235,7 +236,7 @@ private void displayResults(Vector results) {
                 // one record is returned, request the first element
                 // in the results Vector.        
                 HydroBase_StructureView data =
-			(HydroBase_StructureView)results.elementAt(0);
+			(HydroBase_StructureView)results.get(0);
     
                 double curDouble = data.getTia_gis();
                 if (!DMIUtil.isMissing(curDouble)) {
@@ -296,18 +297,18 @@ Formats output.
 @param format format delimiter flag defined in this class
 @return returns a formatted Vector for exporting, printing, etc..
 */
-public Vector formatOutput(int format) {
-	Vector v = new Vector(5, 5);
+public List formatOutput(int format) {
+	List v = new Vector(5, 5);
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		// The output is pretty simple since the GUI is so simple...
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			__structureNameJTextField.getText(),
 			__structureDivJTextField.getText(),
 			__structureWDJTextField.getText(),
 			__structureIDJTextField.getText(), format));
-		v.addElement("");
-		v.addElement("GIS Total: " 
+		v.add("");
+		v.add("GIS Total: " 
 			+ StringUtil.formatString(
 			__gisTotJTextField.getText().trim(), "%-10.1f")
 			+ "Most Recently Reported: " 
@@ -328,17 +329,17 @@ public Vector formatOutput(int format) {
 	}
 	else {	
 		char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			__structureNameJTextField.getText(),
 			__structureDivJTextField.getText(),
 			__structureWDJTextField.getText(),
 			__structureIDJTextField.getText(), format));
-		v.addElement("");
-		v.addElement("GIS Total" + delim + "Year:" + delim 
+		v.add("");
+		v.add("GIS Total" + delim + "Year:" + delim 
 			+ "Diversion Comments Total:" + delim +	"Year:" + delim 
 			+ "Structure Total" + delim + "Year:" + delim);
-		v.addElement(
+		v.add(
 			__gisTotJTextField.getText().trim()+ delim
 			+ __gisTotDateJTextField.getText().trim()+ delim
 			+ __divTotJTextField.getText().trim()+ delim
@@ -492,7 +493,7 @@ This function performs a query.
 */
 private void submitQuery() {
 	String routine = CLASS + ".submitQuery";
-	Vector results = null;
+	List results = null;
         // perform Irrigated Acres query
         JGUIUtil.setWaitCursor(this, true);
               

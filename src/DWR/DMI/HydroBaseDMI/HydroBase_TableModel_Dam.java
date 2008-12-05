@@ -12,7 +12,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.Util.Time.DateTime;
 
@@ -55,7 +55,7 @@ Constructor.  This builds the Model for displaying the given dam results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Dam(Vector results)
+public HydroBase_TableModel_Dam(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -214,7 +214,7 @@ public Object getValueAt(int row, int col) {
 		case COL_WALL_SS:
 		case COL_WIDTH:
 			HydroBase_DamSpillway s = (HydroBase_DamSpillway)
-				_data.elementAt(row);
+				_data.get(row);
 			switch (col) {
 				case COL_SPILLWAY_NAME:	
 					return s.getSpillway_name();
@@ -237,12 +237,10 @@ public Object getValueAt(int row, int col) {
 		case COL_DATE:
 		case COL_INSPECTOR:
 		case COL_INSPECTION_TYPE:
-			HydroBase_DamInspection i = (HydroBase_DamInspection)
-				_data.elementAt(row);
+			HydroBase_DamInspection i = (HydroBase_DamInspection)_data.get(row);
 			switch (col) {
 				case COL_DATE:	
-					DateTime dti = new DateTime(
-						i.getInspect_date());
+					DateTime dti = new DateTime(i.getInspect_date());
 					dti.setPrecision(DateTime.PRECISION_DAY);
 					return dti.toString();
 				case COL_INSPECTOR:	
@@ -258,8 +256,7 @@ public Object getValueAt(int row, int col) {
 		case COL_LENGTH:
 		case COL_OUTLET_TYPE:
 		case COL_DESCRIPTION:
-			HydroBase_DamOutlet o = (HydroBase_DamOutlet)
-				_data.elementAt(row);
+			HydroBase_DamOutlet o = (HydroBase_DamOutlet)_data.get(row);
 			switch (col) {
 				case COL_OUTLET_NAME:	
 					return o.getOutlet_name();
@@ -278,12 +275,10 @@ public Object getValueAt(int row, int col) {
 		// emergency plan
 		case COL_EMERGENCY_DATE:
 		case COL_EMERGENCY_PLAN:
-			HydroBase_EmergencyPlan e = (HydroBase_EmergencyPlan)
-				_data.elementAt(row);
+			HydroBase_EmergencyPlan e = (HydroBase_EmergencyPlan)_data.get(row);
 			switch (col) {
 				case COL_EMERGENCY_DATE:	
-					DateTime dto = new DateTime(
-						e.getEp_date());
+					DateTime dto = new DateTime(e.getEp_date());
 					dto.setPrecision(DateTime.PRECISION_DAY);
 					return dto.toString();
 				case COL_EMERGENCY_PLAN:	

@@ -29,6 +29,7 @@ import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -78,9 +79,9 @@ Form a countyID from its parts.
 public static String formCountyID(int cty, int id) {
 	Integer icty = new Integer(cty);
 	Integer iid = new Integer(id);
-	Vector v = new Vector(2, 1);
-	v.addElement(icty);
-	v.addElement(iid);
+	List v = new Vector(2, 1);
+	v.add(icty);
+	v.add(iid);
 	return StringUtil.formatString(v, "%02d%05d");
 }
 
@@ -91,9 +92,9 @@ Form a countyID from its parts.
 @return a countyid
 */
 public static String formCountyID(String cty, String id) {
-	Vector v = new Vector(2, 1);
-	v.addElement(cty);
-	v.addElement(id);
+	List v = new Vector(2, 1);
+	v.add(cty);
+	v.add(id);
 	return StringUtil.formatString(v, "%02d%05d");
 }
 
@@ -151,8 +152,8 @@ a two-digit cty and a five-digit ID part.
 @param ctyid the ctyid to parse
 @return a Vector with the cty in the first element and the id in the second
 */
-public static Vector parseCTYID(String ctyid) {
-	Vector v = new Vector(2, 1);
+public static List parseCTYID(String ctyid) {
+	List v = new Vector(2, 1);
 	if (ctyid == null) {
 		return null;
 	}
@@ -168,8 +169,8 @@ public static Vector parseCTYID(String ctyid) {
 	// assume the first two characters are the cty and the rest are the
 	// id ...
 	if (length < 3) {
-		v.addElement(ctyid);
-		v.addElement("0");
+		v.add(ctyid);
+		v.add("0");
 	}
 	if (length < 7) {
 		// could be trouble
@@ -177,8 +178,8 @@ public static Vector parseCTYID(String ctyid) {
 		Message.printWarning(2, "HydroBase_CountyRef.parseCTYID",
 			"CTYID: " + ctyid + " length is < 7, should be 7!");
 	}
-	v.addElement(ctyid.substring(0, 2));
-	v.addElement(ctyid.substring(2));
+	v.add(ctyid.substring(0, 2));
+	v.add(ctyid.substring(2));
 	return v;
 }
 

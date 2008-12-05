@@ -84,6 +84,7 @@
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -154,7 +155,7 @@ private String __rolodexNum = null;
 /**
 This is the Vector that holds all the lines of the report.
 */
-private Vector __reportVector = null;
+private List __reportVector = null;
 
 /**
 Constructor.  Once this constructor is called, the summary is generated
@@ -216,7 +217,7 @@ Appends the annual amount query results to the report.
 _RESERVOIR if querying for reservoir records
 @exception Exception if an error occurs
 */
-private void appendAnnualAmtResults(Vector results, Vector comments, int TYPE,
+private void appendAnnualAmtResults(List results, List comments, int TYPE,
 String measTypeString)
 throws Exception {	
 	__reportVector.add("");
@@ -227,17 +228,17 @@ throws Exception {
 	HydroBase_StructMeasType measType = new HydroBase_StructMeasType();
 	measType.setMeas_type(measTypeString);
 
-        Vector QInfoResults = formatMonthlyDiversionForQINFO(results, measType);
+	List QInfoResults = formatMonthlyDiversionForQINFO(results, measType);
 	if (QInfoResults == null) {
 		return;
 	}
 	
         int size = QInfoResults.size();  
         for (int i=0; i<size; i++) {
-                __reportVector.add(QInfoResults.elementAt(i).toString());
+                __reportVector.add(QInfoResults.get(i).toString());
         }
 
-        Vector QInfoComments = formatStructureSummaryComments(
+        List QInfoComments = formatStructureSummaryComments(
 		comments, measType);
 	if (QInfoComments == null) {
 		return;
@@ -245,7 +246,7 @@ throws Exception {
 	
         size = QInfoComments.size();  
         for (int i=0; i<size; i++) {
-                __reportVector.add(QInfoComments.elementAt(i).toString());
+                __reportVector.add(QInfoComments.get(i).toString());
         }	
 }
 
@@ -258,7 +259,7 @@ _RESERVOIR if querying for reservoir records
 @param measTypeString __DIV_TOTAL or __REL_TOTAL.
 @exception Exception if an error occurs
 */
-private void appendComments(Vector comments, int TYPE, String measTypeString)
+private void appendComments(List comments, int TYPE, String measTypeString)
 throws Exception {	
 	__reportVector.add("");
 	__reportVector.add("");
@@ -268,7 +269,7 @@ throws Exception {
         HydroBase_StructMeasType measType = new HydroBase_StructMeasType();
 	measType.setMeas_type(measTypeString);
 
-        Vector QInfoComments = formatStructureSummaryComments(
+	List QInfoComments = formatStructureSummaryComments(
 		comments, measType);
 	if (QInfoComments == null) {
 		return;
@@ -276,7 +277,7 @@ throws Exception {
 	
         int size = QInfoComments.size();  
         for (int i=0; i<size; i++) {
-                __reportVector.add(QInfoComments.elementAt(i).toString());
+                __reportVector.add(QInfoComments.get(i).toString());
         }	
 
 /*
@@ -327,14 +328,14 @@ Append the irrigated acres query results to the report.
 @param results Vector containing the results from the irrigated acres query.
 @exception Exception if an error occurs
 */
-private void appendIrrigatedAcresResults(Vector results)
+private void appendIrrigatedAcresResults(List results)
 throws Exception {	
 	__reportVector.add("");
         double curDouble;
 	HydroBase_StructureView data = null;
         int curInt;
 	String curString;
-	Vector v = null;
+	List v = null;
  
 	__reportVector.add("                        IRRIGATED ACRES FROM "
 		+ "GIS DATA -- BY CROP, YEAR, AND IRRIGATION METHOD");
@@ -367,13 +368,13 @@ throws Exception {
 	double[] acres = new double[size];
 
 	for (int i = 0; i < size; i++) {
-		data = (HydroBase_StructureView)results.elementAt(i);
+		data = (HydroBase_StructureView)results.get(i);
 		years[i] = data.getCal_year();
 		acres[i] = data.getAcres_total();
 	}
 
 	for (int i = 0; i < size; i++) {
-		data = (HydroBase_StructureView)results.elementAt(i);
+		data = (HydroBase_StructureView)results.get(i);
 		v = new Vector();
 		sum = 0;
 
@@ -464,14 +465,14 @@ Appends the irrigated acres summary query results to the report.
 query.
 @exception Exception if an error occurs
 */
-private void appendIrrigatedAcresSummaryResults(Vector results)
+private void appendIrrigatedAcresSummaryResults(List results)
 throws Exception {	
 	__reportVector.add("");
         double curDouble;
         int curInt;
-	Vector v1 = new Vector();
-	Vector v2 = new Vector();
-	Vector v3 = new Vector();
+        List v1 = new Vector();
+        List v2 = new Vector();
+        List v3 = new Vector();
 
 	__reportVector.add("        IRRIGATED ACRES SUMMARY -- TOTALS FROM "
 		+ "VARIOUS SOURCES");
@@ -480,7 +481,7 @@ throws Exception {
  
 	if (results != null && !results.isEmpty()) {
 		HydroBase_StructureView view 
-			= (HydroBase_StructureView)results.elementAt(0);
+			= (HydroBase_StructureView)results.get(0);
 		
 		String format = "%-35.35s%10.10s%12.12s%4.4s";
 
@@ -736,14 +737,14 @@ Appends to the report the water right net query results.
 @param results Vector containing the results from the water right net query.
 @exception Exception if an error occurs
 */
-private void appendWaterRightNetResults(Vector results)
+private void appendWaterRightNetResults(List results)
 throws Exception {	
         Date curDate;    
         double curDouble;
 	HydroBase_NetAmts data;
 	int curInt;
 	String curString;
-        Vector netFields = new Vector(10, 5);
+	List netFields = new Vector(10, 5);
 
         __reportVector.add(StringUtil.centerString (
 		"WATER RIGHTS NET AMOUNT INFORMATION", 110) );
@@ -777,7 +778,7 @@ throws Exception {
 	__reportVector.add(StringUtil.formatString(netFields,
 		format) );
 
-        netFields.removeAllElements();
+        netFields.clear();
         netFields.add("ADMIN NO");
         netFields.add("ADJ DATE");
         netFields.add("PADJ DATE");
@@ -799,8 +800,8 @@ throws Exception {
         int size = results.size();
 
         for (int i = 0; i < size; i++) {
-                data = (HydroBase_NetAmts)results.elementAt(i);  
-                netFields.removeAllElements();
+                data = (HydroBase_NetAmts)results.get(i);  
+                netFields.clear();
          
                 curDouble = data.getAdmin_no();      
                 if (DMIUtil.isMissing(curDouble)) {
@@ -916,13 +917,13 @@ Appends to the report the water right transaction query results.
 query.
 @exception Exception if an error occurs
 */
-private void appendWaterRightTransactionResults(Vector results)
+private void appendWaterRightTransactionResults(List results)
 throws Exception {	
         Date curDate;    
         double curDouble;
 	HydroBase_Transact data;
 	String curString;
-        Vector transFields;
+	List transFields;
 
         transFields = new Vector(10, 5);
 
@@ -945,7 +946,7 @@ throws Exception {
 	__reportVector.add(StringUtil.formatString(transFields,
 		format));
 
-        transFields.removeAllElements();
+        transFields.clear();
         transFields.add("ADMIN NO");
         transFields.add("ADJ DATE");
         transFields.add("APPRO DATE");
@@ -971,8 +972,8 @@ throws Exception {
 	int count = 0;
 
         for (int i = 0; i < size; i++) {
-                data = (HydroBase_Transact)results.elementAt(i);  
-                transFields.removeAllElements();
+                data = (HydroBase_Transact)results.get(i);  
+                transFields.clear();
          
                 curDouble = data.getAdmin_no();      
                 if (DMIUtil.isMissing(curDouble)) {
@@ -1093,7 +1094,7 @@ throws Exception {
 		throw new Exception("Invalid wd value (" + id + ")");
 	}
 
-	Vector v = new Vector(1);
+	List v = new Vector(1);
 	v.add(HydroBase_WaterDistrict.formWDID(wd, id));
 
 	__view = __dmi.readStructureViewForWDID(wd, id);
@@ -1177,13 +1178,13 @@ If no infreq data with the given year are found, returns false.
 @return true if any of the non-infrequent data have the given year, false if
 not.
 */
-private boolean findMatchingNonInfreqYear(Vector v, int year) {
+private boolean findMatchingNonInfreqYear(List v, int year) {
 	HydroBase_AnnualAmt a = null;
 
 	int size = v.size();
 
 	for (int i = 0; i < size; i++) {
-		a = (HydroBase_AnnualAmt)v.elementAt(i);
+		a = (HydroBase_AnnualAmt)v.get(i);
 		if (a.getQuality() != null 
 		    && a.getQuality().equalsIgnoreCase("I")) {
 		    	// skip
@@ -1206,7 +1207,7 @@ summary matrix.
 @param measType HBStructMeasType object
 @exception Exception if an error occurs
 */
-public Vector formatCommentsForQINFO(Vector comments,
+public List formatCommentsForQINFO(List comments,
 HydroBase_StructMeasType measType)
 throws Exception {	
 	boolean hasSFUT;
@@ -1242,12 +1243,12 @@ throws Exception {
 	int iyear2 = 0;
 	HydroBase_DiversionComment comment = null;
 	if (size > 0) {
-		comment = (HydroBase_DiversionComment)comments.elementAt(0);
+		comment = (HydroBase_DiversionComment)comments.get(0);
 		iyear = comment.getIrr_year();
 		if (iyear < iyear1) {
 			iyear1 = iyear;
 		}
-		comment=(HydroBase_DiversionComment)comments.elementAt(size-1);
+		comment=(HydroBase_DiversionComment)comments.get(size-1);
 		iyear = comment.getIrr_year();
 		if (iyear > iyear2) {
 			iyear2 = iyear;
@@ -1256,7 +1257,7 @@ throws Exception {
 
 	// Size the output vector for the number of records + comments + enough
 	// for header/footer lines...
-	Vector s = new Vector((size + 20), 1);
+	List s = new Vector((size + 20), 1);
 
 	// Get the measurement type(it is assumed that all the records have the
 	// same type) so that we can modify the header accordingly...
@@ -1324,7 +1325,7 @@ throws Exception {
 		have_diversion_comment = false;
 		for (j = 0; j < size; j++) {
 			comment = 
-			(HydroBase_DiversionComment)comments.elementAt(j);
+			(HydroBase_DiversionComment)comments.get(j);
 			comment_year = comment.getIrr_year();
 			if (comment_year == iyear) {
 				have_diversion_comment = true;
@@ -1436,7 +1437,7 @@ Formats the comments section of a Structure Summary.
 @param measType the measType of the report (a HydroBase_StructMeasType object).
 @return a Vector of Strings for the report.
 */
-public Vector formatStructureSummaryComments(Vector comments,
+public List formatStructureSummaryComments(List comments,
 HydroBase_StructMeasType measType)
 throws Exception {	
 	// Comments are now mainly tied to the structure so don't even involve
@@ -1458,19 +1459,19 @@ throws Exception {
 	int iyear1 = Integer.MAX_VALUE;
 	int iyear2 = Integer.MIN_VALUE;
 	if (csize > 0) {
-		comment = (HydroBase_DiversionComment)comments.elementAt(0);
+		comment = (HydroBase_DiversionComment)comments.get(0);
 		iyear = comment.getIrr_year();
 		if (iyear < iyear1) {
 			iyear1 = iyear;
 		}
-		comment=(HydroBase_DiversionComment)comments.elementAt(csize-1);
+		comment=(HydroBase_DiversionComment)comments.get(csize-1);
 		iyear = comment.getIrr_year();
 		if (iyear > iyear2) {
 			iyear2 = iyear;
 		}
 	}
 
-	Vector s = new Vector();
+	List s = new Vector();
 
 	// Get the measurement type(it is assumed that all the records have the
 	// same type) so that the header can be displayed accordingly...
@@ -1499,7 +1500,7 @@ throws Exception {
 
 	// See if there are any comments for this irrigation year...
 	for (int j = 0; j < csize; j++) {
-		comment = (HydroBase_DiversionComment)comments.elementAt(j);
+		comment = (HydroBase_DiversionComment)comments.get(j);
 		iyear = comment.getIrr_year();
 
 		// Can conceivably have more than one comment
@@ -1570,7 +1571,7 @@ is assumed that these are sorted by irrigation year.
 @param measType HBStructMeasType object
 @exception Exception if an error occurs
 */
-public Vector formatMonthlyDiversionForQINFO(Vector v, 
+public List formatMonthlyDiversionForQINFO(List v, 
 HydroBase_StructMeasType measType)
 throws Exception {	
 	boolean hasSFUT = false;
@@ -1598,12 +1599,12 @@ throws Exception {
 	// diversion records.  Do everything in terms of
 	// irrigation year since that is what the diversion records use...
 	int iyear = 0;
-	HydroBase_AnnualAmt r = (HydroBase_AnnualAmt)v.elementAt(0);
-	r = (HydroBase_AnnualAmt)v.elementAt(size - 1);
+	HydroBase_AnnualAmt r = (HydroBase_AnnualAmt)v.get(0);
+	r = (HydroBase_AnnualAmt)v.get(size - 1);
 
 	// Size the output vector for the number of records + enough
 	// for header/footer lines...
-	Vector s = new Vector((size + 20), 1);
+	List s = new Vector((size + 20), 1);
 
 	// Get the measurement type(it is assumed that all the records have the
 	// same type) so that the header can be modified accordingly...
@@ -1690,7 +1691,7 @@ throws Exception {
 	String use = "";
 	String use_string;	
 	String[] val_string = new String[13];	
-	Vector c = null;
+	List c = null;
 	
 	int[] monthOrder = new int[12];
 	monthOrder[0] = 11;
@@ -1714,7 +1715,7 @@ throws Exception {
 
 	// New, loop through years and output diversion records ...
 	for (int ii = 0; ii < v.size(); ii++) {
-		iyear = ((HydroBase_AnnualAmt)v.elementAt(ii)).getIrr_year();
+		iyear = ((HydroBase_AnnualAmt)v.get(ii)).getIrr_year();
 		// First locate the diversion record for the irrigation year...
 		yearExists = false;
 		have_diversion_record = true;
@@ -1725,7 +1726,7 @@ throws Exception {
 		c = new Vector(22,1);
 		if (hasSFUT) {
 			rsfut = (HydroBase_AnnualWC)
-				(v.elementAt(ii));
+				(v.get(ii));
 			// For generic lookups...
 			r = rsfut;
 			source	= rsfut.getS();
@@ -1734,7 +1735,7 @@ throws Exception {
 			type	= rsfut.getT();
 		}
 		else {	
-			r = (HydroBase_AnnualAmt)(v.elementAt(ii));
+			r = (HydroBase_AnnualAmt)(v.get(ii));
 		}
 
 		// Now start adding the records fields.  Start with the irr
@@ -2162,7 +2163,7 @@ throws Exception {
 Returns the generated report.
 @return the generated report.
 */
-public Vector getReport() {
+public List getReport() {
 	return __reportVector;
 }
 
@@ -2184,42 +2185,42 @@ throws Exception {
 		noRecords = "";
         }
 
-	Vector v = null;
+        List v = null;
 	if (__view != null) {
 		v = __dmi.readStructMeasTypeListForStructure_numMeas_type(
 			__view.getStructure_num(), measTypeString);
 
 		if (measTypeString.equals(__DIV_TOTAL)) {
-			Vector v2 = __dmi
+			List v2 = __dmi
 			       .readStructMeasTypeListForStructure_numMeas_type(
 				__view.getStructure_num(), "IDivTotal");
 			for (int i = 0; i < v2.size(); i++) {
-				v.add(v2.elementAt(i));
+				v.add(v2.get(i));
 			}
 		}
 		else if (measTypeString.equals(__REL_TOTAL)) {
-			Vector v2 = __dmi
+			List v2 = __dmi
 			       .readStructMeasTypeListForStructure_numMeas_type(
 				__view.getStructure_num(), "IRelTotal");
 			for (int i = 0; i < v2.size(); i++) {
-				v.add(v2.elementAt(i));
+				v.add(v2.get(i));
 			}
 		}
 	}
 
-	Vector results = new Vector();
+	List results = new Vector();
 
 	HydroBase_StructMeasTypeView smtv = null;
 	for (int i = 0; i < v.size(); i++) {
-		smtv = (HydroBase_StructMeasTypeView)v.elementAt(i);
-		Vector v2 = __dmi.readAnnualAmtList(smtv.getMeas_num(), 
+		smtv = (HydroBase_StructMeasTypeView)v.get(i);
+		List v2 = __dmi.readAnnualAmtList(smtv.getMeas_num(), 
 			null, null);
 		for (int j = 0; j < v2.size(); j++) {
-			results.add(v2.elementAt(j));
+			results.add(v2.get(j));
 		}
 	}
 
-	Vector comments = null;
+	List comments = null;
 
 	if (__view != null) {
 		comments = __dmi.readDiversionCommentListForStructure_num(
@@ -2274,10 +2275,10 @@ throws Exception {
 			+ "in database.");
 	}
 
-	Vector order = new Vector();
+        List order = new Vector();
 	order.add("irrig_summary_ts.cal_year");
 	order.add("irrig_summary_ts.land_use");
-	Vector results = null;
+	List results = null;
 	
 	if (__view != null) {
 		results = __dmi.readStructureIrrigSummaryTSList(
@@ -2312,7 +2313,7 @@ private void submitIrrigatedAcresSummaryQuery()
 throws Exception {		
 	String noRecords = "No irrigated acre summary records to display";
 
-	Vector results = null;
+	List results = null;
 	
 	if (__view != null) {
 		results = __dmi.readStructureIrrigSummaryListForStructure_num(
@@ -2376,7 +2377,7 @@ private void submitWaterRightNetQuery()
 throws Exception {	
         String noRecords = "No water right net amounts records to display";
 
-        Vector results = null;
+        List results = null;
 	if (__view != null) {
 	Message.printStatus(2, "", "-----------");
 		results = __dmi.readNetAmtsList(
@@ -2401,7 +2402,7 @@ private void submitWaterRightTransactionQuery()
 throws Exception {	
         String noRecords = "No water right transaction records to display";
 
-        Vector results = null;
+        List results = null;
 	if (__view != null) {
 		results = __dmi.readTransactListForStructure_num(
 			__view.getStructure_num());	

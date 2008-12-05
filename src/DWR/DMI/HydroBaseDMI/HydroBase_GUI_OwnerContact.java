@@ -53,6 +53,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -210,7 +211,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -231,7 +232,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -286,8 +287,8 @@ throws Throwable {
 Formats output for export or printing.
 @param format the format in which to format the output.
 */
-public Vector formatOutput(int format) {
-	Vector v = new Vector(10, 5);
+public List formatOutput(int format) {
+	List v = new Vector(10, 5);
 
 	int size = __worksheet.getRowCount();
 	String s0 = null;
@@ -298,21 +299,21 @@ public Vector formatOutput(int format) {
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		// For now only show the owner type that is shown on the
 		// screen.  Multiple listing is an enhancement...
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement("");
-		v.addElement("                                          "
+		v.add("");
+		v.add("                                          "
 			+ "                     OWNER/CONTACT DATA");
-		v.addElement("FULLNAME:       " 
+		v.add("FULLNAME:       " 
 			+ HydroBase_GUI_Util.trimText(__prefixJTextField) + " "
 			+ HydroBase_GUI_Util.trimText(__firstJTextField) + " "
 			+ HydroBase_GUI_Util.trimText(__middleJTextField) + " "
 			+ HydroBase_GUI_Util.trimText(__lastJTextField) + " "
 			+ HydroBase_GUI_Util.trimText(__suffixJTextField));
-		v.addElement("NAME:           " 
+		v.add("NAME:           " 
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__nameJTextField),
 			"%-40.40s") + " TYPE: "
@@ -320,32 +321,32 @@ public Vector formatOutput(int format) {
 			HydroBase_GUI_Util.trimText(__typeJTextField),
 			"%-15.15s") + " NOTE: " 
 			+ HydroBase_GUI_Util.trimText(__noteJTextField));
-		v.addElement("TITLE:          " 
+		v.add("TITLE:          " 
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__titleJTextField),
 			"%-40.40s") + " PROF. LICENSE: "
 			+ HydroBase_GUI_Util.trimText(__licenseJTextField));
-		v.addElement("ORGANIZATION:   " 
+		v.add("ORGANIZATION:   " 
 			+ HydroBase_GUI_Util.trimText(__orgJTextField));
-		v.addElement("BONDING CO.:    " 
+		v.add("BONDING CO.:    " 
 			+ HydroBase_GUI_Util.trimText(__bondingJTextField));
-		v.addElement("ADDRESS:        " 
+		v.add("ADDRESS:        " 
 			+ HydroBase_GUI_Util.trimText(__address1JTextField));
-		v.addElement("                " 
+		v.add("                " 
 			+ HydroBase_GUI_Util.trimText(__address2JTextField));
-		v.addElement("CITY:           " 
+		v.add("CITY:           " 
 			+ HydroBase_GUI_Util.trimText(__cityJTextField));
-		v.addElement("STATE:          " 
+		v.add("STATE:          " 
 			+ HydroBase_GUI_Util.trimText(__stateJTextField));
-		v.addElement("ZIP:            " 
+		v.add("ZIP:            " 
 			+ HydroBase_GUI_Util.trimText(__zipCodeJTextField));
-		v.addElement("");
-		v.addElement("                                        "
+		v.add("");
+		v.add("                                        "
 			+ "                       CONTACT MEANS");
-		v.addElement("                       TRY    AREA");
-		v.addElement("CONTACT MEANS         FIRST   CODE    "
+		v.add("                       TRY    AREA");
+		v.add("CONTACT MEANS         FIRST   CODE    "
 			+ "NUMBER        OTHER");
-		v.addElement("________________________________________"
+		v.add("________________________________________"
 			+ "___________________________________________"
 			+ "_____________________________________");
 		// Skip the header...
@@ -354,7 +355,7 @@ public Vector formatOutput(int format) {
 			s1 = (String)__worksheet.getValueAt(i, 1);
 			s2 = (String)__worksheet.getValueAt(i, 2);
 			s3 = (String)__worksheet.getValueAt(i, 3);
-			v.addElement(
+			v.add(
 				StringUtil.formatString(s0.trim(), "%-15.15s") 
 				+ "         "
 				+ StringUtil.formatString(s1.trim(), "%-1.1s") 
@@ -366,13 +367,13 @@ public Vector formatOutput(int format) {
 	}
 	else {	
 		char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField),format));
-		v.addElement("");
+		v.add("");
 		// For now display the first contact only...
 		String phone = "";
 		for (int i = 0; i < size; i++) {
@@ -380,16 +381,16 @@ public Vector formatOutput(int format) {
 			s1 = (String)__worksheet.getValueAt(i, 1);
 			s2 = (String)__worksheet.getValueAt(i, 2);
 			s3 = (String)__worksheet.getValueAt(i, 3);
-			v.addElement(s0 + delim + s1 + delim + s2 + delim 
+			v.add(s0 + delim + s1 + delim + s2 + delim 
 				+ s3 + delim);
 		}		
-		v.addElement("TYPE" + delim + "FULLNAME" + delim + "TITLE" 
+		v.add("TYPE" + delim + "FULLNAME" + delim + "TITLE" 
 			+ delim + "ADDRESS1" + delim + "ADDRESS2" + delim 
 			+ "CITY" + delim + "ST" + delim + "ZIP" + delim 
 			+ "PHONE NUMBER" + delim);
 		String zip_code = HydroBase_GUI_Util.trimText(
 			__zipCodeJTextField);
-		v.addElement(StringUtil.formatString(
+		v.add(StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__typeJTextField),
 			"%-15.15s") + delim
 			+ HydroBase_GUI_Util.trimText(__nameJTextField) + delim
@@ -696,7 +697,7 @@ private void submitAndDisplayContactQuery() {
 	String routine = "HydroBase_GUI_OwnerContact.submitAndDisplayContactQuery";
 	JGUIUtil.setWaitCursor(this, true);
 	
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readContactListForRolodex_num(__rolodexNum);
 	}

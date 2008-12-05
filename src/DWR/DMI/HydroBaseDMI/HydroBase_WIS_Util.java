@@ -51,6 +51,7 @@ import RTi.Util.Time.DateTime;
 
 import java.lang.Double;
 import java.lang.Integer;
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -61,26 +62,23 @@ public class HydroBase_WIS_Util
 {
 
 /**
-Computes gain/loss at the specified node.  Gains/losses are based on stream
-mile.
+Computes gain/loss at the specified node.  Gains/losses are based on stream mile.
 @param network the network the ndoe is in.
 @param curNode the node to check.
 */
-public static double[] computeGainLoss(HydroBase_NodeNetwork network, 
-HydroBase_Node curNode) {
+public static double[] computeGainLoss(HydroBase_NodeNetwork network, HydroBase_Node curNode) {
 	return computeGainLoss(network, curNode, null, true);
 }
 
 /**
-Computes gain/loss at the specified node.  Gains losses are based on stream
-mile.
+Computes gain/loss at the specified node.  Gains losses are based on stream mile.
 @param network the network the node is in.
 @param curNode the node to check.
 @param wisDataVector vector wis data from the wis
 @param isComputed whether the values in the wis have been computed yet or not
 */
 public static double[] computeGainLoss(HydroBase_NodeNetwork network, 
-HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) { 
+HydroBase_Node curNode, List wisDataVector, boolean isComputed) { 
 	double[] values = { DMIUtil.MISSING_DOUBLE, DMIUtil.MISSING_DOUBLE };
 	double D1X = DMIUtil.MISSING_DOUBLE;
 	double D12;
@@ -100,11 +98,10 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 
 	HydroBase_WISData wisData = null;
 	if (wisDataVector != null) { 
-		wisData = (HydroBase_WISData)wisDataVector.elementAt(row);
+		wisData = (HydroBase_WISData)wisDataVector.get(row);
 	}
 
-	Message.printDebug(10, routine,
-		"Computing Gain/Loss (using stream mile) for row: " + row);
+	Message.printDebug(10, routine, "Computing Gain/Loss (using stream mile) for row: " + row);
 
 	// do not perform calculation for the following row types
 	if (rowType.equals(HydroBase_GUI_WIS.STREAM) 
@@ -203,13 +200,9 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 				// Get the known upstream and downstream
 				// baseflow values respectively
 				Q1 = getWISDataValue(
-					(HydroBase_WISData)wisDataVector
-					.elementAt(upRow),
-					HydroBase_GUI_WIS.POINT_FLOW_COL);
+					(HydroBase_WISData)wisDataVector.get(upRow), HydroBase_GUI_WIS.POINT_FLOW_COL);
 				Q2 = getWISDataValue(
-					(HydroBase_WISData)wisDataVector
-					.elementAt(downRow),
-					HydroBase_GUI_WIS.POINT_FLOW_COL);
+					(HydroBase_WISData)wisDataVector.get(downRow), HydroBase_GUI_WIS.POINT_FLOW_COL);
 			}
 	
 			// In the WIS, STRING rowTypes can act as nodes in 
@@ -271,24 +264,17 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 					HydroBase_WISData data = null;
 					for (int curRow = upRow + 1; 
 						curRow <= downRow; curRow++) {
-						data = (HydroBase_WISData)
-							wisDataVector.elementAt(
-							curRow);
+						data = (HydroBase_WISData)wisDataVector.get(curRow);
 						sumD += getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.PRIORITY_DIV_COL)
+							HydroBase_GUI_WIS.PRIORITY_DIV_COL)
 							+ getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.DELIVERY_DIV_COL);
+							HydroBase_GUI_WIS.DELIVERY_DIV_COL);
 						sumR += getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.TRIB_NATURAL_COL)
+							HydroBase_GUI_WIS.TRIB_NATURAL_COL)
 							+ getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.TRIB_DELIVERY_COL)
+							HydroBase_GUI_WIS.TRIB_DELIVERY_COL)
 							+ getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.RELEASES_COL);
+							HydroBase_GUI_WIS.RELEASES_COL);
 					}
 
 					factor = Q2 - Q1 + sumD - sumR;
@@ -316,7 +302,7 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 
 	if (wisDataVector != null) {
 		wisData.setGain(gainLoss);
-		wisDataVector.setElementAt(wisData, row);
+		wisDataVector.set(row,wisData);
 	}
 
 	return values;
@@ -335,8 +321,7 @@ HydroBase_Node curNode) {
 }
 
 /**
-Computers gain/loss at the specified node.  Gains/losses are based on weighted
-coefficients.
+Computers gain/loss at the specified node.  Gains/losses are based on weighted coefficients.
 @param network the network in which the node is found.
 @param curNode the node to evaluated.
 @param wisDataVector the vector of data from the wis
@@ -344,7 +329,7 @@ coefficients.
 @return the gains/losses.
 */
 public static double[] computeWeightedGainLoss(HydroBase_NodeNetwork network,
-HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
+HydroBase_Node curNode, List wisDataVector, boolean isComputed) {
 	double[] values = { DMIUtil.MISSING_DOUBLE, DMIUtil.MISSING_DOUBLE };
 	double D1X = DMIUtil.MISSING_DOUBLE;
 	double D12 = DMIUtil.MISSING_DOUBLE;
@@ -367,27 +352,22 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 	String rowType = wisFormat.getRow_type();
 
 	if (wisDataVector != null) { 
-		wisData = (HydroBase_WISData)wisDataVector.elementAt(row);
+		wisData = (HydroBase_WISData)wisDataVector.get(row);
 	}
 
 	if (Message.isDebugOn) {
-		Message.printDebug(10, routine,
-			"Computing Gain/Loss (using weights) for row: " + row);
+		Message.printDebug(10, routine, "Computing Gain/Loss (using weights) for row: " + row);
 	}
 
 	// do not perform calculation for the following row types
 
-	if (rowType.equals(HydroBase_GUI_WIS.STREAM) 
-		|| rowType.equals(HydroBase_GUI_WIS.STRING)){
+	if (rowType.equals(HydroBase_GUI_WIS.STREAM) || rowType.equals(HydroBase_GUI_WIS.STRING)){
 		return values;
 	}
 
-	// Get the upstream and downstream base flow node in the
-	// current reach.
-	HydroBase_Node upFlowNode = network.findUpstreamBaseflowNodeInReach(
-		curNode);
-	HydroBase_Node downFlowNode = network.findDownstreamBaseflowNodeInReach(
-		curNode);
+	// Get the upstream and downstream base flow node in the current reach.
+	HydroBase_Node upFlowNode = network.findUpstreamBaseflowNodeInReach(curNode);
+	HydroBase_Node downFlowNode = network.findDownstreamBaseflowNodeInReach(curNode);
 
 	// set the downFlowNode equal to the curNode if the curNode
 	// is a known base flow and the downFlow is null
@@ -468,18 +448,14 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 			}
 			
 			if (wisDataVector != null) {
-				// get the known upstream and downstream
-				// baseflow values respectively
-				Q1 = getWISDataValue((HydroBase_WISData)
-					wisDataVector.elementAt(upRow),
+				// get the known upstream and downstream baseflow values respectively
+				Q1 = getWISDataValue((HydroBase_WISData)wisDataVector.get(upRow),
 					HydroBase_GUI_WIS.POINT_FLOW_COL);
-				Q2 = getWISDataValue((HydroBase_WISData)
-					wisDataVector.elementAt(downRow),
+				Q2 = getWISDataValue((HydroBase_WISData)wisDataVector.get(downRow),
 					HydroBase_GUI_WIS.POINT_FLOW_COL);
 			}
 
-			D1X = getWISFormatValue(wisFormat, 
-				HydroBase_GUI_WIS.WEIGHT);
+			D1X = getWISFormatValue(wisFormat, HydroBase_GUI_WIS.WEIGHT);
 			D12 = 0.0;
 	
 			HydroBase_Node reachNode = upFlowNode;
@@ -490,10 +466,8 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 				format = reachNode.getWISFormat();
 				rowType = format.getRow_type();
 
-				// In the WIS, STRING rowTypes can act as 
-				// nodes in a reach, so to correctly determine 
-				// the summation we need to pass over
-				// the STRING row types
+				// In the WIS, STRING rowTypes can act as nodes in a reach, so to correctly determine 
+				// the summation we need to pass over the STRING row types
 				if (!rowType.equals(HydroBase_GUI_WIS.STRING)) {
 					if (Message.isDebugOn) {
 						Message.printDebug(10,
@@ -516,24 +490,17 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 					// between Q1 and Q2)
 					if (wisDataVector != null) {
 						HydroBase_WISData data = null;
-						data = (HydroBase_WISData)
-							wisDataVector.elementAt(
-							curRow);
+						data = (HydroBase_WISData)wisDataVector.get(curRow);
 						sumD += getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.PRIORITY_DIV_COL)
+							HydroBase_GUI_WIS.PRIORITY_DIV_COL)
 							+ getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.DELIVERY_DIV_COL);
+							HydroBase_GUI_WIS.DELIVERY_DIV_COL);
 						sumR += getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.TRIB_NATURAL_COL)
+							HydroBase_GUI_WIS.TRIB_NATURAL_COL)
 							+ getWISDataValue(data, 
-							HydroBase_GUI_WIS
-							.TRIB_DELIVERY_COL)
+							HydroBase_GUI_WIS.TRIB_DELIVERY_COL)
 							+ getWISDataValue(data,
-							HydroBase_GUI_WIS
-							.RELEASES_COL);
+							HydroBase_GUI_WIS.RELEASES_COL);
 					}
 				}
 			}
@@ -571,7 +538,7 @@ HydroBase_Node curNode, Vector wisDataVector, boolean isComputed) {
 	
 	if (wisDataVector != null) {
 		wisData.setGain(gainLoss);
-		wisDataVector.setElementAt(wisData, row);
+		wisDataVector.set(row, wisData);
 	}
 
 	return values;
@@ -647,15 +614,15 @@ starts with "WIS".
 @param wis_import the wis import object to process.
 @return the imported data value Vector.
 */
-public static Vector getWISImportValue(HydroBaseDMI dmi, 
+public static List getWISImportValue(HydroBaseDMI dmi, 
 HydroBase_WISImport wis_import) {
 	String routine = "HydroBase_WIS_Util.getWISImportValue";
-	Vector v = new Vector();
+	List v = new Vector();
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
-	v.addElement(new Double(0.0));
-	v.addElement(new Integer(0));
+	v.add(new Double(0.0));
+	v.add(new Integer(0));
 
 	if (wis_import == null) {
 		Message.printWarning(2, routine, "NULL HydroBase_WISImport");
@@ -683,15 +650,15 @@ a flag are suspect, so they are not processed.
 @return a Vector with a Double in (0) that has the data value to use and an
 Integer in (1) that has the number of  data values used to computer (0).  
 */
-private static Vector getRealTimeValue(HydroBaseDMI dmi, 
+private static List getRealTimeValue(HydroBaseDMI dmi, 
 HydroBase_WISImport wis_import) {
 	String routine = "HydroBase_WIS_Util.getRealTimeValue";
-	Vector v = new Vector();
+	List v = new Vector();
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
-	v.addElement(new Double(0.0));
-	v.addElement(new Integer(0));
+	v.add(new Double(0.0));
+	v.add(new Integer(0));
 
 	// Start by getting the RT_meas data for the import.  The dates are
 	// limited as follows.  In all cases, the end_time and offset are
@@ -706,7 +673,7 @@ HydroBase_WISImport wis_import) {
 	// 2)	If end_time and offset are specified, use them as is.
 	// 3)  If the end_time is specified and the offset is not, then
 	//	we assume that the offset is one day before the end-time.
-	Vector measurements = new Vector();
+	List measurements = new Vector();
 	HydroBase_RTMeas measurement;
 	int size = 0;
 	DateTime end = new DateTime(DateTime.DATE_CURRENT 
@@ -718,7 +685,7 @@ HydroBase_WISImport wis_import) {
 	// Change this if we want to query data that has flags...
 	boolean useFlaggedData = false;
 
-	Vector order = new Vector();
+	List order = new Vector();
 
 	int wis_import_end_time = wis_import.getEnd_time();
 	int wis_import_time_offset = wis_import.getTime_offset();
@@ -739,7 +706,7 @@ HydroBase_WISImport wis_import) {
 
 		order.add("rt_meas.date_time");
 
-		Vector results = null;
+		List results = null;
 		try {
 			results = dmi.readRTMeasList(wis_import.getMeas_num(),
 				start, end, useFlaggedData, false);
@@ -769,8 +736,8 @@ HydroBase_WISImport wis_import) {
 		}
 
 		// Get the last record.
-		measurement = (HydroBase_RTMeas)results.elementAt(size - 1);
-		measurements.addElement(measurement);
+		measurement = (HydroBase_RTMeas)results.get(size - 1);
+		measurements.add(measurement);
 	}
 
 	// The end time has been specified so we need to use it to form 
@@ -810,7 +777,7 @@ HydroBase_WISImport wis_import) {
 		}
 		// Process the results to get the final numbers...
 
-		Vector results = null;
+		List results = null;
 		try {
 			results = dmi.readRTMeasList(wis_import.getMeas_num(),
 				start, end, useFlaggedData, false);
@@ -839,8 +806,8 @@ HydroBase_WISImport wis_import) {
 			return v;
 		}
 		for (int i = 0; i < size; i++) {
-			measurement = (HydroBase_RTMeas)results.elementAt(i);
-			measurements.addElement(measurement);
+			measurement = (HydroBase_RTMeas)results.get(i);
+			measurements.add(measurement);
 		}
 	}
 
@@ -855,7 +822,7 @@ HydroBase_WISImport wis_import) {
 			min = 10000000.0;
 			max = 0.0;
 		}
-		measurement = (HydroBase_RTMeas)measurements.elementAt(i);
+		measurement = (HydroBase_RTMeas)measurements.get(i);
 		value = measurement.getAmt();
 		units = measurement.getUnit();
 		if (!units.equalsIgnoreCase("cfs") && !units.equals("")) {
@@ -863,8 +830,8 @@ HydroBase_WISImport wis_import) {
 				"Problem.  Do not know how to convert "
 				+ "units from \"" + units 
 				+ "\" to CFS for WIS");
-			v.setElementAt(new Double(0.0), 0);
-			v.setElementAt(new Integer(0), 1);
+			v.set(0,new Double(0.0));
+			v.set(1,new Integer(0));
 			return v;
 		}
 		if (import_method.equalsIgnoreCase("ave")
@@ -888,15 +855,15 @@ HydroBase_WISImport wis_import) {
 
 	if (import_method.equalsIgnoreCase("ave")) {
 		sum /= (double)size;
-		v.setElementAt(new Double(sum), 0);
+		v.set(0,new Double(sum));
 	}
 	else if (import_method.equalsIgnoreCase("min")) {
-		v.setElementAt(new Double(min), 0);
+		v.set(0,new Double(min));
 	}
 	else if (import_method.equalsIgnoreCase("max")) {
-		v.setElementAt(new Double(max), 0);
+		v.set(0,new Double(max));
 	}
-	v.setElementAt(new Integer(size), 1);
+	v.set(1,new Integer(size));
 	return v;
 }
 
@@ -908,15 +875,15 @@ Sets values for other wis sheet wis_import.
 Integer in (1) that has the number of data values used to computer (0).  In 
 the case of other wis sheets only one value is used, so this is fixed.
 */
-private static Vector getWISValue(HydroBaseDMI dmi, 
+private static List getWISValue(HydroBaseDMI dmi, 
 HydroBase_WISImport wis_import) {
 	String routine = "HydroBase_WIS_Util.getWISValue";
-	Vector v = new Vector();
+	List v = new Vector();
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
-	v.addElement(new Double(0.0));
-	v.addElement(new Integer(0));
+	v.add(new Double(0.0));
+	v.add(new Integer(0));
 
 	String id = wis_import.getImport_identifier();
 
@@ -950,10 +917,10 @@ HydroBase_WISImport wis_import) {
 
 	// First process the HydroBase_WISFormat data to get the row 
 	// number we are working with.
-	Vector where = new Vector();
+	List where = new Vector();
 	where.add("wis_format.wis_num = " + import_num);
 	where.add("wis_format.identifier = '" + id + "'");
-	Vector results = null;
+	List results = null;
 	try {
 		results = dmi.readWISFormatList(import_num, null, id);
 	}
@@ -984,7 +951,7 @@ HydroBase_WISImport wis_import) {
 
 	// get the row number so we can get the correct HydroBase_WISData
 	HydroBase_WISFormat format = 
-		(HydroBase_WISFormat)results.elementAt(size - 1);
+		(HydroBase_WISFormat)results.get(size - 1);
 	int row = format.getWis_row() - 1;
 
 	results = null;
@@ -1013,15 +980,15 @@ HydroBase_WISImport wis_import) {
 
 	// If we have values than we will assume the last value is the one 
 	// we want.  There should only be one value.
-	HydroBase_WISData data = (HydroBase_WISData)results.elementAt(size - 1);
+	HydroBase_WISData data = (HydroBase_WISData)results.get(size - 1);
 
 	// Get the correct value based on the defined import column which was
 	// requested.
 	double value = getWISColumnValue(data, wis_import.getImport_column());
 	if (value != DMIUtil.MISSING_DOUBLE) {
 		// If we get here than set the value
-		v.setElementAt(new Double(value), 0);
-		v.setElementAt(new Integer(1), 1);
+		v.set(0,new Double(value));
+		v.set(1,new Integer(1));
 	}
 
 	return v;

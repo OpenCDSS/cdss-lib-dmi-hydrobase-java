@@ -17,11 +17,10 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
-This class is a table model for displaying data for the tables in the
-wis import wizard.
+This class is a table model for displaying data for the tables in the wis import wizard.
 */
 public class HydroBase_TableModel_WISImportWizard 
 extends HydroBase_TableModel {
@@ -64,7 +63,7 @@ Constructor.  This builds the Model for displaying the given data.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results were passed in
 */
-public HydroBase_TableModel_WISImportWizard(Vector results, int type) 
+public HydroBase_TableModel_WISImportWizard(List results, int type) 
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -157,8 +156,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -168,8 +166,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 	if (__type == SPECIAL_DATA) {
-		HydroBase_SpecialData sp = (HydroBase_SpecialData)
-			_data.elementAt(row);
+		HydroBase_SpecialData sp = (HydroBase_SpecialData)_data.get(row);
 		switch (col) {		
 			case COL_SD_WIS_NUM:	
 				return new Integer(sp.getWis_num());
@@ -182,9 +179,7 @@ public Object getValueAt(int row, int col) {
 		}
 	}
 	else if (__type == STATION_GEOLOC_MEAS_TYPE) {
-		HydroBase_StationView view = 
-			(HydroBase_StationView)
-			_data.elementAt(row);
+		HydroBase_StationView view = (HydroBase_StationView)_data.get(row);
 		switch (col) {
 			case COL_SGMT_NAME:		
 				return view.getStation_name();
@@ -193,8 +188,7 @@ public Object getValueAt(int row, int col) {
 		}
 	}
 	else if (__type == WIS_FORMAT) {
-		HydroBase_WISFormat wf = (HydroBase_WISFormat)
-			_data.elementAt(row);
+		HydroBase_WISFormat wf = (HydroBase_WISFormat)_data.get(row);
 		switch (col) {
 			case COL_WF_ROW_LABEL:
 				return wf.getRow_label();

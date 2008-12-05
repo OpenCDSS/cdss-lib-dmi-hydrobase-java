@@ -20,15 +20,14 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
 import RTi.Util.Time.DateTime;
 
 /**
-This class is a table model for displaying pumping test data in the 
-HydroBase_GUI_GroundWater GUI.
+This class is a table model for displaying pumping test data in the HydroBase_GUI_GroundWater GUI.
 */
 public class HydroBase_TableModel_GroundWaterWellsPumpingTest 
 extends HydroBase_TableModel {
@@ -77,24 +76,21 @@ Number of columns in the table model.
 private final static int __COLUMNS = 33;
 
 /**
-Vector of aquifers to display in the tooltips.
+List of aquifers to display in the tooltips.
 */
-private Vector __aquifers = null;
+private List __aquifers = null;
 
 /**
-Constructor.  This builds the Model for displaying the given pump test 
-results.
+Constructor.  This builds the Model for displaying the given pump test results.
 @param results the results that will be displayed in the table.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_GroundWaterWellsPumpingTest(Vector results,
-Vector aquifers)
+public HydroBase_TableModel_GroundWaterWellsPumpingTest(List results, List aquifers)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_GroundWaterWellsPumpingTest "
-			+ "constructor.");
+			+ "HydroBase_TableModel_GroundWaterWellsPumpingTest constructor.");
 	}
 
 	_rows = results.size();
@@ -304,7 +300,7 @@ public String[] getColumnToolTips() {
 
 
 /**
-Returns an array containing the widths (in number of characters) that the 
+Returns an array containing the widths (in number of characters) that the
 fields in the table should be sized to.
 @return an integer array containing the widths for each field.
 */
@@ -354,8 +350,7 @@ public int[] getColumnWidths() {
 Returns the format that the specified column should be displayed in when
 the table is being displayed in the given table format. 
 @param column column for which to return the format.
-@return the format (as used by StringUtil.formatString() in which to display the
-column.
+@return the format (as used by StringUtil.formatString() in which to display the column.
 */
 public String getFormat(int column) {
 	switch (column) {
@@ -405,8 +400,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -416,8 +410,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_GroundWaterWellsPumpingTest p 
-		= (HydroBase_GroundWaterWellsPumpingTest)_data.elementAt(row);
+	HydroBase_GroundWaterWellsPumpingTest p = (HydroBase_GroundWaterWellsPumpingTest)_data.get(row);
 	switch (col) {
 		case COL_DIV:
 			return new Integer(p.getDiv());

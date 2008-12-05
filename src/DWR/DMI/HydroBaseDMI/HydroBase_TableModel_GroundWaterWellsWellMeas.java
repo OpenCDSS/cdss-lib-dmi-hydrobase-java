@@ -17,13 +17,12 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
 /**
-This class is a table model for displaying ground water data in the 
-HydroBase_GUI_GroundWater GUI.
+This class is a table model for displaying ground water data in the HydroBase_GUI_GroundWater GUI.
 */
 public class HydroBase_TableModel_GroundWaterWellsWellMeas 
 extends HydroBase_TableModel {
@@ -58,25 +57,21 @@ public final static int
 	COL_DSS_AQUIFER_COMMENT = 18;	
 
 /**
-Vector of aquifers to display in the tooltips.
+List of aquifers to display in the tooltips.
 */
-private Vector __aquifers = null;
+private List __aquifers = null;
 
 /**
-Constructor.  This builds the Model for displaying the given ground water 
-results.
+Constructor.  This builds the Model for displaying the given ground water results.
 @param results the results that will be displayed in the table.
-@param dmi a reference to the dmi object used to query for the results. 
-Cannot be null.
+@param dmi a reference to the dmi object used to query for the results.  Cannot be null.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_GroundWaterWellsWellMeas(Vector results,
-Vector aquifers)
+public HydroBase_TableModel_GroundWaterWellsWellMeas(List results,List aquifers)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_GroundWaterWellsWellMeas "
-			+ "constructor.");
+			+ "HydroBase_TableModel_GroundWaterWellsWellMeas constructor.");
 	}
 
 	_rows = results.size();
@@ -290,8 +285,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -301,8 +295,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_GroundWaterWellsView g = 
-		(HydroBase_GroundWaterWellsView)_data.elementAt(row);
+	HydroBase_GroundWaterWellsView g = (HydroBase_GroundWaterWellsView)_data.get(row);
 	switch (col) {
 		case COL_DIV:	
 			return new Integer(g.getDiv());

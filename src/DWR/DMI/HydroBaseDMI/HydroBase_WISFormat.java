@@ -19,6 +19,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIDataObject;
@@ -48,7 +49,7 @@ protected double _gain_factor = DMIUtil.MISSING_DOUBLE;
 protected static int	__COLS = 11;	// number of columns in WIS
 // the following member variables are not saved to the database, but assist in
 // building WIS
-protected Vector _wisFormula,		// Cell formulas for a row. Elements
+protected List _wisFormula,		// Cell formulas for a row. Elements
 					// represent Point Flow, Natural Flow
 					// Delivery Flow, and Gain/Loss, etc...
 					// columns respectively. Each element
@@ -75,13 +76,13 @@ public HydroBase_WISFormat() {
 	_wisImport =  new Vector();
 	_isEntryCell =  new Vector();
 	for (int curCol = 0; curCol < __COLS + 1; curCol++) {
-		_wisFormula.addElement(new HydroBase_WISFormula());
-		_wisImport.addElement(new HydroBase_WISImport());
+		_wisFormula.add(new HydroBase_WISFormula());
+		_wisImport.add(new HydroBase_WISImport());
 		if (curCol < 6) {
-			_isEntryCell.addElement(new Boolean(false));
+			_isEntryCell.add(new Boolean(false));
 		}
 		else {
-			_isEntryCell.addElement(new Boolean(true));
+			_isEntryCell.add(new Boolean(true));
 		}
 	}
 }
@@ -91,7 +92,7 @@ Clears the formulas Vector.
 */
 public void clearFormulas() {
 	for (int curCol = 0; curCol < __COLS + 1; curCol++) {
-		_wisFormula.setElementAt(new HydroBase_WISFormula(), curCol);
+		_wisFormula.set(curCol, new HydroBase_WISFormula());
 	}
 }
 
@@ -212,7 +213,7 @@ Gets the wis formula for a column.
 @return the wis formula for a column.
 */
 public HydroBase_WISFormula getWISFormula(int col) {
-	return (HydroBase_WISFormula)_wisFormula.elementAt(col);
+	return (HydroBase_WISFormula)_wisFormula.get(col);
 }
 
 /**
@@ -221,7 +222,7 @@ Gets the wis import for a column.
 @return the wis import for a column.
 */
 public HydroBase_WISImport getWISImport(int col) {
-	return (HydroBase_WISImport)_wisImport.elementAt(col);
+	return (HydroBase_WISImport)_wisImport.get(col);
 }
 
 /**
@@ -230,7 +231,7 @@ Returns whether the column is an entry cell.
 @return true if the column is an entry cell.
 */
 public boolean isEntryCell(int col) {
-	return ((Boolean)_isEntryCell.elementAt(col)).booleanValue();
+	return ((Boolean)_isEntryCell.get(col)).booleanValue();
 }
 
 /**
@@ -349,16 +350,16 @@ Sets the wis formula for the specified column.
 @param col the column to set the formula in.
 */
 public void setWISFormula(HydroBase_WISFormula wisFormula, int col) {
-	_wisFormula.setElementAt( wisFormula, col );
+	_wisFormula.set(col, wisFormula );
 }
 
 /**
-Sets the wis import for the spefified column.
+Sets the wis import for the specified column.
 @param wisImport the import to set.
 @param col the column to set the import in.
 */
 public void setWISImport(HydroBase_WISImport wisImport, int col) {
-	_wisImport.setElementAt( wisImport, col );
+	_wisImport.set(col, wisImport );
 }
 
 /**
@@ -367,7 +368,7 @@ Sets a column as an entry cell.
 @param b whether to set it as an entry cell or not.
 */
 public void setIsEntryCell(int col, boolean b) {
-	_isEntryCell.setElementAt(new Boolean(b), col);
+	_isEntryCell.set(col,new Boolean(b));
 }
 
 /** 

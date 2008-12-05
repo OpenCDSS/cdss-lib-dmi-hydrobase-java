@@ -23,11 +23,10 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
-This class is a table model for displaying net amounts data in the 
-HydroBase_GUI_OtherQuery GUI.
+This class is a table model for displaying net amounts data in the HydroBase_GUI_OtherQuery GUI.
 */
 public class HydroBase_TableModel_IrrigatedAcres 
 extends HydroBase_TableModel {
@@ -57,7 +56,7 @@ Constructor.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results were was passed in.
 */
-public HydroBase_TableModel_IrrigatedAcres(Vector results)
+public HydroBase_TableModel_IrrigatedAcres(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -68,8 +67,7 @@ throws Exception {
 }
 
 /**
-From AbstractTableModel.  Returns the class of the data stored in a given
-column.
+From AbstractTableModel.  Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
 public Class getColumnClass (int columnIndex) {
@@ -201,8 +199,7 @@ public int getRowCount() {
 }
 
 /**
-From AbstractTableModel.  Returns the data that should be placed in the JTable
-at the given row and column.
+From AbstractTableModel.  Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -212,8 +209,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_ParcelUseTSStructureToParcel pts =
-		(HydroBase_ParcelUseTSStructureToParcel)_data.elementAt(row);
+	HydroBase_ParcelUseTSStructureToParcel pts = (HydroBase_ParcelUseTSStructureToParcel)_data.get(row);
 	switch (col) {
 		case COL_YEAR:		return new Integer(pts.getCal_year());
 		case COL_DIV:		return new Integer(pts.getDiv());
@@ -234,8 +230,7 @@ public Object getValueAt(int row, int col) {
 			HydroBase_ParcelUseTSStructureToParcel pts2 = null;
 			double area, sum = 0.0;
 			for ( int i = 0; i < _rows; i++ ) {
-				pts2 = (HydroBase_ParcelUseTSStructureToParcel)
-					_data.elementAt(i);
+				pts2 = (HydroBase_ParcelUseTSStructureToParcel)_data.get(i);
 				if ( pts2.getCal_year() != year ) {
 					continue;
 				}

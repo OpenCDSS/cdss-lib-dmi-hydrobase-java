@@ -70,6 +70,7 @@ import java.awt.event.WindowListener;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -291,19 +292,19 @@ private String __bypassStructure = null;
 /**
 The calls for the gui.
 */
-private Vector __calls = null;
+private List __calls = null;
 /**
 The net water rights for the gui.
 */
-private Vector __netWaterRights = null;
+private List __netWaterRights = null;
 /**
 The structures for the gui.
 */
-private Vector __structures = null;
+private List __structures = null;
 /**
 Vector of the gui's textfields.
 */
-private Vector __textFields_Vector = null;
+private List __textFields_Vector = null;
 
 /**
 Constructor.
@@ -449,7 +450,7 @@ private void callsClicked() {
 		return;
 	}
 
-	HydroBase_NetAmts netAmt =(HydroBase_NetAmts)__netWaterRights.elementAt(
+	HydroBase_NetAmts netAmt =(HydroBase_NetAmts)__netWaterRights.get(
 		__callList.getSelectedIndex());
 
 	Date curDate = netAmt.getApro_date();
@@ -565,7 +566,7 @@ This routine displays the net water rights associated with the selected
 structure.
 @param results contains HydroBase_NetAmts results
 */
-private void displayWaterRightNetResults(Vector results, boolean includeBypass){
+private void displayWaterRightNetResults(List results, boolean includeBypass){
 	int size = results.size();
 	String display = __dmi.getPreferenceValue("General.CallingRight");
 
@@ -574,9 +575,9 @@ private void displayWaterRightNetResults(Vector results, boolean includeBypass){
 	Date curDate;
 	double curDouble;
 	HydroBase_NetAmts netAmt;
-	Vector v = new Vector();
+	List v = new Vector();
 	for (int i=0; i<size; i++) {
-		netAmt = (HydroBase_NetAmts)results.elementAt(i);
+		netAmt = (HydroBase_NetAmts)results.get(i);
 
 		curString = "";
 		// display based on user preferences
@@ -646,7 +647,7 @@ private void displayWaterRightNetResults(Vector results, boolean includeBypass){
 			}                
 		}	
 		v.add(curString.trim());
-		__netWaterRights.addElement(netAmt);
+		__netWaterRights.add(netAmt);
 	}
 	
 	if (__dmi.getPreferenceValue("General.BypassCall").equals("1")
@@ -655,7 +656,7 @@ private void displayWaterRightNetResults(Vector results, boolean includeBypass){
 	}
 
 	__callList.setListData(v);
-	__netWaterRights.addElement(new HydroBase_NetAmts());
+	__netWaterRights.add(new HydroBase_NetAmts());
 }
 
 /**
@@ -711,10 +712,10 @@ private void displayStructures() {
 	if (!__structures.isEmpty()) {
 		int size = __structures.size();
 
-		Vector v = new Vector();
+		List v = new Vector();
 		for (int i = 0; i < size; i++) {
 			view = (HydroBase_StructureView)
-				__structures.elementAt(i);
+				__structures.get(i);
 			name = "" + view.getStr_name();
 
 			// get water district
@@ -758,9 +759,9 @@ private void displayCalls() {
 	if (!__calls.isEmpty()) {
 		int size = __calls.size();
 
-		Vector v = new Vector();
+		List v = new Vector();
 		for (int i = 0; i < size; i++) {
-			call = (HydroBase_Calls)__calls.elementAt(i);
+			call = (HydroBase_Calls)__calls.get(i);
 			name = "" + call.getStr_name();
 
 			// get water district
@@ -844,16 +845,16 @@ private void fillBypassCopyData() {
 	
 		if (__displayWISCalls) {
 			view = (HydroBase_StructureView)
-				__structures.elementAt(matchIndex);
+				__structures.get(matchIndex);
 			struct_num = view.getStructure_num();
 		}
 		else {	
-			call = (HydroBase_Calls)__calls.elementAt(matchIndex);
+			call = (HydroBase_Calls)__calls.get(matchIndex);
 			struct_num = call.getStructure_num();
 		}
 	}
 
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readNetAmtsList(struct_num, -999, -999, false, 
 			"72");	
@@ -875,7 +876,7 @@ private void fillBypassCopyData() {
 		HydroBase_NetAmts na = null;
 		int size = results.size();
 		for (int i = 0; i < size; i++) {
-			na = (HydroBase_NetAmts)results.elementAt(i);
+			na = (HydroBase_NetAmts)results.get(i);
 			__netWaterRights.add(na);
 			if (na.getAdmin_no() == adminno) {
 				matchIndex = i;
@@ -926,7 +927,7 @@ private void fillCopyData() {
 
 	int size = __netWaterRights.size();
 	for (int i = 0; i < size; i++) {
-		netAmt = (HydroBase_NetAmts)__netWaterRights.elementAt(i);
+		netAmt = (HydroBase_NetAmts)__netWaterRights.get(i);
 		if (netAmt.getAdmin_no() == admin_no) {
 			index = i;
 			i = size + 1;
@@ -1065,7 +1066,7 @@ Returns the apro date from the selected call.
 private Date getAproDate() {
 	int index = __callList.getSelectedIndex();	
 	HydroBase_NetAmts netAmt = (HydroBase_NetAmts)
-		__netWaterRights.elementAt(index);
+		__netWaterRights.get(index);
 	return netAmt.getApro_date();
 }
 
@@ -1076,7 +1077,7 @@ Returns the admin number from the selected call.
 private String getAdminNumber() {
 	int index = __callList.getSelectedIndex();	
 	HydroBase_NetAmts netAmt = (HydroBase_NetAmts)
-		__netWaterRights.elementAt(index);
+		__netWaterRights.get(index);
 	return "" + netAmt.getAdmin_no();
 }
 
@@ -1087,21 +1088,21 @@ Returns the net number from the selected call.
 private String getNetNumber() {
 	int index = __callList.getSelectedIndex();	
 	HydroBase_NetAmts netAmt = (HydroBase_NetAmts)
-		__netWaterRights.elementAt(index);
+		__netWaterRights.get(index);
 	return "" + netAmt.getNet_num();
 }
 
 /**
 This routine performs a call chronology query.  Returns the result set vector
 */
-private Vector getPreviousCalls() {
+private List getPreviousCalls() {
 	String routine = "HydroBase_GUI_SetCall.getPreviousCalls";
-	Vector orderBy = new Vector();
-	orderBy.addElement("wd");
-	orderBy.addElement("str_name");
+	List orderBy = new Vector();
+	orderBy.add("wd");
+	orderBy.add("str_name");
 	
 	// add division where clause
-	Vector divVector = HydroBase_GUI_Util.getDivisions(__dmi);
+	List divVector = HydroBase_GUI_Util.getDivisions(__dmi);
 	try {
 		return __dmi.readCallsListForDiv(divVector, true);
 	}
@@ -1151,18 +1152,18 @@ public void initialize() {
 
 	// allocate elements in the Vector object
 	for (int i = 0; i < 7; i++) {
-		__textFields_Vector.addElement(new JTextField());
+		__textFields_Vector.add(new JTextField());
 	}
 
 	// set the Elements in the Vector object to the
 	// appropriate JTextField object
-	__textFields_Vector.setElementAt(__adminJTextField, ADMIN_NO);
-	__textFields_Vector.setElementAt(__aproDateJTextField, APPRO_DATE);
-	__textFields_Vector.setElementAt(__decreedJTextField, DECREED_AMT);
-	__textFields_Vector.setElementAt(__adjDateJTextField, ADJ_DATE);
-	__textFields_Vector.setElementAt(__priorNumJTextField, PRIORITY_NUMBER);
-	__textFields_Vector.setElementAt(__callsJTextField, CALL);	
-	__textFields_Vector.setElementAt(__setCommentJTextField, SET_COMMENT);
+	__textFields_Vector.set(ADMIN_NO,__adminJTextField );
+	__textFields_Vector.set(APPRO_DATE,__aproDateJTextField );
+	__textFields_Vector.set(DECREED_AMT,__decreedJTextField );
+	__textFields_Vector.set(ADJ_DATE,__adjDateJTextField );
+	__textFields_Vector.set(PRIORITY_NUMBER,__priorNumJTextField );
+	__textFields_Vector.set(CALL,__callsJTextField );	
+	__textFields_Vector.set(SET_COMMENT,__setCommentJTextField );
 
 	// set date properties
 	__dateProps = new PropList("Calls TSDateBuilderGUI properties");
@@ -1218,7 +1219,7 @@ This routine adds an HydroBase_NetAmts object to the _wdNet object
 at the location corresponding to the BYPASS Structure.
 */
 public void setBYPASSInfo(HydroBase_NetAmts data) {
-	__netWaterRights.setElementAt(data,  __netWaterRights.size() - 1);
+	__netWaterRights.set(__netWaterRights.size() - 1, data );
 }
 
 /**
@@ -1248,11 +1249,11 @@ private void setCallClicked() {
 	String wd = "";
 	if (__displayWISCalls) {
 		wd = "" + ((HydroBase_StructureView)
-			__structures.elementAt(structureIndex)).getWD();
+			__structures.get(structureIndex)).getWD();
 	}
 	else {
 		wd = "" + ((HydroBase_Calls)
-			__calls.elementAt(structureIndex)).getWD();
+			__calls.get(structureIndex)).getWD();
 	}
 
 	if (!__dmi.hasPermission(wd)) {
@@ -1319,7 +1320,7 @@ private void setCallClicked() {
 	String wdwater_num = "";
 	if (__displayWISCalls) {
 		view = (HydroBase_StructureView)	
-			__structures.elementAt(structureIndex);
+			__structures.get(structureIndex);
 		structure_num = "" + view.getStructure_num();
 		wdwater_num = "" + view.getWdwater_num();
 		wd = "" + view.getWD();
@@ -1328,7 +1329,7 @@ private void setCallClicked() {
 		structure_name = "" + view.getStr_name();
 	}
 	else {
-		call = (HydroBase_Calls)__calls.elementAt(structureIndex);
+		call = (HydroBase_Calls)__calls.get(structureIndex);
 		structure_num = "" + call.getStructure_num();
 		wdwater_num = "" + call.getWdwater_num();
 		wd = "" + call.getWD();
@@ -1809,7 +1810,7 @@ object.
 private void structureListClicked() {
 	// first retrieve the net amounts information
 	// initialize variables
-	Vector orderBy = new Vector();
+	List orderBy = new Vector();
 	String routine = "HBEditCalls.structureListClicked()";
 
 	if (__bypassStructure == null) {
@@ -1824,7 +1825,7 @@ private void structureListClicked() {
 	int index = __structureList.getSelectedIndex();
 	// clear out all available call information
 	clearCallFields(false);
-	__netWaterRights.removeAllElements();
+	__netWaterRights.clear();
 	__callList.removeAll();
 
 	if (index == -1) {
@@ -1853,12 +1854,12 @@ private void structureListClicked() {
 
 	if (__displayWISCalls) {
 		view = (HydroBase_StructureView)
-			__structures.elementAt(index);
+			__structures.get(index);
 		struct_num = view.getStructure_num();
 		wdWaterNumber = view.getWdwater_num();
 	}
 	else {	
-		call = (HydroBase_Calls)__calls.elementAt(index);
+		call = (HydroBase_Calls)__calls.get(index);
 		struct_num = call.getStructure_num();
 		wdWaterNumber = call.getWdwater_num();
 	}
@@ -1877,16 +1878,16 @@ private void structureListClicked() {
 	// the other display options also.
 	String display = __dmi.getPreferenceValue("General.CallingRight");
 	if (display.equals(HydroBase_GUI_Options.PRIORITY_NUMBER)) {
-		orderBy.addElement("net_amts.pri_case_no");
+		orderBy.add("net_amts.pri_case_no");
 	}
 	else if (display.equals(HydroBase_GUI_Options.ADJ_DATE)) {
-		orderBy.addElement("net_amts.adj_date");
+		orderBy.add("net_amts.adj_date");
 	}
 	else if (display.equals(HydroBase_GUI_Options.APPRO_DATE)) {
-		orderBy.addElement("net_amts.apro_date");
+		orderBy.add("net_amts.apro_date");
 	}
 	else if (display.equals(HydroBase_GUI_Options.ADMIN_NO)) {
-		orderBy.addElement("net_amts.admin_no");
+		orderBy.add("net_amts.admin_no");
 	}
 	else if (display.equals(HydroBase_GUI_Options.DECREED_AMT)) {
 		// Don't know for sure if it is going to be flow or volume so
@@ -1895,7 +1896,7 @@ private void structureListClicked() {
 		// a decision.
 	}
 
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readNetAmtsList(struct_num, -999, -999, false, 
 			"72");	
@@ -1946,7 +1947,7 @@ private void structureListClicked() {
 		}
 
 		__waterDistrictWaterData = 
-			(HydroBase_WDWater)results.elementAt(0);
+			(HydroBase_WDWater)results.get(0);
 	}
 
 	tempString = "Finished Retrieving Water District Water Data.";
@@ -1971,13 +1972,13 @@ private int structureAddition(HydroBase_Calls newCall) {
 	int comparison;
 	if (__calls == null) {
 		__calls = new Vector(1);
-		__calls.addElement(newCall);
+		__calls.add(newCall);
 	}
 	else {
 		int size = __calls.size();
 
 		for (int i = 0; i < size; i++) {
-			call = (HydroBase_Calls)__calls.elementAt(i);
+			call = (HydroBase_Calls)__calls.get(i);
 			old_wd = call.getWD();
 			if (new_wd > old_wd) {
 				insertIndex++;
@@ -2010,7 +2011,7 @@ private int structureAddition(HydroBase_Calls newCall) {
 				break;
 			}
 		}
-		__calls.insertElementAt(newCall, insertIndex);
+		__calls.add(insertIndex,newCall );
 	}
 
 	// get water district
@@ -2056,14 +2057,14 @@ private void structureAddition(HydroBase_StructureView newCall) {
 	int comparison;
 	if (__structures == null) {
 		__structures = new Vector(1);
-		__structures.addElement(newCall);
+		__structures.add(newCall);
 	}
 	else {
 		int size = __structures.size();
 
 		for (int i = 0; i < size; i++) {
 			view = (HydroBase_StructureView)
-				__structures.elementAt(i);
+				__structures.get(i);
 			old_wd = view.getWD();
 			if (new_wd > old_wd) {
 				insertIndex++;
@@ -2093,7 +2094,7 @@ private void structureAddition(HydroBase_StructureView newCall) {
 			}
 		}
 
-		__structures.insertElementAt(newCall, insertIndex);
+		__structures.add(insertIndex, newCall );
 	}
 
 	// get water district

@@ -16,7 +16,7 @@
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import RTi.Util.Time.DateTime;
 
@@ -113,18 +113,16 @@ public final static int
 	COL_LAT_DEC_DEG =		75;
 
 /**
-Constructor.  This builds the Model for displaying the given well 
-results.
+Constructor.  This builds the Model for displaying the given well results.
 @param results the results that will be displayed in the table.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_WellApplicationView(Vector results)
+public HydroBase_TableModel_WellApplicationView(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_WellApplicationView "
-			+ "constructor.");
+			+ "HydroBase_TableModel_WellApplicationView constructor.");
 	}
 	_rows = results.size();
 	_data = results;
@@ -638,8 +636,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -650,7 +647,7 @@ public Object getValueAt(int row, int col) {
 	}
 
 	HydroBase_WellApplicationView w = 
-		(HydroBase_WellApplicationView)_data.elementAt(row);
+		(HydroBase_WellApplicationView)_data.get(row);
 	switch (col) {
 		case COL_DIV:		return new Integer(w.getDiv());
 		case COL_WD:		return new Integer(w.getWD());

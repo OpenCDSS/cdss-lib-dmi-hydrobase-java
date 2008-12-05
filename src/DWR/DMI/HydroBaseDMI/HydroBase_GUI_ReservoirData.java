@@ -42,6 +42,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -172,7 +173,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -193,7 +194,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -237,8 +238,8 @@ throws Throwable {
 Formats output for printing or exporting.
 @param format the format in which to format the data.
 */
-public Vector formatOutput(int format) {
-	Vector v = new Vector();
+public List formatOutput(int format) {
+	List v = new Vector();
 
 	String s0 = null;
 	String s1 = null;
@@ -249,13 +250,13 @@ public Vector formatOutput(int format) {
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		// The output is pretty simple since the GUI is so simple...
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement("");
-		v.addElement("NORMAL STORAGE: " 
+		v.add("");
+		v.add("NORMAL STORAGE: " 
 			+ StringUtil.formatString(HydroBase_GUI_Util.trimText(
 			__normalJTextField), "%-10.0f")
 			+ "MAXIMUM STORAGE: " +
@@ -269,13 +270,13 @@ public Vector formatOutput(int format) {
 			HydroBase_GUI_Util.trimText(__drainageAreaJTextField), 
 			"%-10.0f"));
 		if (size > 0) {
-			v.addElement("");
-			v.addElement("AREA CAPACITY TABLE");
-			v.addElement("ELEVATION      GAGE HT.      "
+			v.add("");
+			v.add("AREA CAPACITY TABLE");
+			v.add("ELEVATION      GAGE HT.      "
 				+ "SURFACE        VOLUME");
-			v.addElement("(FEET)      (FEET)     AREA(ACRES)    "
+			v.add("(FEET)      (FEET)     AREA(ACRES)    "
 				+ "(AF)");
-			v.addElement("______________________________________"
+			v.add("______________________________________"
 				+ "_________________________________________"
 				+ "_________________________________________");
 
@@ -288,7 +289,7 @@ public Vector formatOutput(int format) {
 					"%16.0f");
 				s3 = __worksheet.getValueAtAsString(i, 3,
 					"%13.0f");
-				v.addElement(
+				v.add(
 					StringUtil.formatString(s0, "%6.6s")
 					+ StringUtil.formatString(s1, "%14.14s")
 					+ StringUtil.formatString(s2, "%16.16s")
@@ -299,17 +300,17 @@ public Vector formatOutput(int format) {
 	}
 	else {	
 		char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement("");
-		v.addElement("NORMAL STORAGE" + delim + "MAXIMUM STORAGE" 
+		v.add("");
+		v.add("NORMAL STORAGE" + delim + "MAXIMUM STORAGE" 
 			+ delim + "SURFACE AREA" + delim + "DRAINAGE AREA" 
 			+ delim);
-		v.addElement(
+		v.add(
 			HydroBase_GUI_Util.trimText(__normalJTextField) 
 			+ delim
 			+ HydroBase_GUI_Util.trimText(__maxJTextField) 
@@ -319,8 +320,8 @@ public Vector formatOutput(int format) {
 			+ HydroBase_GUI_Util.trimText(__drainageAreaJTextField) 
 			+ delim);
 		if (size > 0) {
-			v.addElement("");
-			v.addElement("ELEVATION(FEET)" + delim 
+			v.add("");
+			v.add("ELEVATION(FEET)" + delim 
 				+ "GAGE HT.(FEET)" + delim 
 				+ "SURFACE AREA(ACRES)" + delim + "VOLUME(AF)" 
 				+ delim);
@@ -329,7 +330,7 @@ public Vector formatOutput(int format) {
 				s1 = __worksheet.getValueAtAsString(i, 1);
 				s2 = __worksheet.getValueAtAsString(i, 2);
 				s3 = __worksheet.getValueAtAsString(i, 3);
-				v.addElement(s0 + delim + s1 + delim 
+				v.add(s0 + delim + s1 + delim 
 					+ s2 + delim + s3 + delim);
 			}
 		}
@@ -564,7 +565,7 @@ private void submitAndDisplayAreaCapQuery() {
 		+ ".submitAndDisplayAreaCapQuery";
 	JGUIUtil.setWaitCursor(this, true);
 	
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readAreaCapListForStructure_num(__structureNum);
 	}
@@ -648,7 +649,7 @@ private void submitAndDisplayReservoirQuery() {
 			StringUtil.formatString(curDouble, "%6.1f"));
 	}        
 
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readStructMeasTypeListForStructure_numMeas_type(
 			__structureNum, "ResEOM");
@@ -664,7 +665,7 @@ private void submitAndDisplayReservoirQuery() {
 		return;
 	}
 
-	Object o = results.elementAt(0);
+	Object o = results.get(0);
 	HydroBase_StructMeasTypeView smt 
 		= (HydroBase_StructMeasTypeView)o;
 

@@ -12,7 +12,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying reservoir data in the 
@@ -36,12 +36,11 @@ public final static int
 	COL_VOLUME = 		3;
 
 /**
-Constructor.  This builds the Model for displaying the given reservoir data
-results.
+Constructor.  This builds the Model for displaying the given reservoir data results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_ReservoirData(Vector results)
+public HydroBase_TableModel_ReservoirData(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -114,8 +113,7 @@ public int getRowCount() {
 }
 
 /**
-From AbstractTableModel.  Returns the data that should be placed in the JTable
-at the given row and column.
+From AbstractTableModel.  Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -125,7 +123,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_AreaCap a = (HydroBase_AreaCap)_data.elementAt(row);
+	HydroBase_AreaCap a = (HydroBase_AreaCap)_data.get(row);
 	switch (col) {
 		case COL_ELEVATION:	return new Double(a.getElevation());
  		case COL_GAGE_HEIGHT:	return new Double(a.getGage_height());

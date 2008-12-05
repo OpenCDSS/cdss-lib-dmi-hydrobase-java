@@ -42,6 +42,7 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -210,23 +211,23 @@ private String __streamName = DMIUtil.MISSING_STRING;
 /**
 This is the Vector that holds all the lines of the report.
 */
-private Vector __reportVector = null;
+private List __reportVector = null;
 
 /**
 This is the Vector that holds the results of the query that will be used
 to fill out the reports.
 */
-private Vector __results = null;
+private List __results = null;
 
 /**
 Vector of results from a query of the str_ype table.
 */
-private Vector __strtypesVector = null;
+private List __strtypesVector = null;
 
 /**
 Vector of results from a query of the use table.
 */
-private Vector __useVector = null;
+private List __useVector = null;
 
 /**
 Constructor.  The constructor queries the database for the results that will
@@ -384,7 +385,7 @@ throws Exception {
 	// loop through all the records in the results and print out the
 	// data associated with them
 	for (int i = 0; i < numNodes; i++) {
-		node = (HydroBase_NetAmts)__results.elementAt(i);
+		node = (HydroBase_NetAmts)__results.get(i);
 
 		if (byStream) {
 			// if the current record has a different stream name
@@ -392,19 +393,19 @@ throws Exception {
 			// the section header for the new stream name
 			if (!node.getWd_stream_name().equals(lastStreamName)) {
 				if (i>0) {
-					__reportVector.addElement(new String());
-					__reportVector.addElement(new String());
+					__reportVector.add(new String());
+					__reportVector.add(new String());
 				}
 
 				// get a new header
 				__streamName = node.getWd_stream_name();
 				__isNewStreamNode = true;
 
-				Vector v = getNetAdminReportHeader(byStream);
+				List v = getNetAdminReportHeader(byStream);
 				int size = v.size();
 				for (int j = 0; j < size; j++) {
-					__reportVector.addElement(
-						(String)v.elementAt(j));
+					__reportVector.add(
+						(String)v.get(j));
 				}
 			}
 			else {
@@ -416,12 +417,12 @@ throws Exception {
 		// it to the report vector
 		String line = getNetAdminLine(node);
 		if (line.length() > 0) {
-			__reportVector.addElement(line);
+			__reportVector.add(line);
 		}
 	}
 
 	// add footer
-	__reportVector.addElement(new String("* Alternate Point"));
+	__reportVector.add(new String("* Alternate Point"));
 }
 
 /**
@@ -473,8 +474,8 @@ throws Exception {
 
 	// loop through all the records and print their information
 	for (int i = 0; i < size; i++) {
-		node = (HydroBase_NetAmts)__results.elementAt(i);
-		__reportVector.addElement(getNetTabulationLine(node, (i + 1)));
+		node = (HydroBase_NetAmts)__results.get(i);
+		__reportVector.add(getNetTabulationLine(node, (i + 1)));
 		// Garbage collect to try to prevent problems...
 		if ((i%500) == 0) {
 			node = null;
@@ -585,7 +586,7 @@ throws Exception {
 
 	// loop through each record and print out its information
 	for (int i = 0; i < numNodes; i++) {
-		node = (HydroBase_NetAmts)__results.elementAt(i);
+		node = (HydroBase_NetAmts)__results.get(i);
 
 		if (byStream) {
 			// if the current record has a different stream name
@@ -595,16 +596,16 @@ throws Exception {
 				__streamName = node.getWd_stream_name();
 				__isNewStreamNode = true;
 				if (i > 0) {
-					__reportVector.addElement(new String());
-					__reportVector.addElement(new String());
+					__reportVector.add(new String());
+					__reportVector.add(new String());
 				}
 
-				Vector v = 
+				List v = 
 				getTransAdminReportHeader(byStream);
 				int size = v.size();
 				for (int j = 0; j < size; j++) {
-					__reportVector.addElement(
-						(String)v.elementAt(j));
+					__reportVector.add(
+						(String)v.get(j));
 				}
 			}
 			else {
@@ -612,11 +613,11 @@ throws Exception {
 			}
 			lastStreamName = node.getWd_stream_name();
 		}
-		__reportVector.addElement(getTransAdminLine(node));
+		__reportVector.add(getTransAdminLine(node));
 	}
 
 	// add footer
-	__reportVector.addElement(new String("* Alternate Point"));
+	__reportVector.add(new String("* Alternate Point"));
 }
 
 /**
@@ -660,7 +661,7 @@ throws Exception {
 
 	// loop through each record and print out its information
 	for (int i = 0; i < numNodes; i++) {
-		node = (HydroBase_NetAmts)__results.elementAt(i);
+		node = (HydroBase_NetAmts)__results.get(i);
 
 		if ((i %500) == 0) {
 			System.gc();
@@ -672,18 +673,18 @@ throws Exception {
 			// the section header for the new stream name		
 			__isNewStreamNode = true;
 			if (i > 0) {
-				__reportVector.addElement(new String());
-				__reportVector.addElement(new String());
+				__reportVector.add(new String());
+				__reportVector.add(new String());
 			}
 
 			// get a new header
 			__streamName = node.getWd_stream_name();
 			__isNewStreamNode = true;
-			Vector v = getTransStreamReportHeader();
+			List v = getTransStreamReportHeader();
 			int size = v.size();
 			for (int j = 0; j < size; j++) {
-				__reportVector.addElement(
-					(String)v.elementAt(j));
+				__reportVector.add(
+					(String)v.get(j));
 			}
 		}
 		else {	
@@ -691,11 +692,11 @@ throws Exception {
 		}
 
 		lastStreamName = node.getWd_stream_name();
-		__reportVector.addElement(getTransStreamLine(node));
+		__reportVector.add(getTransStreamLine(node));
 	}
 
 	// add footer
-	__reportVector.addElement(new String("* Alternate Point"));
+	__reportVector.add(new String("* Alternate Point"));
 }
 
 /**
@@ -758,21 +759,21 @@ private String getNetAdminLine(HydroBase_NetAmts n)
 throws Exception {
  	int maxUseLength = 3;
 	double cumulTotal = DMIUtil.MISSING_DOUBLE;
-	Vector 	v = new Vector(35, 5);
+	List 	v = new Vector(35, 5);
 	double admin_no = n.getAdmin_no();
 
 	// if this has the same admin num as the last record that was
 	// added to the report, add an asterisk after its admin no
 	if (admin_no == __lastAdminNum) {
-		v.addElement(new String(format(admin_no, "%11.5f")+ "*"));
+		v.add(new String(format(admin_no, "%11.5f")+ "*"));
 	}
 	else {
-		v.addElement(new String(format(admin_no, "%11.5f")));
+		v.add(new String(format(admin_no, "%11.5f")));
 	}
 
-	v.addElement(format(n.getID()));
-	v.addElement(n.getWr_name());
-	v.addElement(n.getPri_case_no());
+	v.add(format(n.getID()));
+	v.add(n.getWr_name());
+	v.add(n.getPri_case_no());
 
 	boolean isCFS = true;
 	String unit = n.getUnit();
@@ -788,8 +789,8 @@ throws Exception {
 // will match?) I don't think so and so the admin_no reset is done:
 			return "";
 		}
-		v.addElement(format(nra, "%7.4f"));
-		v.addElement(getUnit(unit)); 
+		v.add(format(nra, "%7.4f"));
+		v.add(getUnit(unit)); 
 		cumulTotal = nra;
 	}
 	else {
@@ -803,14 +804,14 @@ throws Exception {
 			// this station gets skipped
 			return "";
 		}
-		v.addElement(format(nva, "%7.4f"));
-		v.addElement(getUnit(unit)); 
+		v.add(format(nva, "%7.4f"));
+		v.add(getUnit(unit)); 
 		cumulTotal = nva;
 		isCFS = false;
 	}
 
-	v.addElement(translateNewToOld(n.getUse(), maxUseLength));
-	v.addElement(n.getAction_comment());
+	v.add(translateNewToOld(n.getUse(), maxUseLength));
+	v.add(n.getAction_comment());
 
 	//
 	// now calculate the cumulative total for that id
@@ -835,7 +836,7 @@ throws Exception {
 		__sumsAF.put(ID, new Double(cumulTotal));
 	}
 
-	v.addElement(format(cumulTotal, "%6.2f"));
+	v.add(format(cumulTotal, "%6.2f"));
 
 	// keep track of the last admin number
 	__lastAdminNum = admin_no;
@@ -848,9 +849,9 @@ Returns a header for a Priority List or Priority List by Stream report.
 @param byStream whether the report is By Stream (true) or not
 @throws Exception if an error occurs.
 */
-private Vector getNetAdminReportHeader(boolean byStream)
+private List getNetAdminReportHeader(boolean byStream)
 throws Exception {
-	Vector report = new Vector(4);
+	List report = new Vector(4);
 	String formatHeader = 
 		"%-12.12s %-5.5s %-24.24s %-9.9s %-9.9s " 
 		+ "%-4.4s %-80.80s %-6.6s";
@@ -869,28 +870,28 @@ throws Exception {
 	}
 
 	if (byStream) {
-		report.addElement(" PRIORITY LIST BY STREAM - " + stream_name);
+		report.add(" PRIORITY LIST BY STREAM - " + stream_name);
 	}
 	else {
-		report.addElement("                           " 
+		report.add("                           " 
 			+ "PRIORITY LIST");
 	}
 
 	// add column titles
-	report.addElement(new String());
-	Vector v = new Vector(20, 5);
-	v.addElement("AdminNumber");
-	v.addElement(" ID");
-	v.addElement("STRUCTURE NAME");
-	v.addElement("COURT NO");
-	v.addElement("AMOUNT");
-	v.addElement("USES");
-	v.addElement("COMMENTS");
-	v.addElement("TOTAL");
-	report.addElement(StringUtil.formatString(v, formatHeader));
+	report.add(new String());
+	List v = new Vector(20, 5);
+	v.add("AdminNumber");
+	v.add(" ID");
+	v.add("STRUCTURE NAME");
+	v.add("COURT NO");
+	v.add("AMOUNT");
+	v.add("USES");
+	v.add("COMMENTS");
+	v.add("TOTAL");
+	report.add(StringUtil.formatString(v, formatHeader));
 
 	// add ---
-	report.addElement(
+	report.add(
 		"------------ ----- ------------------------ " 
 		+ "--------- --------- ---- -------------------------------" 
 		+ "------------------------------------------------- ------");
@@ -907,7 +908,7 @@ Vector (base-1)
 */
 private String getNetTabulationLine(HydroBase_NetAmts n, int count)
 throws Exception {
-	Vector v = new Vector(35, 5);
+	List v = new Vector(35, 5);
 	int maxUseLength = 3;
 	double rate_abs;
 	double rate_apex;
@@ -917,24 +918,24 @@ throws Exception {
 	double vol_cond;	
 
 	// Format the right for a water rights tabulation...
-	v.addElement(n.getWr_name());
-	v.addElement(createStructureType(n.getXstrtype()));
-	v.addElement(n.getWd_stream_name());
-	v.addElement(new Integer(n.getWD()));
+	v.add(n.getWr_name());
+	v.add(createStructureType(n.getXstrtype()));
+	v.add(n.getWd_stream_name());
+	v.add(new Integer(n.getWD()));
 	
 	// create location string
-	Vector vl = new Vector(7,1);
-	vl.addElement(n.getQ10());
-	vl.addElement(n.getQ40());
-	vl.addElement(n.getQ160());
-	vl.addElement(format(n.getSec()));
-	vl.addElement(n.getTS());
-	vl.addElement(n.getTdir());
-	vl.addElement(n.getRng());
-	vl.addElement(n.getRdir());
-	vl.addElement(n.getPM());
-	v.addElement(StringUtil.formatString(vl, TABULATION_LOCATION_FORMAT));
-	v.addElement(translateNewToReport(n.getUse(), maxUseLength));
+	List vl = new Vector(7,1);
+	vl.add(n.getQ10());
+	vl.add(n.getQ40());
+	vl.add(n.getQ160());
+	vl.add(format(n.getSec()));
+	vl.add(n.getTS());
+	vl.add(n.getTdir());
+	vl.add(n.getRng());
+	vl.add(n.getRdir());
+	vl.add(n.getPM());
+	v.add(StringUtil.formatString(vl, TABULATION_LOCATION_FORMAT));
+	v.add(translateNewToReport(n.getUse(), maxUseLength));
 
 	// The units determine which values we output and only output
 	// if at least one of the values are non-zero..
@@ -955,38 +956,38 @@ throws Exception {
 		// Only print if non-missing...
 		if (!DMIUtil.isMissing(vol_abs)) {
 			if (vol_abs == 0) {
-				v.addElement("");		
+				v.add("");		
 			}
 			else {
-				v.addElement(format(vol_abs, "%9.3F"));
+				v.add(format(vol_abs, "%9.3F"));
 			}
 		}
 		else {	
-			v.addElement("");
+			v.add("");
 		}
 		
 		if (!DMIUtil.isMissing(vol_cond)) {
 			if (vol_cond == 0) {
-				v.addElement("");
+				v.add("");
 			}
 			else {
-				v.addElement(format(vol_cond, "%9.3F"));
+				v.add(format(vol_cond, "%9.3F"));
 			}
 		}
 		else {	
-			v.addElement("");
+			v.add("");
 		}
 		
 		if (!DMIUtil.isMissing(vol_apex)) {
 			if (vol_apex == 0) {
-				v.addElement("");
+				v.add("");
 			}
 			else {
-				v.addElement(format(vol_apex, "%9.3F"));
+				v.add(format(vol_apex, "%9.3F"));
 			}
 		}
 		else {	
-			v.addElement("");
+			v.add("");
 		}
 
 	}
@@ -1005,86 +1006,86 @@ throws Exception {
 
 		if (!DMIUtil.isMissing(rate_abs)) {
 			if (rate_abs == 0) {
-				v.addElement("");
+				v.add("");
 			}
 			else {
-				v.addElement(format(rate_abs, "%9.3F"));
+				v.add(format(rate_abs, "%9.3F"));
 			}
 		}
 		else {	
-			v.addElement("");
+			v.add("");
 		}
 		
 		if (!DMIUtil.isMissing(rate_cond)) {
 			if (rate_cond == 0) {
-				v.addElement("");
+				v.add("");
 			}
 			else {
-				v.addElement(format(rate_cond, "%9.3F"));
+				v.add(format(rate_cond, "%9.3F"));
 			}
 		}
 		else {	
-			v.addElement("");
+			v.add("");
 		}
 			
 		if (!DMIUtil.isMissing(rate_apex)) {
 			if (rate_apex == 0) {
-				v.addElement("");
+				v.add("");
 			}
 			else {
-				v.addElement(format(rate_apex, "%9.3F"));
+				v.add(format(rate_apex, "%9.3F"));
 			}
 		}
 		else {	
-			v.addElement("");
+			v.add("");
 		}
 	}
 
-	v.addElement(unit); 
+	v.add(unit); 
 
 	if (!DMIUtil.isMissing(n.getAdj_date())) {
-		v.addElement((new DateTime(n.getAdj_date())).
+		v.add((new DateTime(n.getAdj_date())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {	
-		v.addElement("");
+		v.add("");
 	}
 
 	if (!DMIUtil.isMissing(n.getPadj_date())) {
-		v.addElement((new DateTime(n.getAdj_date())).
+		v.add((new DateTime(n.getAdj_date())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {	
-		v.addElement("");
+		v.add("");
 	}
 
 	if (!DMIUtil.isMissing(n.getApro_date())) {
-		v.addElement((new DateTime(n.getApro_date())).
+		v.add((new DateTime(n.getApro_date())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {	
-		v.addElement("");
+		v.add("");
 	}
 
 	// add order number
 	if (n.getOrder_no() == 0) {
-		v.addElement("");
+		v.add("");
 	}
 	else {	
-		v.addElement(format(n.getOrder_no()));
+		v.add(format(n.getOrder_no()));
 	}
 
 	double curAdminNum = n.getAdmin_no();
 	if (curAdminNum == __lastAdminNum) {
-		v.addElement(new String(format(curAdminNum, "%11.5f")+ "*"));
+		v.add(new String(format(curAdminNum, "%11.5f")+ "*"));
 	}
 	else {	
-		v.addElement(new String(format(curAdminNum, "%11.5f")));
+		v.add(new String(format(curAdminNum, "%11.5f")));
 	}
 
-	v.addElement(format(n.getID()));
-	v.addElement(n.getPri_case_no());
-	v.addElement(format(count));
+	v.add(format(n.getID()));
+	v.add(n.getPri_case_no());
+	v.add(format(count));
 
 	// Keep track of the last admin number because it affects the
 	// output...
@@ -1097,44 +1098,44 @@ throws Exception {
 Returns a header for a tabulation report.
 @throws Exception if an error occurs.
 */
-private Vector getNetTabulationReportHeader()
+private List getNetTabulationReportHeader()
 throws Exception {
-	Vector report = new Vector(4);
+	List report = new Vector(4);
 	String formatTopHeader = "%-24s%53.53s%-48.48s%-24.24s";
-	Vector fv = new Vector(4);
+	List fv = new Vector(4);
 
-	fv.addElement("");
-	fv.addElement(" ");
-	fv.addElement("Tabulation Report");
-	fv.addElement((new DateTime(new Date())).
+	fv.add("");
+	fv.add(" ");
+	fv.add("Tabulation Report");
+	fv.add((new DateTime(new Date())).
 		toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
-	report.addElement(StringUtil.formatString(fv,
+	report.add(StringUtil.formatString(fv,
 	formatTopHeader));
-	report.addElement("");
+	report.add("");
 
 	// add column titles, line 1
-	Vector v = new Vector(17, 1);
-	v.addElement("Name of Structure");
-	v.addElement("Typ");
-	v.addElement("Name of Source");
-	v.addElement("WD");
-	v.addElement("- - L O C A T I O N  - -");
-	v.addElement("Use");
-	v.addElement("Net Abs");
-	v.addElement("Net Cond");
-	v.addElement("AltP/Exch");
-	v.addElement("U");
-	v.addElement("Adj Date");
-	v.addElement("P Adj Date");
-	v.addElement("Appro Date");
-	v.addElement("Or");
-	v.addElement("AdminNumber");
-	v.addElement("ID#");
-	v.addElement("Pr#/C#");
-	v.addElement("Line");
+	List v = new Vector(17, 1);
+	v.add("Name of Structure");
+	v.add("Typ");
+	v.add("Name of Source");
+	v.add("WD");
+	v.add("- - L O C A T I O N  - -");
+	v.add("Use");
+	v.add("Net Abs");
+	v.add("Net Cond");
+	v.add("AltP/Exch");
+	v.add("U");
+	v.add("Adj Date");
+	v.add("P Adj Date");
+	v.add("Appro Date");
+	v.add("Or");
+	v.add("AdminNumber");
+	v.add("ID#");
+	v.add("Pr#/C#");
+	v.add("Line");
 
-	report.addElement(StringUtil.formatString(v, TABULATION_FORMAT));
-	report.addElement("");
+	report.add(StringUtil.formatString(v, TABULATION_FORMAT));
+	report.add("");
 	return report;
 }
 
@@ -1155,7 +1156,7 @@ throws Exception {
 	int size = __strtypesVector.size();
 
 	for (int i = 0; i < size; i++) {
-		hbst = (HydroBase_StrType)(__strtypesVector.elementAt(i));
+		hbst = (HydroBase_StrType)(__strtypesVector.get(i));
 
 		if (hbst.getStr_type().equalsIgnoreCase(structureType)) {
 			return  hbst.getRpt_code();
@@ -1172,7 +1173,7 @@ by Stream report.
 */
 private String getTransAdminLine(HydroBase_NetAmts n)
 throws Exception {
-	Vector v = new Vector(35, 5);
+	List v = new Vector(35, 5);
 	if (__isNewStreamNode) {
 		__abscfs = DMIUtil.MISSING_DOUBLE;
 		__condcfs = DMIUtil.MISSING_DOUBLE;
@@ -1189,34 +1190,34 @@ throws Exception {
 	// if this has the same admin num as the last record that was
 	// added to the report, add an asterisk after its admin no	
 	if (curAdminNum == __lastAdminNum) {
-		v.addElement(new String(format(curAdminNum, "%11.5f") + "*"));
+		v.add(new String(format(curAdminNum, "%11.5f") + "*"));
 	}
 	else {
-		v.addElement(new String(format(curAdminNum, "%11.5f")));
+		v.add(new String(format(curAdminNum, "%11.5f")));
 	}
 
 	// keep track of the last admin number
 	__lastAdminNum = curAdminNum;
-	v.addElement(format(n.getOrder_no()));
-	v.addElement(n.getPri_case_no());
+	v.add(format(n.getOrder_no()));
+	v.add(n.getPri_case_no());
 	if (n.getApex().equalsIgnoreCase("Y")) {
-		v.addElement("*");
+		v.add("*");
 	}
 	else {
-		v.addElement(" ");
+		v.add(" ");
 	}
-	v.addElement(format(n.getID()));
-	v.addElement(n.getWr_name());
-	v.addElement(n.getUnit());
+	v.add(format(n.getID()));
+	v.add(n.getWr_name());
+	v.add(n.getUnit());
 
 	String unit = n.getUnit();
 	if (unit.equalsIgnoreCase("C"))
 	{
 		if (DMIUtil.isMissing(n.getNet_rate_abs())) {
-			v.addElement("");
+			v.add("");
 		}
 		else {
-			v.addElement(format(n.getNet_rate_abs(), "%10.3f"));
+			v.add(format(n.getNet_rate_abs(), "%10.3f"));
 			if (DMIUtil.isMissing(__abscfs)) {
 				__abscfs = n.getNet_rate_abs();
 			}
@@ -1227,10 +1228,10 @@ throws Exception {
 	}
 	else {
 		if (DMIUtil.isMissing(n.getNet_vol_abs())) {
-			v.addElement("");
+			v.add("");
 		}
 		else {
-			v.addElement(format(n.getNet_vol_abs(), "%10.3f"));
+			v.add(format(n.getNet_vol_abs(), "%10.3f"));
 			if (DMIUtil.isMissing(__absaf)) {
 				__absaf = n.getNet_vol_abs();
 			}
@@ -1242,10 +1243,10 @@ throws Exception {
 	
 	if (unit.equalsIgnoreCase("C")) {
 		if (DMIUtil.isMissing(n.getNet_rate_cond())) {
-			v.addElement("");
+			v.add("");
 		}
 		else {
-			v.addElement(format(n.getNet_rate_cond(), "%10.3f"));
+			v.add(format(n.getNet_rate_cond(), "%10.3f"));
 			if (DMIUtil.isMissing(__condcfs)) {
 				__condcfs = n.getNet_rate_cond();
 			}
@@ -1256,10 +1257,10 @@ throws Exception {
 	}
 	else {	// units = AF
 		if (DMIUtil.isMissing(n.getNet_vol_cond())) {
-			v.addElement("");
+			v.add("");
 		}
 		else {
-			v.addElement(format(n.getNet_vol_cond(),"%10.3f"));
+			v.add(format(n.getNet_vol_cond(),"%10.3f"));
 			if (DMIUtil.isMissing(__condaf)) {
 				__condaf = n.getNet_vol_cond();
 			}
@@ -1273,14 +1274,14 @@ throws Exception {
 	// ABS/CFS
 	//
 	if (DMIUtil.isMissing(__abscfs)) {
-		v.addElement("");
+		v.add("");
 	}
 	else {
 		if (__abscfs != __prevAbscfs) {
-			v.addElement(format(__abscfs, "%11.2F"));
+			v.add(format(__abscfs, "%11.2F"));
 		}
 		else {
-			v.addElement("\"");
+			v.add("\"");
 		}
 		__prevAbscfs = __abscfs;
 	}
@@ -1288,14 +1289,14 @@ throws Exception {
 	// COND/CFS
 	//
 	if (DMIUtil.isMissing(__condcfs)) {
-		v.addElement("");
+		v.add("");
 	}
 	else {
 		if (__condcfs != __prevCondcfs) {
-			v.addElement(format(__condcfs, "%11.2F"));
+			v.add(format(__condcfs, "%11.2F"));
 		}
 		else {
-			v.addElement("\"");
+			v.add("\"");
 		}
 		__prevCondcfs = __condcfs;
 	}
@@ -1303,14 +1304,14 @@ throws Exception {
 	// ABS/AF
 	//
 	if (DMIUtil.isMissing(__absaf)) {
-		v.addElement("");
+		v.add("");
 	}
 	else {
 		if (__absaf != __prevAbsaf) {
-			v.addElement(format(__absaf, "%11.2F"));
+			v.add(format(__absaf, "%11.2F"));
 		}
 		else {
-			v.addElement("\"");
+			v.add("\"");
 		}
 		__prevAbsaf = __absaf;
 	}
@@ -1318,14 +1319,14 @@ throws Exception {
 	// COND/AF
 	//
 	if (DMIUtil.isMissing(__condaf)) {
-		v.addElement("");
+		v.add("");
 	}
 	else {
 		if (__condaf != __prevCondaf) {
-			v.addElement(format(__condaf, "%11.2F"));
+			v.add(format(__condaf, "%11.2F"));
 		}
 		else {
-			v.addElement("\"");
+			v.add("\"");
 		}
 		__prevCondaf = __condaf;
 	}
@@ -1340,8 +1341,8 @@ Stream report.
 Stream report (true) or for an Administrative Summary report (false).
 @throws Exception if an error occurs.
 */
-private Vector getTransAdminReportHeader(boolean byStream) {
-	Vector report = new Vector(4);
+private List getTransAdminReportHeader(boolean byStream) {
+	List report = new Vector(4);
 	String formatTopHeader = 
 		"%-11.11s %-2.2s %-9.9s %-5.5s %-24.24s %-2.2s " 
 		+ "%-20.20s %-47.47s";
@@ -1355,46 +1356,46 @@ private Vector getTransAdminReportHeader(boolean byStream) {
 	}
 
 	if (byStream) {
-		report.addElement(" ADMINISTRATIVE SUMMARY LIST BY STREAM - " 
+		report.add(" ADMINISTRATIVE SUMMARY LIST BY STREAM - " 
 			+  stream_name + "          " 
 			+ ((new DateTime(new Date())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY)));
 	} 
 	else {
-		report.addElement("                                          "
+		report.add("                                          "
 			+ "ADMINISTRATIVE SUMMARY LIST" 
 			+ "                  " + ((new DateTime(new Date())).
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY)));
 	}
 
 
-	report.addElement(new String());
-	Vector v = new Vector(20, 5);
-	v.addElement("ADMIN");
-	v.addElement("ORD");
-	v.addElement("PRIORITY");
-	v.addElement("");
-	v.addElement("WATER RIGHT");
-	v.addElement("");
-	v.addElement("-------- NET --------");
-	v.addElement("------------------ CUMULATIVE ------------------");
-	report.addElement(StringUtil.formatString(v, formatTopHeader));
+	report.add(new String());
+	List v = new Vector(20, 5);
+	v.add("ADMIN");
+	v.add("ORD");
+	v.add("PRIORITY");
+	v.add("");
+	v.add("WATER RIGHT");
+	v.add("");
+	v.add("-------- NET --------");
+	v.add("------------------ CUMULATIVE ------------------");
+	report.add(StringUtil.formatString(v, formatTopHeader));
 
-	v.removeAllElements();
-	v.addElement("    #");
-	v.addElement("#");
-	v.addElement("       #");
-	v.addElement("ID");
-	v.addElement("NAME");
-	v.addElement("UNITS");
-	v.addElement(" ABSOLUTE");
-	v.addElement("CONDITIONAL");
-	v.addElement("   ABS/CFS");
-	v.addElement("  COND/CFS");
-	v.addElement("   ABS/AF");
-	v.addElement("   COND/AF");
-	report.addElement(StringUtil.formatString(v, formatHeader));
-	report.addElement("----------- -- --------- ----- " 
+	v.clear();
+	v.add("    #");
+	v.add("#");
+	v.add("       #");
+	v.add("ID");
+	v.add("NAME");
+	v.add("UNITS");
+	v.add(" ABSOLUTE");
+	v.add("CONDITIONAL");
+	v.add("   ABS/CFS");
+	v.add("  COND/CFS");
+	v.add("   ABS/AF");
+	v.add("   COND/AF");
+	report.add(StringUtil.formatString(v, formatHeader));
+	report.add("----------- -- --------- ----- " 
 		+ "------------------------ -- ---------- ---------- " 
 		+ "----------- ----------- ----------- -----------");
 
@@ -1408,40 +1409,40 @@ Gets a line of data for a Stream Alphabetical report.
 */
 private String getTransStreamLine(HydroBase_NetAmts n)
 throws Exception {
-	Vector v = new Vector(35, 5);
+	List v = new Vector(35, 5);
 	double admin_no = n.getAdmin_no();
 
 	// if this has the same admin num as the last record that was
 	// added to the report, add an asterisk after its admin no	
 	if (admin_no == __lastAdminNum) {
-		v.addElement(new String(format(admin_no, "%11.5f") + "*"));
+		v.add(new String(format(admin_no, "%11.5f") + "*"));
 	}
 	else {
-		v.addElement(new String(format(admin_no, "%11.5f")));
+		v.add(new String(format(admin_no, "%11.5f")));
 	}
 
-	v.addElement(format(n.getOrder_no()));
-	v.addElement(n.getPri_case_no());
-	v.addElement(format(n.getID()));
+	v.add(format(n.getOrder_no()));
+	v.add(n.getPri_case_no());
+	v.add(format(n.getID()));
 	if (n.getApex().equalsIgnoreCase("Y")) {
-		v.addElement("*");
+		v.add("*");
 	}
 	else {
-		v.addElement(" ");
+		v.add(" ");
 	}
-	v.addElement(n.getWr_name());
+	v.add(n.getWr_name());
 	String unit = n.getUnit();
-	v.addElement(unit);
+	v.add(unit);
 	if (unit.startsWith("C"))
 	{
-		v.addElement(format(n.getNet_rate_abs(), "%10.3f"));
-		v.addElement(format(n.getNet_rate_cond(), "%10.3f"));
+		v.add(format(n.getNet_rate_abs(), "%10.3f"));
+		v.add(format(n.getNet_rate_cond(), "%10.3f"));
 	}
 	else {
-		v.addElement(format(n.getNet_vol_abs(), "%10.3f"));
-		v.addElement(format(n.getNet_vol_cond(), "%10.3f"));
+		v.add(format(n.getNet_vol_abs(), "%10.3f"));
+		v.add(format(n.getNet_vol_cond(), "%10.3f"));
 	}
-	v.addElement(n.getAction_comment());
+	v.add(n.getAction_comment());
 
 	// keep track of the last admin number
 	__lastAdminNum = admin_no;
@@ -1453,9 +1454,9 @@ throws Exception {
 Returns a report header for a Stream Alphabetical report.
 @throws Exception if an error occurs.
 */
-private Vector getTransStreamReportHeader()
+private List getTransStreamReportHeader()
 throws Exception {
-	Vector report = new Vector(4);
+	List report = new Vector(4);
 	String formatTopHeader = 
 		"%-11.11s %-3.3s %-9.9s %-5.5s %-24.24s %-2.2s " 
 		+ "%-22.22s %-80.80s";
@@ -1469,35 +1470,35 @@ throws Exception {
 		stream_name = __streamName;
 	}
 
-	report.addElement(" STREAM ALPHABETICAL LIST - " + stream_name);
-	report.addElement(new String());
+	report.add(" STREAM ALPHABETICAL LIST - " + stream_name);
+	report.add(new String());
 
-	Vector v = new Vector(20, 5);
+	List v = new Vector(20, 5);
 
-	v.addElement("ADMIN");
-	v.addElement("ORD");
-	v.addElement("PRIORITY");
-	v.addElement("");
-	v.addElement("WATER RIGHT");
-	v.addElement("");
-	v.addElement("-------- NET --------");
-	v.addElement("");
-	report.addElement(StringUtil.formatString(v, formatTopHeader));
+	v.add("ADMIN");
+	v.add("ORD");
+	v.add("PRIORITY");
+	v.add("");
+	v.add("WATER RIGHT");
+	v.add("");
+	v.add("-------- NET --------");
+	v.add("");
+	report.add(StringUtil.formatString(v, formatTopHeader));
 
-	v.removeAllElements();
-	v.addElement("    #");
-	v.addElement("  #");
-	v.addElement("       #");
-	v.addElement("ID");
-	v.addElement("NAME");
-	v.addElement("UNITS");
-	v.addElement(" ABSOLUTE");
-	v.addElement("CONDITIONAL");
-	v.addElement("COMMENT");
-	report.addElement(StringUtil.formatString(v, formatHeader));
+	v.clear();
+	v.add("    #");
+	v.add("  #");
+	v.add("       #");
+	v.add("ID");
+	v.add("NAME");
+	v.add("UNITS");
+	v.add(" ABSOLUTE");
+	v.add("CONDITIONAL");
+	v.add("COMMENT");
+	report.add(StringUtil.formatString(v, formatHeader));
 
 	// add ---
-	report.addElement("----------- --- --------- ----- " 
+	report.add("----------- --- --------- ----- " 
 		+ "------------------------ -- ---------- ---------- " 
 		+ "--------------------------------------------------" 
 		+ "------------------------------");
@@ -1509,7 +1510,7 @@ throws Exception {
 Returns the report that was generated.
 @return the report that was generated.
 */
-public Vector getReport() {
+public List getReport() {
 	return __reportVector;
 }
 
@@ -1585,7 +1586,7 @@ throws Exception {
 	}
 	int size = __useVector.size();
 	for (int i = 0; i < size; i++) {
-		HydroBase_Use u = (HydroBase_Use)__useVector.elementAt(i);
+		HydroBase_Use u = (HydroBase_Use)__useVector.get(i);
 		if (u.getUse().equalsIgnoreCase(s)) {
 			return i;
 		}
@@ -1623,7 +1624,7 @@ throws Exception {
 		int index = lookupUsingUse(use);
 		if (!DMIUtil.isMissing(index)) {
 			old += ((HydroBase_Use)
-				__useVector.elementAt(index)).getXuse();
+				__useVector.get(index)).getXuse();
 		}
 
 		if (old.length() == (maxLength)) {
@@ -1664,7 +1665,7 @@ throws Exception {
 		int index = lookupUsingUse(use); 
 		if (index >= 0) {
 			report += ((HydroBase_Use)
-				__useVector.elementAt(index)).getRpt_code();
+				__useVector.get(index)).getRpt_code();
 		}
 
 		if (report.length() == (maxLength)) {

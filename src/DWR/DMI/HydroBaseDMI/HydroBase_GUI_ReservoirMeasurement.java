@@ -45,6 +45,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -184,7 +185,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -205,7 +206,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -282,8 +283,8 @@ throws Throwable {
 Formats output for printing or writing to a file.
 @param format the format in which to format the output.
 */
-public Vector formatOutput(int format) {
-	Vector v = new Vector();
+public List formatOutput(int format) {
+	List v = new Vector();
 	// First get the multilist back as strings...
 
 	int size = __worksheet.getRowCount();
@@ -291,20 +292,20 @@ public Vector formatOutput(int format) {
 	String s0, s1, s2, s3, s4, s5;
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		// The output is pretty simple since the GUI is so simple...
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField),
 			format));
-		v.addElement("");
-		v.addElement("                                              "
+		v.add("");
+		v.add("                                              "
 			+ "RESERVOIR MEASUREMENT DATA");
-		v.addElement("DATE           GAGE HT.      STORAGE        "
+		v.add("DATE           GAGE HT.      STORAGE        "
 			+ "INFLOW         RELEASE       EVAP. LOSS");
-		v.addElement("              (FEET)        (AF)       (AF) "
+		v.add("              (FEET)        (AF)       (AF) "
 			+ "        (AF)            (AF)");
-		v.addElement("____________________________________________"
+		v.add("____________________________________________"
 			+ "____________________________________");
 		// Now do the curve(skip the header)...
 		for (int i = 0; i < size; i++) {
@@ -315,7 +316,7 @@ public Vector formatOutput(int format) {
 			s4 = __worksheet.getValueAtAsString(i, 4, "%16.0f");
 			s5 = __worksheet.getValueAtAsString(i, 5, "%16.0f");
 
-			v.addElement(
+			v.add(
 				StringUtil.formatString(s0.trim(), "%10.10s")
 				+ StringUtil.formatString(s1, "%11.11s")
 				+ StringUtil.formatString(s2, "%14.14s")
@@ -326,15 +327,15 @@ public Vector formatOutput(int format) {
 	}
 	else {	
                 char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText( __structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField),
 			format));
-		v.addElement("");
-		v.addElement("DATE" + delim + "GAGE HT.(FEET)" + delim 
+		v.add("");
+		v.add("DATE" + delim + "GAGE HT.(FEET)" + delim 
 			+ "STORAGE(AF)" + delim + "INFLOW(AF)" + delim
 			+ "RELEASE(AF)" + delim + "EVAP LOSS(AF)" + delim);
 		// Now do the curve(skip the header)...
@@ -345,7 +346,7 @@ public Vector formatOutput(int format) {
 			s3 = __worksheet.getValueAtAsString(i, 3, "%16.0f");
 			s4 = __worksheet.getValueAtAsString(i, 4, "%16.0f");
 			s5 = __worksheet.getValueAtAsString(i, 5, "%16.0f");
-			v.addElement(
+			v.add(
 				StringUtil.formatString(s0.trim(), "%10.10s")
 				.trim()
 				+ delim + s1.trim()
@@ -550,7 +551,7 @@ private void submitReservoirMeasurementQuery() {
 	
         int numRecords = 0;
 	try {
-	      	Vector results = 
+		List results = 
 			__dmi.readResMeasListForStructure_num(__structureNum);
 	        if (results != null && results.size() > 0) {
 			__worksheet.setData(results);

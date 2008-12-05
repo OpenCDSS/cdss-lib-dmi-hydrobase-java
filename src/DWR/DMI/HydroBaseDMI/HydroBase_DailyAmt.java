@@ -25,7 +25,7 @@
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
@@ -729,7 +729,7 @@ checked.
 day is returned.
 @return -1 if no day with data is found.
 */
-public static int findNearestDataDay (Vector records, int day) {
+public static int findNearestDataDay (List records, int day) {
 	if ((records == null) || (records.size() == 0)) {
 		return -1;
 	}
@@ -738,7 +738,7 @@ public static int findNearestDataDay (Vector records, int day) {
 	int day2 = 0;
 	HydroBase_DailyAmt record = null;
 	for (int i = 0; i < size; i++ ) {
-		record = (HydroBase_DailyAmt)records.elementAt(i);
+		record = (HydroBase_DailyAmt)records.get(i);
 		day2 = record.findNearestDataDay(0, 0, day);
 		if (day2 < daymin) {
 			daymin = day2;

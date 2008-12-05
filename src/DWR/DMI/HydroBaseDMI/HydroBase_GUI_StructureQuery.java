@@ -186,6 +186,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -373,7 +374,7 @@ private String	__lastSelectedView = SUMMARY;
 /**
 The results returned from the query.
 */
-private Vector __results = null;
+private List __results = null;
 
 /**
 Constructor. 
@@ -455,7 +456,7 @@ public void actionPerformed(ActionEvent event) {
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
-				Vector outputStrings = formatOutput(format);
+				List outputStrings = formatOutput(format);
 	 			// Now export, letting the user decide the 
 				// file...
 				HydroBase_GUI_Util.export(this, eff[0], 
@@ -492,7 +493,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -543,7 +544,7 @@ private void closeClicked() {
 Display the results of the query in the spreadsheet.  
 @param results the results to display in the spreadsheet.
 */
-private void displayResults(Vector results) 
+private void displayResults(List results) 
 throws Exception {
 
 	HydroBase_TableModel_StructureGeoloc_SP tm = 
@@ -608,13 +609,13 @@ Format output of the worksheet for export.
 SUMMARY) or a flag that specifies the delimiter to use.
 @return a formatted Vector for exporting, printing, etc..
 */
-private Vector formatOutput(int format) {
+private List formatOutput(int format) {
 	int size = __worksheet.getRowCount();
 	if (size == 0) {
         	return new Vector();
 	}
 
-	Vector v = new Vector(size, 100);
+	List v = new Vector(size, 100);
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
         	// Just export in a reasonable format...
@@ -646,7 +647,7 @@ private Vector formatOutput(int format) {
 			+ StringUtil.formatString(__worksheet.getColumnName(10,
 				true), "%-12.12s");	// dcr cap
 		v.add(cols);
-		v.addElement(
+		v.add(
 			"___________________________________________" +
 			"___________________________________________" +
 			"___________________________________________" +
@@ -707,7 +708,7 @@ private Vector formatOutput(int format) {
 					data.getTransbsn(), "%8d").trim();
 			}
 			
-                	v.addElement(
+                	v.add(
                         	  wd + " "
                         	+ id + " "
                         	+ StringUtil.formatString(
@@ -795,7 +796,7 @@ HydroBase_StructureView data) {
         if (view.equals(SUMMARY)) {
 		HydroBase_Report_StructureSummary structureSummary = 
 			new HydroBase_Report_StructureSummary(__dmi, strucNum);
-		Vector reportVector = structureSummary.getReport();
+		List reportVector = structureSummary.getReport();
 		PropList props = new PropList("QInfoReport");
 		props.set("HelpKey", "true");
 
@@ -918,7 +919,7 @@ private void getViewList() {
 		return;
 	}
 
-	Vector items = null;
+	List items = null;
 
 	HydroBase_StructureView data = 
 		(HydroBase_StructureView)__worksheet.getRowData(row);
@@ -935,7 +936,7 @@ private void getViewList() {
         int size = items.size();
 	String curItem = "";
         for (int i = 0; i < size; i++) {
-        	curItem = items.elementAt(i).toString().trim();
+        	curItem = items.get(i).toString().trim();
                 __viewJComboBox.add(curItem);                            
 	}
 
@@ -962,8 +963,8 @@ type.
 @param type the selected structure type.
 @return a Vector of structure views.
 */
-public Vector getStructureViews(String type) {
-	Vector	items = new Vector(10, 5);	// Relevent Structure displays
+public List getStructureViews(String type) {
+	List	items = new Vector(10, 5);	// Relevent Structure displays
 	boolean	isHeadgate = 	false;
 	boolean isJD = 		false;
 	boolean	isNJD = 	false;
@@ -993,52 +994,52 @@ public Vector getStructureViews(String type) {
 
 	// arrange alphabetically
 	if (isHeadgate || isReservoir || isWell) {
-               items.addElement(TIME_SERIES);
+               items.add(TIME_SERIES);
 	}
 	if (isHeadgate) {
-//		items.addElement(HEADGATE);
+//		items.add(HEADGATE);
 	}
 	if (isReservoir) {
-                items.addElement(RES_MEASUREMENTS); 
+                items.add(RES_MEASUREMENTS); 
 	}
-//	items.addElement(IRRIGATED_ACRES_SUMMARY);
-        items.addElement(IRRIGATED_ACRES);
+//	items.add(IRRIGATED_ACRES_SUMMARY);
+        items.add(IRRIGATED_ACRES);
 	if (isJD) {
-                items.addElement(DAM); 
+                items.add(DAM); 
 	}
-   	items.addElement(LOCATION);
+   	items.add(LOCATION);
 	if (isMFR) {
-                items.addElement(REACH);
+                items.add(REACH);
 	}
-        items.addElement(MORE_STRUCTURE);
+        items.add(MORE_STRUCTURE);
 	if (isNJD) {
-                items.addElement(SMALL_DAM);
+                items.add(SMALL_DAM);
 	}
-  	items.addElement(OWNER_CONTACT);
+  	items.add(OWNER_CONTACT);
 	if (isReservoir) {
-                items.addElement(RESERVOIR); 
+                items.add(RESERVOIR); 
 	}
 	
-	items.addElement(SUMMARY);
+	items.add(SUMMARY);
 
 	if (!isNJD && !isJD) {
-                items.addElement(WR_TRANS);
-                items.addElement(WR_NET);
+                items.add(WR_TRANS);
+                items.add(WR_NET);
 	}
 	if (isWell) {
-//		items.addElement(WELL);
+//		items.add(WELL);
 	}
 
         return items;
 }
 
 /**
-This function generates a Vector containing views relevent to the structure
+This function generates a Vector containing views relevant to the structure
 type.
 @param data selected view type.
 @return a Vector of structure views.
 */
-public Vector getStructureViews(HydroBase_StructureView data) {
+public List getStructureViews(HydroBase_StructureView data) {
 	String type = __dmi.getStructureTypeDescription(data.getStr_type());
         return getStructureViews(type);
 }
@@ -1047,7 +1048,7 @@ public Vector getStructureViews(HydroBase_StructureView data) {
 Get the list of AppLayerType that correspond to the GUI in its current state.
 @return Vector of String for AppLayerType that should be considered.
 */
-private Vector getVisibleAppLayerType() {
+private List getVisibleAppLayerType() {
 	int[] rows = __worksheet.getSelectedRows();
 	if (rows == null || rows.length == 0) {
 		return new Vector();
@@ -1057,7 +1058,7 @@ private Vector getVisibleAppLayerType() {
 	int size = rows.length; 
 	Object o = null;
 	String type = null;
-	Vector appLayerTypes = new Vector();
+	List appLayerTypes = new Vector();
 
 	boolean reservoir = false;
 	boolean diversion = false;
@@ -1127,7 +1128,7 @@ Does nothing.
 @param selected Vector of selected GeoRecord.  
 */
 public void geoViewInfo(GRShape devLimits, GRShape dataLimits,
-Vector selected) {}
+		List selected) {}
 
 /**
 Does nothing.  
@@ -1136,7 +1137,7 @@ Does nothing.
 @param selected Vector of selected GeoRecord.  
 */
 public void geoViewInfo(GRPoint devLimits, GRPoint dataLimits, 
-Vector selected) {}
+		List selected) {}
 
 /**
 Does nothing.  
@@ -1145,7 +1146,7 @@ Does nothing.
 @param selected Vector of selected GeoRecord.  
 */
 public void geoViewInfo(GRLimits devLimits, GRLimits dataLimits,
-Vector selected) {}
+		List selected) {}
 
 /**
 If a selection is made from the map, query the database for region that was
@@ -1157,10 +1158,10 @@ listener from the GeoView.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRShape devLimits, GRShape dataLimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	// Figure out which app layer types are selected.  If one that is
 	// applicable to this GUI, execute a query...
-	Vector appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree()
+	List appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree()
 		.getSelectedAppLayerTypes(true);
 	int size = appLayerTypes.size();
 	String appLayerType;
@@ -1172,7 +1173,7 @@ Vector selected, boolean append) {
 	//__filterJPanel.clearInput();
 	
 	for (int i = 0; i < size; i++) {
-		appLayerType = (String)appLayerTypes.elementAt(i);
+		appLayerType = (String)appLayerTypes.get(i);
 		if (appLayerType.equalsIgnoreCase("Diversion")) {
 			viewNeeded = true;
 		}
@@ -1226,7 +1227,7 @@ listener from the GeoView.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRPoint devLimits, GRPoint dataLimits, 
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	geoViewSelect((GRShape)devLimits, (GRShape)dataLimits, selected, 
 		append);
 }
@@ -1241,7 +1242,7 @@ listener from the GeoView.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRLimits devLimits, GRLimits dataLimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	geoViewSelect((GRShape)devLimits, (GRShape)dataLimits, selected, 
 		append);
 }
@@ -1479,7 +1480,7 @@ GeoView Project as AppJoinField="wd,id".
 */
 private void selectOnMap() {
 	int size = __worksheet.getRowCount();
-	Vector idlist = new Vector(size);
+	List idlist = new Vector(size);
         __statusJTextField.setText("Selecting and zooming to structures on "
 		+ "map.  Please wait...");
 	JGUIUtil.setWaitCursor(this, true);
@@ -1494,14 +1495,14 @@ private void selectOnMap() {
 		for (int i = 0; i < rows.length; i++) {
 			sv = (HydroBase_StructureView)
 				__worksheet.getRowData(rows[i]);
-			idlist.addElement(sv.getWD() + "," 
+			idlist.add(sv.getWD() + "," 
 				+ sv.getID());
 		}
 	}
 
 	// Base layers are always visible...
-	Vector enabledAppLayerTypes = getVisibleAppLayerType();
-	enabledAppLayerTypes.addElement("BaseLayer");
+	List enabledAppLayerTypes = getVisibleAppLayerType();
+	enabledAppLayerTypes.add("BaseLayer");
 	__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(enabledAppLayerTypes, 
 		false);
 	__statusJTextField.setText(
@@ -1509,8 +1510,8 @@ private void selectOnMap() {
 	
 	// Select the features, searching only selected structure types, and
 	// zoom to the selected shapes...
-	Vector appLayerTypes = getVisibleAppLayerType();
-	Vector matchingFeatures =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
+	List appLayerTypes = getVisibleAppLayerType();
+	List matchingFeatures =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 		appLayerTypes, idlist, true, .05, .05);
 	int matches = 0;
 	if (matchingFeatures != null) {

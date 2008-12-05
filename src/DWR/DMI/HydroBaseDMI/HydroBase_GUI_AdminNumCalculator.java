@@ -47,6 +47,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -347,8 +348,8 @@ private void graphClicked() {
 		tsview_props.set("XAxisJLabelString", "Appropriation Date");
 		tsview_props.set("EnableTable", "false");
 		tsview_props.set("EnableReferenceGraph", "false");
-		Vector ts_Vector = new Vector(1);
-		ts_Vector.addElement(ts);
+		List ts_Vector = new Vector(1);
+		ts_Vector.add(ts);
 		JGUIUtil.setWaitCursor(this, true);
 		new TSViewJFrame(ts_Vector, tsview_props);
 		JGUIUtil.setWaitCursor(this, false);

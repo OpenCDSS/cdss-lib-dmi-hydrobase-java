@@ -43,6 +43,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -350,7 +351,7 @@ private String __dateString = "";
 /**
 Vector of annotations to be drawn on screen.
 */
-private Vector __annotations = new Vector();
+private List __annotations = new Vector();
 
 /**
 Constructor.
@@ -481,7 +482,7 @@ public void actionPerformed(ActionEvent event) {
 	else if (action.equals(__MENU_PROPERTIES)) {
 		HydroBase_Node node = null;
 		if (__isAnnotation) {
-			node = (HydroBase_Node)__annotations.elementAt(
+			node = (HydroBase_Node)__annotations.get(
 				__popUpNode);
 		}
 		else {
@@ -683,7 +684,7 @@ to have the proplist updated.
 */
 private void changeAnnotationLocation(int annotation) {
 	HydroBase_Node node = 
-		(HydroBase_Node)__annotations.elementAt(annotation);
+		(HydroBase_Node)__annotations.get(annotation);
 
 	double x = node.getX();
 	double y = node.getY();
@@ -832,7 +833,7 @@ private void deleteNode(int node) {
 		return;
 	}
 
-	__annotations.removeElementAt(node);
+	__annotations.remove(node);
 	forceRepaint();
 }
 
@@ -953,7 +954,7 @@ private void fillAnnotationNodeData() {
 	PropList p = null;
 	String text = null;
 	for (int i = 0; i < size; i++) {
-		node = (HydroBase_Node)__annotations.elementAt(i);
+		node = (HydroBase_Node)__annotations.get(i);
 		p = (PropList)node.getAssociatedObject();
 
 		p.set("Number", "" + i);
@@ -1070,7 +1071,7 @@ private int findNodeAtXY(double x, double y) {
 	HydroBase_Node node = null;
 	GRLimits limits = null;
 	for (int i = 0; i < size; i++) {
-		node = (HydroBase_Node)__annotations.elementAt(i);
+		node = (HydroBase_Node)__annotations.get(i);
 		limits = new GRLimits(node.getX(), node.getY(), 
 			node.getX() + node.getWidth(),
 			node.getY() + node.getHeight());
@@ -1094,7 +1095,7 @@ public void forceRepaint() {
 Returns the Vector of annotations.
 @return the Vector of annotations.
 */
-public Vector getAnnotations() {
+public List getAnnotations() {
 	return __annotations;
 }
 
@@ -1131,7 +1132,7 @@ Vector.
 */
 public HydroBase_Node getNode(int nodeNum, boolean isAnnotation) {
 	if (__isAnnotation) {
-		return (HydroBase_Node)__annotations.elementAt(nodeNum);
+		return (HydroBase_Node)__annotations.get(nodeNum);
 	}
 	else {
 		return __nodes[nodeNum];
@@ -1215,7 +1216,7 @@ private String getUniquePropListName(int num) {
 	while (true) {
 		match = false;
 		for (int i = 0; i < size; i++) {
-			node = (HydroBase_Node)__annotations.elementAt(i);
+			node = (HydroBase_Node)__annotations.get(i);
 			p = (PropList)node.getAssociatedObject();
 			if (p.getValue("Number").equals("" + num)) {
 				match = true;
@@ -1256,7 +1257,7 @@ public void setDirty(boolean dirty) {
 	__initialSize = __annotations.size();
 	HydroBase_Node node = null;
 	for (int i = 0; i < __initialSize; i++) {
-		node = (HydroBase_Node)__annotations.elementAt(i);
+		node = (HydroBase_Node)__annotations.get(i);
 		node.setDirty(false);
 	}
 }
@@ -1280,7 +1281,7 @@ public boolean isDirty() {
 	}
 	HydroBase_Node node = null;
 	for (int i = 0; i < size; i++) {
-		node = (HydroBase_Node)__annotations.elementAt(i);
+		node = (HydroBase_Node)__annotations.get(i);
 		if (node.isDirty()) {
 			return true;
 		}
@@ -1346,7 +1347,7 @@ public void mousePressed(MouseEvent event) {
 			__y = y;
 			if (__isAnnotation) {
 				HydroBase_Node node = (HydroBase_Node)
-					__annotations.elementAt(
+					__annotations.get(
 					__leftClickNode);
 				__nodeLimits = new GRLimits(node.getX(), 
 					node.getY(), 
@@ -1407,7 +1408,7 @@ public void mouseReleased(MouseEvent event) {
 			if (__isAnnotation) {
 			
 			HydroBase_Node node = (HydroBase_Node)	
-				__annotations.elementAt(__leftClickNode);
+				__annotations.get(__leftClickNode);
 			node.setVisible(true);
 			__x = x - __xAdjust;
 			__y = y - __yAdjust;
@@ -1610,7 +1611,7 @@ public void paint(Graphics g) {
 				// drag
 				continue;
 			}
-			node = (HydroBase_Node)__annotations.elementAt(i);
+			node = (HydroBase_Node)__annotations.get(i);
 
 			GRDrawingAreaUtil.drawAnnotation(__drawingArea, 
 				(PropList)node.getAssociatedObject());
@@ -1821,14 +1822,14 @@ private String queryCall(HydroBase_Node node) {
 		int[] wdid = HydroBase_WaterDistrict.parseWDID(id);
 		DateTime date = __parent.getWIS().getAdminDateTime();
 
-		Vector v = __dmi.readCallsListForWISDiagram(wdid[0], wdid[1],
+		List v = __dmi.readCallsListForWISDiagram(wdid[0], wdid[1],
 			date);
 	
 		if (v == null || v.size() == 0) {
 			return DMIUtil.MISSING_STRING;
 		}
 		else {
-			HydroBase_Calls c = (HydroBase_Calls)v.elementAt(0);
+			HydroBase_Calls c = (HydroBase_Calls)v.get(0);
 			DateTime set = new DateTime(c.getDate_time_set());
 			DateTime apro = new DateTime(c.getApro_date());
 			String dcr = c.getDcr_amt();
@@ -1868,13 +1869,13 @@ private String queryRight(HydroBase_Node node) {
 	
 	try {
 		int[] wdid = HydroBase_WaterDistrict.parseWDID(id);
-		Vector where = new Vector();
+		List where = new Vector();
 
 		where.add("net_rate_abs > 0");
 		where.add("wd = " + wdid[0]);
 		where.add("id = " + wdid[1]);
 
-		Vector v = __dmi.readNetAmtsList(DMIUtil.MISSING_INT, 
+		List v = __dmi.readNetAmtsList(DMIUtil.MISSING_INT, 
 			wdid[0], wdid[1], true, "72");
 	
 		int size = v.size();
@@ -1886,7 +1887,7 @@ private String queryRight(HydroBase_Node node) {
 			HydroBase_NetAmts n = null;
 			String ret = "";
 			for (int i = 0; i < size; i++) {	
-				n = (HydroBase_NetAmts)v.elementAt(i);
+				n = (HydroBase_NetAmts)v.get(i);
 				d = new DateTime(n.getApro_date());
 				ret += "\n" 
 					+ d.toString(DateTime.FORMAT_YYYY_MM_DD)
@@ -1910,7 +1911,7 @@ private String queryRight(HydroBase_Node node) {
 Sets the Vector of annotations.
 @param annotations the annotations Vector to use.
 */
-public void setAnnotations(Vector annotations) {
+public void setAnnotations(List annotations) {
 	__annotations = annotations;
 }
 
@@ -1939,7 +1940,7 @@ public void setNetwork(HydroBase_NodeNetwork network) {
 	__network.setInWIS(true);
 	__ready = true;
 	boolean done = false;
-	Vector nodes = new Vector();
+	List nodes = new Vector();
 
 	HydroBase_Node node = null;
 	HydroBase_Node holdNode = null;
@@ -1974,7 +1975,7 @@ public void setNetwork(HydroBase_NodeNetwork network) {
 	__nodes = new HydroBase_Node[size];
 
 	for (int i = 0; i < size; i++) {
-		__nodes[i] = (HydroBase_Node)nodes.elementAt(i);
+		__nodes[i] = (HydroBase_Node)nodes.get(i);
 		__nodes[i].setBoundsCalculated(false);
 	}
 }
@@ -2010,7 +2011,7 @@ public void updateNode(int nodeNum, HydroBase_Node node, boolean isAnnotation) {
 	if (__isAnnotation) {
 		PropList p = (PropList)node.getAssociatedObject();
 
-		HydroBase_Node vNode = (HydroBase_Node)__annotations.elementAt(
+		HydroBase_Node vNode = (HydroBase_Node)__annotations.get(
 			nodeNum);
 		PropList vp = (PropList)vNode.getAssociatedObject();
 		vNode.setAssociatedObject(p);

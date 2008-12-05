@@ -148,6 +148,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -364,7 +365,7 @@ private String __currTable = "";
 /**
 Contains the results of the latest query.
 */
-private Vector __results = null;
+private List __results = null;
 
 /**
 Constructor.  This is set up to read the GLOBAL_FAST data from the database
@@ -414,7 +415,7 @@ throws Exception {
 	String find = "  " + wd + " -";
 	__waterDistrictJComboBox.setSelectedPrefixItem(find);
 	
-	Vector whereClause = new Vector();
+	List whereClause = new Vector();
 	whereClause.add("structure_num = " + structureNum);
 
 	int numFilters = __transactFilterJPanel.getNumFilterGroups();
@@ -485,7 +486,7 @@ public void actionPerformed(ActionEvent event) {
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
-				Vector outputStrings = formatOutput(format);
+				List outputStrings = formatOutput(format);
 	 			// Now export, letting the user decide the 
 				// file...
 				HydroBase_GUI_Util.export(this, eff[0], 
@@ -513,7 +514,7 @@ public void actionPerformed(ActionEvent event) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -647,7 +648,7 @@ headings and widths.
 @param redisplay if true, the columns are being redisplayed according to
 another template.  If false, using the same template.
 */
-private void displayNetResults(Vector results)
+private void displayNetResults(List results)
 throws Exception {
 	String temp = __outputTemplateJComboBox.getSelected();
 	int type = -1;
@@ -677,7 +678,7 @@ functions of the HydroBase_Transact class.  In addition, sets the column
 headings and widths.
 @param results Vector of HydroBase_Transact objects.
 */
-private void displayTransactionResults(Vector results)
+private void displayTransactionResults(List results)
 throws Exception {
 	String temp = __outputTemplateJComboBox.getSelected();
 	int type = -1;
@@ -733,9 +734,9 @@ private void enableMapLayers() {
 		+ "right layers.");
 	Message.printStatus(1, "", "Turning on water right GIS layer types.");
 
-	Vector enabledAppLayerTypes = new Vector(1);
-	enabledAppLayerTypes.addElement("WaterRight");
-	enabledAppLayerTypes.addElement("BaseLayer");
+	List enabledAppLayerTypes = new Vector(1);
+	enabledAppLayerTypes.add("WaterRight");
+	enabledAppLayerTypes.add("BaseLayer");
 	__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(enabledAppLayerTypes, 
 		false);
 	enabledAppLayerTypes = null;
@@ -779,7 +780,7 @@ throws Throwable {
 Responsible for formatting output.
 @param format the format in which the output should be exported.
 */
-public Vector formatOutput(int format) 
+public List formatOutput(int format) 
 throws Exception {
         if (__currTable.equalsIgnoreCase(HydroBase_GUI_Util._TRANS)) {
 		return formatOutputForTransactions(format);
@@ -797,12 +798,12 @@ Formats the net amounts data for output.
 @param format the format in which the data should be output.
 @return a Vector, each element of which contains a line of data for the report.
 */
-public Vector formatOutputForNetAmounts(int format) 
+public List formatOutputForNetAmounts(int format) 
 throws Exception {
 
         int size = __worksheet.getRowCount();
 
-        Vector v = new Vector(size, 10);
+        List v = new Vector(size, 10);
 
         // Get the list contents...
 
@@ -822,24 +823,24 @@ throws Exception {
 			structure_num);
 		HydroBase_StructureView hbsv 
 			= (HydroBase_StructureView)o;
-                v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+                v.add(HydroBase_GUI_Util.formatStructureHeader(
                         hbsv.getStr_name(),
                         StringUtil.formatString(hbsv.getDiv(),"%d"),
                         StringUtil.formatString(hbsv.getWD(),"%d"),
                         StringUtil.formatString(hbsv.getID(),"%d"),
                         format));			
 		
-                v.addElement("");
-                v.addElement(
+                v.add("");
+                v.add(
 			"                                               "
 			+ "WATER RIGHTS NET AMOUNTS INformatION");
-		v.addElement(
+		v.add(
 			"ADMIN. NO   ADJ DATE   APPRO DATE  DECREED   DECREED"
 			+ "   DECREED   DECREED   DECREED   DECREED   USES");
-		v.addElement(
+		v.add(
 			"                                  RATE ABS.  VOL ABS."
 			+ " RATE COND  VOL COND RATE APEX  VOL APEX");
-		v.addElement(
+		v.add(
 			"____________________________________________________"
 			+ "__________________________________________________"
 			+ "__________________");
@@ -848,9 +849,9 @@ throws Exception {
         else if (__isQueryByExample &&
 	       format == HydroBase_GUI_Util.SCREEN_VIEW) {
                 // The legacy tabulation report...
-                Vector header = formatWRTabulationHeader(__TABULATION_RIGHTS);
+                List header = formatWRTabulationHeader(__TABULATION_RIGHTS);
                 for (int i = 0; i < header.size(); i++) {
-                        v.addElement((String)header.elementAt(i));
+                        v.add((String)header.get(i));
                 }
         }
         else {  
@@ -869,7 +870,7 @@ throws Exception {
 
                 if (   !__isQueryByExample &&
                        format == HydroBase_GUI_Util.SCREEN_VIEW) {
-                        v.addElement(
+                        v.add(
                                 StringUtil.formatString(
 					data.getAdmin_no(),"%11.5f") + " "
                                 + StringUtil.formatString(
@@ -945,7 +946,7 @@ throws Exception {
                                         units = "A";
                                 }
                         }
-                        v.addElement(
+                        v.add(
                                 StringUtil.formatString(
 					data.getWr_name(), "%-24.24s")
                                	+ " ?   " +
@@ -1037,7 +1038,7 @@ throws Exception {
 							.getColumnName(j, true) 
 							+ delim;
 					}
-					v.addElement(s);
+					v.add(s);
 					printedHeader = true;
 				}
 				
@@ -1051,7 +1052,7 @@ throws Exception {
 					s += o + delim;
 				}
 
-				v.addElement(s);			
+				v.add(s);			
 			}
 		}
         }
@@ -1087,16 +1088,16 @@ public Vector formatOutputForTransactions(int format) {
 	        format == HydroBase_GUI_Util.SCREEN_VIEW) {
                 // We need to make sure that regardless of how the screen is
                 // organized, we output as follows...
-                v.addElement(
+                v.add(
 			  "                                          "
 			+ "WATER RIGHTS TRANSACTION INFORMATION");
-                v.addElement(
+                v.add(
 			  "ADMIN. NO   ADJ DATE   APPRO DATE COURT NO   "
 			+ "DECREED   DECREED   STATUS USES      COMMENTS");
-                v.addElement(
+                v.add(
 			  "                                           "
 			+ "RATE (CFS) VOL (AF)");
-                v.addElement(
+                v.add(
 			  "_____________________________________________"
 			+ "_____________________________________________"
 			+ "______________________________");
@@ -1104,7 +1105,7 @@ public Vector formatOutputForTransactions(int format) {
         else if (__isQueryByExample &&
 	        format == HydroBase_GUI_Util.SCREEN_VIEW) {
                 // Legacy stream alpha report...
-                v.addElement("need to add stream alpha header");
+                v.add("need to add stream alpha header");
         }
         else {  
 		// Delimited is done in the main loop...
@@ -1121,7 +1122,7 @@ public Vector formatOutputForTransactions(int format) {
 	
                 if (!__isQueryByExample 
 		    && format == HydroBase_GUI_Util.SCREEN_VIEW) {
-                        v.addElement(
+                        v.add(
 				StringUtil.formatString(
 					data.getAdmin_no(), "%11.5f")	
                                 + " ");
@@ -1129,7 +1130,7 @@ public Vector formatOutputForTransactions(int format) {
                 else if (__isQueryByExample &&
                           format == HydroBase_GUI_Util.SCREEN_VIEW) {
                         // Legacy stream alpha report...
-                        v.addElement("need to add stream alpha body");
+                        v.add("need to add stream alpha body");
                 }
                 else {  
 			isSelected = false;
@@ -1150,7 +1151,7 @@ public Vector formatOutputForTransactions(int format) {
 					s += __worksheet.getColumnName(j, true) 
 						+ delim;
 				}
-				v.addElement(s);
+				v.add(s);
 				printedHeader = true;
 			}
 			
@@ -1167,7 +1168,7 @@ public Vector formatOutputForTransactions(int format) {
 				s += d + delim;
 			}
 
-			v.addElement(s);
+			v.add(s);
 			}
 		}		
         }
@@ -1180,36 +1181,36 @@ Formats the header for the water right tabulation.
 @param flag flag that says what kind of header to build.
 @return a Vector of Strings, each of which is a line of text in the header.
 */
-public static Vector formatWRTabulationHeader(int flag) {
-       Vector v = new Vector(2, 1);
+public static List formatWRTabulationHeader(int flag) {
+	List v = new Vector(2, 1);
 
 	DateTime t = new DateTime(DateTime.DATE_CURRENT);
 	String now = t.toString(DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS);
 
         if (flag == __TABULATION_RIGHTS) {
-                v.addElement("");
-                v.addElement(
+                v.add("");
+                v.add(
 			  "                                                   "
 			+ "                              Water Rights "
 			+ "Tabulation                     " + now);
-                v.addElement("");
-                v.addElement(
+                v.add("");
+                v.add(
 			  "Name of Structure        Typ Name of Source       "
 			+ "WD TS   RNG  SEC     Q160 Q40 Q10 PM Use        "
 			+ " Net Abs  Net Cond AltP/Exch U   Adj Date P Adj "
 			+ "Date Appro Date O AdminNumber   ID# Pr#/C#");
-                v.addElement("");
+                v.add("");
         }
         else if (flag == __TABULATION_AUGMENTATION) {
-                v.addElement("");
-                v.addElement(
+                v.add("");
+                v.add(
 		         "                                       Tabulation of "
 			+ "Augmentation Plans        " + now);
-                v.addElement(
+                v.add(
 			  "Name of Plan              Stream Name              "
 			+ "W C Case   WD   L O C A T I O N      Adj Date    "
 			+ " ID# U s e s   Line");
-                v.addElement("");
+                v.add("");
         }
 
         return v;
@@ -1266,7 +1267,7 @@ Currently this does nothing.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewInfo(GRShape devlimits, GRShape datalimits,
-Vector selected) {}
+		List selected) {}
 
 /**
 Do nothing.  Should this do the same as a select?
@@ -1274,7 +1275,7 @@ Do nothing.  Should this do the same as a select?
 @param grp2 second point
 @param selected selected Vector.
 */
-public void geoViewInfo(GRPoint grp, GRPoint grp2, Vector selected) {}
+public void geoViewInfo(GRPoint grp, GRPoint grp2, List selected) {}
 
 /**
 Do nothing.  Should this do the same as a select?
@@ -1282,7 +1283,7 @@ Do nothing.  Should this do the same as a select?
 @param grl2 second limits
 @param selected selected Vector.
 */
-public void geoViewInfo(GRLimits grl, GRLimits grl2, Vector selected) {}
+public void geoViewInfo(GRLimits grl, GRLimits grl2, List selected) {}
 
 /**
 Handle the label redraw event from another GeoView(likely a ReferenceGeoView).
@@ -1312,7 +1313,7 @@ Currently this does nothing.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRShape devlimits, GRShape datalimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	String routine = "geoViewSelect";
 	if (isVisible()) {
 		Message.printWarning(1, routine,
@@ -1351,7 +1352,7 @@ Currently does nothing.
 @param append whether to append.
 */
 public void geoViewSelect(GRPoint devlimits, GRPoint datalimits, 
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, 
 		append);
 }
@@ -1366,7 +1367,7 @@ Currently does nothing.
 @param append whether to append.
 */
 public void geoViewSelect(GRLimits devlimits, GRLimits datalimits,
-Vector selected, boolean append) {
+		List selected, boolean append) {
 	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, 
 		append);
 }
@@ -1405,7 +1406,7 @@ throws Exception {
         // get the where and return if an error occured
 	int reportType = DMIUtil.MISSING_INT;
         String table = __tableJComboBox.getSelected();
-	Vector reportVector = null;
+        List reportVector = null;
         if (table.equalsIgnoreCase(HydroBase_GUI_Util._NET_AMOUNTS)) {
                 if (view.equals(__PRIORITY_SUMMARY)) {
 			reportType = 
@@ -1535,9 +1536,9 @@ Currently this only adds "WaterRight".  It may be necessary to distinguish
 between net and transactional rights.
 @return Vector of String for AppLayerType that should be considered.
 */
-private Vector getVisibleAppLayerType() {
-	Vector appLayerTypes = new Vector();
-	appLayerTypes.addElement("WaterRight");
+private List getVisibleAppLayerType() {
+	List appLayerTypes = new Vector();
+	appLayerTypes.add("WaterRight");
 	return appLayerTypes;
 }
 
@@ -1710,7 +1711,7 @@ GeoView Project as AppJoinField="wd,id".
 */
 private void selectOnMap() {
 	String table = __tableJComboBox.getSelected();
-	Vector idlist = new Vector();
+	List idlist = new Vector();
         __statusJTextField.setText(
 		"Selecting and zooming to water rights on map.  "
 		+ "Please wait...");
@@ -1761,9 +1762,9 @@ private void selectOnMap() {
 		}
 
 		if (wd != wd_prev || id != id_prev) {
-			idlist.addElement(wd +","+ id);
+			idlist.add(wd +","+ id);
 			Message.printStatus(1, "", "Feature is \""
-				+ (String)idlist.elementAt(i) + "\"");
+				+ (String)idlist.get(i) + "\"");
 			wd_prev = wd;
 			id_prev = id;
 		}
@@ -1771,7 +1772,7 @@ private void selectOnMap() {
 
 	// Select the features, searching only selected structure types, and
 	// zoom to the selected shapes...
-	Vector matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
+	List matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 		getVisibleAppLayerType(), idlist, true, .05, .05);
 	int matches = 0;
 	if (matching_features != null) {
@@ -1920,9 +1921,9 @@ throws Exception {
                 0, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __tableJComboBox = new SimpleJComboBox();
-	Vector tables = HydroBase_GUI_Util.getTableStrings(this);
+        List tables = HydroBase_GUI_Util.getTableStrings(this);
 	for (int i = 0; i < tables.size(); i++) {
-	        __tableJComboBox.add((String)tables.elementAt(i));
+	        __tableJComboBox.add((String)tables.get(i));
 	}
         if (!__isQueryByExample) {
                 __tableJComboBox.setEnabled(false);
@@ -2124,7 +2125,7 @@ throws Exception {
                 Message.printStatus(10, routine, "Transaction Table Selected");
 		try {
 			sw.start();
-			Vector v = __dmi.readTransactList(
+			List v = __dmi.readTransactList(
 				__transactFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, 
@@ -2150,7 +2151,7 @@ throws Exception {
                 Message.printStatus(10, routine, "Net Amounts Table Selected");
 		try {
 			sw.start();
-			Vector v = __dmi.readNetAmtsList(
+			List v = __dmi.readNetAmtsList(
 				__netAmtsFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, 

@@ -41,6 +41,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -456,8 +457,8 @@ public void setVisible(boolean state) {
 
 		// get the call record which corresponds to
 		// the _call_num
-		Vector whereClause = new Vector();
-		whereClause.addElement("call_num = " + __callNum);
+		List whereClause = new Vector();
+		whereClause.add("call_num = " + __callNum);
 		try {
 			__call = __dmi.readCallsForCall_num(__callNum);
 		}

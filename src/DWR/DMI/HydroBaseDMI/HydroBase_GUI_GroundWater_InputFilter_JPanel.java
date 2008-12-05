@@ -19,6 +19,7 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.awt.event.MouseListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
@@ -45,36 +46,36 @@ public HydroBase_GUI_GroundWater_InputFilter_JPanel(HydroBaseDMI dmi,
 MouseListener listener, boolean tstool) {
 	InputFilter filter = null;
 
-	Vector filters = new Vector();
+	List filters = new Vector();
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
 		null, null, false));
 
 	// Fill in the water district data for input filters...
 
-	Vector district_data_Vector = dmi.getWaterDistricts();
-	Vector district_Vector = new Vector ( district_data_Vector.size() );
-	Vector district_internal_Vector=new Vector(district_data_Vector.size());
+	List district_data_Vector = dmi.getWaterDistricts();
+	List district_Vector = new Vector ( district_data_Vector.size() );
+	List district_internal_Vector=new Vector(district_data_Vector.size());
 	HydroBase_WaterDistrict wd;
 	int size = district_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		wd = (HydroBase_WaterDistrict)district_data_Vector.elementAt(i);
-		district_Vector.addElement (wd.getWD() + " - "+wd.getWd_name());
-		district_internal_Vector.addElement ("" + wd.getWD() );
+		wd = (HydroBase_WaterDistrict)district_data_Vector.get(i);
+		district_Vector.add (wd.getWD() + " - "+wd.getWd_name());
+		district_internal_Vector.add ("" + wd.getWD() );
 	}
 
 	// Fill in the division data for input filters...
 
-	Vector division_data_Vector = dmi.getWaterDivisions();
-	Vector division_Vector = new Vector ( 7 );
-	Vector division_internal_Vector = new Vector ( 7 );
+	List division_data_Vector = dmi.getWaterDivisions();
+	List division_Vector = new Vector ( 7 );
+	List division_internal_Vector = new Vector ( 7 );
 	HydroBase_WaterDivision div;
 	size = division_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		div =(HydroBase_WaterDivision)division_data_Vector.elementAt(i);
-		division_Vector.addElement (div.getDiv() + " - " +
+		div =(HydroBase_WaterDivision)division_data_Vector.get(i);
+		division_Vector.add (div.getDiv() + " - " +
 			div.getDiv_name());
-		division_internal_Vector.addElement ("" + div.getDiv() );
+		division_internal_Vector.add ("" + div.getDiv() );
 	}
 
 	if (tstool) {
@@ -89,14 +90,14 @@ MouseListener listener, boolean tstool) {
 			StringUtil.TYPE_INTEGER,
 			district_Vector, district_internal_Vector, true );
 		filter.setTokenInfo("-",0);
-		filters.addElement ( filter );
+		filters.add ( filter );
 	
 		filter = new InputFilter (
 			"Division", "geoloc.div", "div",
 			StringUtil.TYPE_INTEGER,
 			division_Vector, division_internal_Vector, true );
 		filter.setTokenInfo("-",0);
-		filters.addElement ( filter );
+		filters.add ( filter );
 	}
 
 	filters.add(new InputFilter("DSS Aquifer 1", 

@@ -12,7 +12,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying contact data.
@@ -39,7 +39,7 @@ Constructor.  This builds the Model for displaying the given contact data.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Contact(Vector results)
+public HydroBase_TableModel_Contact(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -112,8 +112,7 @@ public int getRowCount() {
 }
 
 /**
-From AbstractTableModel.  Returns the data that should be placed in the JTable
-at the given row and column.
+From AbstractTableModel.  Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -123,7 +122,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_Contact c = (HydroBase_Contact)_data.elementAt(row);
+	HydroBase_Contact c = (HydroBase_Contact)_data.get(row);
 	switch (col) {
 		case COL_MEANS:		return c.getContact_type();
 		case COL_TRY:		return c.getFirst_contact();

@@ -28,7 +28,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying station data in the 
@@ -84,13 +84,12 @@ If not null, the time step to display instead of that read from the database.
 private String __timeStep = null;
 
 /**
-Constructor.  This builds the Model for displaying the given station 
-results.
+Constructor.  This builds the Model for displaying the given station results.
 @param results the results that will be displayed in the table.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Station(Vector results, HydroBaseDMI dmi)
+public HydroBase_TableModel_Station(List results, HydroBaseDMI dmi)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -224,8 +223,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -236,7 +234,7 @@ public Object getValueAt(int row, int col) {
 	}
 
 	HydroBase_StationGeolocMeasType s = 
-		(HydroBase_StationGeolocMeasType)_data.elementAt(row);
+		(HydroBase_StationGeolocMeasType)_data.get(row);
 	switch (col) {
 		case COL_WD:		return new Integer(s.getWD());
 		case COL_ID:		return s.getStation_id();

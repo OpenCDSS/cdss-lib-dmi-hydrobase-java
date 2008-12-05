@@ -16,7 +16,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying crop char data.
@@ -49,12 +49,11 @@ public static final int
 	COL_SEASON_LENGTH =	13;
 
 /**
-Constructor.  This builds the Model for displaying the given crop char 
-results.
+Constructor.  This builds the Model for displaying the given crop char results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Cropchar(Vector results)
+public HydroBase_TableModel_Cropchar(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -243,7 +242,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_Cropchar c = (HydroBase_Cropchar)_data.elementAt(row);
+	HydroBase_Cropchar c = (HydroBase_Cropchar)_data.get(row);
 	switch (col) {
 		case COL_CROP_NAME:		
 			return c.getCropname();

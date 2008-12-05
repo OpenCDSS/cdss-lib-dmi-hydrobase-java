@@ -56,6 +56,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -133,7 +134,7 @@ private PropList __prop;
 private String __buttonChoice;
 private String __preferredState;
 
-private Vector __ts;
+private List __ts;
 
 private final int _NUM_COLS = 5;
 private final int _NUM_ROWS = 5;
@@ -144,7 +145,7 @@ DateTimeSelectPeriodJDialog constructor
 @param ts contains time series objects
 @param prop PropList object
 */
-public DateTimeSelectPeriodJDialog(JFrame frame, Vector ts, PropList prop) {
+public DateTimeSelectPeriodJDialog(JFrame frame, List ts, PropList prop) {
 	super(frame, true);
 	
 	__frame = frame;
@@ -288,7 +289,7 @@ private void initializeGUI() {
 		int size = __ts.size();
 		if (size > 0) {
 			for (int i=0; i<size; i++) {
-				curTS =(TS)__ts.elementAt(i);
+				curTS =(TS)__ts.get(i);
 
 				// Need a prop to set the legend.  Try to use
 				// intelligent defaults for now.
@@ -415,7 +416,7 @@ This function determines the period(max or min)for the selected time series.
 TSUtil.MAX_POR, or TSUtil.MIN_POR
 */
 private void setPeriodOfRecord(int flag) {
-	Vector ts_Vector = new Vector();
+	List ts_Vector = new Vector();
 	String function = "DateTimeSelectPeriodJDialog.setPeriodOfRecord()";
 
 	if (__userJRadioButton.isSelected()) {
@@ -438,14 +439,14 @@ private void setPeriodOfRecord(int flag) {
 	DateTime startDate = null;
 	DateTime endDate = null;
 	for (int i = 0; i < size; i++) {
-		ts = (TS)__ts.elementAt(i);
+		ts = (TS)__ts.get(i);
 
 		// exception catches ts objects which do not 
 		// have a start and end date		
 		try {
 			startDate = ts.getDate1();
 			endDate = ts.getDate2();
-			ts_Vector.addElement(ts);
+			ts_Vector.add(ts);
 		} 
 		catch(Exception e) {;}	
 	}

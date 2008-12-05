@@ -38,6 +38,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -152,7 +153,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -173,7 +174,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -196,27 +197,27 @@ private void closeClicked() {
 Formats output for printing and exporting.
 @param format the format in which to format the output.
 */
-private Vector formatOutput(int format) {
-	Vector v = new Vector();
+private List formatOutput(int format) {
+	List v = new Vector();
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement(new String());
-		v.addElement(new String("Well data not loaded in HydroBase"));
+		v.add(new String());
+		v.add(new String("Well data not loaded in HydroBase"));
 	}
 	else {	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement(new String());
-		v.addElement(new String("Well data not loaded in HydroBase"));
+		v.add(new String());
+		v.add(new String("Well data not loaded in HydroBase"));
 	}	
 
 	return v;

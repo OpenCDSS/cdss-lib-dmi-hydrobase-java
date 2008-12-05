@@ -47,6 +47,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -127,7 +128,7 @@ private SimpleJComboBox
 /**
 Vector of HydroBase_Stream objects.
 */
-private Vector __streamVector;
+private List __streamVector;
 
 
 /**
@@ -210,7 +211,7 @@ private void generateStreamList() {
 		__associatedJComboBox.getSelected());
 	int wd = (new Integer(swd)).intValue();
 
-	Vector results = null;
+	List results = null;
 	try {
 		results = __dmi.readStreamListForWDStr_trib_to(wd, 
 			DMIUtil.MISSING_INT);
@@ -227,9 +228,9 @@ private void generateStreamList() {
 	if (results != null && size > 0) {
 		HydroBase_Stream data = null;
 		for (int i = 0; i < size; i++) {
-			data = (HydroBase_Stream)results.elementAt(i);
+			data = (HydroBase_Stream)results.get(i);
 			__streamJComboBox.add(data.getStream_name().trim());
-			__streamVector.addElement(data);
+			__streamVector.add(data);
 		}
 	}
 
@@ -325,7 +326,7 @@ private void okClicked() {
 
 	// perform query to check sheetName against a sheet which
 	// may have been archived on the same date as the current day
-	Vector results = null;
+    List results = null;
 	try {
 	        results = __dmi.readWISSheetNameList(DMIUtil.MISSING_INT, 
 			DMIUtil.MISSING_INT, sheetName, null, true);
@@ -344,7 +345,7 @@ private void okClicked() {
 	if (results != null && results.size() > 0) {
 		// compare effective date for element 0 against the current 
 		// day, since effectiveDate was ordered via DESC		
-		data = (HydroBase_WISSheetName)results.elementAt(0);
+		data = (HydroBase_WISSheetName)results.get(0);
 		DateTime recentDate = new DateTime(data.getEffective_date());
 
 		int wis_num = data.getWis_num();
@@ -512,7 +513,7 @@ private void okClicked() {
 		return;
 	}
 	if (results != null && results.size() > 0) {
-		data = (HydroBase_WISSheetName)results.elementAt(0);
+		data = (HydroBase_WISSheetName)results.get(0);
 
 		// now that the new sheet_name record is entered and valid,
 		// enter a matching wis_comments record (so that the
@@ -540,7 +541,7 @@ private void okClicked() {
 			stream = null;
 		}
 		else {
-			stream = (HydroBase_Stream)__streamVector.elementAt(
+			stream = (HydroBase_Stream)__streamVector.get(
 				__streamJComboBox.getSelectedIndex());
 		}
 
@@ -669,9 +670,9 @@ public void setVisible(boolean state) {
 		String name = null;
 		int w = -1;
 		String s = null;
-		Vector v = HydroBase_GUI_Util.generateWaterDistricts(__dmi);
+		List v = HydroBase_GUI_Util.generateWaterDistricts(__dmi);
 		for (int i = 0; i < v.size(); i++) {	
-			s = (String)v.elementAt(i);	
+			s = (String)v.get(i);	
 			w = (Integer.decode(s)).intValue();
 			try {
 				wd = __dmi.lookupWaterDistrictForWD(w);
@@ -684,7 +685,7 @@ public void setVisible(boolean state) {
 		}
 		v = HydroBase_GUI_Util.generateDivisions(__dmi);
 		for (int i = 0; i < v.size(); i++) {	
-			s = (String)v.elementAt(i);	
+			s = (String)v.get(i);	
 			__associatedJComboBox.add(s);
 		}
 		if (__associatedJComboBox.getItemCount() > 0) {

@@ -57,6 +57,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
@@ -499,12 +500,12 @@ private void openClicked() {
 		return;
 	}
 	
-	Vector v = product.getAllProps();
+	List v = product.getAllProps();
 	int size = v.size();
 	Prop p = null;
-	Vector tsids = new Vector();
+	List tsids = new Vector();
 	for (int i = 0; i < size; i++) {
-		p = (Prop)v.elementAt(i);
+		p = (Prop)v.get(i);
 		if (StringUtil.endsWithIgnoreCase(p.getKey(), "TSID")) {
 			tsids.add(p.getValue());
 		}
@@ -513,13 +514,13 @@ private void openClicked() {
 	size = tsids.size();
 	String s = null;
 	TS ts = null;
-	Vector tsList = new Vector();
+	List tsList = new Vector();
 	try {
 		for (int i = 0; i < size; i++) {
-			s = (String)tsids.elementAt(i);
+			s = (String)tsids.get(i);
 			ts = __dmi.readTimeSeries(s, null, null, null, 
 				true, null);
-			tsList.addElement(ts);
+			tsList.add(ts);
 		}
 	}
 	catch (Exception e) {
@@ -552,7 +553,7 @@ database.
 private void openTSProduct(String identifier) {
 	String routine = "HydroBase_GUI_SelectTSProduct.openTSProduct";
 
-	Vector dbProps = null;
+	List dbProps = null;
 	HydroBase_TSProduct tsp = null;
 	Message.printStatus(1, "", "Open product: " + identifier + " / "
 		+ __dmi.getUserNum());
@@ -574,14 +575,14 @@ private void openTSProduct(String identifier) {
 	PropList props = new PropList("TSProduct");
 	props.setHowSet(Prop.SET_FROM_PERSISTENT);
 	int size = dbProps.size();
-	Vector tsids = new Vector();
+	List tsids = new Vector();
 	HydroBase_TSProductProps tspp = null;
 
 	// Loops through all the properties and adds them to an actual proplist.
 	// Also keeps track of any properties that end with TSID, as these 
 	// are time series that will need to be queried from the database.
 	for (int i = 0; i < size; i++) {
-		tspp = (HydroBase_TSProductProps)dbProps.elementAt(i);
+		tspp = (HydroBase_TSProductProps)dbProps.get(i);
 		try {
 			props.set(tspp.getProperty() + "="
 				+ tspp.getValue());
@@ -602,14 +603,14 @@ private void openTSProduct(String identifier) {
 		props.set("ProductIDOriginal", identifier);
 		product = new TSProduct(props, null);
 		TS ts = null;
-		Vector tsList = new Vector();
+		List tsList = new Vector();
 		String s = null;
 		size = tsids.size();
 		for (int i = 0; i < size; i++) {
-			s = (String)tsids.elementAt(i);
+			s = (String)tsids.get(i);
 			ts = __dmi.readTimeSeries(s, null, null, null, 
 				true, null);
-			tsList.addElement(ts);
+			tsList.add(ts);
 		}
 		product.setTSList(tsList);
 
@@ -627,9 +628,9 @@ private void openTSProduct(String identifier) {
 /**
 Reads TSProducts from the database and updates the list in the GUI.
 */
-private Vector readTSProducts() {
+private List readTSProducts() {
 	String routine = getClass() + ".readTSProducts";
-	Vector v = null;
+	List v = null;
 	
 	try {
 		v = 
@@ -648,11 +649,11 @@ private Vector readTSProducts() {
 	}
 
 	int size = v.size();
-	Vector strings = new Vector();
+	List strings = new Vector();
 	HydroBase_TSProduct tsp = null;
 	String s = null;
 	for (int i = 0; i < size; i++) {
-		tsp = (HydroBase_TSProduct)v.elementAt(i);
+		tsp = (HydroBase_TSProduct)v.get(i);
 		s = "" + tsp.getIdentifier() + " - " + tsp.getName();
 		strings.add(s);
 	}

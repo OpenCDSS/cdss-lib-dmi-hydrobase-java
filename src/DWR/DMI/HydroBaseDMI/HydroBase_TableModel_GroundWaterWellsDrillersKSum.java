@@ -20,13 +20,12 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
 /**
-This class is a table model for displaying drillers k sum data in the 
-HydroBase_GUI_GroundWater GUI.
+This class is a table model for displaying drillers k sum data in the HydroBase_GUI_GroundWater GUI.
 */
 public class HydroBase_TableModel_GroundWaterWellsDrillersKSum 
 extends HydroBase_TableModel {
@@ -83,19 +82,17 @@ Number of columns in the table model.
 private final static int __COLUMNS = 41;
 
 /**
-Vector of aquifers to display in the tooltips.
+List of aquifers to display in the tooltips.
 */
-private Vector __aquifers = null;
+private List __aquifers = null;
 
 /**
-Constructor.  This builds the Model for displaying the given pump test 
-results.
+Constructor.  This builds the Model for displaying the given pump test results.
 @param results the results that will be displayed in the table.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_GroundWaterWellsDrillersKSum(Vector results,
-Vector aquifers)
+public HydroBase_TableModel_GroundWaterWellsDrillersKSum(List results, List aquifers)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -476,8 +473,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -487,8 +483,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_GroundWaterWellsDrillersKSum d 
-		= (HydroBase_GroundWaterWellsDrillersKSum)_data.elementAt(row);
+	HydroBase_GroundWaterWellsDrillersKSum d = (HydroBase_GroundWaterWellsDrillersKSum)_data.get(row);
 	switch (col) {
 		case COL_DIV:
 			return new Integer(d.getDiv());

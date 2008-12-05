@@ -11,7 +11,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying wis data.
@@ -29,7 +29,7 @@ Constructor.
 @param data the data for the worksheet.
 @param wisBuilder the GUI in which this worksheet appears.
 */
-public HydroBase_TableModel_WISBuilder(Vector data, 
+public HydroBase_TableModel_WISBuilder(List data, 
 HydroBase_GUI_WISBuilder wisBuilder)
 throws Exception {
 	if (data == null) {
@@ -174,8 +174,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -190,7 +189,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_WISData w = (HydroBase_WISData)_data.elementAt(row);
+	HydroBase_WISData w = (HydroBase_WISData)_data.get(row);
 	switch (col) {
 		case HydroBase_GUI_WIS.ROW_LABEL_COL:	
 			return w.getRow_label() + w.getEtc();
@@ -246,7 +245,7 @@ Sets the value at the specified position.
 */
 public void setValueAt(Object o, int row, int col) {
 	// o will always be passed in as a String -- convert accordingly
-	HydroBase_WISData w = (HydroBase_WISData)_data.elementAt(row);
+	HydroBase_WISData w = (HydroBase_WISData)_data.get(row);
 	switch (col) {
 		case HydroBase_GUI_WIS.ROW_LABEL_COL:	
 			w.setRow_label((String)o);	

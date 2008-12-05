@@ -81,6 +81,7 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.io.File;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.GR.GRLimits;
@@ -165,7 +166,7 @@ the objects to the USGS or USBR identifier from unpermitted_wells.  This is a
 work-around until HydroBase is redesigned to better handle well data.
 */
 public final static void addAlternateWellIdentifiers (	HydroBaseDMI dmi,
-							Vector list )
+							List list )
 {	HydroBase_StructureGeolocStructMeasType data;
 	int size = 0;
 	if ( list != null ) {
@@ -175,7 +176,7 @@ public final static void addAlternateWellIdentifiers (	HydroBaseDMI dmi,
 	HydroBase_GroundWaterWellsView uws;
 	for ( int i = 0; i < size; i++ ) {
 		data = (HydroBase_StructureGeolocStructMeasType)
-			list.elementAt(i);
+			list.get(i);
 		try {	
 			uws = dmi.readGroundWaterWellsMeasType(
 				data.getStructure_num());
@@ -904,7 +905,7 @@ throws Exception
 		FillStart_DateTime.addYear ( -1 );
 	}
 
-	Vector messages = new Vector();
+	List messages = new Vector();
 	DateTime date = new DateTime ( FillStart_DateTime );
 	DateTime yearstart_DateTime = null;	// Fill dates for one year
 	DateTime yearend_DateTime = null;
@@ -983,7 +984,7 @@ throws Exception
 			}
 			// Save messages to add to the genesis history...
 			if ( missing_count > 0 ) {
-				messages.addElement (
+				messages.add (
 				"Nov 1, " + yearstart_DateTime.getYear() +
 				" to Oct 31, " + yearend_DateTime.getYear() +
 				" filled " + missing_count + " values." );
@@ -1008,7 +1009,7 @@ throws Exception
 			// genesis.  The problem is that the genesis can get
 			// very long.
 			for ( int i = 0; i < size; i++ ) {
-				ts.addToGenesis ((String)messages.elementAt(i));
+				ts.addToGenesis ((String)messages.get(i));
 			}
 		}
 	}
@@ -1332,17 +1333,17 @@ returns that string.
 */
 public static String formatLegalLocation(String pm, int ts, String tdir, 
 int rng, String rdir, int sec, String seca,String q160, String q40, String q10){
-	Vector v = new Vector (10);
-	v.addElement(pm);
-	v.addElement("" + ts);
-	v.addElement(tdir);
-	v.addElement("" + rng);
-	v.addElement(rdir);
-	v.addElement("" + sec);
-	v.addElement(seca);
-	v.addElement(q160);
-	v.addElement(q40);
-	v.addElement(q10);
+	List v = new Vector (10);
+	v.add(pm);
+	v.add("" + ts);
+	v.add(tdir);
+	v.add("" + rng);
+	v.add(rdir);
+	v.add("" + sec);
+	v.add(seca);
+	v.add(q160);
+	v.add(q40);
+	v.add(q10);
 	return StringUtil.formatString (v, 
 		"%2.2s%2.2s%1.1s%3.3s%1.1s%4.4s%-1.1s%5.5s%4.4s%4.4s");
 }
@@ -1408,7 +1409,7 @@ DivClass).
 @deprecated Use the overloaded version with the mask.
 2005-04-19 still deprecated
 */
-public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
+public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 						boolean include_stations,
 						boolean include_structures,
 						boolean include_wis )
@@ -1447,10 +1448,10 @@ For example, all data related to reservoirs will be prefixed with
 "Reservoir - ".  This is useful for providing a better presentation to users in
 interfaces.
 */
-public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
+public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 						int include_types,
 						boolean add_group )
-{	Vector types = new Vector();
+{	List types = new Vector();
 	// Add these types exactly as they are listed in HydroBase.  If someone
 	// has a problem, HydroBase should be adjusted.  Notes are shown below
 	// where there may be an issue.  In all cases, documentation needs to
@@ -1497,7 +1498,7 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		if ( add_group ) {
 			prefix = "Hardware - ";
 		}
-		types.addElement ( prefix + "Battery" );
+		types.add ( prefix + "Battery" );
 	}
 	if ( (include_types&DATA_TYPE_STATION_CLIMATE) > 0 ) {
 		prefix = "";
@@ -1509,7 +1510,7 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 							// "PanEvap"
 							// Time step:  Day and
 							// Month
-		types.addElement ( prefix + "EvapPan" );	// Proposed
+		types.add ( prefix + "EvapPan" );	// Proposed
 		//types.addElement ( "FrostDate" );	// Need something like
 							// FrostDateF28,
 							// FrostDateF32,
@@ -1518,32 +1519,32 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 							// so each time series
 							// can be manipulated.
 							// Time step:  Year
-		types.addElement ( prefix + "FrostDateF32F" );	// Proposed
-		types.addElement ( prefix + "FrostDateF28F" );	// Proposed
-		types.addElement ( prefix + "FrostDateL28S" );	// Proposed
-		types.addElement ( prefix + "FrostDateL32S" );	// Proposed
-		//types.addElement ( "MaxTemp" );	// Perhaps should have:
-		//types.addElement ( "MinTemp" );	// "TempMax", "TempMin",
-		//types.addElement ( "MeanTemp" );	// for daily and
+		types.add ( prefix + "FrostDateF32F" );	// Proposed
+		types.add ( prefix + "FrostDateF28F" );	// Proposed
+		types.add ( prefix + "FrostDateL28S" );	// Proposed
+		types.add ( prefix + "FrostDateL32S" );	// Proposed
+		//types.add ( "MaxTemp" );	// Perhaps should have:
+		//types.add ( "MinTemp" );	// "TempMax", "TempMin",
+		//types.add ( "MeanTemp" );	// for daily and
 							// "TempMean",
 							// "TempMeanMax",
 							// "TempMeanMin" for
 							// monthly - it gets
 							// messy.
-		types.addElement ( prefix + "Precip" );	// Time step:  Month,
+		types.add ( prefix + "Precip" );	// Time step:  Month,
 							// Day, real-time with
 							// vax_field PRECIP
-		types.addElement ( prefix + "Temp" );	// Proposed for use with
+		types.add ( prefix + "Temp" );	// Proposed for use with
 							// real-time AIRTEMP
 							// vax_field
-		types.addElement ( prefix + "TempMax" );// Proposed
-		types.addElement ( prefix + "TempMean" );	// Proposed
-		types.addElement ( prefix + "TempMeanMax" );	// Proposed
-		types.addElement ( prefix + "TempMeanMin" );	// Proposed
-		types.addElement ( prefix + "TempMin" );	// Proposed
-		types.addElement ( prefix + "Snow" );	// Time step:  Day,
+		types.add ( prefix + "TempMax" );// Proposed
+		types.add ( prefix + "TempMean" );	// Proposed
+		types.add ( prefix + "TempMeanMax" );	// Proposed
+		types.add ( prefix + "TempMeanMin" );	// Proposed
+		types.add ( prefix + "TempMin" );	// Proposed
+		types.add ( prefix + "Snow" );	// Time step:  Day,
 							// Month
-		//types.addElement ( "SnowCrse" );	// "SnowDepth" and
+		//types.add ( "SnowCrse" );	// "SnowDepth" and
 							// "SnowWaterEquivalent"
 							// would be better, but
 							// need to check how
@@ -1551,15 +1552,15 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 							// "Snow" type
 							// Time step:
 							// Day or IrregDay?
-		types.addElement ( prefix + "SnowCourseDepth" );// Proposed
-		types.addElement ( prefix + "SnowCourseSWE" );	// Proposed
-		types.addElement ( prefix + "Solar" );	// Time step:  Day
-		//types.addElement ( "VP" );		// Maybe VaporPressure
-		types.addElement ( prefix + "VaporPressure" );	
+		types.add ( prefix + "SnowCourseDepth" );// Proposed
+		types.add ( prefix + "SnowCourseSWE" );	// Proposed
+		types.add ( prefix + "Solar" );	// Time step:  Day
+		//types.add ( "VP" );		// Maybe VaporPressure
+		types.add ( prefix + "VaporPressure" );	
 							// Maybe VaporPressure
 							// is better.
 							// Time step:  Day
-		types.addElement ( prefix + "Wind" );	// OK but maybe
+		types.add ( prefix + "Wind" );	// OK but maybe
 							// WindTravel or similar
 							// is better (some gages
 							// measure wind
@@ -1575,9 +1576,9 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 			if ( add_group ) {
 				prefix = "AdminFlow - ";
 			}
-			types.addElement ( prefix + "AdminFlow" );
-			types.addElement ( prefix + "AdminFlowMax" );
-			types.addElement ( prefix + "AdminFlowMin" );
+			types.add ( prefix + "AdminFlow" );
+			types.add ( prefix + "AdminFlowMax" );
+			types.add ( prefix + "AdminFlowMin" );
 		}
 		}
 		catch ( Exception e ) {
@@ -1587,28 +1588,28 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		if ( add_group ) {
 			prefix = "Stream - ";
 		}
-		//types.addElement ( "Nat_flow" );	// Maybe "NatFlow" or
+		//types.add ( "Nat_flow" );	// Maybe "NatFlow" or
 							// "NaturalFlow" is
 							// better.
 							// Time step:  Month
 		// Removed 2007-04-29 Based on State removing from HydroBase
-		//types.addElement ( prefix + "NaturalFlow" );
+		//types.add ( prefix + "NaturalFlow" );
 							// Proposed
-		//types.addElement ( "RT_Rate" );	// "Streamflow" with a
+		//types.add ( "RT_Rate" );	// "Streamflow" with a
 							// "realtime" time step
 							// would be cleaner
 							// Time step:
 							// RealTime?  15Minute?
-		types.addElement ( prefix + "Stage" );	// Time step:  realtime
+		types.add ( prefix + "Stage" );	// Time step:  realtime
 							// RT_Misc GAGE_HT
-		types.addElement ( prefix + "Streamflow" );	// Also need
-		types.addElement ( prefix + "StreamflowMax" );
+		types.add ( prefix + "Streamflow" );	// Also need
+		types.add ( prefix + "StreamflowMax" );
 							// "StreamflowMax" and
-		types.addElement ( prefix + "StreamflowMin" );
+		types.add ( prefix + "StreamflowMin" );
 							// "StreamflowMin"
 							// Time step:
 							// Day, Month, RealTime?
-		types.addElement ( prefix + "WatTemp" );// Water temperature:
+		types.add ( prefix + "WatTemp" );// Water temperature:
 							// RT_Misc WATTEMP
 	}
 	if ( (include_types&DATA_TYPE_STATION_RESERVOIR) > 0 ) {
@@ -1616,25 +1617,25 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		if ( add_group ) {
 			prefix = "Reservoir - ";
 		}
-		types.addElement ( prefix + "Release" );// Time step:
+		types.add ( prefix + "Release" );// Time step:
 							// real-time with
 							// vax_field OUTLETQ
-		//types.addElement ( "RT_Vol" )		// "ResContent",
+		//types.add ( "RT_Vol" )		// "ResContent",
 							// "ResStorage", or
 							// similar would be
 							// better
 							// Time step:
 							// RealTime?  15Minute?
-		//types.addElement ( "RT_Height" );	// "Stage" and
+		//types.add ( "RT_Height" );	// "Stage" and
 							// "PoolElev" would be
 							// better - treat the
 							// time step separately
 							// Time step:
 							// RealTime?  15Minute?
-		types.addElement ( prefix + "PoolElev" );// Time step:
+		types.add ( prefix + "PoolElev" );// Time step:
 							// RT_Height with
 							// vax_field ELEV
-		types.addElement ( prefix + "Storage" );// Time step:  realtime
+		types.add ( prefix + "Storage" );// Time step:  realtime
 							// RT_Vol STORAGE
 	}
 	if ( (include_types&DATA_TYPE_STATION_WELL) > 0 ) {
@@ -1642,7 +1643,7 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		if ( add_group ) {
 			prefix = "Well - ";
 		}
-		types.addElement ( prefix + "WellLevel");// Also see WellLevel
+		types.add ( prefix + "WellLevel");// Also see WellLevel
 							// for structures.
 							// RT_Misc WELL_1
 	}
@@ -1652,23 +1653,23 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		if ( add_group ) {
 			prefix = "Agriculture/CASS - ";
 		}
-		types.addElement ( prefix + "CropAreaHarvested" );
-		types.addElement ( prefix + "CropAreaPlanted" );
-		types.addElement ( prefix + "LivestockHead" );
+		types.add ( prefix + "CropAreaHarvested" );
+		types.add ( prefix + "CropAreaPlanted" );
+		types.add ( prefix + "LivestockHead" );
 		// National agricultural statistics
 		if ( add_group ) {
 			prefix = "Agriculture/NASS - ";
 		}
-		types.addElement ( prefix + "CropArea" );
+		types.add ( prefix + "CropArea" );
 		// Data derived from DSS GIS work...
 		if ( add_group ) {
 			prefix = "Agriculture/GIS - ";
 		}
-		types.addElement ( prefix + "CropAreaAllIrrigation" );
-		types.addElement ( prefix + "CropAreaFlood" );
-		types.addElement ( prefix + "CropAreaDrip" );
-		types.addElement ( prefix + "CropAreaFurrow" );
-		types.addElement ( prefix + "CropAreaSprinkler" );
+		types.add ( prefix + "CropAreaAllIrrigation" );
+		types.add ( prefix + "CropAreaFlood" );
+		types.add ( prefix + "CropAreaDrip" );
+		types.add ( prefix + "CropAreaFurrow" );
+		types.add ( prefix + "CropAreaSprinkler" );
 							// This is something
 							// new, which will
 							// support StateDMI and
@@ -1681,50 +1682,50 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		if ( add_group ) {
 			prefix = "Demographics - ";
 		}
-		types.addElement ( prefix + "HumanPopulation" );
+		types.add ( prefix + "HumanPopulation" );
 	}
 	if ( (include_types&DATA_TYPE_STRUCTURE_DIVERSION) > 0 ) {
 		prefix = "";
 		if ( add_group ) {
 			prefix = "Diversion - ";
 		}
-		types.addElement ( prefix + "DivClass" );// These are probably
-		types.addElement ( prefix + "DivComment" );// OK - will use
-		types.addElement ( prefix + "DivTotal" );// SFUT as the sub data
+		types.add ( prefix + "DivClass" );// These are probably
+		types.add ( prefix + "DivComment" );// OK - will use
+		types.add ( prefix + "DivTotal" );// SFUT as the sub data
 							// type.
-		types.addElement ( prefix + "IDivClass" );
-		types.addElement ( prefix + "IDivTotal" );
+		types.add ( prefix + "IDivClass" );
+		types.add ( prefix + "IDivTotal" );
 	}
 	if ( (include_types&DATA_TYPE_STRUCTURE_RESERVOIR) > 0 ) {
 		prefix = "";
 		if ( add_group ) {
 			prefix = "Reservoir - ";
 		}
-		types.addElement ( prefix + "IRelClass" );
-		types.addElement ( prefix + "IRelTotal" );
-		types.addElement ( prefix + "RelClass" );
-		types.addElement ( prefix + "RelComment" );
-		types.addElement ( prefix + "RelTotal" );
-		types.addElement ( prefix + "ResEOM" );
-		types.addElement ( prefix + "ResEOY" );
-		//types.addElement ( "ResMeas" );	// Would be better as
+		types.add ( prefix + "IRelClass" );
+		types.add ( prefix + "IRelTotal" );
+		types.add ( prefix + "RelClass" );
+		types.add ( prefix + "RelComment" );
+		types.add ( prefix + "RelTotal" );
+		types.add ( prefix + "ResEOM" );
+		types.add ( prefix + "ResEOY" );
+		//types.add ( "ResMeas" );	// Would be better as
 							// "ResMeasFill",
 							// "ResMeasRelease",
 							// "ResMeasElev",
 							// "ResMeasEvap"
-		types.addElement ( prefix + "ResMeasElev" );
+		types.add ( prefix + "ResMeasElev" );
 							// Add to evaluate...
-		types.addElement ( prefix + "ResMeasEvap" );
-		types.addElement ( prefix + "ResMeasFill" );
-		types.addElement ( prefix + "ResMeasRelease" );
-		types.addElement ( prefix + "ResMeasStorage" );
+		types.add ( prefix + "ResMeasEvap" );
+		types.add ( prefix + "ResMeasFill" );
+		types.add ( prefix + "ResMeasRelease" );
+		types.add ( prefix + "ResMeasStorage" );
 	}
 	if ( (include_types&DATA_TYPE_STRUCTURE_WELL) > 0 ) {
 		prefix = "";
 		if ( add_group ) {
 			prefix = "Well - ";
 		}
-		types.addElement ( prefix + "WellLevel" );
+		types.add ( prefix + "WellLevel" );
 							// Also somehow need to
 							// hook in "WellPumping"
 	}
@@ -1733,17 +1734,17 @@ public static Vector getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		if ( add_group ) {
 			prefix = "WIS - ";
 		}
-		types.addElement ( prefix + "WISPointFlow" );
-		types.addElement ( prefix + "WISNaturalFlow" );
-		types.addElement ( prefix + "WISDeliveryFlow" );
-		types.addElement ( prefix + "WISGainLoss" );
-		types.addElement ( prefix + "WISPriorityDiversion" );
-		types.addElement ( prefix + "WISDeliveryDiversion" );
-		types.addElement ( prefix + "WISRelease" );
-		types.addElement ( prefix + "WISTribNaturalFlow" );
-		types.addElement ( prefix + "WISTribDeliveryFlow" );
+		types.add ( prefix + "WISPointFlow" );
+		types.add ( prefix + "WISNaturalFlow" );
+		types.add ( prefix + "WISDeliveryFlow" );
+		types.add ( prefix + "WISGainLoss" );
+		types.add ( prefix + "WISPriorityDiversion" );
+		types.add ( prefix + "WISDeliveryDiversion" );
+		types.add ( prefix + "WISRelease" );
+		types.add ( prefix + "WISTribNaturalFlow" );
+		types.add ( prefix + "WISTribDeliveryFlow" );
 
-		// Time series identifers are of the form:
+		// Time series identifiers are of the form:
 		//
 		// wdid:NN.DWR.WISPointFlow.Day
 	}
@@ -1957,7 +1958,7 @@ included.
 @deprecated Use the other version.
 2005-04-19 still deprecated
 */
-public static Vector getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
+public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 						String data_type )
 {	return getTimeSeriesTimeSteps ( hbdmi, data_type, DATA_TYPE_ALL );
 }
@@ -1980,156 +1981,156 @@ used in cases where a data type is listed as both a station and structure (e.g.,
 WellLevel) but the interval is different for each case (e.g., WellLevel
 Irregular for station, WellLevel Day for structure).
 */
-public static Vector getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
+public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 						String data_type,
 						int include_types )
 {	String Month = "Month";
 	String Day = "Day";
 	String Year = "Year";
 	String Irregular = "Irregular";
-	Vector v = new Vector();
+	List v = new Vector();
 	// Alphabetize by data type, as much as possible...
 	if ( data_type.equalsIgnoreCase("AdminFlow") ) {
-		v.addElement ( Day );
-		v.addElement ( Month );
-		v.addElement ( Irregular );  // Real-time
+		v.add ( Day );
+		v.add ( Month );
+		v.add ( Irregular );  // Real-time
 	}
 	else if ( data_type.equalsIgnoreCase("AdminFlowMax") ||
 			data_type.equalsIgnoreCase("AdminFlowMin") ) {
-			v.addElement ( Month );
+			v.add ( Month );
 		}
 	else if ( data_type.equalsIgnoreCase("Agstats") ) {
-		v.addElement ( Year );
+		v.add ( Year );
 	}
 	else if ( data_type.startsWith("CropArea") ) {
-		v.addElement ( Year );
+		v.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("Battery") ) {
-		v.addElement ( Irregular );
+		v.add ( Irregular );
 	}
 	else if(data_type.equalsIgnoreCase("DivClass") ||
 		data_type.equalsIgnoreCase("DivTotal") ||
 		data_type.equalsIgnoreCase("IDivClass") ||
 		data_type.equalsIgnoreCase("IDivTotal") ) {
-		v.addElement ( Day );
-		v.addElement ( Month );
-		v.addElement ( Year );
+		v.add ( Day );
+		v.add ( Month );
+		v.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("EvapPan") ) {
-		v.addElement ( Day );
-		v.addElement ( Month );
+		v.add ( Day );
+		v.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("DivComment") ) {
-		v.addElement ( Year );
+		v.add ( Year );
 	}
 	else if( data_type.equalsIgnoreCase("FrostDateL28S") ||
 		data_type.equalsIgnoreCase("FrostDateL32S") ||
 		data_type.equalsIgnoreCase("FrostDateF32F") ||
 		data_type.equalsIgnoreCase("FrostDateF28F") ) {
-		v.addElement ( Year );
+		v.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("NaturalFlow") ) {
-		v.addElement ( Month );
+		v.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("PoolElev") ) {
-		v.addElement ( Irregular );
+		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("Precip") ) {
-		v.addElement ( Day );
-		v.addElement ( Month );
-		v.addElement ( Irregular );
+		v.add ( Day );
+		v.add ( Month );
+		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("RelClass") ||
 		data_type.equalsIgnoreCase("RelTotal") ||
 		data_type.equalsIgnoreCase("IRelClass") ||
 		data_type.equalsIgnoreCase("IRelTotal") ) {
-		v.addElement ( Day );
-		v.addElement ( Month );
-		v.addElement ( Year );
+		v.add ( Day );
+		v.add ( Month );
+		v.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("RelComment") ) {
-		v.addElement ( Year );
+		v.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("Release") ) {
-		v.addElement ( Irregular );
+		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("ResEOM") ) {
-		v.addElement ( Month );
+		v.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("ResEOY") ) {
-		v.addElement ( Year );
+		v.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("ResMeasElev") ||
 		data_type.equalsIgnoreCase ( "ResMeasEvap" ) ||
 		data_type.equalsIgnoreCase ( "ResMeasFill" ) ||
 		data_type.equalsIgnoreCase ( "ResMeasRelease") ||
 		data_type.equalsIgnoreCase ( "ResMeasStorage") ) {
-		v.addElement ( Day );
+		v.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("Snow") ) {
 		// Snow accumulation - on the ground
-		v.addElement ( Day );
-		v.addElement ( Month );
+		v.add ( Day );
+		v.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("SnowCourseDepth") ||
 		data_type.equalsIgnoreCase("SnowCourseSWE") ) {
 		// Although the data are stored in a monthly table, the values
 		// are generally recorded to the day
-		v.addElement ( Day );
+		v.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("Solar") ) {
-		v.addElement ( Day );
+		v.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("Stage") ) {
-		v.addElement ( Irregular );
+		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("Storage") ) {
-		v.addElement ( Irregular );
+		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("Streamflow") ) {
-		v.addElement ( Day );
-		v.addElement ( Month );
-		//v.addElement ( RealTime );
-		v.addElement ( Irregular );
+		v.add ( Day );
+		v.add ( Month );
+		//v.add ( RealTime );
+		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("StreamflowMax") ||
 		data_type.equalsIgnoreCase("StreamflowMin") ) {
-		v.addElement ( Month );
+		v.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("Temp") ) {
-		v.addElement ( Irregular );
+		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("TempMax") ) {
-		v.addElement ( Day );
+		v.add ( Day );
 	}
 	else if(data_type.equalsIgnoreCase("TempMean") ||
 		data_type.equalsIgnoreCase("TempMeanMax") ||
 		data_type.equalsIgnoreCase("TempMeanMin") ) {
-		v.addElement ( Month );
+		v.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("TempMin") ) {
-		v.addElement ( Day );
+		v.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("VaporPressure") ) {
-		v.addElement ( Day );
+		v.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("WatTemp") ) {
-		v.addElement ( Irregular );
+		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("WellLevel") ) {
 		if ( (include_types&DATA_TYPE_STRUCTURE_WELL) != 0 ) {
-			v.addElement ( Day );
+			v.add ( Day );
 		}
 		if ( (include_types&DATA_TYPE_STATION_WELL) != 0 ) {
-			v.addElement ( Irregular );
+			v.add ( Irregular );
 		}
 	}
 	else if ( data_type.equalsIgnoreCase("Wind") ) {
-		v.addElement ( Day );
+		v.add ( Day );
 	}
 	else if ( data_type.regionMatches(true,0,"WIS",0,3) ) {
 		// Water information sheet data types start with "WIS"...
-		v.addElement ( Day );
+		v.add ( Day );
 	}
 	return v;
 }
@@ -2276,11 +2277,11 @@ public static boolean isStationTimeSeriesDataType (	HydroBaseDMI hbdmi,
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,0) ;
 	}
-	Vector global_mt = hbdmi.getMeasType();
+	List global_mt = hbdmi.getMeasType();
 	int size = global_mt.size();
 	HydroBase_MeasType mt;
 	for ( int i = 0; i < size; i++ ) {
-		mt = (HydroBase_MeasType)global_mt.elementAt(i);
+		mt = (HydroBase_MeasType)global_mt.get(i);
 		if ( data_type.equalsIgnoreCase(mt.getMeas_type()) ) {
 			return true;
 		}
@@ -2325,12 +2326,12 @@ public static boolean isStructureTimeSeriesDataType (	HydroBaseDMI hbdmi,
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,0) ;
 	}
-	Vector global_mt = hbdmi.getStructMeasType();
+	List global_mt = hbdmi.getStructMeasType();
 	int size = global_mt.size();
 	HydroBase_StructMeasType mt;
 	// Check the list of struct_meas_type.meas_type...
 	for ( int i = 0; i < size; i++ ) {
-		mt = (HydroBase_StructMeasType)global_mt.elementAt(i);
+		mt = (HydroBase_StructMeasType)global_mt.get(i);
 		if ( data_type.equalsIgnoreCase(mt.getMeas_type()) ) {
 			return true;
 		}
@@ -2477,7 +2478,7 @@ input name.  The first match is found.
 @param HydroBaseDMI_Vector List of HydroBaseDMI to search.
 @parma input_name HydroBaseDMI input name to find.
 */
-public static HydroBaseDMI lookupHydroBaseDMI ( Vector HydroBaseDMI_Vector,
+public static HydroBaseDMI lookupHydroBaseDMI ( List HydroBaseDMI_Vector,
 						String input_name )
 {	int size = 0;
 	if ( HydroBaseDMI_Vector != null ) {
@@ -2485,7 +2486,7 @@ public static HydroBaseDMI lookupHydroBaseDMI ( Vector HydroBaseDMI_Vector,
 	}
 	HydroBaseDMI dmi = null;
 	for ( int i = 0; i < size; i++ ) {
-		dmi = (HydroBaseDMI)HydroBaseDMI_Vector.elementAt(i);
+		dmi = (HydroBaseDMI)HydroBaseDMI_Vector.get(i);
 		if ( dmi == null ) {
 			continue;
 		}
@@ -2528,7 +2529,7 @@ throws Exception {
 		// Do not check for G: above because it is being phased in.
 		// First break by spaces..
 		String sfut0 = sfut_string + " ";
-		Vector sfut = StringUtil.breakStringList ( sfut0, " ",
+		List sfut = StringUtil.breakStringList ( sfut0, " ",
 			StringUtil.DELIM_SKIP_BLANKS );
 		int sfut_size = sfut.size();
 		if ( sfut_size < 4 ) {
@@ -2538,11 +2539,11 @@ throws Exception {
 		}
 		// Now break each field by ':' and use
 		// the second part.  Do not handle more than five parts.
-		Vector sfut2;
+		List sfut2;
 		for ( int is = 0; (is < sfut_size) && (is < 5); is++ ) {
 			sfut2 = StringUtil.breakStringList (
-				sfut.elementAt(is) + ":", ":", 0 );
-			sfut_parts[is] = (String)sfut2.elementAt(1);
+				sfut.get(is) + ":", ":", 0 );
+			sfut_parts[is] = (String)sfut2.get(1);
 			if ( sfut_parts[is] == null ) {
 				sfut_parts[is] = "";
 			}
@@ -2551,20 +2552,20 @@ throws Exception {
 	else {	// Assume the simple format of:
 		// xx:xx:xx:xx
 		String sfut0 = sfut_string + ":";
-		Vector sfut =
+		List sfut =
 		StringUtil.breakStringList ( sfut0, ":", 0 );
 		if ( sfut.size() < 4 ) {
 			Message.printWarning ( 2, routine,
 			"SFUT must have 4 parts" );
 			return sfut_parts;
 		}
-		sfut_parts[0] = (String)sfut.elementAt(0);
-		sfut_parts[1] = (String)sfut.elementAt(1);
-		sfut_parts[2] = (String)sfut.elementAt(2);
-		sfut_parts[3] = (String)sfut.elementAt(3);
+		sfut_parts[0] = (String)sfut.get(0);
+		sfut_parts[1] = (String)sfut.get(1);
+		sfut_parts[2] = (String)sfut.get(2);
+		sfut_parts[3] = (String)sfut.get(3);
 		if ( sfut.size() > 4 ) {
 			// G: at end, for database after 20061003
-			sfut_parts[4] = (String)sfut.elementAt(4);
+			sfut_parts[4] = (String)sfut.get(4);
 		}
 	}
 
@@ -2614,7 +2615,7 @@ from.
 @return a list of objects for the data type.
 @exception if there is an error reading the data.
 */
-public static Vector readTimeSeriesHeaderObjects (	HydroBaseDMI hbdmi,
+public static List readTimeSeriesHeaderObjects (	HydroBaseDMI hbdmi,
 							String data_type,
 							String time_step,
 							InputFilter_JPanel ifp )
@@ -2639,14 +2640,14 @@ as null to query all data.
 @return a list of objects for the data type.
 @exception if there is an error reading the data.
 */
-public static Vector readTimeSeriesHeaderObjects (	HydroBaseDMI hbdmi,
+public static List readTimeSeriesHeaderObjects (	HydroBaseDMI hbdmi,
 							String data_type,
 							String time_step,
 							InputFilter_JPanel ifp,
 							GRLimits grlimits )
 throws Exception
 {	String routine = "HydroBase_Util.readTimeSeriesHeaderObjects", message;
-	Vector tslist = null;
+	List tslist = null;
 	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType (
 			data_type, time_step );
 	String meas_type = hb_mt[0];
@@ -2747,12 +2748,12 @@ throws Exception
 				null,	// start
 				null,	// end
 				true);	// distinct
-			Vector v = new Vector();
+			List v = new Vector();
 			int size2 = tslist.size();
 			HydroBase_StructureView view = null;
 			for (int i = 0; i < size2; i++) {
 				view = (HydroBase_StructureView)tslist
-					.elementAt(i);
+					.get(i);
 				v.add(new HydroBase_StructureIrrigSummaryTS(
 					view));
 			}
@@ -2812,11 +2813,11 @@ throws Exception
 				getTimeSeriesDataUnits (
 				hbdmi, data_type, time_step );
 //			if (hbdmi.useStoredProcedures()) {
-			Vector v = tslist;
+			List v = tslist;
 			tslist = new Vector();
 			for ( int i = 0; i < size; i++ ) {
 				view = (HydroBase_StationView)
-					v.elementAt(i);
+					v.get(i);
 				// Set to the value used in TSTool...
 				if ( view.getVax_field().length() > 0 ){
 					view.setMeas_type(
@@ -2857,12 +2858,12 @@ throws Exception
 				getTimeSeriesDataUnits (
 				hbdmi, data_type, time_step );
 //			if (hbdmi.useStoredProcedures()) {
-			Vector v = tslist;
+			List v = tslist;
 			tslist = new Vector();			
 			for ( int i = 0; i < size; i++ ) {
 				view = 
 				(HydroBase_StructMeasTypeView)
-					v.elementAt(i);
+					v.get(i);
 				// Set to the value used in TSTool...
 				if ( view.getIdentifier().length() > 0){
 					// Merged SFUT...
@@ -2914,12 +2915,12 @@ throws Exception
 				getTimeSeriesDataUnits (
 				hbdmi, data_type, time_step );
 
-			Vector v = tslist;
+			List v = tslist;
 			tslist = new Vector();			
 			for ( int i = 0; i < size; i++ ) {
 				view = 
 				(HydroBase_GroundWaterWellsView)
-					v.elementAt(i);
+					v.get(i);
 				// Set to the value used in TSTool...
 				if ( view.getIdentifier().length() > 0){
 					// Merged SFUT...
@@ -2948,9 +2949,9 @@ throws Exception
 			tslist = hbdmi.
 			readWISSheetNameWISFormatListDistinct(ifp);
 			int listSize = tslist.size();
-			Vector v = new Vector();
+			List v = new Vector();
 			for (int i = 0; i < listSize; i++) {
-				v.add(tslist.elementAt(i));
+				v.add(tslist.get(i));
 			}
 			tslist = v;
 		}

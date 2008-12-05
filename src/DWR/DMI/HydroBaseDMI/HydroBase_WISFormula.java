@@ -17,6 +17,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIDataObject;
@@ -36,7 +37,7 @@ protected String _column = 		DMIUtil.MISSING_STRING;
 protected String _formula = 		DMIUtil.MISSING_STRING;
 protected String _formulastring = 	DMIUtil.MISSING_STRING;
 protected boolean _isFormulaEvaluated = 	false;
-protected Vector _wisMath;
+protected List _wisMath;
 
 /**
 Constructor.
@@ -51,7 +52,7 @@ Adds a term to the formula.
 @param wisMath a term to add to the formula.
 */
 public void addTerm(HydroBase_WISMath wisMath) {	
-	_wisMath.addElement(wisMath);
+	_wisMath.add(wisMath);
 }
 
 /**
@@ -107,14 +108,14 @@ the location is out of bounds.
 @return the term at the specified location.
 */
 public HydroBase_WISMath getTerm(int i) {	
-	return (HydroBase_WISMath)_wisMath.elementAt(i);
+	return (HydroBase_WISMath)_wisMath.get(i);
 }
 
 /**
 Returns the terms of the formula.
 @return the terms of the formula.
 */
-public Vector getTerms() {	
+public List getTerms() {	
 	return _wisMath;
 }
 
@@ -180,7 +181,7 @@ Sets the term at the specified location.
 @param loc the location in the formula at which to set the term.
 */
 public void setTerm(HydroBase_WISMath wisMath, int loc)  {	
-	_wisMath.setElementAt(wisMath, loc);
+	_wisMath.set(loc,wisMath);
 }
 
 /**

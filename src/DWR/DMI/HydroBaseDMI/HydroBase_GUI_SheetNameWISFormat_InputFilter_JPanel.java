@@ -20,6 +20,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
@@ -41,20 +42,20 @@ HydroBase_SheetNameWISFormat queries.
 */
 public HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel (HydroBaseDMI hbdmi )
 throws Exception
-{	Vector sheet_name_Vector = new Vector();	
-	Vector sheet_names = hbdmi.readWISSheetNameList(-999, -999, null, null);
+{	List sheet_name_Vector = new Vector();	
+	List sheet_names = hbdmi.readWISSheetNameList(-999, -999, null, null);
 	int size = 0;
 	if ( sheet_names != null ) {
 		size = sheet_names.size();
 	}
 	for ( int i = 0; i < size; i++ ) {
-		sheet_name_Vector.addElement (
-			((HydroBase_WISSheetName)sheet_names.elementAt(i)).
+		sheet_name_Vector.add (
+			((HydroBase_WISSheetName)sheet_names.get(i)).
 			getSheet_name() );
 	}
 
-	Vector input_filters = new Vector(8);
-	input_filters.addElement ( new InputFilter (
+	List input_filters = new Vector(8);
+	input_filters.add ( new InputFilter (
 		"", "",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );	// Blank to disable filter
@@ -63,7 +64,7 @@ throws Exception
 		"sheet_name",
 		StringUtil.TYPE_STRING,
 		sheet_name_Vector, sheet_name_Vector, true );
-	input_filters.addElement ( filter );
+	input_filters.add ( filter );
 	// REVISIT SAM 2004-05-19 - might want to add row identifier and
 	// row label, but these are in separate tables that are difficult to
 	// join with in a general filter

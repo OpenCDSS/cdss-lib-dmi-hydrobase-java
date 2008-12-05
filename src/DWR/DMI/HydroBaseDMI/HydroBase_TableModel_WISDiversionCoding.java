@@ -16,7 +16,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
@@ -58,18 +58,16 @@ The worksheet this table model is being used in.
 private JWorksheet __worksheet;
 
 /**
-Constructor.  This builds the Model for displaying the given diversion
-coding data.
+Constructor.  This builds the Model for displaying the given diversion coding data.
 @param results the results that will be displayed in the table.  CANNOT be null.
 @param day day number for which the coding is being edited.
 @throws Exception if invalid results were passed in.
 */
-public HydroBase_TableModel_WISDiversionCoding(Vector results, int day)
+public HydroBase_TableModel_WISDiversionCoding(List results, int day)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_WISDiversionCoding "
-			+ "constructor.");
+			+ "HydroBase_TableModel_WISDiversionCoding constructor.");
 	}
 	_data = results;
 	_data.add(new HydroBase_WISDailyWC());
@@ -166,7 +164,7 @@ public double getTotalAmount() {
 	HydroBase_WISDailyWC wc = null;
 	double d = 0;
 	for (int i = 0; i < (_data.size() - 1); i++) {
-		wc = (HydroBase_WISDailyWC)_data.elementAt(i);
+		wc = (HydroBase_WISDailyWC)_data.get(i);
 		d = wc.getAmountForDay(__day);
 		if (!DMIUtil.isMissing(d)) {
 			total += d;
@@ -205,7 +203,7 @@ public Object getValueAt(int row, int col) {
 		}
 	}
 
-	HydroBase_WISDailyWC wc = (HydroBase_WISDailyWC)_data.elementAt(row);
+	HydroBase_WISDailyWC wc = (HydroBase_WISDailyWC)_data.get(row);
 	switch (col) {
 		case COL_ID:	return "" + wc.getID();
 		case COL_S:	return wc.getS();
@@ -264,7 +262,7 @@ Sets the value at the specified position to the specified value.
 @param col the col of the cell for which to set the value.
 */
 public void setValueAt(Object value, int row, int col) {
-	HydroBase_WISDailyWC wc = (HydroBase_WISDailyWC)_data.elementAt(row);
+	HydroBase_WISDailyWC wc = (HydroBase_WISDailyWC)_data.get(row);
 	switch (col) {
 		case COL_S:	
 		case COL_U:

@@ -42,6 +42,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -199,7 +200,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -220,7 +221,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -312,8 +313,8 @@ Formats output for printing or export.
 @return a Vector of strings, each of which is a line in the report to be
 exported or printed.
 */
-public Vector formatOutput(int format) {
-	Vector v = new Vector();
+public List formatOutput(int format) {
+	List v = new Vector();
 	int spillwaySize = __spillwayWorksheet.getRowCount();
 	int inspectionSize = __inspectionWorksheet.getRowCount();
 	int outletSize = __outletWorksheet.getRowCount();
@@ -326,20 +327,20 @@ public Vector formatOutput(int format) {
 	String s2, s5, s6, s11, s12, s13;
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement("");
-		v.addElement("                                          "
+		v.add("");
+		v.add("                                          "
 			+ "        DAM INFORMATION");
-		v.addElement("DAM AKA:       "
+		v.add("DAM AKA:       "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__damAKAJTextField),
 			"%-59.59s") + "STATE DAM ID:          "
 			+ HydroBase_GUI_Util.trimText(__stateDamIDJTextField));
-		v.addElement("HAZARD CLASS:  "
+		v.add("HAZARD CLASS:  "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__hazardClassJTextField),
 			"%-23.23s") + "NAB CODE:        "
@@ -347,24 +348,24 @@ public Vector formatOutput(int format) {
 			HydroBase_GUI_Util.trimText(__nabCodeJTextField), 
 			"%-19.19s") + "NATIONAL INVENTORY ID: "
 			+ HydroBase_GUI_Util.trimText(__nationalIDJTextField));
-		v.addElement("NEAREST DOWNSTREAM                         "
+		v.add("NEAREST DOWNSTREAM                         "
 			+ "                               FOREST SERVICE "
 			+ "ID:     "
 			+ HydroBase_GUI_Util.trimText(__forestIDJTextField));
-		v.addElement("TOWN NAME:     " + StringUtil.formatString(
+		v.add("TOWN NAME:     " + StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__nameJTextField),
 			"%-23.23s") + "DISTANCE:        "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__distanceJTextField), 
 			"%-19.19s") + "FEDERAL LAND:          "
 			+ HydroBase_GUI_Util.trimText(__federalLandJTextField));
-		v.addElement("                                      "
+		v.add("                                      "
 			+ "STREAM CODE:     " + StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__streamCodeJTextField), 
 			"%-19.19s") + "FEDERAL REGULATIONS:   "
 			+ HydroBase_GUI_Util.trimText(__regulationsJTextField));
-		v.addElement("");
-		v.addElement("SPILLWAY CAPACITY: " + StringUtil.formatString(
+		v.add("");
+		v.add("SPILLWAY CAPACITY: " + StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__spillwayJTextField),
 			"%-19.19s") + "CREST ELEVATION: "
 			+ StringUtil.formatString(
@@ -372,40 +373,40 @@ public Vector formatOutput(int format) {
 			"%-19.19s") + "JURISDICTIONAL HEIGHT: "
 			+ HydroBase_GUI_Util.trimText(
 			__jurisdictionalJTextField));
-		v.addElement("OUTLET CAPACITY:   " + StringUtil.formatString(
+		v.add("OUTLET CAPACITY:   " + StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__outletJTextField),
 			"%-19.19s") + "CREST LENGTH:    "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__lengthJTextField), 
 			"%-19.19s") + "HYDRAULIC HEIGHT:      "
 			+ HydroBase_GUI_Util.trimText(__hydraulicJTextField));
-		v.addElement("                                      "
+		v.add("                                      "
 			+ "CREST WIDTH:     "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__widthJTextField), 
 			"%-19.19s") + "STRUCTURAL HEIGHT:     "
 			+ HydroBase_GUI_Util.trimText(__structuralJTextField));
-		v.addElement("DAM TYPE:          " + StringUtil.formatString(
+		v.add("DAM TYPE:          " + StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__damTypeJTextField),
 			"%-19.19s") + "PURPOSE:         "
 			+ StringUtil.formatString(
 			HydroBase_GUI_Util.trimText(__purposeJTextField), 
 			"%-19.19s") + "YEAR COMPLETE:         "
 			+ HydroBase_GUI_Util.trimText(__yearJTextField));
-		v.addElement("REMARKS:           "
+		v.add("REMARKS:           "
 			+ HydroBase_GUI_Util.trimText(__remarksJTextField));
 
 		if (spillwaySize > 0) {
-			v.addElement("");
-			v.addElement("                                     "
+			v.add("");
+			v.add("                                     "
 				+ "           SPILLWAY INFORMATION");
-			v.addElement("                                     "
+			v.add("                                     "
 				+ "                                        "
 				+ "    WALL SIDE");
-			v.addElement("NAME                CAPACITY  "
+			v.add("NAME                CAPACITY  "
 				+ "       FREEBOARD              FLOW"
 				+ " CODE         TYPE SLOPE   WIDTH");
-			v.addElement("______________________________________"
+			v.add("______________________________________"
 				+ "_________________________________________"
 				+ "_________________________________________");
 			// Now do the list...
@@ -465,7 +466,7 @@ public Vector formatOutput(int format) {
 					s6 = StringUtil.formatString(
 						d6.toString(), "%16.1f");
 				}
-				v.addElement(
+				v.add(
 					StringUtil.formatString(
 					s0.trim(),
 					"%-20.20s")
@@ -492,13 +493,13 @@ public Vector formatOutput(int format) {
 		}
 
 		if (outletSize > 0) {
-			v.addElement("");
-			v.addElement("                                    "
+			v.add("");
+			v.add("                                    "
 				+ "               OUTLET INFORMATION");
-			v.addElement("NAME                          "
+			v.add("NAME                          "
 				+ "CAPACITY      DIAMETER        LENGTH    "
 				+ "     TYPE   OUTLET DESCRIPTION");
-			v.addElement("______________________________________"
+			v.add("______________________________________"
 				+ "_________________________________________"
 				+ "_________________________________________");
 
@@ -548,7 +549,7 @@ public Vector formatOutput(int format) {
 				if (DMIUtil.isMissing(s15)) {
 					s15 = "";
 				}
-				v.addElement(
+				v.add(
 					StringUtil.formatString(s10.trim(),
 					"%-30.30s")
 					+ StringUtil.formatString(
@@ -568,11 +569,11 @@ public Vector formatOutput(int format) {
 		}
 
 		if (inspectionSize > 0) {
-			v.addElement("");
-			v.addElement("                                     "
+			v.add("");
+			v.add("                                     "
 				+ "                INSPECTION LOG");
-			v.addElement("DATE           INSPECTOR      TYPE    ");
-			v.addElement("______________________________________"
+			v.add("DATE           INSPECTOR      TYPE    ");
+			v.add("______________________________________"
 				+ "_________________________________________"
 				+ "_________________________________________");
 
@@ -594,7 +595,7 @@ public Vector formatOutput(int format) {
 				if (DMIUtil.isMissing(s9)) {
 					s9 = "";
 				}
-				v.addElement(
+				v.add(
 					StringUtil.formatString(s7.trim(),
 					"%-10.10s") + "     "
 					+ StringUtil.formatString(s8.trim(),
@@ -605,11 +606,11 @@ public Vector formatOutput(int format) {
 		}
 		
 		if (emergencySize > 0) {
-			v.addElement("");
-			v.addElement("                                     "
+			v.add("");
+			v.add("                                     "
 				+ "                EMERGENCY PLAN");
-			v.addElement("DATE           REQUIRED");
-			v.addElement("______________________________________"
+			v.add("DATE           REQUIRED");
+			v.add("______________________________________"
 				+ "_________________________________________"
 				+ "_________________________________________");
 
@@ -624,7 +625,7 @@ public Vector formatOutput(int format) {
 				if (DMIUtil.isMissing(s17)) {
 					s17 = "";
 				}
-				v.addElement(
+				v.add(
 					StringUtil.formatString(s16.trim(),
 					"%-10.10s") + "     "
 					+ s17.trim());
@@ -634,14 +635,14 @@ public Vector formatOutput(int format) {
 
 	else {	
 		char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(format));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(format));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
 			HydroBase_GUI_Util.trimText(__wdJTextField),
 			HydroBase_GUI_Util.trimText(__idJTextField), format));
-		v.addElement("");
-		v.addElement("DAM AKA" + delim + "HAZARD CLASS" + delim 
+		v.add("");
+		v.add("DAM AKA" + delim + "HAZARD CLASS" + delim 
 			+ "NAB CODE" + delim + "STATE DAME ID" + delim 
 			+ "NAT INVENT ID" + delim + "FOREST SERV ID" + delim 
 			+ "FED LAND" + delim + "FED REGS" + delim 
@@ -653,7 +654,7 @@ public Vector formatOutput(int format) {
 			+ "PURPOSE" + delim + "YEAR COMPLETE" + delim 
 			+ "REMARKS" + delim);
 
-		v.addElement(
+		v.add(
 			HydroBase_GUI_Util.trimText(__damAKAJTextField) 
 			+ delim
 			+ HydroBase_GUI_Util.trimText(__hazardClassJTextField) 
@@ -702,8 +703,8 @@ public Vector formatOutput(int format) {
 			+ delim);
 
 		if (spillwaySize > 0) {
-			v.addElement("");
-			v.addElement("NAME" + delim + "CAPACITY" + delim 
+			v.add("");
+			v.add("NAME" + delim + "CAPACITY" + delim 
 				+ "FREEBOARD" + delim + "FLOW CODE" + delim 
 				+ "TYPE" + delim + "WALL SIDE SLOPE" + delim 
 				+ "WIDTH" + delim);
@@ -764,7 +765,7 @@ public Vector formatOutput(int format) {
 					s6 = StringUtil.formatString(
 						d6.toString(), "%16.1f");
 				}
-				v.addElement(s0.trim() + delim + s1.trim()
+				v.add(s0.trim() + delim + s1.trim()
 					+ delim + s2.trim() + delim 
 					+ s3.trim() + delim + s4.trim()
 					+ delim + s5.trim() + delim
@@ -773,8 +774,8 @@ public Vector formatOutput(int format) {
 		}
 
 		if (outletSize > 0) {
-			v.addElement("");
-			v.addElement("NAME" + delim + "CAPACITY" + delim 
+			v.add("");
+			v.add("NAME" + delim + "CAPACITY" + delim 
 				+ "DIAMETER" + delim + "LENGTH" + delim 
 				+ "TYPE" + delim + "OUTLET DESCRIPTION" +delim);
 			for (int i = 0; i < outletSize; i++) {
@@ -823,7 +824,7 @@ public Vector formatOutput(int format) {
 				if (DMIUtil.isMissing(s15)) {
 					s15 = "";
 				}
-				v.addElement(s10.trim() + delim + s11.trim()
+				v.add(s10.trim() + delim + s11.trim()
 					+ delim + s12.trim() + delim
 					+ s13.trim() + delim + s14.trim()
 					+ delim + s15.trim() + delim);
@@ -831,8 +832,8 @@ public Vector formatOutput(int format) {
 		}
 
 		if (inspectionSize > 0) {
-			v.addElement("");
-			v.addElement("DATE" + delim + "INSPECTOR" + delim 
+			v.add("");
+			v.add("DATE" + delim + "INSPECTOR" + delim 
 				+ "TYPE" + delim + "DAM/OUTLET NAME" + delim);
 			for (int i = 0; i < inspectionSize; i++) {
 				s7 = (String)__inspectionWorksheet.getValueAt(
@@ -852,14 +853,14 @@ public Vector formatOutput(int format) {
 				if (DMIUtil.isMissing(s9)) {
 					s9 = "";
 				}
-				v.addElement(s7.trim() + delim + s8.trim()
+				v.add(s7.trim() + delim + s8.trim()
 					+ delim + s9.trim() + delim);
 			}
 		}
 
 		if (emergencySize > 0) {
-			v.addElement("");
-			v.addElement("DATE" + delim + "REQUIRED" + delim);
+			v.add("");
+			v.add("DATE" + delim + "REQUIRED" + delim);
 			for (int i = 0; i < emergencySize; i++) {
 				s16 = (String)__emergencyWorksheet.getValueAt(
 					i, 0);
@@ -872,7 +873,7 @@ public Vector formatOutput(int format) {
 					s17 = "";
 				}
 					
-				v.addElement(s16.trim() + delim + s17.trim()
+				v.add(s16.trim() + delim + s17.trim()
 					+ delim);
 			}
 		}
@@ -1462,7 +1463,7 @@ private void submitAndDisplayEmergencyPlanQuery() {
 	String routine = "HydroBase_GUI_Dam.submitAndDisplayEmergencyPlanQuery";
 	JGUIUtil.setWaitCursor(this, true);
 	
-	Vector v = null;
+	List v = null;
 	try {
 		v = __dmi.readEmergencyPlanListForStructure_num(__structureNum);
 	}
@@ -1488,7 +1489,7 @@ private void submitAndDisplayInspectionQuery() {
 	String routine = "HydroBase_GUI_Dam.submitAndDisplayInspectionQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
-	Vector v = null;
+	List v = null;
 	try {
 		v = __dmi.readDamInspectionListForStructure_num(__structureNum);
 	}
@@ -1513,7 +1514,7 @@ private void submitAndDisplayOutletQuery() {
 	String routine = "HydroBase_GUI_Dam.submitAndDisplayOutletQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
-	Vector v = null;
+	List v = null;
 	try {
 		v = __dmi.readDamOutletListForStructure_num(__structureNum);
 	}
@@ -1539,7 +1540,7 @@ private void submitAndDisplaySpillwayQuery() {
 	String routine = "HydroBase_GUI_Dam.submitAndDisplaySpillwayQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
-	Vector v = null;
+	List v = null;
 	try {
 		v = __dmi.readDamSpillwayListForStructure_num(__structureNum);
 	}

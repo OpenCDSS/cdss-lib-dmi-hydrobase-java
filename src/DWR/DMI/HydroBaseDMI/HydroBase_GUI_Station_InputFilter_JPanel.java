@@ -13,6 +13,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
@@ -36,7 +37,7 @@ public HydroBase_GUI_Station_InputFilter_JPanel(HydroBaseDMI dmi) {
 	String rd = dmi.getRightIdDelim();
 	String ld = dmi.getLeftIdDelim();
 
-	Vector filters = new Vector();
+	List filters = new Vector();
 
 	String stationTableName = HydroBase_GUI_Util._STATION_TABLE_NAME 
 		+ "." + ld;
@@ -55,13 +56,13 @@ public HydroBase_GUI_Station_InputFilter_JPanel(HydroBaseDMI dmi) {
 		stationTableName + "contr_area" + rd, "contr_area",
 		StringUtil.TYPE_DOUBLE, null, null, false));		
 
-	Vector counties = dmi.getCountyRef();
+	List counties = dmi.getCountyRef();
 	HydroBase_CountyRef county = null;
 	int size = counties.size();
-	Vector v1 = new Vector();
-	Vector v2 = new Vector();
+	List v1 = new Vector();
+	List v2 = new Vector();
 	for (int i = 0; i < size; i++) {
-		county = (HydroBase_CountyRef)counties.elementAt(i);
+		county = (HydroBase_CountyRef)counties.get(i);
 		if (county.getCty() > 0) {
 			v1.add(county.getCounty());
 			v2.add("" + county.getCty());

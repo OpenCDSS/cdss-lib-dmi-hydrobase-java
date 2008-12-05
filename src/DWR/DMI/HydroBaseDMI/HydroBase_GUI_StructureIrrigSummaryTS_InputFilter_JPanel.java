@@ -15,6 +15,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
@@ -39,46 +40,46 @@ public HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel (
 throws Exception
 {	// Fill in the district data for input filters...
 
-	Vector district_data_Vector = hbdmi.getWaterDistricts();
-	Vector district_Vector = new Vector ( district_data_Vector.size() );
-	Vector district_internal_Vector=new Vector(district_data_Vector.size());
+	List district_data_Vector = hbdmi.getWaterDistricts();
+	List district_Vector = new Vector ( district_data_Vector.size() );
+	List district_internal_Vector=new Vector(district_data_Vector.size());
 	HydroBase_WaterDistrict wd;
 	int size = district_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		wd = (HydroBase_WaterDistrict)district_data_Vector.elementAt(i);
-		district_Vector.addElement (wd.getWD() + " - "+wd.getWd_name());
-		district_internal_Vector.addElement ("" + wd.getWD() );
+		wd = (HydroBase_WaterDistrict)district_data_Vector.get(i);
+		district_Vector.add (wd.getWD() + " - "+wd.getWd_name());
+		district_internal_Vector.add ("" + wd.getWD() );
 	}
 
 	// Fill in the division data for input filters...
 
-	Vector division_data_Vector = hbdmi.getWaterDivisions();
-	Vector division_Vector = new Vector ( 7 );
-	Vector division_internal_Vector = new Vector ( 7 );
+	List division_data_Vector = hbdmi.getWaterDivisions();
+	List division_Vector = new Vector ( 7 );
+	List division_internal_Vector = new Vector ( 7 );
 	HydroBase_WaterDivision div;
 	size = division_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		div =(HydroBase_WaterDivision)division_data_Vector.elementAt(i);
-		division_Vector.addElement (div.getDiv() + " - " +
+		div =(HydroBase_WaterDivision)division_data_Vector.get(i);
+		division_Vector.add (div.getDiv() + " - " +
 			div.getDiv_name());
-		division_internal_Vector.addElement ("" + div.getDiv() );
+		division_internal_Vector.add ("" + div.getDiv() );
 	}
 
 	// Get crop data for filter use...
 
-	Vector crop_data_Vector = hbdmi.getCropRef();
-	Vector crop_Vector = new Vector ( 30 );
-	Vector crop_internal_Vector = new Vector ( 30 );
+	List crop_data_Vector = hbdmi.getCropRef();
+	List crop_Vector = new Vector ( 30 );
+	List crop_internal_Vector = new Vector ( 30 );
 	HydroBase_CropRef crop;
 	size = crop_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		crop = (HydroBase_CropRef)crop_data_Vector.elementAt(i);
-		crop_Vector.addElement ( crop.getCrop_desc() );
-		crop_internal_Vector.addElement ( crop.getCrop_desc() );
+		crop = (HydroBase_CropRef)crop_data_Vector.get(i);
+		crop_Vector.add ( crop.getCrop_desc() );
+		crop_internal_Vector.add ( crop.getCrop_desc() );
 	}
 
-	Vector input_filters = new Vector(6);
-	input_filters.addElement ( new InputFilter (
+	List input_filters = new Vector(6);
+	input_filters.add ( new InputFilter (
 		"", "",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );	// Blank to disable filter
@@ -87,22 +88,22 @@ throws Exception
 		StringUtil.TYPE_INTEGER,
 		district_Vector, district_internal_Vector, true );
 		filter.setTokenInfo("-",0);
-		input_filters.addElement ( filter );
+		input_filters.add ( filter );
 	filter = new InputFilter (
 		"Division", "structure.div", "div",
 		StringUtil.TYPE_INTEGER,
 		division_Vector, division_internal_Vector, true );
 		filter.setTokenInfo("-",0);
-		input_filters.addElement ( filter );
-	input_filters.addElement ( new InputFilter (
+		input_filters.add ( filter );
+	input_filters.add ( new InputFilter (
 		"Structure ID", "structure.id", "id",
 		StringUtil.TYPE_INTEGER,
 		null, null, true ) );
-	input_filters.addElement ( new InputFilter (
+	input_filters.add ( new InputFilter (
 		"Structure Name", "structure.str_name", "str_name",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );
-	input_filters.addElement (
+	input_filters.add (
 		new InputFilter (
 		"Land Use/Crop Type", "irrig_summary_ts.land_use", "land_use",
 		StringUtil.TYPE_STRING,

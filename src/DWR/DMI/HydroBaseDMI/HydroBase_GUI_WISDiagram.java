@@ -35,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -158,7 +159,7 @@ private JTextField __statusField;
 /**
 Vector of the records read from the database.
 */
-private Vector __records;
+private List __records;
 
 /**
 Constructor; private so that it can't be used.
@@ -402,7 +403,7 @@ private void buildDiagram() {
 	int wis_num;
 	int size = __records.size();
 	for (int i = 0; i < size; i++) {
-		data = (HydroBase_WISDiagramData)__records.elementAt(i);
+		data = (HydroBase_WISDiagramData)__records.get(i);
 		wis_num = data.getWis_num();
 		type = data.getType();
 		if (wis_num == __wisNum 
@@ -454,7 +455,7 @@ private void buildDiagram() {
 		String plural = "s";
 		String s = null;
 		String temp = "";
-		Vector v = null;
+		List v = null;
 
 		// query the user for the bounds of the display.  The bounds
 		// will be constrained to be non-negative, and lx < rx and
@@ -488,7 +489,7 @@ private void buildDiagram() {
 			}
 			
 			for (int i = 0; i < 4; i++) {
-				temp = (String)v.elementAt(i);
+				temp = (String)v.get(i);
 				temp = temp.trim();
 				try {
 					D = new Double(temp);
@@ -758,7 +759,7 @@ Builds the node diagram from the wis format vector in the WIS that instantiated
 this GUI.
 */
 private void buildDiagramFromWISFormat() {
-	Vector v = null;
+	List v = null;
 	if (__mode == __NETWORK_BUILD) {
 		v = __wisBuilder.getWisFormatVector();
 	}
@@ -896,7 +897,7 @@ label.
 @return the row label.
 */
 private String lookupLabel(String identifier) {
-	Vector v = null;
+	List v = null;
 	if (__mode == __NETWORK_BUILD) {
 		v = __wisBuilder.getWisFormatVector();
 	}
@@ -907,7 +908,7 @@ private String lookupLabel(String identifier) {
 	int size = v.size();
 	HydroBase_WISFormat format = null;
 	for (int i = 0; i < size; i++) {
-		format = (HydroBase_WISFormat)v.elementAt(i);
+		format = (HydroBase_WISFormat)v.get(i);
 		if (format.getIdentifier().equals(identifier)) {
 			return format.getRow_label();
 		}
@@ -1014,10 +1015,10 @@ private HydroBase_Node[] recordsToNodes() {
 	int rows = __records.size();
 	int wis_num = 0;
 	String type = null;
-	Vector v = new Vector();
+	List v = new Vector();
 
 	for (int i = 0; i < rows; i++) {
-		data = (HydroBase_WISDiagramData)__records.elementAt(i);
+		data = (HydroBase_WISDiagramData)__records.get(i);
 		wis_num = data.getWis_num();
 		type = data.getType().trim();
 		if (wis_num == __wisNum 
@@ -1039,11 +1040,11 @@ private HydroBase_Node[] recordsToNodes() {
 	}			
 
 	// annotations
-	Vector annotations = new Vector();
+	List annotations = new Vector();
 	PropList p = null;
 	String props = null;
 	for (int i = 0; i < rows; i++) {
-		data = (HydroBase_WISDiagramData)__records.elementAt(i);
+		data = (HydroBase_WISDiagramData)__records.get(i);
 		wis_num = data.getWis_num();
 		type = data.getType();
 		p = null;
@@ -1074,7 +1075,7 @@ private HydroBase_Node[] recordsToNodes() {
 
 	HydroBase_Node[] nodes = new HydroBase_Node[size];
 	for (int i = 0; i < size; i++) {
-		nodes[i] = (HydroBase_Node)v.elementAt(i);
+		nodes[i] = (HydroBase_Node)v.get(i);
 	}
 	return nodes;
 }
@@ -1129,7 +1130,7 @@ private void saveClicked() {
 	HydroBase_Node[] nodes = __device.getNodes();
 	HydroBase_Node node = null;
 	int size = 0;
-	Vector annotations = __device.getAnnotations();
+	List annotations = __device.getAnnotations();
 	HydroBase_WISDiagramData wnd = null;
 	String props = null;
 	String stemp = null;
@@ -1180,7 +1181,7 @@ private void saveClicked() {
 				wnd.setID("Annotation " + (i + 1));
 				wnd.setType("Annotation");
 
-				node = (HydroBase_Node)annotations.elementAt(i);
+				node = (HydroBase_Node)annotations.get(i);
 				propList = (PropList)node.getAssociatedObject();
 				propCount = propList.size();
 				props = "";
@@ -1217,7 +1218,7 @@ private void saveClicked() {
 	}
 	size = annotations.size();
 	for (int i = 0; i < size; i++) {	
-		node = (HydroBase_Node)annotations.elementAt(i);
+		node = (HydroBase_Node)annotations.get(i);
 		node.setDirty(false);
 	}
 	__device.setDirty(false);

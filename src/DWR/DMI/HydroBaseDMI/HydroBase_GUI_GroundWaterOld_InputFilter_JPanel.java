@@ -17,6 +17,7 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.awt.event.MouseListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
@@ -46,7 +47,7 @@ MouseListener listener) {
 
 	InputFilter filter = null;
 
-	Vector filters = new Vector();
+	List filters = new Vector();
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
 		null, null, false));

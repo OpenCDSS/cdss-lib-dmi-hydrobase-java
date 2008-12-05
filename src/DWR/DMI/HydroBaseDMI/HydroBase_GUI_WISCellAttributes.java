@@ -45,7 +45,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -266,14 +266,14 @@ private void getCellFormula() {
 		__formulaJList.add("CELL DOES NOT CONTAIN A FORMULA");
 	}
 	else {
-		Vector results = HydroBase_WISMath.parseFormula(
+		List results = HydroBase_WISMath.parseFormula(
 			__wisFormula.getFormulastring(), 
 			HydroBase_WISMath.LABEL);
 		formulaString = "";
 		int terms = results.size();
 		HydroBase_WISMath wisMath;
 		for (int i = 0; i < terms; i++) {
-			wisMath = (HydroBase_WISMath)results.elementAt(i);
+			wisMath = (HydroBase_WISMath)results.get(i);
 	                formulaString = HydroBase_WISMath.getTerm(
 				wisMath, HydroBase_WISMath.LABEL);
 			__formulaJList.add(formulaString);
@@ -293,10 +293,10 @@ private void getCellImport() {
 		return;
 	}
 
-	Vector importValue = HydroBase_WIS_Util.getWISImportValue(
+	List importValue = HydroBase_WIS_Util.getWISImportValue(
 		__dmi, __wisImport);
-	if (Integer.parseInt(importValue.elementAt(1).toString()) > 0) {
-		Double myDouble = (Double)importValue.elementAt(0);
+	if (Integer.parseInt(importValue.get(1).toString()) > 0) {
+		Double myDouble = (Double)importValue.get(0);
 		valueAsString = StringUtil.formatString(
 			myDouble.doubleValue(), "%10.1f");
 	}

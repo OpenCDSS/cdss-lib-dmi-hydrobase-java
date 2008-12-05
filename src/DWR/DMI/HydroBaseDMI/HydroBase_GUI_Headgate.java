@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -198,7 +199,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -219,7 +220,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			Vector outputStrings = formatOutput(format);
+			List outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -249,20 +250,20 @@ Responsible for formatting output.
 @param FORMAT format delimiter flag defined in this class
 @return returns a formatted Vector for exporting, printing, etc..
 */
-public Vector formatOutput(int FORMAT) {
-	Vector v = new Vector();
+public List formatOutput(int FORMAT) {
+	List v = new Vector();
 
 	if (FORMAT == HydroBase_GUI_Util.SCREEN_VIEW) {
 		// The output is pretty simple since the GUI is so simple...
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			__structureJTextField.getText(),
 			__divJTextField.getText(),
 			__wdJTextField.getText(),
 			__idJTextField.getText(), FORMAT));
 	}
 	else {	
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(FORMAT));
-		v.addElement(HydroBase_GUI_Util.formatStructureHeader(
+		v.add(HydroBase_GUI_Util.formatStructureHeader(FORMAT));
+		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			__structureJTextField.getText(),
 			__divJTextField.getText(),
 			__wdJTextField.getText(),

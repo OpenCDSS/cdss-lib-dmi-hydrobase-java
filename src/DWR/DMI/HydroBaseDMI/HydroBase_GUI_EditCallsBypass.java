@@ -55,8 +55,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import java.util.Vector;
+import java.util.List;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -183,18 +184,18 @@ private SimpleJList __structureJList;
 /**
 Vector of HydroBase_Calls objects.
 */
-private Vector __calls;
+private List __calls;
 
 /**
 Vector of HydroBase_Structure objects, or HydroBase_StructureView objects
 if using stored procedures..
 */
-private Vector __structures;
+private List __structures;
 
 /**
 Vector of JTextFields.
 */
-private Vector __textFieldVector;
+private List __textFieldVector;
 
 private JLabel __structureJLabel = null;
 
@@ -220,7 +221,7 @@ the parent when a structure query window is displayed.
 @param textField_Vector a Vector of text field objects.
 */
 public HydroBase_GUI_EditCallsBypass(HydroBaseDMI dmi, 
-JFrame main_parent, HydroBase_GUI_SetCall parent, Vector textField_Vector) {
+JFrame main_parent, HydroBase_GUI_SetCall parent, List textField_Vector) {
 	__main_parent = main_parent;
 	__parent = parent;
 	__dmi = dmi;
@@ -271,7 +272,7 @@ private void callsJListClicked() {
 	__callsJTextField.setText(selectedItem);
 
 	HydroBase_NetAmts netAmt = (HydroBase_NetAmts)
-		__calls.elementAt(__callsJList.getSelectedIndex());
+		__calls.get(__callsJList.getSelectedIndex());
 
 	Date curDate = netAmt.getApro_date();
 	if (!DMIUtil.isMissing(curDate)) {
@@ -341,7 +342,7 @@ private void closeClicked() {
 Displays the WIS structures.
 @param results contains results from the net amts query.
 */
-private void displayWaterRightNetResults(Vector results) {
+private void displayWaterRightNetResults(List results) {
 	String routine = "HydroBase_GUI_EditCallsBypass.displayWaterRight"
 		+ "NetResults";
 	// initialize variables
@@ -356,7 +357,7 @@ private void displayWaterRightNetResults(Vector results) {
 	HydroBase_NetAmts netAmt;
 
 	for (int i = 0; i < size; i++) {
-		netAmt = (HydroBase_NetAmts)results.elementAt(i);
+		netAmt = (HydroBase_NetAmts)results.get(i);
 		curString = "";
 		// display based on user preferences
 		if (display.equals(HydroBase_GUI_Options.PRIORITY_NUMBER)) {
@@ -420,7 +421,7 @@ private void displayWaterRightNetResults(Vector results) {
 		}	
 
 		__callsJList.add(curString.trim());
-		__calls.addElement(netAmt);
+		__calls.add(netAmt);
 	}
 }
 
@@ -458,13 +459,13 @@ private void displayWISStructures() {
 	String id = "";
 	String wd = "";
 	int curInt;
-	Vector data = new Vector();
+	List data = new Vector();
 	
 	if (!__structures.isEmpty()) {
 		int size = __structures.size();
 		for (int i = 0; i < size; i++) {
 			view = (HydroBase_StructureView)
-				__structures.elementAt(i);
+				__structures.get(i);
 			name = "" + view.getStr_name().trim();
 			curInt = view.getWD();
 			if (DMIUtil.isMissing(curInt)) {
@@ -530,7 +531,7 @@ __textFieldVector object.
 @return the JTextField object at the specified location.
 */
 private JTextField getJTextField(int element) {
-	return((JTextField)__textFieldVector.elementAt(element));
+	return((JTextField)__textFieldVector.get(element));
 }
 
 /**
@@ -589,7 +590,7 @@ private void okClicked() {
 
 	// set the BYPASS information
 	__parent.setBYPASSInfo(
-		(HydroBase_NetAmts)__calls.elementAt(call_index));
+		(HydroBase_NetAmts)__calls.get(call_index));
 	// post information in the appropriate JTextFields 
 	// on the __parent object	
 	JTextField text = getJTextField(HydroBase_GUI_SetCall.ADMIN_NO);
@@ -897,14 +898,14 @@ private void structureAddition(HydroBase_StructureView newCall) {
 	int comparison;
 	if (__structures == null) {
 		__structures = new Vector(1);
-		__structures.addElement(newCall);
+		__structures.add(newCall);
 	}
 	else {
 		int size = __structures.size();
 
 		for (int i = 0; i < size; i++) {
 			view = (HydroBase_StructureView)
-				__structures.elementAt(i);
+				__structures.get(i);
 			old_wd = view.getWD();
 			if (new_wd > old_wd) {
 				insertIndex++;
@@ -935,7 +936,7 @@ private void structureAddition(HydroBase_StructureView newCall) {
 			}
 		}
 
-		__structures.insertElementAt(newCall, insertIndex);
+		__structures.add(insertIndex,newCall );
 	}
 
 	// get water district
@@ -985,7 +986,7 @@ private void structureListClicked() {
 
 	// clear out all available call information
 	clearCallFields();
-	__calls.removeAllElements();
+	__calls.clear();
 	__callsJList.removeAll();
 
 	String tempString = 
@@ -1004,10 +1005,10 @@ private void structureListClicked() {
 		return;
 	}
 
-	Vector results = null;
+	List results = null;
 
 	HydroBase_StructureView view = (HydroBase_StructureView)
-		__structures.elementAt(index);
+		__structures.get(index);
 
 	__structureJLabel.setText("" + __structureJList.getSelectedItem());
 

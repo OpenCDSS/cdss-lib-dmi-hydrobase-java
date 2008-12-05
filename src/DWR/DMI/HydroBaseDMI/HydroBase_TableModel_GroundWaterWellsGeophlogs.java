@@ -17,7 +17,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 import RTi.DMI.DMIUtil;
 
@@ -61,9 +61,9 @@ public final static int
 	COL_DSS_AQUIFER_COMMENT = 19;	
 
 /**
-Vector of aquifers to display in the tooltips.
+List of aquifers to display in the tooltips.
 */
-private Vector __aquifers = null;
+private List __aquifers = null;
 
 /**
 Constructor.  This builds the Model for displaying the given ground water 
@@ -71,13 +71,11 @@ results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_GroundWaterWellsGeophlogs(Vector results,
-Vector aquifers)
+public HydroBase_TableModel_GroundWaterWellsGeophlogs(List results,List aquifers)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_GroundWaterWellsGeophlogs "
-			+ "constructor.");
+			+ "HydroBase_TableModel_GroundWaterWellsGeophlogs constructor.");
 	}
 
 	_rows = results.size();
@@ -259,8 +257,7 @@ public int[] getColumnWidths() {
 Returns the format that the specified column should be displayed in when
 the table is being displayed in the given table format. 
 @param column column for which to return the format.
-@return the format (as used by StringUtil.formatString() in which to display the
-column.
+@return the format (as used by StringUtil.formatString() in which to display the column.
 */
 public String getFormat(int column) {
 	switch (column) {
@@ -297,8 +294,7 @@ public int getRowCount() {
 }
 
 /**
-Returns the data that should be placed in the JTable
-at the given row and column.
+Returns the data that should be placed in the JTable at the given row and column.
 @param row the row for which to return data.
 @param col the column for which to return data.
 @return the data that should be placed in the JTable at the given row and col.
@@ -308,8 +304,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_GroundWaterWellsGeophlogs g = 
-		(HydroBase_GroundWaterWellsGeophlogs)_data.elementAt(row);
+	HydroBase_GroundWaterWellsGeophlogs g = (HydroBase_GroundWaterWellsGeophlogs)_data.get(row);
 	switch (col) {
 		case COL_DIV:
 			return new Integer(g.getDiv());

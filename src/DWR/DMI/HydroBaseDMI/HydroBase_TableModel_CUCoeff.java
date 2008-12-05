@@ -14,7 +14,7 @@
 
 package DWR.DMI.HydroBaseDMI;
 
-import java.util.Vector;
+import java.util.List;
 
 /**
 This class is a table model for displaying cu coeff data.
@@ -36,12 +36,11 @@ public final static int
 	COL_EFFICIENCY = 	2;
 
 /**
-Constructor.  This builds the Model for displaying the given Net Amounts
-results.
+Constructor.  This builds the Model for displaying the given Net Amounts results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_CUCoeff(Vector results)
+public HydroBase_TableModel_CUCoeff(List results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -129,7 +128,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_CUCoeff c = (HydroBase_CUCoeff)_data.elementAt(row);
+	HydroBase_CUCoeff c = (HydroBase_CUCoeff)_data.get(row);
 	switch (col) {
 		case COL_NAME:		return c.getConsname();
 		case COL_USE:		return new Double(c.getConsuse());
