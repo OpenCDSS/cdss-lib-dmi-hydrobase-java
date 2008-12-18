@@ -13539,25 +13539,21 @@ throws Exception {
 }
 
 /**
-Read a Vector of HydroBase_CUClimWts objects given a county and hydrounit (HUC)
+Read a list of HydroBase_CUClimWts objects given a county and hydrounit (HUC)
 pattern.  The output is ordered by county, hydrounit.<p>
 This is used by StateDMI.
 <p><b>Stored Procedures</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_StationCUClimWts</li></ul>
-@param county the county to use for matching cu_clim_wts.county (can be a
-wildcard pattern).
-@param hydrounit the hydrologic unit to use for matching cu_clim_wts.hydrounit
-(can be a wildcard pattern).
-@return a Vector of HydroBase_CUClimWts objects.
+@param county the county to use for matching cu_clim_wts.county (can be a wildcard pattern).
+@param hydrounit the hydrologic unit to use for matching cu_clim_wts.hydrounit(can be a wildcard pattern).
+@return a list of HydroBase_CUClimWts objects.
 @throws Exception if an error occurs.
 */
-public List readStationGeolocCUClimWtsListForCountyAndHydrounit(
-String county, String hydrounit) 
+public List readStationGeolocCUClimWtsListForCountyAndHydrounit(String county, String hydrounit) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 		String[] triplet = null;
 		if (county != null && county.length() > 0) {
@@ -13576,9 +13572,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_StationCUClimWts"), 23, 
-			null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_StationCUClimWts"), 23, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toStationGeolocCUClimWtsSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -13594,8 +13588,7 @@ throws Exception {
 			q.addWhereClause(where.replace('*','%'));
 		}
 		if ((hydrounit != null) && !hydrounit.equals("*")) {
-			where = "cu_clim_wts.hydrounit like '" + hydrounit 
-				+ "'";
+			where = "cu_clim_wts.hydrounit like '" + hydrounit + "'";
 			q.addWhereClause(where.replace('*','%'));
 		}
 		q.addOrderByClause("cu_clim_wts.county");
@@ -22483,36 +22476,24 @@ throws Exception {
 Runs an SPFlex query using the given parameters.<p>
 The parameters are as follows:<p>
 <b>0</b> - the internal number of the view for which to run SPFLex<br>
-<b>1</b> - the first field on which to query, or -999 if no fields are being
-	queried.<br>
+<b>1</b> - the first field on which to query, or -999 if no fields are being queried.<br>
 <b>2</b> - the first comparator (or -999 if no fields are being queried)<br>
 <b>3</b> - the first query value (or -999 if no fields are being queried)<br>
-<b>4</b> - the second field on which to query, or -999 if no fields are being
-	queried.<br>
+<b>4</b> - the second field on which to query, or -999 if no fields are being queried.<br>
 <b>5</b> - the second comparator (or -999 if one field is being queried)<br>
 <b>6</b> - the second query value (or -999 if one field is being queried)<br>
-<b>7</b> - the third field on which to query, or -999 if two fields are being
-	queried.<br>
+<b>7</b> - the third field on which to query, or -999 if two fields are being queried.<br>
 <b>8</b> - the third comparator (or -999 if two fields are being queried)<br>
 <b>9</b> - the third query value (or -999 if two fields are being queried)<br>
-<b>10</b> - the fourth field on which to query, or -999 if three fields are 
-	being queried.<br>
-<b>11</b> - the fourth comparator (or -999 if three fields are being queried)
-	<br>
-<b>12</b> - the fourth query value (or -999 if three fields are being queried)
-	<br>
-<b>13</b> - the fifth field on which to query, or -999 if three fields are 
-	being queried.<br>
-<b>14</b> - the fifth comparator (or -999 if three fields are being queried)
-	<br>
-<b>15</b> - the fifth query value (or -999 if three fields are being queried)
-	<br>
-<b>16</b> - the sixth field on which to query, or -999 if three fields are 
-	being queried.<br>
-<b>17</b> - the sixth comparator (or -999 if three fields are being queried)
-	<br>
-<b>18</b> - the sixth query value (or -999 if three fields are being queried)
-	<br>	
+<b>10</b> - the fourth field on which to query, or -999 if three fields are being queried.<br>
+<b>11</b> - the fourth comparator (or -999 if three fields are being queried)<br>
+<b>12</b> - the fourth query value (or -999 if three fields are being queried)<br>
+<b>13</b> - the fifth field on which to query, or -999 if three fields are being queried.<br>
+<b>14</b> - the fifth comparator (or -999 if three fields are being queried)<br>
+<b>15</b> - the fifth query value (or -999 if three fields are being queried)<br>
+<b>16</b> - the sixth field on which to query, or -999 if three fields are being queried.<br>
+<b>17</b> - the sixth comparator (or -999 if three fields are being queried)<br>
+<b>18</b> - the sixth query value (or -999 if three fields are being queried)<br>	
 <b>19</b> - the order by code<br>
 <b>20</b> - the application code<br>
 @param parameters the parameters for the SPFlex run.
@@ -22522,11 +22503,9 @@ The parameters are as follows:<p>
 private ResultSet runSPFlex(String[] parameters) 
 throws Exception {
 	if (__uspFlexStoredProcedureData == null) {
-		__uspFlexStoredProcedureData = new DMIStoredProcedureData(this, 
-			"usp_Flex");
+		__uspFlexStoredProcedureData = new DMIStoredProcedureData(this, "usp_Flex");
 		__uspFlexSelectStatement = new DMISelectStatement(this);
-		__uspFlexSelectStatement.setStoredProcedureData(
-			__uspFlexStoredProcedureData);
+		__uspFlexSelectStatement.setStoredProcedureData(__uspFlexStoredProcedureData);
 	}
 
 	__lastStatement = __uspFlexSelectStatement;
@@ -22781,15 +22760,13 @@ private void setupViewNumbersHashtable() {
 	__viewNumbers.put("vw_CDSS_Structure", "31");
 	__viewNumbers.put("vw_CDSS_StructureIrrigSummaryTS", "32");
 	__viewNumbers.put("vw_CDSS_StructureStructMeasType", "33");
-	__viewNumbers.put("vw_CDSS_StructureIrrigSummaryTS_Distinct_LU",
-		"74");
+	__viewNumbers.put("vw_CDSS_StructureIrrigSummaryTS_Distinct_LU", "74");
 	__viewNumbers.put("vw_CDSS_Transact", "34");
 	__viewNumbers.put("vw_CDSS_TSProduct", "35");
 	
 	if (version < VERSION_20050701) {
 		__viewNumbers.put("vw_CDSS_Unpermitted_Wells", "36");
-		__viewNumbers.put("vw_CDSS_UnpermittedWellStructMeasType", 
-			"75");
+		__viewNumbers.put("vw_CDSS_UnpermittedWellStructMeasType", "75");
 	}
 	
 	__viewNumbers.put("vw_CDSS_WDWater", "37");
@@ -31133,10 +31110,9 @@ throws Exception {
 }
 
 /**
-Translates a ResultSet into a Vector of HydroBase_StationGeolocCUClimWts
-objects.
+Translates a ResultSet into a list of HydroBase_StationGeolocCUClimWts objects.
 @param rs the resultset to translate
-@return a Vector of HydroBase_StationGeolocCUClimWts objects
+@return a list of HydroBase_StationGeolocCUClimWts objects
 */
 private List toStationGeolocCUClimWtsList (ResultSet rs) 
 throws Exception {
@@ -31188,10 +31164,9 @@ throws Exception {
 }
 
 /**
-Translates a ResultSet from a stored procedure into a Vector of 
-HydroBase_StationGeolocCUClimWts objects.
+Translates a ResultSet from a stored procedure into a list of HydroBase_StationGeolocCUClimWts objects.
 @param rs the resultset to translate
-@return a Vector of HydroBase_StationGeolocCUClimWts objects
+@return a list of HydroBase_StationGeolocCUClimWts objects
 */
 private List toStationGeolocCUClimWtsSPList (ResultSet rs) 
 throws Exception {
