@@ -891,8 +891,7 @@ then add the field to the Vector-filling code in this method</li>
 which this field was added.  Add the data member for the field, 
 get/set statements, and then add the field (with brief information on the
 version in which it was added) to the toString()</li>
-<li>add the field, and the appropriate version-checking code, to the 
-writeXXXX() method</li>
+<li>add the field, and the appropriate version-checking code, to the writeXXXX() method</li>
 <li>update determineDatabaseVersion()</li>
 </ul>
 */
@@ -901,10 +900,8 @@ extends DMI
 implements TSProductAnnotationProvider, TSProductDMI {
 
 /**
-HydroBase release dates.  The value of each integer is the design version,
-followed by the release date.
-These values must be handled in determineDatabaseVersion() and
-isVersionAtLeast().
+HydroBase release dates.  The value of each integer is the design version, followed by the release date.
+These values must be handled in determineDatabaseVersion() and isVersionAtLeast().
 */
 
 public final static long VERSION_20070525 = 2007052520070525L;
@@ -938,8 +935,7 @@ public final static long VERSION_20030701 = 2003070120030701L;
 
 /**
 <ul>
-<li><i>geoloc.elev</i> is present (used to be <i>geoloc.elevation</i> in 
-RTi version)</li>
+<li><i>geoloc.elev</i> is present (used to be <i>geoloc.elevation</i> in RTi version)</li>
 <li><i>geoloc.elev</i> field exists.</li>
 </ul>
 */
@@ -1014,6 +1010,44 @@ public final static long VERSION_19970501 = 1997050119970501L;
 Unknown version.
 */
 public final static long VERSION_UNKNOWN  = 0L;
+
+/**
+Values to optimize database version checks.
+*/
+private boolean __isVersion20070525Checked = false;
+private boolean __isVersionAtLeast20070525 = false;
+private boolean __isVersion20070502Checked = false;
+private boolean __isVersionAtLeast20070502 = false;
+private boolean __isVersion20070416Checked = false;
+private boolean __isVersionAtLeast20070416 = false;
+private boolean __isVersion20061003Checked = false;
+private boolean __isVersionAtLeast20061003 = false;
+private boolean __isVersion20051115Checked = false;
+private boolean __isVersionAtLeast20051115 = false;
+private boolean __isVersion20050701Checked = false;
+private boolean __isVersionAtLeast20050701 = false;
+private boolean __isVersion20050501Checked = false;
+private boolean __isVersionAtLeast20050501 = false;
+private boolean __isVersionAtLeast20040701 = false;
+private boolean __isVersion20040701Checked = false;
+private boolean __isVersionAtLeast20030701 = false;
+private boolean __isVersion20030701Checked = false;
+private boolean __isVersionAtLeast20010326 = false;
+private boolean __isVersion20010326Checked = false;
+private boolean __isVersionAtLeast20000706 = false;
+private boolean __isVersion20000706Checked = false;
+private boolean __isVersionAtLeast20000427 = false;
+private boolean __isVersion20000427Checked = false;
+private boolean __isVersionAtLeast20000301 = false;
+private boolean __isVersion20000301Checked = false;
+private boolean __isVersionAtLeast19990305 = false;
+private boolean __isVersion19990305Checked = false;
+private boolean __isVersionAtLeast19990202 = false;
+private boolean __isVersion19990202Checked = false;
+private boolean __isVersionAtLeast19980428 = false;
+private boolean __isVersion19980428Checked = false;
+private boolean __isVersionAtLeast19970501 = false;
+private boolean __isVersion19970501Checked = false;
 
 // agricultural_CASS_crop_statistics
 private final int __S_AGRICULTURAL_CASS_CROP_STATS = 20;
@@ -1439,8 +1473,7 @@ Whether the currently-logged-in user is the guest user.
 private boolean __isGuest = false;
 
 /**
-Whether to print SQL or SP strings at debug level 30 as database operations
-execute.
+Whether to print SQL or SP strings at debug level 30 as database operations execute.
 */
 private boolean __printQueryStrings = true;
 
@@ -1451,8 +1484,7 @@ private boolean __useSP = false;
 
 /**
 The last DMISelectStatement executed by the DMI.  This is used for stored
-procedure connections in order that the stored procedures can be closed 
-properly.
+procedure connections in order that the stored procedures can be closed properly.
 */
 private DMISelectStatement __lastStatement = null;
 
@@ -1462,8 +1494,7 @@ The hashtable that caches stored procedure information.
 private Hashtable __storedProcedureHashtable = null;
 
 /**
-Holds the relationship of views to the view numbers used internally by the
-SPFlex stored procedure.
+Holds the relationship of views to the view numbers used internally by the SPFlex stored procedure.
 */
 private Hashtable __viewNumbers = null;
 
@@ -1593,8 +1624,7 @@ connection.  If null, the default system login is used ("guest").
 @param system_password If not null, this is used as the system password to make
 the connection.  If null, the default system password is used ("guest").
 */
-public HydroBaseDMI ( String database_engine, String odbc_name,
-			String system_login, String system_password )
+public HydroBaseDMI ( String database_engine, String odbc_name, String system_login, String system_password )
 throws Exception {
 	this(database_engine, odbc_name, system_login, system_password, false);
 }
@@ -1602,17 +1632,15 @@ throws Exception {
 /** 
 Constructor for a predefined ODBC DSN.
 @param database_engine The database engine to use (see the DMI constructor).
-@param odbc_name The ODBC DSN that has been defined on the machine.
-If null, default to "HydroBase".
+@param odbc_name The ODBC DSN that has been defined on the machine.  If null, default to "HydroBase".
 @param system_login If not null, this is used as the system login to make the
 connection.  If null, the default system login is used ("guest").
 @param system_password If not null, this is used as the system password to make
 the connection.  If null, the default system password is used ("guest").
 @param useStoredProcedures specifies whether stored procedures should be used.
 */
-public HydroBaseDMI ( String database_engine, String odbc_name,
-			String system_login, String system_password,
-			boolean useStoredProcedures)
+public HydroBaseDMI ( String database_engine, String odbc_name, String system_login, String system_password,
+	boolean useStoredProcedures)
 throws Exception
 {	// Use the default system login and password
 	super ( database_engine, odbc_name, system_login, system_password );
@@ -1666,8 +1694,7 @@ created URL to connect to a database that does not use stored procedures.
 If null, default to "SQLServer2000".
 @param database_server The IP address or DSN-resolvable database server machine name.
 @param database_name The database name on the server.  If null, default to "HydroBase".
-@param port Port number used by the database.  If negative, default to that for
-the database engine.
+@param port Port number used by the database.  If negative, default to that for the database engine.
 @param system_login If not null, this is used as the system login to make the
 connection.  If null, the default system login is used ("guest").
 @param system_password If not null, this is used as the system password to make
@@ -1685,25 +1712,20 @@ Constructor for a database server and database name, to use an automatically cre
 If null, default to "SQLServer2000".
 @param database_server The IP address or DSN-resolvable database server machine name.
 @param database_name The database name on the server.  If null, default to "HydroBase".
-@param port Port number used by the database.  If negative, default to that for
-the database engine.
+@param port Port number used by the database.  If negative, default to that for the database engine.
 @param system_login If not null, this is used as the system login to make the
 connection.  If null, the default system login is used ("guest").
 @param system_password If not null, this is used as the system password to make
 the connection.  If null, the default system password is used ("guest").
 @param useStoredProcedures specifies whether stored procedures should be used.
 */
-public HydroBaseDMI ( String database_engine, String database_server,
-			String database_name, int port,
-			String system_login, String system_password,
-			boolean useStoredProcedures)
+public HydroBaseDMI ( String database_engine, String database_server, String database_name, int port,
+			String system_login, String system_password, boolean useStoredProcedures)
 throws Exception
 {	// Use the default system login and password
-	super ( database_engine, database_server, database_name, port,
-		system_login, system_password );
+	super ( database_engine, database_server, database_name, port, system_login, system_password );
 
-	// Turn off printing of the Stored Procedure or SQL string to 
-	// Debug 30, for the sake of security. 
+	// Turn off printing of the Stored Procedure or SQL string to Debug 30, for the sake of security. 
 	__printQueryStrings = false;
 	
 	setUseStoredProcedures(useStoredProcedures);
@@ -1745,8 +1767,7 @@ throws Exception
 		dumpSQLOnExecution(false);
 	}
 
-	// Turn back on printing of Stored Procedure or SQL strings to 
-	// Debug 30.
+	// Turn back on printing of Stored Procedure or SQL strings to Debug 30.
 	__printQueryStrings = true;
 }
 
@@ -1761,14 +1782,13 @@ to the database.  The following properties are available:<p>
 <td>HydroBase.DatabaseEngine</td><td>SQLServer2000</td></tr>
 <tr>
 <td>HydroBase.DatabaseServer</td><td><b>None -- required.</b>Can be "local",
-in which case the current machine on which the software is running is 
-connected to.</td></tr>
+in which case the current machine on which the software is running is connected to.</td></tr>
 <tr>
 <td>HydroBase.DatabaseName</td><td>HydroBase</td></tr>
 <tr>
 <td>HydroBase.UseStoredProcedures</td><td>True</td></tr>
 <tr>
-<td>HydroBase.SystemLogin</td><td>cdss (if using stored procedures)<p>
+<td>HydroBase.SystemLogin</td><td>cdss (if using stored procedures),<p>
 crdss (if not using stored procedures)</td></tr>
 <tr>
 <td>HydroBase.SystemPassword</td><td>cdss%tools (if using stored procedures)<p>
@@ -1784,8 +1804,7 @@ throws Exception {
 	// Use the default system login and password
 	super();
 
-	// Turn off printing of the Stored Procedure or SQL string to 
-	// Debug 30, for the sake of security. 
+	// Turn off printing of the Stored Procedure or SQL string to Debug 30, for the sake of security. 
 	__printQueryStrings = false;
 
 	String database_engine = null;
@@ -1886,8 +1905,7 @@ throws Exception {
 		}
 	}
 
-	initialize(database_engine, database_server, database_name, port,
-		system_login, system_password, null, true);
+	initialize(database_engine, database_server, database_name, port, system_login, system_password, null, true);
 	
 	setUseStoredProcedures(useStoredProcedures);
 
@@ -1931,8 +1949,7 @@ throws Exception {
 	long version = getDatabaseVersion();
 
 	if (canSetUpStoredProcedure(statement, sqlNumber)) {
-		// where, distinct and order by clauses can be set
-		// as usual for other types of queries.
+		// where, distinct and order by clauses can be set as usual for other types of queries.
 		return;
 	}
 	
@@ -1941,57 +1958,42 @@ throws Exception {
 			select = (DMISelectStatement)statement;
 			select.addField("agricultural_cass_crop_stats.st");
 			select.addField("agricultural_cass_crop_stats.county");
-			select.addField(
-				"agricultural_cass_crop_stats.commodity");
-			select.addField(
-				"agricultural_cass_crop_stats.practice");
-			select.addField(
-				"agricultural_cass_crop_stats.cal_year");
+			select.addField("agricultural_cass_crop_stats.commodity");
+			select.addField("agricultural_cass_crop_stats.practice");
+			select.addField("agricultural_cass_crop_stats.cal_year");
 			select.addField("agricultural_cass_crop_stats.Planted");
-			select.addField(
-				"agricultural_cass_crop_stats.pltdharv");
-			select.addField(
-				"agricultural_cass_crop_stats.harvested");
+			select.addField("agricultural_cass_crop_stats.pltdharv");
+			select.addField("agricultural_cass_crop_stats.harvested");
 			select.addField("agricultural_cass_crop_stats.pltdyld");
 			select.addField("agricultural_cass_crop_stats.yield");
-			select.addField(
-				"agricultural_cass_crop_stats.yieldunit");
-			select.addField(
-				"agricultural_cass_crop_stats.production");
-			select.addField(
-				"agricultural_cass_crop_stats.productionunit");
+			select.addField("agricultural_cass_crop_stats.yieldunit");
+			select.addField("agricultural_cass_crop_stats.production");
+			select.addField("agricultural_cass_crop_stats.productionunit");
 			select.addTable("agricultural_cass_crop_stats");
 			break;
 		case __S_AGRICULTURAL_CASS_CROP_STATS_DISTINCT:
 			select = (DMISelectStatement)statement;
 			select.addField("agricultural_cass_crop_stats.st");
 			select.addField("agricultural_cass_crop_stats.county");
-			select.addField(
-				"agricultural_cass_crop_stats.commodity");
-			select.addField(
-				"agricultural_cass_crop_stats.practice");
+			select.addField("agricultural_cass_crop_stats.commodity");
+			select.addField("agricultural_cass_crop_stats.practice");
 			select.addTable("agricultural_cass_crop_stats");
 			break;		
 		case __S_AGRICULTURAL_NASS_CROP_STATS:
 			select = (DMISelectStatement)statement;
 			select.addField("agricultural_nass_crop_stats.st");
 			select.addField("agricultural_nass_crop_stats.county");
-			select.addField(
-				"agricultural_nass_crop_stats.commodity");
-			select.addField(
-				"agricultural_nass_crop_stats.cal_year");
-			select.addField(
-				"agricultural_nass_crop_stats.ag_amt");
-			select.addField(
-				"agricultural_nass_crop_stats.flag");
+			select.addField("agricultural_nass_crop_stats.commodity");
+			select.addField("agricultural_nass_crop_stats.cal_year");
+			select.addField("agricultural_nass_crop_stats.ag_amt");
+			select.addField("agricultural_nass_crop_stats.flag");
 			select.addTable("agricultural_nass_crop_stats");
 			break;
 		case __S_AGRICULTURAL_NASS_CROP_STATS_DISTINCT:
 			select = (DMISelectStatement)statement;
 			select.addField("agricultural_nass_crop_stats.st");
 			select.addField("agricultural_nass_crop_stats.county");
-			select.addField(
-				"agricultural_nass_crop_stats.commodity");
+			select.addField("agricultural_nass_crop_stats.commodity");
 			select.addTable("agricultural_nass_crop_stats");
 			break;			
 		case __S_ANNUAL_AMT:
@@ -2140,10 +2142,8 @@ throws Exception {
 			select.addTable("contact");
 			select.addTable("rolodex");
 			select.addTable("person_details");
-			select.addWhereClause("contact.rolodex_num "
-				+ "= rolodex.rolodex_num");
-			select.addWhereClause("person_details.rolodex_num "
-				+ "= rolodex.rolodex_num");
+			select.addWhereClause("contact.rolodex_num = rolodex.rolodex_num");
+			select.addWhereClause("person_details.rolodex_num = rolodex.rolodex_num");
 			break;
 		case __S_COURTCASE_FOR_STRUCTURE_NUM:
 			select = (DMISelectStatement)statement;
@@ -2199,15 +2199,12 @@ throws Exception {
 		case __S_CG_CU_BLANEY_CRIDDLE:
 		case __S_CU_BLANEY_CRIDDLE_FOR_METHOD_DESC:
 		case __S_CG_CU_BLANEY_CRIDDLE_FOR_METHOD_DESC:
-			// REVISIT (SAM)
-			// does not match query definition from HBDMI
+			// TODO (SAM) does not match query definition from HBDMI
 			// Join crop, cu_method, cu_blaney_criddle.  The read
-			// method should define a where on crop name or cu
-			// method description.
-			// REVISIT (SAM) - actually, the definition of a
+			// method should define a where on crop name or cu method description.
+			// TODO (SAM) - actually, the definition of a
 			// HydroBase_CUBlaneyCriddle object is dependent on
-			// all 3 tables because the data objects contain arrays
-			// of data!  Need to discuss.
+			// all 3 tables because the data objects contain arrays of data!  Need to discuss.
 			select = (DMISelectStatement)statement;
 			select.addField("crop.cropnum");
 			select.addField("crop.cropname");
@@ -2219,20 +2216,17 @@ throws Exception {
 			select.addTable("cu_method");
 			select.addTable("cu_blaney_criddle");
 			select.addWhereClause("crop.cropnum=cu_method.cropnum");
-			select.addWhereClause("cu_method.method_num "
-				+ "= cu_blaney_criddle.method_num");		
+			select.addWhereClause("cu_method.method_num = cu_blaney_criddle.method_num");		
 			break;
 		case __S_CU_BLANEY_CRIDDLE_DISTINCT:
-			// REVISIT (SAM) - I added this to support StateDMI
+			// TODO (SAM) - I added this to support StateDMI
 			// All we want is the distinct cu_method.method_desc
-			// that apply for cu_blaney_criddle records but we
-			// need to do a join to get it to work...
+			// that apply for cu_blaney_criddle records but we need to do a join to get it to work...
 			select = (DMISelectStatement)statement;
 			select.addField("cu_method.method_desc");
 			select.addTable("cu_method");
 			select.addTable("cu_blaney_criddle");
-			select.addWhereClause(
-			"cu_method.method_num=cu_blaney_criddle.method_num");
+			select.addWhereClause("cu_method.method_num=cu_blaney_criddle.method_num");
 			break;
 		case __S_CU_COEFF:
 			select = (DMISelectStatement)statement;
@@ -2249,8 +2243,7 @@ throws Exception {
 			select.addField("cu_method.method_desc");
 			select.addTable("cu_method");
 			select.addTable("cu_blaney_criddle");
-			select.addWhereClause(
-			"cu_method.method_num=cu_blaney_criddle.method_num");
+			select.addWhereClause("cu_method.method_num=cu_blaney_criddle.method_num");
 			break;
 		case __S_CU_METHOD_DISTINCT:
 			select = (DMISelectStatement)statement;
@@ -2276,10 +2269,8 @@ throws Exception {
 			select.addTable("crop");
 			select.addTable("cu_mod_hargreaves");
 			select.addTable("cu_method");
-			select.addWhereClause("crop.cropnum "
-				+ "= cu_method.cropnum");
-			select.addWhereClause("cu_method.method_num "
-				+ "= cu_mod_hargreaves.method_num");
+			select.addWhereClause("crop.cropnum = cu_method.cropnum");
+			select.addWhereClause("cu_method.method_num = cu_mod_hargreaves.method_num");
 			break;
 		case __S_CG_CU_PENMAN_MONTEITH:
 		case __S_CG_CU_PENMAN_MONTEITH_FOR_METHOD_DESC:
@@ -2293,10 +2284,8 @@ throws Exception {
 			select.addTable("crop");
 			select.addTable("cu_penman_monteith");
 			select.addTable("cu_method");
-			select.addWhereClause("crop.cropnum "
-				+ "= cu_method.cropnum");
-			select.addWhereClause("cu_method.method_num = "
-				+ "cu_penman_monteith.method_num");
+			select.addWhereClause("crop.cropnum = cu_method.cropnum");
+			select.addWhereClause("cu_method.method_num = cu_penman_monteith.method_num");
 			break;
 		case __S_DAILY_AMT:
 			select = (DMISelectStatement)statement;
@@ -2776,8 +2765,7 @@ throws Exception {
 			select.addField("structure.transbsn");
 			select.addTable("dam");
 			select.addTable("structure");			
-			select.addWhereClause("dam.structure_num "
-				+ "= structure.structure_num");
+			select.addWhereClause("dam.structure_num = structure.structure_num");
 			break;
 		case __S_DAM_INSPECTION:
 			select = (DMISelectStatement)statement;
@@ -2856,8 +2844,7 @@ throws Exception {
 			select.addField("equipment.structure_num");
 			select.addTable("equipment");
 			select.addTable("structure");
-			select.addWhereClause("equipment.structure_num "
-				+ "= structure.structure_num");
+			select.addWhereClause("equipment.structure_num = structure.structure_num");
 			break;
 		case __S_FROST_DATES:
 			select = (DMISelectStatement)statement;
@@ -2872,15 +2859,13 @@ throws Exception {
 			break;
 		case __S_GENERAL_COMMENT:
 			select = (DMISelectStatement)statement;		
-			select.addField("general_comment." 
-				+ "structure_num");
+			select.addField("general_comment.structure_num");
 			if (version >= 19990305) {
 				select.addField("general_comment.date_entered");
 				select.addField("general_comment.comment");
 			}
 			else {
-				select.addField("general_comment."
-					+ "genl_comm_num");
+				select.addField("general_comment.genl_comm_num");
 				select.addField("general_comment.genl_comment");
 				select.addField("general_comment.notes");
 			}
@@ -3006,8 +2991,7 @@ throws Exception {
 			select.addField("structure.transbsn");
 			select.addTable("mf_reach");
 			select.addTable("structure");
-			select.addWhereClause("mf_reach.structure_num "
-				+ "= structure.structure_num");
+			select.addWhereClause("mf_reach.structure_num = structure.structure_num");
 			break;
 		case __S_MONTHLY_TOTAL_PCPN:
 			select = (DMISelectStatement)statement;
@@ -3123,22 +3107,18 @@ throws Exception {
 			select.addField("net_amts.q40");
 			select.addField("net_amts.q160");
 			select.addField("net_amts.rng");
-			if (!getDatabaseEngine().equalsIgnoreCase("Access")
-			    && version >= VERSION_20040701) {
+			if (!getDatabaseEngine().equalsIgnoreCase("Access") && version >= VERSION_20040701) {
 				select.addField("net_amts.rdir");
 			}
-			else if (getDatabaseEngine().equalsIgnoreCase("Access")
-			    && version > VERSION_20040701) {
+			else if (getDatabaseEngine().equalsIgnoreCase("Access") && version > VERSION_20040701) {
 				select.addField("net_amts.rdir");
 			}			
 			select.addField("net_amts.tab_trib");
 			select.addField("net_amts.ts");
-			if (!getDatabaseEngine().equalsIgnoreCase("Access")
-			    && version >= VERSION_20040701) {
+			if (!getDatabaseEngine().equalsIgnoreCase("Access") && version >= VERSION_20040701) {
 				select.addField("net_amts.tdir");
 			}
-			else if (getDatabaseEngine().equalsIgnoreCase("Access")
-			    && version > VERSION_20040701) {
+			else if (getDatabaseEngine().equalsIgnoreCase("Access") && version > VERSION_20040701) {
 				select.addField("net_amts.tdir");
 			}			
 			select.addField("net_amts.[use]");
@@ -3189,8 +3169,7 @@ throws Exception {
 			select.addField("structure_to_parcel.percent_irrig");
 			select.addTable("parcel_use_ts");
 			select.addTable("structure_to_parcel");
-			select.addWhereClause("structure_to_parcel.parcel_num "
-				+ "= parcel_use_ts.parcel_num");
+			select.addWhereClause("structure_to_parcel.parcel_num = parcel_use_ts.parcel_num");
 			break;					
 		case __S_PERSON_DETAILS:
 			select = (DMISelectStatement)statement;
@@ -3207,8 +3186,7 @@ throws Exception {
 			}
 			select.addTable("structure");
 			select.addTable("person_details");
-			select.addWhereClause("structure.structure_num "
-				+ "= person_details.structure_num");
+			select.addWhereClause("structure.structure_num = person_details.structure_num");
 			break;
 		case __S_PUMP_TEST:
 			select = (DMISelectStatement)statement;
@@ -3246,10 +3224,8 @@ throws Exception {
 			select.addTable("pump_test");
 			select.addTable("structure");
 			select.addTable("geoloc");
-			select.addWhereClause("structure.structure_num "
-				+ "= pump_test.structure_num");
-			select.addWhereClause("structure.geoloc_num "
-				+ "= geoloc.geoloc_num");
+			select.addWhereClause("structure.structure_num = pump_test.structure_num");
+			select.addWhereClause("structure.geoloc_num = geoloc.geoloc_num");
 			break;
 		case __S_PUMP_TEST_VIEW:
 			select = (DMISelectStatement)statement;
@@ -3293,11 +3269,8 @@ throws Exception {
 			select.addField("geoloc.q40");
 			select.addField("geoloc.q10");
 			select.addTable("pump_test");
-			select.addInnerJoin("structure",
-				"structure.structure_num "
-				+ "= pump_test.structure_num");
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = structure.geoloc_num");
+			select.addInnerJoin("structure", "structure.structure_num = pump_test.structure_num");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = structure.geoloc_num");
 			select.addOrderByClause("structure.str_name");
 			select.addOrderByClause("structure.[id]");
 			break;
@@ -3371,8 +3344,7 @@ throws Exception {
 			select.addField("reservoir.drain_area");
 			select.addTable("structure");
 			select.addTable("reservoir");
-			select.addWhereClause("reservoir.structure_num "
-				+ "= structure.structure_num");
+			select.addWhereClause("reservoir.structure_num = structure.structure_num");
 			break;
 		case __S_ROLODEX_FOR_ROLODEX_NUM:
 		case __S_ROLODEX_FOR_STRUCTURE_NUM:
@@ -3403,8 +3375,7 @@ throws Exception {
 			select.addTable("rolodex");
 			if (sqlNumber == __S_ROLODEX_FOR_STRUCTURE_NUM) {
 				select.addTable("person_details");
-				select.addWhereClause("rolodex.rolodex_num "
-					+ "= person_details.rolodex_num");	
+				select.addWhereClause("rolodex.rolodex_num = person_details.rolodex_num");	
 			}
 			break;
 		case __S_RT_MEAS:
@@ -3468,8 +3439,7 @@ throws Exception {
 			select.addTable(table);
 			select.addTable("wis_format");
 			select.selectDistinct(true);
-			select.addWhereClause(table + ".wis_num "
-				+ "= wis_format.wis_num");
+			select.addWhereClause(table + ".wis_num = wis_format.wis_num");
 			break;			
 		case __S_SMALL_DAM:
 			select = (DMISelectStatement)statement;
@@ -3514,8 +3484,7 @@ throws Exception {
 			}
 			select.addTable("small_dam");
 			select.addTable("structure");
-			select.addWhereClause("small_dam.structure_num "
-				+ "= structure.structure_num");
+			select.addWhereClause("small_dam.structure_num = structure.structure_num");
 			break;
 		case __S_SNOW_CRSE:
 			select = (DMISelectStatement)statement;
@@ -3613,14 +3582,12 @@ throws Exception {
 			}
 			select.addTable("station");
 			select.addTable("geoloc");
-			select.addWhereClause("station.geoloc_num "
-				+ "= geoloc.geoloc_num");
+			select.addWhereClause("station.geoloc_num = geoloc.geoloc_num");
 			break;
 		case __S_STATION_GEOLOC_CU_CLIM_WTS:
-			// REVISIT (SAM) - FOR now I am including only what I
+			// TODO (SAM) - FOR now I am including only what I
 			// need from station and geoloc, but a full query should
-			// be done to be consisting with the convention of
-			// including all data when tables are joined.
+			// be done to be consisting with the convention of including all data when tables are joined.
 			select = (DMISelectStatement)statement;
 			select.addField("cu_clim_wts.hydrounit");
 			select.addField("cu_clim_wts.county");
@@ -3633,10 +3600,8 @@ throws Exception {
 			select.addTable("cu_clim_wts");
 			select.addTable("station");
 			select.addTable("geoloc");
-			select.addWhereClause(
-				"cu_clim_wts.station_num=station.station_num");
-			select.addWhereClause(
-				"station.geoloc_num=geoloc.geoloc_num");
+			select.addWhereClause("cu_clim_wts.station_num=station.station_num");
+			select.addWhereClause("station.geoloc_num=geoloc.geoloc_num");
 			break;			
 		case __S_STATION_GEOLOC_MEAS_TYPE_DISTINCT:
 			distinct = true;
@@ -3714,10 +3679,8 @@ throws Exception {
 			select.addTable("station");
 			select.addTable("geoloc");
 			select.addTable("meas_type");
-			select.addWhereClause("geoloc.geoloc_num "
-				+ "= station.geoloc_num");
-			select.addWhereClause("station.station_num "
-				+ "= meas_type.station_num");
+			select.addWhereClause("geoloc.geoloc_num = station.geoloc_num");
+			select.addWhereClause("station.station_num = meas_type.station_num");
 			break;
 		case __S_STATION_VIEW:
 			select = (DMISelectStatement)statement;
@@ -3749,8 +3712,7 @@ throws Exception {
 			select.addField("geoloc.accuracy");
 			select.addField("geoloc.st");
 			select.addTable("station");
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = station.geoloc_num");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = station.geoloc_num");
 			break;
 		case __S_STATION_MEAS_TYPE_VIEW:
 			select = (DMISelectStatement)statement;
@@ -3791,10 +3753,8 @@ throws Exception {
 			select.addField("geoloc.accuracy");
 			select.addField("geoloc.st");
 			select.addTable("station");
-			select.addInnerJoin("meas_type",
-				"meas_type.station_num = station.station_num");
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = station.geoloc_num");
+			select.addInnerJoin("meas_type", "meas_type.station_num = station.station_num");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = station.geoloc_num");
 			break;
 		case __S_STATION_MEAS_TYPE_DISTINCT_VIEW:
 			select = (DMISelectStatement)statement;
@@ -3828,17 +3788,14 @@ throws Exception {
 			select.addField("geoloc.accuracy");
 			select.addField("geoloc.st");
 			select.addTable("station");
-			select.addInnerJoin("meas_type",
-				"meas_type.station_num = station.station_num");
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = station.geoloc_num");
+			select.addInnerJoin("meas_type", "meas_type.station_num = station.station_num");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = station.geoloc_num");
 			break;			
 		case __S_STR_TYPE:
 			select = (DMISelectStatement)statement;
 			if (version > VERSION_20040701) {
 				select.addField("ref_Structure_Type.str_type");
-				select.addField(
-					"ref_Structure_Type.str_type_desc");
+				select.addField("ref_Structure_Type.str_type_desc");
 				select.addField("ref_Structure_Type.rpt_code");
 				select.addTable("ref_Structure_Type");
 			}
@@ -3859,8 +3816,7 @@ throws Exception {
 			select.addField("stream.str_mile");
 			select.addTable("legacy_stream");	
 			select.addTable("stream");	
-			select.addWhereClause("legacy_stream.stream_num "
-				+ "= stream.stream_num");
+			select.addWhereClause("legacy_stream.stream_num = stream.stream_num");
 			break;
 		case __S_STRUCT_MEAS_TYPE_DISTINCT_2:
 			select = (DMISelectStatement)statement;
@@ -3890,8 +3846,7 @@ throws Exception {
 			select.addField("struct_meas_type.identifier");
 			select.addTable("struct_meas_type");
 			select.addTable("structure");
-			select.addWhereClause("struct_meas_type.structure_num "
-				+ "= structure.structure_num");
+			select.addWhereClause("struct_meas_type.structure_num = structure.structure_num");
 			break;
 		case __S_STRUCT_MEAS_TYPE_VIEW:
 			select = (DMISelectStatement)statement;
@@ -3938,11 +3893,8 @@ throws Exception {
 			select.addField("struct_meas_type.meas_count");
 			select.addField("struct_meas_type.data_source");
 			select.addTable("structure");
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = structure.geoloc_num");
-			select.addInnerJoin("struct_meas_type",
-				"struct_meas_type.structure_num "
-				+ "= structure.structure_num");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = structure.geoloc_num");
+			select.addInnerJoin("struct_meas_type", "struct_meas_type.structure_num = structure.structure_num");
 			break;
 		case __S_STRUCTURE_AKA:
 			select = (DMISelectStatement)statement;
@@ -3954,8 +3906,7 @@ throws Exception {
 			select.addField("structure.div");
 			select.addTable("structure");
 			select.addTable("structure_aka");
-			select.addWhereClause("structure_aka.structure_num "
-				+ "= structure.structure_num");
+			select.addWhereClause("structure_aka.structure_num = structure.structure_num");
 			break;
 		case __S_STRUCTURE_GEOLOC_LIST_FOR_WDID:
 			select = (DMISelectStatement)statement;
@@ -4047,10 +3998,8 @@ throws Exception {
 			select.addTable("structure");
 			select.addTable("geoloc");
 			select.addTable("struct_meas_type");
-			select.addWhereClause(
-				"geoloc.geoloc_num = structure.geoloc_num");
-			select.addWhereClause("structure.structure_num "
-				+ "= struct_meas_type.structure_num");
+			select.addWhereClause("geoloc.geoloc_num = structure.geoloc_num");
+			select.addWhereClause("structure.structure_num = struct_meas_type.structure_num");
 			break;
 		case __S_STRUCTURE_GEOLOC_STRUCT_MEAS_TYPE_2:
 			select = (DMISelectStatement)statement;
@@ -4073,10 +4022,8 @@ throws Exception {
 			select.addTable("structure");
 			select.addTable("geoloc");
 			select.addTable("struct_meas_type");
-			select.addWhereClause(
-				"geoloc.geoloc_num = structure.geoloc_num");
-			select.addWhereClause("structure.structure_num "
-				+ "= struct_meas_type.structure_num");
+			select.addWhereClause("geoloc.geoloc_num = structure.geoloc_num");
+			select.addWhereClause("structure.structure_num = struct_meas_type.structure_num");
 			break;
 		case __S_STRUCTURE_IRRIG_SUMMARY_JOIN:
 		case __S_STRUCTURE_IRRIG_SUMMARY_JOIN_FOR_STRUCTURE_NUM:
@@ -4102,10 +4049,8 @@ throws Exception {
 			select.addField("irrig_summary.tia_struct");
 			select.addField("irrig_summary.tia_struct_calyear");
 			select.addTable("structure");
-			// Want to make sure to return records, even if
-			// irrig_summary
-			select.addLeftJoin("irrig_summary",
-			"structure.structure_num=irrig_summary.structure_num");
+			// Want to make sure to return records, even if irrig_summary
+			select.addLeftJoin("irrig_summary", "structure.structure_num=irrig_summary.structure_num");
 			break;
 		case __S_STRUCTURE:
 		case __S_STRUCTURE_FOR_STRUCTURE_NUM:
@@ -4204,14 +4149,10 @@ throws Exception {
 			select.addTable("wd_water");
 			select.addTable("rolodex");
 			select.addTable("person_details");
-			select.addWhereClause("geoloc.geoloc_num "
-				+ "= structure.geoloc_num");
-			select.addWhereClause("wd_water.wdwater_num "
-				+ "= structure.wdwater_num");
-			select.addWhereClause("person_details.structure_num "
-				+ "= structure.structure_num");	
-			select.addWhereClause("person_details.rolodex_num "
-				+ "= rolodex.rolodex_num");
+			select.addWhereClause("geoloc.geoloc_num = structure.geoloc_num");
+			select.addWhereClause("wd_water.wdwater_num = structure.wdwater_num");
+			select.addWhereClause("person_details.structure_num = structure.structure_num");	
+			select.addWhereClause("person_details.rolodex_num = rolodex.rolodex_num");
 			break;
 		case __S_STRUCTURE_DISTINCT_WD:
 			select = (DMISelectStatement)statement;
@@ -4246,15 +4187,13 @@ throws Exception {
 			select.addField("Structure.wdwater_num");
 			select.addTable("irrig_summary_ts");
 			select.addTable("structure");
-			select.addWhereClause("structure.structure_num=" +
-					"irrig_summary_ts.structure_num");
+			select.addWhereClause("structure.structure_num=irrig_summary_ts.structure_num");
 			break;			
 		case __S_STRUCTURE_IRRIG_SUMMARY_TS_JOIN_DISTINCT:
 		case __S_STRUCTURE_IRRIG_SUMMARY_TS_JOIN_DISTINCT_SP:
 			select = (DMISelectStatement)statement;
 			// Put these in the same order as above.
-			// Mainly this just avoids the cal_year and data fields
-			// in the irrig_summary_ts table.
+			// Mainly this just avoids the cal_year and data fields in the irrig_summary_ts table.
 			select.addField("irrig_summary_ts.land_use");
 			select.addField("Structure.ciu");
 			select.addField("Structure.dcr_capacity");
@@ -4275,8 +4214,7 @@ throws Exception {
 			select.addField("Structure.wdwater_num");
 			select.addTable("irrig_summary_ts");
 			select.addTable("structure");
-			select.addWhereClause("structure.structure_num=" +
-					"irrig_summary_ts.structure_num");
+			select.addWhereClause("structure.structure_num=irrig_summary_ts.structure_num");
 			select.selectDistinct ( true);
 			break;			
 		case __S_STRUCTURE_VIEW:
@@ -4298,8 +4236,7 @@ throws Exception {
 			select.addField("structure.transbsn");
 			select.addField("structure.xtia");
 			if (version > VERSION_20040701) {
-				select.addField("ref_structure_type"
-					+ ".str_type_desc");
+				select.addField("ref_structure_type.str_type_desc");
 			}
 			else {
 				select.addField("str_type.str_type_desc");
@@ -4351,58 +4288,36 @@ throws Exception {
 			select.addField("tia_struct");
 			select.addField("tia_struct_calyear");
 			if (version >= VERSION_20040701) {
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_APEX_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_APEX_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_APEX_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_APEX_cond");
-				select.addField("dcr_rate_abs + dcr_rate_cond "
-					+ "+ dcr_rate_APEX_abs + "
-					+ "dcr_rate_APEX_cond AS "
-					+ "dcr_rate_total");
-				select.addField("dcr_vol_abs + dcr_vol_cond "
-					+ "+ dcr_vol_APEX_abs +  "
+				select.addField("structure_decree_summary.dcr_rate_abs");
+				select.addField("structure_decree_summary.dcr_rate_cond");
+				select.addField("structure_decree_summary.dcr_rate_APEX_abs");
+				select.addField("structure_decree_summary.dcr_rate_APEX_cond");
+				select.addField("structure_decree_summary.dcr_vol_abs");
+				select.addField("structure_decree_summary.dcr_vol_cond");
+				select.addField("structure_decree_summary.dcr_vol_APEX_abs");
+				select.addField("structure_decree_summary.dcr_vol_APEX_cond");
+				select.addField("dcr_rate_abs + dcr_rate_cond + dcr_rate_APEX_abs + "
+					+ "dcr_rate_APEX_cond AS dcr_rate_total");
+				select.addField("dcr_vol_abs + dcr_vol_cond + dcr_vol_APEX_abs + "
 					+ "dcr_vol_APEX_cond AS dcr_vol_total");
 			}
 			select.addTable("structure");
 			if (version > VERSION_20040701) {
 				select.addInnerJoin("ref_structure_type",
-					"ref_structure_type.str_type "
-					+ "= structure.str_type");
+					"ref_structure_type.str_type = structure.str_type");
 			}
 			else {
 				select.addInnerJoin("str_type",
-					"str_type.str_type "
-					+ "= structure.str_type");
+					"str_type.str_type = structure.str_type");
 			}
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = structure.geoloc_num");
-			select.addLeftJoin("wd_water",
-				"wd_water.wdwater_num = structure.wdwater_num");
-			select.addLeftJoin("person_details",
-				"person_details.structure_num "
-				+ "= structure.structure_num");
-			select.addLeftJoin("rolodex",
-				"rolodex.rolodex_num "
-				+ "= person_details.rolodex_num");
-			select.addLeftJoin("irrig_summary",
-				"irrig_summary.structure_num " 
-				+ "= structure.structure_num");
+			select.addInnerJoin("geoloc","geoloc.geoloc_num = structure.geoloc_num");
+			select.addLeftJoin("wd_water","wd_water.wdwater_num = structure.wdwater_num");
+			select.addLeftJoin("person_details","person_details.structure_num = structure.structure_num");
+			select.addLeftJoin("rolodex","rolodex.rolodex_num = person_details.rolodex_num");
+			select.addLeftJoin("irrig_summary","irrig_summary.structure_num = structure.structure_num");
 			if (version >= VERSION_20040701) {
 				select.addLeftJoin("structure_decree_summary",
-					"structure_decree_summary.structure_num"
-					+ "= structure.structure_num");
+					"structure_decree_summary.structure_num = structure.structure_num");
 			}
 			break;
 		case __S_STRUCTURE_IRRIG_SUMMARY_TS_VIEW:
@@ -4453,22 +4368,14 @@ throws Exception {
 			select.addField("geoloc.stream_num");
 			select.addField("geoloc.str_mile");
 			if (version >= VERSION_20040701) {
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_APEX_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_APEX_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_APEX_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_APEX_cond");
+				select.addField("structure_decree_summary.dcr_rate_abs");
+				select.addField("structure_decree_summary.dcr_rate_cond");
+				select.addField("structure_decree_summary.dcr_rate_APEX_abs");
+				select.addField("structure_decree_summary.dcr_rate_APEX_cond");
+				select.addField("structure_decree_summary.dcr_vol_abs");
+				select.addField("structure_decree_summary.dcr_vol_cond");
+				select.addField("structure_decree_summary.dcr_vol_APEX_abs");
+				select.addField("structure_decree_summary.dcr_vol_APEX_cond");
 			}
 			select.addField("irrig_summary_ts.cal_year");
 			select.addField("irrig_summary_ts.land_use");
@@ -4478,20 +4385,15 @@ throws Exception {
 			select.addField("irrig_summary_ts.acres_by_furrow");
 			select.addField("irrig_summary_ts.acres_by_sprinkler");
 			if (version >= VERSION_20040701) {
-				select.addField("irrig_summary_ts"
-					+ ".acres_by_groundwater");
+				select.addField("irrig_summary_ts.acres_by_groundwater");
 			}
 			select.addTable("structure");
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = structure.geoloc_num");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = structure.geoloc_num");
 			if (version >= VERSION_20040701) {
 				select.addLeftJoin("structure_decree_summary",
-					"structure_decree_summary.structure_num"
-					+ " = structure.structure_num");
+					"structure_decree_summary.structure_num = structure.structure_num");
 			}
-			select.addInnerJoin("irrig_summary_ts",
-				"irrig_summary_ts.structure_num"
-				+ " = structure.structure_num");
+			select.addInnerJoin("irrig_summary_ts", "irrig_summary_ts.structure_num = structure.structure_num");
 			break;
 		case __S_STRUCTURE_IRRIG_SUMMARY_TS_DISTINCT_VIEW:
 			select = (DMISelectStatement)statement;
@@ -4541,35 +4443,24 @@ throws Exception {
 			select.addField("geoloc.stream_num");
 			select.addField("geoloc.str_mile");
 			if (version >= VERSION_20040701) {
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_APEX_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_rate_APEX_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_cond");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_APEX_abs");
-				select.addField("structure_decree_summary"
-					+ ".dcr_vol_APEX_cond");
+				select.addField("structure_decree_summary.dcr_rate_abs");
+				select.addField("structure_decree_summary.dcr_rate_cond");
+				select.addField("structure_decree_summary.dcr_rate_APEX_abs");
+				select.addField("structure_decree_summary.dcr_rate_APEX_cond");
+				select.addField("structure_decree_summary.dcr_vol_abs");
+				select.addField("structure_decree_summary.dcr_vol_cond");
+				select.addField("structure_decree_summary.dcr_vol_APEX_abs");
+				select.addField("structure_decree_summary.dcr_vol_APEX_cond");
 			}
 			select.addField("irrig_summary_ts.land_use");
 			select.addTable("structure");
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = structure.geoloc_num");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = structure.geoloc_num");
 			if (version >= VERSION_20040701) {
 				select.addLeftJoin("structure_decree_summary",
-					"structure_decree_summary.structure_num"
-					+ " = structure.structure_num");
+					"structure_decree_summary.structure_num = structure.structure_num");
 			}
 			select.addInnerJoin("irrig_summary_ts",
-				"irrig_summary_ts.structure_num"
-				+ " = structure.structure_num");
+				"irrig_summary_ts.structure_num = structure.structure_num");
 			break;
 		case __S_TRANSACT:
 		case __S_TRANSACT_FOR_STRUCTURE_NUM:
@@ -4585,21 +4476,17 @@ throws Exception {
 			select.addField("transact.xstrtype");
 			select.addField("transact.pm");
 			select.addField("transact.ts");
-			if (!getDatabaseEngine().equalsIgnoreCase("Access")
-			    && version >= VERSION_20040701) {
+			if (!getDatabaseEngine().equalsIgnoreCase("Access") && version >= VERSION_20040701) {
 				select.addField("transact.tdir");
 			}
-			else if (getDatabaseEngine().equalsIgnoreCase("Access")
-			    && version > VERSION_20040701) {
+			else if (getDatabaseEngine().equalsIgnoreCase("Access") && version > VERSION_20040701) {
 				select.addField("transact.tdir");
 			}			
 			select.addField("transact.rng");
-			if (!getDatabaseEngine().equalsIgnoreCase("Access")
-			    && version >= VERSION_20040701) {
+			if (!getDatabaseEngine().equalsIgnoreCase("Access") && version >= VERSION_20040701) {
 				select.addField("transact.rdir");
 			}
-			else if (getDatabaseEngine().equalsIgnoreCase("Access")
-			    && version > VERSION_20040701) {
+			else if (getDatabaseEngine().equalsIgnoreCase("Access") && version > VERSION_20040701) {
 				select.addField("transact.rdir");
 			}
 			select.addField("transact.sec");
@@ -4716,14 +4603,9 @@ throws Exception {
 			select.addField("unpermitted_wells.usgs_id");
 			select.addField("unpermitted_wells.usbr_id");
 			select.addTable("structure");
-			select.addInnerJoin("geoloc",
-				"geoloc.geoloc_num = structure.geoloc_num");
-			select.addInnerJoin("struct_meas_type",
-				"struct_meas_type.structure_num"
-				+ " = structure.structure_num");
-			select.addInnerJoin("unpermitted_wells",
-				"structure.structure_num" 
-				+ " = unpermitted_wells.structure_num");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = structure.geoloc_num");
+			select.addInnerJoin("struct_meas_type", "struct_meas_type.structure_num = structure.structure_num");
+			select.addInnerJoin("unpermitted_wells", "structure.structure_num = unpermitted_wells.structure_num");
 			break;
 		case __S_USE:
 			select = (DMISelectStatement)statement;
@@ -4744,8 +4626,7 @@ throws Exception {
 			}
 			select.addTable("user_preferences");
 			select.addTable("user_security");
-			select.addWhereClause("user_preferences.user_num "
-				+ "= user_security.user_num");
+			select.addWhereClause("user_preferences.user_num = user_security.user_num");
 			break;
 		case __S_USER_SECURITY:
 		case __S_USER_SECURITY_FOR_USER_NUM:
@@ -4888,8 +4769,7 @@ throws Exception {
 			select.addField("well_application.wd");
 			select.addTable("well_application");
 			select.addTable("geoloc");
-			select.addWhereClause("well_application.geoloc_num "
-				+ "= geoloc.geoloc_num");
+			select.addWhereClause("well_application.geoloc_num = geoloc.geoloc_num");
 			if (sqlNumber == __S_WELL_APPLICATION) {
 				break;
 			}
@@ -4924,9 +4804,7 @@ throws Exception {
 				select.addField("well_application.actdate");
 			}
 			else {
-				select.addField("CONVERT(nvarchar(10),"
-					+ " well_application" 
-					+ ".actdate, 101) AS actdate");
+				select.addField("CONVERT(nvarchar(10), well_application.actdate, 101) AS actdate");
 			}
 			select.addField("well_application.actcode");
 			select.addField("well_application.wd");
@@ -4959,8 +4837,7 @@ throws Exception {
 			select.addField("geoloc.utm_y");
 			select.addField("geoloc.latdecdeg");
 			select.addField("geoloc.longdecdeg");
-			select.addField("ref_loc_accuracy.[description] AS "
-				+ "loc_source");
+			select.addField("ref_loc_accuracy.[description] AS loc_source");
 			select.addField("well_application.aquifer1");
 			select.addField("well_application.aquifer2");
 			select.addField("well_application.subdiv_name");
@@ -4991,39 +4868,19 @@ throws Exception {
 				select.addField("well_application.abcodate");
 			}
 			else {
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".pidate, 101) AS pidate");
+				select.addField("CONVERT(nvarchar(10), well_application.pidate, 101) AS pidate");
 				select.addField("well_application.statute");
 				select.addField("well_application.statcode");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".statdate, 101) as statdate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".npdate, 101) as npdate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".wadate, 101) as wadate");
+				select.addField("CONVERT(nvarchar(10), well_application.statdate, 101) as statdate");
+				select.addField("CONVERT(nvarchar(10), well_application.npdate, 101) as npdate");
+				select.addField("CONVERT(nvarchar(10), well_application.wadate, 101) as wadate");
 				select.addField("well_application.trancode");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".trandate, 101) as trandate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".sadate, 101) as sadate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".sbudate, 101) as sbudate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".exdate, 101) as exdate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".abrdate, 101) as abrdate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".abcodate, 101) as abcodate");
+				select.addField("CONVERT(nvarchar(10), well_application.trandate, 101) as trandate");
+				select.addField("CONVERT(nvarchar(10), well_application.sadate, 101) as sadate");
+				select.addField("CONVERT(nvarchar(10), well_application.sbudate, 101) as sbudate");
+				select.addField("CONVERT(nvarchar(10), well_application.exdate, 101) as exdate");
+				select.addField("CONVERT(nvarchar(10), well_application.abrdate, 101) as abrdate");
+				select.addField("CONVERT(nvarchar(10), well_application.abcodate, 101) as abcodate");
 			}
 			select.addField("well_application.abreq");
 			select.addField("well_application.acreft");
@@ -5047,18 +4904,10 @@ throws Exception {
 				select.addField("well_application.pcdate");
 			}
 			else {
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".nwcdate, 101) as nwcdate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".nbudate, 101) as nbudate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".wcdate, 101) as wcdate");
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".pcdate, 101) as pcdate");
+				select.addField("CONVERT(nvarchar(10), well_application.nwcdate, 101) as nwcdate");
+				select.addField("CONVERT(nvarchar(10), well_application.nbudate, 101) as nbudate");
+				select.addField("CONVERT(nvarchar(10), well_application.wcdate, 101) as wcdate");
+				select.addField("CONVERT(nvarchar(10), well_application.pcdate, 101) as pcdate");
 			}
 			select.addField("well_application.[log]");
 			select.addField("well_application.qual");
@@ -5073,25 +4922,14 @@ throws Exception {
 				select.addField("well_application.noticedate");
 			}
 			else {
-				select.addField("CONVERT(nvarchar(10), "
-					+ "well_application"
-					+ ".noticedate, 101) as noticedate");
+				select.addField("CONVERT(nvarchar(10), well_application.noticedate, 101) as noticedate");
 			}
 			select.addTable("well_application");
-			select.addInnerJoin("geoloc", 
-				"geoloc.geoloc_num "
-				+ "= well_application.geoloc_num");
-			select.addInnerJoin("well_app_rolodex",
-				"well_app_rolodex.well_app_num "
-				+ "= well_application.well_app_num");
-			select.addInnerJoin("rolodex",
-				"rolodex.rolodex_num "
-				+ "= well_app_rolodex.rolodex_num");
-			select.addInnerJoin("contact",
-				"contact.rolodex_num = rolodex.rolodex_num");
-			select.addLeftJoin("ref_loc_accuracy",
-				"ref_loc_accuracy.loc_accuracy_num "
-				+ "= geoloc.accuracy");
+			select.addInnerJoin("geoloc", "geoloc.geoloc_num = well_application.geoloc_num");
+			select.addInnerJoin("well_app_rolodex", "well_app_rolodex.well_app_num = well_application.well_app_num");
+			select.addInnerJoin("rolodex", "rolodex.rolodex_num = well_app_rolodex.rolodex_num");
+			select.addInnerJoin("contact", "contact.rolodex_num = rolodex.rolodex_num");
+			select.addLeftJoin("ref_loc_accuracy", "ref_loc_accuracy.loc_accuracy_num = geoloc.accuracy");
 			break;
 		case __S_WELL_MEAS:
 			select = (DMISelectStatement)statement;
@@ -5115,10 +4953,8 @@ throws Exception {
 			select.addTable("well_meas");			
 			select.addTable("structure");
 			select.addTable("geoloc");
-			select.addWhereClause("structure.structure_num "
-				+ "= well_meas.structure_num");
-			select.addWhereClause("structure.geoloc_num "
-				+ "= geoloc.geoloc_num");
+			select.addWhereClause("structure.structure_num = well_meas.structure_num");
+			select.addWhereClause("structure.geoloc_num = geoloc.geoloc_num");
 			break;
 		case __S_WELLS:
 			select = (DMISelectStatement)statement;
@@ -5171,16 +5007,14 @@ throws Exception {
 				select.addField("well_to_layer.layer");
 				select.addField("well_to_layer.layer_per");
 				select.addField("well_to_layer.est_id");
-				select.addWhereClause("wells.well_id "
-					+ "= well_to_layer.well_id");
+				select.addWhereClause("wells.well_id = well_to_layer.well_id");
 				select.addField("wells.ditches_served");
 			}
 			else {
 				select.addField("layers.layer");
 				select.addField("layers.layer_per");
 				select.addField("layers.est_id");
-				select.addWhereClause("wells.well_id "
-					+ "= layers.well_id");
+				select.addWhereClause("wells.well_id = layers.well_id");
 			}
 			select.addTable("wells");
 			if (version >= VERSION_20000706) {
@@ -5216,8 +5050,7 @@ throws Exception {
 			select.addField("well_to_parcel.class");
 			select.addField("well_to_parcel.distance");
 			if (version >= VERSION_20000706) {
-				select.addField("well_to_parcel."
-					 + "prorated_yield");
+				select.addField("well_to_parcel.prorated_yield");
 				select.addField("well_to_parcel.percent_yield");
 			}
 			select.addTable("wells");
@@ -5232,8 +5065,7 @@ throws Exception {
 				select.addField("well_to_parcel.cal_year");
 				select.addField("well_to_parcel.parcel_id");
 			}
-			select.addWhereClause("wells.well_id "
-				+ "= well_to_parcel.well_id");
+			select.addWhereClause("wells.well_id = well_to_parcel.well_id");
 			break;
 		case __S_WELLS_STRUCTURE:
 			select = (DMISelectStatement)statement;
@@ -5258,28 +5090,24 @@ throws Exception {
 			select.addField("wells.use2");
 			select.addField("wells.use3");
 			if (version >= VERSION_20000706) {
-				select.addField("well_to_structure."
-					+ "structure_num");
+				select.addField("well_to_structure.structure_num");
 				select.addField("well_to_structure.parcel");
 				select.addField("well_to_structure.ditch_cov");
 				select.addField("well_to_structure.str_wd");
 				select.addField("well_to_structure.str_id");
-				select.addWhereClause("wells.well_id "
-					+ "= well_to_structure.well_id");
+				select.addWhereClause("wells.well_id = well_to_structure.well_id");
 				select.addField("wells.ditches_served");
 				select.addField("well_to_structure.ditch_id");
 				select.addField("well_to_structure.cal_year");
 				select.addField("well_to_structure.parcel_id");
 			}
 			else {
-				select.addField("structure_to_well."
-					+ "structure_num");
+				select.addField("structure_to_well.structure_num");
 				select.addField("structure_to_well.parcel");
 				select.addField("structure_to_well.ditch_cov");
 				select.addField("structure_to_well.str_wd");
 				select.addField("structure_to_well.str_id");
-				select.addWhereClause("wells.well_id "
-					+ "= structure_to_well.well_id");
+				select.addWhereClause("wells.well_id = structure_to_well.well_id");
 			}		
 			select.addTable("wells");
 			if (version >= VERSION_20000706) {
@@ -5314,44 +5142,34 @@ throws Exception {
 			select.addField("well_to_parcel.parcel");
 			select.addField("well_to_parcel.class");
 			select.addField("well_to_parcel.distance");
-			select.addWhereClause("wells.well_id "
-				+ "= well_to_parcel.well_id");
+			select.addWhereClause("wells.well_id = well_to_parcel.well_id");
 			if (version >= VERSION_20000706) {
-				select.addField("well_to_parcel."
-					+ "prorated_yield");
+				select.addField("well_to_parcel.prorated_yield");
 				select.addField("well_to_parcel.percent_yield");
 				if (version >= VERSION_20040701) {
 					select.addField("well_to_parcel.div");
-					select.addField(
-					"well_to_parcel.cal_year");
-					select.addField(
-					"well_to_parcel.parcel_id");
+					select.addField("well_to_parcel.cal_year");
+					select.addField("well_to_parcel.parcel_id");
 				}
-				select.addField("well_to_structure."
-					+ "structure_num");
+				select.addField("well_to_structure.structure_num");
 				select.addField("well_to_structure.parcel");
 				select.addField("well_to_structure.ditch_cov");
 				select.addField("well_to_structure.str_wd");
 				select.addField("well_to_structure.str_id");
-				select.addWhereClause("wells.well_id "
-					+ "= well_to_structure.well_id");
-				select.addWhereClause("well_to_parcel.parcel = "
-					+ "well_to_structure.parcel");
+				select.addWhereClause("wells.well_id = well_to_structure.well_id");
+				select.addWhereClause("well_to_parcel.parcel = well_to_structure.parcel");
 
 				select.addField("wells.ditches_served");
 				select.addField("well_to_structure.ditch_id");
 			}
 			else {
-				select.addField("structure_to_well."
-					+ "structure_num");
+				select.addField("structure_to_well.structure_num");
 				select.addField("structure_to_well.parcel");
 				select.addField("structure_to_well.ditch_cov");
 				select.addField("structure_to_well.str_wd");
 				select.addField("structure_to_well.str_id");
-				select.addWhereClause("wells.well_id "
-					+ "= structure_to_well.well_id");
-				select.addWhereClause("well_to_parcel.parcel = "
-					+ "structure_to_well.parcel");	
+				select.addWhereClause("wells.well_id = structure_to_well.well_id");
+				select.addWhereClause("well_to_parcel.parcel = structure_to_well.parcel");	
 			}
 			select.addTable("wells");
 			if (version >= VERSION_20000706) {
@@ -5687,8 +5505,7 @@ throws Exception {
 			write.addTable("wis_diagram_data");
 			break;
 		default:
-			Message.printWarning (2, "HydroBaseDMI.buildSQL",
-			"Unknown statement code: " + sqlNumber);
+			Message.printWarning (2, "HydroBaseDMI.buildSQL", "Unknown statement code: " + sqlNumber);
 			break;
 	}
 }
@@ -6171,8 +5988,7 @@ throws java.sql.SQLException {
 	java.util.Enumeration e = __storedProcedureHashtable.keys();
 	DMIStoredProcedureData data = null;
 	while (e.hasMoreElements()) {
-		data = (DMIStoredProcedureData)
-			__storedProcedureHashtable.get((String)e.nextElement());
+		data = (DMIStoredProcedureData)__storedProcedureHashtable.get((String)e.nextElement());
 		cs = data.getCallableStatement();
 		cs.close();
 	}
@@ -6184,8 +6000,7 @@ throws java.sql.SQLException {
 Closes a ResultSet from a stored procedure query.  Note that in the base DMI 
 class there is another version of closeResultSet without the 'select' parameter
 passed in.  This is only done for non-SP connections.  This version ensures that
-the SP's Statement object is not closed, and thus the SP can be re-used
-efficiently.
+the SP's Statement object is not closed, and thus the SP can be re-used efficiently.
 @param rs the ResultSet to be closed.
 @param select the DMIStatement that was executed.
 */
@@ -7275,6 +7090,16 @@ public String getPreferenceValue(String variable) {
 }
 
 /**
+Return the maximum number of parameters that the SPFlex stored procedure can accept.  This is used to check to
+make sure that a user is not provided more choices than are allowed.
+@return the maximum number of parameters that the SPFlex stored procedure can accept.
+*/
+public static int getSPFlexMaxParameters()
+{
+    return 6;
+}
+
+/**
 Returns the Vector of structure types stored in global data.
 @return the Vector of structure types stored in global data.
 */
@@ -7285,8 +7110,7 @@ public List getStrTypesVector() {
 			__StrTypes_Vector = readStrTypeList();
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine,
-				"Unable to read StrTypes data.");
+			Message.printWarning ( 2, routine, "Unable to read StrTypes data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__StrTypes_Vector == null) {
@@ -7305,12 +7129,10 @@ public List getStructMeasType () {
 	String routine = "getStructMeasType";
 	if (__StructMeasType_Vector == null) {
 		try {
-			__StructMeasType_Vector 
-				= readStructMeasTypeDistinctList();
+			__StructMeasType_Vector = readStructMeasTypeDistinctList();
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine,
-				"Unable to read distinct StructMeasType data.");
+			Message.printWarning ( 2, routine, "Unable to read distinct StructMeasType data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__StructMeasType_Vector == null) {
@@ -7323,11 +7145,9 @@ public List getStructMeasType () {
 
 /**
 Returns the structure type description that matches a given structure type
-abbreviation.  Data is read from internal Vectors that are populated when
-a user logs into the database.
+abbreviation.  Data is read from internal Vectors that are populated when a user logs into the database.
 @param structureType A structure type string from the str_type table.
-@return The structure type description given a structure type (abbreviation) or
-" " if none matched.
+@return The structure type description given a structure type (abbreviation) or " " if none matched.
 */
 public String getStructureTypeDescription (String structureType) {
 	HydroBase_StrType strType;
@@ -7362,8 +7182,7 @@ public List getUseTypes() {
 			__UseTypes_Vector = readUseList();
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine,
-				"Unable to read UseTypes data.");
+			Message.printWarning ( 2, routine, "Unable to read UseTypes data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__UseTypes_Vector == null) {
@@ -7377,8 +7196,7 @@ public List getUseTypes() {
 /**
 Create comments about the database suitable to include in any file header.
 The strings do not have "#" at the front.
-This method is used by software that writes output files using data that were
-read from HydroBase.
+This method is used by software that writes output files using data that were read from HydroBase.
 @return an array of strings, each of which is a line that can be used in a
 file header to document the database version.
 */
@@ -7386,28 +7204,25 @@ public String[] getVersionComments()
 throws Exception {
 	String [] v = new String[9];
 	v[0] = "";
-	v[1] = "-------------------------------------------------------" +
-		"----------------------";
+	v[1] = "-----------------------------------------------------------------------------";
 	if (getJDBCODBC()) {
 		// Database server...
-		v[2] = "HydroBase database is: " +
-			getDatabaseName() + " on " + getDatabaseServer();
+		v[2] = "HydroBase database is: " + getDatabaseName() + " on " + getDatabaseServer();
 	}
 	else {
 		// Connection is ODBC...
 		v[2] = "HydroBase ODBC DSN is: " + getODBCName();
 	}
 	v[3] = getLatestVersionString();
-	v[4] = "HydroBase table structure for software is at least " +
-		getDatabaseVersion();
+	v[4] = "HydroBase table structure for software is at least " + getDatabaseVersion();
 	v[5] = "HydroBase input name is \"" + getInputName() + "\".";
 	if ( __useSP ) {
 		v[6] = "Stored procedures are being used.";
 	}
-	else {	v[6] = "Stored procedures are not being used.";
+	else {
+	    v[6] = "Stored procedures are not being used.";
 	}
-	v[7] = "------------------------------------------------------" +
-		"-----------------------";
+	v[7] = "-----------------------------------------------------------------------------";
 	v[8] = "";
 	return v;
 }
@@ -7434,8 +7249,7 @@ This function  examines choice component argument and builds the
 where clause for the selected division/district.
 @param choice the SimpleJComboBox to use when building the where clause.
 @param table the table with which the where clause will be used.
-@param displayWarning boolean flag for diplaying or supressing the dialog 
-warnings
+@param displayWarning boolean flag for diplaying or supressing the dialog warnings
 @param checkData boolean flag to for checking on Water District before adding 
 to the return Vector(note: this flag is needed by HBSyncWizardGUI which needs
 to query the remote database and the check is setup for the local database)
@@ -7450,11 +7264,10 @@ throws Exception {
 
 	String[] ret = new String[2];
 
-        // add where clause for wd
+    // add where clause for wd
 	String select = choice.getSelected().trim();
 	if (select == null && displayWarning) {
-		Message.printWarning(1, function,
-			"You must first select a Division or District.");
+		Message.printWarning(1, function, "You must first select a Division or District.");
 		return null;
 	}
 
@@ -7484,22 +7297,18 @@ throws Exception {
 		index = choice.getSelectedIndex()+ 1;
 		while (index <  choice.getItemCount()) {
 			String otherSelect = (choice.getItem(index)).trim();
-			if (otherSelect.startsWith("Division")
-			    || otherSelect.equals(
-			    HydroBase_GUI_Util._ALL_DIVISIONS)) {
+			if (otherSelect.startsWith("Division") || otherSelect.equals(HydroBase_GUI_Util._ALL_DIVISIONS)) {
 				break;
 			}
 
 			String wd=HydroBase_WaterDistrict.parseWD(otherSelect);
-			if (	!checkData || 
-				isWaterDistrictAvailable(wd)) {
+			if ( !checkData || isWaterDistrictAvailable(wd)) {
 				hasData = true;
 				if (table == null) {
 					whereClauses.add("wd = " + wd);
 				}
 				else {
-					whereClauses.add(table 
-						+ ".wd = " + wd);
+					whereClauses.add(table + ".wd = " + wd);
 				}
 			}
 			else {
@@ -7509,17 +7318,16 @@ throws Exception {
 		}
 	}
 	else {
-	        String wd = HydroBase_WaterDistrict.parseWD(select);
+	    String wd = HydroBase_WaterDistrict.parseWD(select);
 		sp = "wd " + wd;
 		if (!checkData || isWaterDistrictAvailable(wd)) {
 			hasData = true;
-				if (table == null) {
-					whereClauses.add("wd = " + wd);
-				}
-				else {
-					whereClauses.add(table 
-						+ ".wd = " + wd);
-				}
+			if (table == null) {
+				whereClauses.add("wd = " + wd);
+			}
+			else {
+				whereClauses.add(table + ".wd = " + wd);
+			}
 		}
 		else {
 			notFound.add(select);
@@ -7533,16 +7341,14 @@ throws Exception {
 		}
 
 		if (displayWarning) {
-			Message.printWarning(1, function, 
-				"Information for water"
-	 			+ " district(s):" + items
+			Message.printWarning(1, function, "Information for water district(s):" + items
 				+ "\nis not available in the database.");
 		}
 
 		return null;
 	}
 
-        String or = DMIUtil.getOrClause(whereClauses);
+    String or = DMIUtil.getOrClause(whereClauses);
 	ret[0] = or;
 	ret[1] = sp;
 
@@ -7553,8 +7359,7 @@ throws Exception {
 Returns the water district name given the integer identifier, or an empty
 string if unknown.  Data is read from the global data.
 @param wd the wd of the water district for which to return the name 
-@return the water district name given the integer identifier or an empty
-string ("") if unknown.
+@return the water district name given the integer identifier or an empty string ("") if unknown.
 */
 public String getWaterDistrictName ( int wd )
 throws Exception {
@@ -7563,7 +7368,6 @@ throws Exception {
 	int size = 0;
 	if (waterDistricts != null) {
 		size = waterDistricts.size();
-
 	}
 	HydroBase_WaterDistrict hwd;
 	for ( int i = 0; i < size; i++) {
@@ -7576,8 +7380,7 @@ throws Exception {
 }
 
 /**
-Return the global list of water districts objects, sorted by water district
-number.
+Return the global list of water districts objects, sorted by water district number.
 @return the global list of water districts objects.
 */
 public List getWaterDistricts() {
@@ -7587,8 +7390,7 @@ public List getWaterDistricts() {
 			__WaterDistricts_Vector = readWaterDistrictList(false);
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine,
-				"Unable to read WaterDistrict data.");
+			Message.printWarning ( 2, routine, "Unable to read WaterDistrict data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__WaterDistricts_Vector == null) {
@@ -7604,12 +7406,10 @@ public List getWaterDistrictsByDiv() {
 	if (__WaterDistrictsByDiv_Vector == null) {
 		// read the water district by div data
 		try {
-			__WaterDistrictsByDiv_Vector = readWaterDistrictList(
-				true);
+			__WaterDistrictsByDiv_Vector = readWaterDistrictList(true);
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine,
-				"Unable to read WaterDistrict data.");
+			Message.printWarning ( 2, routine,"Unable to read WaterDistrict data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__WaterDistrictsByDiv_Vector == null) {
@@ -7624,12 +7424,10 @@ public List getWaterDistrictsFromStructures() {
 	if (__WaterDistrictsFromStructures_Vector == null) {
 		// read the water district by div data
 		try {
-			__WaterDistrictsFromStructures_Vector = 
-				readStructureDistinctWDList();
+			__WaterDistrictsFromStructures_Vector = readStructureDistinctWDList();
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine,
-				"Unable to read WaterDistrict data.");
+			Message.printWarning ( 2, routine, "Unable to read WaterDistrict data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__WaterDistrictsFromStructures_Vector == null) {
@@ -7640,8 +7438,7 @@ public List getWaterDistrictsFromStructures() {
 }
 
 /**
-Return the global list of water division objects, sorted by water division
-number.
+Return the global list of water division objects, sorted by water division number.
 @return the global list of water division objects.
 */
 public List getWaterDivisions() {
@@ -7651,8 +7448,7 @@ public List getWaterDivisions() {
 			__WaterDivisions_Vector = readWaterDivisionList();
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine,
-				"Unable to read water division data.");
+			Message.printWarning ( 2, routine, "Unable to read water division data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__WaterDivisions_Vector == null) {
@@ -7717,78 +7513,142 @@ public boolean isGuestLoggedIn() {
 }
 
 /**
-Returns whether the database contains tables, etc that match the indicated
-version.
-@param version See VERSION_* definitions.
-@return true if the database contains tables, etc., that match the indicated
-version.
-@throws Exception if there is an error determining the version (e.g.,
-unable to get database meta data).
+Returns whether the database contains tables, etc that match the indicated version.
+@param versionRequested See VERSION_* definitions.
+@return true if the database contains tables, etc., that match the indicated version.
+@throws Exception if there is an error determining the version (e.g., unable to get database meta data).
 */
-public boolean isVersionAtLeast(long version)
-throws Exception {
-	String routine = "HydroBaseDMI.isVersionAtLeast";
-
+public boolean isVersionAtLeast(long versionRequested)
+throws Exception
+{
 	if (Message.isDebugOn) {
-		Message.printDebug(5, routine,
-			"Checking to see if database version is at least " 
-			+ version);
+	    String routine = "HydroBaseDMI.isVersionAtLeast";
+		Message.printDebug(5, routine, "Checking to see if database version is at least " + versionRequested);
 	}
 
-	if (version == VERSION_20070525 ) {
-		return isVersion20070525();
+	if ( versionRequested == VERSION_20070525 ) {
+	    if ( !__isVersion20070525Checked ) {
+	        __isVersionAtLeast20070525 = isVersion20070525();
+	        __isVersion20070525Checked = true;
+	    }
+	    return __isVersionAtLeast20070525;
 	}
-	else if (version == VERSION_20070502) {
-		return isVersion20070502();
+	else if (versionRequested == VERSION_20070502) {
+        if ( !__isVersion20070502Checked ) {
+              __isVersionAtLeast20070502 = isVersion20070502();
+              __isVersion20070502Checked = true;
+        }
+        return __isVersionAtLeast20070502;
 	}
-	else if (version == VERSION_20070416) {
-		return isVersion20070416();
+	else if (versionRequested == VERSION_20070416) {
+        if ( !__isVersion20070416Checked ) {
+            __isVersionAtLeast20070416 = isVersion20070416();
+            __isVersion20070416Checked = true;
+        }
+        return __isVersionAtLeast20070416;
 	}
-	else if (version == VERSION_20061003) {
-		return isVersion20061003();
+	else if (versionRequested == VERSION_20061003) {
+        if ( !__isVersion20061003Checked ) {
+            __isVersionAtLeast20061003 = isVersion20061003();
+            __isVersion20061003Checked = true;
+        }
+        return __isVersionAtLeast20061003;
 	}
-	else if (version == VERSION_20051115) {
-		return isVersion20051115();
+	else if (versionRequested == VERSION_20051115) {
+        if ( !__isVersion20051115Checked ) {
+            __isVersionAtLeast20051115 = isVersion20051115();
+            __isVersion20051115Checked = true;
+        }
+        return __isVersionAtLeast20051115;
 	}
-	else if (version == VERSION_20050701) {
-		return isVersion20050701();
+	else if (versionRequested == VERSION_20050701) {
+        if ( !__isVersion20050701Checked ) {
+            __isVersionAtLeast20050701 = isVersion20050701();
+            __isVersion20050701Checked = true;
+        }
+        return __isVersionAtLeast20050701;
 	}
-	else if (version == VERSION_20050501) {
-		return isVersion20050501() ;
+	else if (versionRequested == VERSION_20050501) {
+        if ( !__isVersion20050501Checked ) {
+            __isVersionAtLeast20050501 = isVersion20050501();
+            __isVersion20050501Checked = true;
+        }
+        return __isVersionAtLeast20050501;
 	}
-	else if (version == VERSION_20040701) {
-		return isVersion20040701();
+	else if (versionRequested == VERSION_20040701) {
+        if ( !__isVersion20040701Checked ) {
+            __isVersionAtLeast20040701 = isVersion20040701();
+            __isVersion20040701Checked = true;
+        }
+        return __isVersionAtLeast20040701;
 	}
-	else if (version == VERSION_20030701) {
-		return isVersion20030701();
+	else if (versionRequested == VERSION_20030701) {
+        if ( !__isVersion20030701Checked ) {
+            __isVersionAtLeast20030701 = isVersion20030701();
+            __isVersion20030701Checked = true;
+        }
+        return __isVersionAtLeast20030701;
 	}
-	else if (version == VERSION_20010326) {
-		return isVersion20010326();
+	else if (versionRequested == VERSION_20010326) {
+        if ( !__isVersion20010326Checked ) {
+            __isVersionAtLeast20010326 = isVersion20010326();
+            __isVersion20010326Checked = true;
+        }
+        return __isVersionAtLeast20010326;
 	}
-	else if (version == VERSION_20000706) {
-		return isVersion20000706();
+	else if (versionRequested == VERSION_20000706) {
+        if ( !__isVersion20000706Checked ) {
+            __isVersionAtLeast20000706 = isVersion20000706();
+            __isVersion20000706Checked = true;
+        }
+        return __isVersionAtLeast20000706;
 	}
-	else if (version == VERSION_20000427) {
-		return isVersion20000427();
+	else if (versionRequested == VERSION_20000427) {
+        if ( !__isVersion20000427Checked ) {
+            __isVersionAtLeast20000427 = isVersion20000427();
+            __isVersion20000427Checked = true;
+        }
+        return __isVersionAtLeast20000427;
 	}
-	else if (version == VERSION_20000301) {
-		return isVersion20000301();
+	else if (versionRequested == VERSION_20000301) {
+        if ( !__isVersion20000301Checked ) {
+            __isVersionAtLeast20000301 = isVersion20000301();
+            __isVersion20000301Checked = true;
+        }
+        return __isVersionAtLeast20000301;
 	}
-	else if (version == VERSION_19990305) {
-		return isVersion19990305();
+	else if (versionRequested == VERSION_19990305) {
+        if ( !__isVersion19990305Checked ) {
+            __isVersionAtLeast19990305 = isVersion19990305();
+            __isVersion19990305Checked = true;
+        }
+        return __isVersionAtLeast19990305;
 	}
-	else if (version == VERSION_19990202) {
-		return isVersion19990202();
+	else if (versionRequested == VERSION_19990202) {
+        if ( !__isVersion19990202Checked ) {
+            __isVersionAtLeast19990202 = isVersion19990202();
+            __isVersion19990202Checked = true;
+        }
+        return __isVersionAtLeast19990202;
 	}
-	else if (version == VERSION_19980428) {
-		return isVersion19980428();
+	else if (versionRequested == VERSION_19980428) {
+        if ( !__isVersion19980428Checked ) {
+            __isVersionAtLeast19980428 = isVersion19980428();
+            __isVersion19980428Checked = true;
+        }
+        return __isVersionAtLeast19980428;
 	}
-	else if (version == VERSION_19970501) {
-		return isVersion19970501();
+	else if (versionRequested == VERSION_19970501) {
+        if ( !__isVersion19970501Checked ) {
+            __isVersionAtLeast19970501 = isVersion19970501();
+            __isVersion19970501Checked = true;
+        }
+        return __isVersionAtLeast19970501;
 	}
 	else {
 		// Unknown version...
-		Message.printWarning(2, routine, "Unknown HydroBase database version: " + version );
+	    String routine = "HydroBaseDMI.isVersionAtLeast";
+		Message.printWarning(2, routine, "Unknown HydroBase database version: " + versionRequested );
 		return false;
 	}
 }
@@ -7812,37 +7672,32 @@ throws Exception {
 	int dl = 5;
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for geoloc, structure, station tables.");
+		Message.printDebug(dl, routine, "Checking for geoloc, structure, station tables.");
 	}
 	
 	if (!DMIUtil.databaseHasTable(this, "structure")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine, "structure "
-				+ "table not found: not 19970501 version");
+			Message.printDebug(dl, routine, "structure table not found: not 19970501 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseHasTable(this, "geoloc")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine, "geoloc "
-				+ "table not found: not 19970501 version");
+			Message.printDebug(dl, routine, "geoloc table not found: not 19970501 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseHasTable(this, "station")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine, "station "
-				+ "table not found: not 19970501 version");
+			Message.printDebug(dl, routine, "station table not found: not 19970501 version");
 		}
 		return false;
 	}
 	
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 19970501 version");
+		Message.printDebug(dl, routine, "Database is at least 19970501 version");
 	}
 
 	return true;
@@ -7864,21 +7719,18 @@ throws Exception {
 	int dl = 5;
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for struct_meas_type table");
+		Message.printDebug(dl, routine, "Checking for struct_meas_type table");
 	}
 	
 	if (!DMIUtil.databaseHasTable(this, "struct_meas_type")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine, "struct_meas_type "
-				+ "table not found: not 19980428 version");
+			Message.printDebug(dl, routine, "struct_meas_type table not found: not 19980428 version");
 		}
 		return false;
 	}
 	
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine, "struct_meas_type "
-			+ "table found: is at least 19980428 version");
+		Message.printDebug(dl, routine, "struct_meas_type table found: is at least 19980428 version");
 	}
 	
 	return true;
@@ -7891,8 +7743,7 @@ true (don't check all the 1999-02-02 conditions):
 <p>
 <ul>
 <li>	Has the <i>irrig_summary</i> table.</li>
-<li>	The <i>irrig_time_series</i> table has <i>wd</i> and <i>id</i>
-	columns.</li>
+<li>	The <i>irrig_time_series</i> table has <i>wd</i> and <i>id</i> columns.</li>
 </ul>
 @return true if the version matches the 1999-02-02 version.
 */
@@ -7902,34 +7753,27 @@ throws Exception {
 	int dl = 5;
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for irrig_summary table.  "
-			+ "Checking for irrig_time_series.wd and "
-			+ "irrig_time_series.[id]");
+		Message.printDebug(dl, routine, "Checking for irrig_summary table.  "
+			+ "Checking for irrig_time_series.wd and irrig_time_series.[id]");
 	}
 	
 	if (!DMIUtil.databaseHasTable(this, "irrig_summary")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine, "irrig_summary "
-				+ "table not found: not 19990202 version");
+			Message.printDebug(dl, routine, "irrig_summary table not found: not 19990202 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "irrig_time_series", "wd")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"irrig_time_series.wd not found: " 
-				+ "not 19990202 version");
+			Message.printDebug(dl, routine, "irrig_time_series.wd not found: not 19990202 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "irrig_time_series", "id")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"irrig_time_series.id not found: "
-				+ "not 19990202 version");
+			Message.printDebug(dl, routine, "irrig_time_series.id not found: not 19990202 version");
 		}
 		return false;
 	}
@@ -7937,8 +7781,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 19990202 version");
+		Message.printDebug(dl, routine, "Database is at least 19990202 version");
 	}
 
 	return true;
@@ -7980,73 +7823,56 @@ throws Exception {
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "contact", "phone_ext")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"contact.phone_ext not found: not 19990305 "
-				+ "version");
+			Message.printDebug(dl, routine, "contact.phone_ext not found: not 19990305 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "county_ref","abbrev")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"county_ref.abbrev not found: not 19990305 "
-				+ "version");
+			Message.printDebug(dl, routine, "county_ref.abbrev not found: not 19990305 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "geoloc", "utm_x")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"geoloc.utm_x not found: not 19990305 version");
+			Message.printDebug(dl, routine, "geoloc.utm_x not found: not 19990305 version");
 		}
 		return false;
 	}
 	
-	if (!DMIUtil.databaseTableHasColumn(this, "person_details", 
-		"priority")) {
+	if (!DMIUtil.databaseTableHasColumn(this, "person_details", "priority")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"person_details.priority not found: "
-				+ "not 19990305 version");
+			Message.printDebug(dl, routine, "person_details.priority not found: not 19990305 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "rolodex", "lic_no")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"rolodex.lic_no not found: not 19990305 "
-				+ "version");
+			Message.printDebug(dl, routine, "rolodex.lic_no not found: not 19990305 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "station", "transbsn")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"station.transbsn not found: not 19990305 "
-				+ "version");
+			Message.printDebug(dl, routine, "station.transbsn not found: not 19990305 version");
 		}
 		return false;
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "structure", "transbsn")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"structure.transbsn not found: not 19990305 "
-				+ "version");
+			Message.printDebug(dl, routine, "structure.transbsn not found: not 19990305 version");
 		}
 		return false;
 	}
 	
-	if (!DMIUtil.databaseTableHasColumn(this, "user_security", 
-	    "application")) {
+	if (!DMIUtil.databaseTableHasColumn(this, "user_security", "application")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"user_security.application not found: "
-				+ "not 19990305 version");
+			Message.printDebug(dl, routine, "user_security.application not found: not 19990305 version");
 		}
 		return false;
 	}
@@ -8054,8 +7880,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 19990305 version");
+		Message.printDebug(dl, routine, "Database is at least 19990305 version");
 	}
 
 	return true;
@@ -8063,15 +7888,13 @@ throws Exception {
 
 /**
 Check the database version to see if it matches the changes noted in db_version
-between 1999-03-05 and 2000-03-01.
-The database version is verified if the following are
+between 1999-03-05 and 2000-03-01.  The database version is verified if the following are
 true (don't check all the conditions in db_version):
 <p>
 <ul>
 <li>	"geoloc" table has a "elevation" column.</li>
 <li>	has well_application and struct_to_well tables
-	(however, these are not checked because they may not always be linked
-	in).
+	(however, these are not checked because they may not always be linked in).
 <li>
 </ul>
 @return true if the version matches the 2000-03-01 version.
@@ -8082,15 +7905,12 @@ throws Exception {
 	int dl = 5;
 	
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for geoloc.elevation.");
+		Message.printDebug(dl, routine, "Checking for geoloc.elevation.");
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "geoloc", "elevation")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"geoloc.elevation not found: not 20000301 "
-				+ "version");
+			Message.printDebug(dl, routine, "geoloc.elevation not found: not 20000301 version");
 		}
 		return false;
 	}
@@ -8098,8 +7918,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 20000301 version");
+		Message.printDebug(dl, routine, "Database is at least 20000301 version");
 	}
 	
 	return true;
@@ -8122,16 +7941,12 @@ throws Exception {
 	int dl = 5;
 	
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-		"Checking for struct_to_well.unique_ditch.");
+		Message.printDebug(dl, routine, "Checking for struct_to_well.unique_ditch.");
 	}
 	
-	if (!DMIUtil.databaseTableHasColumn(this, "struct_to_well", 
-	    "unique_ditch")) {
+	if (!DMIUtil.databaseTableHasColumn(this, "struct_to_well", "unique_ditch")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"struct_to_well.unique_ditch not found: "
-				+ "not 20000427 version");
+			Message.printDebug(dl, routine, "struct_to_well.unique_ditch not found: not 20000427 version");
 		}
 		return false;
 	}
@@ -8139,8 +7954,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 20000427 version");
+		Message.printDebug(dl, routine, "Database is at least 20000427 version");
 	}
 
 	return true;
@@ -8166,14 +7980,11 @@ throws Exception {
 	String routine = "HydroBaseDMI.isVersion20000706";
 	int dl = 5;
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-		"Checking for well_to_structure table.");
+		Message.printDebug(dl, routine, "Checking for well_to_structure table.");
 	}
 	if (!DMIUtil.databaseHasTable(this, "well_to_structure")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-			"well_to_structure table not found: " +
-			"not 20000706 version");
+			Message.printDebug(dl, routine, "well_to_structure table not found: not 20000706 version");
 		}
 		return false;
 	}
@@ -8181,8 +7992,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 20000706 version");
+		Message.printDebug(dl, routine, "Database is at least 20000706 version");
 	}
 	
 	return true;
@@ -8202,15 +8012,12 @@ throws Exception {
 	int dl = 5;
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for str_type table.");
+		Message.printDebug(dl, routine, "Checking for str_type table.");
 	}
 	
 	if (!DMIUtil.databaseHasTable(this, "str_type")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"str_type table not found: "
-				+ "not 20030701 version");
+			Message.printDebug(dl, routine, "str_type table not found: not 20030701 version");
 		}
 		return false;
 	}
@@ -8218,8 +8025,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 20030701 version");
+		Message.printDebug(dl, routine, "Database is at least 20030701 version");
 	}
 
 	return true;
@@ -8244,15 +8050,12 @@ throws Exception {
 	int dl = 5;
 	
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for well_to_structure table.");
+		Message.printDebug(dl, routine, "Checking for well_to_structure table.");
 	}
 	
 	if (!DMIUtil.databaseTableHasColumn(this, "geoloc", "elev")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"geoloc.elev field not found: "
-				+ "not 20010326 version");
+			Message.printDebug(dl, routine, "geoloc.elev field not found: not 20010326 version");
 		}
 		return false;
 	}
@@ -8260,8 +8063,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 20010326 version");
+		Message.printDebug(dl, routine, "Database is at least 20010326 version");
 	}
 	
 	return true;
@@ -8281,15 +8083,12 @@ throws Exception {
 	int dl = 5;
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for Agricultural_NASS_Crop_stats table.");
+		Message.printDebug(dl, routine, "Checking for Agricultural_NASS_Crop_stats table.");
 	}
 	
 	if (!DMIUtil.databaseHasTable(this, "Agricultural_NASS_Crop_stats")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-			"Agricultural_NASS_Crop_stats table not found: "
-			+ "not 20040701 version");
+			Message.printDebug(dl, routine, "Agricultural_NASS_Crop_stats table not found: not 20040701 version");
 		}
 		return false;
 	}
@@ -8297,8 +8096,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 20040701 version");
+		Message.printDebug(dl, routine, "Database is at least 20040701 version");
 	}
 
 	return true;
@@ -8310,8 +8108,7 @@ The 2005-05-01 database includes the following change:<p>
 <ul>
 <li>usp_CDSS_refCounty_Sel stored procedure can be set up.</li>
 </ul><p>
-This method will also return true if the ref_county table can be found.  This
-means it is the Access database version.
+This method will also return true if the ref_county table can be found.  This means it is the Access database version.
 @return true if the version matches the 2005-05-01 version.
 */
 public boolean isVersion20050501 ()
@@ -8320,34 +8117,27 @@ throws Exception {
 	int dl = 5;
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking to see if stored procedures are available.");
+		Message.printDebug(dl, routine, "Checking to see if stored procedures are available.");
 	}
 
 	DMISelectStatement q = new DMISelectStatement(this);
 	if (canSetUpStoredProcedure(q, __S_REF_COUNTY)) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"Stored procedure could be set up.");
+			Message.printDebug(dl, routine, "Stored procedure could be set up.");
 		}
-		// any stored procedure availability (at current)
-		// means it's the latest database available
+		// Any stored procedure availability (at current) means it's the latest database available
 		return true;
 	}
 
-	// Stored procedures aren't available, but perhaps it's the 
-	// Access version.
+	// Stored procedures aren't available, but perhaps it's the Access version.
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for ref_county table.");
+		Message.printDebug(dl, routine, "Checking for ref_county table.");
 	}
 	
 	if (!DMIUtil.databaseHasTable(this, "ref_county")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"ref_county table not found: not 20050501 "
-				+ "version");
+			Message.printDebug(dl, routine, "ref_county table not found: not 20050501 version");
 		}
 		return false;
 	}
@@ -8355,8 +8145,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 20050501 version");
+		Message.printDebug(dl, routine, "Database is at least 20050501 version");
 	}
 
 	return true;
@@ -8378,15 +8167,12 @@ throws Exception {
 	int dl = 5;
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking to see if usp_CDSS_Geophlogs_Sel stored "
-				+ "procedure is available.");
+		Message.printDebug(dl, routine, "Checking to see if usp_CDSS_Geophlogs_Sel stored procedure is available.");
 	}
 
 	if (!DMIUtil.databaseHasStoredProcedure(this,"usp_CDSS_Geophlogs_Sel")){
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"Stored procedure was not found.");
+			Message.printDebug(dl, routine, "Stored procedure was not found.");
 		}
 		return false;
 	}
@@ -8394,15 +8180,12 @@ throws Exception {
 	// the following is for non-SP databases
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Checking for volvanics.structure_num field.");
+		Message.printDebug(dl, routine, "Checking for volvanics.structure_num field.");
 	}
 
 	if (DMIUtil.databaseTableHasColumn(this, "volcanics", "structure_num")){
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine,
-				"volcanics.structure_num found: "
-				+ "not 20050701 version");
+			Message.printDebug(dl, routine, "volcanics.structure_num found: not 20050701 version");
 		}
 		return false;
 	}
@@ -8410,8 +8193,7 @@ throws Exception {
 	// Satisfied all the criteria...
 
 	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine,
-			"Database is at least 20050701 version");
+		Message.printDebug(dl, routine, "Database is at least 20050701 version");
 	}
 
 	return true;
@@ -8422,8 +8204,7 @@ Check the database version to see if it matches the 2005-11-15 database.
 The 2005-11-15 database includes the following change:<p>
 <ul>
 <li>The ResultSet generated for the 
-vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType view has the DSS_aquifer1
-field</li>
+vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType view has the DSS_aquifer1 field</li>
 </ul><p>
 @return true if the version matches the 2005-11-15 version.
 */
@@ -8439,17 +8220,13 @@ throws Exception {
 
 	if (Message.isDebugOn) {
 		Message.printDebug(dl, routine,
-			"Checking to see if "
-			+ "vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType "
-			+ "has the DSS_aquifer1 field.");
+			"Checking to see if vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType has the DSS_aquifer1 field.");
 	}
 
-	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, 
-		null);
+	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 	// Construct search parameters that will never return a record.  The
-	// following will query for all records where identifier is null 
-	// AND identifier is not null.
+	// following will query for all records where identifier is null AND identifier is not null.
 	String[] triplet = new String[3];
 	triplet[0] = "identifier";
 	triplet[1] = "NL";
@@ -8465,8 +8242,7 @@ throws Exception {
 	// The view number hashtable has not been set up by the time this
 	// method is called automatically in super.open() to determine the
 	// version.  Thus, the view number associated internally in the 
-	// database with the view ("78") is passed in as a number String,
-	// rather than as a name.
+	// database with the view ("78") is passed in as a number String, rather than as a name.
 	HydroBase_GUI_Util.fillSPParameters(parameters, "78", 83, null);
 	ResultSet rs = runSPFlex(parameters);
 	boolean hasField = DMIUtil.resultSetHasColumn(rs, "DSS_aquifer1");
@@ -8493,8 +8269,7 @@ throws Exception {
 }
 
 /**
-Check the database version to see if it matches the 2007-04-16 database,
-which includes the following changes:<p>
+Check the database version to see if it matches the 2007-04-16 database, which includes the following changes:<p>
 <ul>
 <li>The stored procedure usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear was added.</li>
 </ul><p>
@@ -8506,9 +8281,7 @@ throws Exception {
 	if (!DMIUtil.databaseHasStoredProcedure(this,"usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear")){
 		if (Message.isDebugOn) {
 			Message.printDebug(10, routine,
-				"Stored procedure " +
-				"usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear " +
-				" was not found.");
+				"Stored procedure usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear was not found.");
 		}
 		return false;
 	}
@@ -8517,8 +8290,7 @@ throws Exception {
 }
 
 /**
-Check the database version to see if it matches the 2007-05-02 database,
-which includes the following changes:<p>
+Check the database version to see if it matches the 2007-05-02 database, which includes the following changes:<p>
 <ul>
 <li>The view vw_CDSS_DailyAdminFlow was added.</li>
 <li>The view number for vw_CDSS_DailyAdminFlow is available in the internal
@@ -8541,8 +8313,7 @@ throws Exception {
 	'CDSS' as the only parameter to the stored procedure.
 	if ( !isViewNumberAvailable ( "113" ) ) {
 		if ( Message.isDebugOn ) {
-			Message.printDebug ( 1, routine,
-				"HydroBase does not have view 113 - not version 20070502");
+			Message.printDebug ( 1, routine, "HydroBase does not have view 113 - not version 20070502");
 		}
 		return false;
 	}
@@ -8552,8 +8323,7 @@ throws Exception {
 }
 
 /**
-Check the database version to see if it matches the 2007-05-25 database,
-which includes the following changes:<p>
+Check the database version to see if it matches the 2007-05-25 database, which includes the following changes:<p>
 <ul>
 <li>The view vw_CDSS_WellsWellToParcel includes the yield_apex column.</li>
 </ul><p>
@@ -8564,9 +8334,7 @@ throws Exception {
 	String routine = "HydroBaseDMI.isVersion20070525";
 	if (!DMIUtil.databaseTableHasColumn(this, "vw_CDSS_WellsWellToParcel", "yield_apex")) {
 		if (Message.isDebugOn) {
-			Message.printDebug(30, routine,
-				"vw_CDSS_WellsWellToParcel does not have yield_apex: "
-				+ "not 20070525 version");
+			Message.printDebug(30, routine, "vw_CDSS_WellsWellToParcel does not have yield_apex: not 20070525 version");
 		}
 		return false;
 	}
@@ -8617,8 +8385,7 @@ private boolean isViewNumberAvailable ( String view )
 
 /**
 Returns true if the water district is available in HydroBase, as determined 
-by which water districts were returned from a distrinct query on 
-the HydroBase_Structures list.
+by which water districts were returned from a distrinct query on the HydroBase_Structures list.
 @param num int Water district number.
 @return true If the water district is available. This is determined
 by which water districts were returned from a distinct query on the
@@ -8630,12 +8397,10 @@ public boolean isWaterDistrictAvailable(int num) {
 
 /**
 Returns whether the specified water district is available in HydroBase, as 
-determined by which water disricts were returned from a distinct query on the 
-HydroBase_Structures list.
+determined by which water disricts were returned from a distinct query on the HydroBase_Structures list.
 @param num String Water district number.
 @return true If the water district is available. This is determined
-by which water districts were returned from a distinct query on the
-HydroBase_Structures list.
+by which water districts were returned from a distinct query on the HydroBase_Structures list.
 */
 public boolean isWaterDistrictAvailable(String num) {
 	num.trim();
@@ -8644,12 +8409,10 @@ public boolean isWaterDistrictAvailable(String num) {
 
 /**
 Returns whether the specified water district is available, as determined by 
-which water districts were returned from a distinct query on the 
-HydroBase_Structures list.
+which water districts were returned from a distinct query on the HydroBase_Structures list.
 @param num Water district number.
 @return true If the water district is available. This is determined
-by which water districts were returned from a distinct query on the
-HydroBase_Structures list.
+by which water districts were returned from a distinct query on the HydroBase_Structures list.
 */
 public boolean isWaterDistrictAvailable(Integer num) {
 	List v = getWaterDistrictsFromStructures();
@@ -8668,8 +8431,7 @@ public boolean isWaterDistrictAvailable(Integer num) {
 // L METHODS
 
 /**
-Returns the county name associated with the given county id in the 
-__CountyRef_Vector, using global data.
+Returns the county name associated with the given county id in the __CountyRef_Vector, using global data.
 @param countyID the number for which to return the county name.
 @return the county name associated with the given county id.
 */
@@ -8691,8 +8453,7 @@ public String lookupCountyName(int countyID) {
 /**
 Returns the description for a CIU given the CIU code.
 @param code the CIU code that matches a code within ref_ciu.
-@return the description that matches the code, or null if none could be 
-found.
+@return the description that matches the code, or null if none could be found.
 */
 public String lookupCIUDescription(String code) {
 	HydroBase_RefCIU ref = null;
@@ -8709,22 +8470,21 @@ public String lookupCIUDescription(String code) {
 
 /**
 This function returns a String array of the time interval specified in the 
-user's preferences.  The values are read from the internal preferences data
-read for the user when they logged in.<p>
+user's preferences.  The values are read from the internal preferences data read for the user when they logged in.<p>
 NOTE: position 0 in the returned array corresponds to the 'FROM' time.<p>
 Position 1 in the returned array correponds to the the 'TO' time.
 @return an array of the time interval. 
 */
 public String[] lookupInterval() {
-	String[]        interval;       // interval to return
-        DateTime tsDate;
-	String		property = null;
+	String[] interval;       // interval to return
+    DateTime tsDate;
+	String property = null;
 
-        // initialize variables
-        interval = new String[2];
+    // initialize variables
+    interval = new String[2];
 
-        // if 'PastFlag' = 1 then we need to calculate the interval based on the
-        // the system time and the 'PastValue' preference
+    // if 'PastFlag' = 1 then we need to calculate the interval based on the
+    // the system time and the 'PastValue' preference
 	property = getPreferenceValue("Time.PastFlag");
 	if ((property == null) || property.equals("NONE")) {
 		property = "1";
@@ -8734,60 +8494,47 @@ public String[] lookupInterval() {
 		property = property.trim();
 	}
 	if (property.equals("1")) {
-                tsDate = new DateTime( DateTime.DATE_CURRENT |
-				DateTime.PRECISION_MINUTE);
+        tsDate = new DateTime( DateTime.DATE_CURRENT |DateTime.PRECISION_MINUTE);
 
-                // the 'TO' interval is built according to the local machine
-		// time
+        // the 'TO' interval is built according to the local machine time
 		interval[1] =tsDate.toString(DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 
-                // the 'FROM' interval is built according to the local machine
-		// time minus the 'PastValue' preference
+        // the 'FROM' interval is built according to the local machine time minus the 'PastValue' preference
 		String past_value = getPreferenceValue("Time.PastValue");
 		if ((past_value == null) || past_value.equals("NONE")) {
 			// Default to 24 hours...
 			past_value = "24";
 			setPreferenceValue ( "Time.PastValue", past_value);
 		}
-                int pastHours = Integer.parseInt( past_value);
-                tsDate.addHour( - pastHours);
+        int pastHours = Integer.parseInt( past_value);
+        tsDate.addHour( - pastHours);
 		interval[0]=tsDate.toString( DateTime.FORMAT_YYYY_MM_DD_HH_mm);
-        } 
-
-        else {
-		// otherwise the interval based is based on the 'IntervalStart'
-		// and 'IntervalEnd' preferences.
+    } 
+    else {
+		// otherwise the interval based is based on the 'IntervalStart' and 'IntervalEnd' preferences.
 		// It is unlikely that these values are not set if the main
-		// flag is but if either are not set, default to current time
-		// and current time - 24 hours.
+		// flag is but if either are not set, default to current time and current time - 24 hours.
 		String end = getPreferenceValue("Time.IntervalEnd");
 		if ((end == null) || end.equals("NONE")) {
-			tsDate = new DateTime( DateTime.DATE_CURRENT |
-					DateTime.PRECISION_MINUTE);
-
+			tsDate = new DateTime( DateTime.DATE_CURRENT |DateTime.PRECISION_MINUTE);
 			end =tsDate.toString(DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 			setPreferenceValue ( "Time.IntervalEnd", end);
 		}
 		String start = getPreferenceValue("Time.IntervalStart");
 		if ((start == null) || start.equals("NONE")) {
-			tsDate = new DateTime( DateTime.DATE_CURRENT |
-					DateTime.PRECISION_MINUTE);
+			tsDate = new DateTime( DateTime.DATE_CURRENT |DateTime.PRECISION_MINUTE);
 			tsDate.addHour ( -24);
 			start=tsDate.toString(DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 			setPreferenceValue ( "Time.IntervalStart", start);
 		}
 		interval[0] = HydroBase_GUI_Util.getUserDate( start);
-                interval[1] = HydroBase_GUI_Util.getUserDate( end);
-        }                              
-
-	tsDate = null;
-	property = null;
-        return interval;
+        interval[1] = HydroBase_GUI_Util.getUserDate( end);
+    }
+    return interval;
 }
 
 /**
-Returns the use type definition that matches the given xuse type, using global
-data.
+Returns the use type definition that matches the given xuse type, using global data.
 @param xuse the xuse type for which to return the use definition.
 @return the use type definition for the given xuse.
 @throws Exception if an error occurs.
@@ -8807,8 +8554,7 @@ throws Exception {
 }
 
 /**
-Returns the use type definition that matches the given use type, using global
-data.
+Returns the use type definition that matches the given use type, using global data.
 @param use the use type for which to return the use definition.
 @return the use type definition for the given use.
 @throws Exception if an error occurs.
@@ -8840,8 +8586,7 @@ throws Exception {
 	int size = waterDistrictsByDiv.size();
 	List waterDistricts = new Vector();	
 	for (int i = 0; i < size; i++) {
-		w = (HydroBase_WaterDistrict)
-			waterDistrictsByDiv.get(i);
+		w = (HydroBase_WaterDistrict)waterDistrictsByDiv.get(i);
 		if (w.getDiv() == div) {
 			// Add to the list...
 			waterDistricts.add(w);
@@ -8862,8 +8607,7 @@ throws Exception {
 	List waterDistrictsByDiv = getWaterDistrictsByDiv();
 	int size = waterDistrictsByDiv.size();
 	for (int i = 0; i < size; i++) {
-		w = (HydroBase_WaterDistrict)
-			waterDistrictsByDiv.get(i);
+		w = (HydroBase_WaterDistrict)waterDistrictsByDiv.get(i);
 		if (w.getWD() == wd) {
 			return w;
 		}
@@ -8883,8 +8627,7 @@ throws Exception {
 	List waterDistrictsByDiv = getWaterDistrictsByDiv();
 	int size = waterDistrictsByDiv.size();
 	for (int i = 0; i < size; i++) {
-		w = (HydroBase_WaterDistrict)
-			waterDistrictsByDiv.get(i);
+		w = (HydroBase_WaterDistrict)waterDistrictsByDiv.get(i);
 		if (w.getWD() == district) {
 			return w.getDiv();
 		}
@@ -8927,14 +8670,12 @@ throws Exception, java.sql.SQLException
 // P METHODS
 
 /**
-Returns whether the property associated with the given keyword has been 
-changed in the current session.
+Returns whether the property associated with the given keyword has been changed in the current session.
 @return true if the property has changed, false otherwise.
 */
 public boolean preferenceIsModified(String keyword) {
-	if (__prefsProps.getProp(keyword) == null 
-		|| __prefsProps.getProp(keyword).getHowSet() == 
-		Prop.SET_AT_RUNTIME_BY_USER) {
+	if ( (__prefsProps.getProp(keyword) == null) ||
+	    (__prefsProps.getProp(keyword).getHowSet() == Prop.SET_AT_RUNTIME_BY_USER) ) {
 		return true;
 	}
 	return false;
@@ -8959,15 +8700,12 @@ This method is used by:<ul>
 This method uses the following views:<p><ul>
 <li>vw_CDSS_AgriculturalCASSCropStats_Distinct</li>
 <li>vw_CDSS_AgriculturalCASSCropStats</li></ul><p>
-@param panel the panel with the query constraints.  If null, it will not be 
-used.
+@param panel the panel with the query constraints.  If null, it will not be used.
 @param county The county for the query - specify null or blank to ignore.
 @param commodity The commodity for the query - specify null or blank to ignore.
 @param practice The practice for the query - specify null or blank to ignore.
-@param req_date1 If not null, specify the start date for the query.  Will be
-ignored for distinct queries.
-@param req_date2 If not null, specify the end date for the query.  Will be
-ignored for distinct queries.
+@param req_date1 If not null, specify the start date for the query.  Will be ignored for distinct queries.
+@param req_date2 If not null, specify the end date for the query.  Will be ignored for distinct queries.
 @param distinct if set to true, then only data for distinct
 state/county/commodity/practice records will be returned.
 @return a Vector of HydroBase_Agstats.
@@ -8978,8 +8716,7 @@ String county, String commodity, String practice, DateTime req_date1,
 DateTime req_date2, boolean distinct) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			panel, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(panel, null);
 
 		String[] triplet = null;
 		if (county != null && county.length() > 0) {
@@ -9023,20 +8760,16 @@ throws Exception {
 		}
 
 		if (distinct) {
-			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber(
-				"vw_CDSS_AgriculturalCASSCropStats_Distinct"), 
-				2, null);
+			HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber(
+				"vw_CDSS_AgriculturalCASSCropStats_Distinct"), 2, null);
 			ResultSet rs = runSPFlex(parameters);
 			List v = toAgriculturalCASSCropStatsSPList(rs, true);
 			closeResultSet(rs, __lastStatement);
 			return v;					
 		}
 		else {
-			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber(
-				"vw_CDSS_AgriculturalCASSCropStats"), 
-				1, null);
+			HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber(
+				"vw_CDSS_AgriculturalCASSCropStats"), 1, null);
 			ResultSet rs = runSPFlex(parameters);
 			List v = toAgriculturalCASSCropStatsSPList(rs, false);
 			closeResultSet(rs, __lastStatement);
@@ -9052,49 +8785,33 @@ throws Exception {
 		else {
 			buildSQL(q, __S_AGRICULTURAL_CASS_CROP_STATS);
 		}
-		List wheres 
-			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
-			this, panel);		
+		List wheres = HydroBase_GUI_Util.getWhereClausesFromInputFilter(this, panel);		
 		if (wheres != null) {
 			// Use what was given...
 			q.addWhereClauses(wheres);
 		}
 		if ((county != null) && (county.length() != 0)) {
-			q.addWhereClause(
-				"agricultural_CASS_crop_stats.county = '" +
-				county + "'");
+			q.addWhereClause( "agricultural_CASS_crop_stats.county = '" + county + "'");
 		}
 		if ((commodity != null) && (commodity.length() != 0)) {
-			q.addWhereClause(
-				"agricultural_CASS_crop_stats.commodity = '"+
-				commodity + "'");
+			q.addWhereClause( "agricultural_CASS_crop_stats.commodity = '"+ commodity + "'");
 		}
 		if ((practice != null) && (practice.length() != 0)) {
-			q.addWhereClause(
-				"agricultural_CASS_crop_stats.practice = '" +
-				practice + "'");
+			q.addWhereClause( "agricultural_CASS_crop_stats.practice = '" + practice + "'");
 		} 
 		if (!distinct && req_date1 != null) {
-			q.addWhereClause(	
-				"agricultural_CASS_crop_stats.cal_year >=" +
-				req_date1.getYear());
+			q.addWhereClause( "agricultural_CASS_crop_stats.cal_year >=" + req_date1.getYear());
 		}
 		if (!distinct && req_date2 != null) {
-			q.addWhereClause(
-				"agricultural_CASS_crop_stats.cal_year <=" +
-				req_date2.getYear());
+			q.addWhereClause( "agricultural_CASS_crop_stats.cal_year <=" + req_date2.getYear());
 		}
 		// Default...
 		q.addOrderByClause("agricultural_CASS_crop_stats.st");
-		q.addOrderByClause(
-			"agricultural_CASS_crop_stats.county");
-		q.addOrderByClause(
-			"agricultural_CASS_crop_stats.commodity");
-		q.addOrderByClause(
-			"agricultural_CASS_crop_stats.practice");
+		q.addOrderByClause("agricultural_CASS_crop_stats.county");
+		q.addOrderByClause("agricultural_CASS_crop_stats.commodity");
+		q.addOrderByClause("agricultural_CASS_crop_stats.practice");
 		if (!distinct) {
-			q.addOrderByClause(
-			       "agricultural_CASS_crop_stats.cal_year");
+			q.addOrderByClause("agricultural_CASS_crop_stats.cal_year");
 		}
 		
 		ResultSet rs = dmiSelect(q);
@@ -9113,15 +8830,12 @@ This method is used by:<ul>
 This method uses the following views:<p><ul>
 <li>vw_CDSS_AgriculturalCASSLivestockStats_Distinct</li>
 <li>vw_CDSS_AgriculturalCASSLivestockStats</li></ul><p>
-@param panel the panel with the query constraints.  If null, it will not be 
-used.
+@param panel the panel with the query constraints.  If null, it will not be used.
 @param county The county for the query - specify null or blank to ignore.
 @param commodity The commodity for the query - specify null or blank to ignore.
 @param type The livestock type for the query - specify null or blank to ignore.
-@param req_date1 If not null, specify the start date for the query.  Will be
-ignored for distinct queries.
-@param req_date2 If not null, specify the end date for the query.  Will be
-ignored for distinct queries.
+@param req_date1 If not null, specify the start date for the query.  Will be ignored for distinct queries.
+@param req_date2 If not null, specify the end date for the query.  Will be ignored for distinct queries.
 @param distinct if set to true, then only data for distinct
 state/county/commodity/type records will be returned.
 @return a Vector of HydroBase_Agstats.
@@ -9132,8 +8846,7 @@ String county, String commodity, String type, DateTime req_date1,
 DateTime req_date2, boolean distinct ) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			panel, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( panel, null);
 
 		String[] triplet = null;
 		if (county != null && county.length() > 0) {
@@ -9178,24 +8891,19 @@ throws Exception {
 
 		if (distinct) {
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber(
-				"vw_CDSS_AgriculturalCASSLivestockStats_Distinct"), 
-				111, null);
+				getViewNumber("vw_CDSS_AgriculturalCASSLivestockStats_Distinct"), 111, null);
 			ResultSet rs = runSPFlex(parameters);
-			List v = toAgriculturalCASSLivestockStatsSPList(rs,
-				true);
+			List v = toAgriculturalCASSLivestockStatsSPList(rs,true);
 			closeResultSet(rs, __lastStatement);
 			return v;					
 		}
-		else {	// For time series, order by distinct fields + year...
+		else {
+		    // For time series, order by distinct fields + year...
 			// This is the default inside the HydroBase view.
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber(
-				"vw_CDSS_AgriculturalCASSLivestockStats"), 
-				-999, null);
+				getViewNumber("vw_CDSS_AgriculturalCASSLivestockStats"), -999, null);
 			ResultSet rs = runSPFlex(parameters);
-			List v = toAgriculturalCASSLivestockStatsSPList(rs,
-				false);
+			List v = toAgriculturalCASSLivestockStatsSPList(rs,false);
 			closeResultSet(rs, __lastStatement);
 			return v;					
 		}		
@@ -9207,52 +8915,35 @@ throws Exception {
 			q.selectDistinct(true);
 		}
 		else {
-			buildSQL(q, 
-				__S_AGRICULTURAL_CASS_LIVESTOCK_STATS);
+			buildSQL(q, __S_AGRICULTURAL_CASS_LIVESTOCK_STATS);
 		}
-		List wheres 
-			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
-			this, panel);		
+		List wheres = HydroBase_GUI_Util.getWhereClausesFromInputFilter(this, panel);		
 		if (wheres != null) {
 			// Use what was given...
 			q.addWhereClauses(wheres);
 		}
 		if ((county != null) && (county.length() != 0)) {
-			q.addWhereClause(
-				"agricultural_CASS_livestock_stats.county = '" +
-				county + "'");
+			q.addWhereClause( "agricultural_CASS_livestock_stats.county = '" + county + "'");
 		}
 		if ((commodity != null) && (commodity.length() != 0)) {
-			q.addWhereClause(
-				"agricultural_CASS_livestock_stats.commodity = '"+
-				commodity + "'");
+			q.addWhereClause("agricultural_CASS_livestock_stats.commodity = '"+ commodity + "'");
 		}
 		if ((type != null) && (type.length() != 0)) {
-			q.addWhereClause(
-				"agricultural_CASS_livestock_stats.type = '" +
-				type + "'");
+			q.addWhereClause( "agricultural_CASS_livestock_stats.type = '" + type + "'");
 		} 
 		if (!distinct && req_date1 != null) {
-			q.addWhereClause(	
-				"agricultural_CASS_livestock_stats.cal_year >=" +
-				req_date1.getYear());
+			q.addWhereClause( "agricultural_CASS_livestock_stats.cal_year >=" + req_date1.getYear());
 		}
 		if (!distinct && req_date2 != null) {
-			q.addWhereClause(
-				"agricultural_CASS_livestock_stats.cal_year <=" +
-				req_date2.getYear());
+			q.addWhereClause( "agricultural_CASS_livestock_stats.cal_year <=" + req_date2.getYear());
 		}
 		// Default...
 		q.addOrderByClause("agricultural_CASS_livestock_stats.st");
-		q.addOrderByClause(
-			"agricultural_CASS_livestock_stats.county");
-		q.addOrderByClause(
-			"agricultural_CASS_livestock_stats.commodity");
-		q.addOrderByClause(
-			"agricultural_CASS_livestock_stats.practice");
+		q.addOrderByClause("agricultural_CASS_livestock_stats.county");
+		q.addOrderByClause("agricultural_CASS_livestock_stats.commodity");
+		q.addOrderByClause("agricultural_CASS_livestock_stats.practice");
 		if (!distinct) {
-			q.addOrderByClause(
-			       "agricultural_CASS_livestock_stats.cal_year");
+			q.addOrderByClause("agricultural_CASS_livestock_stats.cal_year");
 		}
 		
 		ResultSet rs = dmiSelect(q);
@@ -9267,20 +8958,16 @@ Read the HydroBase agricultural_NASS_crop_stats table.<p>
 This method is used by:<ul>
 <li>readTimeSeries()</li>
 </ul>
-The where clauses and order by clauses are all dependent on the variables passed
-in to the method.<p>
+The where clauses and order by clauses are all dependent on the variables passed in to the method.<p>
 <b>Stored Procedures</b><p>
 This method uses the following views:<p><ul>
 <li>vw_CDSS_AgriculturalNASSCropStats_Distinct</li>
 <li>vw_CDSS_AgriculturalNASSCropStats</li></ul><p>
-@param panel the panel with the query constraints.  If null, it will not be 
-used.
+@param panel the panel with the query constraints.  If null, it will not be used.
 @param county The county for the query - specify null or blank to ignore.
 @param commodity The commodity for the query - specify null or blank to ignore.
-@param req_date1 If not null, specify the start date for the query.  Ignored
-if the query is distinct.
-@param req_date2 If not null, specify the end date for the query.  Ignore if
-the query is distinct.
+@param req_date1 If not null, specify the start date for the query.  Ignored if the query is distinct.
+@param req_date2 If not null, specify the end date for the query.  Ignore if the query is distinct.
 @param distinct if set to true, then only data for distinct
 state/county/commodity/practice records will be returned.
 @return a Vector of HydroBase_Agstats.
@@ -9291,8 +8978,7 @@ String county, String commodity, DateTime req_date1, DateTime req_date2,
 boolean distinct) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			panel, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(panel, null);
 
 		String[] triplet = null;
 
@@ -9330,9 +9016,7 @@ throws Exception {
 
 		if (distinct) {
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber(
-				"vw_CDSS_AgriculturalNASSCropStats_Distinct"), 
-				4, null);
+				getViewNumber("vw_CDSS_AgriculturalNASSCropStats_Distinct"), 4, null);
 			ResultSet rs = runSPFlex(parameters);
 			List v = toAgriculturalNASSCropStatsSPList(rs, true);
 			closeResultSet(rs, __lastStatement);
@@ -9340,9 +9024,7 @@ throws Exception {
 		}
 		else {
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber(
-				"vw_CDSS_AgriculturalNASSCropStats"), 
-				3, null);
+				getViewNumber("vw_CDSS_AgriculturalNASSCropStats"), 3, null);
 			ResultSet rs = runSPFlex(parameters);
 			List v = toAgriculturalNASSCropStatsSPList(rs, false);
 			closeResultSet(rs, __lastStatement);
@@ -9358,41 +9040,28 @@ throws Exception {
 		else {
 			buildSQL(q, __S_AGRICULTURAL_NASS_CROP_STATS);
 		}
-		List wheres 
-			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
-			this, panel);		
+		List wheres = HydroBase_GUI_Util.getWhereClausesFromInputFilter(this, panel);		
 		if (wheres != null) {
 			// Use what was given...
 			q.addWhereClauses(wheres);
 		}
 		if ((county != null) && (county.length() != 0)) {
-			q.addWhereClause(
-				"agricultural_NASS_crop_stats.county = '" +
-				county + "'");
+			q.addWhereClause( "agricultural_NASS_crop_stats.county = '" + county + "'");
 		}
 		if ((commodity != null) && (commodity.length() != 0)) {
-			q.addWhereClause(
-				"agricultural_NASS_crop_stats.commodity = '"+
-				commodity + "'");
+			q.addWhereClause( "agricultural_NASS_crop_stats.commodity = '"+ commodity + "'");
 		}
 		if (req_date1 != null) {
-			q.addWhereClause(	
-				"agricultural_NASS_crop_stats.cal_year >=" +
-				req_date1.getYear());
+			q.addWhereClause( "agricultural_NASS_crop_stats.cal_year >=" + req_date1.getYear());
 		}
 		if (req_date2 != null) {
-			q.addWhereClause(
-				"agricultural_NASS_crop_stats.cal_year <=" +
-				req_date2.getYear());
+			q.addWhereClause( "agricultural_NASS_crop_stats.cal_year <=" + req_date2.getYear());
 		}
 		q.addOrderByClause("agricultural_NASS_crop_stats.st");
-		q.addOrderByClause(
-			"agricultural_NASS_crop_stats.county");
-		q.addOrderByClause(
-			"agricultural_NASS_crop_stats.commodity");
+		q.addOrderByClause("agricultural_NASS_crop_stats.county");
+		q.addOrderByClause("agricultural_NASS_crop_stats.commodity");
 		if (!distinct) {
-			q.addOrderByClause(
-			       "agricultural_NASS_crop_stats.cal_year");
+			q.addOrderByClause("agricultural_NASS_crop_stats.cal_year");
 		}
 		else {
 			// Use what was given...
@@ -9407,8 +9076,7 @@ throws Exception {
 }
 
 /**
-Read the AnnualAmt table for all data and use struct_meas_type
-Order results by annual_amt.irr_year.<p>
+Read the AnnualAmt table for all data and use struct_meas_type.  Order results by annual_amt.irr_year.<p>
 This method is used by:<ul>
 <li>readTimeSeries()</li>
 <li>HydroBase_Report_StructureSummary.submitAnnualAmtQuery()</li>
@@ -9422,12 +9090,10 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_AnnualAmt objects.
 @throws Exception if an error occurs.
 */
-public List readAnnualAmtList(int meas_num, DateTime req_date1,
-DateTime req_date2) 
+public List readAnnualAmtList(int meas_num, DateTime req_date1, DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 		String[] triplet = new String[3];
 		triplet[0] = "meas_num";
@@ -9451,8 +9117,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_Annual_Amt"), 5, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Annual_Amt"), 5, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toAnnualAmtList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -9465,12 +9130,10 @@ throws Exception {
 		// Appliation requests are in calendar year so make sure that 
 		// the irrigation years span the requested calendar year.
 		if (req_date1 != null) {
-			q.addWhereClause("annual_amt.irr_year >=" +
-				req_date1.getYear());
+			q.addWhereClause("annual_amt.irr_year >=" + req_date1.getYear());
 		}
 		if (req_date2 != null) {
-			q.addWhereClause("annual_amt.irr_year <=" +
-				(req_date2.getYear() + 1));
+			q.addWhereClause("annual_amt.irr_year <=" + (req_date2.getYear() + 1));
 		}
 		q.addOrderByClause("annual_amt.irr_year");
 		ResultSet rs = dmiSelect(q);
@@ -9481,8 +9144,7 @@ throws Exception {
 }
 
 /**
-Read the annual_res table for all data.  Order results first by
-annual_res.irr_year,
+Read the annual_res table for all data.  Order results first by annual_res.irr_year,
 This is used by:<ul>
 <li>readTimeSeries()</li>
 </ul>
@@ -9499,8 +9161,7 @@ public List readAnnualResList(int meas_num, DateTime req_date1,
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 		String[] triplet = new String[3];
 		triplet[0] = "meas_num";
@@ -9524,8 +9185,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_Annual_Res"), 6, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Annual_Res"), 6, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toAnnualResSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -9550,8 +9210,7 @@ throws Exception {
 }
 
 /**
-Read the AnnualWC table for the specified meas_type.
-Order results by annual_wc.irr_year.<p>
+Read the AnnualWC table for the specified meas_type.  Order results by annual_wc.irr_year.<p>
 This method is used by:<ul>
 <li>readTimeSeries()</li>
 </ul>
@@ -9564,12 +9223,10 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_AnnualWC objects.
 @throws Exception if an error occurs.
 */
-public List readAnnualWCList(int meas_num, DateTime req_date1,
-DateTime req_date2) 
+public List readAnnualWCList(int meas_num, DateTime req_date1, DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
 
 		String[] triplet = new String[3];
 		triplet[0] = "meas_num";
@@ -9593,8 +9250,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_Annual_WC"), 7, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Annual_WC"), 7, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toAnnualWCList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -9607,12 +9263,10 @@ throws Exception {
 		// Appliation requests are in calendar year so make sure 
 		// that the irrigation years span the requested calendar year.
 		if (req_date1 != null) {
-			q.addWhereClause("annual_wc.irr_year >=" +
-				req_date1.getYear());
+			q.addWhereClause("annual_wc.irr_year >=" + req_date1.getYear());
 		}
 		if (req_date2 != null) {
-			q.addWhereClause("annual_wc.irr_year <=" +
-				(req_date2.getYear() + 1));
+			q.addWhereClause("annual_wc.irr_year <=" + (req_date2.getYear() + 1));
 		}
 		q.addOrderByClause("annual_wc.irr_year");
 		ResultSet rs = dmiSelect(q);
@@ -9646,8 +9300,7 @@ throws Exception {
 }
 
 /**
-Read the HydroBase Area_cap table for all data with the matching 
-structure_num.<p>
+Read the HydroBase Area_cap table for all data with the matching structure_num.<p>
 This method is used by:<ul>
 <li>HydroBase_GUI_ReservoirData.submitAndDisplayAreaCapQuery</li>
 </ul>
@@ -9676,8 +9329,7 @@ throws Exception {
 }
 
 /**
-Read the HydroBase calls table and return a HydroBase_Calls object.<p>
-This method is used by:<ul>
+Read the HydroBase calls table and return a HydroBase_Calls object.<p>  This method is used by:<ul>
 <li>HydroBase_GUI_CallsQuery.reactivateClicked()</li>
 <li>HydroBase_GUI_CallsQuery.releaseCallClicked()</li>
 </ul>
@@ -9692,15 +9344,13 @@ This uses the following view:<p><ul>
 public HydroBase_Calls readCallsForCall_num(int call_num) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 		String[] triplet = new String[3];
 		triplet[0] = "call_num";
 		triplet[1] = "EQ";
 		triplet[2] = "" + call_num;
 		HydroBase_GUI_Util.addTriplet(parameters, triplet);
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_Calls"), 0, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Calls"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toCallsSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -15448,8 +15098,7 @@ throws Exception {
 }
 
 /**
-Read the struct_meas_type table for all data and join with data in geoloc
-and structure.<p>
+Read the struct_meas_type table for all data and join with data in geoloc and structure.<p>
 This method is used by:<ul>
 <li>TSTool</li>
 <li>HydroBase_Util</li>
@@ -15458,20 +15107,16 @@ This method is used by:<ul>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_StructureStructMeasType</li></ul>
 @param panel the panel of InputFilters that hold the query constraints.
-@param meas_type the meas_num for which to return the record (specify null to
-read all).
-@param time_step the time_step for which to return the record (specify null to
-read all).
+@param meas_type the meas_num for which to return the record (specify null to read all).
+@param time_step the time_step for which to return the record (specify null to read all).
 @return a Vector of HydroBase_StructureGeolocStructMeasType objects.
 @throws Exception if an error occurs.
 @junit do it view
 */
-public List readStructureGeolocStructMeasTypeList(InputFilter_JPanel panel, 
-String meas_type, String time_step)
+public List readStructureGeolocStructMeasTypeList(InputFilter_JPanel panel, String meas_type, String time_step)
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			panel, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( panel, null);
 		String[] triplet = null;
 		if (meas_type != null && meas_type.length() > 0) {
 			triplet = new String[3];
@@ -15489,9 +15134,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_StructureStructMeasType"), 
-			74, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_StructureStructMeasType"), 74, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -15502,22 +15145,17 @@ throws Exception {
 		buildSQL(q, __S_STRUCT_MEAS_TYPE_VIEW);
 		
 		if ((meas_type != null) && (meas_type.length() > 0)) {
-			q.addWhereClause("struct_meas_type.meas_type='" 
-				+ meas_type+"'");
+			q.addWhereClause("struct_meas_type.meas_type='" + meas_type+"'");
 		}
 		if ((time_step != null) && (time_step.length() > 0)) {
-			q.addWhereClause("struct_meas_type.time_step='" 
-				+ time_step+"'");
+			q.addWhereClause("struct_meas_type.time_step='" + time_step+"'");
 		}
 
-		List wheres
-			= HydroBase_GUI_Util.getWhereClausesFromInputFilter(
-			this, panel);
+		List wheres = HydroBase_GUI_Util.getWhereClausesFromInputFilter(this, panel);
 
 		if (wheres != null) {
 			for (int i = 0; i < wheres.size(); i++) {
-				q.addWhereClause(
-					(String)wheres.get(i));
+				q.addWhereClause((String)wheres.get(i));
 			}
 		}
 		q.addOrderByClause("structure.wd");
@@ -15887,8 +15525,7 @@ filled with diversion comments.
 currently only used when a structure "struct_meas_type" record is not found,
 and therefore the time series header information cannot be initialized.
 */
-public TS readTimeSeries (String tsident_string, DateTime req_date1,
-			  DateTime req_date2, String req_units,
+public TS readTimeSeries (String tsident_string, DateTime req_date1, DateTime req_date2, String req_units,
 			  boolean read_data, PropList props )
 throws Exception, NoDataFoundException
 {
@@ -15928,18 +15565,15 @@ throws Exception, NoDataFoundException
 		// These errors could be due to bad code, but this should be
 		// caught with unit testing.  It could also be caused by users
 		// hand-editing commands and having a typo.
-		warning.append ( "Trying to read HydroBase time series using " +
-		"invalid properties:" );
+		warning.append ( "Trying to read HydroBase time series using invalid properties:" );
 		for ( int i = 0; i < size; i++ ) {
 			warning.append ( "\n" + warnings.get(i) );
 		}
 		Message.printWarning ( 3, routine, warning.toString() );
-		throw new HydroBaseException (
-		"Invalid properties used reading time series." );
+		throw new HydroBaseException ( "Invalid properties used reading time series." );
 	}
 
-	// First determine the meas_type or struct_meas_type for the time
-	// series...
+	// First determine the meas_type or struct_meas_type for the time series...
 
 	HydroBase_StructMeasTypeView str_mt_v = null;	// For structures
 
@@ -15958,15 +15592,9 @@ throws Exception, NoDataFoundException
 	String cupop_area_type = "";			//CUPopulation area type
 	String cupop_area_name = "";			//CUPopulation area name
 	String cupop_pop_type = "";			//CUPopulation pop. type
-	List sheet_names = null;			// Vector of sheet_name
-							// needed to get list
-							// of wis_num for data
-							// queries.
-	List wis_formats = null;			// The list of formats
-							// describing the rows
-							// of interest.
-	String wis_sheet_name = "";			// WIS sheet name, used
-							// with WIS time series
+	List sheet_names = null; // List of sheet_name needed to get list of wis_num for data queries.
+	List wis_formats = null; // The list of formats describing the rows of interest.
+	String wis_sheet_name = ""; // WIS sheet name, used with WIS time series
 
 	if (data_type.indexOf("-") > 0) {
 		// Contains the vax_field or SFUT...
@@ -15975,23 +15603,18 @@ throws Exception, NoDataFoundException
 	}
 	String interval = tsident.getInterval();	// TSID data interval 
 
-	// Convert the requested data type and interval to a HydroBase
-	// meas_type and time_step for the queries...
-	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType(
-			data_type, interval);
+	// Convert the requested data type and interval to a HydroBase meas_type and time_step for the queries...
+	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType(data_type, interval);
 	String meas_type = hb_mt[0];
 	String vax_field = hb_mt[1];
 	String time_step = hb_mt[2];
 
-	// First define the time series to be returned, based on the TSID
-	// interval base and multiplier...
+	// First define the time series to be returned, based on the TSID interval base and multiplier...
 
 	TS ts = null;
 
-	// REVISIT (SAM) - need to verify that there is no multiplier on the
-	// following...
-	if (	interval.equalsIgnoreCase("Min") ||
-		interval.equalsIgnoreCase("Minute")) {
+	// TODO (SAM) - need to verify that there is no multiplier on the following...
+	if ( interval.equalsIgnoreCase("Min") || interval.equalsIgnoreCase("Minute")) {
 		ts = new MinuteTS ();
 	}
 	else if (interval.equalsIgnoreCase("Hour")) {
@@ -16003,10 +15626,8 @@ throws Exception, NoDataFoundException
 			// Allow data flags - HydroBase has 1 character flags...
 			((DayTS)ts).hasDataFlags(true, 1);
 		}
-		else if (data_type.equalsIgnoreCase("DivTotal") ||
-			data_type.equalsIgnoreCase("DivClass") ||
-			data_type.equalsIgnoreCase("RelTotal") ||
-			data_type.equalsIgnoreCase("RelClass")) {
+		else if (data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("DivClass") ||
+			data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("RelClass")) {
 			// Allow data flags - HydroBase has 2 character flags...
 			((DayTS)ts).hasDataFlags(true,2);
 		}
@@ -16020,33 +15641,25 @@ throws Exception, NoDataFoundException
 			// Allow data flags - HydroBase has 1 character flags...
 			((YearTS)ts).hasDataFlags(true,1);
 		}
-		else if (data_type.equalsIgnoreCase("DivClass") ||
-			data_type.equalsIgnoreCase("DivTotal") ||
-			data_type.equalsIgnoreCase("IDivClass") ||
-			data_type.equalsIgnoreCase("IDivTotal") ||
-			data_type.equalsIgnoreCase("IRelClass") ||
-			data_type.equalsIgnoreCase("IRelTotal") ||
-			data_type.equalsIgnoreCase("RelClass") ||
-			data_type.equalsIgnoreCase("RelTotal")) {
-			// Allow quality flags - HydroBase has 1 character
-			// flags...
+		else if (data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("DivTotal") ||
+			data_type.equalsIgnoreCase("IDivClass") || data_type.equalsIgnoreCase("IDivTotal") ||
+			data_type.equalsIgnoreCase("IRelClass") || data_type.equalsIgnoreCase("IRelTotal") ||
+			data_type.equalsIgnoreCase("RelClass") || data_type.equalsIgnoreCase("RelTotal")) {
+			// Allow quality flags - HydroBase has 1 character flags...
 			((YearTS)ts).hasDataFlags(true,1);
 		}
 	}
-	else if (interval.equalsIgnoreCase("Irreg") ||
-		interval.equalsIgnoreCase("Irregular") ||
+	else if (interval.equalsIgnoreCase("Irreg") || interval.equalsIgnoreCase("Irregular") ||
 		interval.equalsIgnoreCase("RealTime")) {
 		ts = new IrregularTS ();
 	}
 	else {
-		Message.printWarning ( 3, routine,
-		"Data interval \"" + interval + "\" is not supported.");
+		Message.printWarning ( 3, routine, "Data interval \"" + interval + "\" is not supported.");
 		return null;
 	}
 	int interval_base = ts.getDataIntervalBase();
 
-	// Define the header information from station/meas_type or
-	// structure/struct_meas_type...
+	// Define the header information from station/meas_type or structure/struct_meas_type...
 
 	String wdid = "";
 	int [] wdid_parts = null;
@@ -16055,8 +15668,7 @@ throws Exception, NoDataFoundException
 	HydroBase_StructureView strView = null;
 	HydroBase_GroundWaterWellsView well = null;
 	DateTime db_DateTime1 = null;
-	DateTime db_DateTime2 = null;
-				// Used for WIS to indicate database period
+	DateTime db_DateTime2 = null; // Used for WIS to indicate database period
 	
 	if (HydroBase_Util.isStationTimeSeriesDataType(this, meas_type)) {
 		// Data types associated with stations...
@@ -16064,39 +15676,31 @@ throws Exception, NoDataFoundException
 		String station_id = tsident.getLocation();
 		staView = readStationViewForStation_id ( station_id);
 		if (staView == null) {
-			message = "Unable to find station \"" 
-				+ station_id+"\"";
+			message = "Unable to find station \"" + station_id+"\"";
 			Message.printWarning ( 3, routine, message);
 			throw new Exception ( message);
 		}
 		// Next get the meas_type for the station...
-		List mts = readMeasTypeList(staView.getStation_num(), 
-			meas_type, vax_field, time_step, data_source);
+		List mts = readMeasTypeList(staView.getStation_num(), meas_type, vax_field, time_step, data_source);
 		if ((mts == null) || (mts.size() == 0)) {
-			message = "Unable to find meas_type for \"" +
-				tsident_string + "\" station_num =" +
-				staView.getStation_num() +" meas_type="+
-				meas_type + " vax_field=" + vax_field +
+			message = "Unable to find meas_type for \"" + tsident_string + "\" station_num =" +
+				staView.getStation_num() +" meas_type="+ meas_type + " vax_field=" + vax_field +
 				" time_step=" + time_step;
 			Message.printWarning ( 3, routine, message);
 			throw new Exception ( message);
 		}
-		mtsView = (HydroBase_StationView)
-			mts.get(0);
+		mtsView = (HydroBase_StationView)mts.get(0);
 		mt_start_year = mtsView.getStart_year();
 		mt_end_year = mtsView.getEnd_year();
 		mt_meas_num = mtsView.getMeas_num();
 		ts.setIdentifier ( tsident_string);
 		ts.setDescription ( staView.getStation_name());
 	}
-	else if (HydroBase_Util.isStructureTimeSeriesDataType (
-			this, meas_type)) {
+	else if (HydroBase_Util.isStructureTimeSeriesDataType (this, meas_type)) {
 		// Data types associated with structures...
-		// First get the structure because the structure_num is
-		// needed...
+		// First get the structure because the structure_num is needed...
 
-		// TODO (SAM 2004-01-14) START
-		//	- Fix when well data redesign is done
+		// TODO (SAM 2004-01-14) START - Fix when well data redesign is done
 		// If the data type is "WellLevel" and time step is "Day", then
 		// the incoming data type may be a USGS, USGS, or WDID id.
 		// Until HydroBase is redesigned, a work-around is in place
@@ -16138,51 +15742,38 @@ throws Exception, NoDataFoundException
 		try {
 			if (wdid_parts == null) {
 				// Need to parse it out...
-				wdid_parts = HydroBase_WaterDistrict.parseWDID (
-						wdid);
+				wdid_parts = HydroBase_WaterDistrict.parseWDID (wdid);
 			}
 		}
 		catch ( Exception e) {
-			message = "Cannot parse \"" + tsident.getLocation() +
-			"\" into WD and ID - can't look up structure.";
+			message = "Cannot parse \"" + tsident.getLocation() + "\" into WD and ID - can't look up structure.";
 			Message.printWarning ( 3, routine, message);
 			throw new Exception ( message);
 		}
-		strView = readStructureViewForWDID(wdid_parts[0], 
-			wdid_parts[1]);
+		strView = readStructureViewForWDID(wdid_parts[0], wdid_parts[1]);
 		if (strView == null) {
-			message = "Unable to find structure \"" 
-				+ tsident.getLocation() +"\"";
+			message = "Unable to find structure \"" + tsident.getLocation() +"\"";
 			Message.printWarning(3, routine, message);
 			throw new Exception(message);
 		}
-		// The identifier is the SFUT string which should have come in
-		// as the sub data type...
+		// The identifier is the SFUT string which should have come in as the sub data type...
 		String identifier = sub_data_type;
 		String identifier_adjusted = HydroBase_Util.adjustSFUTForHydroBaseVersion(
 				this,wdid_parts[0],wdid_parts[1],identifier);
 		// Next get the struct_meas_type for the structure...
 		List mts = readStructMeasTypeListForStructure_num
-			(strView.getStructure_num(), meas_type,
-			identifier_adjusted,time_step, data_source);
+			(strView.getStructure_num(), meas_type, identifier_adjusted,time_step, data_source);
 		if ((mts == null) || (mts.size() == 0)) {
-			message = "Unable to find struct_meas_type "
-				+ "for \"" + tsident_string 
-				+ "\" structure_num =" 
-				+ strView.getStructure_num() 
-				+ " meas_type=" + meas_type 
-				+ " identifier=" + identifier 
-				+ " time_step=" + time_step
-				+ "  Structure does not have a time series "
-				+ "in HydroBase.";
+			message = "Unable to find struct_meas_type for \"" + tsident_string + "\" structure_num =" 
+				+ strView.getStructure_num() + " meas_type=" + meas_type + " identifier=" + identifier 
+				+ " time_step=" + time_step + "  Structure does not have a time series in HydroBase.";
 			if ( identifier.equals(identifier_adjusted) ) {
 				 message += " (SFUT adjusted to be compatible with database version)";
 			}
 			Message.printWarning(3, routine, message);
 			throw new NoDataFoundException(message);
 		}
-		str_mt_v = (HydroBase_StructMeasTypeView)
-			mts.get(0);
+		str_mt_v = (HydroBase_StructMeasTypeView)mts.get(0);
 		mt_start_year = str_mt_v.getStart_year();
 		mt_end_year = str_mt_v.getEnd_year();
 		ts.setIdentifier(tsident_string);
@@ -16217,71 +15808,47 @@ throws Exception, NoDataFoundException
 		ts.setIdentifier(tsident_string);
 		ts.setDescription(well.getWell_name());
 	}
-	else if (	HydroBase_Util.
-			isAgriculturalCASSCropStatsTimeSeriesDataType(this,
-			data_type)) {
-		// The sub-datatype has the comodity and practice, separated
-		// by an underscore
-		agstats_commodity = StringUtil.getToken (
-			sub_data_type, "_", 0, 0);
-		agstats_practice = StringUtil.getToken (
-			sub_data_type, "_", 0, 1);
+	else if (HydroBase_Util.isAgriculturalCASSCropStatsTimeSeriesDataType(this,data_type)) {
+		// The sub-datatype has the comodity and practice, separated by an underscore
+		agstats_commodity = StringUtil.getToken (sub_data_type, "_", 0, 0);
+		agstats_practice = StringUtil.getToken (sub_data_type, "_", 0, 1);
 		ts.setIdentifier ( tsident_string);
-		ts.setDescription ( tsident.getLocation() + "," +
-			agstats_commodity + "," + agstats_practice); 
+		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity + "," + agstats_practice); 
 	}
-	else if (	HydroBase_Util.
-			isAgriculturalCASSLivestockStatsTimeSeriesDataType(this,
-			data_type)) {
-		// The sub-datatype has the comodity and type, separated
-		// by an underscore
-		agstats_commodity = StringUtil.getToken (
-			sub_data_type, "_", 0, 0);
-		agstats_type = StringUtil.getToken (
-			sub_data_type, "_", 0, 1);
+	else if ( HydroBase_Util.isAgriculturalCASSLivestockStatsTimeSeriesDataType(this,data_type)) {
+		// The sub-datatype has the comodity and type, separated by an underscore
+		agstats_commodity = StringUtil.getToken ( sub_data_type, "_", 0, 0);
+		agstats_type = StringUtil.getToken (sub_data_type, "_", 0, 1);
 		ts.setIdentifier ( tsident_string);
-		ts.setDescription ( tsident.getLocation() + "," +
-			agstats_commodity + "," + agstats_type); 
+		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity + "," + agstats_type); 
 	}
-	else if (	HydroBase_Util.
-			isAgriculturalNASSCropStatsTimeSeriesDataType(this,
-			data_type)) {
-		// The sub-datatype has the comodity and practice, only referred
-		// to as commodity by NASS
+	else if ( HydroBase_Util.isAgriculturalNASSCropStatsTimeSeriesDataType(this,data_type)) {
+		// The sub-datatype has the comodity and practice, only referred to as commodity by NASS
 		agstats_commodity = sub_data_type;
 		ts.setIdentifier ( tsident_string);
-		ts.setDescription ( tsident.getLocation() + "," +
-			agstats_commodity); 
+		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity); 
 	}
-	else if (	HydroBase_Util.
-			isCUPopulationTimeSeriesDataType(this, data_type)) {
+	else if ( HydroBase_Util.isCUPopulationTimeSeriesDataType(this, data_type)) {
 		// The location has the area type and name.
-		cupop_area_type = StringUtil.getToken (
-			tsident.getLocation(), "-", 0, 0 );
-		cupop_area_name = StringUtil.getToken (
-			tsident.getLocation(), "-", 0, 1 );
+		cupop_area_type = StringUtil.getToken ( tsident.getLocation(), "-", 0, 0 );
+		cupop_area_name = StringUtil.getToken ( tsident.getLocation(), "-", 0, 1 );
 		// The sub-datatype has the population type.
 		cupop_pop_type = sub_data_type;
 		ts.setIdentifier ( tsident_string);
 		ts.setDescription ( cupop_area_name + "," + cupop_pop_type ); 
 	}
-	else if (HydroBase_Util.isIrrigSummaryTimeSeriesDataType(this,
-			data_type)) {
+	else if (HydroBase_Util.isIrrigSummaryTimeSeriesDataType(this, data_type)) {
 		// Used for irrig_summary_ts.
 		// Get the wdid_parts for later.
-		// REVISIT (SAM 2004-02-08) - if the irrig_summary_ts table
+		// TODO (SAM 2004-02-08) - if the irrig_summary_ts table
 		// only contains structure data, may include this with
-		// structures above to get the structure information for time
-		// series comments.
-		wdid_parts = HydroBase_WaterDistrict.parseWDID (
-					tsident.getLocation());
+		// structures above to get the structure information for time series comments.
+		wdid_parts = HydroBase_WaterDistrict.parseWDID ( tsident.getLocation());
 		// The location should correspond to a structure since only
 		// ditches are currently associated with crop areas...
-		strView = readStructureViewForWDID(wdid_parts[0], 
-			wdid_parts[1]);
+		strView = readStructureViewForWDID(wdid_parts[0], wdid_parts[1]);
 		if (strView == null) {
-			message = "Unable to find structure \"" 
-				+ tsident.getLocation() + "\"";
+			message = "Unable to find structure \"" + tsident.getLocation() + "\"";
 			Message.printWarning(3, routine, message);
 			throw new Exception(message);
 		}
@@ -16292,13 +15859,10 @@ throws Exception, NoDataFoundException
 		// The scenario has the sheet name...
 		ts.setIdentifier ( tsident_string);
 		wis_sheet_name = ts.getIdentifier().getScenario();
-		// Read the sheet names to get the sheet number.  The wis_num is
-		// used to join WIS tables...
+		// Read the sheet names to get the sheet number.  The wis_num is used to join WIS tables...
 		sheet_names = readWISSheetNameList(-999, -999, wis_sheet_name, null);
 		if ((sheet_names == null) || (sheet_names.size() == 0)) {
-			message = "Unable to find sheet_name for \"" +
-				tsident_string + "\" sheet name =\"" +
-				wis_sheet_name + "\"";
+			message = "Unable to find sheet_name for \"" + tsident_string + "\" sheet name =\"" + wis_sheet_name + "\"";
 			Message.printWarning ( 3, routine, message);
 			throw new Exception ( message);
 		}
@@ -16310,30 +15874,21 @@ throws Exception, NoDataFoundException
 		List wisNums = new Vector();
 		List identifiers = new Vector();
 		for ( int iwis = 0; iwis < wis_size; iwis++) {
-			wisNums.add("" + ((HydroBase_WISSheetName)
-				sheet_names.get(iwis)).getWis_num());
+			wisNums.add("" + ((HydroBase_WISSheetName)sheet_names.get(iwis)).getWis_num());
 			identifiers.add(tsident.getLocation());
 		}
-		wis_formats = readWISFormatListForWis_numIdentifierList(
-			wisNums, identifiers);
+		wis_formats = readWISFormatListForWis_numIdentifierList( wisNums, identifiers);
 		if ((wis_formats == null) || (wis_formats.size() == 0)) {
-			message = "Unable to find wis_format for \"" +
-				tsident_string + "\" sheet name =\"" +
-				wis_sheet_name + "\"";
+			message = "Unable to find wis_format for \"" + tsident_string + "\" sheet name =\"" + wis_sheet_name + "\"";
 			Message.printWarning ( 3, routine, message);
 			throw new Exception ( message);
 		}
 		// Set the description using the first record - if the name
 		// changed, there is a chance that this will not be consistent
-		// with the current sheet since the records are not sorted by
-		// date.
-		ts.setDescription (
-			((HydroBase_WISFormat)wis_formats.get(0)).
-			getRow_label());
-		// Read the vector of wis_comments for the sheet name, in order
-		// to get available dates...
-		List temp = readWISSheetNameList(DMIUtil.MISSING_INT,
-			DMIUtil.MISSING_INT, wis_sheet_name, null);
+		// with the current sheet since the records are not sorted by date.
+		ts.setDescription ( ((HydroBase_WISFormat)wis_formats.get(0)).getRow_label());
+		// Read the vector of wis_comments for the sheet name, in order to get available dates...
+		List temp = readWISSheetNameList(DMIUtil.MISSING_INT, DMIUtil.MISSING_INT, wis_sheet_name, null);
 		List wis_nums	= new Vector();
 		int sz = temp.size();
 		HydroBase_WISSheetName wss = null;
@@ -16343,27 +15898,20 @@ throws Exception, NoDataFoundException
 		}
 		List wis_comments = readWISCommentsList(wis_nums, null);
 		if ((wis_comments == null) || (wis_comments.size() == 0)) {
-			message = "Unable to find wis_comments for \"" +
-				tsident_string + "\" sheet name =\"" +
-				wis_sheet_name + "\"";
+			message = "Unable to find wis_comments for \"" + tsident_string + "\" sheet name =\"" + wis_sheet_name + "\"";
 			Message.printWarning ( 3, routine, message);
 			throw new Exception ( message);
 		}
-		db_DateTime1 = new DateTime ( ((HydroBase_WISComments)
-			wis_comments.get(0)).getSet_date());
-		db_DateTime2 = new DateTime ( ((HydroBase_WISComments)
-			wis_comments.get(wis_comments.size() - 1)).
-			getSet_date());
+		db_DateTime1 = new DateTime ( ((HydroBase_WISComments)wis_comments.get(0)).getSet_date());
+		db_DateTime2 = new DateTime ( ((HydroBase_WISComments)wis_comments.get(wis_comments.size() - 1)).getSet_date());
 	}
 	else {
-		message = "Unrecognized meas_type \"" + meas_type +
-			"\" from data type \"" + data_type + "\"";
+		message = "Unrecognized meas_type \"" + meas_type + "\" from data type \"" + data_type + "\"";
 		Message.printWarning ( 3, routine, message);
 		throw new Exception ( message);
 	}
 
-	// Set the time series dates from available header information (may be
-	// reset below when data are read).
+	// Set the time series dates from available header information (may be reset below when data are read).
 
 	if (req_date1 != null) {
 		ts.setDate1 ( req_date1);
@@ -16460,64 +16008,39 @@ throws Exception, NoDataFoundException
 
 	// Read the data.
 	// Currently HydroBase does not have an easy way to automate the
-	// following because tables have specific formats and more than one
-	// time series is in a table, as columns.
+	// following because tables have specific formats and more than one time series is in a table, as columns.
 	//
-	// List alphabetized by data type but check the interval first since it
-	// is an integer (fast check).
+	// List alphabetized by data type but check the interval first since it is an integer (fast check).
 
 	List v = null;	// Vector of time series data records.
-	if ((interval_base == TimeInterval.DAY) &&
-			data_type.equalsIgnoreCase("AdminFlow")) {
-			ts.setDataUnits (
-				HydroBase_Util.getTimeSeriesDataUnits (
-				this, data_type, interval ));
-			ts.setDataUnitsOriginal ( ts.getDataUnits());
-			ts.setInputName ( "HydroBase DailyAdminFlow.day*");
-			v = readDailyStationData ( __S_DAILY_ADMIN_FLOW,
-						mt_meas_num, req_date1, req_date2);
+	if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("AdminFlow")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		ts.setInputName ( "HydroBase DailyAdminFlow.day*");
+		v = readDailyStationData ( __S_DAILY_ADMIN_FLOW, mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-			data_type.equalsIgnoreCase("AdminFlow")) {
-
-			ts.setDataUnits (
-				HydroBase_Util.getTimeSeriesDataUnits (
-				this, data_type, interval ));
-			ts.setDataUnitsOriginal ( ts.getDataUnits());
-			ts.setInputName ( "HydroBase MonthlyAdminFlow.total_q_af");
-			v = readMonthlyStationData ( __S_MONTHLY_TOTAL_ADMIN_FLOW,
-						mt_meas_num, req_date1, req_date2);
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("AdminFlow")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		ts.setInputName ( "HydroBase MonthlyAdminFlow.total_q_af");
+		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_ADMIN_FLOW, mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-			data_type.equalsIgnoreCase("AdminFlowMax")) {
-
-			ts.setDataUnits (
-				HydroBase_Util.getTimeSeriesDataUnits (
-				this, data_type, interval ));
-			ts.setDataUnitsOriginal ( ts.getDataUnits());
-			ts.setInputName ( "HydroBase MonthlyAdminFlow.max_q_cfs");
-			v = readMonthlyStationData ( __S_MONTHLY_MAX_ADMIN_FLOW,
-						mt_meas_num, req_date1, req_date2);
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("AdminFlowMax")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		ts.setInputName ( "HydroBase MonthlyAdminFlow.max_q_cfs");
+		v = readMonthlyStationData ( __S_MONTHLY_MAX_ADMIN_FLOW, mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-			data_type.equalsIgnoreCase("AdminFlowMin")) {
-
-			ts.setDataUnits (
-				HydroBase_Util.getTimeSeriesDataUnits (
-				this, data_type, interval ));
-			ts.setDataUnitsOriginal ( ts.getDataUnits());
-			ts.setInputName ( "HydroBase MonthlyAdminFlow.min_q_cfs");
-			v = readMonthlyStationData ( __S_MONTHLY_MIN_ADMIN_FLOW,
-						mt_meas_num, req_date1, req_date2);
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("AdminFlowMin")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		ts.setInputName ( "HydroBase MonthlyAdminFlow.min_q_cfs");
+		v = readMonthlyStationData ( __S_MONTHLY_MIN_ADMIN_FLOW, mt_meas_num, req_date1, req_date2);
 	}
-	else if (	(interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropArea")) {
+	else if ( (interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropArea")) {
 		// Units determined from data below.
-		ts.setInputName (
-			"HydroBase agricultural_NASS_crop_stats.harvested");
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setInputName ( "HydroBase agricultural_NASS_crop_stats.harvested");
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		v = readAgriculturalNASSCropStatsList (
 			null,	// panel
@@ -16525,14 +16048,10 @@ throws Exception, NoDataFoundException
 			agstats_commodity,
 			req_date1, req_date2, false);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaHarvested")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaHarvested")) {
 		// Units determined from data below.
-		ts.setInputName (
-			"HydroBase agricultural_CASS_crop_stats.harvested");
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setInputName ( "HydroBase agricultural_CASS_crop_stats.harvested");
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		v = readAgriculturalCASSCropStatsList (
 			(InputFilter_JPanel)null,	// panel 
@@ -16541,13 +16060,9 @@ throws Exception, NoDataFoundException
 			agstats_practice,
 			req_date1, req_date2, false);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaPlanted")) {
-		ts.setInputName (
-			"HydroBase agricultural_CASS_crop_stats.planted");
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaPlanted")) {
+		ts.setInputName ("HydroBase agricultural_CASS_crop_stats.planted");
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		v = readAgriculturalCASSCropStatsList (
 			(InputFilter_JPanel)null,	// panel 
@@ -16556,11 +16071,8 @@ throws Exception, NoDataFoundException
 			agstats_practice,
 			req_date1, req_date2, false);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaAllIrrigation")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.YEAR) &&data_type.equalsIgnoreCase("CropAreaAllIrrigation")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase irrig_summary_ts.acres_total");
 		v = readStructureIrrigSummaryTSList (
@@ -16575,11 +16087,8 @@ throws Exception, NoDataFoundException
 			req_date2,
 			false);	// Not distinct
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaDrip")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaDrip")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase irrig_summary_ts.acres_by_drip");
 		v = readStructureIrrigSummaryTSList (
@@ -16594,11 +16103,8 @@ throws Exception, NoDataFoundException
 			req_date2,
 			false);	// Not distinct
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaFlood")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaFlood")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase irrig_summary_ts.acres_by_flood");
 		v = readStructureIrrigSummaryTSList (
@@ -16613,11 +16119,8 @@ throws Exception, NoDataFoundException
 			req_date2,
 			false);	// Not distinct
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaFurrow")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaFurrow")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase irrig_summary_ts.acres_by_furrow");
 		v = readStructureIrrigSummaryTSList (
@@ -16632,14 +16135,10 @@ throws Exception, NoDataFoundException
 			req_date2,
 			false);	// Not distinct
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaSprinkler")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaSprinkler")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
-		ts.setInputName (
-			"HydroBase irrig_summary_ts.acres_by_sprinkler");
+		ts.setInputName ("HydroBase irrig_summary_ts.acres_by_sprinkler");
 		v = readStructureIrrigSummaryTSList (
 			null,	// panel
 			null,	// order by clauses
@@ -16652,124 +16151,76 @@ throws Exception, NoDataFoundException
 			req_date2,
 			false);	// Not distinct
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("DivClass")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("DivClass")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_wc.amt_*, daily_wc.obs_*");
-		v = readDailyWCList(str_mt_v.getMeas_num(),
-			req_date1, req_date2);
+		v = readDailyWCList(str_mt_v.getMeas_num(),req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("DivClass") ||
+	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("DivClass") ||
 		data_type.equalsIgnoreCase("IDivClass")) ) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_wc.amt_*");
-		v = readAnnualWCList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualWCList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("DivClass") ||
+	else if ((interval_base == TimeInterval.YEAR) && (data_type.equalsIgnoreCase("DivClass") ||
 		data_type.equalsIgnoreCase("IDivClass")) ) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_wc.ann_amt");
-		v = readAnnualWCList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualWCList(str_mt_v.getMeas_num(), req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("DivComment")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("DivComment")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
-		ts.setInputName (
-		"HydroBase diversion_comment.not_used, " +
-		"diversion_comment.acres_irrig");
-		v = readDiversionCommentList(
-			str_mt_v.getMeas_num(),req_date1,req_date2);
+		ts.setInputName ("HydroBase diversion_comment.not_used, diversion_comment.acres_irrig");
+		v = readDiversionCommentList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("DivTotal")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("DivTotal")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_amt.amt_*, daily_amt.obs_*");
-		v = readDailyAmtList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readDailyAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("DivTotal") ||
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("DivTotal") ||
 		(data_type.equalsIgnoreCase("IDivTotal")) ) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_amt.amt_*");
-		v = readAnnualAmtList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("DivTotal") ||
+	else if ((interval_base == TimeInterval.YEAR) && (data_type.equalsIgnoreCase("DivTotal") ||
 		data_type.equalsIgnoreCase("IDivTotal")) ) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_amt.ann_amt");
-		v = readAnnualAmtList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("EvapPan")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("EvapPan")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_evap.total_evap");
-		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_EVAP,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_EVAP,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("EvapPan")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) &&data_type.equalsIgnoreCase("EvapPan")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_evap.day*");
-		v = readDailyStationData ( __S_DAILY_EVAP,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_EVAP,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("FrostDateF32F") ||
-		data_type.equalsIgnoreCase("FrostDateF28F") ||
-		data_type.equalsIgnoreCase("FrostDateL32S") ||
+	else if ((interval_base == TimeInterval.YEAR) &&(data_type.equalsIgnoreCase("FrostDateF32F") ||
+		data_type.equalsIgnoreCase("FrostDateF28F") ||data_type.equalsIgnoreCase("FrostDateL32S") ||
 		data_type.equalsIgnoreCase("FrostDateL28S"))) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase frost_dates");
 		v = readFrostDatesList (mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("HumanPopulation")) {
+	else if ((interval_base == TimeInterval.YEAR) &&data_type.equalsIgnoreCase("HumanPopulation")) {
 		// CU Population...
-		ts.setInputName (
-			"HydroBase CUPopulation.population");
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setInputName ("HydroBase CUPopulation.population");
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		v = readCUPopulationList (
 			(InputFilter_JPanel)null,	// panel 
@@ -16778,14 +16229,10 @@ throws Exception, NoDataFoundException
 			cupop_pop_type,
 			req_date1, req_date2, false);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("LivestockHead")) {
+	else if ((interval_base == TimeInterval.YEAR) &&data_type.equalsIgnoreCase("LivestockHead")) {
 		// CASS agstats...
-		ts.setInputName (
-			"HydroBase agricultural_CASS_livestock_stats.head");
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setInputName ("HydroBase agricultural_CASS_livestock_stats.head");
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		v = readAgriculturalCASSLivestockStatsList (
 			(InputFilter_JPanel)null,	// panel 
@@ -16794,321 +16241,190 @@ throws Exception, NoDataFoundException
 			agstats_type,
 			req_date1, req_date2, false);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("NaturalFlow")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("NaturalFlow")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_nflow.total_q_af");
-		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_NFLOW,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_NFLOW,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("Precip")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("Precip")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_pcpn.total_evap");
-		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_PCPN,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_PCPN,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Precip")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Precip")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ("HydroBase daily_pcpn.day*, daily_pcpn.flag*");
-		v = readDailyStationData ( __S_DAILY_PCPN,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_PCPN,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("RelClass")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("RelClass")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_wc.amt_*, daily_wc.obs_*");
-		v = readDailyWCList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readDailyWCList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("RelClass") ||
+	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("RelClass") ||
 		data_type.equalsIgnoreCase("IRelClass")) ) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_wc.amt_*");
-		v = readAnnualWCList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualWCList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("RelClass") ||
+	else if ((interval_base == TimeInterval.YEAR) &&(data_type.equalsIgnoreCase("RelClass") ||
 		data_type.equalsIgnoreCase("IRelClass")) ) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_wc.ann_amt");
-		v = readAnnualWCList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualWCList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("RelTotal")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("RelTotal")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_amt.amt_*, daily_amt.obs_*");
-		v = readDailyAmtList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readDailyAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("RelTotal") ||
+	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("RelTotal") ||
 		data_type.equalsIgnoreCase("IRelTotal"))) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_amt.amt_*");
-		v = readAnnualAmtList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("RelTotal") ||
+	else if ((interval_base == TimeInterval.YEAR) && (data_type.equalsIgnoreCase("RelTotal") ||
 		data_type.equalsIgnoreCase("IRelTotal")) ) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_amt.ann_amt");
-		v = readAnnualAmtList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("ResEOM")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) &&data_type.equalsIgnoreCase("ResEOM")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase res_eom.total_af");
-		v = readResEOMList(str_mt_v.getMeas_num(), 
-			req_date1, req_date2);
+		v = readResEOMList(str_mt_v.getMeas_num(), req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("ResEOY")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("ResEOY")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase annual_res.ann_amt");
-		v = readAnnualResList(str_mt_v.getMeas_num(),
-			req_date1,req_date2);
+		v = readAnnualResList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasElev")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("ResMeasElev")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (	this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase res_meas.gage_height");
-		v = readResMeasList(str_mt_v.getMeas_num(), 
-			req_date1, req_date2);
+		v = readResMeasList(str_mt_v.getMeas_num(), req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasEvap")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("ResMeasEvap")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase res_meas.evap_loss_amt");
-		v = readResMeasList(str_mt_v.getMeas_num(), 
-			req_date1, req_date2);
+		v = readResMeasList(str_mt_v.getMeas_num(), req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasFill")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("ResMeasFill")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase res_meas.fill_amt");
-		v = readResMeasList(str_mt_v.getMeas_num(), 
-			req_date1, req_date2);
+		v = readResMeasList(str_mt_v.getMeas_num(), req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasRelease")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("ResMeasRelease")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase res_meas.release_amt");
-		v = readResMeasList(str_mt_v.getMeas_num(), 
-			req_date1, req_date2);
+		v = readResMeasList(str_mt_v.getMeas_num(), req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasStorage")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) &&data_type.equalsIgnoreCase("ResMeasStorage")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase res_meas.storage_amt");
-		v = readResMeasList(str_mt_v.getMeas_num(), 
-			req_date1, req_date2);
+		v = readResMeasList(str_mt_v.getMeas_num(), req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("Snow")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("Snow")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_snow.total_snow");
-		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_SNOW,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_SNOW,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Snow")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Snow")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_snow.day*");
-		v = readDailyStationData ( __S_DAILY_SNOW,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_SNOW,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		(data_type.equalsIgnoreCase("SnowCourseDepth") ||
+	else if ((interval_base == TimeInterval.DAY) &&(data_type.equalsIgnoreCase("SnowCourseDepth") ||
 		data_type.equalsIgnoreCase("SnowCourseSWE"))) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_snow.depth");
 		v = readSnowCrseList(mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Solar")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Solar")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_solar.day*");
-		v = readDailyStationData ( __S_DAILY_SOLAR,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_SOLAR,	mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Streamflow")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Streamflow")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_flow.day*");
-		v = readDailyStationData ( __S_DAILY_FLOW,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_FLOW,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("Streamflow")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("Streamflow")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_flow.total_q_af");
-		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_FLOW,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_TOTAL_FLOW,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("StreamflowMax")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("StreamflowMax")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_flow.max_q_cfs");
-		v = readMonthlyStationData ( __S_MONTHLY_MAX_FLOW,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_MAX_FLOW,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("StreamflowMin")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("StreamflowMin")) {
+		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_flow.min_q_cfs");
-		v = readMonthlyStationData ( __S_MONTHLY_MIN_FLOW,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_MIN_FLOW,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("TempMax")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) &&data_type.equalsIgnoreCase("TempMax")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_max_t.day*");
-		v = readDailyStationData ( __S_DAILY_MAX_T,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_MAX_T, mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("TempMean")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("TempMean")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_temp.mean_t");
-		v = readMonthlyStationData ( __S_MONTHLY_MEAN_T,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_MEAN_T, mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("TempMeanMax")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("TempMeanMax")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_temp.avg_max_t");
-		v = readMonthlyStationData ( __S_MONTHLY_AVG_MAX_T,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_AVG_MAX_T,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("TempMeanMin")) {
-
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("TempMeanMin")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase monthly_temp.avg_min_t");
-		v = readMonthlyStationData ( __S_MONTHLY_AVG_MIN_T,
-					mt_meas_num, req_date1, req_date2);
+		v = readMonthlyStationData ( __S_MONTHLY_AVG_MIN_T,	mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("TempMin")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("TempMin")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_min_t.day*");
-		v = readDailyStationData ( __S_DAILY_MIN_T,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_MIN_T,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("VaporPressure")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("VaporPressure")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_vp.day*");
-		v = readDailyStationData ( __S_DAILY_VP,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_VP, mt_meas_num, req_date1, req_date2);
 	}
 	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("WellLevel")) {
 	    // TODO SAM 2008-05-12 Why the XJTSX comments?
@@ -17130,29 +16446,19 @@ throws Exception, NoDataFoundException
 			ts.setInputName ( "HydroBase well_meas.wat_level");
 			v = readWellMeasList (well.getWell_meas_num(), req_date1, req_date2);
 		}
-		// XJTSX
-		
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Wind")) {
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Wind")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_wind.day*");
-		v = readDailyStationData ( __S_DAILY_WIND,
-					mt_meas_num, req_date1, req_date2);
+		v = readDailyStationData ( __S_DAILY_WIND,mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.regionMatches(true,0,"WIS",0,3)) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.regionMatches(true,0,"WIS",0,3)) {
 		// Water information sheets.  Records must be read from
 		// the wis_data table using the wis_num/row_num pair list
 		// determined above, sorted by date.  If for some reason a value
-		// exists in more than one wis_num for the same date (it should
-		// not, the later value will be used).
-		ts.setDataUnits (
-			HydroBase_Util.getTimeSeriesDataUnits (
-			this, data_type, interval ));
+		// exists in more than one wis_num for the same date (it should not, the later value will be used).
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase wis_data for wis_num/wis_row");
 		int wis_size = sheet_names.size();
@@ -17162,15 +16468,13 @@ throws Exception, NoDataFoundException
 		List wisRows = new Vector();
 		HydroBase_WISFormat format = null;
 		for ( int iwis = 0; iwis < wis_size; iwis++) {
-			format = (HydroBase_WISFormat)wis_formats.get(
-				iwis);
+			format = (HydroBase_WISFormat)wis_formats.get(iwis);
 			wisNums.add("" + format.getWis_num());
 			wisRows.add("" + format.getWis_row());
 		}
 		List order = new Vector();
 		order.add("wis_data.set_date");
-		v = readWISDataListForWis_numWis_rowList(wisNums, wisRows,
-			order);
+		v = readWISDataListForWis_numWis_rowList(wisNums, wisRows,order);
 	}
 	// Real-time data...
 	else if ((interval_base == TimeInterval.IRREGULAR) &&
@@ -17187,14 +16491,10 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("WellLevel"))) {
 		// Data units must be set from data records.
 		ts.setInputName ( "HydroBase RT_meas.amt");
-		Message.printStatus ( 2, routine,
-		"Reading from meas_num" + mt_meas_num +
-		" for " + req_date1 + " to " + req_date2);
+		Message.printStatus ( 2, routine, "Reading from meas_num" + mt_meas_num + " for " + req_date1 + " to " + req_date2);
 		// XJTSX 
 		// nothing to read realtime for wells?
-
-		v = readRTMeasList(mt_meas_num, req_date1, req_date2,
-			true, false);
+		v = readRTMeasList(mt_meas_num, req_date1, req_date2,true, false);
 	}
 
 	// Now set the returned data dates, which will be used further below...
@@ -17209,19 +16509,14 @@ throws Exception, NoDataFoundException
 	// filled in.  The following code is roughly in alphabetical order with
 	// realtime data at the end.
 
-	Message.printStatus ( 2, routine,
-	"Read " + size + " records for time series " + tsident_string);
+	Message.printStatus ( 2, routine, "Read " + size + " records for time series " + tsident_string);
 	if (size == 0) {
 		return ts;
 	}
 
 	DateTime data_date1 = null;	// Starting date/time from data records.
 	DateTime data_date2 = null;	// Ending date/time from data records.
-					// Note that the db_DateTime* values
-					// set above should be used for original
-					// dates if available.
-	boolean has_data_flags = false;	// Indicate whether data flags should
-					// be managed in memory.
+					// Note that the db_DateTime* values set above should be used for original dates if available.
 
 	if ((interval_base == TimeInterval.MONTH) &&
 		(data_type.equalsIgnoreCase("AdminFlow") ||
@@ -17237,11 +16532,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("AdminFlow")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("AdminFlow")) {
 		// Get the first and last dates...
-		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.get(0);
+		HydroBase_DailyTS data = (HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17252,11 +16545,9 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if (	(interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropArea")) {
+	else if ( (interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropArea")) {
 		// Get the first and last dates...
-		HydroBase_AgriculturalNASSCropStats data =
-			(HydroBase_AgriculturalNASSCropStats)v.get(0);
+		HydroBase_AgriculturalNASSCropStats data = (HydroBase_AgriculturalNASSCropStats)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
@@ -17264,12 +16555,10 @@ throws Exception, NoDataFoundException
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("CropAreaHarvested") ||
+	else if ((interval_base == TimeInterval.YEAR) && (data_type.equalsIgnoreCase("CropAreaHarvested") ||
 		data_type.equalsIgnoreCase("CropAreaPlanted"))) {
 		// Get the first and last dates...
-		HydroBase_AgriculturalCASSCropStats data =
-			(HydroBase_AgriculturalCASSCropStats)v.get(0);
+		HydroBase_AgriculturalCASSCropStats data = (HydroBase_AgriculturalCASSCropStats)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
@@ -17285,20 +16574,16 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("CropAreaSprinkler"))) {
 		// Get the first and last dates...
 		if (getDatabaseVersion() < VERSION_20050701) {		
-			HydroBase_StructureIrrigSummaryTS data =
-				(HydroBase_StructureIrrigSummaryTS)
-				v.get(0);
+			HydroBase_StructureIrrigSummaryTS data = (HydroBase_StructureIrrigSummaryTS)v.get(0);
 			data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 			data_date1.setYear ( data.getCal_year());
 			// Set the units here also
-			data = (HydroBase_StructureIrrigSummaryTS)v.get(
-				size - 1);
+			data = (HydroBase_StructureIrrigSummaryTS)v.get(size - 1);
 			data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 			data_date2.setYear ( data.getCal_year());
 		}
 		else {
-			HydroBase_StructureView data =
-				(HydroBase_StructureView)v.get(0);
+			HydroBase_StructureView data = (HydroBase_StructureView)v.get(0);
 			data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 			data_date1.setYear ( data.getCal_year());
 			// Set the units here also
@@ -17308,11 +16593,9 @@ throws Exception, NoDataFoundException
 		}		
 	}
 	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("DivClass") ||
-		data_type.equalsIgnoreCase("IDivClass")) ) {
+		(data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("IDivClass")) ) {
 		// Get the first and last dates...
-		HydroBase_AnnualWC data =
-			(HydroBase_AnnualWC)v.get(0);
+		HydroBase_AnnualWC data = (HydroBase_AnnualWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
@@ -17321,11 +16604,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("DivClass")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("DivClass")) {
 		// Get the first and last dates...
-		HydroBase_DailyWC data =
-			(HydroBase_DailyWC)v.get(0);
+		HydroBase_DailyWC data = (HydroBase_DailyWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
@@ -17337,22 +16618,18 @@ throws Exception, NoDataFoundException
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
 	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("DivClass") ||
-		data_type.equalsIgnoreCase("IDivClass")) ) {
+		(data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("IDivClass")) ) {
 		// Get the first and last dates...
-		HydroBase_AnnualWC data =
-			(HydroBase_AnnualWC)v.get(0);
+		HydroBase_AnnualWC data = (HydroBase_AnnualWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
 		data = (HydroBase_AnnualWC)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("DivComment")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("DivComment")) {
 		// Get the first and last dates...
-		HydroBase_DiversionComment data =
-			(HydroBase_DiversionComment)v.get(0);
+		HydroBase_DiversionComment data = (HydroBase_DiversionComment)v.get(0);
 		// Dates are typically Oct 31 of the irrigation year.
 		// Therefore the year corresponds to the irrigation year.
 		data_date1 = new DateTime(data.getComm_date());
@@ -17362,11 +16639,9 @@ throws Exception, NoDataFoundException
 		data_date2.setPrecision ( DateTime.PRECISION_YEAR);
 	}
 	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("DivTotal")||
-		data_type.equalsIgnoreCase("IDivTotal")) ) {
+		(data_type.equalsIgnoreCase("DivTotal")|| data_type.equalsIgnoreCase("IDivTotal")) ) {
 		// Get the first and last dates...
-		HydroBase_AnnualAmt data =
-			(HydroBase_AnnualAmt)v.get(0);
+		HydroBase_AnnualAmt data = (HydroBase_AnnualAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
@@ -17375,11 +16650,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("DivTotal")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("DivTotal")) {
 		// Get the first and last dates...
-		HydroBase_DailyAmt data =
-			(HydroBase_DailyAmt)v.get(0);
+		HydroBase_DailyAmt data = (HydroBase_DailyAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
@@ -17391,22 +16664,18 @@ throws Exception, NoDataFoundException
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
 	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("DivTotal") ||
-		data_type.equalsIgnoreCase("IDivTotal")) ) {
+		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("IDivTotal")) ) {
 		// Get the first and last dates...
-		HydroBase_AnnualAmt data =
-			(HydroBase_AnnualAmt)v.get(0);
+		HydroBase_AnnualAmt data = (HydroBase_AnnualAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
 		data = (HydroBase_AnnualAmt)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("EvapPan")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("EvapPan")) {
 		// Get the first and last dates...
-		HydroBase_MonthlyEvap data =
-			(HydroBase_MonthlyEvap)v.get(0);
+		HydroBase_MonthlyEvap data = (HydroBase_MonthlyEvap)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17415,11 +16684,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("EvapPan")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("EvapPan")) {
 		// Get the first and last dates...
-		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.get(0);
+		HydroBase_DailyTS data = (HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17436,19 +16703,16 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("FrostDateL32S") ||
 		data_type.equalsIgnoreCase("FrostDateL28S"))) {
 		// Get the first and last dates...
-		HydroBase_FrostDates data =
-			(HydroBase_FrostDates)v.get(0);
+		HydroBase_FrostDates data = (HydroBase_FrostDates)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		data = (HydroBase_FrostDates)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("HumanPopulation") ) ) {
+	else if ((interval_base == TimeInterval.YEAR) && (data_type.equalsIgnoreCase("HumanPopulation") ) ) {
 		// Get the first and last dates...
-		HydroBase_CUPopulation data =
-			(HydroBase_CUPopulation)v.get(0);
+		HydroBase_CUPopulation data = (HydroBase_CUPopulation)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
@@ -17456,25 +16720,19 @@ throws Exception, NoDataFoundException
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("LivestockHead") ) ) {
+	else if ((interval_base == TimeInterval.YEAR) && (data_type.equalsIgnoreCase("LivestockHead") ) ) {
 		// Get the first and last dates...
-		HydroBase_AgriculturalCASSLivestockStats data =
-			(HydroBase_AgriculturalCASSLivestockStats)
-			v.get(0);
+		HydroBase_AgriculturalCASSLivestockStats data = (HydroBase_AgriculturalCASSLivestockStats)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getCal_year());
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
-		data = (HydroBase_AgriculturalCASSLivestockStats)
-			v.get(size-1);
+		data = (HydroBase_AgriculturalCASSLivestockStats)v.get(size-1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getCal_year());
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("NaturalFlow")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("NaturalFlow")) {
 		// Get the first and last dates...
-		HydroBase_MonthlyNflow data =
-			(HydroBase_MonthlyNflow)v.get(0);
+		HydroBase_MonthlyNflow data = (HydroBase_MonthlyNflow)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17483,11 +16741,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("Precip")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("Precip")) {
 		// Get the first and last dates...
-		HydroBase_MonthlyPcpn data =
-			(HydroBase_MonthlyPcpn)v.get(0);
+		HydroBase_MonthlyPcpn data = (HydroBase_MonthlyPcpn)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17496,11 +16752,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Precip")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Precip")) {
 		// Get the first and last dates...
-		HydroBase_DailyPcpn data =
-			(HydroBase_DailyPcpn)v.get(0);
+		HydroBase_DailyPcpn data = (HydroBase_DailyPcpn)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17511,12 +16765,10 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("RelClass") ||
+	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("RelClass") ||
 		data_type.equalsIgnoreCase("IRelClass")) ) {
 		// Get the first and last dates...
-		HydroBase_AnnualWC data =
-			(HydroBase_AnnualWC)v.get(0);
+		HydroBase_AnnualWC data = (HydroBase_AnnualWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
@@ -17525,11 +16777,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("RelClass")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("RelClass")) {
 		// Get the first and last dates...
-		HydroBase_DailyWC data =
-			(HydroBase_DailyWC)v.get(0);
+		HydroBase_DailyWC data =(HydroBase_DailyWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
@@ -17541,11 +16791,9 @@ throws Exception, NoDataFoundException
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
 	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("RelClass") ||
-		data_type.equalsIgnoreCase("IRelClass")) ) {
+		(data_type.equalsIgnoreCase("RelClass") || data_type.equalsIgnoreCase("IRelClass")) ) {
 		// Get the first and last dates...
-		HydroBase_AnnualWC data =
-			(HydroBase_AnnualWC)v.get(0);
+		HydroBase_AnnualWC data = (HydroBase_AnnualWC)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
 		data = (HydroBase_AnnualWC)v.get(size - 1);
@@ -17553,11 +16801,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getIrr_year());
 	}
 	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("RelTotal") ||
-		data_type.equalsIgnoreCase("IRelTotal")) ) {
+		(data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("IRelTotal")) ) {
 		// Get the first and last dates...
-		HydroBase_AnnualAmt data =
-			(HydroBase_AnnualAmt)v.get(0);
+		HydroBase_AnnualAmt data =(HydroBase_AnnualAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
@@ -17566,11 +16812,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getIrr_year());
 		data_date2.setMonth ( 10);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("RelTotal")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("RelTotal")) {
 		// Get the first and last dates...
-		HydroBase_DailyAmt data =
-			(HydroBase_DailyAmt)v.get(0);
+		HydroBase_DailyAmt data = (HydroBase_DailyAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getIrr_year() - 1);
 		data_date1.setMonth ( 11);
@@ -17582,22 +16826,18 @@ throws Exception, NoDataFoundException
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
 	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("RelTotal") ||
-		data_type.equalsIgnoreCase("IRelTotal")) ) {
+		(data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("IRelTotal")) ) {
 		// Get the first and last dates...
-		HydroBase_AnnualAmt data =
-			(HydroBase_AnnualAmt)v.get(0);
+		HydroBase_AnnualAmt data = (HydroBase_AnnualAmt)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
 		data = (HydroBase_AnnualAmt)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("ResEOM")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("ResEOM")) {
 		// Get the first and last dates...
-		HydroBase_ResEOM data =
-			(HydroBase_ResEOM)v.get(0);
+		HydroBase_ResEOM data = (HydroBase_ResEOM)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17606,11 +16846,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("ResEOY")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("ResEOY")) {
 		// Get the first and last dates...
-		HydroBase_AnnualRes data =
-			(HydroBase_AnnualRes)v.get(0);
+		HydroBase_AnnualRes data = (HydroBase_AnnualRes)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date1.setYear ( data.getIrr_year());
 		data = (HydroBase_AnnualRes)v.get(size - 1);
@@ -17624,19 +16862,16 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase ( "ResMeasRelease" ) ||
 		data_type.equalsIgnoreCase ( "ResMeasStorage" ))) {
 		// Get the first and last dates...
-		HydroBase_ResMeas data =
-			(HydroBase_ResMeas)v.get(0);
+		HydroBase_ResMeas data = (HydroBase_ResMeas)v.get(0);
 		data_date1 = new DateTime ( data.getDate_time());
 		data_date1.setPrecision ( DateTime.PRECISION_DAY);
 		data = (HydroBase_ResMeas)v.get(size - 1);
 		data_date2 = new DateTime ( data.getDate_time());
 		data_date2.setPrecision ( DateTime.PRECISION_DAY);
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("Snow")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("Snow")) {
 		// Get the first and last dates...
-		HydroBase_MonthlySnow data =
-			(HydroBase_MonthlySnow)v.get(0);
+		HydroBase_MonthlySnow data = (HydroBase_MonthlySnow)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17645,11 +16880,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Snow")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Snow")) {
 		// Get the first and last dates...
-		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.get(0);
+		HydroBase_DailyTS data = (HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17661,11 +16894,9 @@ throws Exception, NoDataFoundException
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
 	else if ((interval_base == TimeInterval.DAY) &&
-		(data_type.equalsIgnoreCase("SnowCourseDepth") ||
-		data_type.equalsIgnoreCase("SnowCourseSWE"))) {
+		(data_type.equalsIgnoreCase("SnowCourseDepth") || data_type.equalsIgnoreCase("SnowCourseSWE"))) {
 		// Get the first and last dates...
-		HydroBase_SnowCrse data =
-			(HydroBase_SnowCrse)v.get(0);
+		HydroBase_SnowCrse data = (HydroBase_SnowCrse)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17676,11 +16907,9 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Solar")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Solar")) {
 		// Get the first and last dates...
-		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.get(0);
+		HydroBase_DailyTS data = (HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17691,13 +16920,10 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("Streamflow") ||
-		data_type.equalsIgnoreCase("StreamflowMax") ||
-		data_type.equalsIgnoreCase("StreamflowMin"))) {
+	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("Streamflow") ||
+		data_type.equalsIgnoreCase("StreamflowMax") || data_type.equalsIgnoreCase("StreamflowMin"))) {
 		// Get the first and last dates...
-		HydroBase_MonthlyFlow data =
-			(HydroBase_MonthlyFlow)v.get(0);
+		HydroBase_MonthlyFlow data = (HydroBase_MonthlyFlow)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17706,11 +16932,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Streamflow")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Streamflow")) {
 		// Get the first and last dates...
-		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.get(0);
+		HydroBase_DailyTS data = (HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17721,12 +16945,10 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		(data_type.equalsIgnoreCase("TempMax") ||
+	else if ((interval_base == TimeInterval.DAY) && (data_type.equalsIgnoreCase("TempMax") ||
 		data_type.equalsIgnoreCase("TempMin"))) {
 		// Get the first and last dates...
-		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.get(0);
+		HydroBase_DailyTS data = (HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17737,13 +16959,10 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("TempMean") ||
-		data_type.equalsIgnoreCase("TempMeanMax") ||
-		data_type.equalsIgnoreCase("TempMeanMin"))) {
+	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("TempMean") ||
+		data_type.equalsIgnoreCase("TempMeanMax") || data_type.equalsIgnoreCase("TempMeanMin"))) {
 		// Get the first and last dates...
-		HydroBase_MonthlyTemp data =
-			(HydroBase_MonthlyTemp)v.get(0);
+		HydroBase_MonthlyTemp data = (HydroBase_MonthlyTemp)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_MONTH);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17752,11 +16971,9 @@ throws Exception, NoDataFoundException
 		data_date2.setYear ( data.getCal_year());
 		data_date2.setMonth ( data.getCal_mon_num());
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("VaporPressure")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("VaporPressure")) {
 		// Get the first and last dates...
-		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.get(0);
+		HydroBase_DailyTS data = (HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17767,22 +16984,18 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("WellLevel")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("WellLevel")) {
 		// Get the first and last dates...
-		HydroBase_WellMeas data =
-			(HydroBase_WellMeas)v.get(0);
+		HydroBase_WellMeas data = (HydroBase_WellMeas)v.get(0);
 		data_date1 = new DateTime ( data.getMeas_date());
 		data_date1.setPrecision ( DateTime.PRECISION_DAY);
 		data = (HydroBase_WellMeas)v.get(size - 1);
 		data_date2 = new DateTime ( data.getMeas_date());
 		data_date2.setPrecision ( DateTime.PRECISION_DAY);
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Wind")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Wind")) {
 		// Get the first and last dates...
-		HydroBase_DailyTS data =
-			(HydroBase_DailyTS)v.get(0);
+		HydroBase_DailyTS data = (HydroBase_DailyTS)v.get(0);
 		data_date1 = new DateTime ( DateTime.PRECISION_DAY);
 		data_date1.setYear ( data.getCal_year());
 		data_date1.setMonth ( data.getCal_mon_num());
@@ -17793,16 +17006,12 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.regionMatches(true,0,"WIS",0,3)) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.regionMatches(true,0,"WIS",0,3)) {
 		// Get the first and last dates...
-		HydroBase_WISData data =
-			(HydroBase_WISData)v.get(0);
-		data_date1 = new DateTime ( data.getSet_date(),
-			DateTime.PRECISION_DAY);
+		HydroBase_WISData data = (HydroBase_WISData)v.get(0);
+		data_date1 = new DateTime ( data.getSet_date(), DateTime.PRECISION_DAY);
 		data = (HydroBase_WISData)v.get(size - 1);
-		data_date2 = new DateTime ( data.getSet_date(),
-			DateTime.PRECISION_DAY);
+		data_date2 = new DateTime ( data.getSet_date(), DateTime.PRECISION_DAY);
 	}
 	// Real-time data...
 	else if ((interval_base == TimeInterval.IRREGULAR) &&
@@ -17818,8 +17027,7 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("WatTemp") ||
 		data_type.equalsIgnoreCase("WellLevel"))) {
 		// Get the first and last dates...
-		HydroBase_RTMeas data =
-			(HydroBase_RTMeas)v.get(0);
+		HydroBase_RTMeas data = (HydroBase_RTMeas)v.get(0);
 		data_date1 = new DateTime ( data.getDate_time());
 		data_date1.setPrecision ( DateTime.PRECISION_MINUTE);
 		data = (HydroBase_RTMeas)v.get(size - 1);
@@ -17834,11 +17042,9 @@ throws Exception, NoDataFoundException
 
 	if ((req_date1 != null) && (req_date2 != null)) {
 		// Allocate the memory regardless of whether there was data.  If
-		// no data have been found then missing data will be
-		// initialized...
+		// no data have been found then missing data will be initialized...
 		//
-		// The original dates may be unknown so use the requested
-		// dates.
+		// The original dates may be unknown so use the requested dates.
 		ts.setDate1(req_date1);
 		if (db_DateTime1 == null) {
 			ts.setDate1Original(req_date1);
@@ -17864,8 +17070,7 @@ throws Exception, NoDataFoundException
     // have been specified above.
 	ts.allocateDataSpace();
 
-	// Now transfer the data records into the time series.  This depends on
-	// the type of record.
+	// Now transfer the data records into the time series.  This depends on the type of record.
 
 	DateTime date = new DateTime ( ts.getDate1());
 	double value = 0.0;	// Data value being transferred.
@@ -17873,98 +17078,87 @@ throws Exception, NoDataFoundException
 	int ndays = 0;		// Number of days in a month.
 	
 	// The following is alphabetized by the data type as close as
-	// convenient.  All real-time data types are at the bottom and share
-	// code...
+	// convenient.  All real-time data types are at the bottom and share code...
 
-	if ((interval_base == TimeInterval.MONTH) &&
-			data_type.equalsIgnoreCase("AdminFlow")) {
-			HydroBase_MonthlyFlow data;
-			for ( int i = 0; i < size; i++) {
-				// Loop through and assign the data...
-				data = (HydroBase_MonthlyFlow)v.get(i);
-				date.setYear ( data.getCal_year());
-				date.setMonth ( data.getCal_mon_num());
-				value = data.getTotal_q_af();
+	if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("AdminFlow")) {
+		HydroBase_MonthlyFlow data;
+		for ( int i = 0; i < size; i++) {
+			// Loop through and assign the data...
+			data = (HydroBase_MonthlyFlow)v.get(i);
+			date.setYear ( data.getCal_year());
+			date.setMonth ( data.getCal_mon_num());
+			value = data.getTotal_q_af();
+			if (!DMIUtil.isMissing(value)) {
+				ts.setDataValue ( date, value);
+			}
+		}
+	}
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("AdminFlow")) {
+		HydroBase_DailyTS data;
+		// Loop through each month...
+		for ( int i = 0; i < size; i++) {
+			// Loop through and assign the data...
+			data = (HydroBase_DailyTS)v.get(i);
+			date.setYear ( data.getCal_year());
+			date.setMonth ( data.getCal_mon_num());
+			ndays = TimeUtil.numDaysInMonth ( date);
+			for ( iday = 1; iday <= ndays; iday++) {
+				date.setDay ( iday);
+				value = data.getDay ( iday);
+				//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
 		}
-		else if ((interval_base == TimeInterval.DAY) &&
-			data_type.equalsIgnoreCase("AdminFlow")) {
-			HydroBase_DailyTS data;
-			// Loop through each month...
-			for ( int i = 0; i < size; i++) {
-				// Loop through and assign the data...
-				data = (HydroBase_DailyTS)v.get(i);
-				date.setYear ( data.getCal_year());
-				date.setMonth ( data.getCal_mon_num());
-				ndays = TimeUtil.numDaysInMonth ( date);
-				for ( iday = 1; iday <= ndays; iday++) {
-					date.setDay ( iday);
-					value = data.getDay ( iday);
-					//Message.printStatus ( 2, routine,
-					//"Date:  " + date + " value: " + value);
-					if (!DMIUtil.isMissing(value)) {
-						ts.setDataValue ( date, value);
-					}
-				}
+	}
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("AdminFlowMax")) {
+		HydroBase_MonthlyFlow data;
+		for ( int i = 0; i < size; i++) {
+			// Loop through and assign the data...
+			data = (HydroBase_MonthlyFlow)v.get(i);
+			date.setYear ( data.getCal_year());
+			date.setMonth ( data.getCal_mon_num());
+			value = data.getMax_q_cfs();
+			if (!DMIUtil.isMissing(value)) {
+				ts.setDataValue ( date, value);
 			}
 		}
-		else if ((interval_base == TimeInterval.MONTH) &&
-			data_type.equalsIgnoreCase("AdminFlowMax")) {
-			HydroBase_MonthlyFlow data;
-			for ( int i = 0; i < size; i++) {
-				// Loop through and assign the data...
-				data = (HydroBase_MonthlyFlow)v.get(i);
-				date.setYear ( data.getCal_year());
-				date.setMonth ( data.getCal_mon_num());
-				value = data.getMax_q_cfs();
-				if (!DMIUtil.isMissing(value)) {
-					ts.setDataValue ( date, value);
-				}
+	}
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("AdminFlowMin")) {
+		HydroBase_MonthlyFlow data;
+		for ( int i = 0; i < size; i++) {
+			// Loop through and assign the data...
+			data = (HydroBase_MonthlyFlow)v.get(i);
+			date.setYear ( data.getCal_year());
+			date.setMonth ( data.getCal_mon_num());
+			value = data.getMin_q_cfs();
+			if (!DMIUtil.isMissing(value)) {
+				ts.setDataValue ( date, value);
 			}
 		}
-		else if ((interval_base == TimeInterval.MONTH) &&
-			data_type.equalsIgnoreCase("AdminFlowMin")) {
-			HydroBase_MonthlyFlow data;
-			for ( int i = 0; i < size; i++) {
-				// Loop through and assign the data...
-				data = (HydroBase_MonthlyFlow)v.get(i);
-				date.setYear ( data.getCal_year());
-				date.setMonth ( data.getCal_mon_num());
-				value = data.getMin_q_cfs();
-				if (!DMIUtil.isMissing(value)) {
-					ts.setDataValue ( date, value);
-				}
-			}
-		}
-	else if (	(interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropArea")) {
+	}
+	else if ( (interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropArea")) {
 		HydroBase_AgriculturalNASSCropStats data;
 		String flag;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data.  Only transfer data
 			// that have a flag of "" or "0" since other flag values
 			// indicate missing or problematic data...
-			data = (HydroBase_AgriculturalNASSCropStats)
-				v.get(i);
+			data = (HydroBase_AgriculturalNASSCropStats)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = data.getAg_amt();
 			flag = data.getFlag();
-			if (	(flag.length() == 0) || flag.equals("0") &&
-				!DMIUtil.isMissing(value)) {
+			if ( (flag.length() == 0) || flag.equals("0") && !DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaHarvested")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaHarvested")) {
 		HydroBase_AgriculturalCASSCropStats data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_AgriculturalCASSCropStats)
-				v.get(i);
+			data = (HydroBase_AgriculturalCASSCropStats)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = data.getHarvested();
 			if (!DMIUtil.isMissing(value)) {
@@ -17972,13 +17166,11 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaPlanted")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaPlanted")) {
 		HydroBase_AgriculturalCASSCropStats data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_AgriculturalCASSCropStats)
-				v.get(i);
+			data = (HydroBase_AgriculturalCASSCropStats)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = data.getPlanted();
 			if (!DMIUtil.isMissing(value)) {
@@ -17986,14 +17178,12 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaAllIrrigation")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaAllIrrigation")) {
 		if (getDatabaseVersion() < VERSION_20050701) {		
 			HydroBase_StructureIrrigSummaryTS data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureIrrigSummaryTS)
-				v.get(i);
+				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_total();
 				if (!DMIUtil.isMissing(value)) {
@@ -18005,8 +17195,7 @@ throws Exception, NoDataFoundException
 			HydroBase_StructureView data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureView)
-				v.get(i);
+				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_total();
 				if (!DMIUtil.isMissing(value)) {
@@ -18015,14 +17204,12 @@ throws Exception, NoDataFoundException
 			}
 		}		
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaDrip")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaDrip")) {
 		if (getDatabaseVersion() < VERSION_20050701) {		
 			HydroBase_StructureIrrigSummaryTS data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureIrrigSummaryTS)
-				v.get(i);
+				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_drip();
 				if (!DMIUtil.isMissing(value)) {
@@ -18034,8 +17221,7 @@ throws Exception, NoDataFoundException
 			HydroBase_StructureView data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureView)
-				v.get(i);
+				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_drip();
 				if (!DMIUtil.isMissing(value)) {
@@ -18044,14 +17230,12 @@ throws Exception, NoDataFoundException
 			}
 		}		
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaFlood")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaFlood")) {
 		if (getDatabaseVersion() < VERSION_20050701) {		
 			HydroBase_StructureIrrigSummaryTS data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureIrrigSummaryTS)
-				v.get(i);
+				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_flood();
 				if (!DMIUtil.isMissing(value)) {
@@ -18063,8 +17247,7 @@ throws Exception, NoDataFoundException
 			HydroBase_StructureView data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureView)
-				v.get(i);
+				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_flood();
 				if (!DMIUtil.isMissing(value)) {
@@ -18073,14 +17256,12 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaFurrow")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaFurrow")) {
 		if (getDatabaseVersion() < VERSION_20050701) {		
 			HydroBase_StructureIrrigSummaryTS data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureIrrigSummaryTS)
-				v.get(i);
+				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_furrow();
 				if (!DMIUtil.isMissing(value)) {
@@ -18092,8 +17273,7 @@ throws Exception, NoDataFoundException
 			HydroBase_StructureView data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureView)
-				v.get(i);
+				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_furrow();
 				if (!DMIUtil.isMissing(value)) {
@@ -18102,14 +17282,12 @@ throws Exception, NoDataFoundException
 			}
 		}		
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("CropAreaSprinkler")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("CropAreaSprinkler")) {
 		if (getDatabaseVersion() < VERSION_20050701) {		
 			HydroBase_StructureIrrigSummaryTS data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureIrrigSummaryTS)
-				v.get(i);
+				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_sprinkler();
 				if (!DMIUtil.isMissing(value)) {
@@ -18121,8 +17299,7 @@ throws Exception, NoDataFoundException
 			HydroBase_StructureView data;
 			for ( int i = 0; i < size; i++) {
 				// Loop through and assign the data...
-				data = (HydroBase_StructureView)
-				v.get(i);
+				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_sprinkler();
 				if (!DMIUtil.isMissing(value)) {
@@ -18204,8 +17381,7 @@ throws Exception, NoDataFoundException
 		}
 	}
 	else if ((interval_base == TimeInterval.DAY) &&
-		(data_type.equalsIgnoreCase("DivClass") ||
-		data_type.equalsIgnoreCase("RelClass"))) {
+		(data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("RelClass"))) {
 		HydroBase_DailyWC data;
 		String obs;
 		// Loop through each month...
@@ -18222,8 +17398,7 @@ throws Exception, NoDataFoundException
 				if (obs == null) {
 					obs = "";
 				}
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value, obs, 1);
 				}
@@ -18231,15 +17406,12 @@ throws Exception, NoDataFoundException
 		}
 	}
 	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("DivClass") ||
-		data_type.equalsIgnoreCase("IDivClass") ||
-		data_type.equalsIgnoreCase("IRelClass") ||
-		data_type.equalsIgnoreCase("RelClass"))) {
+		(data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("IDivClass") ||
+		data_type.equalsIgnoreCase("IRelClass") || data_type.equalsIgnoreCase("RelClass"))) {
 		HydroBase_AnnualWC data;
 		String quality;
 		for ( int i = 0; i < size; i++) {
-			// Loop through and assign the data - only interested
-			// in the annual amount...
+			// Loop through and assign the data - only interested in the annual amount...
 			data = (HydroBase_AnnualWC)v.get(i);
 			date.setYear ( data.getIrr_year());
 			value = data.getAnn_amt();
@@ -18247,19 +17419,16 @@ throws Exception, NoDataFoundException
 			if (quality == null) {
 				quality = "";
 			}
-			if (	!DMIUtil.isMissing(value) ||
-				(quality.length() > 0)) {
+			if ( !DMIUtil.isMissing(value) || (quality.length() > 0)) {
 				ts.setDataValue ( date, value, quality, 1);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("DivComment")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("DivComment")) {
 		HydroBase_DiversionComment data;
 		DateTime dt;
 		String not_used;
-		ts.addToComments (
-		"Data from diversion_comment (year is irrigation year) ...");
+		ts.addToComments ( "Data from diversion_comment (year is irrigation year) ...");
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
 			data = (HydroBase_DiversionComment)v.get(i);
@@ -18271,31 +17440,23 @@ throws Exception, NoDataFoundException
 				not_used = "";
 			}
 			// Only set if the data value or flag is not missing...
-			if (	!DMIUtil.isMissing(value) ||
-				(not_used.length() > 0)) {
+			if ( !DMIUtil.isMissing(value) || (not_used.length() > 0)) {
 				ts.setDataValue ( dt, value, not_used, 1);
 			}
 			// Always add to the time series comments...
 			if (!DMIUtil.isMissing(value)) {
-				ts.addToComments ( "" + dt.getYear() +
-				" Not used=" +
-				not_used + ", acres_irrig=" +
-				StringUtil.formatString(value,"%.2f") +
-				", comment=\"" + data.getDiver_comment() +"\"");
+				ts.addToComments ( "" + dt.getYear() + " Not used=" + not_used + ", acres_irrig=" +
+				StringUtil.formatString(value,"%.2f") + ", comment=\"" + data.getDiver_comment() +"\"");
 			}
 			else {
-				ts.addToComments ( "" + dt.getYear() +
-				" Not used=" + not_used +
-				", acres_irrig=, comment=\"" +
-				data.getDiver_comment() +"\"");
+				ts.addToComments ( "" + dt.getYear() + " Not used=" + not_used +
+				", acres_irrig=, comment=\"" + data.getDiver_comment() +"\"");
 			}
 		}
 	}
 	else if ((interval_base == TimeInterval.MONTH) &&
-		(data_type.equalsIgnoreCase("DivTotal") ||
-		data_type.equalsIgnoreCase("IDivTotal") ||
-		data_type.equalsIgnoreCase("IRelTotal") ||
-		data_type.equalsIgnoreCase("RelTotal"))) {
+		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("IDivTotal") ||
+		data_type.equalsIgnoreCase("IRelTotal") || data_type.equalsIgnoreCase("RelTotal"))) {
 		HydroBase_AnnualAmt data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18364,8 +17525,7 @@ throws Exception, NoDataFoundException
 		}
 	}
 	else if ((interval_base == TimeInterval.DAY) &&
-		(data_type.equalsIgnoreCase("DivTotal") ||
-		data_type.equalsIgnoreCase("RelTotal"))) {
+		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("RelTotal"))) {
 		HydroBase_DailyAmt data;
 		String obs;
 		// Loop through each month...
@@ -18382,8 +17542,7 @@ throws Exception, NoDataFoundException
 				if (obs == null) {
 					obs = "";
 				}
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value, obs, 1);
 				}
@@ -18391,15 +17550,12 @@ throws Exception, NoDataFoundException
 		}
 	}
 	else if ((interval_base == TimeInterval.YEAR) &&
-		(data_type.equalsIgnoreCase("DivTotal") ||
-		data_type.equalsIgnoreCase("IDivTotal") ||
-		data_type.equalsIgnoreCase("IRelTotal") ||
-		data_type.equalsIgnoreCase("RelTotal"))) {
+		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("IDivTotal") ||
+		data_type.equalsIgnoreCase("IRelTotal") || data_type.equalsIgnoreCase("RelTotal"))) {
 		HydroBase_AnnualAmt data;
 		String quality;
 		for ( int i = 0; i < size; i++) {
-			// Loop through and assign the data - only interested
-			// in the annual amount...
+			// Loop through and assign the data - only interested in the annual amount...
 			data = (HydroBase_AnnualAmt)v.get(i);
 			date.setYear ( data.getIrr_year());
 			value = data.getAnn_amt();
@@ -18407,14 +17563,12 @@ throws Exception, NoDataFoundException
 			if (quality == null) {
 				quality = "";
 			}
-			if (	!DMIUtil.isMissing(value) ||
-				(quality.length() > 0)) {
+			if ( !DMIUtil.isMissing(value) || (quality.length() > 0)) {
 				ts.setDataValue ( date, value, quality, 1);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("EvapPan")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("EvapPan")) {
 		HydroBase_MonthlyEvap data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18427,8 +17581,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("EvapPan")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("EvapPan")) {
 		HydroBase_DailyTS data;
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
@@ -18440,16 +17593,14 @@ throws Exception, NoDataFoundException
 			for ( iday = 1; iday <= ndays; iday++) {
 				date.setDay ( iday);
 				value = data.getDay ( iday);
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("FrostDateL28S")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("FrostDateL28S")) {
 		HydroBase_FrostDates data;
 		Date date2;
 		for ( int i = 0; i < size; i++) {
@@ -18458,14 +17609,11 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date2 = data.getL28s();
 			if (date2 != null) {
-				ts.setDataValue ( date,
-				(double)TimeUtil.dayOfYear(
-				new DateTime(date2)));
+				ts.setDataValue ( date, (double)TimeUtil.dayOfYear(	new DateTime(date2)));
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("FrostDateL32S")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("FrostDateL32S")) {
 		HydroBase_FrostDates data;
 		Date date2;
 		for ( int i = 0; i < size; i++) {
@@ -18474,14 +17622,11 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date2 = data.getL32s();
 			if (date2 != null) {
-				ts.setDataValue ( date,
-				(double)TimeUtil.dayOfYear(
-				new DateTime(date2)));
+				ts.setDataValue ( date,(double)TimeUtil.dayOfYear(new DateTime(date2)));
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("FrostDateF32F")) {
+	else if ((interval_base == TimeInterval.YEAR) &&data_type.equalsIgnoreCase("FrostDateF32F")) {
 		HydroBase_FrostDates data;
 		Date date2;
 		for ( int i = 0; i < size; i++) {
@@ -18490,14 +17635,11 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date2 = data.getF32f();
 			if (date2 != null) {
-				ts.setDataValue ( date,
-				(double)TimeUtil.dayOfYear(
-				new DateTime(date2)));
+				ts.setDataValue ( date,(double)TimeUtil.dayOfYear(	new DateTime(date2)));
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("FrostDateF28F")) {
+	else if ((interval_base == TimeInterval.YEAR) &&data_type.equalsIgnoreCase("FrostDateF28F")) {
 		HydroBase_FrostDates data;
 		Date date2;
 		for ( int i = 0; i < size; i++) {
@@ -18506,14 +17648,11 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date2 = data.getF28f();
 			if (date2 != null) {
-				ts.setDataValue ( date,
-				(double)TimeUtil.dayOfYear(
-				new DateTime(date2)));
+				ts.setDataValue ( date,(double)TimeUtil.dayOfYear(	new DateTime(date2)));
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("HumanPopulation")) {
+	else if ((interval_base == TimeInterval.YEAR) &&data_type.equalsIgnoreCase("HumanPopulation")) {
 		HydroBase_CUPopulation data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18525,13 +17664,11 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("LivestockHead")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("LivestockHead")) {
 		HydroBase_AgriculturalCASSLivestockStats data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
-			data = (HydroBase_AgriculturalCASSLivestockStats)
-				v.get(i);
+			data = (HydroBase_AgriculturalCASSLivestockStats)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = (double)data.getHead();
 			if (!DMIUtil.isMissing(value)) {
@@ -18539,8 +17676,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("NaturalFlow")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("NaturalFlow")) {
 		HydroBase_MonthlyNflow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18553,8 +17689,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("Precip")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("Precip")) {
 		HydroBase_MonthlyPcpn data;
 		boolean units_set = false;
 		for ( int i = 0; i < size; i++) {
@@ -18573,8 +17708,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Precip")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Precip")) {
 		HydroBase_DailyPcpn data;
 		String flag;
 		boolean units_set = false;
@@ -18592,8 +17726,7 @@ throws Exception, NoDataFoundException
 				if (flag == null) {
 					flag = "";
 				}
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value, flag, 1);
 				}
@@ -18605,8 +17738,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("ResEOM")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("ResEOM")) {
 		HydroBase_ResEOM data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18619,8 +17751,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) &&
-		data_type.equalsIgnoreCase("ResEOY")) {
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("ResEOY")) {
 		HydroBase_AnnualRes data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18632,8 +17763,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasElev")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("ResMeasElev")) {
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18641,15 +17771,13 @@ throws Exception, NoDataFoundException
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getGage_height ();
-			//Message.printStatus ( 2, routine,
-			//"Date:  " + date + " value: " + value);
+			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasEvap")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("ResMeasEvap")) {
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18657,15 +17785,13 @@ throws Exception, NoDataFoundException
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getEvap_loss_amt ();
-			//Message.printStatus ( 2, routine,
-			//"Date:  " + date + " value: " + value);
+			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasFill")) {
+	else if ((interval_base == TimeInterval.DAY) &&data_type.equalsIgnoreCase("ResMeasFill")) {
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18673,15 +17799,13 @@ throws Exception, NoDataFoundException
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getFill_amt ();
-			//Message.printStatus ( 2, routine,
-			//"Date:  " + date + " value: " + value);
+			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasRelease")) {
+	else if ((interval_base == TimeInterval.DAY) &&data_type.equalsIgnoreCase("ResMeasRelease")) {
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18689,15 +17813,13 @@ throws Exception, NoDataFoundException
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getRelease_amt ();
-			//Message.printStatus ( 2, routine,
-			//"Date:  " + date + " value: " + value);
+			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("ResMeasStorage")) {
+	else if ((interval_base == TimeInterval.DAY) &&data_type.equalsIgnoreCase("ResMeasStorage")) {
 		HydroBase_ResMeas data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18705,15 +17827,13 @@ throws Exception, NoDataFoundException
 			date = new DateTime ( data.getDate_time());
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getStorage_amt ();
-			//Message.printStatus ( 2, routine,
-			//"Date:  " + date + " value: " + value);
+			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("Snow")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("Snow")) {
 		HydroBase_MonthlySnow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18726,8 +17846,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Snow")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Snow")) {
 		HydroBase_DailyTS data;
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
@@ -18739,16 +17858,14 @@ throws Exception, NoDataFoundException
 			for ( iday = 1; iday <= ndays; iday++) {
 				date.setDay ( iday);
 				value = data.getDay ( iday);
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("SnowCourseDepth")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("SnowCourseDepth")) {
 		HydroBase_SnowCrse data;
 		String day;
 		// Data records are monthly but data are actually daily...
@@ -18763,15 +17880,13 @@ throws Exception, NoDataFoundException
 			}
 			date.setDay ( StringUtil.atoi(day));
 			value = data.getDepth ();
-			//Message.printStatus ( 2, routine,
-			//"Date:  " + date + " value: " + value);
+			//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("SnowCourseSWE")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("SnowCourseSWE")) {
 		HydroBase_SnowCrse data;
 		String day;
 		// Data records are monthly but data are actually daily...
@@ -18786,8 +17901,7 @@ throws Exception, NoDataFoundException
 			}
 			date.setDay ( StringUtil.atoi(day));
 			value = data.getSwe ();
-			//Message.printStatus ( 2, routine,
-			//"Date:  " + date + " value: " + value);
+			//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
@@ -18806,16 +17920,14 @@ throws Exception, NoDataFoundException
 			for ( iday = 1; iday <= ndays; iday++) {
 				date.setDay ( iday);
 				value = data.getDay ( iday);
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("Streamflow")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("Streamflow")) {
 		HydroBase_MonthlyFlow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18828,8 +17940,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Streamflow")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Streamflow")) {
 		HydroBase_DailyTS data;
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
@@ -18841,16 +17952,14 @@ throws Exception, NoDataFoundException
 			for ( iday = 1; iday <= ndays; iday++) {
 				date.setDay ( iday);
 				value = data.getDay ( iday);
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("StreamflowMax")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("StreamflowMax")) {
 		HydroBase_MonthlyFlow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18863,8 +17972,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("StreamflowMin")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("StreamflowMin")) {
 		HydroBase_MonthlyFlow data;
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -18877,8 +17985,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("TempMean")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("TempMean")) {
 		HydroBase_MonthlyTemp data;
 		boolean units_set = false;	// Units are in data records
 		for ( int i = 0; i < size; i++) {
@@ -18897,8 +18004,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("TempMeanMax")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("TempMeanMax")) {
 		HydroBase_MonthlyTemp data;
 		boolean units_set = false;	// Units are in data records
 		for ( int i = 0; i < size; i++) {
@@ -18917,8 +18023,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.MONTH) &&
-		data_type.equalsIgnoreCase("TempMeanMin")) {
+	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("TempMeanMin")) {
 		HydroBase_MonthlyTemp data;
 		boolean units_set = false;	// Units are in data records
 		for ( int i = 0; i < size; i++) {
@@ -18938,8 +18043,7 @@ throws Exception, NoDataFoundException
 		}
 	}
 	else if ((interval_base == TimeInterval.DAY) &&
-		(data_type.equalsIgnoreCase("TempMax") ||
-		data_type.equalsIgnoreCase("TempMin"))) {
+		(data_type.equalsIgnoreCase("TempMax") || data_type.equalsIgnoreCase("TempMin"))) {
 		HydroBase_DailyTS data;
 		boolean units_set = false;	// Units are in data records
 		// Loop through each month...
@@ -18952,8 +18056,7 @@ throws Exception, NoDataFoundException
 			for ( iday = 1; iday <= ndays; iday++) {
 				date.setDay ( iday);
 				value = data.getDay ( iday);
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
@@ -18965,8 +18068,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("VaporPressure")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("VaporPressure")) {
 		HydroBase_DailyTS data;
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
@@ -18978,16 +18080,14 @@ throws Exception, NoDataFoundException
 			for ( iday = 1; iday <= ndays; iday++) {
 				date.setDay ( iday);
 				value = data.getDay ( iday);
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("WellLevel")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("WellLevel")) {
 		HydroBase_WellMeas data;
 		double elevation = DMIUtil.MISSING_DOUBLE;
 		// XJTSX
@@ -19001,18 +18101,13 @@ throws Exception, NoDataFoundException
 			elevation = strView.getElevation();
 		}
 		if (DMIUtil.isMissing(elevation)) {
-			ts.setDescription ( ts.getDescription() +
-			" (no elevation datum)");
+			ts.setDescription ( ts.getDescription() + " (no elevation datum)");
 			elevation = 0.0;
 		}
 		else {
-			ts.setDescription ( ts.getDescription() +
-			" (datum " + StringUtil.formatString(elevation,"%.1f") +
-			" FT)");
+			ts.setDescription ( ts.getDescription() + " (datum " + StringUtil.formatString(elevation,"%.1f") + " FT)");
 		}
-		ts.addToGenesis (
-			"Time series values = HydroBase geoloc.elevation - " +
-			"well_meas.wat_level (" +
+		ts.addToGenesis ( "Time series values = HydroBase geoloc.elevation - well_meas.wat_level (" +
 			StringUtil.formatString(elevation,"%.1f") + ")");
 
 		for ( int i = 0; i < size; i++) {
@@ -19020,7 +18115,6 @@ throws Exception, NoDataFoundException
 			data = (HydroBase_WellMeas)v.get(i);
 			date = new DateTime ( data.getMeas_date());
 			date.setPrecision ( DateTime.PRECISION_DAY);
-
 			if (newFormat) {
 				value = data.getWl_depth();
 			}
@@ -19032,8 +18126,7 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.equalsIgnoreCase("Wind")) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Wind")) {
 		HydroBase_DailyTS data;
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
@@ -19045,16 +18138,14 @@ throws Exception, NoDataFoundException
 			for ( iday = 1; iday <= ndays; iday++) {
 				date.setDay ( iday);
 				value = data.getDay ( iday);
-				//Message.printStatus ( 2, routine,
-				//"Date:  " + date + " value: " + value);
+				//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
 				if (!DMIUtil.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) &&
-		data_type.regionMatches(true,0,"WIS",0,3)) {
+	else if ((interval_base == TimeInterval.DAY) && data_type.regionMatches(true,0,"WIS",0,3)) {
 		HydroBase_WISData data;
 		// Figure out the column, to speed up code...
 		int pos = 0;
@@ -19089,8 +18180,7 @@ throws Exception, NoDataFoundException
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
 			data = (HydroBase_WISData)v.get(i);
-			date = new DateTime ( data.getSet_date(),
-				DateTime.PRECISION_DAY);
+			date = new DateTime ( data.getSet_date(), DateTime.PRECISION_DAY);
 			if (pos == 0) {
 				value = data.getPoint_flow ();
 			}
@@ -19118,8 +18208,7 @@ throws Exception, NoDataFoundException
 			else if (pos == 8) {
 				value = data.getTrib_delivery ();
 			}
-			//Message.printStatus ( 2, routine,
-			//"Date:  " + date + " value: " + value);
+			//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
@@ -19150,11 +18239,10 @@ throws Exception, NoDataFoundException
 
 	// Add to the genesis to explain where the time series were read from...
 
-	ts.addToGenesis("Read HydroBase time series from " + ts.getDate1() +
-		" to " + ts.getDate2() + ".");
+	ts.addToGenesis("Read HydroBase time series from " + ts.getDate1() + " to " + ts.getDate2() + ".");
 
 	// Set the comments, consistent with previous CDSS work...
-	// REVISIT (SAM) - this is somewhat redundant
+	// TODO (SAM) - this is somewhat redundant
 	if (((mtsView != null)) && (staView != null)) {
 		// Set comments for station data.  Some comments may have been
 		// added above so manipulate to add at the end...
@@ -19162,26 +18250,20 @@ throws Exception, NoDataFoundException
 		// Get old comments so they can be added at the end...
 		List old_header = ts.getComments();
 		List header = new Vector ( 10, 5);
-		header.add (
-		"Station and time series information from HydroBase "+
-		"determined at time of query:" );
-		header.add (
-		"Time series identifier         = " + ts.getIdentifierString());
-		header.add (
-		"Description                    = " + ts.getDescription());
+		header.add ( "Station and time series information from HydroBase determined at time of query:" );
+		header.add ( "Time series identifier         = " + ts.getIdentifierString());
+		header.add ( "Description                    = " + ts.getDescription());
 		// The following may not work for older databases where
 		// data_source was not packaged with the database...
 		String data_source_desc = null;
-		if (	isDatabaseVersionAtLeast(VERSION_20010326)) {
+		if ( isDatabaseVersionAtLeast(VERSION_20010326)) {
 			data_source_desc = "";
 		}
 		else if (isDatabaseVersionAtLeast(VERSION_19990305)) {
-			// Should limit to the main database until the Access
-			// databases are updated...
-			/* REVISIT (SAM)
+			// Should limit to the main database until the Access databases are updated...
+			/* TOPO (SAM)
 			try {
-				data_source_desc = HBDataSource.getComment (
-					dmi, ts.getIdentifier().getSource());
+				data_source_desc = HBDataSource.getComment (dmi, ts.getIdentifier().getSource());
 			}
 			catch ( Exception e) {
 				// Just handled as null...
@@ -19195,32 +18277,18 @@ throws Exception, NoDataFoundException
 		else if (!data_source_desc.equals ("")) {
 			data_source_desc = " (" + data_source_desc + ")";
 		}
-		header.add(
-		"Data source                    = "
-		+ ts.getIdentifier().getSource() + data_source_desc);
-		header.add (
-		"Data type                      = "
-		+ ts.getIdentifier().getType());
-		header.add (
-		"Data interval                  = "
-		+ ts.getIdentifier().getInterval());
-		header.add (
-		"Data units                     = "
-		+ ts.getDataUnits());
+		header.add ( "Data source                    = " + ts.getIdentifier().getSource() + data_source_desc);
+		header.add ( "Data type                      = " + ts.getIdentifier().getType());
+		header.add ( "Data interval                  = " + ts.getIdentifier().getInterval());
+		header.add ( "Data units                     = " + ts.getDataUnits());
 		if ((req_date1 != null) && (req_date2 != null)) {
-			header.add (
-			"HydroBase query period         = " +
-			req_date1.toString() +
-			" to " + req_date2.toString());
+			header.add ( "HydroBase query period         = " + req_date1 + " to " + req_date2 );
 		}
 		else {
 			// Not available...
-			header.add (
-			"HydroBase query period         = Query All");
+			header.add ( "HydroBase query period         = Query All");
 		}
-		header.add (
-			"HydroBase available period     = " +
-			mt_start_year + " to " + mt_end_year);
+		header.add ( "HydroBase available period     = " + mt_start_year + " to " + mt_end_year);
 
 		ts.setComments ( header);
 		String abbrev = staView.getAbbrev();
@@ -19236,85 +18304,63 @@ throws Exception, NoDataFoundException
 		double contrib = staView.getContr_area();
 
 		if (abbrev.length() > 0) {
-			ts.addToComments (
-			"State of CO abbreviation       = " + abbrev);
+			ts.addToComments ( "State of CO abbreviation       = " + abbrev);
 		}
 		if (!DMIUtil.isMissing(wd) && !DMIUtil.isMissing(div)) {
-			ts.addToComments (
-			"Located in water div, district = " + div + ", " + wd);
+			ts.addToComments ( "Located in water div, district = " + div + ", " + wd);
 		}
 		else {
-			ts.addToComments (
-			"Located in water div, district = ");
+			ts.addToComments ( "Located in water div, district = ");
 		}
 		if ((county != null) && (state != null)) {
-			ts.addToComments (
-			"Located in county, state       = " +
-			county + ", " + state);
+			ts.addToComments ( "Located in county, state       = " + county + ", " + state);
 		}
 		else {
-			ts.addToComments (
-			"Located in county, state       = ");
+			ts.addToComments ( "Located in county, state       = ");
 		}
 		if ((huc != null) && (huc.length() > 0)) {
-			ts.addToComments (
-			"Located in HUC                 = " + huc);
+			ts.addToComments ( "Located in HUC                 = " + huc);
 		}
 		else {
-			ts.addToComments (
-			"Located in HUC                 = ");
+			ts.addToComments ( "Located in HUC                 = ");
 		}
-		if (	!DMIUtil.isMissing(latitude) &&
-			!DMIUtil.isMissing(longitude)) {
-			ts.addToComments (
-			"Latitude, longitude            = " +
+		if ( !DMIUtil.isMissing(latitude) && !DMIUtil.isMissing(longitude)) {
+			ts.addToComments ( "Latitude, longitude            = " +
 			StringUtil.formatString(latitude,"%11.6f") + ", " +
 			StringUtil.formatString(longitude,"%11.6f"));
 		}
 		else {
-			ts.addToComments (
-			"Latitude, longitude            = NA");
+			ts.addToComments ( "Latitude, longitude            = NA");
 		}
 		if (!DMIUtil.isMissing(drainage)) {
-			ts.addToComments (
-			"Drainage area                  = " +
-			StringUtil.formatString(drainage,"%.2f") +
-				" SQ MI");
+			ts.addToComments ( "Drainage area                  = " +
+			StringUtil.formatString(drainage,"%.2f") + " SQ MI");
 		}
 		else {
-			ts.addToComments (
-			"Drainage area                  = NA");
+			ts.addToComments ( "Drainage area                  = NA");
 		}
 		if (!DMIUtil.isMissing(contrib)) {
-			ts.addToComments (
-			"Non-natural contributing area  = " +
-			StringUtil.formatString(contrib,"%.2f") +
-			" SQ MI");
+			ts.addToComments ( "Non-natural contributing area  = " +
+			StringUtil.formatString(contrib,"%.2f") + " SQ MI");
 		}
 		else {
-			ts.addToComments (
-			"Non-natural contributing area  = NA");
+			ts.addToComments ( "Non-natural contributing area  = NA");
 		}
 		if (!DMIUtil.isMissing(elevation)) {
-			ts.addToComments (
-			"Elevation                      = " +
-			StringUtil.formatString(elevation,"%.2f") +
-				" FT");
+			ts.addToComments ( "Elevation                      = " +
+			StringUtil.formatString(elevation,"%.2f") + " FT");
 		}
 		else {
-			ts.addToComments (
-				"Elevation                      = NA");
+			ts.addToComments ( "Elevation                      = NA");
 		}
 
-		// Add previous comments at the end, if any exist.  These are
-		// notes about the data...
+		// Add previous comments at the end, if any exist.  These are notes about the data...
 
 		if (old_header != null) {
 			ts.addToComments ( "");
 			size = old_header.size();
 			for ( int i = 0; i < size; i++) {
-				ts.addToComments (
-				(String) old_header.get(i));
+				ts.addToComments ( (String) old_header.get(i));
 			}
 		}
 	}
@@ -19325,84 +18371,55 @@ throws Exception, NoDataFoundException
 		List old_header = ts.getComments();
 
 		List header = new Vector ( 10, 5);
-		header.add (
-		"Structure and time series information from HydroBase...");
-		header.add (
-		"Time series identifier         = " +
-		ts.getIdentifier().getIdentifier());
-		header.add (
-		"Description                    = " + ts.getDescription());
-		header.add (
-		"Data source                    = "
-		+ ts.getIdentifier().getSource());
-		header.add (
-		"Data type                      = "
-		+ ts.getIdentifier().getType());
-		header.add (
-		"Data interval                  = "
-		+ ts.getIdentifier().getInterval());
-		header.add (
-		"Data units                     = " + ts.getDataUnits());
+		header.add ( "Structure and time series information from HydroBase...");
+		header.add ( "Time series identifier         = " + ts.getIdentifier().getIdentifier());
+		header.add ( "Description                    = " + ts.getDescription());
+		header.add ( "Data source                    = " + ts.getIdentifier().getSource());
+		header.add ( "Data type                      = " + ts.getIdentifier().getType());
+		header.add ( "Data interval                  = " + ts.getIdentifier().getInterval());
+		header.add ( "Data units                     = " + ts.getDataUnits());
 		if ((req_date1 != null) && (req_date2 != null)) {
-			header.add (
-			"HydroBase query period         = " +
-			req_date1 + " to " + req_date2);
+			header.add ( "HydroBase query period         = " + req_date1 + " to " + req_date2);
 		}
 		else {
-			header.add (
-			"Requested period               = Query All");
+			header.add ( "Requested period               = Query All");
 		}
 		if (str_mt_v != null) {
-			header.add(
-				"HydroBase available period     = " 
-				+ str_mt_v.getStart_year() + " to " 
+			header.add ( "HydroBase available period     = " + str_mt_v.getStart_year() + " to " 
 				+ str_mt_v.getEnd_year());
 		}
 		else {
-			header.add (
-				"HydroBase available period     "
-				+ "= UNKNOWN");
+			header.add ( "HydroBase available period     = UNKNOWN");
 		}
 	
 		ts.setComments ( header);
 		int wd = strView.getWD();
 		int div = strView.getDiv();
 		if (!DMIUtil.isMissing(wd) && !DMIUtil.isMissing(div)) {
-			ts.addToComments (
-			"Located in water div, district = " + div + ", " + wd);
+			ts.addToComments ( "Located in water div, district = " + div + ", " + wd);
 		}
 		else {
-			ts.addToComments (
-				"Located in water div, district = ");
+			ts.addToComments ( "Located in water div, district = ");
 		}
-		ts.addToComments (
-		"Located in county, state       = " +
-		strView.getCounty() + ", " + strView.getST());
-		ts.addToComments (
-		"Located in HUC                 = " + strView.getHUC());
+		ts.addToComments ( "Located in county, state       = " + strView.getCounty() + ", " + strView.getST());
+		ts.addToComments ( "Located in HUC                 = " + strView.getHUC());
 		double latitude = strView.getLatdecdeg();
 		double longitude = strView.getLongdecdeg();
-		if (	!DMIUtil.isMissing(latitude) &&
-			!DMIUtil.isMissing(longitude)) {
-			ts.addToComments (
-			"Latitude, longitude            = " +
-			StringUtil.formatString(latitude,"%11.6f") + ", " +
-			StringUtil.formatString(longitude,"%11.6f"));
+		if ( !DMIUtil.isMissing(latitude) && !DMIUtil.isMissing(longitude)) {
+			ts.addToComments ( "Latitude, longitude            = " +
+			StringUtil.formatString(latitude,"%11.6f") + ", " + StringUtil.formatString(longitude,"%11.6f"));
 		}
 		else {
-			ts.addToComments (
-			"Latitude, longitude            = ");
+			ts.addToComments ( "Latitude, longitude            = ");
 		}
 
-		// Add previous comments at the end, if any exist.  These are
-		// notes about the data...
+		// Add previous comments at the end, if any exist.  These are notes about the data...
 
 		if (old_header != null) {
 			ts.addToComments ( "");
 			size = old_header.size();
 			for ( int i = 0; i < size; i++) {
-				ts.addToComments (
-				(String) old_header.get(i));
+				ts.addToComments ((String) old_header.get(i));
 			}
 		}
 	}	
@@ -19414,85 +18431,56 @@ throws Exception, NoDataFoundException
 		List old_header = ts.getComments();
 
 		List header = new Vector ( 10, 5);
-		header.add (
-		"Structure and time series information from HydroBase...");
-		header.add (
-		"Time series identifier         = " +
-		ts.getIdentifier().getIdentifier());
-		header.add (
-		"Description                    = " + ts.getDescription());
-		header.add (
-		"Data source                    = "
-		+ ts.getIdentifier().getSource());
-		header.add (
-		"Data type                      = "
-		+ ts.getIdentifier().getType());
-		header.add (
-		"Data interval                  = "
-		+ ts.getIdentifier().getInterval());
-		header.add (
-		"Data units                     = " + ts.getDataUnits());
+		header.add ( "Structure and time series information from HydroBase...");
+		header.add ( "Time series identifier         = " + ts.getIdentifier().getIdentifier());
+		header.add ( "Description                    = " + ts.getDescription());
+		header.add ( "Data source                    = " + ts.getIdentifier().getSource());
+		header.add ( "Data type                      = " + ts.getIdentifier().getType());
+		header.add ( "Data interval                  = " + ts.getIdentifier().getInterval());
+		header.add ( "Data units                     = " + ts.getDataUnits());
 		if ((req_date1 != null) && (req_date2 != null)) {
-			header.add (
-			"HydroBase query period         = " +
-			req_date1 + " to " + req_date2);
+			header.add ( "HydroBase query period         = " + req_date1 + " to " + req_date2);
 		}
 		else {
-			header.add (
-			"Requested period               = Query All");
+			header.add ( "Requested period               = Query All");
 		}
 		if (str_mt_v != null) {
-			header.add(
-				"HydroBase available period     = " 
-				+ str_mt_v.getStart_year() + " to " 
+			header.add ( "HydroBase available period     = " + str_mt_v.getStart_year() + " to " 
 				+ str_mt_v.getEnd_year());
 		}
 		else {
-			header.add (
-				"HydroBase available period     "
-				+ "= UNKNOWN");
+			header.add ( "HydroBase available period     = UNKNOWN");
 		}
 	
 		ts.setComments ( header);
 		int wd = well.getWD();
 		int div = well.getDiv();
 		if (!DMIUtil.isMissing(wd) && !DMIUtil.isMissing(div)) {
-			ts.addToComments (
-			"Located in water div, district = " + div + ", " + wd);
+			ts.addToComments ( "Located in water div, district = " + div + ", " + wd);
 		}
 		else {
-			ts.addToComments (
-				"Located in water div, district = ");
+			ts.addToComments ( "Located in water div, district = ");
 		}
-		ts.addToComments (
-			"Located in county, state       = " 
-			+ well.getCounty() + ", " + "CO");
+		ts.addToComments ( "Located in county, state       = " + well.getCounty() + ", " + "CO");
 			//+ well.getST());
-		ts.addToComments (
-		"Located in HUC                 = " + well.getHUC());
+		ts.addToComments ( "Located in HUC                 = " + well.getHUC());
 		double latitude = well.getLatdecdeg();
 		double longitude = well.getLongdecdeg();
-		if (	!DMIUtil.isMissing(latitude) &&
-			!DMIUtil.isMissing(longitude)) {
-			ts.addToComments (
-			"Latitude, longitude            = " +
-			StringUtil.formatString(latitude,"%11.6f") + ", " +
-			StringUtil.formatString(longitude,"%11.6f"));
+		if ( !DMIUtil.isMissing(latitude) && !DMIUtil.isMissing(longitude)) {
+			ts.addToComments ( "Latitude, longitude            = " +
+			StringUtil.formatString(latitude,"%11.6f") + ", " + StringUtil.formatString(longitude,"%11.6f"));
 		}
 		else {
-			ts.addToComments (
-			"Latitude, longitude            = ");
+			ts.addToComments ( "Latitude, longitude            = ");
 		}
 
-		// Add previous comments at the end, if any exist.  These are
-		// notes about the data...
+		// Add previous comments at the end, if any exist.  These are notes about the data...
 
 		if (old_header != null) {
 			ts.addToComments ( "");
 			size = old_header.size();
 			for ( int i = 0; i < size; i++) {
-				ts.addToComments (
-				(String) old_header.get(i));
+				ts.addToComments ((String) old_header.get(i));
 			}
 		}
 	}	
@@ -19502,59 +18490,43 @@ throws Exception, NoDataFoundException
 	// data will be considered as original data and will therefore be
 	// included in original data limits.
 
-	// Fill daily diversion data by carrying forward within irrigation
-	// years...
+	// Fill daily diversion data by carrying forward within irrigation years...
 
-	if (	(interval_base == TimeInterval.DAY) &&
-		(data_type.equalsIgnoreCase("DivTotal") ||
-		data_type.equalsIgnoreCase("DivClass") ||
-		data_type.equalsIgnoreCase("RelTotal") ||
-		data_type.equalsIgnoreCase("RelClass"))) {
+	if ( (interval_base == TimeInterval.DAY) &&
+		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("DivClass") ||
+		data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("RelClass"))) {
 		String FillDailyDiv = props.getValue ( "FillDailyDiv" );
 		if ( (FillDailyDiv == null) || FillDailyDiv.equals("") ) {
 			FillDailyDiv = "true";	// Default is to fill.
 		}
 		if ( FillDailyDiv.equalsIgnoreCase("true") ) {
-			String FillDailyDivFlag = props.getValue (
-				"FillDailyDivFlag" );
-			// REVISIT SAM 2006-04-25
-			// This throws an Exception.  Leave it for now but need
+			String FillDailyDivFlag = props.getValue ( "FillDailyDivFlag" );
+			// TODO SAM 2006-04-25 This throws an Exception.  Leave it for now but need
 			// to evaluate how to handle errors..
-			HydroBase_Util.fillTSIrrigationYearCarryForward (
-					(DayTS)ts, FillDailyDivFlag );
+			HydroBase_Util.fillTSIrrigationYearCarryForward ( (DayTS)ts, FillDailyDivFlag );
 		}
 	}
 
 	// Fill with diversion comments (after observations)...
 
-	if (	((interval_base == TimeInterval.DAY) ||
+	if ( ((interval_base == TimeInterval.DAY) ||
 		(interval_base == TimeInterval.MONTH) ||
 		(interval_base == TimeInterval.YEAR)) &&
-		(data_type.equalsIgnoreCase("DivTotal") ||
-		data_type.equalsIgnoreCase("DivClass") ||
-		data_type.equalsIgnoreCase("RelTotal") ||
-		data_type.equalsIgnoreCase("RelClass"))) {
-		String FillUsingDivComments =
-			props.getValue ( "FillUsingDivComments" );
-		if (	(FillUsingDivComments == null) ||
-			FillUsingDivComments.equals("") ) {
-			FillUsingDivComments = "false";
-						// Default is NOT to fill.
+		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("DivClass") ||
+		data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("RelClass"))) {
+		String FillUsingDivComments = props.getValue ( "FillUsingDivComments" );
+		if ( (FillUsingDivComments == null) || FillUsingDivComments.equals("") ) {
+			FillUsingDivComments = "false"; // Default is NOT to fill.
 		}
 		if ( FillUsingDivComments.equalsIgnoreCase("true") ) {
-			String FillUsingDivCommentsFlag = props.getValue (
-				"FillUsingDivCommentsFlag" );
-			// REVISIT SAM 2006-04-25
-			// This throws an Exception.  Leave it for now but need
+			String FillUsingDivCommentsFlag = props.getValue ( "FillUsingDivCommentsFlag" );
+			// TODO SAM 2006-04-25 This throws an Exception.  Leave it for now but need
 			// to evaluate how to handle errors..
 			HydroBase_Util.fillTSUsingDiversionComments (
-				this, ts, req_date1, req_date2,
-				FillUsingDivCommentsFlag,
-				true );	// Extend period if diversion comments
-					// are available
+				this, ts, req_date1, req_date2, FillUsingDivCommentsFlag,
+				true );	// Extend period if diversion comments are available
 		}
 	}
-
 	return ts;
 }
 
@@ -19565,8 +18537,7 @@ stored procedures and those that do not, and it handles calling SPFlex or
 the readXXXList() method, as appropriate.
 @param panel the panel of InputFilters that hold the query constraints.
 @param districtWhere the value returned by getWaterDistrictWhereClause().
-@param mapQueryLimits the GRLimits defining the geographical area for which
-to query.
+@param mapQueryLimits the GRLimits defining the geographical area for which to query.
 @return a Vector of HydroBase_Transact objects.
 @throws Exception if there is an error running the query.
 */
@@ -22501,7 +21472,21 @@ The parameters are as follows:<p>
 @throws Exception if there is an error running the stored procedure.
 */
 private ResultSet runSPFlex(String[] parameters) 
-throws Exception {
+throws Exception
+{   if ( Message.isDebugOn ) {
+        Message.printDebug ( 30, "runSPFlex", "parameters:" );
+        for ( int i = 0; i < parameters.length; i++ ) {
+            Message.printDebug ( 30, "runSPFlex", "parameters[" + i + "] = " + parameters[i] );
+        }
+    }
+    int numParameters = (parameters.length - 3)/3; // 3 is the first one and last two
+    if ( numParameters > getSPFlexMaxParameters() ) {
+        String routine = getClass().getName() + "runSPFlex";
+        String message = "Trying to query HydroBase with SPFlex with " + numParameters +
+            " parameters.  Maximum allowed is " + getSPFlexMaxParameters();
+        Message.printWarning(3,routine, message );
+        throw new RuntimeException ( message );
+    }
 	if (__uspFlexStoredProcedureData == null) {
 		__uspFlexStoredProcedureData = new DMIStoredProcedureData(this, "usp_Flex");
 		__uspFlexSelectStatement = new DMISelectStatement(this);
@@ -22529,8 +21514,7 @@ DMISelectStatement __uspFlexSelectStatement = null;
 /**
 Save any changed user preferences to the database.  After saving, the 
 previously-changed user preferences are no longer marked as modified.  
-@return true if the preferences were successfully saved to the database.  
-False if not.
+@return true if the preferences were successfully saved to the database.  False if not.
 */
 public boolean saveUserPreferences() {
 	String function = "HydroBaseDMI.savePreferences";
@@ -22540,17 +21524,16 @@ public boolean saveUserPreferences() {
 		return false;
 	}
 
-        Message.printStatus(2, function,
-		"Checking for user preferences that have changed...");
+    Message.printStatus(2, function, "Checking for user preferences that have changed...");
 	
-        // loop over all the preference fields
+    // loop over all the preference fields
 	int size = __prefsProps.size();
 
 	// So that it is not confusing to users who did not save options, do
 	// an initial pass to see if anything does need to be updated...
 	boolean needToSave = false;
 	Prop p = null;	
-        for(int i = 0; i < size; i++) {
+    for(int i = 0; i < size; i++) {
 		p = __prefsProps.propAt(i);
 		if (p.getHowSet() == Prop.SET_AT_RUNTIME_BY_USER) {
 			needToSave = true;
@@ -22558,8 +21541,7 @@ public boolean saveUserPreferences() {
 	}
 
 	if (!needToSave) {
-		Message.printStatus(2, function,
-			"No preferences have changed.  Don't need to save.");
+		Message.printStatus(2, function, "No preferences have changed.  Don't need to save.");
 		return true;
 	}
 

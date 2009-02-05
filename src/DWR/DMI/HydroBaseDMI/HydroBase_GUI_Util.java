@@ -218,7 +218,7 @@ public final static int GROUND_WATER = 3;
 /**
 The number of parameter triplets that SPFlex can handle.
 */
-private final static int __NUM_TRIPLETS = 6;
+private final static int __NUM_TRIPLETS = HydroBaseDMI.getSPFlexMaxParameters();
 
 /**
 The user number of the user for which preferences were read from the database.
@@ -236,8 +236,7 @@ Label string that appears by the query results table.
 */
 public final static String LIST_LABEL = "Query Results List:";	
 
-// REVISIT SAM 2006-10-30
-// Need to clarify what these are really used for... are they identifiers for
+// TODO SAM 2006-10-30 Need to clarify what these are really used for... are they identifiers for
 // windows?  Table names should not be used in the applications!
 /**
 Strings used by GUI objects.  These strings are used to separate database-
@@ -314,12 +313,13 @@ static {
 }	
 
 /**
-Adds a triplet to the parameter list in the first position available.
+Adds a triplet to the parameter list in the first "where" triplet position that is available.
 @param parameter the parameter list that has already been set up.
 @param triplet the triplet to put in the parameter list.
 */
 public static void addTriplet(String[] parameters, String[] triplet) {
 	for (int i = 0; i < __NUM_TRIPLETS; i++) {
+	    // Find first open slot for "where" and fill with the provided information.
 		if (parameters[1 + (i * 3)].equals("-999")) {
 			parameters[1 + (i * 3)] = triplet[0];
 			parameters[2 + (i * 3)] = triplet[1];
@@ -327,6 +327,10 @@ public static void addTriplet(String[] parameters, String[] triplet) {
 			return;
 		}
 	}
+    // Trying to add a where more than the maximum that can be handled by SPFlex
+    String message = "Trying to add where clause (" + triplet[0] + " " + triplet[1] + " " +
+        triplet[2] + ") to SPFlex - exceeding limit of " + __NUM_TRIPLETS;
+    throw new RuntimeException ( message );
 }
 
 /**
@@ -352,8 +356,7 @@ private static String appendAnd(String s) {
 /**
 Builds a location string and puts it in the given text field.  If the text
 field already contains a location string, that string is edited instead.
-@param textField the textField for which to create a location string or 
-edit an existing one.
+@param textField the textField for which to create a location string or edit an existing one.
 */
 public static void buildLocation(JFrame frame, JTextField textField) {
 	String routine = "HydroBase_GUI_Util.buildLocation";
@@ -436,19 +439,16 @@ throws Exception {
 
 /**
 Given an array of stored procedure parameters, this will fill in missing 
-information, which includes the viewNumber to run, the order by information,
-and the mapQueryLimit information.<p>
+information, which includes the viewNumber to run, the order by information, and the mapQueryLimit information.<p>
 <b>NOTE:</b> currently order by and mapquery information are not filled in.
 @param parameters the array of stored procedure parameters to fill in.
 @param viewNumber the internal number of the SPFlex view to run.
 @param orderBys the order by statement that should be taken into account with
-the query.  If no ordering is to be done with the query, this should be less
-than or equal to 0.
-@param mapQueryLimits the mapquerylimits to use in limiting the geographic
-area of the query.  Currently ignored.  In future can be null.
+the query.  If no ordering is to be done with the query, this should be less than or equal to 0.
+@param mapQueryLimits the mapquerylimits to use in limiting the geographic area of the query.
 */
-protected static void fillSPParameters(String[] parameters, String viewNumber, 
-int orderBy, GRLimits mapQueryLimits) {
+protected static void fillSPParameters(String[] parameters, String viewNumber, int orderBy, GRLimits mapQueryLimits)
+{
 	parameters[0] = viewNumber;
 	if (orderBy > 0) {
 		parameters[parameters.length -2] = "" + orderBy;
@@ -458,7 +458,7 @@ int orderBy, GRLimits mapQueryLimits) {
 	}
 	parameters[parameters.length - 1] = "CDSS";
 
-	int FIRST_PARAMETER = 1;
+	int FIRST_PARAMETER = 1; // Skip 0th element, which is the stored procedure number
 
 	if (mapQueryLimits == null) {
 		return;
@@ -470,13 +470,10 @@ int orderBy, GRLimits mapQueryLimits) {
 		+ mapQueryLimits.getBottomY() + ","
 		+ mapQueryLimits.getTopY();
 
-	for (int i = FIRST_PARAMETER; 
-	    i <= FIRST_PARAMETER + (__NUM_TRIPLETS * 3); 
-	    i += 3) {
+	for (int i = FIRST_PARAMETER; i <= FIRST_PARAMETER + (__NUM_TRIPLETS * 3); i += 3) {
 	    	if (parameters[i].equals("-999")) {
-			// missing parameter, so fit the map query limits in 
-			// this position.
-			parameters[i]     = "utm_bounds";
+			// Missing parameter, so fit the map query limits in this position.
+			parameters[i] = "utm_bounds";
 			parameters[i + 1] = "EQ";
 			parameters[i + 2] = queryString;
 			return;
@@ -1148,8 +1145,7 @@ in the parameter list.
 See HydroBaseDMI.runSPFlex() for more information.
 @throws Exception if there is an error building the parameter array.
 */
-public static String[] getSPFlexParameters(InputFilter_JPanel panel,
-String[] districtWhere) 
+public static String[] getSPFlexParameters(InputFilter_JPanel panel, String[] districtWhere) 
 throws Exception {
 	InputFilter filter = null;
 	int nfg = 0;
@@ -1178,9 +1174,8 @@ throws Exception {
 			parameters[count++] = "NE";
 			parameters[count++] = "-1";
 		}
-		else if (districtWhere[1].equals(
-		    HydroBase_GUI_Util._DIVISION_8)) {
-		    	parameters[count++] = "div";
+		else if (districtWhere[1].equals( HydroBase_GUI_Util._DIVISION_8)) {
+		    parameters[count++] = "div";
 			parameters[count++] = "EQ";
 			parameters[count++] = "8";
 		}
@@ -1197,15 +1192,12 @@ throws Exception {
 
 	// Loop through all the InputFilters and put their values into 
 	// the array.  getSPFlexParametersTriplet() will build an array 
-	// with the field to query, the SPFlex comparator, and the value
-	// to query against.
+	// with the field to query, the SPFlex comparator, and the value to query against.
 	for (int i = 0; i < nfg; i++) {
 		filter = panel.getInputFilter(i);	
-		triplet = getSPFlexParametersTriplet(filter, 
-			panel.getOperator(i));
+		triplet = getSPFlexParametersTriplet(filter, panel.getOperator(i));
 		if (triplet != null) {
-			// non-null triplets contain values and can be put
-			// into the array
+			// non-null triplets contain values and can be put into the array
 			parameters[count++] = triplet[0];
 			parameters[count++] = triplet[1];
 			parameters[count++] = triplet[2];
@@ -1220,8 +1212,7 @@ throws Exception {
 }
 
 /**
-Builds an array containing the SPFlex information for a query from an
-InputFilter.
+Builds an array containing the SPFlex information for a query from an InputFilter.
 @param filter the filter for which to build the SPFlex information.
 @param op the operator selected for the InputFilter in the panel.
 @return a three-element array containing:<p>
@@ -1231,8 +1222,7 @@ InputFilter.
 <i>null</i> will be returned if no field was selected in the InputFilter.
 @throws Exception if an error occurs.
 */
-public static String[] getSPFlexParametersTriplet(InputFilter filter, 
-String op) 
+public static String[] getSPFlexParametersTriplet(InputFilter filter, String op) 
 throws Exception {
 	String[] triplet = new String[3];
 	// Get the selected filter for the filter group...
@@ -1262,7 +1252,7 @@ throws Exception {
 	triplet[2] = filter.getInputInternal().trim();
 
 	if (op.equalsIgnoreCase(InputFilter.INPUT_BETWEEN)) {
-		// REVISIT - need to enable in InputFilter_JPanel.
+		// TODO - need to enable in InputFilter_JPanel.
 	}
 	else if (op.equalsIgnoreCase( InputFilter.INPUT_CONTAINS)) {
 		triplet[1] = "CN";

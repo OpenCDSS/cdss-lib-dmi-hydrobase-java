@@ -109,8 +109,7 @@ import RTi.Util.Time.DateTime;
 import RTi.Util.Time.TimeInterval;
 
 /**
-The HydroBase_Util class contains utility methods for manipulating HydroBase
-data objects.
+The HydroBase_Util class contains utility methods for manipulating HydroBase data objects.
 */
 public class HydroBase_Util
 {
@@ -165,8 +164,7 @@ data object to query the unpermitted_wells table and then set the common_id in
 the objects to the USGS or USBR identifier from unpermitted_wells.  This is a
 work-around until HydroBase is redesigned to better handle well data.
 */
-public final static void addAlternateWellIdentifiers (	HydroBaseDMI dmi,
-							List list )
+public final static void addAlternateWellIdentifiers ( HydroBaseDMI dmi, List list )
 {	HydroBase_StructureGeolocStructMeasType data;
 	int size = 0;
 	if ( list != null ) {
@@ -175,11 +173,9 @@ public final static void addAlternateWellIdentifiers (	HydroBaseDMI dmi,
 	
 	HydroBase_GroundWaterWellsView uws;
 	for ( int i = 0; i < size; i++ ) {
-		data = (HydroBase_StructureGeolocStructMeasType)
-			list.get(i);
+		data = (HydroBase_StructureGeolocStructMeasType)list.get(i);
 		try {	
-			uws = dmi.readGroundWaterWellsMeasType(
-				data.getStructure_num());
+			uws = dmi.readGroundWaterWellsMeasType(data.getStructure_num());
 			if ( uws == null ) {
 				continue;
 			}
@@ -203,8 +199,7 @@ in the database, and the F: if specified is 7-digits padded to zeros.  Requests 
 the old SFUT with no G: are updated as follows.
 <ol>
 <li>	" G:" is added to the end of the identifier.</li>
-<li>	The F: (if specified as non-blank) is updated to a 7-digit value padded
-		with zeros.</li>
+<li>	The F: (if specified as non-blank) is updated to a 7-digit value padded with zeros.</li>
 </ol>
 If the database is earlier than 20061003, then the new G: is NOT included in the identifier
 in the database, and the F: if specified as the structure number in the district of the
@@ -220,17 +215,15 @@ structure.  Requests using the new SFUT(G) are updated as follows.
 @param wd Water district identifier, needed to adjust the F: to/from 7-digits.
 @param id Structure identifier.
 @param identifier The SFUT(G) identifier to adjust.
-@returns An SFUT(G) identifier that can be used to query data in the database
-version that is being used.
+@returns An SFUT(G) identifier that can be used to query data in the database version that is being used.
 */
-public static String adjustSFUTForHydroBaseVersion ( HydroBaseDMI dmi, int wd, int id,
-		String identifier )
+public static String adjustSFUTForHydroBaseVersion ( HydroBaseDMI dmi, int wd, int id, String identifier )
 throws Exception
 {	if ( (identifier == null) || (identifier.length() == 0) ) {
 		return identifier;
 	}
-	String identifier_new = identifier;
-	boolean need_to_adjust = false;	// true if need to adjust SFUT string
+	String identifierNew = identifier;
+	boolean needToAdjust = false;	// true if need to adjust SFUT string
 	String G = "";
 	String F = "";
 	String[] SFUT_parts = HydroBase_Util.parseSFUT( identifier );
@@ -238,23 +231,22 @@ throws Exception
 		// Version that requires G: and 7-digit F: in SFUT.
 		if ( identifier.indexOf("G:") < 0 ){
 			// Requested identifier does not have G: so add it as blank...
-			need_to_adjust = true;
+			needToAdjust = true;
 		}
 		if ( SFUT_parts[1].length() > 0 ) {
 			// Have a non-blank F: so make sure it is 7-digits
 			F = SFUT_parts[1];	// Default is use all 7
 			if ( F.length() < 7 ) {
 				// Reformat to be 7 characters.  Assume that the WDID for the F: is
-				// the same as that passed in to this method.  Make sure that the
-				// overall length is 7.
-				need_to_adjust = true;
+				// the same as that passed in to this method.  Make sure that the overall length is 7.
+				needToAdjust = true;
 				F = HydroBase_WaterDistrict.formWDID(7,""+wd,F);
 			}
 		}
-		if ( need_to_adjust ) {
+		if ( needToAdjust ) {
 			// TODO SAM 2007-02-26 Might need an SFUT object to handle its own parse/toString().
 			// Reformat the identifier to include G: and 7-digit FROM...
-			identifier_new = "S:" + SFUT_parts[0] +
+			identifierNew = "S:" + SFUT_parts[0] +
 							" F:" + F +
 							" U:" + SFUT_parts[2] +
 							" T:" + SFUT_parts[3] +
@@ -265,7 +257,7 @@ throws Exception
 		// HydroBase version that DOES NOT include G: and 7-digit F: in SFUT.
 		// Adjust the data back to the old format, if possible.
 		if ( SFUT_parts.length > 4 ) {
-			need_to_adjust = true;	// Simple cut - omit G below
+			needToAdjust = true;	// Simple cut - omit G below
 			// Have a G: OK to cut off if blank but problems otherwise.
 			if ( SFUT_parts[4].length() > 0 ) {
 				throw new Exception ( "New SFUT with non-blank G: (" + identifier +
@@ -276,39 +268,41 @@ throws Exception
 		if ( F.length() >= 7 ) {
 			// Reformat to just be the ID.  In this case, the WD part must agree
 			// with the WD passed in to this method.
-			need_to_adjust = true;
+			needToAdjust = true;
 			int [] wdid_parts = HydroBase_WaterDistrict.parseWDID( F );
 			if ( wdid_parts[0] != wd ) {
 				throw new Exception ( "Long F: WDID (" + SFUT_parts[1] +
 						") has different WD than structure.  Request is not compatible with older HydroBase." );
 			}
-			else {	F = "" + wdid_parts[1];
-					need_to_adjust = true;
+			else {
+			    F = "" + wdid_parts[1];
+				needToAdjust = true;
 			}
 		}
-		if ( need_to_adjust ) {
+		if ( needToAdjust ) {
 			// TODO SAM 2007-02-26 Might need an SFUT object to handle its own parse/toString().
 			// Reformat the identifier to exclude G: and not use 7-digit FROM...
-			identifier_new = "S:" + SFUT_parts[0] +
+			identifierNew = "S:" + SFUT_parts[0] +
 							" F:" + F +
 							" U:" + SFUT_parts[2] +
 							" T:" + SFUT_parts[3];
 		}
 	}
-	Message.printStatus(2, "", "Adjusted SFUT=\"" + identifier_new + "\"" );
-	return identifier_new;
+	if ( needToAdjust ) {
+	    Message.printStatus(2, "", "Changed SFUT for HydroBase version, original SFUT=\"" + identifier +
+	    "\" Adjusted SFUT=\"" + identifierNew + "\"" );
+	}
+	return identifierNew;
 }
 
 /**
-Builds a location string, suitable for display in a table, given the 
-passed-in parameters.
-REVISIT (JTS - 2006-05-25)
-Combine with the other buildLocation() method, overload one, because there's 
+Builds a location string, suitable for display in a table, given the passed-in parameters.
+TODO (JTS - 2006-05-25) Combine with the other buildLocation() method, overload one, because there's 
 a lot of duplicate code.
 */
 public final static String buildLocation(String pm, int ts, String tdir,
-int rng, String rdir, int sec, String seca, String q160, String q40,
-String q10) {
+int rng, String rdir, int sec, String seca, String q160, String q40, String q10)
+{
 	if (DMIUtil.isMissing(pm)) {
 		pm = " ";
 	}
@@ -358,20 +352,17 @@ String q10) {
 
 	q10 = StringUtil.formatString(q10, "%2.2s");
 
-	return pm + " " + tsS + tdir + " " + rngS + rdir + " " + secS + seca
-		+ " " + q160 + " " + q40 + " " + q10;
+	return pm + " " + tsS + tdir + " " + rngS + rdir + " " + secS + seca + " " + q160 + " " + q40 + " " + q10;
 }
 
 /**
-Builds a location string, suitable for display in a table, given the 
-passed-in parameters.
-REVISIT (JTS - 2006-05-25)
-Combine with the other buildLocation() method, overload one, because there's 
+Builds a location string, suitable for display in a table, given the passed-in parameters.
+TODO (JTS - 2006-05-25) Combine with the other buildLocation() method, overload one, because there's 
 a lot of duplicate code.
 */
 public final static String buildLocation(String pm, String ts, String tdir,
-String rng, String rdir, int sec, String seca, String q160, String q40,
-String q10) {
+String rng, String rdir, int sec, String seca, String q160, String q40, String q10)
+{
 	if (DMIUtil.isMissing(pm)) {
 		pm = " ";
 	}
@@ -421,15 +412,12 @@ String q10) {
 
 	q10 = StringUtil.formatString(q10, "%2.2s");
 
-	return pm + " " + tsS + tdir + " " + rngS + rdir + " " + secS + seca
-		+ " " + q160 + " " + q40 + " " + q10;
+	return pm + " " + tsS + tdir + " " + rngS + rdir + " " + secS + seca + " " + q160 + " " + q40 + " " + q10;
 }
 
 /**
-Builds a location string, suitable for display in a table, given the 
-passed-in parameters.
-REVISIT (JTS - 2006-05-25)
-Combine with the other buildLocation() method, overload one, because there's 
+Builds a location string, suitable for display in a table, given the passed-in parameters.
+TODO (JTS - 2006-05-25) Combine with the other buildLocation() method, overload one, because there's 
 a lot of duplicate code.
 */
 public final static String buildLocation(String pm, String ts,
@@ -470,27 +458,22 @@ String q10) {
 
 	q10 = StringUtil.formatString(q10, "%2.2s");
 
-	return pm + " " + ts + " " + rng + " " + secS + seca
-		+ " " + q160 + " " + q40 + " " + q10;
+	return pm + " " + ts + " " + rng + " " + secS + seca + " " + q160 + " " + q40 + " " + q10;
 }
 
 /**
-Convert a data type and data interval from general time series notation to
-HydroBase meas_type, struct_meas_type table convention.
-For example, "StreamflowMax", "Month" will be converted to "Streamflow",
-"Monthly".  Specific actions are taken for station and structure data and other
+Convert a data type and data interval from general time series notation to HydroBase meas_type, struct_meas_type
+table convention.  For example, "StreamflowMax", "Month" will be converted to "Streamflow", "Monthly".
+Specific actions are taken for station and structure data and other
 data types (AgStats, irrig_ts_summary, and WIS) pass through the GUI values.
 @param data_type A data type from an application (e.g., "StreamflowMax"),
 corresponding to an entry in the HydroBase meas_type or struct_meas_type table.
 @param interval A time series notation interval (e.g., "Day", "Month").
 @return The HydroBase equivalent meas_type data, as an array.  The [0] position
 will contain the data type.  The [1] position will contain a sub data type,
-if appropriate, or an empty string.  The [2] position will contain the data
-interval.
+if appropriate, or an empty string.  The [2] position will contain the data interval.
 */
-public final static String [] convertToHydroBaseMeasType (
-							String data_type,
-							String interval )
+public final static String [] convertToHydroBaseMeasType ( String data_type, String interval )
 {	String [] hb = new String[3];
 	hb[0] = "";
 	hb[1] = "";
@@ -521,25 +504,23 @@ public final static String [] convertToHydroBaseMeasType (
 		data_type = StringUtil.getToken ( data_type, "-", 0, 0 );
 	}
 
-	// Order by data types and group when multiple time series are in the
-	// same table...
+	// Order by data types and group when multiple time series are in the same table...
 
-	if(data_type.equalsIgnoreCase("AdminFlow") ||
-			data_type.equalsIgnoreCase("AdminFlowMax") ||
-			data_type.equalsIgnoreCase("AdminFlowMin") ) {
-			// All these match the AdminFlow meas_type...
-			hb[0] = "AdminFlow";
-			if (	interval.equalsIgnoreCase("RealTime") ||
-				interval.equalsIgnoreCase("Irregular") ) {
-				hb[0] = "RT_rate";
-				if ( sub_data_type.length() > 0 ) {
-					// Assume that the vax_field is accurate...
-					hb[1] = sub_data_type;
-				}
-				else {	hb[1] = "DISCHRG";	// Assume this
-				}
-				hb[2] = "Real-time";
+	if(data_type.equalsIgnoreCase("AdminFlow") || data_type.equalsIgnoreCase("AdminFlowMax") ||
+		data_type.equalsIgnoreCase("AdminFlowMin") ) {
+		// All these match the AdminFlow meas_type...
+		hb[0] = "AdminFlow";
+		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
+			hb[0] = "RT_rate";
+			if ( sub_data_type.length() > 0 ) {
+				// Assume that the vax_field is accurate...
+				hb[1] = sub_data_type;
 			}
+			else {
+			    hb[1] = "DISCHRG";	// Assume this
+			}
+			hb[2] = "Real-time";
+		}
 	}
 	else if ( data_type.equalsIgnoreCase("Battery") ) {
 		hb[0] = "RT_Misc";
@@ -580,10 +561,8 @@ public final static String [] convertToHydroBaseMeasType (
 		hb[0] = "Evap";
 		// Interval converted above.
 	}
-	else if( data_type.equalsIgnoreCase("FrostDateL28S") ||
-		data_type.equalsIgnoreCase("FrostDateL32S") ||
-		data_type.equalsIgnoreCase("FrostDateF32F") ||
-		data_type.equalsIgnoreCase("FrostDateF28F") ) {
+	else if( data_type.equalsIgnoreCase("FrostDateL28S") || data_type.equalsIgnoreCase("FrostDateL32S") ||
+		data_type.equalsIgnoreCase("FrostDateF32F") || data_type.equalsIgnoreCase("FrostDateF28F") ) {
 		hb[0] = "FrostDate";
 		hb[2] = "Annual";
 	}
@@ -598,7 +577,7 @@ public final static String [] convertToHydroBaseMeasType (
 			hb[2] = "Annual";
 		}
 		else if ( interval.equalsIgnoreCase("Year") ) {
-			// To get only the annual ammount...
+			// To get only the annual amount...
 			hb[2] = "Annual";
 		}
 	}
@@ -609,7 +588,7 @@ public final static String [] convertToHydroBaseMeasType (
 			hb[2] = "Annual";
 		}
 		else if ( interval.equalsIgnoreCase("Year") ) {
-			// To get only the annual ammount...
+			// To get only the annual amount...
 			hb[2] = "Annual";
 		}
 	}
@@ -624,7 +603,7 @@ public final static String [] convertToHydroBaseMeasType (
 			hb[2] = "Annual";
 		}
 		else if ( interval.equalsIgnoreCase("Year") ) {
-			// To get only the annual ammount...
+			// To get only the annual amount...
 			hb[2] = "Annual";
 		}
 	}
@@ -635,7 +614,7 @@ public final static String [] convertToHydroBaseMeasType (
 			hb[2] = "Annual";
 		}
 		else if ( interval.equalsIgnoreCase("Year") ) {
-			// To get only the annual ammount...
+			// To get only the annual amount...
 			hb[2] = "Annual";
 		}
 	}
@@ -656,8 +635,7 @@ public final static String [] convertToHydroBaseMeasType (
 	else if ( data_type.equalsIgnoreCase("Precip") ) {
 		hb[0] = "Precip";
 		// Interval converted above.
-		if (	interval.equalsIgnoreCase("RealTime") ||
-			interval.equalsIgnoreCase("Irregular") ) {
+		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
 			hb[0] = "RT_Misc";
 			hb[1] = "PRECIP";
 			// Interval converted above.
@@ -675,7 +653,7 @@ public final static String [] convertToHydroBaseMeasType (
 			hb[2] = "Annual";
 		}
 		else if ( interval.equalsIgnoreCase("Year") ) {
-			// To get only the annual ammount...
+			// To get only the annual amount...
 			hb[2] = "Annual";
 		}
 	}
@@ -695,7 +673,7 @@ public final static String [] convertToHydroBaseMeasType (
 			hb[2] = "Annual";
 		}
 		else if ( interval.equalsIgnoreCase("Year") ) {
-			// To get only the annual ammount...
+			// To get only the annual amount...
 			hb[2] = "Annual";
 		}
 	}
@@ -707,10 +685,8 @@ public final static String [] convertToHydroBaseMeasType (
 		hb[0] = "ResEOY";
 		// Monthly interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("ResMeasElev") ||
-		data_type.equalsIgnoreCase ( "ResMeasEvap" ) ||
-		data_type.equalsIgnoreCase ( "ResMeasFill" ) ||
-		data_type.equalsIgnoreCase ( "ResMeasRelease" ) ||
+	else if ( data_type.equalsIgnoreCase("ResMeasElev") || data_type.equalsIgnoreCase ( "ResMeasEvap" ) ||
+		data_type.equalsIgnoreCase ( "ResMeasFill" ) || data_type.equalsIgnoreCase ( "ResMeasRelease" ) ||
 		data_type.equalsIgnoreCase ( "ResMeasStorage" ) ) {
 		hb[0] = "ResMeas";
 		hb[2] = "Random";
@@ -719,11 +695,9 @@ public final static String [] convertToHydroBaseMeasType (
 		hb[0] = "Snow";
 		// Interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("SnowCourseDepth") ||
-		data_type.equalsIgnoreCase("SnowCourseSWE") ) {
+	else if ( data_type.equalsIgnoreCase("SnowCourseDepth") || data_type.equalsIgnoreCase("SnowCourseSWE") ) {
 		hb[0] = "SnowCrse";
-		// Interval in HydroBase is monthly even though time series will
-		// be treated as daily.
+		// Interval in HydroBase is monthly even though time series will be treated as daily.
 		hb[2] = "Monthly";
 	}
 	else if ( data_type.equalsIgnoreCase("Solar") ) {
@@ -740,19 +714,18 @@ public final static String [] convertToHydroBaseMeasType (
 		hb[1] = "STORAGE";
 		hb[2] = "Real-time";
 	}
-	else if(data_type.equalsIgnoreCase("Streamflow") ||
-		data_type.equalsIgnoreCase("StreamflowMax") ||
+	else if(data_type.equalsIgnoreCase("Streamflow") || data_type.equalsIgnoreCase("StreamflowMax") ||
 		data_type.equalsIgnoreCase("StreamflowMin") ) {
 		// All these match the Streamflow meas_type...
 		hb[0] = "Streamflow";
-		if (	interval.equalsIgnoreCase("RealTime") ||
-			interval.equalsIgnoreCase("Irregular") ) {
+		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
 			hb[0] = "RT_rate";
 			if ( sub_data_type.length() > 0 ) {
 				// Assume that the vax_field is accurate...
 				hb[1] = sub_data_type;
 			}
-			else {	hb[1] = "DISCHRG";	// Assume this
+			else {
+			    hb[1] = "DISCHRG";	// Assume this
 			}
 			hb[2] = "Real-time";
 		}
@@ -771,8 +744,7 @@ public final static String [] convertToHydroBaseMeasType (
 		hb[0] = "MinTemp";
 		// Daily interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("TempMeanMax") ||
-		data_type.equalsIgnoreCase("TempMeanMin") ||
+	else if ( data_type.equalsIgnoreCase("TempMeanMax") || data_type.equalsIgnoreCase("TempMeanMin") ||
 		data_type.equalsIgnoreCase("TempMean") ) {
 		hb[0] = "MeanTemp";
 		// Monthly interval converted above.
@@ -787,8 +759,7 @@ public final static String [] convertToHydroBaseMeasType (
 		hb[2] = "Real-time";
 	}
 	else if ( data_type.equalsIgnoreCase("WellLevel") ) {
-		if (	interval.equalsIgnoreCase("RealTime") ||
-			interval.equalsIgnoreCase("Irregular") ) {
+		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
 			hb[0] = "RT_Misc";
 			hb[1] = "WELL_1";
 		}
@@ -798,7 +769,8 @@ public final static String [] convertToHydroBaseMeasType (
 			hb[2] = "Day";
 		}
 		// XJTSX
-		else {	hb[0] = "WellLevel";
+		else {
+		    hb[0] = "WellLevel";
 			hb[2] = "Random";
 		}
 	}
@@ -811,14 +783,12 @@ public final static String [] convertToHydroBaseMeasType (
 }
 
 /**
-Creates a Property List with information needed to fill a Time Series with a
-constant value.
+Creates a Property List with information needed to fill a Time Series with a constant value.
 @param inputTS Time Series to fill.
 @param value Constant used to fill the Time Series.
 @param start Start DateTime for filling.
 @param end End DateTime for filling.
-@return PropList List that contains information on filling a constant value for
-the given Time Series and dates.
+@return PropList List that contains information on filling a constant value for the given Time Series and dates.
  */
 public static PropList createFillConstantPropList( TS inputTS, String value,
 		String fillFlag, DateTime start, DateTime end)
@@ -838,8 +808,7 @@ public static PropList createFillConstantPropList( TS inputTS, String value,
 	}
 	
 	// Create the PropList
-	PropList prop = new PropList(
-		"List to fill TS with constant value");
+	PropList prop = new PropList( "List to fill TS with constant value");
 	prop.add( "FillConstantValue=" + value );
 	prop.add( "StartDate=" + start.toString() );
 	prop.add( "EndDate=" + end.toString() );
@@ -869,8 +838,7 @@ time series by carrying forward data.  The following rules are applied:
 @param FillDailyDivFlag A one-character value used to flag filled data.
 @exception Exception if there is an error filling the data.
 */
-static void fillTSIrrigationYearCarryForward (
-					DayTS ts, String FillDailyDivFlag )
+static void fillTSIrrigationYearCarryForward ( DayTS ts, String FillDailyDivFlag )
 throws Exception
 {	String routine = "HydroBase_Util.fillTSIrrigationYearCarryForward";
 	if ( ts == null ) {
@@ -885,8 +853,7 @@ throws Exception
 
 	// Allocate fill flag space in the time series, if necessary...
 
-	boolean FillDailyDivFlag_boolean = false;	// Indicate whether to
-							// use flag
+	boolean FillDailyDivFlag_boolean = false;	// Indicate whether to use flag
 	if ( (FillDailyDivFlag != null) && (FillDailyDivFlag.length() > 0) ) {
 		FillDailyDivFlag_boolean = true;
 		// Make sure that the data flag is allocated.
@@ -913,8 +880,7 @@ throws Exception
 	int missing_count = 0;		// Count of missing values in a year
 	double value = 0.0;		// Time series data value
 	double fill_value = 0.0;	// Value to be used to fill data.
-	TSData tsdata = null;		// Needed to retrieve time series data
-					// with flags.
+	TSData tsdata = null;		// Needed to retrieve time series data with flags.
 	for ( ; date.lessThanOrEqualTo(FillEnd_DateTime); date.addDay(1) ) {
 		if ( (date.getMonth() == 11) && (date.getDay() == 1) ) {
 			// Start of a new irrigation year.
@@ -928,17 +894,13 @@ throws Exception
 			yearend_DateTime.setDay ( 31 );
 			if ( Message.isDebugOn ) {
 				Message.printDebug ( 2, routine,
-				"Checking for data in " + yearstart_DateTime +
-				" to " + yearend_DateTime );
+				"Checking for data in " + yearstart_DateTime + " to " + yearend_DateTime );
 			}
 			found_count = 0;
 			if ( Message.isDebugOn ) {
-				Message.printDebug ( 2, "",
-				"Processing irrigation year starting at " +
-				date );
+				Message.printDebug ( 2, "", "Processing irrigation year starting at " + date );
 			}
-			for ( ; date.lessThanOrEqualTo(yearend_DateTime);
-				date.addDay(1) ) {
+			for ( ; date.lessThanOrEqualTo(yearend_DateTime); date.addDay(1) ) {
 				value = ts.getDataValue ( date );
 				if ( !ts.isDataMissing(value) ) {
 					// Have an observation...
@@ -946,52 +908,43 @@ throws Exception
 				}
 			}
 			if ( Message.isDebugOn ) {
-				Message.printDebug ( 2, routine, "Found " +
-				found_count + " days of observations." );
+				Message.printDebug ( 2, routine, "Found " + found_count + " days of observations." );
 			}
 			if ( found_count == 0 ) {
 				// Just continue and process the next year...
 				continue;
 			}
-			// Else, will repeat the year that was just checked to
-			// fill it in.
+			// Else, will repeat the year that was just checked to fill it in.
 			date = new DateTime(yearstart_DateTime);
 			fill_value = 0.0;
 			missing_count = 0;
-			for ( ; date.lessThanOrEqualTo(yearend_DateTime);
-				date.addDay(1) ) {
+			for ( ; date.lessThanOrEqualTo(yearend_DateTime); date.addDay(1) ) {
 				value = ts.getDataValue ( date );
 				if ( ts.isDataMissing(value) ) {
 					++missing_count;
 					if ( FillDailyDivFlag_boolean ) {
-						// Set the data flag, appending
-						// to the old value...
+						// Set the data flag, appending to the old value...
 						tsdata = ts.getDataPoint(date);
-						ts.setDataValue ( date,
-						fill_value,
-						(tsdata.getDataFlag().trim() +
-						FillDailyDivFlag), 1 );
+						ts.setDataValue ( date, fill_value, (tsdata.getDataFlag().trim() + FillDailyDivFlag), 1 );
 					}
-					else {	// No data flag...
-						ts.setDataValue ( date,
-							fill_value );
+					else {
+					    // No data flag...
+						ts.setDataValue ( date, fill_value );
 					}
 				}
-				else {	// Reset the value to be used to fill
-					// other data...
+				else {
+				    // Reset the value to be used to fill other data...
 					fill_value = value;
 				}
 			}
 			// Save messages to add to the genesis history...
 			if ( missing_count > 0 ) {
 				messages.add (
-				"Nov 1, " + yearstart_DateTime.getYear() +
-				" to Oct 31, " + yearend_DateTime.getYear() +
+				"Nov 1, " + yearstart_DateTime.getYear() + " to Oct 31, " + yearend_DateTime.getYear() +
 				" filled " + missing_count + " values." );
 			}
 			// Reset the date to the end of the irrigation year so
-			// that an increment will cause a new irrigation year
-			// to be processed...
+			// that an increment will cause a new irrigation year to be processed...
 			date = new DateTime ( yearend_DateTime );
 		}
 	}
@@ -1001,13 +954,10 @@ throws Exception
 	int size = messages.size();
 	if ( size > 0 ) {
 		ts.addToGenesis("Filled " + ts.getDate1() + " to " +
-		ts.getDate2() +
-		" using carry forward within irrigation year." );
+		ts.getDate2() + " using carry forward within irrigation year." );
 		if ( Message.isDebugOn ) {
-			// REVISIT SAM 2006-04-27
-			// Evaluate whether this should always be saved in the
-			// genesis.  The problem is that the genesis can get
-			// very long.
+			// TODO SAM 2006-04-27 Evaluate whether this should always be saved in the
+			// genesis.  The problem is that the genesis can get very long.
 			for ( int i = 0; i < size; i++ ) {
 				ts.addToGenesis ((String)messages.get(i));
 			}
@@ -1016,29 +966,24 @@ throws Exception
 }
 	
 /**
-Fill a daily, monthly, or yearly diversion (DivTotal, DivClass) or reservoir
-(RelTotal, RelClass) time series using diversion comment
-information.  Certain "not used" flags indicate a value of zero.  This method
-DOES NOT change the period of record to include comments outside the original
-period.  It also does not use a flag to indicate filled values.  Use the
-overloaded method to indicate filled values.
+Fill a daily, monthly, or yearly diversion (DivTotal, DivClass) or reservoir (RelTotal, RelClass) time series
+using diversion comment information.  Certain "not used" flags indicate a value of zero.  This method
+DOES NOT change the period of record to include comments outside the original period.  It also does not
+use a flag to indicate filled values.  Use the overloaded method to indicate filled values.
 @param hbdmi HydroBaseDMI to use for queries.
 @param ts Time series to fill.
 @param date1 Starting date to fill, or null to fill all.
 @param date2 Ending date to fill, or null to fill all.
-@exception Exception if there is an error filling the time series (e.g.,
-exception thrown querying HydroBase).
+@exception Exception if there is an error filling the time series (e.g., exception thrown querying HydroBase).
 */
-public static void fillTSUsingDiversionComments(HydroBaseDMI hbdmi, TS ts,
-						DateTime date1, DateTime date2)
+public static void fillTSUsingDiversionComments(HydroBaseDMI hbdmi, TS ts, DateTime date1, DateTime date2)
 throws Exception
 {	fillTSUsingDiversionComments ( hbdmi, ts, date1, date2, null, false );
 }
 
 /**
-Fill a daily, monthly, or yearly diversion (DivTotal, DivClass) or reservoir
-(RelTotal, RelClass) time series using diversion comment
-information.  Certain "not used" flags ("A", "B", "C", "D") indicate a value of
+Fill a daily, monthly, or yearly diversion (DivTotal, DivClass) or reservoir (RelTotal, RelClass) time series
+using diversion comment information.  Certain "not used" flags ("A", "B", "C", "D") indicate a value of
 zero for the irrigation year (Nov 1 to Oct 31).  Yearly time series are assumed
 to be in irrigation year, to match the diversion comments.
 @param hbdmi HydroBaseDMI to use for queries.
@@ -1054,13 +999,10 @@ if diversion comment values are found outside the current time series period.
 This will only occur if the fill dates are null (indicating that all available
 data should be used, for example in general queries).
 A value of true will extend the period if necessary.
-@exception Exception if there is an error filling the time series (e.g.,
-exception thrown querying HydroBase).
+@exception Exception if there is an error filling the time series (e.g., exception thrown querying HydroBase).
 */
-public static void fillTSUsingDiversionComments(HydroBaseDMI hbdmi, TS ts,
-						DateTime date1, DateTime date2,
-						String fillflag,
-						boolean extend_period )
+public static void fillTSUsingDiversionComments(HydroBaseDMI hbdmi, TS ts, DateTime date1, DateTime date2,
+	String fillflag, boolean extend_period )
 throws Exception
 {	String routine = "HydroBase_Util.fillDiversionUsingComments";
 
@@ -1072,26 +1014,21 @@ throws Exception
 	TS divcomts = null;
 	int interval_base = ts.getDataIntervalBase();
 	int interval_mult = ts.getDataIntervalMult();
-	try {	// Get the diversion comments as a time series, where the year
-		// in the time series is irrigation year.
-		if (	ts.getDataType().equalsIgnoreCase("DivTotal") ||
-			ts.getDataType().equalsIgnoreCase("DivClass") ) {
+	try {
+	    // Get the diversion comments as a time series, where the year in the time series is irrigation year.
+		if ( ts.getDataType().equalsIgnoreCase("DivTotal") || ts.getDataType().equalsIgnoreCase("DivClass") ) {
 			// Diversion comments...
 			divcomts = hbdmi.readTimeSeries(
-			ts.getLocation() + ".DWR.DivComment.Year",
-			date1, date2, null, true, null);
+			ts.getLocation() + ".DWR.DivComment.Year", date1, date2, null, true, null);
 		}
-		else if(ts.getDataType().equalsIgnoreCase("RelTotal") ||
-			ts.getDataType().equalsIgnoreCase("RelClass") ) {
+		else if(ts.getDataType().equalsIgnoreCase("RelTotal") || ts.getDataType().equalsIgnoreCase("RelClass") ) {
 			// Release comments...
 			divcomts = hbdmi.readTimeSeries(
-			ts.getLocation() + ".DWR.RelComment.Year",
-			date1, date2, null, true, null);
+			ts.getLocation() + ".DWR.RelComment.Year", date1, date2, null, true, null);
 		}
 	}
 	catch ( NoDataFoundException e ) {
-		// This is OK.  There just aren't any diversion comments in
-		// the database for this structure.
+		// This is OK.  There just aren't any diversion comments in the database for this structure.
 		divcomts = null;
 	}
 	catch(Exception e) {
@@ -1102,31 +1039,20 @@ throws Exception
 		throw new HydroBaseException ( message ); 
 	}
 	if ( divcomts == null ) {
-		Message.printStatus(2, routine,
-		"No diversion comments for " + ts.getIdentifierString() +
-		".  Not filling data.");
+		Message.printStatus(2, routine, "No diversion comments for " + ts.getIdentifierString() + ".  Not filling data.");
 		return;
 	}
 
 	DateTime divcomdate = new DateTime(divcomts.getDate1());
-	DateTime divcomend = new DateTime(divcomts.getDate2());
-						// Period for diversion comments
+	DateTime divcomend = new DateTime(divcomts.getDate2()); // Period for diversion comments
 	// The following causes the precision to be set correctly...
 	DateTime tsdate1 = new DateTime(ts.getDate1());
-	DateTime tsdate2 = new DateTime(ts.getDate2());
-						// Period for time series to
-						// fill.
-	String zero_flags = "ABCD";		// "not used" flag that
-						// indicates a zero value.
+	DateTime tsdate2 = new DateTime(ts.getDate2()); // Period for time series to fill.
+	String zero_flags = "ABCD"; 	// "not used" flag that indicates a zero value.
 
-	String not_used = null;			// Flag in diversion comments
-						// indicating whether diversion
-						// was used in irrigation year.
-	TSData tsdata = null;			// Single data point from a time
-						// series.
-	int fill_count = 0;			// Number of data values filled
-						// in the irrigation year (or
-						// number of years with
+	String not_used = null; // Flag in diversion comments indicating whether diversion was used in irrigation year.
+	TSData tsdata = null; // Single data point from a time series.
+	int fill_count = 0; // Number of data values filled in the irrigation year (or number of years with
 						// diversion comments below).
 	if ( (date1 == null) && (date2 == null) && extend_period ) {
 		// Loop through diversion comments once and determine whether
@@ -1134,26 +1060,21 @@ throws Exception
 		// the not_used flag is one of the zero values.
 		int yearmin = 3000;
 		int yearmax = -3000;
-		for (	; divcomdate.lessThanOrEqualTo(divcomend);
-			divcomdate.addYear(1)) {
+		for ( ; divcomdate.lessThanOrEqualTo(divcomend); divcomdate.addYear(1)) {
 			tsdata = divcomts.getDataPoint(divcomdate);
 			not_used = tsdata.getDataFlag();
-			if (	(not_used == null)|| (not_used.length() == 0) ||
-				(zero_flags.indexOf(not_used) < 0) ) {
-				// No need to process the flag because a zero
-				// water use flag is not specified...
+			if ( (not_used == null)|| (not_used.length() == 0) || (zero_flags.indexOf(not_used) < 0) ) {
+				// No need to process the flag because a zero water use flag is not specified...
 				continue;
 			}
 			++fill_count;
-			// Save the min and max year.  Note that these are
-			// irrigation years since that is what is stored in
+			// Save the min and max year.  Note that these are irrigation years since that is what is stored in
 			// the diversion comment time series.
 			yearmin = MathUtil.min ( yearmin, divcomdate.getYear());
 			yearmax = MathUtil.max ( yearmax, divcomdate.getYear());
 		}
 		// If the minimum and maximum year from the above indicate that
-		// the period should be longer, extend it.  Do the comparisons
-		// in calendar years.
+		// the period should be longer, extend it.  Do the comparisons in calendar years.
 		DateTime min_DateTime = new DateTime();
 		min_DateTime.setYear ( yearmin - 1 );
 		min_DateTime.setMonth ( 11 );
@@ -1174,10 +1095,8 @@ throws Exception
 			min_DateTime.setPrecision(DateTime.PRECISION_YEAR);
 			max_DateTime.setPrecision(DateTime.PRECISION_YEAR);
 		}
-		if (	min_DateTime.lessThan(tsdate1) ||
-			max_DateTime.greaterThan(tsdate2) ) {
-			// Resize the time series, using the original date/time
-			// on an end if necessary...
+		if ( min_DateTime.lessThan(tsdate1) || max_DateTime.greaterThan(tsdate2) ) {
+			// Resize the time series, using the original date/time on an end if necessary...
 			if ( min_DateTime.greaterThan(tsdate1) ) {
 				min_DateTime = new DateTime ( tsdate1 );
 			}
@@ -1190,11 +1109,8 @@ throws Exception
 		}
 	}
 
-	// If at least one diversion comment was found above, allocate space
-	// for the data flags...
-	// REVISIT SAM 2006-04-26
-	// This won't actually be needed if no filling occurs, but optimize this
-	// later.
+	// If at least one diversion comment was found above, allocate space for the data flags...
+	// TODO SAM 2006-04-26 This won't actually be needed if no filling occurs, but optimize this later.
 
 	boolean fillflag_boolean = false;	// Indicate whether to use flag
 	boolean fillflag_auto = false;
@@ -1215,54 +1131,43 @@ throws Exception
 	DateTime tsdate;
 	int iyear = 0;		// Irrigation year to process.
 	double dataValue = 0.0;	// Value from the time series.
-	String fillflag2 = null;// String used to do filling, reflecting "Auto"
-				// value
-	for (	divcomdate = new DateTime(divcomts.getDate1());
-		divcomdate.lessThanOrEqualTo(divcomend);
-		divcomdate.addYear(1)) {
+	String fillflag2 = null;// String used to do filling, reflecting "Auto" value
+	for ( divcomdate = new DateTime(divcomts.getDate1());
+		divcomdate.lessThanOrEqualTo(divcomend); divcomdate.addYear(1)) {
 		tsdata = divcomts.getDataPoint(divcomdate);
 		not_used = tsdata.getDataFlag();
-		if (	(not_used == null) || (not_used.length() == 0) ||
-			(zero_flags.indexOf(not_used) < 0) ) {
-			// No need to process the flag because a zero water
-			// use flag is not specified.
-                	continue;
+		if ( (not_used == null) || (not_used.length() == 0) || (zero_flags.indexOf(not_used) < 0) ) {
+			// No need to process the flag because a zero water use flag is not specified.
+            continue;
 		}
-		// Have a valid "not used" flag to be used in filling.  The year		// for diversion comments time series is irrigation year.
-		// REVISIT SAM 2006-04-25
-		// Always fill the missing values.  It is assumed that HydroBase
-		// has diversion comments only for irrigation years where no
-		// detailed observations occur.  This should be checked during 
-		// HydroBase verification (but is not checked in this code).
+		// Have a valid "not used" flag to be used in filling.  The year for diversion comments time series is
+		// irrigation year.
+		// TODO SAM 2006-04-25 Always fill the missing values.  It is assumed that HydroBase
+		// has diversion comments only for irrigation years where no detailed observations occur.  This should
+		// be checked during HydroBase verification (but is not checked in this code).
 		iyear = divcomdate.getYear();
 		fill_count = 0;
 		if ( interval_base == TimeInterval.YEAR ) {
-			// Can check one date, corresponding to the diversion
-			// comment year...
+			// Can check one date, corresponding to the diversion comment year...
 			dataValue = ts.getDataValue(divcomdate);
 			if ( ts.isDataMissing(dataValue) ) {
 				if ( fillflag_boolean ) {
-					// Set the data flag, appending
-					// to the old value...
+					// Set the data flag, appending to the old value...
 					if ( fillflag_auto ) {
-						// Automatically use the
-						// "not used" flag value...
+						// Automatically use the "not used" flag value...
 						fillflag2 = not_used;
 					}
 					tsdata =ts.getDataPoint(divcomdate);
-					ts.setDataValue ( divcomdate,
-					0.0,
-					(tsdata.getDataFlag().trim() +
-					fillflag2), 1 );
+					ts.setDataValue ( divcomdate, 0.0, (tsdata.getDataFlag().trim() + fillflag2), 1 );
 				}
-				else {	// No data flag...
+				else {
+				    // No data flag...
 					ts.setDataValue ( divcomdate, 0.0 );
 				}
 				++fill_count;
 			}
 		}
-		else if ( (interval_base == TimeInterval.MONTH) ||
-			(interval_base == TimeInterval.DAY) ) {
+		else if ( (interval_base == TimeInterval.MONTH) || (interval_base == TimeInterval.DAY) ) {
 			// Check every time series value in the irrigation year.
 			tsdate1.setDay(1);
 			tsdate1.setMonth(11);
@@ -1272,32 +1177,23 @@ throws Exception
 			tsdate2.setDay(31);
 			tsdate2.setMonth(10);
 			tsdate2.setYear(iyear);
-			// The following will work for either daily or monthly
-			// because the precision on tsdate1 is set based on the
-			// time series interval (if monthly the day will be
-			// ignored)...
-			for ( tsdate = new DateTime(tsdate1);
-				tsdate.lessThanOrEqualTo(tsdate2);
-				tsdate.addInterval(
-				interval_base,interval_mult)) {
+			// The following will work for either daily or monthly because the precision on tsdate1 is set based
+			// on the time series interval (if monthly the day will be ignored)...
+			for ( tsdate = new DateTime(tsdate1); tsdate.lessThanOrEqualTo(tsdate2);
+				tsdate.addInterval(interval_base,interval_mult)) {
 				dataValue = ts.getDataValue(tsdate);
 				if ( ts.isDataMissing(dataValue)) {
 					if ( fillflag_boolean ) {
-						// Set the data flag, appending
-						// to the old value...
+						// Set the data flag, appending to the old value...
 						if ( fillflag_auto ) {
-							// Automatically use the
-							// "not used" flag
-							// value...
+							// Automatically use the "not used" flag value...
 							fillflag2 = not_used;
 						}
 						tsdata =ts.getDataPoint(tsdate);
-						ts.setDataValue ( tsdate,
-						0.0,
-						(tsdata.getDataFlag().trim() +
-						fillflag2), 1 );
+						ts.setDataValue ( tsdate, 0.0, (tsdata.getDataFlag().trim() + fillflag2), 1 );
 					}
-					else {	// No data flag...
+					else {
+					    // No data flag...
 						ts.setDataValue ( tsdate, 0.0 );
 					}
 					++fill_count;
@@ -1306,8 +1202,7 @@ throws Exception
 		}
 		// Print/save a message for the year...
 		if ( fill_count > 0 ) {
-			String comment_string =
-			"Filled " + fill_count + " values in irrigation year " +
+			String comment_string = "Filled " + fill_count + " values in irrigation year " +
 			iyear + " (Nov " + (iyear - 1) + "-Oct " + iyear +
 			") with zero because not_used=\"" + not_used + "\"";
 			ts.addToGenesis(comment_string);
@@ -1317,8 +1212,7 @@ throws Exception
 }
 
 /**
-Transforms the location elements into a standard legal location string and
-returns that string.
+Transforms the location elements into a standard legal location string and returns that string.
 @param pm Principle Meridian
 @param ts Township
 @param tdir Township direction
@@ -1344,8 +1238,7 @@ int rng, String rdir, int sec, String seca,String q160, String q40, String q10){
 	v.add(q160);
 	v.add(q40);
 	v.add(q10);
-	return StringUtil.formatString (v, 
-		"%2.2s%2.2s%1.1s%3.3s%1.1s%4.4s%-1.1s%5.5s%4.4s%4.4s");
+	return StringUtil.formatString (v, "%2.2s%2.2s%1.1s%3.3s%1.1s%4.4s%-1.1s%5.5s%4.4s%4.4s");
 }
 
 
@@ -1355,8 +1248,7 @@ Get the configuration file name for HydroBase.  Currently this is the same as
 the main CDSS configuration file
 */
 public static String getConfigurationFile() {
-	return IOUtil.getApplicationHomeDir() + File.separator
-		+ "system" + File.separator + "CDSS.cfg";
+	return IOUtil.getApplicationHomeDir() + File.separator + "system" + File.separator + "CDSS.cfg";
 }
 
 /**
@@ -1367,18 +1259,17 @@ public static String getDefaultDatabaseServer ()
 }
 
 /**
-Return the default time series data type, to allow a GUI to select the default
-in a list.
+Return the default time series data type, to allow a GUI to select the default in a list.
 @return the default time series data type.
 @param add_group Indicates if a data group should be included before the data
 type - this should be called consistent with getTimeSeriesDataTypes().
 */
-public static String getDefaultTimeSeriesDataType (	HydroBaseDMI hbdmi,
-							boolean add_group )
+public static String getDefaultTimeSeriesDataType (	HydroBaseDMI hbdmi, boolean add_group )
 {	if ( add_group ) {
 		return "Stream - Streamflow";
 	}
-	else {	return "Streamflow";
+	else {
+	    return "Streamflow";
 	}
 }
 
@@ -1392,48 +1283,11 @@ public static int getPreferredWDIDLength ()
 }
 
 /**
+TODO NEED INPUT FROM DOUG ON WHETHER SUGGESTED DATA TYPES CAN BE USED NOW AND BE PHASED INTO HYDROBASE.
 Return a list of time series data types, suitable for listing in a graphical
 interface.  For example, this list is used in TSTool and StateView to list
 data types, which are then passed to the readTimeSeries(String TSID) method,
-where the data type in the list matches the data type in the time series
-identifier.
-In the future, this list may be determined from a query of HydroBase's meas_type
-and/or struct_meas_type tables.  Currently, the types are hard-coded here
-because they cannot cleanly be determined from HydroBase.
-@param hdmi HydroBaseDMI instance for opened connection.
-@param include_stations Include data types for stations (e.g., Streamflow,
-Precipitation).
-@param include_structures Include data types for structures (e.g., DivTotal,
-DivClass).
-@param include_wis Include data types for water information sheets.
-@deprecated Use the overloaded version with the mask.
-2005-04-19 still deprecated
-*/
-public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
-						boolean include_stations,
-						boolean include_structures,
-						boolean include_wis )
-{	int include_mask = 0;
-	if ( include_stations ) {
-		include_mask |= DATA_TYPE_STATION_ALL;
-	}
-	if ( include_stations ) {
-		include_mask |= DATA_TYPE_STRUCTURE_ALL;
-	}
-	if ( include_wis ) {
-		include_mask |= DATA_TYPE_WIS;
-	}
-	return getTimeSeriesDataTypes ( hdmi, include_mask, false );
-}
-
-/**
-NEED INPUT FROM DOUG ON WHETHER SUGGESTED DATA TYPES CAN BE USED NOW AND BE
-PHASED INTO HYDROBASE.
-Return a list of time series data types, suitable for listing in a graphical
-interface.  For example, this list is used in TSTool and StateView to list
-data types, which are then passed to the readTimeSeries(String TSID) method,
-where the data type in the list matches the data type in the time series
-identifier.
+where the data type in the list matches the data type in the time series identifier.
 In the future, this list may be determined from a query of HydroBase's meas_type
 and/or struct_meas_type tables.  Currently, the types are hard-coded here
 because they cannot cleanly be determined from HydroBase.
@@ -1445,12 +1299,9 @@ reservoir structure time series, specify DATA_TYPE_STRUCTURE_RESERVOIR.  Types
 can be combined if appropriate.
 @param add_group If true, a data type group will be added before the data types.
 For example, all data related to reservoirs will be prefixed with
-"Reservoir - ".  This is useful for providing a better presentation to users in
-interfaces.
+"Reservoir - ".  This is useful for providing a better presentation to users in interfaces.
 */
-public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
-						int include_types,
-						boolean add_group )
+public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi, int include_types, boolean add_group )
 {	List types = new Vector();
 	// Add these types exactly as they are listed in HydroBase.  If someone
 	// has a problem, HydroBase should be adjusted.  Notes are shown below
@@ -1466,8 +1317,7 @@ public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 	// Irregular is used.  In the future, perhaps it will be possible to get
 	// an exact regular interval for real-time gages.
 	//
-	// A sub data type can be used instead of VAXFIELD in the time series
-	// identifier.  For example:
+	// A sub data type can be used instead of VAXFIELD in the time series identifier.  For example:
 	//
 	// Location.DataSource.DataType-SubType.Interval
 	//
@@ -1476,13 +1326,11 @@ public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 	//
 	// The sub type could be queried based on the data type.
 	//
-	// For crop time series from the GIS-based summary, the
-	// identifier could look like:
+	// For crop time series from the GIS-based summary, the identifier could look like:
 	//
 	// WDID.CDSSGIS.CropArea-ALFALFA.Year
 	//
-	// For the crop time series from Agstats, it would be something
-	// like:
+	// For the crop time series from Agstats, it would be something like:
 	//
 	// County.DOA.Agstats-xxxx xxx.Year
 	//
@@ -1490,8 +1338,7 @@ public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 	//
 	// WDID.DWR.DivClass-S:F:U:T:.Month
 	//
-	String prefix;	// A string to add at the front of the type if
-			// add_group is true
+	String prefix; // A string to add at the front of the type if add_group is true
 	if ( (include_types&DATA_TYPE_HARDWARE) > 0 ) {
 		// RT_Misc BATTERY
 		prefix = "";
@@ -1505,19 +1352,15 @@ public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 		if ( add_group ) {
 			prefix = "Climate - ";
 		}
-		//types.addElement ( "Evap" );		// Maybe should be
-							// "EvapPan" or
-							// "PanEvap"
-							// Time step:  Day and
-							// Month
+		//types.addElement ( "Evap" ); // Maybe should be "EvapPan" or "PanEvap"
+							// Time step:  Day and Month
 		types.add ( prefix + "EvapPan" );	// Proposed
 		//types.addElement ( "FrostDate" );	// Need something like
 							// FrostDateF28,
 							// FrostDateF32,
 							// FrostDateS28,
 							// FrostDateS32
-							// so each time series
-							// can be manipulated.
+							// so each time series can be manipulated.
 							// Time step:  Year
 		types.add ( prefix + "FrostDateF32F" );	// Proposed
 		types.add ( prefix + "FrostDateF28F" );	// Proposed
@@ -1531,19 +1374,14 @@ public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 							// "TempMeanMin" for
 							// monthly - it gets
 							// messy.
-		types.add ( prefix + "Precip" );	// Time step:  Month,
-							// Day, real-time with
-							// vax_field PRECIP
-		types.add ( prefix + "Temp" );	// Proposed for use with
-							// real-time AIRTEMP
-							// vax_field
+		types.add ( prefix + "Precip" ); // Time step:  Month, Day, real-time with vax_field PRECIP
+		types.add ( prefix + "Temp" ); // Proposed for use with real-time AIRTEMP vax_field
 		types.add ( prefix + "TempMax" );// Proposed
 		types.add ( prefix + "TempMean" );	// Proposed
 		types.add ( prefix + "TempMeanMax" );	// Proposed
 		types.add ( prefix + "TempMeanMin" );	// Proposed
 		types.add ( prefix + "TempMin" );	// Proposed
-		types.add ( prefix + "Snow" );	// Time step:  Day,
-							// Month
+		types.add ( prefix + "Snow" );	// Time step:  Day, Month
 		//types.add ( "SnowCrse" );	// "SnowDepth" and
 							// "SnowWaterEquivalent"
 							// would be better, but
@@ -1600,8 +1438,7 @@ public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi,
 							// would be cleaner
 							// Time step:
 							// RealTime?  15Minute?
-		types.add ( prefix + "Stage" );	// Time step:  realtime
-							// RT_Misc GAGE_HT
+		types.add ( prefix + "Stage" );	// Time step:  real-time RT_Misc GAGE_HT
 		types.add ( prefix + "Streamflow" );	// Also need
 		types.add ( prefix + "StreamflowMax" );
 							// "StreamflowMax" and
@@ -1764,13 +1601,10 @@ time series data records, return blank.
 @return the data units for a time series data type.
 @param hbdmi Reserved for future use.
 @param data_type the time series data type, using time series data conventions
-(e.g., use "StreamflowMax" and "Month" rather than "Streamflow", "Monthly",
-which is not specific enough).
+(e.g., use "StreamflowMax" and "Month" rather than "Streamflow", "Monthly", which is not specific enough).
 @param interval Data interval for time series.
 */
-public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
-						String data_type,
-						String interval )
+public static String getTimeSeriesDataUnits ( HydroBaseDMI hbdmi, String data_type, String interval )
 {	String	ACRE = "ACRE", ACFT = "ACFT", CFS = "CFS", DAY = "DAY",
 		FT = "FT", HEAD = "HEAD",
 		IN = "IN", KM = "KM",
@@ -1780,30 +1614,25 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 		if ( interval.equalsIgnoreCase("Month") ) {
 			return ACFT;
 		}
-		else if ( interval.equalsIgnoreCase("Day") ||
-			interval.equalsIgnoreCase("RealTime") ||
+		else if ( interval.equalsIgnoreCase("Day") || interval.equalsIgnoreCase("RealTime") ||
 			interval.equalsIgnoreCase("Irregular")) {
 			return CFS;
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("AdminFlowMax") &&
-			interval.equalsIgnoreCase("Month") ) {
-			return CFS;
-		}
-		else if ( data_type.equalsIgnoreCase("AdminFlowMin") &&
-			interval.equalsIgnoreCase("Month") ) {
-			return CFS;
-		}
+	else if ( data_type.equalsIgnoreCase("AdminFlowMax") && interval.equalsIgnoreCase("Month") ) {
+		return CFS;
+	}
+	else if ( data_type.equalsIgnoreCase("AdminFlowMin") && interval.equalsIgnoreCase("Month") ) {
+		return CFS;
+	}
 	else if ( data_type.startsWith("CropArea") ) {
 		return ACRE;
 	}
 	else if ( data_type.equalsIgnoreCase("Battery") ) {
 		return VOLT;
 	}
-	else if (data_type.equalsIgnoreCase("DivClass") ||
-		data_type.equalsIgnoreCase("DivTotal") ||
-		data_type.equalsIgnoreCase("IDivClass") ||
-		data_type.equalsIgnoreCase("IDivTotal") ) {
+	else if (data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("DivTotal") ||
+		data_type.equalsIgnoreCase("IDivClass") || data_type.equalsIgnoreCase("IDivTotal") ) {
 		if ( interval.equalsIgnoreCase("Month") ) {
 			return ACFT;
 		}
@@ -1821,10 +1650,8 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 	else if ( data_type.equalsIgnoreCase("EvapPan") ) {
 		return IN;
 	}
-	else if( data_type.equalsIgnoreCase("FrostDateL28S") ||
-		data_type.equalsIgnoreCase("FrostDateL32S") ||
-		data_type.equalsIgnoreCase("FrostDateF32F") ||
-		data_type.equalsIgnoreCase("FrostDateF28F") ) {
+	else if( data_type.equalsIgnoreCase("FrostDateL28S") || data_type.equalsIgnoreCase("FrostDateL32S") ||
+		data_type.equalsIgnoreCase("FrostDateF32F") || data_type.equalsIgnoreCase("FrostDateF28F") ) {
 		return DAY;
 	}
 	else if ( data_type.equalsIgnoreCase("HumanPopulation") ) {
@@ -1843,10 +1670,8 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 		// Units are in data records and can be IN or mm...
 		return "";
 	}
-	else if ( data_type.equalsIgnoreCase("RelClass") ||
-		data_type.equalsIgnoreCase("RelTotal") ||
-		data_type.equalsIgnoreCase("IRelClass") ||
-		data_type.equalsIgnoreCase("IRelTotal") ) {
+	else if ( data_type.equalsIgnoreCase("RelClass") || data_type.equalsIgnoreCase("RelTotal") ||
+		data_type.equalsIgnoreCase("IRelClass") || data_type.equalsIgnoreCase("IRelTotal") ) {
 		if ( interval.equalsIgnoreCase("Month") ) {
 			return ACFT;
 		}
@@ -1885,8 +1710,7 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 	else if ( data_type.equalsIgnoreCase ( "ResMeasStorage" ) ) {
 		return ACFT;
 	}
-	else if ( data_type.equalsIgnoreCase("Snow") ||
-		data_type.equalsIgnoreCase("SnowCourseDepth") ||
+	else if ( data_type.equalsIgnoreCase("Snow") || data_type.equalsIgnoreCase("SnowCourseDepth") ||
 		data_type.equalsIgnoreCase("SnowCourseSWE") ) {
 		return IN;
 	}
@@ -1903,8 +1727,7 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 		if ( interval.equalsIgnoreCase("Month") ) {
 			return ACFT;
 		}
-		else if ( interval.equalsIgnoreCase("Day") ||
-			interval.equalsIgnoreCase("RealTime") ||
+		else if ( interval.equalsIgnoreCase("Day") || interval.equalsIgnoreCase("RealTime") ||
 			interval.equalsIgnoreCase("Irregular")) {
 			return CFS;
 		}
@@ -1917,10 +1740,8 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 		interval.equalsIgnoreCase("Month") ) {
 		return CFS;
 	}
-	else if(data_type.equalsIgnoreCase("TempMax") ||
-		data_type.equalsIgnoreCase("TempMin") ||
-		data_type.equalsIgnoreCase("TempMean") ||
-		data_type.equalsIgnoreCase("TempMeanMax") ||
+	else if(data_type.equalsIgnoreCase("TempMax") || data_type.equalsIgnoreCase("TempMin") ||
+		data_type.equalsIgnoreCase("TempMean") || data_type.equalsIgnoreCase("TempMeanMax") ||
 		data_type.equalsIgnoreCase("TempMeanMin") ) {
 		// Units can't be detected until records are read...
 		return "";
@@ -1947,27 +1768,7 @@ public static String getTimeSeriesDataUnits (	HydroBaseDMI hbdmi,
 /**
 Return the time steps to be displayed for a time series data type.  The time
 step should ideally be in meas_type; however, some time series tables store
-more than one time series data type and the time steps in meas_type are not
-appropriate for displays.
-@return the time steps that are available for a time series data type.
-@param hbdmi Reserved for future use.
-@param data_type the time series data type, using time series data conventions
-(e.g., use "StreamflowMax" rather than "Streamflow", which is ambiguous).
-Do not include the prefix added by getTimeSeriesDataTypes() when notes are
-included.
-@deprecated Use the other version.
-2005-04-19 still deprecated
-*/
-public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
-						String data_type )
-{	return getTimeSeriesTimeSteps ( hbdmi, data_type, DATA_TYPE_ALL );
-}
-
-/**
-Return the time steps to be displayed for a time series data type.  The time
-step should ideally be in meas_type; however, some time series tables store
-more than one time series data type and the time steps in meas_type are not
-appropriate for displays.
+more than one time series data type and the time steps in meas_type are not appropriate for displays.
 @return the time steps that are available for a time series data type.
 @param hbdmi Reserved for future use.
 @param data_type the time series data type, using time series data conventions
@@ -1981,9 +1782,7 @@ used in cases where a data type is listed as both a station and structure (e.g.,
 WellLevel) but the interval is different for each case (e.g., WellLevel
 Irregular for station, WellLevel Day for structure).
 */
-public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
-						String data_type,
-						int include_types )
+public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String data_type, int include_types )
 {	String Month = "Month";
 	String Day = "Day";
 	String Year = "Year";
@@ -1996,9 +1795,9 @@ public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 		v.add ( Irregular );  // Real-time
 	}
 	else if ( data_type.equalsIgnoreCase("AdminFlowMax") ||
-			data_type.equalsIgnoreCase("AdminFlowMin") ) {
-			v.add ( Month );
-		}
+		data_type.equalsIgnoreCase("AdminFlowMin") ) {
+		v.add ( Month );
+	}
 	else if ( data_type.equalsIgnoreCase("Agstats") ) {
 		v.add ( Year );
 	}
@@ -2008,10 +1807,8 @@ public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 	else if ( data_type.equalsIgnoreCase("Battery") ) {
 		v.add ( Irregular );
 	}
-	else if(data_type.equalsIgnoreCase("DivClass") ||
-		data_type.equalsIgnoreCase("DivTotal") ||
-		data_type.equalsIgnoreCase("IDivClass") ||
-		data_type.equalsIgnoreCase("IDivTotal") ) {
+	else if(data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("DivTotal") ||
+		data_type.equalsIgnoreCase("IDivClass") || data_type.equalsIgnoreCase("IDivTotal") ) {
 		v.add ( Day );
 		v.add ( Month );
 		v.add ( Year );
@@ -2023,10 +1820,8 @@ public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 	else if ( data_type.equalsIgnoreCase("DivComment") ) {
 		v.add ( Year );
 	}
-	else if( data_type.equalsIgnoreCase("FrostDateL28S") ||
-		data_type.equalsIgnoreCase("FrostDateL32S") ||
-		data_type.equalsIgnoreCase("FrostDateF32F") ||
-		data_type.equalsIgnoreCase("FrostDateF28F") ) {
+	else if( data_type.equalsIgnoreCase("FrostDateL28S") || data_type.equalsIgnoreCase("FrostDateL32S") ||
+		data_type.equalsIgnoreCase("FrostDateF32F") || data_type.equalsIgnoreCase("FrostDateF28F") ) {
 		v.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("NaturalFlow") ) {
@@ -2040,10 +1835,8 @@ public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 		v.add ( Month );
 		v.add ( Irregular );
 	}
-	else if ( data_type.equalsIgnoreCase("RelClass") ||
-		data_type.equalsIgnoreCase("RelTotal") ||
-		data_type.equalsIgnoreCase("IRelClass") ||
-		data_type.equalsIgnoreCase("IRelTotal") ) {
+	else if ( data_type.equalsIgnoreCase("RelClass") || data_type.equalsIgnoreCase("RelTotal") ||
+		data_type.equalsIgnoreCase("IRelClass") || data_type.equalsIgnoreCase("IRelTotal") ) {
 		v.add ( Day );
 		v.add ( Month );
 		v.add ( Year );
@@ -2060,10 +1853,8 @@ public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 	else if ( data_type.equalsIgnoreCase("ResEOY") ) {
 		v.add ( Year );
 	}
-	else if ( data_type.equalsIgnoreCase("ResMeasElev") ||
-		data_type.equalsIgnoreCase ( "ResMeasEvap" ) ||
-		data_type.equalsIgnoreCase ( "ResMeasFill" ) ||
-		data_type.equalsIgnoreCase ( "ResMeasRelease") ||
+	else if ( data_type.equalsIgnoreCase("ResMeasElev") || data_type.equalsIgnoreCase ( "ResMeasEvap" ) ||
+		data_type.equalsIgnoreCase ( "ResMeasFill" ) || data_type.equalsIgnoreCase ( "ResMeasRelease") ||
 		data_type.equalsIgnoreCase ( "ResMeasStorage") ) {
 		v.add ( Day );
 	}
@@ -2072,10 +1863,8 @@ public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 		v.add ( Day );
 		v.add ( Month );
 	}
-	else if ( data_type.equalsIgnoreCase("SnowCourseDepth") ||
-		data_type.equalsIgnoreCase("SnowCourseSWE") ) {
-		// Although the data are stored in a monthly table, the values
-		// are generally recorded to the day
+	else if ( data_type.equalsIgnoreCase("SnowCourseDepth") || data_type.equalsIgnoreCase("SnowCourseSWE") ) {
+		// Although the data are stored in a monthly table, the values are generally recorded to the day
 		v.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("Solar") ) {
@@ -2103,8 +1892,7 @@ public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 	else if ( data_type.equalsIgnoreCase("TempMax") ) {
 		v.add ( Day );
 	}
-	else if(data_type.equalsIgnoreCase("TempMean") ||
-		data_type.equalsIgnoreCase("TempMeanMax") ||
+	else if(data_type.equalsIgnoreCase("TempMean") || data_type.equalsIgnoreCase("TempMeanMax") ||
 		data_type.equalsIgnoreCase("TempMeanMin") ) {
 		v.add ( Month );
 	}
@@ -2136,17 +1924,14 @@ public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi,
 }
 
 /**
-Indicate whether a time series data type is for CASS agricultural crop
-statistics.
+Indicate whether a time series data type is for CASS agricultural crop statistics.
 @param hbdmi An instance of HydroBaseDMI.  The data type is checked to see
 whether it is "CropAreaHarvested" or "CropAreaPlanted".
 @param data_type A HydroBase data type.  If the data_type has a "-",
 then the token after the dash is compared.
 @return true if the data type is for agricultural crop statistics.
 */
-public static boolean isAgriculturalCASSCropStatsTimeSeriesDataType (
-							HydroBaseDMI hbdmi,
-							String data_type )
+public static boolean isAgriculturalCASSCropStatsTimeSeriesDataType ( HydroBaseDMI hbdmi, String data_type )
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,1) ;
 	}
@@ -2154,73 +1939,63 @@ public static boolean isAgriculturalCASSCropStatsTimeSeriesDataType (
 		data_type.equalsIgnoreCase("CropAreaPlanted") ) {
 		return true;
 	}
-	else {	return false;
+	else {
+	    return false;
 	}
 }
 
 /**
-Indicate whether a time series data type is for CASS agricultural livestock
-statistics.
-@param hbdmi An instance of HydroBaseDMI.  The data type is checked to see
-whether it is "LivestockHead".
-@param data_type A HydroBase data type.  If the data_type has a "-",
-then the token after the dash is compared.
+Indicate whether a time series data type is for CASS agricultural livestock statistics.
+@param hbdmi An instance of HydroBaseDMI.  The data type is checked to see whether it is "LivestockHead".
+@param data_type A HydroBase data type.  If the data_type has a "-", then the token after the dash is compared.
 @return true if the data type is for agricultural livestock statistics.
 */
-public static boolean isAgriculturalCASSLivestockStatsTimeSeriesDataType (
-							HydroBaseDMI hbdmi,
-							String data_type )
+public static boolean isAgriculturalCASSLivestockStatsTimeSeriesDataType ( HydroBaseDMI hbdmi, String data_type )
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,1) ;
 	}
 	if ( data_type.equalsIgnoreCase("LivestockHead") ) {
 		return true;
 	}
-	else {	return false;
+	else {
+	    return false;
 	}
 }
 
 /**
-Indicate whether a time series data type is for NASS agricultural crop
-statistics.
-@param hbdmi An instance of HydroBaseDMI.  The data type is checked to see
-whether it is "CropArea" or "CropArea".
-@param data_type A HydroBase data type.  If the data_type has a "-",
-then the token after the dash is compared.
+Indicate whether a time series data type is for NASS agricultural crop statistics.
+@param hbdmi An instance of HydroBaseDMI.  The data type is checked to see whether it is "CropArea" or "CropArea".
+@param data_type A HydroBase data type.  If the data_type has a "-", then the token after the dash is compared.
 @return true if the data type is for agricultural crop statistics.
 */
-public static boolean isAgriculturalNASSCropStatsTimeSeriesDataType (
-							HydroBaseDMI hbdmi,
-							String data_type )
+public static boolean isAgriculturalNASSCropStatsTimeSeriesDataType ( HydroBaseDMI hbdmi, String data_type )
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,1) ;
 	}
-	if ( data_type.equalsIgnoreCase("CropArea") ||
-		data_type.equalsIgnoreCase("CropArea") ) {
+	if ( data_type.equalsIgnoreCase("CropArea") || data_type.equalsIgnoreCase("CropArea") ) {
 		return true;
 	}
-	else {	return false;
+	else {
+	    return false;
 	}
 }
 
 /**
 Indicate whether a time series data type is for CUPopulation.
-@param hbdmi An instance of HydroBaseDMI.  The data type is checked to see
-whether it is "HumanPopulation".
+@param hbdmi An instance of HydroBaseDMI.  The data type is checked to see whether it is "HumanPopulation".
 @param data_type A HydroBase data type.  If the data_type has a "-",
 then the token after the dash is compared.
 @return true if the data type is for CUPopulation.
 */
-public static boolean isCUPopulationTimeSeriesDataType (
-							HydroBaseDMI hbdmi,
-							String data_type )
+public static boolean isCUPopulationTimeSeriesDataType ( HydroBaseDMI hbdmi, String data_type )
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,1) ;
 	}
 	if ( data_type.equalsIgnoreCase("HumanPopulation") ) {
 		return true;
 	}
-	else {	return false;
+	else {
+	    return false;
 	}
 }
 
@@ -2230,8 +2005,7 @@ Indicate whether a time series data type is for a groundwater well time series.
 @param data_type A HydroBase data type.  Currently, the string is compared
 against the hard-coded strings "WellLevel"
 */
-public static boolean isGroundWaterWellTimeSeriesDataType (HydroBaseDMI hbdmi,
-						String data_type )
+public static boolean isGroundWaterWellTimeSeriesDataType (HydroBaseDMI hbdmi, String data_type )
 {	if (data_type.equalsIgnoreCase("WellLevel")) {
 		return true;
 	}
@@ -2241,39 +2015,32 @@ public static boolean isGroundWaterWellTimeSeriesDataType (HydroBaseDMI hbdmi,
 /**
 Indicate whether a time series data type is for irrigation summary time series.
 @param hbdmi An instance of HydroBaseDMI.  The data type is checked to see
-whether it is "CropAreaAllIrrigation", "CropAreaDrip", "CropAreaFlood",
-"CropAreaFurrow", or "CropAreaSprinkler".
-@param data_type A HydroBase data type.  If the data_type has a "-",
-then the token after the dash is compared.
+whether it is "CropAreaAllIrrigation", "CropAreaDrip", "CropAreaFlood", "CropAreaFurrow", or "CropAreaSprinkler".
+@param data_type A HydroBase data type.  If the data_type has a "-", then the token after the dash is compared.
 @return true if the data type is for irrigation summary time series.
 */
-public static boolean isIrrigSummaryTimeSeriesDataType (
-							HydroBaseDMI hbdmi,
-							String data_type )
+public static boolean isIrrigSummaryTimeSeriesDataType ( HydroBaseDMI hbdmi, String data_type )
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,1) ;
 	}
-	if (	data_type.equalsIgnoreCase("CropAreaAllIrrigation") ||
-		data_type.equalsIgnoreCase("CropAreaDrip") ||
-		data_type.equalsIgnoreCase("CropAreaFlood") ||
-		data_type.equalsIgnoreCase("CropAreaFurrow") ||
+	if ( data_type.equalsIgnoreCase("CropAreaAllIrrigation") || data_type.equalsIgnoreCase("CropAreaDrip") ||
+		data_type.equalsIgnoreCase("CropAreaFlood") || data_type.equalsIgnoreCase("CropAreaFurrow") ||
 		data_type.equalsIgnoreCase("CropAreaSprinkler") ) {
 		return true;
 	}
-	else {	return false;
+	else {
+	    return false;
 	}
 }
 
 /**
 Indicate whether a time series data type is for a station.
-@param hbdmi An instance of HydroBaseDMI.  The global distinct MeasType data
-from the instance are checked.
+@param hbdmi An instance of HydroBaseDMI.  The global distinct MeasType data from the instance are checked.
 @param data_type A HydroBase data type.  If it matches the data type in
 meas_type.meas_type, true will be returned.  If the data_type has a "-", then
 the token before the dash is compared.
 */
-public static boolean isStationTimeSeriesDataType (	HydroBaseDMI hbdmi,
-							String data_type )
+public static boolean isStationTimeSeriesDataType (	HydroBaseDMI hbdmi, String data_type )
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,0) ;
 	}
@@ -2290,16 +2057,13 @@ public static boolean isStationTimeSeriesDataType (	HydroBaseDMI hbdmi,
 }
 
 /**
-Indicate whether a time series data type is for a structure that has SFUT (one
-of the "Class" data types).
-@param hbdmi An instance of HydroBaseDMI.  The global distinct StructMeasType
-data from the instance are checked.
+Indicate whether a time series data type is for a structure that has SFUT (one of the "Class" data types).
+@param hbdmi An instance of HydroBaseDMI.  The global distinct StructMeasType data from the instance are checked.
 @param data_type A HydroBase data type.  If it matches the data type in
 struct_meas_type.meas_type, true will be returned.  If the data_type has a "-",
 then the token before the dash is compared.
 */
-public static boolean isStructureSFUTTimeSeriesDataType(HydroBaseDMI hbdmi,
-							String data_type )
+public static boolean isStructureSFUTTimeSeriesDataType(HydroBaseDMI hbdmi, String data_type )
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,0) ;
 	}
@@ -2312,17 +2076,13 @@ public static boolean isStructureSFUTTimeSeriesDataType(HydroBaseDMI hbdmi,
 /**
 Indicate whether a time series data type is for a structure.  The result is
 inclusive of isStructureSFUTTimeSeriesDataType().  In other words, call the
-isStructureSFUTTimeSeriesDataType() first to match SFUT data types and then
-call this more general method.
+isStructureSFUTTimeSeriesDataType() first to match SFUT data types and then call this more general method.
 @param hbdmi An instance of HydroBaseDMI.  The global distinct StructMeasType
 data from the instance are checked.
-@param data_type A HydroBase data type.  If it matches the data type in
-struct_meas_type.meas_type, true will be returned.
-If the data_type has a "-",
-then the token before the dash is compared.
+@param data_type A HydroBase data type.  If it matches the data type in struct_meas_type.meas_type,
+true will be returned.  If the data_type has a "-", then the token before the dash is compared.
 */
-public static boolean isStructureTimeSeriesDataType (	HydroBaseDMI hbdmi,
-							String data_type )
+public static boolean isStructureTimeSeriesDataType ( HydroBaseDMI hbdmi, String data_type )
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,0) ;
 	}
@@ -2343,14 +2103,11 @@ public static boolean isStructureTimeSeriesDataType (	HydroBaseDMI hbdmi,
 Indicate whether a time series data type is for a WIS time series.
 @param hbdmi An instance of HydroBaseDMI. 
 @param data_type A HydroBase data type.  Currently, the string is compared
-against the hard-coded strings "WISDeliveryFlow", "WISPriorityDiversion",
-"WISDeliveryDiversion",
-"WISGainLoss", "WISNaturalFlow", "WISPointFlow", "WISRelease",
-"WISTribNaturalFlow", "WISTribDeliveryFlow".
+against the hard-coded strings "WISDeliveryFlow", "WISPriorityDiversion", "WISDeliveryDiversion",
+"WISGainLoss", "WISNaturalFlow", "WISPointFlow", "WISRelease", "WISTribNaturalFlow", "WISTribDeliveryFlow".
 */
-public static boolean isWISTimeSeriesDataType (	HydroBaseDMI hbdmi,
-						String data_type )
-{	if (	data_type.equalsIgnoreCase("WISPointFlow") ||
+public static boolean isWISTimeSeriesDataType (	HydroBaseDMI hbdmi, String data_type )
+{	if ( data_type.equalsIgnoreCase("WISPointFlow") ||
 		data_type.equalsIgnoreCase("WISNaturalFlow") ||
 		data_type.equalsIgnoreCase("WISDeliveryFlow") ||
 		data_type.equalsIgnoreCase("WISGainLoss") ||
@@ -2367,8 +2124,6 @@ public static boolean isWISTimeSeriesDataType (	HydroBaseDMI hbdmi,
 /**
 Returns the String name for the diversion source abbreviation using global
 data.  This is the "S" in SFUT.  Return an empty string if not found.<p>
-<p><b>REVISIT (JTS - 2004-06-21)<br></b>
-Move into HydroBase_Util.  This method is UNUSED by HydroBase right now.
 @return the String name for the diversion source abbreviation.  This is the
 "S" in SFUT.  Return an empty string if not found.
 @param source Source abbreviation.
@@ -2408,15 +2163,14 @@ public static String lookupDiversionCodingSource ( String source )
 	else if ( source.equalsIgnoreCase( "R" ) ) {
 		return "REMEASURED AND REDIVERTED";
 	}
-	else {	return "";
+	else {
+	    return "";
 	}
 }
 
 /**
 Returns the String name for the diversion type abbreviation in global data.  
 This is the  "T" in SFUT.  Return an empty string if not found.
-<p><b>REVISIT (JTS - 2004-06-21)<br></b>
-Move into HydroBase_Util.  This method is UNUSED by HydroBase right now.
 @return the String name for the diversion type abbreviation.  This is the
 "T" in SFUT.  Return an empty string if not found.
 @param type Type abbreviation.
@@ -2465,21 +2219,20 @@ public static String lookupDiversionCodingType ( String type )
 	else if ( type.equalsIgnoreCase( "S" ) ) {
 		return "RESERVOIR SUBSTITUTION";
 	}
-	else {	return "";
+	else {
+	    return "";
 	}
 }
 
 /**
-Lookup a HydroBaseDMI instance using the input name.  This is useful, for
-example, when finding a HydroBaseDMI instance matching at time series identifier
-that includes the input name.
+Lookup a HydroBaseDMI instance using the input name.  This is useful, for example, when finding a HydroBaseDMI
+instance matching at time series identifier that includes the input name.
 @return the HydroBaseDMI instance with an input name that matches the requested
 input name.  The first match is found.
 @param HydroBaseDMI_Vector List of HydroBaseDMI to search.
 @parma input_name HydroBaseDMI input name to find.
 */
-public static HydroBaseDMI lookupHydroBaseDMI ( List HydroBaseDMI_Vector,
-						String input_name )
+public static HydroBaseDMI lookupHydroBaseDMI ( List HydroBaseDMI_Vector, String input_name )
 {	int size = 0;
 	if ( HydroBaseDMI_Vector != null ) {
 		size = HydroBaseDMI_Vector.size();
@@ -2502,11 +2255,9 @@ Parse an SFUT string into its parts.  The string to parse has the format
 "S: F: U: T: G:" where data fields may be present after each :.  The G: format
 was added in HydroBase 20061003.  The F: in this version is a 7-digit WDID
 indicating the "from" structure.  In earlier versions, it is the ID part of the
-WDID, and the WDID is the same as the structure itself (can only record data
-movement within a water district).
+WDID, and the WDID is the same as the structure itself (can only record data movement within a water district).
 @return An array of strings, each of which is one of the SFUT fields, without
-the leading "S:", "F:", "U:", "T:" or "G:".  The parts are guaranteed to be non-null,
-but may be blank strings.
+the leading "S:", "F:", "U:", "T:" or "G:".  The parts are guaranteed to be non-null, but may be blank strings.
 @param sfut_string An SFUT string to parse.
 @throws Exception if an error occurs.
 */
@@ -2518,45 +2269,35 @@ throws Exception {
 	sfut_parts[2] = "";
 	sfut_parts[3] = "";
 	sfut_parts[4] = "";
-	String	routine = "HydroBase_Util.parseSFUT";
+	String routine = "HydroBase_Util.parseSFUT";
 
-	if (	(sfut_string.indexOf("S:") >= 0) &&
-		(sfut_string.indexOf("F:") >= 0) &&
-		(sfut_string.indexOf("U:") >= 0) &&
-		(sfut_string.indexOf("T:") >= 0) ) {
-		// Full-style SFUT string like:
-		// S:1 F:xxx U:xxx T:xxx G:xxx
-		// Do not check for G: above because it is being phased in.
-		// First break by spaces..
+	if ( (sfut_string.indexOf("S:") >= 0) && (sfut_string.indexOf("F:") >= 0) &&
+		(sfut_string.indexOf("U:") >= 0) && (sfut_string.indexOf("T:") >= 0) ) {
+		// Full-style SFUT string like:  S:1 F:xxx U:xxx T:xxx G:xxx
+		// Do not check for G: above because it is being phased in.  First break by spaces..
 		String sfut0 = sfut_string + " ";
-		List sfut = StringUtil.breakStringList ( sfut0, " ",
-			StringUtil.DELIM_SKIP_BLANKS );
+		List sfut = StringUtil.breakStringList ( sfut0, " ", StringUtil.DELIM_SKIP_BLANKS );
 		int sfut_size = sfut.size();
 		if ( sfut_size < 4 ) {
-			Message.printWarning ( 2, routine,
-			"SFUT must have at least 4 parts" );
+			Message.printWarning ( 2, routine, "SFUT must have at least 4 parts" );
 			return sfut_parts;
 		}
-		// Now break each field by ':' and use
-		// the second part.  Do not handle more than five parts.
+		// Now break each field by ':' and use the second part.  Do not handle more than five parts.
 		List sfut2;
 		for ( int is = 0; (is < sfut_size) && (is < 5); is++ ) {
-			sfut2 = StringUtil.breakStringList (
-				sfut.get(is) + ":", ":", 0 );
+			sfut2 = StringUtil.breakStringList ( sfut.get(is) + ":", ":", 0 );
 			sfut_parts[is] = (String)sfut2.get(1);
 			if ( sfut_parts[is] == null ) {
 				sfut_parts[is] = "";
 			}
 		}
 	}
-	else {	// Assume the simple format of:
-		// xx:xx:xx:xx
+	else {
+	    // Assume the simple format of: xx:xx:xx:xx
 		String sfut0 = sfut_string + ":";
-		List sfut =
-		StringUtil.breakStringList ( sfut0, ":", 0 );
+		List sfut = StringUtil.breakStringList ( sfut0, ":", 0 );
 		if ( sfut.size() < 4 ) {
-			Message.printWarning ( 2, routine,
-			"SFUT must have 4 parts" );
+			Message.printWarning ( 2, routine, "SFUT must have 4 parts" );
 			return sfut_parts;
 		}
 		sfut_parts[0] = (String)sfut.get(0);
@@ -2582,8 +2323,7 @@ throws Exception {
 	String routine = "HydroBase_Util.readConfiguration";
 
 	if (!IOUtil.fileExists(configurationFile)) {
-		throw new Exception("Configuration file \"" 
-			+ configurationFile + "\" does not exist.");
+		throw new Exception("Configuration file \"" + configurationFile + "\" does not exist.");
 	}
 
 	PropList configurationProps = new PropList("ConfigurationProps");
@@ -2593,8 +2333,7 @@ throws Exception {
 	}
 	catch (Exception e) {
 		Message.printWarning(2, routine, 
-			"Configuration Properties could not be read from file: "
-			+ "'" + configurationFile + "'.");
+			"Configuration Properties could not be read from file: " + "'" + configurationFile + "'.");
 		Message.printWarning(3, routine, e);
 	}
 
@@ -2602,83 +2341,65 @@ throws Exception {
 }
 
 /**
-Read a list of objects that contain time series header information.  This is
-used, for example, to populate the time series list area of TSTool and to get
-a list of time series for the TSTool readHydroBase(Where...) command.
+Read a list of objects that contain time series header information.  This is used, for example, to populate the
+time series list area of TSTool and to get a list of time series for the TSTool readHydroBase(Where...) command.
 @param hbdmi The HydroBaseDMI instance to use for queries.
 @param data_type The data type for time series, either from the TSTool
 data type choice for HydroBase, or a simple string.
 @param time_step The time step for time series, either from the TSTool
 time step choice, or a simple string "Day", "Month", etc.
-@param ifp An InputFilter_JPanel instance to retrieve where clause information
-from.
+@param ifp An InputFilter_JPanel instance to retrieve where clause information from.
 @return a list of objects for the data type.
 @exception if there is an error reading the data.
 */
-public static List readTimeSeriesHeaderObjects (	HydroBaseDMI hbdmi,
-							String data_type,
-							String time_step,
-							InputFilter_JPanel ifp )
+public static List readTimeSeriesHeaderObjects ( HydroBaseDMI hbdmi, String data_type, String time_step,
+	InputFilter_JPanel ifp )
 throws Exception
-{	return readTimeSeriesHeaderObjects ( hbdmi, data_type, time_step,
-					ifp, null );
+{	return readTimeSeriesHeaderObjects ( hbdmi, data_type, time_step, ifp, null );
 }
 
 /**
-Read a list of objects that contain time series header information.  This is
-used, for example, to populate the time series list area of TSTool and to get
-a list of time series for the TSTool readHydroBase(Where...) command.
+Read a list of objects that contain time series header information.  This is used, for example, to populate the
+time series list area of TSTool and to get a list of time series for the TSTool readHydroBase(Where...) command.
 @param hbdmi The HydroBaseDMI instance to use for queries.
 @param data_type The data type for time series, either from the TSTool
 data type choice for HydroBase, or a simple string.
 @param time_step The time step for time series, either from the TSTool
 time step choice, or a simple string "Day", "Month", etc.
-@param ifp An InputFilter_JPanel instance to retrieve where clause information
-from.
-@param grlimits GRLimits indicating the extent of the map to query.  Specify
-as null to query all data.
+@param ifp An InputFilter_JPanel instance to retrieve where clause information from.
+@param grlimits GRLimits indicating the extent of the map to query.  Specify as null to query all data.
 @return a list of objects for the data type.
 @exception if there is an error reading the data.
 */
-public static List readTimeSeriesHeaderObjects (	HydroBaseDMI hbdmi,
-							String data_type,
-							String time_step,
-							InputFilter_JPanel ifp,
-							GRLimits grlimits )
+public static List readTimeSeriesHeaderObjects ( HydroBaseDMI hbdmi, String data_type, String time_step,
+	InputFilter_JPanel ifp, GRLimits grlimits )
 throws Exception
 {	String routine = "HydroBase_Util.readTimeSeriesHeaderObjects", message;
 	List tslist = null;
-	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType (
-			data_type, time_step );
+	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType ( data_type, time_step );
 	String meas_type = hb_mt[0];
 	String vax_field = hb_mt[1];
 	String hbtime_step = hb_mt[2];
-	String data_source = null;
+	String dataSource = null;
 	int size = 0;
+	
+	Message.printStatus(2, routine, "Reading HydroBase time series header objects for HydroBase meas_type=\"" +
+	       meas_type + "\", HydroBase timeStep=\"" + hbtime_step + "\".");
 
 	// Get the specific where clauses from the input filter...
-	if (	(ifp instanceof
-		HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel) ||
-		(ifp instanceof
-		HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel)
-		|| (ifp instanceof
-		HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel)
-		|| (ifp instanceof
-		HydroBase_GUI_AgriculturalCASSLivestockStats_InputFilter_JPanel) ||
-		(ifp instanceof
-		HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel)
-		|| (ifp instanceof
-		HydroBase_GUI_CUPopulation_InputFilter_JPanel) ||
-		(ifp instanceof
-		HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel) ||
-		(ifp instanceof 
-			HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel) ) {
+	if ( (ifp instanceof HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel) ||
+		(ifp instanceof HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel) ||
+		(ifp instanceof HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel) ||
+		(ifp instanceof HydroBase_GUI_AgriculturalCASSLivestockStats_InputFilter_JPanel) ||
+		(ifp instanceof HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel) ||
+		(ifp instanceof HydroBase_GUI_CUPopulation_InputFilter_JPanel) ||
+		(ifp instanceof HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel) ||
+		(ifp instanceof HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel) ) {
 	}
 	// Special cases first and then general lists...
-	if (	HydroBase_Util.
-		isAgriculturalCASSCropStatsTimeSeriesDataType ( hbdmi,
-		data_type ) ) {
-		try {	tslist = hbdmi.readAgriculturalCASSCropStatsList (
+	if ( HydroBase_Util.isAgriculturalCASSCropStatsTimeSeriesDataType ( hbdmi, data_type ) ) {
+		try {
+		    tslist = hbdmi.readAgriculturalCASSCropStatsList (
 				ifp,	// From input filter
 				null,		// county
 				null,		// commodity
@@ -2688,17 +2409,15 @@ throws Exception
 				true );		// Distinct
 		}
 		catch ( Exception e ) {
-			message = "Error getting agricultural crop " +
-				"time series list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
+			message = "Error getting CASS agricultural crop time series list from HydroBase (" + e + ").";
+			Message.printWarning ( 3, routine, message );
+			Message.printWarning ( 3, routine, e );
 			throw new Exception ( message );
 		}
 	}
-	else if(HydroBase_Util.
-		isAgriculturalCASSLivestockStatsTimeSeriesDataType ( hbdmi,
-		data_type ) ) {
-		try {	tslist = hbdmi.readAgriculturalCASSLivestockStatsList (
+	else if(HydroBase_Util.isAgriculturalCASSLivestockStatsTimeSeriesDataType ( hbdmi,data_type ) ) {
+		try {
+		    tslist = hbdmi.readAgriculturalCASSLivestockStatsList (
 				ifp,	// From input filter
 				null,		// county
 				null,		// commodity
@@ -2708,16 +2427,15 @@ throws Exception
 				true );		// Distinct
 		}
 		catch ( Exception e ) {
-			message = "Error getting agricultural livestock " +
-				"time series list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
+			message = "Error getting CASS agricultural livestock time series list from HydroBase (" + e + ").";
+			Message.printWarning ( 3, routine, message );
+			Message.printWarning ( 3, routine, e );
 			throw new Exception ( message );
 		}
 	}
-	else if(HydroBase_Util.isCUPopulationTimeSeriesDataType ( hbdmi,
-		data_type ) ) {
-		try {	tslist = hbdmi.readCUPopulationList (
+	else if(HydroBase_Util.isCUPopulationTimeSeriesDataType ( hbdmi,data_type ) ) {
+		try {
+		    tslist = hbdmi.readCUPopulationList (
 				ifp,	// From input filter
 				null,		// county
 				null,		// commodity
@@ -2727,16 +2445,15 @@ throws Exception
 				true );		// Distinct
 		}
 		catch ( Exception e ) {
-			message = "Error getting CU Population " +
-				"time series list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
+			message = "Error getting CU Population time series list from HydroBase (" + e + ").";
+			Message.printWarning ( 3, routine, message );
+			Message.printWarning ( 3, routine, e );
 			throw new Exception ( message );
 		}
 	}
-	else if(HydroBase_Util.isIrrigSummaryTimeSeriesDataType (
-		hbdmi, data_type ) ) {
-		try {	// Structure GIS crop areas...
+	else if(HydroBase_Util.isIrrigSummaryTimeSeriesDataType ( hbdmi, data_type ) ) {
+		try {
+		    // Structure GIS crop areas...
 			tslist = hbdmi.readStructureIrrigSummaryTSList (
 				ifp,
 				null,	// orderby
@@ -2752,24 +2469,21 @@ throws Exception
 			int size2 = tslist.size();
 			HydroBase_StructureView view = null;
 			for (int i = 0; i < size2; i++) {
-				view = (HydroBase_StructureView)tslist
-					.get(i);
-				v.add(new HydroBase_StructureIrrigSummaryTS(
-					view));
+				view = (HydroBase_StructureView)tslist.get(i);
+				v.add(new HydroBase_StructureIrrigSummaryTS(view));
 			}
 			tslist = v;
 		}
 		catch ( Exception e ) {
-			message = "Error getting crop area" +
-			" list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
+			message = "Error getting irrigation summary crop area list from HydroBase (" + e + ").";
+			Message.printWarning ( 3, routine, message );
+			Message.printWarning ( 3, routine, e );
 			throw new Exception ( message );
 		}
 	}
-	else if ( HydroBase_Util.isAgriculturalNASSCropStatsTimeSeriesDataType (
-			hbdmi, data_type ) ) {
-		try {	// NASS crop statistics...
+	else if ( HydroBase_Util.isAgriculturalNASSCropStatsTimeSeriesDataType ( hbdmi, data_type ) ) {
+		try {
+		    // NASS crop statistics...
 			tslist = hbdmi.readAgriculturalNASSCropStatsList (
 				ifp,	// From input filter
 				null,		// county
@@ -2779,155 +2493,115 @@ throws Exception
 				true );		// Distinct
 		}
 		catch ( Exception e ) {
-			message = "Error getting crop area" +
-			" list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
+			message = "Error getting NASS crop area list from HydroBase (" + e + ").";
+			Message.printWarning ( 3, routine, message );
+			Message.printWarning ( 3, routine, e );
 			throw new Exception ( message );
 		}
 	}
 	else if(HydroBase_Util.isStationTimeSeriesDataType(hbdmi, meas_type)){
-		try {	// Note multiple vax_field and data sources
-			// can be returned below.  Only specify the
-			// vax_field when it is necessary to do so to
-			// get the proper list back...
-			tslist = hbdmi.readStationGeolocMeasTypeList(ifp,
-				null, grlimits, meas_type, hbtime_step,
-				vax_field, data_source, null, false);
-			// Convert HydroBase data to make it more
-			// consistent with how TSTool handles time
-			// series...
+		try {
+		    // Note multiple vax_field and data sources can be returned below.  Only specify the
+			// vax_field when it is necessary to do so to get the proper list back...
+			tslist = hbdmi.readStationGeolocMeasTypeList(ifp, null, grlimits, meas_type, hbtime_step,
+				vax_field, dataSource, null, false);
+			// Convert HydroBase data to make it more consistent with how TSTool handles time series...
 			if ( tslist != null ) {
 				size = tslist.size();
 			}
 			if ( size == 0 ) {
-				Message.printWarning ( 2, routine,
-				"Found 0 time series for " +
-				"meas_type=\""+ meas_type +
-				"\" time_step=\""+ hbtime_step +
-				"\" vax_field=\""+ vax_field +
-				"\" data_source=\""+ data_source +"\"");
+				Message.printWarning ( 3, routine, "Found 0 time series for meas_type=\""+ meas_type +
+				"\" time_step=\""+ hbtime_step + "\" vax_field=\""+ vax_field + "\" data_source=\""+ dataSource +"\"");
 			}
 			HydroBase_StationView view = null;
-			String data_units = HydroBase_Util.
-				getTimeSeriesDataUnits (
-				hbdmi, data_type, time_step );
+			String data_units = HydroBase_Util.getTimeSeriesDataUnits ( hbdmi, data_type, time_step );
 //			if (hbdmi.useStoredProcedures()) {
 			List v = tslist;
 			tslist = new Vector();
 			for ( int i = 0; i < size; i++ ) {
-				view = (HydroBase_StationView)
-					v.get(i);
+				view = (HydroBase_StationView)v.get(i);
 				// Set to the value used in TSTool...
 				if ( view.getVax_field().length() > 0 ){
-					view.setMeas_type(
-					data_type + "-" +
-					view.getVax_field() );
+					view.setMeas_type( data_type + "-" + view.getVax_field() );
 				}
-				else {	view.setMeas_type ( data_type);
+				else {
+				    view.setMeas_type ( data_type);
 				}
 				view.setTime_step ( time_step );
 				view.setData_units ( data_units );
-				// REVISIT (JTS - 2005-04-06)
-				// THIS SHOULDn"T BE DONE ONCE WE CAN 
-				// RECOMPILE TSTOOL!!!				
-				tslist.add(new HydroBase_StationGeolocMeasType(
-					view));
+				// TODO (JTS - 2005-04-06) THIS SHOULDn"T BE DONE ONCE WE CAN RECOMPILE TSTOOL!!!				
+				tslist.add(new HydroBase_StationGeolocMeasType(view));
 			}
 		}
 		catch ( Exception e ) {
-			message = "Error getting station time series " +
-			" list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
+			message = "Error getting station time series list from HydroBase (" + e + ").";
+			Message.printWarning ( 3, routine, message );
+			Message.printWarning ( 3, routine, e );
 			throw new Exception ( message );
 		}
 	}
 	else if(HydroBase_Util.isStructureTimeSeriesDataType(hbdmi, meas_type)){
-		try {	// Note multiple SFUT and data sources
-			// can be returned below...
-			tslist = hbdmi.readStructureGeolocStructMeasTypeList(
-				ifp, meas_type, hbtime_step);
-			// Convert HydroBase data to make it more
-			// consistent with how TSTool handles time series...
+		try {
+		    // Note multiple SFUT and data sources can be returned below...
+			tslist = hbdmi.readStructureGeolocStructMeasTypeList(ifp, meas_type, hbtime_step);
+			// Convert HydroBase data to make it more consistent with how TSTool handles time series...
 			if ( tslist != null ) {
 				size = tslist.size();
 			}
 			HydroBase_StructMeasTypeView view;
-			String data_units = HydroBase_Util.
-				getTimeSeriesDataUnits (
-				hbdmi, data_type, time_step );
-//			if (hbdmi.useStoredProcedures()) {
+			String data_units = HydroBase_Util.getTimeSeriesDataUnits (hbdmi, data_type, time_step );
 			List v = tslist;
 			tslist = new Vector();			
 			for ( int i = 0; i < size; i++ ) {
-				view = 
-				(HydroBase_StructMeasTypeView)
-					v.get(i);
+				view = (HydroBase_StructMeasTypeView)v.get(i);
 				// Set to the value used in TSTool...
 				if ( view.getIdentifier().length() > 0){
 					// Merged SFUT...
-					view.setMeas_type(
-					data_type + "-" + view.getIdentifier());
+					view.setMeas_type(data_type + "-" + view.getIdentifier());
 				}
-				else {	view.setMeas_type( data_type);
+				else {
+				    view.setMeas_type( data_type);
 				}
 				view.setTime_step(time_step);
 				view.setData_units ( data_units );
-				// REVISIT (JTS - 2005-04-06)
-				// THIS SHOULDn"T BE DONE ONCE WE CAN 
-				// RECOMPILE TSTOOL!!!
-				tslist.add(new 
-					HydroBase_StructureGeolocStructMeasType(
-					view));
+				// TODO (JTS - 2005-04-06) THIS SHOULDn"T BE DONE ONCE WE CAN RECOMPILE TSTOOL!!!
+				tslist.add(new HydroBase_StructureGeolocStructMeasType(view));
 			}
-			if (	data_type.equals("WellLevel")
-				&& time_step.equalsIgnoreCase("Day")){
-				// Add the common identifiers to the
-				// normal data.  This is a work-around
-				// until HydroBase is redesigned.
-				// REVISIT SAM 2004-01-13
-				HydroBase_Util.
-					addAlternateWellIdentifiers (
-					hbdmi, tslist );
+			if ( data_type.equals("WellLevel") && time_step.equalsIgnoreCase("Day")){
+				// Add the common identifiers to the normal data.  This is a work-around until HydroBase is redesigned.
+				// TODO SAM 2004-01-13
+				HydroBase_Util.addAlternateWellIdentifiers ( hbdmi, tslist );
 			}
 		}
 		catch ( Exception e ) {
-			message = "Error getting structure time series"+
-			" list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
+			message = "Error getting structure time series list from HydroBase (" + e + ").";
+			Message.printWarning ( 3, routine, message );
+			Message.printWarning ( 3, routine, e );
 			throw new Exception ( message );
 		}
 	}
 	else if (meas_type.equalsIgnoreCase("WellLevel")) {
-		try {	// Note multiple SFUT and data sources
-			// can be returned below...
-			tslist = hbdmi.readGroundWaterWellsMeasTypeList(
-				ifp, null);
-			// Convert HydroBase data to make it more
-			// consistent with how TSTool handles time series...
+		try {
+		    // Note multiple SFUT and data sources can be returned below...
+			tslist = hbdmi.readGroundWaterWellsMeasTypeList(ifp, null);
+			// Convert HydroBase data to make it more consistent with how TSTool handles time series...
 			if ( tslist != null ) {
 				size = tslist.size();
 			}
 			HydroBase_GroundWaterWellsView view;
-			String data_units = HydroBase_Util.
-				getTimeSeriesDataUnits (
-				hbdmi, data_type, time_step );
+			String data_units = HydroBase_Util.getTimeSeriesDataUnits ( hbdmi, data_type, time_step );
 
 			List v = tslist;
 			tslist = new Vector();			
 			for ( int i = 0; i < size; i++ ) {
-				view = 
-				(HydroBase_GroundWaterWellsView)
-					v.get(i);
+				view = (HydroBase_GroundWaterWellsView)v.get(i);
 				// Set to the value used in TSTool...
 				if ( view.getIdentifier().length() > 0){
 					// Merged SFUT...
-					view.setMeas_type(
-					data_type + "-" + view.getIdentifier());
+					view.setMeas_type(data_type + "-" + view.getIdentifier());
 				}
-				else {	view.setMeas_type( data_type);
+				else {
+				    view.setMeas_type( data_type);
 				}
 				view.setTime_step(time_step);
 				view.setData_units ( data_units );
@@ -2935,19 +2609,17 @@ throws Exception
 			}
 		}
 		catch ( Exception e ) {
-			message = "Error getting structure time series"+
-			" list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
+			message = "Error getting well level time series list from HydroBase (" + e + ").";
+			Message.printWarning ( 3, routine, message );
+			Message.printWarning ( 3, routine, e );
 			throw new Exception ( message );
 		}
 	}
 	// XJTSX
 	else if ( HydroBase_Util.isWISTimeSeriesDataType ( hbdmi, data_type) ) {
-		try {	// Use the selected sheet name from the input
-			// filter, if present...
-			tslist = hbdmi.
-			readWISSheetNameWISFormatListDistinct(ifp);
+		try {
+		    // Use the selected sheet name from the input filter, if present...
+			tslist = hbdmi.readWISSheetNameWISFormatListDistinct(ifp);
 			int listSize = tslist.size();
 			List v = new Vector();
 			for (int i = 0; i < listSize; i++) {
@@ -2956,8 +2628,7 @@ throws Exception
 			tslist = v;
 		}
 		catch ( Exception e ) {
-			message = "Error getting WIS time series"+
-			" list from HydroBase.";
+			message = "Error getting WIS time series list from HydroBase.";
 			Message.printWarning ( 2, routine, message );
 			Message.printWarning ( 2, routine, e );
 			throw new Exception ( message );
