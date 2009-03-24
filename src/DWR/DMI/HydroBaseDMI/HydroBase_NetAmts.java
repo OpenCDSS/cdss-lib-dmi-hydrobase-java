@@ -31,61 +31,71 @@ Class to store data from the HydroBase net_amts table.
 public class HydroBase_NetAmts 
 extends DMIDataObject {
 
-protected int _net_num = 		DMIUtil.MISSING_INT;
-protected int _div = 			DMIUtil.MISSING_INT;
-protected String _tab_trib = 		DMIUtil.MISSING_STRING;
-protected int _wd = 			DMIUtil.MISSING_INT;
-protected int _id = 			DMIUtil.MISSING_INT;
-protected String _wr_name = 		DMIUtil.MISSING_STRING;
-protected int _xwr_stream_no = 		DMIUtil.MISSING_INT;
-protected int _wr_stream_no = 		DMIUtil.MISSING_INT;
-protected String _wd_stream_name = 	DMIUtil.MISSING_STRING;
-protected String _xstrtype = 		DMIUtil.MISSING_STRING;
-protected String _strtype = 		DMIUtil.MISSING_STRING;
-protected String _pm = 			DMIUtil.MISSING_STRING;
-protected String _rng = 		DMIUtil.MISSING_STRING;
-protected String _rdir = 		DMIUtil.MISSING_STRING;
-protected String _rnga = 		DMIUtil.MISSING_STRING;
-protected String _ts = 			DMIUtil.MISSING_STRING;
-protected String _tdir = 		DMIUtil.MISSING_STRING;
-protected String _tsa = 		DMIUtil.MISSING_STRING;
-protected int _sec = 			DMIUtil.MISSING_INT;
-protected String _seca = 		DMIUtil.MISSING_STRING;
-protected String _q160 = 		DMIUtil.MISSING_STRING;
-protected String _q40 = 		DMIUtil.MISSING_STRING;
-protected String _q10 = 		DMIUtil.MISSING_STRING;
-protected int _cty = 			DMIUtil.MISSING_INT;
-protected Date _adj_date = 		DMIUtil.MISSING_DATE;
-protected Date _padj_date = 		DMIUtil.MISSING_DATE;
-protected Date _apro_date = 		DMIUtil.MISSING_DATE;
-protected double _admin_no = 		DMIUtil.MISSING_DOUBLE;
-protected int _order_no = 		DMIUtil.MISSING_INT;
-protected String _pri_case_no = 	DMIUtil.MISSING_STRING;
-protected String _adj_type = 		DMIUtil.MISSING_STRING;
-protected String _use = 		DMIUtil.MISSING_STRING;
-protected double _net_rate_abs = 	DMIUtil.MISSING_DOUBLE;
-protected double _net_vol_abs = 	DMIUtil.MISSING_DOUBLE;
-protected double _net_rate_cond = 	DMIUtil.MISSING_DOUBLE;
-protected double _net_vol_cond = 	DMIUtil.MISSING_DOUBLE;
-protected double _net_rate_apex = 	DMIUtil.MISSING_DOUBLE;
-protected double _net_vol_apex = 	DMIUtil.MISSING_DOUBLE;
-protected String _abs = 		DMIUtil.MISSING_STRING;
-protected String _cond = 		DMIUtil.MISSING_STRING;
-protected String _apex = 		DMIUtil.MISSING_STRING;
-protected double _net_abs = 		DMIUtil.MISSING_DOUBLE;
-protected double _net_cond = 		DMIUtil.MISSING_DOUBLE;
-protected double _net_apex = 		DMIUtil.MISSING_DOUBLE;
-protected String _unit = 		DMIUtil.MISSING_STRING;
-protected String _action_comment =	DMIUtil.MISSING_STRING;
-protected int _right_num = 		DMIUtil.MISSING_INT;
-protected int _structure_num = 		DMIUtil.MISSING_INT;
+protected int _net_num = DMIUtil.MISSING_INT;
+protected int _div = DMIUtil.MISSING_INT;
+protected String _tab_trib = DMIUtil.MISSING_STRING;
+protected int _wd = DMIUtil.MISSING_INT;
+protected int _id = DMIUtil.MISSING_INT;
+protected String _wr_name = DMIUtil.MISSING_STRING;
+protected int _xwr_stream_no = DMIUtil.MISSING_INT;
+protected int _wr_stream_no = DMIUtil.MISSING_INT;
+protected String _wd_stream_name = DMIUtil.MISSING_STRING;
+protected String _xstrtype = DMIUtil.MISSING_STRING;
+protected String _strtype = DMIUtil.MISSING_STRING;
+protected String _pm = DMIUtil.MISSING_STRING;
+protected String _rng = DMIUtil.MISSING_STRING;
+protected String _rdir = DMIUtil.MISSING_STRING;
+protected String _rnga = DMIUtil.MISSING_STRING;
+protected String _ts = DMIUtil.MISSING_STRING;
+protected String _tdir = DMIUtil.MISSING_STRING;
+protected String _tsa = DMIUtil.MISSING_STRING;
+protected int _sec = DMIUtil.MISSING_INT;
+protected String _seca = DMIUtil.MISSING_STRING;
+protected String _q160 = DMIUtil.MISSING_STRING;
+protected String _q40 = DMIUtil.MISSING_STRING;
+protected String _q10 = DMIUtil.MISSING_STRING;
+protected int _cty = DMIUtil.MISSING_INT;
+protected Date _adj_date = DMIUtil.MISSING_DATE;
+protected Date _padj_date = DMIUtil.MISSING_DATE;
+protected Date _apro_date = DMIUtil.MISSING_DATE;
+protected double _admin_no = DMIUtil.MISSING_DOUBLE;
+protected int _order_no = DMIUtil.MISSING_INT;
+protected String _pri_case_no = DMIUtil.MISSING_STRING;
+protected String _adj_type = DMIUtil.MISSING_STRING;
+protected String _use = DMIUtil.MISSING_STRING;
+protected double _net_rate_abs = DMIUtil.MISSING_DOUBLE;
+protected double _net_vol_abs = DMIUtil.MISSING_DOUBLE;
+protected double _net_rate_cond = DMIUtil.MISSING_DOUBLE;
+protected double _net_vol_cond = DMIUtil.MISSING_DOUBLE;
+protected double _net_rate_apex = DMIUtil.MISSING_DOUBLE;
+protected double _net_vol_apex = DMIUtil.MISSING_DOUBLE;
+protected String _abs = DMIUtil.MISSING_STRING;
+protected String _cond = DMIUtil.MISSING_STRING;
+protected String _apex = DMIUtil.MISSING_STRING;
+protected double _net_abs = DMIUtil.MISSING_DOUBLE;
+protected double _net_cond = DMIUtil.MISSING_DOUBLE;
+protected double _net_apex = DMIUtil.MISSING_DOUBLE;
+protected String _unit = DMIUtil.MISSING_STRING;
+protected String _action_comment = DMIUtil.MISSING_STRING;
+protected int _right_num = DMIUtil.MISSING_INT;
+protected int _structure_num = DMIUtil.MISSING_INT;
 
 /**
 The common identifier is used to store a formatted WDID or concatenated well
 permit number, suffix, replacement, when processing data.  This data member
 is currently only used by StateDMI. 
 */
-private String _common_id =		DMIUtil.MISSING_STRING;
+private String _common_id = DMIUtil.MISSING_STRING;
+
+/**
+The parcel ID is used when processing well rights and is only used by StateDMI. 
+*/
+private int _parcelID = DMIUtil.MISSING_INT;
+
+/**
+The parcel match class is used when processing well rights and is only used by StateDMI. 
+*/
+private int _parcelMatchClass = DMIUtil.MISSING_INT;
 
 /**
 Constructor.
@@ -322,6 +332,22 @@ Returns _padj_date
 */
 public Date getPadj_date() {
 	return _padj_date;
+}
+
+/**
+Returns _parcelID
+@return _parcelID
+*/
+public int getParcelID() {
+	return _parcelID;
+}
+
+/**
+Returns _parcelMatchClass
+@return _parcelMatchClass
+*/
+public int getParcelMatchClass() {
+	return _parcelMatchClass;
 }
 
 /**
@@ -714,6 +740,22 @@ Sets _padj_date
 */
 public void setPadj_date(Date padj_date) {
 	_padj_date = padj_date;
+}
+
+/**
+Sets _parcelID
+@param parcelID value to put into _parcelID
+*/
+public void setParcelID(int parcelID) {
+	_parcelID = parcelID;
+}
+
+/**
+Sets _parcelMatchClass
+@param parcelMatchClass value to put into _parcelMatchClass
+*/
+public void setParcelMatchClass(int parcelMatchClass) {
+	_parcelMatchClass = parcelMatchClass;
 }
 
 /**
