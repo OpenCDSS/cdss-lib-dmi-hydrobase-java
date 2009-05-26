@@ -821,7 +821,7 @@ in order to support StateView/CWRAT, TSTool, StateDMI, and other CDSS software.
 However, a few methods are available for writing and deleting data, in
 particular for administrative data edits (calls and WIS) in CWRAT.<p>
 
-A database connection is made either by specifying a pre-defined ODBC DSN (used
+A database connection is made either by specifying a predefined ODBC DSN (used
 with Microsoft Access) or by specifying a database server name, in which case
 SQL Server is assumed and the database name is assumed to be "HydroBase".  In
 either case, a login can be specified using a SelectHydroBaseJDialog instance.
@@ -1691,7 +1691,7 @@ throws Exception
 Constructor for a database server and database name, to use an automatically
 created URL to connect to a database that does not use stored procedures.
 @param database_engine The database engine to use (see the DMI constructor).
-If null, default to "SQLServer2000".
+If null, default to "SQLServer".
 @param database_server The IP address or DSN-resolvable database server machine name.
 @param database_name The database name on the server.  If null, default to "HydroBase".
 @param port Port number used by the database.  If negative, default to that for the database engine.
@@ -1709,7 +1709,7 @@ throws Exception {
 /** 
 Constructor for a database server and database name, to use an automatically created URL.
 @param database_engine The database engine to use (see the DMI constructor).
-If null, default to "SQLServer2000".
+If null, default to "SQLServer".
 @param database_server The IP address or DSN-resolvable database server machine name.
 @param database_name The database name on the server.  If null, default to "HydroBase".
 @param port Port number used by the database.  If negative, default to that for the database engine.
@@ -1732,7 +1732,7 @@ throws Exception
 	
 	if ( database_engine == null ) {
 		// Use the default...
-		setDatabaseEngine("SQLServer2000");
+		setDatabaseEngine("SQLServer");
 	}
 	if ( database_name == null ) {
 		// Use the default...
@@ -1794,9 +1794,10 @@ crdss (if not using stored procedures)</td></tr>
 <td>HydroBase.SystemPassword</td><td>cdss%tools (if using stored procedures)<p>
 crdss3nt (if not using stored procedures)</td></tr>
 <tr>
-<td>HydroBase.Port</td><td>1433, then 21784 (if connecting to a remote server)
-<p>21784, then 1433 (if connecting to a local machine).  1433 is the default for
-full SQL Server whereas 21784 is used for SQL Server Express and the older MSDE.</td></tr>
+<td>HydroBase.Port</td><td>1433, then 5758, then 21784 (if connecting to a remote server)
+<p>5758, 21784, then 1433 (if connecting to a local machine).  1433 is the default for
+full SQL Server whereas 5758 is used for SQL Server Express and the older MSDE
+(previously 21784 was used).</td></tr>
 </table>
 */
 public HydroBaseDMI(PropList props) 
@@ -1832,7 +1833,7 @@ throws Exception {
 	}
 	
 	if (database_engine == null) {
-		database_engine = "SQLServer2000";
+		database_engine = "SQLServer";
 	}
 
 	if (database_server == null) {
@@ -1890,9 +1891,10 @@ throws Exception {
 		    // Connecting to the local machine.  Try the SQL Server Express/MSDE port first and 
 		    // full SQL Server port second.  Also get the specific machine name instead of "local".
 			database_server = IOUtil.getProgramHost();
-			__localPorts = new int[2];
-			__localPorts[0] = 21784; // MSDE or SQL Server Express
-			__localPorts[1] = 1433;
+			__localPorts = new int[3];
+			__localPorts[0] = 5758; // SQL Server Express or full
+			__localPorts[1] = 21784; // MSDE or SQL Server Express
+			__localPorts[2] = 1433;
 			port = __localPorts[0];
 		}
 		else {
@@ -1900,7 +1902,8 @@ throws Exception {
 		    // full server (like at the State).
 			__localPorts = new int[2];
 			__localPorts[0] = 1433;
-			__localPorts[1] = 21784; // MSDE
+			__localPorts[1] = 5758;
+			__localPorts[2] = 21784; // MSDE
 			port = __localPorts[0];
 		}
 	}
@@ -5516,13 +5519,11 @@ throws Exception {
 Checks to see if a stored procedure can be used for the given statement.  If
 so, the statement object is modified with the definition of the stored procedure
 to be executed, and true is return.  If a stored procedure cannot be used
-for this statement, false is returned and no changes are made to the 
-statement.
+for this statement, false is returned and no changes are made to the statement.
 @param statement the statement that might be set up as a stored procedure.
-@param sqlNumber the int value that refers to the specific statement being
+@param sqlNumber the integer value that refers to the specific statement being
 executed, the same value as used by buildSQL().
-@return true if the statement can be set up as a stored procedure.  Otherwise, 
-return false.
+@return true if the statement can be set up as a stored procedure.  Otherwise, return false.
 @throws Exception if there is any error in reading data from the database
 while querying stored procedure information.
 */
@@ -5530,24 +5531,20 @@ private boolean canSetUpStoredProcedure(DMIStatement statement, int sqlNumber)
 throws Exception {
 	boolean debug = false;
 	if (IOUtil.testing() && debug) {
-		Message.printStatus(2, "", "Checking to see if SQLNumber " 
-			+ sqlNumber + " has an SP (" + __useSP + ")");
+		Message.printStatus(2, "", "Checking to see if SQLNumber " + sqlNumber + " has an SP (" + __useSP + ")");
 	}
 			
 	if (!__useSP) {
 		if (Message.isDebugOn) {
 			Message.printDebug(30, 
-				"HydroBaseDMI.canSetUpStoredProcedure",
-				"Cannot use stored procedures with this "
-				+ "database.");
+				"HydroBaseDMI.canSetUpStoredProcedure", "Cannot use stored procedures with this database.");
 		}
 		return false;
 	}
 
 	String name = null;
 
-	// Look up the name of the stored procedure that maps to the specified
-	// sqlNumber value.  
+	// Look up the name of the stored procedure that maps to the specified sqlNumber value.  
 
 	switch (sqlNumber) {
 		case __S_AQUIFER:
@@ -5652,19 +5649,16 @@ throws Exception {
 			name = "usp_CDSS_ParcelUseTS_CalYear_Distinct";
 			break;
 		case __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN:
-			name = 
-		   "usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_Structure_num";
+			name = "usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_Structure_num";
 			break;
 		case __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR:
-			name = 
-		   "usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear";
+			name = "usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear";
 			break;
 		case __S_PERSON_DETAILS:
 			name = "usp_CDSS_PersonDetails_Sel_By_Structure_num";
 			break;
 		case __S_RESERVOIR_FOR_STRUCTURE_NUM:
-			name =
-			     "usp_CDSS_StructureReservoir_Sel_By_Structure_num";
+			name = "usp_CDSS_StructureReservoir_Sel_By_Structure_num";
 			break;
 		case __S_RESERVOIR:
 			name = "usp_CDSS_StructureReservoir_Sel_By_WDID";
@@ -5787,7 +5781,6 @@ throws Exception {
 		case __D_WIS_IMPORT:
 			name = "usp_CDSS_WISImport_Del_By_Wis_num";
 			break;
-
 		case __W_CALLS:
 			name = "usp_CDSS_Calls_Upd";
 			break;
@@ -5862,8 +5855,7 @@ throws Exception {
 	}
 
 	if (IOUtil.testing() && debug) {
-		Message.printStatus(2, "", "Trying to create stored procedure '"
-			+ name + "'");
+		Message.printStatus(2, "", "Trying to create stored procedure '" + name + "'");
 	}
 
 	// Look up the definition of the stored procedure (stored in a
@@ -5871,15 +5863,12 @@ throws Exception {
 	// repeated calls to the same stored procedure to re-used stored
 	// procedure meta data without requerying the database.
 
-	DMIStoredProcedureData data = 
-		(DMIStoredProcedureData)__storedProcedureHashtable.get(name);
+	DMIStoredProcedureData data = (DMIStoredProcedureData)__storedProcedureHashtable.get(name);
 	
 	if (data != null) {
-		// If a data object was found, set up the data in the statement
-		// below and return true
+		// If a data object was found, set up the data in the statement below and return true
 	}
-	else if (data == null 
-		&& DMIUtil.databaseHasStoredProcedure(this, name)) {
+	else if ( (data == null) && DMIUtil.databaseHasStoredProcedure(this, name)) {
 		// If no data object was found, but the stored procedure is
 		// defined in the database then build the data object for the
 		// stored procedure and then store it in the hashtable.
@@ -5891,26 +5880,20 @@ throws Exception {
 		// defined in the database, then use the original DMI code.
 		// Return false to buildSQL() so it knows to continue executing.
 		if (IOUtil.testing()) {
-			Message.printStatus(2, 
-				"HydroBaseDMI.canSetUpStoredProcedure",
-				"No stored procedure defined in database "
-				+ "for SQL#: " + sqlNumber);
+			Message.printStatus(2, "HydroBaseDMI.canSetUpStoredProcedure",
+				"No stored procedure defined in database for SQL#: " + sqlNumber);
 		}
 
 		if (Message.isDebugOn) {
-			Message.printDebug(30, 
-				"HydroBaseDMI.canSetUpStoredProcedure",
-				"No stored procedure defined in database "
-				+ "for SQL#: " + sqlNumber);
+			Message.printDebug(30, "HydroBaseDMI.canSetUpStoredProcedure",
+				"No stored procedure defined in database for SQL#: " + sqlNumber);
 		}		
 		return false;
 	}
 
 	if (Message.isDebugOn) {
-		Message.printDebug(30, 
-			"HydroBaseDMI.canSetUpStoredProcedure",
-			"Stored procedure '" + name + "' found and will "
-			+ "be used.");
+		Message.printDebug(30, "HydroBaseDMI.canSetUpStoredProcedure",
+			"Stored procedure '" + name + "' found and will be used.");
 	}	
 
 	if (IOUtil.testing() && debug) {
@@ -6579,9 +6562,7 @@ throws java.sql.SQLException {
 
 /**
 Executes a query and returns the result.  This overrides the normal dmiSelect()
-in order that for stored procedures when testing the string that can be
-pasted into the Query Analyzer can be printed.
-@param q the DMISelectStatement to execute.
+in order to print the SQL so that it can be pasted into a database tool.
 @return a ResultSet of records.
 */
 public ResultSet dmiSelect(DMISelectStatement q)
@@ -6589,8 +6570,7 @@ throws java.sql.SQLException {
 	if (__useSP) {
 		__lastStatement = q;
 		if (IOUtil.testing()) {
-			Message.printStatus(2, "", "" 
-				+ q.createStoredProcedureString());
+			Message.printStatus(2, "", "" + q.createStoredProcedureString());
 		}
 		checkSecurityAndPrint(q.createStoredProcedureString());
 	}

@@ -60,6 +60,7 @@ import javax.swing.event.ListSelectionListener;
 import java.util.List;
 import java.util.Vector;
 
+import RTi.DMI.DMI;
 import RTi.DMI.DMIUtil;
 
 import RTi.GRTS.TSProduct;
@@ -734,10 +735,7 @@ private void setupGUI() {
 		0, y++, 1, 1, 1, 0, 
 		GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);		
 
-	if ((__dmi.getDatabaseEngine().equals("SQL_Server")
-		|| __dmi.getDatabaseEngine().equals("SQLServer7")
-		|| __dmi.getDatabaseEngine().equals("SQLServer2000"))
-		&& __dmi.isGuestLoggedIn()) {
+	if ( (__dmi.getDatabaseEngineType() == DMI.DBENGINE_SQLSERVER) && __dmi.isGuestLoggedIn()) {
 		JGUIUtil.addComponent(northJPanel, 
 			new JLabel(" "),
 			0, y++, 1, 1, 1, 0, 

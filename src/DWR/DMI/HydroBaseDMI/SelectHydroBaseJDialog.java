@@ -115,6 +115,7 @@ import java.io.File;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -157,8 +158,7 @@ implements ActionListener, KeyListener, ItemListener, WindowListener {
 
 /**
 The default ODBC DSN that has been set.  If this is not null, then when the
-dialog opens the dialog will be set to make a local connection with this
-DSN as the default value.
+dialog opens the dialog will be set to make a local connection with this DSN as the default value.
 */
 private static String __defaultOdbcDsn = null;
 
@@ -186,8 +186,8 @@ public final String
 Button labels.
 */
 private final String
-	__BUTTON_CANCEL = 	"Cancel",
-	__BUTTON_OK = 		"OK";
+	__BUTTON_CANCEL = "Cancel",
+	__BUTTON_OK = "OK";
 
 /**
 Name of the default ODBC DSN name.
@@ -213,8 +213,8 @@ private final String __NO_DATABASES = "[No HydroBase databases available]";
 Strings that specify how to connect, remote or local.
 */
 private final String	
-	__LOCAL		= "Use Access Database",
-	__REMOTE	= "Use SQL Server Database";
+	__LOCAL = "Use Access Database",
+	__REMOTE = "Use SQL Server Database";
 
 /**
 Whether the Dialog was closed with the cancel button.
@@ -377,8 +377,7 @@ The username that was automatically detected by trying to create a connection to
 private String __detectedUsername = null;
 
 /**
-The password that was automatically detected by trying to create a connection
-to a database.
+The password that was automatically detected by trying to create a connection to a database.
 */
 private String __detectedPassword = null;
 
@@ -394,8 +393,7 @@ Constructor.  Constructs and displays a SelectHydroBaseJDialog.
 SelectHydroBase dialog "OK", then whatever HydroBaseDMI that is in effect will
 be available to the calling code (it will be null if the login failed).
 @param props Properties for the selection ("ValidateLogin"=true|false,
-"ShowWaterDivisions"=true|false, "DatabaseHost"=localhost,
-"ArchiveDatabaseHost"=remoteHost).
+"ShowWaterDivisions"=true|false, "DatabaseHost"=localhost, "ArchiveDatabaseHost"=remoteHost).
 */
 public SelectHydroBaseJDialog(JFrame parent, HydroBaseDMI hbdmi, PropList props)
 {	
@@ -455,8 +453,7 @@ public void actionPerformed(ActionEvent event) {
 Close the dialog without transferring any settings to the internal data.
 */
 private void cancelClicked() {
-	// The HydroBaseDMI is the one that was passed into the constructor (no
-	// need to do anything).  
+	// The HydroBaseDMI is the one that was passed into the constructor (no need to do anything).  
 	__cancelled = true;
 	closeDialog();
 }
@@ -486,46 +483,54 @@ private void checkDatabaseVersion(HydroBaseDMI hbdmi) {
 }
 
 /**
-Checks a server with the given hostname for the databases running on it.
+Checks a server with the given hostname for the databases running on it and populate the displayed list
+of database names.
 @param server the server to check.
 */
-private void checkServer(String server) {
-	String[] usernames = new String[2];
-	String[] passwords = new String[2];
-	int[] ports = new int[2];
+private void checkServerForDatabaseNames(String server)
+{	String routine = getClass().getName() + ".checkServerForDatabaseNames";
+	String[] usernames = new String[3];
+	String[] passwords = new String[3];
+	int[] ports = new int[3];
 
 	if (!__useSPJCheckBox.isSelected()) {
 		usernames[0] = "crdss";	
 		passwords[0] = "crdss3nt";    
-		ports[0] = 21784;
-
+		ports[0] = 5758;
+		
 		usernames[1] = "crdss";	
 		passwords[1] = "crdss3nt";    
-		ports[1] = 1433;
+		ports[1] = 21784;
+
+		usernames[2] = "crdss";	
+		passwords[2] = "crdss3nt";    
+		ports[2] = 1433;
 	}
 	else {
 		usernames[0] = "cdss";
 		passwords[0] = "cdss%tools";
-		ports[0] = 21784;
+		ports[0] = 5758;
 		
-		usernames[1] = "cdss";	
-		passwords[1] = "cdss%tools";  
-		ports[1] = 1433;
+		usernames[1] = "cdss";
+		passwords[1] = "cdss%tools";
+		ports[1] = 21784;
+		
+		usernames[2] = "cdss";	
+		passwords[2] = "cdss%tools";  
+		ports[2] = 1433;
 	}
 
 	GenericDMI dmi = null;
 
-	int i = 0;
-
-	for (; i < 2; i++) {
+	for ( int i = 0; i < ports.length; i++) {
+		Message.printStatus(2, routine, "Checking for databases on server \"" +
+			server + "\" using port " + ports[i] );
 		try {
-			dmi = new GenericDMI("SQLServer2000", server,
-				"master", ports[i], usernames[i], passwords[i]);
+			dmi = new GenericDMI("SQLServer", server, "master", ports[i], usernames[i], passwords[i]);
 			dmi.open();
 		}
 		catch (Exception e) {
-			// if there is an exception then the DMI was not opened,
-			// so there is no need to close it here.
+			// If there is an exception then the DMI was not opened, so there is no need to close it here.
 			dmi = null;
 		}
 
@@ -533,28 +538,29 @@ private void checkServer(String server) {
 			__detectedUsername = usernames[i];
 			__detectedPassword = passwords[i];
 			__detectedPort = ports[i];
-			i = 5;
-			// the DMI is closed below after database information
-			// is read from it.
+			break;
+			// the DMI is closed below after database information is read from it.
 		}
 	}
 
 	try {
 		if (dmi == null) {
 			// error -- throw an exception to hit the catch below.
-			throw new Exception("");
+			throw new Exception("Unable to get DMI connection using available options.");
 		}
 	
 		Connection c = dmi.getConnection();
 		DatabaseMetaData dmd = c.getMetaData();
-		List v = DMIUtil.processResultSet(dmd.getCatalogs());
+		ResultSet catalogs = dmd.getCatalogs();
+		List v = DMIUtil.processResultSet(catalogs);
 		dmi.close();
 		__databaseNamesJComboBox.removeAllItems();
 		List v2 = null;
 		int size = v.size();
-
+		Message.printStatus(2, routine, "Have " + size + " database names for server \"" + server +
+			"\" using port " + ports[1]);
 		if (size == 0) {
-			// no database found -- this should NEVER happen, but just in case ...
+			// No database found -- this should NEVER happen for a valid HydroBase server ...
 			v.add(__NO_DATABASES);
 			__databaseNamesJComboBox.add(__NO_DATABASES);
 			__databaseNames.put(server, v);
@@ -565,16 +571,22 @@ private void checkServer(String server) {
 		String s = null;
 		int count = 0;
 		List v3 = new Vector();
-		for (i = 0; i < size; i++) {
+		for ( int i = 0; i < size; i++) {
 			v2 = (List)v.get(i);
-			s = (String)v2.get(0);
-			s = s.trim();
-
-			// only add those database that start with "HydroBase"
-			if (StringUtil.startsWithIgnoreCase(s, __HYDROBASE)) {
-				v3.add(s);
-				__databaseNamesJComboBox.add(s);
-				count++;
+			if ( v2.size() < 1 ) {
+				Message.printWarning(3, routine, "Record [" + i +
+					"] database catalog has zero columns - no database name.");
+			}
+			else {
+				s = (String)v2.get(0);
+				s = s.trim();
+	
+				// only add those database that start with "HydroBase"
+				if (StringUtil.startsWithIgnoreCase(s, __HYDROBASE)) {
+					v3.add(s);
+					__databaseNamesJComboBox.add(s);
+					count++;
+				}
 			}
 		}
 
@@ -590,6 +602,8 @@ private void checkServer(String server) {
 		__databaseNames.put(server, v3);
 	}
 	catch (Exception e) {
+		Message.printWarning(3, routine, "Error getting database names (" + e + ").");
+		Message.printWarning(3,routine,e);
 		__databaseNamesJComboBox.removeAllItems();
 		List v = new Vector();
 		v.add(__NO_DATABASES);
@@ -768,9 +782,8 @@ private void findDatabaseNames() {
 		s = IOUtil.getProgramHost();
 	}
 	
-	// first check to see if the database names have been cached from the
-	// database server.  If so, use the cached copy rather than going out
-	// to the server again.
+	// First check to see if the database names have been cached from the
+	// database server.  If so, use the cached copy rather than going out to the server again.
 	List v = (List)__databaseNames.get(s);
 	if (v != null) {
 		int size = v.size();
@@ -793,30 +806,32 @@ private void findDatabaseNames() {
 		return;
 	}
 	
-	// determine whether currently-selected server is the localhost.
+	// Determine whether currently-selected server is the localhost.
 	boolean local = false;
 	if (s.equalsIgnoreCase(IOUtil.getProgramHost())) {
 		local = true;
 	}
 		
 	if (local) {
-		// for local hosts, do a quick check to see if a SQL Server
-		// instance is running -- see if port 21784 can be locked by
+		// For local hosts, do a quick check to see if a SQL Server
+		// instance is running -- see if port 5758 (newer) or 21784 (older) can be locked by
 		// Java.  If it can, then the port is open and SQL Server is
 		// probably (99.99999% of the time) not running.  Otherwise,
 		// SQL Server is probably (99.99999% of the time) up on that port.
-		if (IOUtil.isPortOpen(21784)) {
+		if ( IOUtil.isPortOpen(5758) && IOUtil.isPortOpen(21784) ) {
 			__databaseNamesJComboBox.removeAllItems();
 			__databaseNamesJComboBox.add(__NO_DATABASES);
 			ok(false);
 			return;
 		}
+		// TODO SAM 2009-05-22 Why not just use the following always? speed?
 		else {
-			checkServer(s);
+			checkServerForDatabaseNames(s);
 		}
 	}
 	else {
-		checkServer(s);
+		// Check database names on server
+		checkServerForDatabaseNames(s);
 	}
 
 	if (__databaseNamesJComboBox.contains(__defaultDatabaseName)) {
@@ -1471,21 +1486,20 @@ throws Exception {
 		// Remote database.  Use the specified host but default the
 		// other information.  The database name is defaulted internally.
 
-/*
-Message.printStatus(2, "", "Logging in with:");
-Message.printStatus(2, "", "  Port:     " + __detectedPort);
-Message.printStatus(2, "", "  Username: " + __detectedUsername);
-Message.printStatus(2, "", "  Password: " + __detectedPassword);
-*/
+		/*
+		Message.printStatus(2, "", "Logging in with:");
+		Message.printStatus(2, "", "  Port:     " + __detectedPort);
+		Message.printStatus(2, "", "  Username: " + __detectedUsername);
+		Message.printStatus(2, "", "  Password: " + __detectedPassword);
+		*/
 
 		if (!__useSPJCheckBox.isSelected()) {
-			hbdmi = new HydroBaseDMI("SQLServer2000", host, databaseName, __detectedPort,
+			hbdmi = new HydroBaseDMI("SQLServer", host, databaseName, __detectedPort,
 				__detectedUsername, __detectedPassword);
 		}
 		else {
-			hbdmi = new HydroBaseDMI("SQLServer2000",
-				host, databaseName, __detectedPort,	__detectedUsername, __detectedPassword,
-				true);
+			hbdmi = new HydroBaseDMI("SQLServer",
+				host, databaseName, __detectedPort,	__detectedUsername, __detectedPassword, true);
 		}	
 	}
 
@@ -1571,9 +1585,10 @@ private void readConfigurationFile() {
 			__serverNames.add("greenmtn.state.co.us");
 		}
 
+		// TODO SAM 2009-05-21 Why is the following a "not"
 		// if SQL Server is running locally (eg, MSDE), 
-		// add the local machine to the list of serves that can be connected to.
-		if (!IOUtil.isPortOpen(21784)) {
+		// add the local machine to the list of servers that can be connected to.
+		if (!IOUtil.isPortOpen(5758) || !IOUtil.isPortOpen(21784)) {
 			__serverNames.add("local");
 		}
 	}
@@ -1698,8 +1713,7 @@ public static void setDefaultDiv(String div) {
 /**
 Select the water division based on the login information.  If a remote
 database is selected, the default water division is selected.  If a local
-database is selected, the ODBC DSN in searched for an indication of which
-division is being accessed.
+database is selected, the ODBC DSN in searched for an indication of which division is being accessed.
 */
 private void setWaterDivisionFromLogin() {
 	if (__connectionJComboBox.getSelectedItem().equals(__REMOTE)) {
