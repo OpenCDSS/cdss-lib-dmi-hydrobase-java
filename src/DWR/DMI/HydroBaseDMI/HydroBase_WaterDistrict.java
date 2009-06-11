@@ -40,10 +40,10 @@ Class to store data from the HydroBase water_district table.
 public class HydroBase_WaterDistrict 
 extends DMIDataObject {
 
-protected int _wd = 		DMIUtil.MISSING_INT;
-protected int _div = 		DMIUtil.MISSING_INT;
-protected String _wd_name = 	DMIUtil.MISSING_STRING;
-protected String _tab_trib = 	DMIUtil.MISSING_STRING;
+protected int _wd = DMIUtil.MISSING_INT;
+protected int _div = DMIUtil.MISSING_INT;
+protected String _wd_name = DMIUtil.MISSING_STRING;
+protected String _tab_trib = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
@@ -91,7 +91,8 @@ public static String formWDID ( int length, int wd, int id ) {
 	if ((length <= 2) || (length >= 12)) {
 		return StringUtil.formatString (v, "%02d%05d");
 	}
-	else {	return StringUtil.formatString (v, "%02d%0" + (length-2)+"d");
+	else {
+		return StringUtil.formatString (v, "%02d%0" + (length-2)+"d");
 	}
 }
  
@@ -156,13 +157,13 @@ public String getWd_name() {
 }
 
 /**
-Determine whether a String identifier is a WDID.  The parseWDID() method is
-called to test the string.
+Determine whether a String identifier is a WDID.  The parseWDID() method is called to test the string.
 @return true if the String could be a WDID.
 @param wdid Candidate WDID string.
 */
 public static boolean isWDID ( String wdid )
-{	try {	parseWDID ( wdid );
+{	try {
+		parseWDID ( wdid );
 		return true;
 	}
 	catch ( Exception e ) {
@@ -171,17 +172,12 @@ public static boolean isWDID ( String wdid )
 }
 
 /**
-This function takes a String consisting of the water
-district number and name and returns the water district
-number.  The format of the districtNumber_name String
-consist of at most a two digit number in the left most
-portion of the string followed by a space and a dash
-which separates the number from the water district name.
-In short, the water district number may always be found in 
-the first two positions of the districtNumber_name String.
-if the districtNumber_name begins with "Division" then
-a division number is present therefore return the Division
-number preceed by -99.
+This function takes a String consisting of the water district number and name and returns the water district
+number.  The format of the districtNumber_name String consist of at most a two digit number in the left most
+portion of the string followed by a space and a dash which separates the number from the water district name.
+In short, the water district number may always be found in the first two positions of the districtNumber_name
+String.  If the districtNumber_name begins with "Division" then a division number is present therefore
+return the Division number precede by -99.
 @return The water district number and name.
 @param districtNumber_name Water district name.
 */
@@ -192,7 +188,8 @@ public static String parseWD ( String districtNumber_name )
 	if ( wd.startsWith("Division") ) {
 		parsedValue = "-99" + wd.substring(9, 10);
 	}
-	else {	parsedValue = wd.substring(0, 2);
+	else {
+		parsedValue = wd.substring(0, 2);
 	}
 	return parsedValue.trim();
 }
@@ -200,12 +197,10 @@ public static String parseWD ( String districtNumber_name )
 /**
 Parse a WDID into its parts.  Until told otherwise, assume a WDID consists of
 a two-digit WD and a 5-digit ID part.  This allows some room for growth.
-The string can also contain the leading characters "wdid:", which will be
-stripped off before parsing.
+The string can also contain the leading characters "wdid:", which will be stripped off before parsing.
 @param wdid string to parse.
 @return an int[2] array, the first being the WD and the second the ID.
-@exception Exception if there is an error parsing the WDID (e.g., null data,
-non-integer values).
+@exception Exception if there is an error parsing the WDID (e.g., null data, non-integer values).
 */
 public static int[] parseWDID ( String wdid )
 throws Exception
@@ -215,15 +210,12 @@ throws Exception
 /**
 Parse a WDID into its parts.  Until told otherwise, assume a WDID consists of
 a two-digit WD and a 5-digit ID part.  This allows some room for growth.
-The string can also contain the leading characters "wdid:", which will be
-stripped off before parsing.
+The string can also contain the leading characters "wdid:", which will be stripped off before parsing.
 @param wdid string to parse.
 @param wdid_parts_reuse An existing int[] array with at least 2 elements that
-will be used to return data.  Specify this if repeatedly parsing strings in
-order to minimize memory use.
+will be used to return data.  Specify this if repeatedly parsing strings in order to minimize memory use.
 @return an int[2] array, the first being the WD and the second the ID.
-@exception Exception if there is an error parsing the WDID (e.g., null data,
-non-integer values).
+@exception Exception if there is an error parsing the WDID (e.g., null data, non-integer values).
 */
 public static int[] parseWDID ( String wdid, int [] wdid_parts_reuse )
 throws Exception
@@ -239,7 +231,8 @@ throws Exception
 	if ( wdid_parts_reuse != null ) {
 		wdid_parts = wdid_parts_reuse;
 	}
-	else { wdid_parts = new int[2];
+	else {
+		wdid_parts = new int[2];
 	}
 
 	// If wdid starts with "wdid:", strip off the front and continue...
@@ -248,7 +241,8 @@ throws Exception
 		if (wdid.length() == 5) {
 			wdid = "";
 		}
-		else {	wdid = wdid.substring(5);
+		else {
+			wdid = wdid.substring(5);
 		}
 	}
 
@@ -257,15 +251,13 @@ throws Exception
 	int length = wdid.length();
 	for (int i = 0; i < length; i++) {
 		if (!Character.isDigit(wdid.charAt(i))) {
-			message = "WDID \"" + wdid +
-			"\" is not all digits.  Unable to parse.";
+			message = "WDID \"" + wdid + "\" is not all digits.  Unable to parse.";
 			Message.printWarning (wl, routine, message );
 			throw new Exception ( message );
 		}
 	}
 
-	// Assume that the first two characters are the WD and the rest are the
-	// ID...
+	// Assume that the first two characters are the WD and the rest are the ID...
 
 	String wd;
 	String id;
@@ -275,7 +267,8 @@ throws Exception
 		wd = wdid;
 		id = "0";
 	}
-	else {	wd = wdid.substring(0,2);
+	else {
+		wd = wdid.substring(0,2);
 		id = wdid.substring(2);
 	}
 	wdid_parts[0] = StringUtil.atoi ( wd );
