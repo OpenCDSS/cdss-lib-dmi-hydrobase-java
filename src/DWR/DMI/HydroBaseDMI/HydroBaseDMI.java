@@ -1955,6 +1955,11 @@ throws Exception {
 		// where, distinct and order by clauses can be set as usual for other types of queries.
 		return;
 	}
+	else {
+		String routine = "HydroBaseDMI.buildSQL";
+		Message.printWarning(3,routine, "No stored procedure for sqlNumber " +
+			sqlNumber + ".  Old version of HydroBase?");
+	}
 	
 	switch (sqlNumber) {
 		case __S_AGRICULTURAL_CASS_CROP_STATS:
@@ -7363,15 +7368,15 @@ throws Exception {
 Return the global list of water districts objects, sorted by water district number.
 @return the global list of water districts objects.
 */
-public List getWaterDistricts() {
+public List<HydroBase_WaterDistrict> getWaterDistricts() {
 	String routine = "getWaterDistricts";
 	if (__WaterDistricts_Vector == null) {
 		try {
 			__WaterDistricts_Vector = readWaterDistrictList(false);
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine, "Unable to read WaterDistrict data.");
-			Message.printWarning ( 2, routine, e);
+			Message.printWarning ( 3, routine, "Unable to read WaterDistrict data.");
+			Message.printWarning ( 3, routine, e);
 		}
 		if (__WaterDistricts_Vector == null) {
 			__WaterDistricts_Vector = new Vector();
