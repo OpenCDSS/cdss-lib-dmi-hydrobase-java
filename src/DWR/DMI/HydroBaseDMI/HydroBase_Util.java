@@ -2225,6 +2225,29 @@ public static String lookupDiversionCodingType ( String type )
 }
 
 /**
+Lookup the water division for a district.
+@param dmi HydroBaseDMI instance, which will have as global data water district information.
+@param wd water district to look up.
+@return the division for the district, or -1 if not found. 
+*/
+public static int lookupDivisionForWaterDistrict ( HydroBaseDMI dmi, int district )
+{
+	List<HydroBase_WaterDistrict> wdList = dmi.getWaterDistricts();
+	int wdListSize = 0;
+	if ( wdList != null ) {
+		wdListSize = wdList.size();
+	}
+	HydroBase_WaterDistrict wd;
+	for ( int i = 0; i < wdListSize; i++ ) {
+		wd = wdList.get(i);
+		if ( wd.getWD() == district ) {
+			return wd.getDiv();
+		}
+	}
+	return -1;
+}
+
+/**
 Lookup a HydroBaseDMI instance using the input name.  This is useful, for example, when finding a HydroBaseDMI
 instance matching at time series identifier that includes the input name.
 @return the HydroBaseDMI instance with an input name that matches the requested
