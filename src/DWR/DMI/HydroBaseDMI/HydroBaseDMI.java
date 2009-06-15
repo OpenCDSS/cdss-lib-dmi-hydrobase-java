@@ -1900,7 +1900,7 @@ throws Exception {
 		else {
 		    // Connecting to a remote machine.  Try the SQL Server port first assuming a
 		    // full server (like at the State).
-			__localPorts = new int[2];
+			__localPorts = new int[3];
 			__localPorts[0] = 1433;
 			__localPorts[1] = 5758;
 			__localPorts[2] = 21784; // MSDE
