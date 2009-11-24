@@ -33,18 +33,19 @@ public class HydroBase_StationGeolocMeasType
 extends HydroBase_StationGeoloc {
 
 // Meas Type
-protected int _meas_num = 		DMIUtil.MISSING_INT;
-protected String _meas_type = 		DMIUtil.MISSING_STRING;
-protected String _time_step = 		DMIUtil.MISSING_STRING;
-protected int _start_year = 		DMIUtil.MISSING_INT;
-protected int _end_year = 		DMIUtil.MISSING_INT;
-protected String _vax_field = 		DMIUtil.MISSING_STRING;
-protected String _transmit = 		DMIUtil.MISSING_STRING;
-protected int _meas_count = 		DMIUtil.MISSING_INT;
-protected String _data_source = 	DMIUtil.MISSING_STRING;
-protected String _data_units = 		DMIUtil.MISSING_STRING;	
-							// Not in HydroBase but
-							// is used by software.
+protected int _meas_num = DMIUtil.MISSING_INT;
+protected String _meas_type = DMIUtil.MISSING_STRING;
+protected String _time_step = DMIUtil.MISSING_STRING;
+protected int _start_year = DMIUtil.MISSING_INT;
+protected int _end_year = DMIUtil.MISSING_INT;
+protected String _vax_field = DMIUtil.MISSING_STRING;
+protected String _transmit = DMIUtil.MISSING_STRING;
+protected int _meas_count = DMIUtil.MISSING_INT;
+protected String _data_source = DMIUtil.MISSING_STRING;
+/**
+Data units - not available in HydroBase but is used by software.
+*/
+protected String _data_units = DMIUtil.MISSING_STRING;	
 
 /**
 Constructor.
