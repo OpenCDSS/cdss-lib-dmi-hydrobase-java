@@ -835,8 +835,7 @@ are also saved in memory.<P>
 Most methods in this class follow the naming conventions described below, with
 exceptions being utility or look-up methods that do not actually execute SQL.
 In some cases where SQL is not executed, methods are being considered for
-transfer to the HydroBase_Util
-or HydroBase_GUI_Util classes.
+transfer to the HydroBase_Util or HydroBase_GUI_Util classes.
 The first word in the method name is one of the following:<br>
 <ol>
 <li>read</li>
@@ -1609,10 +1608,22 @@ Water divisions data.
 private List __WaterDivisions_Vector = null;
 
 /**
-This Vector will contain HydroBase_Structure objects, UNLESS stored procedures
+This list will contain HydroBase_Structure objects, UNLESS stored procedures
 are being used, in which case it will contain HydroBase_StructureView objects.
 */
 private List __WISStructures_Vector = null;
+
+/**
+Hashtable for cached results of ReadParcelUseTSListCache() calls.  A List of results is saved for
+each division that is queried.
+*/
+private Hashtable __readParcelUseTSListCache = new Hashtable();
+
+/**
+Hashtable for cached results of ReadWellsWellToParcelListCache() calls.  A List of results is saved for
+each division that is queried.
+*/
+private Hashtable __readWellsWellToParcelListCache = new Hashtable();
 
 /** 
 Constructor for a predefined ODBC DSN that does not enable Stored Procedures.
@@ -12219,8 +12230,89 @@ throws Exception {
 }
 
 /**
-Read the parcel_use_ts tables for all data with the matching
-criteria.<p>
+Read the parcel_use_ts tables for all data with the matching criteria, and optionally utilize a cache to
+optimize performance (use more memory but do local search rather than query HydroBase each time).<p>
+<p><b>Stored Procedures</b><p>
+This method uses the following view:<p><ul>
+<li>vw_CDSS_Parcel_Use_TS</li></ul>
+This method is used by StateDMI.
+@param cal_year cal year to query for - specify missing to ignore.
+@param div Division to query for - specify missing to ignore.
+@param parcel_id Parcel_id to query for - specify missing to ignore.
+@return a list of HydroBase_ParcelUseTS objects.  The objects are sorted by
+div, parcel_id, and cal_year.
+*/
+public List<HydroBase_ParcelUseTS> readParcelUseTSList(int cal_year, int div, int parcel_id, boolean cacheHydroBase )
+throws Exception
+{
+	if ( !cacheHydroBase ) {
+		// Pass through the query
+		return readParcelUseTSList( cal_year, div, parcel_id,
+				null, // landuse
+				null, // irrig_type
+				null, // req_date1,
+				null ); // req_date2
+	}
+	else {
+		// Division is required for caching
+		if ( HydroBase_WaterDivision.getDivisionName(div) == null ) {
+			throw new IllegalArgumentException (
+				"The division " + div + " is invalid.  Cannot query ParcelUseTS data.");
+		}
+		// Check to see whether a cache has been created for the division.  If not, perform the query
+		// to initialize the cache
+		List<HydroBase_ParcelUseTS> list = readParcelUseTSListCacheGetCache(div);
+		if ( list == null ) {
+			// Initialize the cache for the division
+			list = readParcelUseTSList( -1, div, -1,
+				null, // landuse
+				null, // irrig_type
+				null, // req_date1,
+				null ); // req_date2
+			readParcelUseTSListCacheSetCache ( div, list );
+		}
+		// Now search for the specific criteria
+		//TODO SAM 2010-01-11 may need to optimize this to be indexed, although it would be better to sort by
+		// calendar year and then parcel (?)
+		List<HydroBase_ParcelUseTS> filteredList = new Vector();
+		for ( HydroBase_ParcelUseTS listItem: list ) {
+			// Check each criteria
+			if ( (cal_year >= 0) && (cal_year != listItem.getCal_year()) ) {
+				continue;
+			}
+			if ( (parcel_id >= 0) && (parcel_id != listItem.getParcel_id()) ) {
+				continue;
+			}
+			// Passed the test so add to the list
+			filteredList.add ( listItem );
+		}
+		return filteredList;
+	}
+}
+
+/**
+Get the cache for the requested division, or return null if no has is available.
+*/
+private List<HydroBase_ParcelUseTS> readParcelUseTSListCacheGetCache( int div)
+{
+	Object o = __readParcelUseTSListCache.get("" + div);
+	List<HydroBase_ParcelUseTS> list = null;
+	if ( o != null ) {
+		list = (List<HydroBase_ParcelUseTS>)o;
+	}
+	return list;
+}
+
+/**
+Set the cache for the requested division.
+*/
+private void readParcelUseTSListCacheSetCache( int div, List<HydroBase_ParcelUseTS> list )
+{
+	__readParcelUseTSListCache.put("" + div, list);
+}
+
+/**
+Read the parcel_use_ts tables for all data with the matching criteria.<p>
 <p><b>Stored Procedures</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_Parcel_Use_TS</li></ul>
@@ -12229,19 +12321,17 @@ This method is used by StateDMI.
 @param div Division to query for - specify missing to ignore.
 @param parcel_id Parcel_id to query for - specify missing to ignore.
 @param land_use Land use to query for - can specify null or blank to ignore.
-@param irrig_type Irrigation type to query for - can specify null or blank to
-ignore.
+@param irrig_type Irrigation type to query for - can specify null or blank to ignore.
 @param req_date1 First cal_year to read - specify null to ignore.
 @param req_date2 Last cal_year to read - specify null to ignore.
 @return a Vector of HydroBase_ParcelUseTS objects.  The objects are sorted by
 div, parcel_id, and cal_year.
 */
-public List readParcelUseTSList(int cal_year, int div, int parcel_id,
+public List<HydroBase_ParcelUseTS> readParcelUseTSList(int cal_year, int div, int parcel_id,
 String land_use, String irrig_type, DateTime req_date1, DateTime req_date2)
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 		String[] triplet = null;
 		
@@ -12301,8 +12391,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_Parcel_Use_TS"), 18, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Parcel_Use_TS"), 18, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toParcelUseTSList(rs, false);
 		closeResultSet(rs, __lastStatement);
@@ -12323,29 +12412,23 @@ throws Exception {
 			q.addWhereClause("parcel_use_ts.cal_year = "+ cal_year);
 		}
 		if (!DMIUtil.isMissing(parcel_id)) {
-			q.addWhereClause("parcel_use_ts.parcel_id = " 
-				+ parcel_id);
+			q.addWhereClause("parcel_use_ts.parcel_id = " + parcel_id);
 		}
 		if ((land_use != null) && (land_use.length() > 0)) {
-			q.addWhereClause("parcel_use_ts.land_use = '" 
-				+ land_use + "'");
+			q.addWhereClause("parcel_use_ts.land_use = '" + land_use + "'");
 		}
 		if (irrig_type != null && irrig_type.length() > 0) {
-			q.addWhereClause("parcel_use_ts.irrig_type = '"
-				+ irrig_type + "'");
-		}
-		
+			q.addWhereClause("parcel_use_ts.irrig_type = '" + irrig_type + "'");
+		}	
 		if (req_date1 != null) {
-			q.addWhereClause("parcel_use_ts.cal_year >= " 
-				+ req_date1.getYear());
+			q.addWhereClause("parcel_use_ts.cal_year >= " + req_date1.getYear());
 		}
 		if (req_date2 != null) {
-			q.addWhereClause("parcel_use_ts.cal_year <= " 
-				+ req_date2.getYear());
+			q.addWhereClause("parcel_use_ts.cal_year <= " + req_date2.getYear());
 		}
 	
 		ResultSet rs = dmiSelect(q);
-		List v = toParcelUseTSList(rs, false);
+		List<HydroBase_ParcelUseTS> v = toParcelUseTSList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -19774,7 +19857,87 @@ throws Exception {
 	}
 }
 
-// REVISIT (SAM 2004-09-22) The HydroBase_Wells class is a join of all the well*
+/**
+Read the wells and well_to_parcel table for all data where the tables share
+the same well_id.  Possibly use irrig_acre<p>
+This is called by:<ul>
+<li>StateDMI</li>
+</ul>
+<p><b>Stored Procedure</b><p>
+This method uses the following view:<p><ul>
+<li>vw_CDSS_WellsWellToParcel</li></ul>
+@return a list of HydroBase_Wells objects.
+--------------------
+TODO (JTS - 2005-03-04) change the following to use -999 instead of -1
+--------------------
+@param parcel_id If >= 0, the parcel_id will be used to filter the query.
+@param cal_year If >= 0, the cal_year will be used to filter the query.
+@param div If >= 0, the div will be used to filter the query.
+@param cacheHydroBase if true, then on first read all the data for a division will be read
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_Wells> readWellsWellToParcelList(int parcel_id, int cal_year, int div, boolean cacheHydroBase )
+throws Exception
+{
+	if ( !cacheHydroBase ) {
+		// Pass the call through
+		return readWellsWellToParcelList( parcel_id, cal_year, div );
+	}
+	else {
+		// Division is required for caching
+		if ( HydroBase_WaterDivision.getDivisionName(div) == null ) {
+			throw new IllegalArgumentException (
+				"The division " + div + " is invalid.  Cannot query WellsWellToParcel data.");
+		}
+		// Check to see whether a cache has been created for the division.  If not, perform the query
+		// to initialize the cache
+		List<HydroBase_Wells> list = readWellsWellToParcelListCacheGetCache(div);
+		if ( list == null ) {
+			// Initialize the cache for the division
+			list = readWellsWellToParcelList( -1, -1, div );
+			readWellsWellToParcelListCacheSetCache ( div, list );
+		}
+		// Now search for the specific criteria
+		//TODO SAM 2010-01-13 may need to optimize this to be indexed, although it would be better to sort by
+		// calendar year and then parcel (?)
+		List<HydroBase_Wells> filteredList = new Vector();
+		for ( HydroBase_Wells listItem: list ) {
+			// Check each criteria
+			if ( (cal_year >= 0) && (cal_year != listItem.getCal_year()) ) {
+				continue;
+			}
+			if ( (parcel_id >= 0) && (parcel_id != listItem.getParcel_id()) ) {
+				continue;
+			}
+			// Passed the test so add to the list
+			filteredList.add ( listItem );
+		}
+		return filteredList;
+	}
+}
+
+/**
+Get the cache for the requested division, or return null if no has is available.
+*/
+private List<HydroBase_Wells> readWellsWellToParcelListCacheGetCache( int div)
+{
+	Object o = __readWellsWellToParcelListCache.get("" + div);
+	List<HydroBase_Wells> list = null;
+	if ( o != null ) {
+		list = (List<HydroBase_Wells>)o;
+	}
+	return list;
+}
+
+/**
+Set the cache for the requested division.
+*/
+private void readWellsWellToParcelListCacheSetCache( int div, List<HydroBase_Wells> list )
+{
+	__readWellsWellToParcelListCache.put("" + div, list);
+}
+
+// TODO (SAM 2004-09-22) The HydroBase_Wells class is a join of all the well*
 // table data.  This is OK for now since it such esoteric data; however, it does
 // not follow the standard for classes for joined tables.
 /**
@@ -19786,21 +19949,19 @@ This is called by:<ul>
 <p><b>Stored Procedure</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_WellsWellToParcel</li></ul>
-@return a Vector of HydroBase_Wells objects.
+@return a list of HydroBase_Wells objects.
 --------------------
-REVISIT (JTS - 2005-03-04)
-change the following to use -999 instead of -1
+TODO (JTS - 2005-03-04) change the following to use -999 instead of -1
 --------------------
 @param parcel_id If >= 0, the parcel_id will be used to filter the query.
 @param cal_year If >= 0, the cal_year will be used to filter the query.
 @param div If >= 0, the div will be used to filter the query.
 @throws Exception if an error occurs.
 */
-public List readWellsWellToParcelList(int parcel_id, int cal_year, int div) 
+public List<HydroBase_Wells> readWellsWellToParcelList(int parcel_id, int cal_year, int div ) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
 			
 		String[] triplet = null;
 
@@ -19828,13 +19989,11 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		// REVISIT (JTS - 2005-02-16)
-		// if set_date is provided, should sort on set_date DESC
+		// TODO (JTS - 2005-02-16) if set_date is provided, should sort on set_date DESC
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_WellsWellToParcel"), 0, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_WellsWellToParcel"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		List v = toWellsWellToParcelSPList(rs);
+		List<HydroBase_Wells> v = toWellsWellToParcelSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -19842,8 +20001,7 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WELLS_PARCEL);
 		if (parcel_id >= 0) {
-			q.addWhereClause("well_to_parcel.parcel_id=" 
-				+ parcel_id);
+			q.addWhereClause("well_to_parcel.parcel_id=" + parcel_id);
 		}
 		if (cal_year >= 0) {
 			q.addWhereClause("well_to_parcel.cal_year=" + cal_year);
@@ -19852,7 +20010,7 @@ throws Exception {
 			q.addWhereClause("well_to_parcel.div=" + div);
 		}
 		ResultSet rs = dmiSelect(q);
-		List v = toWellsList(rs, __S_WELLS_PARCEL);
+		List<HydroBase_Wells> v = toWellsList(rs, __S_WELLS_PARCEL);
 		closeResultSet(rs);
 		return v;
 	}
@@ -28882,10 +29040,10 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_ParcelUseTS objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_ParcelUseTS
+@return a list of HydroBase_ParcelUseTS
 @throws Exception if an error occurs.
 */
-private List toParcelUseTSList (ResultSet rs, boolean distinct) 
+private List<HydroBase_ParcelUseTS> toParcelUseTSList (ResultSet rs, boolean distinct) 
 throws Exception {
 	HydroBase_ParcelUseTS data = null;
 	List v = new Vector();
@@ -35182,19 +35340,15 @@ Translate a ResultSet to HydroBase_Wells objects.
 @return a Vector of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private List toWellsList (ResultSet rs, int sqlNumber) 
+private List<HydroBase_Wells> toWellsList (ResultSet rs, int sqlNumber) 
 throws Exception {
 	HydroBase_Wells data = null;
-	List v = new Vector();
+	List<HydroBase_Wells> v = new Vector();
 	int index = 1;
 
-	if (	sqlNumber != __S_WELLS &&
-		sqlNumber != __S_WELLS_LAYER &&
-		sqlNumber != __S_WELLS_PARCEL &&
-		sqlNumber != __S_WELLS_STRUCTURE &&
-		sqlNumber != __S_WELLS_PARCEL_STRUCTURE) {
-		throw new Exception ("Invalid sqlNumber passed to "
-			+ "'toWellsList': " + sqlNumber);
+	if ( (sqlNumber != __S_WELLS) && (sqlNumber != __S_WELLS_LAYER) && (sqlNumber != __S_WELLS_PARCEL) &&
+		(sqlNumber != __S_WELLS_STRUCTURE) && (sqlNumber != __S_WELLS_PARCEL_STRUCTURE) ) {
+		throw new Exception ("Invalid sqlNumber passed to 'toWellsList': " + sqlNumber);
 	}
 
 	int i;
@@ -35307,8 +35461,7 @@ throws Exception {
 				data.setDitches_served(i);
 			}
 		} 
-		if (	sqlNumber == __S_WELLS_PARCEL || 
-			sqlNumber == __S_WELLS_PARCEL_STRUCTURE) {
+		if ( (sqlNumber == __S_WELLS_PARCEL) || (sqlNumber == __S_WELLS_PARCEL_STRUCTURE) ) {
 			i = rs.getInt(index++);
 			if (!rs.wasNull()) {
 				data.setParcel(i);
@@ -35346,8 +35499,7 @@ throws Exception {
 				}
 			}
 		}	
-		if (	sqlNumber == __S_WELLS_STRUCTURE || 
-			sqlNumber == __S_WELLS_PARCEL_STRUCTURE) {
+		if ( (sqlNumber == __S_WELLS_STRUCTURE) || (sqlNumber == __S_WELLS_PARCEL_STRUCTURE) ) {
 			i = rs.getInt(index++);
 			if (!rs.wasNull()) {
 				data.setStructure_num(i);
