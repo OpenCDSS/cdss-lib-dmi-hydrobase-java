@@ -18,8 +18,8 @@ import RTi.Util.GUI.JWorksheet_AbstractRowTableModel;
 This class is an abstract table model defining methods that should be
 present in HydroBase table models.
 */
-public abstract class HydroBase_TableModel 
-extends JWorksheet_AbstractRowTableModel {
+public abstract class HydroBase_TableModel extends JWorksheet_AbstractRowTableModel
+{
 
 /**
 Returns an array containing the widths (in number of characters) that the 

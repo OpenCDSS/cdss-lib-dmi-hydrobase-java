@@ -25,17 +25,16 @@ import RTi.DMI.DMIUtil;
 /**
 Class to store data from the HydroBase parcel_use_ts table.
 */
-public class HydroBase_ParcelUseTS 
-extends DMIDataObject {
+public class HydroBase_ParcelUseTS extends DMIDataObject {
 
-protected int _parcel_num = 		DMIUtil.MISSING_INT;
-protected int _div = 			DMIUtil.MISSING_INT;
-protected int _cal_year = 		DMIUtil.MISSING_INT;
-protected int _parcel_id = 		DMIUtil.MISSING_INT;
-protected double _perimeter = 		DMIUtil.MISSING_DOUBLE;
-protected double _area = 		DMIUtil.MISSING_DOUBLE;
-protected String _land_use = 		DMIUtil.MISSING_STRING;
-protected String _irrig_type = 		DMIUtil.MISSING_STRING;
+protected int _parcel_num = DMIUtil.MISSING_INT;
+protected int _div = DMIUtil.MISSING_INT;
+protected int _cal_year = DMIUtil.MISSING_INT;
+protected int _parcel_id = DMIUtil.MISSING_INT;
+protected double _perimeter = DMIUtil.MISSING_DOUBLE;
+protected double _area = DMIUtil.MISSING_DOUBLE;
+protected String _land_use = DMIUtil.MISSING_STRING;
+protected String _irrig_type = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
@@ -45,8 +44,7 @@ public HydroBase_ParcelUseTS() {
 }
 
 /**
-Cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
+Cleans up variables when the class is disposed of.  Sets all the member variables (that aren't primitives) to null
 */
 protected void finalize()
 throws Throwable {

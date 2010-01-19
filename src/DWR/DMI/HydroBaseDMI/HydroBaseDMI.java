@@ -5930,8 +5930,7 @@ are logged in to a local database (Access).  Otherwise, the user security
 permissions are checked to see if the user has no permissions.  If the user
 has no permissions, then false is returned.  Otherwise, true is returned.  <p>
 <b>Note:</b> This doesn't check the permissions a user may have for a specific
-water district, it only checks if the user is allowed to write data to the
-database.
+water district, it only checks if the user is allowed to write data to the database.
 @return true if the user can save, false if they cannot.
 */
 public boolean canWriteToDatabase() {
@@ -5944,8 +5943,7 @@ public boolean canWriteToDatabase() {
 	}
 	else {
 		// remote users cannot save if they are guests.
-		if (!getUserLogin().equals(
-			SelectHydroBaseJDialog.getDefaultLogin())) {
+		if (!getUserLogin().equals(SelectHydroBaseJDialog.getDefaultLogin())) {
 			return true;
 		}
 	}	
@@ -5953,8 +5951,7 @@ public boolean canWriteToDatabase() {
 }
 
 /**
-Checks to see if query strings should be printed at Debug level 30 and if so,
-prints the given string.
+Checks to see if query strings should be printed at Debug level 30 and if so, prints the given string.
 @param s the String to possibly print, if the settings are correct.
 */
 private void checkSecurityAndPrint(String s) {
@@ -6012,11 +6009,20 @@ throws java.sql.SQLException {
 }
 
 /**
+Clear the caches that are established when performing processing.  Caches should be cleared when starting
+a new command file run in StateDMI and TSTool.
+*/
+public void clearCaches ()
+{
+	__readParcelUseTSListCache.clear();
+	__readWellsWellToParcelListCache.clear();
+}
+
+/**
 Converts a where clause with a county in it into a where clause that can be
-used with Access databaes.<p>
-This has to be done to accomodate counties with MS Access databases -- in all
-other cases, counties can be queried as strings, but in Access it must be
-queried as a number.
+used with Access databases.<p>
+This has to be done to accommodate counties with MS Access databases -- in all
+other cases, counties can be queried as strings, but in Access it must be queried as a number.
 @param where clause to convert
 @return the converted where clause
 */
@@ -12571,8 +12577,7 @@ throws Exception {
 }
 
 /**
-Reads all record from the parcel use ts structure join table that have the
-specified structure_num.
+Reads all record from the parcel use ts structure join table that have the specified structure_num.
 This method is used by:<ul>
 <li>HydroBase_GUI_IrrigatedAcres.HydroBase_GUI_IrrigatedAcres()</li>
 <li>StateDMI for processing well data.</li>
@@ -12582,14 +12587,12 @@ The stored procedure that corresponds to this query is:<ul>
 <li>usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_Structure_num</li>
 </ul>
 @param structure_num the structure_num for which to query the database.
-@return a Vector of HydroBase_ParcelUseTSStructureToParcel objects.
+@return a list of HydroBase_ParcelUseTSStructureToParcel objects.
 @throws Exception if an error occurs.
 */
-public List readParcelUseTSStructureToParcelListForStructure_num(
-int structure_num) 
+public List readParcelUseTSStructureToParcelListForStructure_num(int structure_num) 
 throws Exception {
-	return readParcelUseTSStructureToParcelListForStructure_numCal_year (
-		structure_num, -999 );
+	return readParcelUseTSStructureToParcelListForStructure_numCal_year ( structure_num, -999 );
 }
 
 /**
@@ -12603,12 +12606,12 @@ The stored procedure that corresponds to this query is:<ul>
 <li>usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear</li>
 </ul>
 @param structure_num the structure_num for which to query the database.
-@param cal_year Calendar year for which to query the database.
-@return a Vector of HydroBase_ParcelUseTSStructureToParcel objects.
+@param cal_year Calendar year for which to query the database, or negative to get all years.
+@return a list of HydroBase_ParcelUseTSStructureToParcel objects.
 @throws Exception if an error occurs.
 */
-public List readParcelUseTSStructureToParcelListForStructure_numCal_year(
-int structure_num, int cal_year) 
+public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForStructure_numCal_year(
+	int structure_num, int cal_year ) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR);
@@ -12623,7 +12626,7 @@ throws Exception {
 	q.addOrderByClause("parcel_use_ts.parcel_id");
 	q.addOrderByClause("parcel_use_ts.land_use");
 	ResultSet rs = dmiSelect(q);
-	List v = toParcelUseTSStructureToParcelList(rs);
+	List<HydroBase_ParcelUseTSStructureToParcel> v = toParcelUseTSStructureToParcelList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -12634,8 +12637,7 @@ throws Exception {
 }
 
 /**
-Read the person_details table for all data and join with data in the structure
-table.<p>
+Read the person_details table for all data and join with data in the structure table.<p>
 This method is used by:<ul>
 <li>HydroBase_GUI_OwnerContact.submitAndDisplayPersonDetailsQuery</li>
 </ul>
@@ -12646,8 +12648,7 @@ The stored procedure that corresponds to this query is:<ul>
 @return a HydroBase_PersonDetail object or null.
 @throws Exception if an error occurs.
 */
-public HydroBase_PersonDetails readPersonDetailsForStructure_num(
-int structure_num) 
+public HydroBase_PersonDetails readPersonDetailsForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_PERSON_DETAILS);
@@ -14859,8 +14860,7 @@ throws Exception {
 }
 
 /**
-Reads the structure table for all records that match the specified where clauses
-and order by clauses.<p>
+Reads the structure table for all records that match the specified where clauses and order by clauses.<p>
 This method is used by:<ul>
 <li>HydroBase_GUI_DailyWC.submitQuery()</li>
 <li>HydroBase_GUI_IrrigatedAcres.submitAndDisplayStructureQuery()</li>
@@ -14876,20 +14876,17 @@ This method uses the following views:<p><ul>
 @return the matching HydroBase_Structure record.
 @throws Exception if an error occurs.
 */
-public HydroBase_StructureView readStructureViewForStructure_num(
-int structure_num) 
+public HydroBase_StructureView readStructureViewForStructure_num(int structure_num) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 		String[] triplet = new String[3];
 		triplet[0] = "structure_num";
 		triplet[1] = "EQ";
 		triplet[2] = "" + structure_num;
 		HydroBase_GUI_Util.addTriplet(parameters, triplet);
 			
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_Structure"), 0, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Structure"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -29101,13 +29098,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_ParcelUseTSStructureToParcel objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_ParcelUseTS
+@return a list of HydroBase_ParcelUseTSStructureToParcel
 @throws Exception if an error occurs.
 */
-private List toParcelUseTSStructureToParcelList (ResultSet rs) 
+private List<HydroBase_ParcelUseTSStructureToParcel> toParcelUseTSStructureToParcelList (ResultSet rs) 
 throws Exception {
 	HydroBase_ParcelUseTSStructureToParcel data = null;
-	List v = new Vector();
+	List<HydroBase_ParcelUseTSStructureToParcel> v = new Vector();
 	int index = 1;
 	
 	int i;

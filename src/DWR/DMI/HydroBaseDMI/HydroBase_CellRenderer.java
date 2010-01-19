@@ -28,8 +28,7 @@ import RTi.Util.GUI.JWorksheet_AbstractRowTableModel;
 import RTi.Util.String.StringUtil;
 
 /**
-This class is the class from which other Cell Renderers for HydroBase
-should be built.
+This class is the class from which other cell renderers for HydroBase should be built.
 */
 public class HydroBase_CellRenderer
 extends JWorksheet_AbstractExcelCellRenderer {
@@ -58,7 +57,7 @@ throws Throwable {
 
 /**
 Returns the format for a given column.
-@param column the colum for which to return the format.
+@param column the column for which to return the format.
 @return the format (as used by StringUtil.format) for a column.
 */
 public String getFormat(int column) {
@@ -67,10 +66,8 @@ public String getFormat(int column) {
 
 /**
 Renders a value for a cell in a JTable.  This method is called automatically
-by the JTable when it is rendering its cells.  This overrides some code from
-DefaultTableCellRenderer.
-@param table the JTable (in this case, JWorksheet) in which the cell
-to be rendered will appear.
+by the JTable when it is rendering its cells.  This overrides some code from DefaultTableCellRenderer.
+@param table the JTable (in this case, JWorksheet) in which the cell to be rendered will appear.
 @param value the cell's value to be rendered.
 @param isSelected whether the cell is selected or not.
 @param hasFocus whether the cell has focus or not.

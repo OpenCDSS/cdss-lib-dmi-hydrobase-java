@@ -27,55 +27,55 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase wells table and related parcel tables.
 */
-public class HydroBase_Wells 
-extends DMIDataObject {
+public class HydroBase_Wells extends DMIDataObject
+{
 
-protected int _well_id = 		DMIUtil.MISSING_INT;
-protected int _div = 			DMIUtil.MISSING_INT;
-protected int _wd = 			DMIUtil.MISSING_INT;
-protected int _id = 			DMIUtil.MISSING_INT;
-protected String _receipt = 		DMIUtil.MISSING_STRING;
-protected int _permitno = 		DMIUtil.MISSING_INT;
-protected String _permitsuf = 		DMIUtil.MISSING_STRING;
-protected String _permitrpl = 		DMIUtil.MISSING_STRING;
-protected String _well_name = 		DMIUtil.MISSING_STRING;
-protected float _yield = 		DMIUtil.MISSING_FLOAT;
-protected float _yield_apex = 		DMIUtil.MISSING_FLOAT;
-protected Date _perm_date = 		DMIUtil.MISSING_DATE;
-protected Date _appr_date = 		DMIUtil.MISSING_DATE;
-protected int _tperf = 			DMIUtil.MISSING_INT;
-protected int _bperf = 			DMIUtil.MISSING_INT;
-protected int _depth = 			DMIUtil.MISSING_INT;
-protected String _aquifer1 = 		DMIUtil.MISSING_STRING;
-protected int _wd_id = 			DMIUtil.MISSING_INT;
-protected int _flag = 			DMIUtil.MISSING_INT;
-protected String _use1 = 		DMIUtil.MISSING_STRING;
-protected String _use2 = 		DMIUtil.MISSING_STRING;
-protected String _use3 = 		DMIUtil.MISSING_STRING;
-protected int _ditches_served =		DMIUtil.MISSING_INT;
+protected int _well_id = DMIUtil.MISSING_INT;
+protected int _div = DMIUtil.MISSING_INT;
+protected int _wd = DMIUtil.MISSING_INT;
+protected int _id = DMIUtil.MISSING_INT;
+protected String _receipt = DMIUtil.MISSING_STRING;
+protected int _permitno = DMIUtil.MISSING_INT;
+protected String _permitsuf = DMIUtil.MISSING_STRING;
+protected String _permitrpl = DMIUtil.MISSING_STRING;
+protected String _well_name = DMIUtil.MISSING_STRING;
+protected float _yield = DMIUtil.MISSING_FLOAT;
+protected float _yield_apex = DMIUtil.MISSING_FLOAT;
+protected Date _perm_date = DMIUtil.MISSING_DATE;
+protected Date _appr_date = DMIUtil.MISSING_DATE;
+protected int _tperf = DMIUtil.MISSING_INT;
+protected int _bperf = DMIUtil.MISSING_INT;
+protected int _depth = DMIUtil.MISSING_INT;
+protected String _aquifer1 = DMIUtil.MISSING_STRING;
+protected int _wd_id = DMIUtil.MISSING_INT;
+protected int _flag = DMIUtil.MISSING_INT;
+protected String _use1 = DMIUtil.MISSING_STRING;
+protected String _use2 = DMIUtil.MISSING_STRING;
+protected String _use3 = DMIUtil.MISSING_STRING;
+protected int _ditches_served = DMIUtil.MISSING_INT;
 
 // well_to_layer
-protected int _layer = 			DMIUtil.MISSING_INT;
-protected float _layer_per = 		DMIUtil.MISSING_INT;
-protected int _est_id = 		DMIUtil.MISSING_INT;
+protected int _layer = DMIUtil.MISSING_INT;
+protected float _layer_per = DMIUtil.MISSING_INT;
+protected int _est_id = DMIUtil.MISSING_INT;
 
 // well_to_parcel
-protected int _parcel = 		DMIUtil.MISSING_INT;
-protected int _class = 			DMIUtil.MISSING_INT;
-protected float _distance = 		DMIUtil.MISSING_FLOAT;
-protected float _prorated_yield = 	DMIUtil.MISSING_FLOAT;
-protected double _percent_yield =	DMIUtil.MISSING_DOUBLE;
-protected int _cal_year = 		DMIUtil.MISSING_INT;
-protected int _parcel_id = 		DMIUtil.MISSING_INT;
+protected int _parcel = DMIUtil.MISSING_INT;
+protected int _class = DMIUtil.MISSING_INT;
+protected float _distance = DMIUtil.MISSING_FLOAT;
+protected float _prorated_yield = DMIUtil.MISSING_FLOAT;
+protected double _percent_yield = DMIUtil.MISSING_DOUBLE;
+protected int _cal_year = DMIUtil.MISSING_INT;
+protected int _parcel_id = DMIUtil.MISSING_INT;
 
 // well_to_structure
-protected String _ditch_id = 		DMIUtil.MISSING_STRING;
-protected int _structure_num = 		DMIUtil.MISSING_INT;
-protected float _ditch_cov = 		DMIUtil.MISSING_FLOAT;
-protected int _str_wd = 		DMIUtil.MISSING_INT;
-protected int _str_id = 		DMIUtil.MISSING_INT;
+protected String _ditch_id = DMIUtil.MISSING_STRING;
+protected int _structure_num = DMIUtil.MISSING_INT;
+protected float _ditch_cov = DMIUtil.MISSING_FLOAT;
+protected int _str_wd = DMIUtil.MISSING_INT;
+protected int _str_id = DMIUtil.MISSING_INT;
 
-protected String _permit_id = 		DMIUtil.MISSING_STRING;
+protected String _permit_id = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.

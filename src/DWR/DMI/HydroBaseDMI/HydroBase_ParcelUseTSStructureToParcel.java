@@ -17,16 +17,21 @@ package DWR.DMI.HydroBaseDMI;
 import RTi.DMI.DMIUtil;
 
 /**
-Class to store data from the HydroBase parcel_use_ts, and structure_to_parcel
-tables.
+Class to store data from the HydroBase parcel_use_ts, and structure_to_parcel tables.
 */
-public class HydroBase_ParcelUseTSStructureToParcel
-extends HydroBase_ParcelUseTS {
+public class HydroBase_ParcelUseTSStructureToParcel extends HydroBase_ParcelUseTS {
 
 // structure_to_parcel fields
-protected int _structure_num = 		DMIUtil.MISSING_INT;
-protected int _primary_flag = 		DMIUtil.MISSING_INT;
-protected double _percent_irrig = 	DMIUtil.MISSING_DOUBLE;
+protected int _structure_num = DMIUtil.MISSING_INT;
+protected int _primary_flag = DMIUtil.MISSING_INT;
+protected double _percent_irrig = DMIUtil.MISSING_DOUBLE;
+
+// TODO SAM 2010-01-18 Figure out whether can be set in original query.
+// Used by StateDMI - not set during the original query but filled in with a secondary query
+
+protected int __structureWD = DMIUtil.MISSING_INT;
+protected int __structureID = DMIUtil.MISSING_INT;
+protected String __structureName = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
@@ -61,6 +66,30 @@ public int getPrimary_flag() {
 }
 
 /**
+Returns __structureID
+@return __structureID
+*/
+public int getStructureID() {
+	return __structureID;
+}
+
+/**
+Returns __structureName
+@return __structureName
+*/
+public String getStructureName() {
+	return __structureName;
+}
+
+/**
+Returns __structureWD
+@return __structureWD
+*/
+public int getStructureWD() {
+	return __structureWD;
+}
+
+/**
 Returns _structure_num
 @return _structure_num
 */
@@ -85,11 +114,35 @@ public void setPrimary_flag(int primary_flag) {
 }
 
 /**
+Sets __structureID
+@param structureID structure identifier (no leading WD).
+*/
+public void setStructureID(int structureID) {
+	__structureID = structureID;
+}
+
+/**
+Sets __structureName
+@param structureName structure name.
+*/
+public void setStructureName(String structureName) {
+	__structureName = structureName;
+}
+
+/**
 Sets _structure_num
 @param structure_num value to put into _structure_num
 */
 public void setStructure_num(int structure_num) {
 	_structure_num = structure_num;
+}
+
+/**
+Sets __structureWD
+@param structureWD structure water district.
+*/
+public void setStructureWD(int structureWD) {
+	__structureWD = structureWD;
 }
 
 /** 
