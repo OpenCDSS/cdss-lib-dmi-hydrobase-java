@@ -19,7 +19,9 @@ import RTi.DMI.DMIUtil;
 /**
 Class to store data from the HydroBase parcel_use_ts, and structure_to_parcel tables.
 */
-public class HydroBase_ParcelUseTSStructureToParcel extends HydroBase_ParcelUseTS {
+public class HydroBase_ParcelUseTSStructureToParcel extends HydroBase_ParcelUseTS
+implements Comparable<HydroBase_ParcelUseTSStructureToParcel>
+{
 
 // structure_to_parcel fields
 protected int _structure_num = DMIUtil.MISSING_INT;
@@ -38,6 +40,34 @@ Constructor.
 */
 public HydroBase_ParcelUseTSStructureToParcel ()
 {	super();
+}
+
+/**
+Compare two objects for sorting.  The comparison is done by calendar year, division,
+and parcel id.
+*/
+public int compareTo ( HydroBase_ParcelUseTSStructureToParcel o2 )
+{
+	if ( this.getCal_year() > o2.getCal_year() ) {
+		return 1;
+	}
+	else if ( this.getCal_year() < o2.getCal_year() ) {
+		return -1;
+	}
+	if ( this.getDiv() > o2.getDiv() ) {
+		return 1;
+	}
+	else if ( this.getDiv() < o2.getDiv() ) {
+		return -1;
+	}
+	if ( this.getParcel_id() > o2.getParcel_id() ) {
+		return 1;
+	}
+	else if ( this.getParcel_id() < o2.getParcel_id() ) {
+		return -1;
+	}
+	// Fall through... they are the same, at least to this level of comparison
+	return 0;
 }
 
 /**

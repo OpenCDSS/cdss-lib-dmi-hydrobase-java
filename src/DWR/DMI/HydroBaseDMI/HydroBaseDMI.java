@@ -771,6 +771,7 @@ package DWR.DMI.HydroBaseDMI;
 
 import java.sql.ResultSet;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -12501,8 +12502,7 @@ This method is used by StateDMI to aggregate parcels.
 @param div Division to query for - specify a negative number to ignore.
 @param parcel_id Parcel_id values to query for - specify null to ignore.
 @param land_use Land use to query for - can specify null or blank to ignore.
-@param irrig_type Irrigation type to query for - can specify null or blank to
-ignore.
+@param irrig_type Irrigation type to query for - can specify null or blank to ignore.
 @param req_date1 First cal_year to read - specify null to ignore.
 @param req_date2 Last cal_year to read - specify null to ignore.
 @return a Vector of HydroBase_ParcelUseTS objects.  The objects are sorted by
@@ -12523,8 +12523,7 @@ throws Exception {
 		else {
 			for (int i = 0; i < parcel_id.length; i++) {
 				v = readParcelUseTSList(-999, div, parcel_id[i],
-					land_use, irrig_type, req_date1,
-					req_date2);
+					land_use, irrig_type, req_date1, req_date2);
 				size = v.size();
 				for (int j = 0; j < size; j++) {
 					results.add(v.get(j));
@@ -12550,23 +12549,19 @@ throws Exception {
 				if (i != 0) {
 					where.append(" OR ");
 				}
-				where.append("(parcel_use_ts.parcel_id = " +
-					parcel_id[i]+ ")");
+				where.append("(parcel_use_ts.parcel_id = " + parcel_id[i]+ ")");
 			}
 			where.append(")");
 			q.addWhereClause(where.toString());
 		}
 		if ((land_use != null) && (land_use.length() > 0)) {
-			q.addWhereClause("parcel_use_ts.land_use = '" 
-				+land_use+"'");
+			q.addWhereClause("parcel_use_ts.land_use = '" +land_use+"'");
 		}
 		if (req_date1 != null) {
-			q.addWhereClause("parcel_use_ts.cal_year >= " +
-				req_date1.getYear());
+			q.addWhereClause("parcel_use_ts.cal_year >= " + req_date1.getYear());
 		}
 		if (req_date2 != null) {
-			q.addWhereClause("parcel_use_ts.cal_year <= " + 
-				req_date2.getYear());
+			q.addWhereClause("parcel_use_ts.cal_year <= " + req_date2.getYear());
 		}
 	
 		ResultSet rs = dmiSelect(q);
@@ -12592,7 +12587,32 @@ The stored procedure that corresponds to this query is:<ul>
 */
 public List readParcelUseTSStructureToParcelListForStructure_num(int structure_num) 
 throws Exception {
-	return readParcelUseTSStructureToParcelListForStructure_numCal_year ( structure_num, -999 );
+	DMISelectStatement q = new DMISelectStatement(this);
+	buildSQL(q, __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN);
+	if ( structure_num > 0 ) {
+		q.addWhereClause("structure_to_parcel.structure_num = "+ structure_num);
+	}
+	else if ( __useSP ) {
+		throw new IllegalArgumentException ( "The structure number (" + structure_num +
+			") is invalid.  Must be >= 0." );
+	}
+	q.addOrderByClause("parcel_use_ts.cal_year");
+	q.addOrderByClause("parcel_use_ts.parcel_id");
+	//q.addOrderByClause("parcel_use_ts.parcel_num");
+	q.addOrderByClause("parcel_use_ts.land_use");
+	ResultSet rs = dmiSelect(q);
+	List<HydroBase_ParcelUseTSStructureToParcel> v = toParcelUseTSStructureToParcelList(rs);
+	if (__useSP) {
+		closeResultSet(rs, q);
+		// Sort the data by calendar year since it is not done in the SP
+		if ( v != null ) {
+			Collections.sort(v);
+		}
+	}
+	else {
+		closeResultSet(rs);
+	}
+	return v;
 }
 
 /**
@@ -12606,7 +12626,7 @@ The stored procedure that corresponds to this query is:<ul>
 <li>usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear</li>
 </ul>
 @param structure_num the structure_num for which to query the database.
-@param cal_year Calendar year for which to query the database, or negative to get all years.
+@param cal_year Calendar year for which to query the database.
 @return a list of HydroBase_ParcelUseTSStructureToParcel objects.
 @throws Exception if an error occurs.
 */
@@ -12618,17 +12638,29 @@ throws Exception {
 	if ( structure_num > 0 ) {
 		q.addWhereClause("structure_to_parcel.structure_num = "+ structure_num);
 	}
+	else if ( __useSP ) {
+		throw new IllegalArgumentException ( "The structure number (" + structure_num +
+			") is invalid.  Must be >= 0." );
+	}
 	if ( cal_year > 0 ) {
 		q.addWhereClause("parcel_use_ts.cal_year = "+ cal_year);
 	}
-	q.addOrderByClause("parcel_use_ts.parcel_num");
-	q.addOrderByClause("parcel_use_ts.cal_year");
+	else if ( __useSP ) {
+		throw new IllegalArgumentException ( "The calendar year (" + cal_year +
+			") is invalid.  Must be > 0." );
+	}
+	// Only one year so no need to sort by cal_year
+	//q.addOrderByClause("parcel_use_ts.cal_year");
+	//q.addOrderByClause("parcel_use_ts.parcel_num");
 	q.addOrderByClause("parcel_use_ts.parcel_id");
 	q.addOrderByClause("parcel_use_ts.land_use");
 	ResultSet rs = dmiSelect(q);
 	List<HydroBase_ParcelUseTSStructureToParcel> v = toParcelUseTSStructureToParcelList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
+		if ( v != null ) {
+			Collections.sort(v);
+		}
 	}
 	else {
 		closeResultSet(rs);
