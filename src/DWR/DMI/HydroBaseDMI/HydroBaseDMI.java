@@ -1621,6 +1621,18 @@ each division that is queried.
 private Hashtable __readParcelUseTSListCache = new Hashtable();
 
 /**
+Index for __readParcelUseTSListCache hash that stores calendar year for each division.
+Initialize to 7 slots (one for each division) and allocate the sub-array when the cache is initialized.
+*/
+private int [][] __readParcelUseTSListCacheCalendarYearIndexYears = new int[7][];
+
+/**
+Index for __readParcelUseTSListCache hash that stores calendar year data position for each division.
+Initialize to 7 slots (one for each division) and allocate the sub-array when the cache is initialized.
+*/
+private int [][] __readParcelUseTSListCacheCalendarYearIndexPos = new int[7][];
+
+/**
 Hashtable for cached results of ReadWellsWellToParcelListCache() calls.  A List of results is saved for
 each division that is queried.
 */
@@ -1970,7 +1982,7 @@ throws Exception {
 	else {
 		String routine = "HydroBaseDMI.buildSQL";
 		Message.printWarning(3,routine, "No stored procedure for sqlNumber " +
-			sqlNumber + ".  Old version of HydroBase?");
+			sqlNumber + ".  Old version of HydroBase?  Will try building old SQL statement.");
 	}
 	
 	switch (sqlNumber) {
@@ -12246,6 +12258,10 @@ This method is used by StateDMI.
 @param cal_year cal year to query for - specify missing to ignore.
 @param div Division to query for - specify missing to ignore.
 @param parcel_id Parcel_id to query for - specify missing to ignore.
+@param cacheHydroBase if true, then caching will be performed, in which a full division of data is read upon
+the first query of a division (division must be specified).  Subsequent queries will use the cache to search for
+the object with matching division, calendar year, and parcel_id.  Caching will require more memory but can
+significantly improve performance.
 @return a list of HydroBase_ParcelUseTS objects.  The objects are sorted by
 div, parcel_id, and cal_year.
 */
@@ -12271,20 +12287,50 @@ throws Exception
 		List<HydroBase_ParcelUseTS> list = readParcelUseTSListCacheGetCache(div);
 		if ( list == null ) {
 			// Initialize the cache for the division
+			// First read all the data for the division...
 			list = readParcelUseTSList( -1, div, -1,
 				null, // landuse
 				null, // irrig_type
 				null, // req_date1,
 				null ); // req_date2
+			// Now set the cache to save the results...
 			readParcelUseTSListCacheSetCache ( div, list );
 		}
-		// Now search for the specific criteria
-		//TODO SAM 2010-01-11 may need to optimize this to be indexed, although it would be better to sort by
-		// calendar year and then parcel (?)
+		// Now search for the specific criteria.  Use the index based on calendar year to improve performance,
+		// reducing search time by approximately 1/Nyears.
 		List<HydroBase_ParcelUseTS> filteredList = new Vector();
-		for ( HydroBase_ParcelUseTS listItem: list ) {
-			// Check each criteria
-			if ( (cal_year >= 0) && (cal_year != listItem.getCal_year()) ) {
+		// Initialize iteration start and end to full list
+		int istart = 0, iend = list.size() - 1;
+		// Reset the iteration limits using the index
+		if ( (cal_year > 0) && __readParcelUseTSListCacheCalendarYearIndexYears[div - 1].length > 0 ) {
+			// Have more than one year to process and have requested a specific year so find the year of interest
+			// for the iteration, to improve performance
+			boolean found = false;
+			for ( int i = 0; i < __readParcelUseTSListCacheCalendarYearIndexYears[div - 1].length; i++ ) {
+				if ( __readParcelUseTSListCacheCalendarYearIndexYears[div - 1][i] == cal_year ) {
+					istart = __readParcelUseTSListCacheCalendarYearIndexPos[div - 1][i];
+					if ( (i + 1) <= (__readParcelUseTSListCacheCalendarYearIndexYears[div - 1].length - 1) ) {
+						// OK to set end to one position before the next year
+						iend = __readParcelUseTSListCacheCalendarYearIndexPos[div - 1][i + 1] - 1;
+					}
+					found = true;
+					break;
+				}
+			}
+			if ( !found ) {
+				// Did not find the requested year so throw an exception (calling code is requesting a year of data
+				// that does not exist).
+				throw new IllegalArgumentException (
+					"The requested calendar year " + cal_year + " is not in the database.  Check input.");
+			}
+		}
+		HydroBase_ParcelUseTS listItem;
+		// Use <= for check below because of how loop bounds are set above
+		Message.printStatus(2, "", "ParcelUseTS iterators: " + istart + ", " + iend );
+		for ( int i = istart; i <= iend; i++ ) {
+			listItem = list.get(i);
+			// Check criteria to match.  If cal_year was not specified, then all records will be returned.
+			if ( (cal_year > 0) && (cal_year != listItem.getCal_year()) ) {
 				continue;
 			}
 			if ( (parcel_id >= 0) && (parcel_id != listItem.getParcel_id()) ) {
@@ -12300,7 +12346,7 @@ throws Exception
 /**
 Get the cache for the requested division, or return null if no has is available.
 */
-private List<HydroBase_ParcelUseTS> readParcelUseTSListCacheGetCache( int div)
+private List<HydroBase_ParcelUseTS> readParcelUseTSListCacheGetCache( int div )
 {
 	Object o = __readParcelUseTSListCache.get("" + div);
 	List<HydroBase_ParcelUseTS> list = null;
@@ -12314,7 +12360,45 @@ private List<HydroBase_ParcelUseTS> readParcelUseTSListCacheGetCache( int div)
 Set the cache for the requested division.
 */
 private void readParcelUseTSListCacheSetCache( int div, List<HydroBase_ParcelUseTS> list )
-{
+{	String routine = "HydroBaseDMI.readParcelUseTSListCacheSetCache";
+	// Sort the list by calendar year and build an index to calendar year positions
+	Collections.sort(list, new HydroBase_ParcelUseTS_Comparator_CalendarYearParcelID() );
+	// Now search through the sorted list and determine when a new calendar year starts.  Save the
+	// position in an index so that they can be used in the read method to optimize performance.
+	int [] tmpIndexYear = new int[100]; // 100 years should be enough for temporary working array
+	int [] tmpIndexPos = new int[100]; // 100 years should be enough for temporary working array
+	int tmpIndexCount = 0;
+	boolean found;
+	int cal_year;
+	int iIndex;
+	int iList = 0;
+	for ( HydroBase_ParcelUseTS listItem: list ) {
+		cal_year = listItem.getCal_year();
+		found = false;
+		for ( iIndex = 0; iIndex < tmpIndexCount; iIndex++ ) {
+			if ( cal_year == tmpIndexYear[iIndex] ) {
+				// Found the year in the index so no reason to continue searching
+				found = true;
+				break;
+			}
+		}
+		if ( !found ) {
+			// Found a new calendar year so add it to the index
+			tmpIndexYear[tmpIndexCount] = cal_year;
+			tmpIndexPos[tmpIndexCount++] = iList; // Only increment the count in the last set!
+		}
+		++iList;
+	}
+	// Resize the sub-array...
+	__readParcelUseTSListCacheCalendarYearIndexYears[div-1] = new int[tmpIndexCount];
+	__readParcelUseTSListCacheCalendarYearIndexPos[div-1] = new int[tmpIndexCount];
+	Message.printStatus( 2, routine, "Saved ParcelUseTS cache for division " + div +": " +
+			list.size() + " objects, " + tmpIndexCount + " years." );
+	for ( int i = 0; i < tmpIndexCount; i++ ) {
+		Message.printStatus( 2, routine, "ParcelUseTS cache year=" + tmpIndexYear[i] + ", pos=" + tmpIndexPos[i] );
+		__readParcelUseTSListCacheCalendarYearIndexYears[div-1][i] = tmpIndexYear[i];
+		__readParcelUseTSListCacheCalendarYearIndexPos[div-1][i] = tmpIndexPos[i];
+	}
 	__readParcelUseTSListCache.put("" + div, list);
 }
 
@@ -12324,14 +12408,14 @@ Read the parcel_use_ts tables for all data with the matching criteria.<p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_Parcel_Use_TS</li></ul>
 This method is used by StateDMI.
-@param cal_year cal year to query for - specify missing to ignore.
-@param div Division to query for - specify missing to ignore.
-@param parcel_id Parcel_id to query for - specify missing to ignore.
+@param cal_year cal year to query for - specify missing or <= 0 to ignore.
+@param div Division to query for - specify missing or <= 0 to ignore.
+@param parcel_id Parcel_id to query for - specify missing or < 0 to ignore.
 @param land_use Land use to query for - can specify null or blank to ignore.
-@param irrig_type Irrigation type to query for - can specify null or blank to ignore.
+@param irrig_type Irrigation type to query for - specify null or blank to ignore.
 @param req_date1 First cal_year to read - specify null to ignore.
 @param req_date2 Last cal_year to read - specify null to ignore.
-@return a Vector of HydroBase_ParcelUseTS objects.  The objects are sorted by
+@return a list of HydroBase_ParcelUseTS objects.  The objects are sorted by
 div, parcel_id, and cal_year.
 */
 public List<HydroBase_ParcelUseTS> readParcelUseTSList(int cal_year, int div, int parcel_id,
@@ -12342,7 +12426,7 @@ throws Exception {
 
 		String[] triplet = null;
 		
-		if (!DMIUtil.isMissing(cal_year)) {
+		if (!DMIUtil.isMissing(cal_year) && (cal_year > 0) ) {
 			triplet = new String[3];
 			triplet[0] = "cal_year";
 			triplet[1] = "EQ";
@@ -12350,7 +12434,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(div)) {
+		if (!DMIUtil.isMissing(div) && (div > 0) ) {
 			triplet = new String[3];
 			triplet[0] = "div";
 			triplet[1] = "EQ";
@@ -12358,7 +12442,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}			
 
-		if (!DMIUtil.isMissing(parcel_id)) {
+		if (!DMIUtil.isMissing(parcel_id) && (parcel_id >= 0) ) {
 			triplet = new String[3];
 			triplet[0] = "parcel_id";
 			triplet[1] = "EQ";
@@ -12412,13 +12496,13 @@ throws Exception {
 		q.addOrderByClause("parcel_use_ts.parcel_id");
 		q.addOrderByClause("parcel_use_ts.cal_year");
 
-		if (!DMIUtil.isMissing(div)) {
+		if (!DMIUtil.isMissing(div)&& (div > 0)) {
 			q.addWhereClause("parcel_use_ts.div = " + div);
 		}
-		if (!DMIUtil.isMissing(cal_year)) {
+		if (!DMIUtil.isMissing(cal_year) && (cal_year > 0)) {
 			q.addWhereClause("parcel_use_ts.cal_year = "+ cal_year);
 		}
-		if (!DMIUtil.isMissing(parcel_id)) {
+		if (!DMIUtil.isMissing(parcel_id) && (parcel_id >= 0)) {
 			q.addWhereClause("parcel_use_ts.parcel_id = " + parcel_id);
 		}
 		if ((land_use != null) && (land_use.length() > 0)) {
@@ -12442,8 +12526,7 @@ throws Exception {
 }
 
 /**
-Read the parcel_use_ts tables for all distinct cal_years with the matching
-criteria.<p>
+Read the parcel_use_ts tables for all distinct cal_years with the matching criteria.<p>
 <p><b>Stored Procedures</b><p>
 This method uses the following Stored Procedure:<p><ul>
 <li>usp_CDSS_ParcelUseTS_CalYear_Distinct</li></ul>
@@ -12633,6 +12716,10 @@ The stored procedure that corresponds to this query is:<ul>
 public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForStructure_numCal_year(
 	int structure_num, int cal_year ) 
 throws Exception {
+	if ( cal_year <= 0 ) {
+		// Call the simpler method
+		return readParcelUseTSStructureToParcelListForStructure_num(structure_num);
+	}
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR);
 	if ( structure_num > 0 ) {
@@ -12649,6 +12736,7 @@ throws Exception {
 		throw new IllegalArgumentException ( "The calendar year (" + cal_year +
 			") is invalid.  Must be > 0." );
 	}
+
 	// Only one year so no need to sort by cal_year
 	//q.addOrderByClause("parcel_use_ts.cal_year");
 	//q.addOrderByClause("parcel_use_ts.parcel_num");
@@ -19902,7 +19990,8 @@ TODO (JTS - 2005-03-04) change the following to use -999 instead of -1
 @param parcel_id If >= 0, the parcel_id will be used to filter the query.
 @param cal_year If >= 0, the cal_year will be used to filter the query.
 @param div If >= 0, the div will be used to filter the query.
-@param cacheHydroBase if true, then on first read all the data for a division will be read
+@param cacheHydroBase if true, then on first read all the data for a division will be read.  This will require
+more memory but greatly improves performance for subsequent reads.
 @throws Exception if an error occurs.
 */
 public List<HydroBase_Wells> readWellsWellToParcelList(int parcel_id, int cal_year, int div, boolean cacheHydroBase )
@@ -19962,8 +20051,11 @@ private List<HydroBase_Wells> readWellsWellToParcelListCacheGetCache( int div)
 Set the cache for the requested division.
 */
 private void readWellsWellToParcelListCacheSetCache( int div, List<HydroBase_Wells> list )
-{
+{	String routine = "HydroBaseDMI.readWellsWellToParcelListCacheSetCache";
 	__readWellsWellToParcelListCache.put("" + div, list);
+	Message.printStatus( 2, routine, "Saved ParcelUseTS cache for division " + div +": " +
+		list.size() + " objects." );
+		//list.size() + " objects, " + tmpIndexCount + " years." );
 }
 
 // TODO (SAM 2004-09-22) The HydroBase_Wells class is a join of all the well*
@@ -19987,7 +20079,7 @@ TODO (JTS - 2005-03-04) change the following to use -999 instead of -1
 @param div If >= 0, the div will be used to filter the query.
 @throws Exception if an error occurs.
 */
-public List<HydroBase_Wells> readWellsWellToParcelList(int parcel_id, int cal_year, int div ) 
+public List<HydroBase_Wells> readWellsWellToParcelList ( int parcel_id, int cal_year, int div ) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);

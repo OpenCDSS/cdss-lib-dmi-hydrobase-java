@@ -1,6 +1,11 @@
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.Date;
 import java.util.List;
+
+import RTi.DMI.DMI;
+import RTi.DMI.DMIUtil;
+import RTi.Util.Time.DateTime;
 
 /**
 This class is a table model for displaying net amounts data in the HydroBase_GUI_OtherQuery GUI.
@@ -11,7 +16,7 @@ public class HydroBase_TableModel_Wells extends HydroBase_TableModel
 /**
 Number of columns in the table model.
 */
-private final static int __COLUMNS = 7;
+private final static int __COLUMNS = 17;
 
 /**
 References to the columns.
@@ -25,7 +30,17 @@ public final static int
 	COL_CLASS = 3,
 	COL_DISTANCE = 4,
 	COL_PRORATED_YIELD = 5,
-	COL_PERCENT_YIELD = 6;
+	COL_PERCENT_YIELD = 6,
+	COL_WELL_WD = 7,
+	COL_WELL_ID = 8,
+	COL_WELL_RECEIPT = 9,
+	COL_WELL_NAME = 10,
+	COL_WELL_YIELD = 11,
+	COL_WELL_YIELD_APEX = 12,
+	COL_WELL_PERMIT_DATE = 13,
+	COL_WELL_APPRO_DATE = 14,
+	COL_WELL_DEPTH = 15,
+	COL_DITCHES_SERVED = 16;
 
 /**
 Constructor.  This  shows the expanded structure information needed by the StateDMI's parcel water supply tool.
@@ -54,6 +69,16 @@ public Class getColumnClass (int columnIndex) {
 		case COL_DISTANCE: return Double.class;
 		case COL_PRORATED_YIELD: return Double.class;
 		case COL_PERCENT_YIELD: return Double.class;
+		case COL_WELL_WD: return Integer.class;
+		case COL_WELL_ID: return Integer.class;
+		case COL_WELL_RECEIPT: return String.class;
+		case COL_WELL_NAME: return String.class;
+		case COL_WELL_YIELD: return Double.class;
+		case COL_WELL_YIELD_APEX: return Double.class;
+		case COL_WELL_PERMIT_DATE: return String.class;
+		case COL_WELL_APPRO_DATE: return String.class;
+		case COL_WELL_DEPTH: return Double.class;
+		case COL_DITCHES_SERVED: return Integer.class;
 		default: return String.class;
 	}
 }
@@ -79,6 +104,16 @@ public String getColumnName(int columnIndex) {
 		case COL_DISTANCE: return "PARCEL\nTO\nWELL\nDIST (M)";
 		case COL_PRORATED_YIELD: return "PRORATED\nWELL\nYIELD\n(GPM)";
 		case COL_PERCENT_YIELD: return "\nPERCENT\nWELL\nYIELD";
+		case COL_WELL_WD: return "\n\nWATER\nDISTRICT";
+		case COL_WELL_ID: return "\nWELL\nID\n(IF WDID)";
+		case COL_WELL_RECEIPT: return "\nWELL\nRECEIPT\n(IF PERMIT)";
+		case COL_WELL_NAME: return "\n\nWELL\nNAME";
+		case COL_WELL_YIELD: return "\nWELL\nYIELD\n(GPM)";
+		case COL_WELL_YIELD_APEX: return "WELL\nAPEX\nYIELD\n(GPM)";
+		case COL_WELL_PERMIT_DATE: return "WELL\nPERMIT\nDATE\n(IF PERMIT)";
+		case COL_WELL_APPRO_DATE: return "WELL\nAPPROP.\nDATE\n(IF WDID)";
+		case COL_WELL_DEPTH: return "\nWELL\nDEPTH\n(FT)";
+		case COL_DITCHES_SERVED: return "\nNUMBER\nDITCHES\nSERVED";
 		default: return " ";
 	}	
 }
@@ -97,6 +132,16 @@ public String[] getColumnToolTips()
 	tips[COL_DISTANCE] = "Distance from parcel centroid to well (M).";
 	tips[COL_PRORATED_YIELD] = "Well capacity prorated to parcel supply (GPM).";
 	tips[COL_PERCENT_YIELD] = "Well capacity prorated to parcel supply (%).";
+	tips[COL_WELL_WD] = "Well water district if well is a structure with a WDID.";
+	tips[COL_WELL_ID] = "Well ID if well is a structure with a WDID.";
+	tips[COL_WELL_RECEIPT] = "Well receipt number if well is a permit.";
+	tips[COL_WELL_NAME] = "Well name.";
+	tips[COL_WELL_YIELD] = "Well yield (GPM).";
+	tips[COL_WELL_YIELD_APEX] = "Well alternate point/exchange (GPM).";
+	tips[COL_WELL_PERMIT_DATE] = "Well permit date if well is a permit.";
+	tips[COL_WELL_APPRO_DATE] = "Well appropriation date if well is a structure with a WDID.";
+	tips[COL_WELL_DEPTH] = "Well depth (FT).";
+	tips[COL_DITCHES_SERVED] = "Well number of ditches served.";
 
 	return tips;
 }
@@ -119,6 +164,16 @@ public int[] getColumnWidths() {
 	widths[COL_DISTANCE] = 7;
 	widths[COL_PRORATED_YIELD] = 8;
 	widths[COL_PERCENT_YIELD] = 8;
+	widths[COL_WELL_WD] = 6;
+	widths[COL_WELL_ID] = 6;
+	widths[COL_WELL_RECEIPT] = 6;
+	widths[COL_WELL_NAME] = 12;
+	widths[COL_WELL_YIELD] = 6;
+	widths[COL_WELL_YIELD_APEX] = 6;
+	widths[COL_WELL_PERMIT_DATE] = 6;
+	widths[COL_WELL_APPRO_DATE] = 6;
+	widths[COL_WELL_DEPTH] = 6;
+	widths[COL_DITCHES_SERVED] = 6;
 	
 	return widths;
 }
@@ -138,6 +193,16 @@ public String getFormat(int column) {
 		case COL_DISTANCE: return "%10.0f";
 		case COL_PRORATED_YIELD: return "%8.2f";
 		case COL_PERCENT_YIELD: return "%8.2f";
+		case COL_WELL_WD: return "%2d";
+		case COL_WELL_ID: return "%8d";
+		case COL_WELL_RECEIPT: return "%-12.12s";
+		case COL_WELL_NAME: return "%-s";
+		case COL_WELL_YIELD: return "%8.2f";
+		case COL_WELL_YIELD_APEX: return "%8.2f";
+		case COL_WELL_PERMIT_DATE: return "%s";
+		case COL_WELL_APPRO_DATE: return "%s";
+		case COL_WELL_DEPTH: return "%8.2f";
+		case COL_DITCHES_SERVED: return "%3d";
 		default: return "%-8s";
 	}
 }
@@ -161,6 +226,7 @@ public Object getValueAt(int row, int col) {
 	}
 
 	HydroBase_Wells well = (HydroBase_Wells)_data.get(row);
+	Date date = null;
 	switch (col) {
 		case COL_YEAR: return new Integer(well.getCal_year());
 		case COL_DIV: return new Integer(well.getDiv());
@@ -169,7 +235,30 @@ public Object getValueAt(int row, int col) {
 		case COL_DISTANCE: return new Double(well.getDistance());
 		case COL_PRORATED_YIELD: return new Double(well.getProrated_yield());
 		case COL_PERCENT_YIELD: return new Double(100.0*well.getPercent_yield());
-
+		case COL_WELL_WD: return new Integer(well.getWD());
+		case COL_WELL_ID: return new Integer(well.getID());
+		case COL_WELL_RECEIPT: return new String(well.getReceipt());
+		case COL_WELL_NAME: return new String(well.getWell_name());
+		case COL_WELL_YIELD: return new Double(well.getYield());
+		case COL_WELL_YIELD_APEX: return new Double(well.getYield_apex());
+		case COL_WELL_PERMIT_DATE:
+			date = well.getPerm_date();
+			if ( date == null ) {
+				return DMIUtil.MISSING_DATE;
+			}
+			else {
+				return "" + new DateTime(date).toString();
+			}
+		case COL_WELL_APPRO_DATE:
+			date = well.getAppr_date();
+			if ( date == null ) {
+				return DMIUtil.MISSING_DATE;
+			}
+			else {
+				return "" + new DateTime(date).toString();
+			}
+		case COL_WELL_DEPTH: return new Double(well.getDepth());
+		case COL_DITCHES_SERVED: return new Integer(well.getDitches_served());
 		default: return "";
 	}
 }
