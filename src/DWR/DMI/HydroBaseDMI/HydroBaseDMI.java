@@ -1638,6 +1638,18 @@ each division that is queried.
 */
 private Hashtable __readWellsWellToParcelListCache = new Hashtable();
 
+/**
+Index for __readWellsWellToParcelListCache hash that stores calendar year for each division.
+Initialize to 7 slots (one for each division) and allocate the sub-array when the cache is initialized.
+*/
+private int [][] __readWellsWellToParcelListCacheCalendarYearIndexYears = new int[7][];
+
+/**
+Index for __readWellsWellToParcelListCache hash that stores calendar year data position for each division.
+Initialize to 7 slots (one for each division) and allocate the sub-array when the cache is initialized.
+*/
+private int [][] __readWellsWellToParcelListCacheCalendarYearIndexPos = new int[7][];
+
 /** 
 Constructor for a predefined ODBC DSN that does not enable Stored Procedures.
 @param database_engine The database engine to use (see the DMI constructor).
@@ -12029,26 +12041,21 @@ This method uses the following views:<p>
 @param structure_num if missing, will be ignored.
 @param wd Water district to select.  If missing, will be ignored.
 @param id Identifier to select.  If missing, will be ignored.
-@param positiveNetRateAbs whether to only return net amts with positive net
-rates.
-@param orderBys a Vector of potential order by clauses to include.  If null,
-will not be included.  
+@param positiveNetRateAbs whether to only return net amts with positive net rates.
+@param orderBys a Vector of potential order by clauses to include.  If null, will not be included.  
 @return a Vector of HydroBase_NetAmts objects.
 @throws Exception if an error occurs.
 */
 public List readNetAmtsList(int structure_num, int wd, int id, 
 boolean positiveNetRateAbs, List orderBys, boolean old)
 throws Exception {
-	return readNetAmtsList(structure_num, wd, id, positiveNetRateAbs,
-		null);
+	return readNetAmtsList(structure_num, wd, id, positiveNetRateAbs, null);
 }
 
-public List readNetAmtsList(int structure_num, int wd, int id, 
-boolean positiveNetRateAbs, String orderCode)
+public List readNetAmtsList(int structure_num, int wd, int id, boolean positiveNetRateAbs, String orderCode)
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
 			
 		String[] triplet = null;
 		if (!DMIUtil.isMissing(structure_num)) {
@@ -12096,8 +12103,7 @@ throws Exception {
 			orderNumber = 72;
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_NetAmts"), orderNumber, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_NetAmts"), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toNetAmtsSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -12107,8 +12113,7 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_NET_AMTS_FOR_WD_ID);
 		if (!DMIUtil.isMissing(structure_num)) {
-			q.addWhereClause("net_amts.structure_num = " 
-				+ structure_num);
+			q.addWhereClause("net_amts.structure_num = " + structure_num);
 		}
 		if (!DMIUtil.isMissing(wd)) {
 			q.addWhereClause("net_amts.wd = " + wd);
@@ -12135,7 +12140,6 @@ throws Exception {
 			q.addOrderByClause("net_amts.[id]");
 		}
 
-		
 		ResultSet rs = dmiSelect(q);
 		List v = toNetAmtsList(rs);
 		closeResultSet(rs);
@@ -12326,7 +12330,7 @@ throws Exception
 		}
 		HydroBase_ParcelUseTS listItem;
 		// Use <= for check below because of how loop bounds are set above
-		Message.printStatus(2, "", "ParcelUseTS iterators: " + istart + ", " + iend );
+		// Message.printStatus(2, "", "ParcelUseTS iterators: " + istart + ", " + iend );
 		for ( int i = istart; i <= iend; i++ ) {
 			listItem = list.get(i);
 			// Check criteria to match.  If cal_year was not specified, then all records will be returned.
@@ -20015,12 +20019,40 @@ throws Exception
 			list = readWellsWellToParcelList( -1, -1, div );
 			readWellsWellToParcelListCacheSetCache ( div, list );
 		}
-		// Now search for the specific criteria
-		//TODO SAM 2010-01-13 may need to optimize this to be indexed, although it would be better to sort by
-		// calendar year and then parcel (?)
+		// Now search for the specific criteria.  Use the index based on calendar year to improve performance,
+		// reducing search time by approximately 1/Nyears.
 		List<HydroBase_Wells> filteredList = new Vector();
-		for ( HydroBase_Wells listItem: list ) {
-			// Check each criteria
+		// Initialize iteration start and end to full list
+		int istart = 0, iend = list.size() - 1;
+		// Reset the iteration limits using the index
+		if ( (cal_year > 0) && __readWellsWellToParcelListCacheCalendarYearIndexYears[div - 1].length > 0 ) {
+			// Have more than one year to process and have requested a specific year so find the year of interest
+			// for the iteration, to improve performance
+			boolean found = false;
+			for ( int i = 0; i < __readWellsWellToParcelListCacheCalendarYearIndexYears[div - 1].length; i++ ) {
+				if ( __readWellsWellToParcelListCacheCalendarYearIndexYears[div - 1][i] == cal_year ) {
+					istart = __readWellsWellToParcelListCacheCalendarYearIndexPos[div - 1][i];
+					if ( (i + 1) <= (__readWellsWellToParcelListCacheCalendarYearIndexYears[div - 1].length - 1) ) {
+						// OK to set end to one position before the next year
+						iend = __readWellsWellToParcelListCacheCalendarYearIndexPos[div - 1][i + 1] - 1;
+					}
+					found = true;
+					break;
+				}
+			}
+			if ( !found ) {
+				// Did not find the requested year so throw an exception (calling code is requesting a year of data
+				// that does not exist).
+				throw new IllegalArgumentException (
+					"The requested calendar year " + cal_year + " is not in the database.  Check input.");
+			}
+		}
+		HydroBase_Wells listItem;
+		// Use <= for check below because of how loop bounds are set above
+		//Message.printStatus(2, "", "Wells iterators: " + istart + ", " + iend );
+		for ( int i = istart; i <= iend; i++ ) {
+			listItem = list.get(i);
+			// Check criteria to match.  If cal_year was not specified, then all records will be returned.
 			if ( (cal_year >= 0) && (cal_year != listItem.getCal_year()) ) {
 				continue;
 			}
@@ -20049,13 +20081,51 @@ private List<HydroBase_Wells> readWellsWellToParcelListCacheGetCache( int div)
 
 /**
 Set the cache for the requested division.
+@param div division to indicate cache
+@param list list of all data objects in division
 */
 private void readWellsWellToParcelListCacheSetCache( int div, List<HydroBase_Wells> list )
 {	String routine = "HydroBaseDMI.readWellsWellToParcelListCacheSetCache";
 	__readWellsWellToParcelListCache.put("" + div, list);
-	Message.printStatus( 2, routine, "Saved ParcelUseTS cache for division " + div +": " +
-		list.size() + " objects." );
-		//list.size() + " objects, " + tmpIndexCount + " years." );
+	// Sort the list by calendar year and build an index to calendar year positions
+	Collections.sort(list, new HydroBase_Wells_Comparator_CalendarYearParcelID() );
+	// Now search through the sorted list and determine when a new calendar year starts.  Save the
+	// position in an index so that they can be used in the read method to optimize performance.
+	int [] tmpIndexYear = new int[100]; // 100 years should be enough for temporary working array
+	int [] tmpIndexPos = new int[100]; // 100 years should be enough for temporary working array
+	int tmpIndexCount = 0;
+	boolean found;
+	int cal_year;
+	int iIndex;
+	int iList = 0;
+	for ( HydroBase_Wells listItem: list ) {
+		cal_year = listItem.getCal_year();
+		found = false;
+		for ( iIndex = 0; iIndex < tmpIndexCount; iIndex++ ) {
+			if ( cal_year == tmpIndexYear[iIndex] ) {
+				// Found the year in the index so no reason to continue searching
+				found = true;
+				break;
+			}
+		}
+		if ( !found ) {
+			// Found a new calendar year so add it to the index
+			tmpIndexYear[tmpIndexCount] = cal_year;
+			tmpIndexPos[tmpIndexCount++] = iList; // Only increment the count in the last set!
+		}
+		++iList;
+	}
+	// Resize the sub-array...
+	__readWellsWellToParcelListCacheCalendarYearIndexYears[div-1] = new int[tmpIndexCount];
+	__readWellsWellToParcelListCacheCalendarYearIndexPos[div-1] = new int[tmpIndexCount];
+	Message.printStatus( 2, routine, "Saved WellsWellToParcel cache for division " + div +": " +
+			list.size() + " objects, " + tmpIndexCount + " years." );
+	for ( int i = 0; i < tmpIndexCount; i++ ) {
+		Message.printStatus( 2, routine, "WellsWellToParcel cache year=" + tmpIndexYear[i] + ", pos=" + tmpIndexPos[i] );
+		__readWellsWellToParcelListCacheCalendarYearIndexYears[div-1][i] = tmpIndexYear[i];
+		__readWellsWellToParcelListCacheCalendarYearIndexPos[div-1][i] = tmpIndexPos[i];
+	}
+	__readWellsWellToParcelListCache.put("" + div, list);
 }
 
 // TODO (SAM 2004-09-22) The HydroBase_Wells class is a join of all the well*
