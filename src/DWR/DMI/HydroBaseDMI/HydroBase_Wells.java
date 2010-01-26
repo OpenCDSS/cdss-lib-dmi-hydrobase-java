@@ -62,7 +62,7 @@ protected int _est_id = DMIUtil.MISSING_INT;
 // well_to_parcel
 protected int _parcel = DMIUtil.MISSING_INT;
 protected int _class = DMIUtil.MISSING_INT;
-protected float _distance = DMIUtil.MISSING_FLOAT;
+protected float _distance = DMIUtil.MISSING_FLOAT; // Units of FT, from Nils Babel, 2010-01-25
 protected float _prorated_yield = DMIUtil.MISSING_FLOAT;
 protected double _percent_yield = DMIUtil.MISSING_DOUBLE;
 protected int _cal_year = DMIUtil.MISSING_INT;

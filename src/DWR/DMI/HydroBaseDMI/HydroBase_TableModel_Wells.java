@@ -3,7 +3,6 @@ package DWR.DMI.HydroBaseDMI;
 import java.util.Date;
 import java.util.List;
 
-import RTi.DMI.DMI;
 import RTi.DMI.DMIUtil;
 import RTi.Util.Time.DateTime;
 
@@ -101,7 +100,7 @@ public String getColumnName(int columnIndex) {
 		case COL_DIV: return "\n\n\nDIV";
 		case COL_PARCEL_ID: return "\n\nPARCEL\nID";
 		case COL_CLASS: return "\nWELL\nMATCH\nCLASS";
-		case COL_DISTANCE: return "PARCEL\nTO\nWELL\nDIST (M)";
+		case COL_DISTANCE: return "PARCEL\nTO\nWELL\nDIST (FT)";
 		case COL_PRORATED_YIELD: return "PRORATED\nWELL\nYIELD\n(GPM)";
 		case COL_PERCENT_YIELD: return "\nPERCENT\nWELL\nYIELD";
 		case COL_WELL_WD: return "\n\nWATER\nDISTRICT";
@@ -129,7 +128,7 @@ public String[] getColumnToolTips()
 	tips[COL_DIV] = "Water division for well/parcel data.";
 	tips[COL_PARCEL_ID] = "Parcel identifier (unique for year and division).";
 	tips[COL_CLASS] = "Indicates well to parcel matching classification.";
-	tips[COL_DISTANCE] = "Distance from parcel centroid to well (M).";
+	tips[COL_DISTANCE] = "Distance from parcel centroid to well (FT).";
 	tips[COL_PRORATED_YIELD] = "Well capacity prorated to parcel supply (GPM).";
 	tips[COL_PERCENT_YIELD] = "Well capacity prorated to parcel supply (%).";
 	tips[COL_WELL_WD] = "Well water district if well is a structure with a WDID.";
