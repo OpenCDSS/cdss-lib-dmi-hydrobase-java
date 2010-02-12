@@ -8891,7 +8891,7 @@ format =
 + comment + "                       another data source." + n
 + comment + n
 + comment + "      IsBaseflow       If \"true\", then the node is a location" +n
-+ comment + "                       where stream flows will be esimated" + n
++ comment + "                       where stream flows will be estimated" + n
 + comment + "                       (and a station will be listed in the" + n
 + comment + "                       StateMod stream estimate station file)." + n
 + comment + n
