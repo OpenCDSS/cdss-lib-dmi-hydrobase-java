@@ -920,7 +920,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// For now hard-code.  Later need to find a way to put in a Jar so that
 	// "outside" users do not see the remote host...
 	// TODO (JTS - 2005-06-08)
-	// I don'lt understand the above comment, but perhaps it's something 
+	// I don't understand the above comment, but perhaps it's something 
 	// that should be done in the future.
 
 	// Database host.  If a local database, then an ODBC data source name 
