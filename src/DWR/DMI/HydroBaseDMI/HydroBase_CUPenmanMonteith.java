@@ -1,25 +1,10 @@
-// ----------------------------------------------------------------------------
-// HydroBase_CUPenmanMonteith.java - Class to hold data from 
-//		the HydroBase cu_penman_monteith table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-06	J. Thomas Sapienza, RTi	Initial version from HBCUPenmanMonteith.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2005-02-28	JTS, RTi		Added method_desc.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 /**
-Class to store data from the HydroBase cu_penman_monteith table.  
-A penman monteith
+Class to store data from the HydroBase cu_penman_monteith table.  A Penman-Monteith
 crop coefficient curve requires data from several tables in order to 
 define the object.  This is different from most other HydroBase objects.
 CU_Blaney_Criddle and CU_mod_hargreaves are similar.
@@ -28,16 +13,16 @@ public class HydroBase_CUPenmanMonteith
 extends DMIDataObject {
 
 // From crop
-protected int _cropnum = 		DMIUtil.MISSING_INT;
-protected String _cropname = 		DMIUtil.MISSING_STRING;
+protected int _cropnum = DMIUtil.MISSING_INT;
+protected String _cropname = DMIUtil.MISSING_STRING;
 
 // From cu_penman_monteith
-protected int _method_num = 		DMIUtil.MISSING_INT;
-protected int _growthstage_no = 	DMIUtil.MISSING_INT;
-protected int _curve_value = 		DMIUtil.MISSING_INT;
-protected float _cropgrowcoeff = 	DMIUtil.MISSING_FLOAT;
+protected int _method_num = DMIUtil.MISSING_INT;
+protected int _growthstage_no = DMIUtil.MISSING_INT;
+protected int _curve_value = DMIUtil.MISSING_INT;
+protected float _cropgrowcoeff = DMIUtil.MISSING_FLOAT;
 
-protected String _method_desc = 	DMIUtil.MISSING_STRING;
+protected String _method_desc = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
