@@ -1123,6 +1123,8 @@ private final int __S_CG_CU_MOD_HARGREAVES = 421;
 private final int __S_CG_CU_MOD_HARGREAVES_FOR_METHOD_DESC = 423;
 
 // cu_penman_monteith
+private final int __S_CU_PENMAN_MONTEITH = 430;
+private final int __S_CU_PENMAN_MONTEITH_DISTINCT = 440;
 private final int __S_CG_CU_PENMAN_MONTEITH = 441;
 private final int __S_CG_CU_PENMAN_MONTEITH_FOR_METHOD_DESC = 443;
 
@@ -1536,7 +1538,7 @@ private List __AquiferRef_Vector = null;
 /**
 Distinct CU Methods from the CU_Blaney_Criddle table.
 */
-private List __BlaneyCriddleCUMethod_Vector = null;
+private List<HydroBase_CUBlaneyCriddle> __BlaneyCriddleCUMethod_Vector = null;
 
 /**
 Distinct counties from the refCounty table.
@@ -1567,6 +1569,11 @@ private List __LocTypes_Vector = null;
 Distinct meas types.
 */
 private List __MeasType_Vector = null;
+
+/**
+Distinct CU Methods from the CU_Penman_Monteith table.
+*/
+private List<HydroBase_CUPenmanMonteith> __PenmanMonteithCUMethod_Vector = null;
 
 /**
 CIUs from the refCIU table.
@@ -1994,7 +2001,7 @@ throws Exception {
 	else {
 		String routine = "HydroBaseDMI.buildSQL";
 		Message.printWarning(3,routine, "No stored procedure for sqlNumber " +
-			sqlNumber + ".  Old version of HydroBase?  Will try building old SQL statement.");
+			sqlNumber + ".  Old version of HydroBase?  Will try building SQL statement.");
 	}
 	
 	switch (sqlNumber) {
@@ -2315,6 +2322,24 @@ throws Exception {
 			select.addTable("cu_method");
 			select.addWhereClause("crop.cropnum = cu_method.cropnum");
 			select.addWhereClause("cu_method.method_num = cu_mod_hargreaves.method_num");
+			break;
+		case __S_CU_PENMAN_MONTEITH:
+			// Simple query on the vw_CDSS_CUPenmanMonteith view
+			select = (DMISelectStatement)statement;
+			select.addField("vw_CDSS_CUPenmanMonteith.cropnum");
+			select.addField("vw_CDSS_CUPenmanMonteith.cropname");
+			select.addField("vw_CDSS_CUPenmanMonteith.growthstage_no");
+			select.addField("vw_CDSS_CUPenmanMonteith.curve_value");
+			select.addField("vw_CDSS_CUPenmanMonteith.cropgrowcoeff");
+			select.addField("vw_CDSS_CUPenmanMonteith.method_desc");
+			select.addTable("vw_CDSS_CUPenmanMonteith");
+			break;
+		case __S_CU_PENMAN_MONTEITH_DISTINCT:
+			// Simple query on the vw_CDSS_CUPenmanMonteith view
+			select = (DMISelectStatement)statement;
+			select.addField("vw_CDSS_CUPenmanMonteith.method_desc");
+			select.addTable("vw_CDSS_CUPenmanMonteith");
+			select.selectDistinct(true);
 			break;
 		case __S_CG_CU_PENMAN_MONTEITH:
 		case __S_CG_CU_PENMAN_MONTEITH_FOR_METHOD_DESC:
@@ -6677,6 +6702,7 @@ throws Throwable {
 	__HUC_Vector = null;
 	__LocTypes_Vector = null;
 	__MeasType_Vector = null;
+	__PenmanMonteithCUMethod_Vector = null;
 	__RefCIU_Vector = null;
 	__StrTypes_Vector = null;
 	__StructMeasType_Vector = null;
@@ -6724,22 +6750,18 @@ public List getAquiferRef() {
 
 /**
 Returns the global BlaneyCriddleCUMethod data, containing a list of distinct
-CU method descriptions from the cu_blaney_criddle table.
-This is used by StateDMI.
+CU method descriptions from the cu_blaney_criddle table. This is used by StateDMI.
 @return the global BlaneyCriddleCUMethod data.
 */
-public List getBlaneyCriddleCUMethod() {
+public List<HydroBase_CUBlaneyCriddle> getBlaneyCriddleCUMethod() {
 	String routine = "getBlaneyCriddleCUMethod";
 	if (__BlaneyCriddleCUMethod_Vector == null) { 
 		try {
-			__BlaneyCriddleCUMethod_Vector =
-				readCUBlaneyCriddleListForMethodDesc ( null, 
-				true);
+			__BlaneyCriddleCUMethod_Vector = readCUBlaneyCriddleListForMethodDesc ( null, true);
 		}
 		catch ( Exception e) {
-			Message.printWarning ( 2, routine,
-			"Unable to read BlaneyCriddle CU_method data.");
-			Message.printWarning ( 2, routine, e);
+			Message.printWarning ( 3, routine, "Unable to read BlaneyCriddle CU_method data.");
+			Message.printWarning ( 3, routine, e);
 		}
 		if (__BlaneyCriddleCUMethod_Vector == null) {
 			__BlaneyCriddleCUMethod_Vector = new Vector();
@@ -7083,12 +7105,34 @@ public List getMeasType() {
 }
 
 /**
-Returns the corresponding property value (i.e., user preference value) for
-the given key. <p>
+Returns the global PenmanMonteithCUMethod data, containing a list of distinct
+CU method descriptions from the cu_penman_monteith table. This is used by StateDMI.
+@return the global PenmanMonteithCUMethod data.
+*/
+public List<HydroBase_CUPenmanMonteith> getPenmanMonteithCUMethod() {
+	String routine = "getPenmanMonteithCUMethod";
+	if (__PenmanMonteithCUMethod_Vector == null) { 
+		try {
+			// Get the distinct list of methods...
+			__PenmanMonteithCUMethod_Vector = readCUPenmanMonteithListForMethodDesc ( null, true );
+		}
+		catch ( Exception e) {
+			Message.printWarning ( 3, routine, "Unable to read PenmanMonteith CU_method data.");
+			Message.printWarning ( 3, routine, e);
+		}
+		if (__PenmanMonteithCUMethod_Vector == null) {
+			__PenmanMonteithCUMethod_Vector = new Vector();
+		}
+	}
+
+	return __PenmanMonteithCUMethod_Vector;
+}
+
+/**
+Returns the corresponding property value (i.e., user preference value) for the given key. <p>
 It is imperative to type the String variable exactly as in appears in the 
 User_preference table, otherwise the search will fail. <p>
-Preference values are stored in an internal proplist when a user logs in
-to the database.
+Preference values are stored in an internal proplist when a user logs in to the database.
 @param variable lookup keyword
 @return the corresponding value or "NONE" if not found.
 */
@@ -7100,20 +7144,17 @@ public String getPreferenceValue(String variable) {
 	try {
 		value = __prefsProps.getValue(variable).trim();
 		if (Message.isDebugOn) {
-			Message.printDebug(dl, function,
-				"Located user preference: " + variable
-				+ " value is " + value);
+			Message.printDebug(dl, function, "Located user preference: " + variable + " value is " + value);
 		}
 	}
 	catch (Exception e) {
 		value = "NONE";
 		Message.printDebug(dl, function,
-			"Unable to locate user preference: " + variable
-			+ " set to default value of " + value);
+			"Unable to locate user preference: " + variable + " set to default value of " + value);
 		return value;
 	}
 
-        return value;
+    return value;
 }
 
 /**
@@ -9970,10 +10011,8 @@ throws Exception {
 		}
 		if (doAll || method.startsWith("BLANEY-CRIDDLE")) {
 			if (!doAll) {
-				q.addWhereClause("cu_method.method_desc = '" 
-					+ method + "'");
-				buildSQL(q, 
-				      __S_CG_CU_BLANEY_CRIDDLE_FOR_METHOD_DESC);
+				q.addWhereClause("cu_method.method_desc = '" + method + "'");
+				buildSQL(q, __S_CG_CU_BLANEY_CRIDDLE_FOR_METHOD_DESC);
 			}
 			else {
 				buildSQL(q, __S_CG_CU_BLANEY_CRIDDLE);
@@ -9990,10 +10029,8 @@ throws Exception {
 		q = new DMISelectStatement(this);
 		if (doAll || method.startsWith("MODIFIED-HARGREAVES")) {
 			if (!doAll) {
-				q.addWhereClause("cu_method.method_desc = '" 
-					+ method + "'");
-				buildSQL(q, 
-				      __S_CG_CU_MOD_HARGREAVES_FOR_METHOD_DESC);
+				q.addWhereClause("cu_method.method_desc = '" + method + "'");
+				buildSQL(q, __S_CG_CU_MOD_HARGREAVES_FOR_METHOD_DESC);
 			}
 			else {
 				buildSQL(q, __S_CG_CU_MOD_HARGREAVES);
@@ -10008,10 +10045,8 @@ throws Exception {
 		q = new DMISelectStatement(this);
 		if (doAll || method.startsWith("PENMAN-MONTEITH")) {
 			if (!doAll) {
-				q.addWhereClause("cu_method.method_desc = '" 
-					+ method + "'");
-				buildSQL(q, 
-	    			     __S_CG_CU_PENMAN_MONTEITH_FOR_METHOD_DESC);
+				q.addWhereClause("cu_method.method_desc = '" + method + "'");
+				buildSQL(q, __S_CG_CU_PENMAN_MONTEITH_FOR_METHOD_DESC);
 			}
 			else {
 				buildSQL(q, __S_CG_CU_PENMAN_MONTEITH);
@@ -10021,7 +10056,7 @@ throws Exception {
 			q.addOrderByClause("cu_penman_monteith.growthstage_no");
 			q.addOrderByClause("cu_penman_monteith.curve_value");
 			rs = dmiSelect(q);
-			List v = toCUPenmanMonteithList(rs);
+			List v = toCUPenmanMonteithList(rs, false);
 			vectors[2] = v;
 		}
 		return vectors;
@@ -10056,8 +10091,7 @@ throws Exception {
 }
 
 /**
-Read HydroBase crop and HydroBase cu_blaney_criddle for all data and use 
-cu_method.<p>
+Read HydroBase crop and HydroBase cu_blaney_criddle for all data and use cu_method.<p>
 This method is used by:<ul>
 <li>HydroBaseDMI.readGlobalData()</li>
 </ul>
@@ -10072,11 +10106,10 @@ If distinct is fale, then the following view will be used:<p><ul>
 @param distinct If specified as true, it is expected that "method_desc" is
 null and the Vector that is returned will have the method_desc set to distinct
 values.  if specified as false, perform a full query.
-@return a Vector of HydroBase_CUPenmanMonteith.
+@return a list of HydroBase_CUPenmanMonteith.
 @throws Exception if an error occurs.
 */
-public List readCUBlaneyCriddleListForMethodDesc (	String method_desc,
-							boolean distinct ) 
+public List<HydroBase_CUBlaneyCriddle> readCUBlaneyCriddleListForMethodDesc ( String method_desc, boolean distinct ) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	if (distinct) {
@@ -10085,23 +10118,20 @@ throws Exception {
 		q.addOrderByClause("cu_method.method_desc");
 		if (__useSP) {
 			ResultSet rs = dmiSelect(q);
-			List v = toCUBlaneyCriddleDistinctSPList(rs);
+			List<HydroBase_CUBlaneyCriddle> v = toCUBlaneyCriddleDistinctSPList(rs);
 			closeResultSet(rs, q);
 			return v;
 		}
 		else {
 			ResultSet rs = dmiSelect(q);
-			List v = toCUBlaneyCriddleList(rs, distinct);
+			List<HydroBase_CUBlaneyCriddle> v = toCUBlaneyCriddleList(rs, distinct);
 			closeResultSet(rs);
 			return v;
 		}
 	}
 	else {
 		if (__useSP) {
-			String[] parameters 
-				= HydroBase_GUI_Util.getSPFlexParameters(
-				null, null);
-	
+			String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			String[] triplet = null;
 	
 			if (method_desc != null) {
@@ -10109,24 +10139,19 @@ throws Exception {
 				triplet[0] = "method_desc";
 				triplet[1] = "MA";
 				triplet[2] = method_desc;
-				HydroBase_GUI_Util.addTriplet(parameters, 
-					triplet);
+				HydroBase_GUI_Util.addTriplet(parameters,triplet);
 			}
 
-			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber("vw_CDSS_CUBlaneyCriddle"), 
-				9, null);
+			HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_CUBlaneyCriddle"), 9, null);
 			ResultSet rs = runSPFlex(parameters);
-			List v = toCUBlaneyCriddleSPList(rs);
+			List<HydroBase_CUBlaneyCriddle> v = toCUBlaneyCriddleSPList(rs);
 			closeResultSet(rs, __lastStatement);
 			return v;
 		}
 		else {
 			if (method_desc != null) {
-				buildSQL(q, 
-					__S_CU_BLANEY_CRIDDLE_FOR_METHOD_DESC);
-				q.addWhereClause("cu_method.method_desc='" 
-					+ method_desc + "'");
+				buildSQL(q, __S_CU_BLANEY_CRIDDLE_FOR_METHOD_DESC);
+				q.addWhereClause("cu_method.method_desc='" + method_desc + "'");
 			}
 			else {
 				buildSQL(q, __S_CU_BLANEY_CRIDDLE);
@@ -10135,7 +10160,7 @@ throws Exception {
 			q.addOrderByClause("cu_blaney_criddle.curve_value");
 			q.addOrderByClause("cu_method.method_desc");
 			ResultSet rs = dmiSelect(q);
-			List v = toCUBlaneyCriddleList(rs, distinct);
+			List<HydroBase_CUBlaneyCriddle> v = toCUBlaneyCriddleList(rs, distinct);
 			closeResultSet(rs);
 			return v;	
 		}
@@ -10207,6 +10232,94 @@ throws Exception {
 }
 
 /**
+Read HydroBase crop and HydroBase cu_penman_monteith for all data and use cu_method.<p>
+This method is used by:<ul>
+<li>HydroBaseDMI.readGlobalData()</li>
+</ul>
+<p><b>Stored Procedures</b><p>
+The stored procedures that corresponds to this query is:<ul>
+<li>usp_CDSS_CUPenmanMontieth_Sel_Distinct</li>
+</ul>
+<b>NOTE:</b> This stored procedure is <i>only</i> used if distinct is true.  
+If distinct is fale, then the following view will be used:<p><ul>
+<li>vw_CDSS_CUBlaneyCriddle</li></ul>
+@param method_desc CUMethod description from cu_method.method_desc.
+@param distinct If specified as true, it is expected that "method_desc" is
+null and the Vector that is returned will have the method_desc set to distinct
+values.  if specified as false, perform a full query.
+@return a list of HydroBase_CUPenmanMonteith.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_CUPenmanMonteith> readCUPenmanMonteithListForMethodDesc ( String method_desc, boolean distinct ) 
+throws Exception {
+	DMISelectStatement q = new DMISelectStatement(this);
+	if (distinct) {
+		// There is no stored procedure (yet) so select all from the view and then loop through and get the
+		// distinct values - this uses the newer views that are exposed.
+		List<HydroBase_CUPenmanMonteith> v = readCUPenmanMonteithListForMethodDesc ( null, false );
+		List<HydroBase_CUPenmanMonteith> vUnique = new Vector();
+		boolean found;
+		for ( HydroBase_CUPenmanMonteith hpm: v ) {
+			found = false;
+			for ( HydroBase_CUPenmanMonteith hpmu: vUnique ) {
+				if ( hpm.getMethod_desc().equalsIgnoreCase(hpmu.getMethod_desc()) ) {
+					found = true;
+					break;
+				}
+			}
+			if ( !found ) {
+				vUnique.add(hpm);
+			}
+		}
+		return vUnique;
+	}
+	else {
+		// Method is required, to ensure that there is no confusion
+		// Problem - recursive call above causes a problem with this check
+		/*
+		if ( (method_desc == null) || method_desc.equals("") ) {
+			throw new IllegalArgumentException (
+				"The method description " + method_desc + " is required to qeury Penman-Monteith coefficients.");
+		}
+		*/
+		if (__useSP) {
+			String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
+			String[] triplet = null;
+	
+			if (method_desc != null) {
+				triplet = new String[3];
+				triplet[0] = "method_desc";
+				triplet[1] = "MA";
+				triplet[2] = method_desc;
+				HydroBase_GUI_Util.addTriplet(parameters,triplet);
+			}
+			// TODO SAM 2010-04-01 Might need an order by but was 9 and that did not work
+			HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_CUPenmanMonteith"), 0, null);
+			ResultSet rs = runSPFlex(parameters);
+			List<HydroBase_CUPenmanMonteith> v = toCUPenmanMonteithSPList(rs);
+			closeResultSet(rs, __lastStatement);
+			// Impose needed order since above did not work...
+			Collections.sort(v, new HydroBase_CUPenmanMonteith_Sorter());
+			return v;
+		}
+		else {
+			buildSQL(q, __S_CU_PENMAN_MONTEITH);
+			if (method_desc != null) {
+				q.addWhereClause("vw_CDSS_CUPenmanMonteith.method_desc='" + method_desc + "'");
+			}
+			q.addOrderByClause("vw_CDSS_CUPenmanMonteith.cropname");
+			q.addOrderByClause("vw_CDSS_CUPenmanMonteith.growthstage_no");
+			q.addOrderByClause("vw_CDSS_CUPenmanMonteith.curve_value");
+			ResultSet rs = dmiSelect(q);
+			List<HydroBase_CUPenmanMonteith> v = toCUPenmanMonteithList(rs, distinct);
+			closeResultSet(rs);
+			// No need to sort because ordered by the query
+			return v;	
+		}
+	}
+}
+
+/**
 Read the HydroBase CUPopulation table/view.<p>
 This method is used by:<ul>
 <li>readTimeSeries()</li>
@@ -10215,19 +10328,17 @@ This method is used by:<ul>
 This method uses the following views:<p><ul>
 <li>vw_CDSS_CUPopulation_Distinct</li>
 <li>vw_CDSS_CUPopulation</li></ul><p>
-@param panel the panel with the query constraints.  If null, it will not be 
-used.
+@param panel the panel with the query constraints.  If null, it will not be used.
 @param area_type The area type for the query - specify null or blank to ignore.
 @param area_name The area name for the query - specify null or blank to ignore.
-@param pop_type The population type for the query - specify null or blank to
-ignore.
+@param pop_type The population type for the query - specify null or blank to ignore.
 @param req_date1 If not null, specify the start date for the query.  Will be
 ignored for distinct queries.
 @param req_date2 If not null, specify the end date for the query.  Will be
 ignored for distinct queries.
 @param distinct if set to true, then only data for distinct
 area_type/area_name/pop_type records will be returned.
-@return a Vector of HydroBase_CUPopulation.
+@return a list of HydroBase_CUPopulation.
 @throws Exception if an error occurs.
 */
 public List readCUPopulationList(InputFilter_JPanel panel,
@@ -10280,22 +10391,18 @@ throws Exception {
 		HydroBase_GUI_Util.addTriplet(parameters, triplet);
 	}
 
-	// REVISIT SAM 2006-11-01
-	// Replace the order by (0) with a value appropriate for the
-	// CU Population data.
+	// TODO SAM 2006-11-01 Replace the order by (0) with a value appropriate for the CU Population data.
 	if (distinct) {
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber(
-			"vw_CDSS_CUPopulation_Distinct"), 112, null);
+			getViewNumber("vw_CDSS_CUPopulation_Distinct"), 112, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toCUPopulationList(rs, true);
 		closeResultSet(rs, __lastStatement);
 		return v;					
 	}
-	else {	// Order by everything, including cal_year (default in view on
-		// database side)...
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber( "vw_CDSS_CUPopulation"), -999, null );
+	else {
+		// Order by everything, including cal_year (default in view on database side)...
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber( "vw_CDSS_CUPopulation"), -999, null );
 		ResultSet rs = runSPFlex(parameters);
 		List v = toCUPopulationList(rs, false);
 		closeResultSet(rs, __lastStatement);
@@ -10313,15 +10420,13 @@ This method uses the following view:<p><ul>
 @param meas_num the struct_meas_type.meas_num key for this time series.
 @param req_date1 If not null, specify the start date for the query.
 @param req_date2 If not null, specify the end date for the query.
-@return a Vector of HydroBase_DailyAmt objects.
+@return a list of HydroBase_DailyAmt objects.
 @throws Exception if an error occurs.
 */
-public List readDailyAmtList(int meas_num, DateTime req_date1,
-DateTime req_date2) 
+public List readDailyAmtList(int meas_num, DateTime req_date1, DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 		String[] triplet = new String[3];
 		triplet[0] = "meas_num";
@@ -10345,8 +10450,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_DailyAmt"), 10, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_DailyAmt"), 10, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toDailyAmtList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -10357,12 +10461,10 @@ throws Exception {
 		buildSQL(q, __S_DAILY_AMT);
 		q.addWhereClause("daily_amt.meas_num=" + meas_num);
 		if (req_date1 != null) {
-			q.addWhereClause(
-				"daily_amt.cal_year >=" + req_date1.getYear());
+			q.addWhereClause("daily_amt.cal_year >=" + req_date1.getYear());
 		}
 		if (req_date2 != null) {
-			q.addWhereClause(
-				"daily_amt.cal_year <=" + req_date2.getYear());
+			q.addWhereClause("daily_amt.cal_year <=" + req_date2.getYear());
 		}
 		q.addOrderByClause("daily_amt.cal_year");
 		q.addOrderByClause("daily_amt.cal_mon");
@@ -10409,8 +10511,7 @@ This method uses the following views:<p><ul>
 @return a Vector of HydroBase_X objects.
 @throws Exception if an error occurs.
 */
-protected List readDailyStationData(int sqlNumber, int meas_num,
-DateTime req_date1, DateTime req_date2) 
+protected List readDailyStationData(int sqlNumber, int meas_num, DateTime req_date1, DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
 		String viewName = null;
@@ -10460,8 +10561,7 @@ throws Exception {
 				return null;
 		}
 		
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 		String[] triplet = new String[3];
 		triplet[0] = "meas_num";
@@ -10485,8 +10585,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber(viewName), orderNumber, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters,getViewNumber(viewName), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
 
 		List v = null;
@@ -10538,12 +10637,10 @@ This method uses the following view:<p><ul>
 @return a Vector of HydroBase_DailyWC objects.
 @throws Exception if an error occurs.
 */
-public List readDailyWCList(	int meas_num, DateTime req_date1,
-				DateTime req_date2 ) 
+public List readDailyWCList( int meas_num, DateTime req_date1, DateTime req_date2 ) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 		String[] triplet = new String[3];
 		triplet[0] = "meas_num";
@@ -10567,8 +10664,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_DailyWC"), 11, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_DailyWC"), 11, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toDailyWCSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -10616,8 +10712,7 @@ public List readDailyWCListForStructure_numRecordType(int structure_num,
 String recordType)
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 		String[] triplet = new String[3];
 		triplet[0] = "structure_num";
 		triplet[1] = "EQ";
@@ -10626,13 +10721,11 @@ throws Exception {
 	
 		if (recordType.equals("H")) {
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber("vw_CDSS_WISDailyWC_Diversion"), 
-				12, null);
+				getViewNumber("vw_CDSS_WISDailyWC_Diversion"), 12, null);
 		}
 		else {
 			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber("vw_CDSS_WISDailyWC_Release"), 
-				13, null);
+				getViewNumber("vw_CDSS_WISDailyWC_Release"), 13, null);
 		}
 	
 		ResultSet rs = runSPFlex(parameters);
@@ -10645,15 +10738,14 @@ throws Exception {
 		buildSQL(q, __S_DAILY_WC);
 		q.addWhereClause("daily_wc.structure_num = " + structure_num);
 	
-	        // construct where clause and submit query
-	        if (recordType.equals("H")) {
-	                q.addWhereClause("(T<>'6' and T<>'7' and T<>'8') "
-				+ "OR T IS NULL");
-	        }
-	        else {
-			// Reservoir
-	                q.addWhereClause("T='6' OR T='7' OR T='8'");
-	        }
+        // construct where clause and submit query
+        if (recordType.equals("H")) {
+            q.addWhereClause("(T<>'6' and T<>'7' and T<>'8') OR T IS NULL");
+        }
+        else {
+        	// Reservoir
+            q.addWhereClause("T='6' OR T='7' OR T='8'");
+        }
 		
 		q.addOrderByClause("daily_wc.meas_num");
 		q.addOrderByClause("daily_wc.structure_num");
@@ -10669,8 +10761,7 @@ throws Exception {
 }
 
 /**
-Read the dam and structure tables for the record that matches the specified
-structure_num.<p>
+Read the dam and structure tables for the record that matches the specified structure_num.<p>
 This method is used by:<ul>
 <li>HydroBaseDMI.readGlobalData()</li>
 <li>HydroBase_GUI_Dam.submitAndDisplayDamQuery()</li>
@@ -10704,8 +10795,7 @@ throws Exception {
 }
 
 /**
-Read the dam_inspection table for all data matching the specified 
-structure num.<p>
+Read the dam_inspection table for all data matching the specified structure num.<p>
 This method is used by:<ul>
 <li>HydroBase_GUI_Dam.submitAndDisplayInspectionQuery()</li>
 </ul>
@@ -10763,8 +10853,7 @@ throws Exception {
 }
 
 /**
-Read the dam_spillway table for all data matching the specified structure 
-num.<p>
+Read the dam_spillway table for all data matching the specified structure num.<p>
 This method is used by:<ul>
 <li>HydroBase_GUI_Dam.submitAndDisplaySpillwayQuery()</li>
 </ul>
@@ -10811,8 +10900,7 @@ throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	if (version_type != null) {
 		buildSQL ( q, __S_DBVERSION_FOR_VERSION_TYPE);
-		q.addWhereClause("db_version.version_type = '" 
-			+ version_type + "'");
+		q.addWhereClause("db_version.version_type = '" + version_type + "'");
 	}
 	else {
 		buildSQL(q, __S_DBVERSION);
@@ -10830,8 +10918,7 @@ throws Exception {
 }
 
 /**
-Read the diversion_comment table for all data and join with data in 
-the structure table.<p>
+Read the diversion_comment table for all data and join with data in the structure table.<p>
 This method is used by:<ul>
 <li>readTimeSeries()</li>
 <li>HydroBase_Report_StructureSummary.formatMonthlyDiversionForQINFO()</li>
@@ -10846,26 +10933,22 @@ The stored procedure that corresponds to this query is:<ul>
 @return a Vector of HydroBase_DiversionComment objects.
 @throws Exception if an error occurs.
 */
-public List readDiversionCommentList(	int meas_num, DateTime req_date1,
-					DateTime req_date2 ) 
+public List readDiversionCommentList( int meas_num, DateTime req_date1, DateTime req_date2 ) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_DIVERSION_COMMENT);
 	q.addWhereClause("diversion_comment.meas_num = " + meas_num);
 	// Appliation requests are in calendar year and the comm_date is also
-	// apparently in calendar year but all dates are typically Oct 31 so
-	// only the year is important...
-	// REVISIT (SAM 2003-12-09) - need to do some work to decide how best to
+	// apparently in calendar year but all dates are typically Oct 31 so only the year is important...
+	// TODO (SAM 2003-12-09) - need to do some work to decide how best to
 	// handle this since DB has YYYY-MM-DD but in memory we are carrying the
 	// data with YYYY for time series.
 	//
 	//if (req_date1 != null) {
-	//	q.addWhereClause("diversion_comment.comm_date >=" +
-	//		req_date1.getYear());
+	//	q.addWhereClause("diversion_comment.comm_date >=" + req_date1.getYear());
 	//}
 	//if (req_date2 != null) {
-	//	q.addWhereClause("diversion_comment.comm_date <=" +
-	//		(req_date2.getYear() + 1));
+	//	q.addWhereClause("diversion_comment.comm_date <=" + (req_date2.getYear() + 1));
 	//}
 	q.addOrderByClause("diversion_comment.comm_date");
 	ResultSet rs = dmiSelect(q);
@@ -10880,8 +10963,7 @@ throws Exception {
 }
 
 /**
-Read the diversion_comment table for all data and join with data in 
-the structure table.<p>
+Read the diversion_comment table for all data and join with data in the structure table.<p>
 This is called by:<ul>
 <li>HydroBase_Report_StructureSummary.formatMonthlyDiversionForQINFO()</li>
 </ul>
@@ -10910,8 +10992,7 @@ throws Exception {
 }
 
 /**
-Read the emergency_plan table for all data matching the specified structure
-num.<p>
+Read the emergency_plan table for all data matching the specified structure num.<p>
 This method is used by:<ul>
 <li>HydroBase_GUI_Dam.submitAndDisplayEmergencyPlanQuery()</li>
 </ul>
@@ -10993,8 +11074,7 @@ public List readFrostDatesList(int meas_num, DateTime req_date1,
 DateTime req_date2) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
 		String[] triplet = new String[3];
 		triplet[0] = "meas_num";
@@ -11018,8 +11098,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_Frost_Dates"), 14, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Frost_Dates"), 14, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toFrostDatesSPList(rs);
 		closeResultSet(rs, __lastStatement);
@@ -11030,12 +11109,10 @@ throws Exception {
 		buildSQL(q, __S_FROST_DATES);
 		q.addWhereClause("frost_dates.meas_num = " + meas_num);
 		if (req_date1 != null) {
-			q.addWhereClause("frost_dates.cal_year >="
-				+ req_date1.getYear());
+			q.addWhereClause("frost_dates.cal_year >=" + req_date1.getYear());
 		}
 		if (req_date2 != null) {
-			q.addWhereClause("frost_dates.cal_year <="
-				+ req_date2.getYear());
+			q.addWhereClause("frost_dates.cal_year <=" + req_date2.getYear());
 		}
 		q.addOrderByClause("frost_dates.cal_year");
 		ResultSet rs = dmiSelect(q);
@@ -11087,8 +11164,7 @@ This method is used by:<ul>
 The stored procedure that corresponds to this query is:<p>
 <li>usp_CDSS_Geoloc_Sel_By_Geoloc_num</li>
 </ul>
-@param geoloc_num the geoloc_num for which to return the matching geoloc
-object.
+@param geoloc_num the geoloc_num for which to return the matching geoloc object.
 @return an HydroBase_Geoloc object or null if the geoloc could not be found.
 @throws Exception if an error occurs.
 */
@@ -11167,8 +11243,7 @@ public void readGlobalData () {
 		__CountyRef_Vector = readCountyRefList();
 	}
 	catch ( Exception e) {
-		Message.printWarning ( 2, routine,
-		"Unable to read County_Ref data.");
+		Message.printWarning ( 2, routine, "Unable to read County_Ref data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__CountyRef_Vector == null) {
@@ -11181,8 +11256,7 @@ public void readGlobalData () {
 		__CropRef_Vector = readCropRefList();
 	}
 	catch ( Exception e) {
-		Message.printWarning ( 2, routine,
-		"Unable to read Crop_Ref data.");
+		Message.printWarning ( 2, routine, "Unable to read Crop_Ref data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__CropRef_Vector == null) {
@@ -11194,8 +11268,7 @@ public void readGlobalData () {
 		__WaterDistricts_Vector = readWaterDistrictList(false);
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read WaterDistrict data.");
+		Message.printWarning ( 2, routine, "Unable to read WaterDistrict data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__WaterDistricts_Vector == null) {
@@ -11207,8 +11280,7 @@ public void readGlobalData () {
 		__WaterDistrictsByDiv_Vector = readWaterDistrictList(true);
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read WaterDistrict data.");
+		Message.printWarning ( 2, routine, "Unable to read WaterDistrict data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__WaterDistrictsByDiv_Vector == null) {
@@ -11217,12 +11289,10 @@ public void readGlobalData () {
 
 	// read the water district numbers from the structures table
 	try {
-		__WaterDistrictsFromStructures_Vector = 
-			readStructureDistinctWDList();
+		__WaterDistrictsFromStructures_Vector = readStructureDistinctWDList();
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read WaterDistrict data.");
+		Message.printWarning ( 2, routine, "Unable to read WaterDistrict data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__WaterDistrictsFromStructures_Vector == null) {
@@ -11234,8 +11304,7 @@ public void readGlobalData () {
 		__WaterDivisions_Vector = readWaterDivisionList();
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read water division data.");
+		Message.printWarning ( 2, routine, "Unable to read water division data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__WaterDivisions_Vector == null) {
@@ -11247,8 +11316,7 @@ public void readGlobalData () {
 		__StrTypes_Vector = readStrTypeList();
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read StrTypes data.");
+		Message.printWarning ( 2, routine, "Unable to read StrTypes data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__StrTypes_Vector == null) {
@@ -11260,8 +11328,7 @@ public void readGlobalData () {
 		__LocTypes_Vector = readLocTypeList();
 	} 
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read LocTypes data.");
+		Message.printWarning ( 2, routine, "Unable to read LocTypes data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__LocTypes_Vector == null) {
@@ -11273,8 +11340,7 @@ public void readGlobalData () {
 		__UseTypes_Vector = readUseList();
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read UseTypes data.");
+		Message.printWarning ( 2, routine, "Unable to read UseTypes data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__UseTypes_Vector == null) {
@@ -11284,12 +11350,10 @@ public void readGlobalData () {
 	// Read the BlaneyCriddleCUMethod data...
 
 	try {
-		__BlaneyCriddleCUMethod_Vector =
-			readCUBlaneyCriddleListForMethodDesc ( null, true);
+		__BlaneyCriddleCUMethod_Vector = readCUBlaneyCriddleListForMethodDesc ( null, true);
 	}
 	catch ( Exception e) {
-		Message.printWarning ( 2, routine,
-		"Unable to read BlaneyCriddle CU_method data.");
+		Message.printWarning ( 2, routine, "Unable to read BlaneyCriddle CU_method data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__BlaneyCriddleCUMethod_Vector == null) {
@@ -11299,12 +11363,10 @@ public void readGlobalData () {
 	// Read the CropcharCUMethod data...
 
 	try {
-		__CropcharCUMethod_Vector = readCropcharListForMethodDesc (
-			null, true);
+		__CropcharCUMethod_Vector = readCropcharListForMethodDesc ( null, true);
 	}
 	catch ( Exception e) {
-		Message.printWarning ( 2, routine,
-		"Unable to read Cropchar CU_method data.");
+		Message.printWarning ( 2, routine, "Unable to read Cropchar CU_method data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__CropcharCUMethod_Vector == null) {
@@ -11317,13 +11379,25 @@ public void readGlobalData () {
 		__MeasType_Vector = readMeasTypeDistinctList();
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read distinct MeasType data.");
+		Message.printWarning ( 2, routine, "Unable to read distinct MeasType data.");
 		Message.printWarning ( 2, routine, e);
 	}
 
 	if (__MeasType_Vector == null) {
 		__MeasType_Vector = new Vector();
+	}
+	
+	// Read the PenmanMonteithCUMethod data...
+
+	try {
+		__PenmanMonteithCUMethod_Vector = readCUPenmanMonteithListForMethodDesc ( null, true);
+	}
+	catch ( Exception e) {
+		Message.printWarning ( 2, routine, "Unable to read PenmanMonteith CU_method data.");
+		Message.printWarning ( 2, routine, e);
+	}
+	if (__PenmanMonteithCUMethod_Vector == null) {
+		__PenmanMonteithCUMethod_Vector = new Vector();
 	}
 
 	// Read the currently in use types.
@@ -11331,8 +11405,7 @@ public void readGlobalData () {
 		__RefCIU_Vector = readRefCIUList();
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read ref_ciu data.");
+		Message.printWarning ( 2, routine, "Unable to read ref_ciu data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__RefCIU_Vector == null) {
@@ -11344,8 +11417,7 @@ public void readGlobalData () {
 		__StructMeasType_Vector = readStructMeasTypeDistinctList();
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine,
-			"Unable to read distinct StructMeasType data.");
+		Message.printWarning ( 2, routine, "Unable to read distinct StructMeasType data.");
 		Message.printWarning ( 2, routine, e);
 	}
 	if (__StructMeasType_Vector == null) {
@@ -23789,16 +23861,15 @@ throws Exception {
 }
 
 /**
-Convert a ResultSet to a Vector of HydroBase_CUBlaneyCriddle
+Convert a ResultSet to a list of HydroBase_CUBlaneyCriddle
 @param rs ResultSet from a query
-@param distinct if true, only the method_desc field is set in the returned
-objects.
-@return a Vector of HydroBase_CUBlaneyCriddle
+@param distinct if true, only the method_desc field is set in the returned objects.
+@return a list of HydroBase_CUBlaneyCriddle
 */
-private List toCUBlaneyCriddleList(ResultSet rs, boolean distinct ) 
+private List<HydroBase_CUBlaneyCriddle> toCUBlaneyCriddleList(ResultSet rs, boolean distinct ) 
 throws Exception {
 	HydroBase_CUBlaneyCriddle data = null;
-	List v = new Vector();
+	List<HydroBase_CUBlaneyCriddle> v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -23843,16 +23914,15 @@ throws Exception {
 }
 
 /**
-Convert a ResultSet to a Vector of HydroBase_CUBlaneyCriddle
+Convert a ResultSet to a list of HydroBase_CUBlaneyCriddle
 @param rs ResultSet from a query
-@param distinct if true, only the method_desc field is set in the returned
-objects.
-@return a Vector of HydroBase_CUBlaneyCriddle
+@param distinct if true, only the method_desc field is set in the returned objects.
+@return a list of HydroBase_CUBlaneyCriddle
 */
-private List toCUBlaneyCriddleDistinctSPList(ResultSet rs)
+private List<HydroBase_CUBlaneyCriddle> toCUBlaneyCriddleDistinctSPList(ResultSet rs)
 throws Exception {
 	HydroBase_CUBlaneyCriddle data = null;
-	List v = new Vector();
+	List<HydroBase_CUBlaneyCriddle> v = new Vector();
 	int index = 1;
 
 	String s;
@@ -23870,14 +23940,14 @@ throws Exception {
 }
 
 /**
-Convert a ResultSet to a Vector of HydroBase_CUBlaneyCriddle
+Convert a ResultSet to a list of HydroBase_CUBlaneyCriddle
 @param rs ResultSet from a query
-@return a Vector of HydroBase_CUBlaneyCriddle
+@return a list of HydroBase_CUBlaneyCriddle
 */
-private List toCUBlaneyCriddleSPList(ResultSet rs)
+private List<HydroBase_CUBlaneyCriddle> toCUBlaneyCriddleSPList(ResultSet rs)
 throws Exception {
 	HydroBase_CUBlaneyCriddle data = null;
-	List v = new Vector();
+	List<HydroBase_CUBlaneyCriddle> v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24142,14 +24212,15 @@ throws Exception {
 }
 
 /**
-Convert a ResultSet to a Vector of HydroBase_CUPenmanMonteith
+Convert a ResultSet to a list of HydroBase_CUPenmanMonteith
 @param rs ResultSet from a query
-@return a Vector of HydroBase_CUPenmanMonteith
+@param distinct if a distinct query, then only the method_desc is set
+@return a list of HydroBase_CUPenmanMonteith
 */
-private List toCUPenmanMonteithList(ResultSet rs) 
+private List<HydroBase_CUPenmanMonteith> toCUPenmanMonteithList(ResultSet rs, boolean distinct ) 
 throws Exception {
 	HydroBase_CUPenmanMonteith data = null;
-	List v = new Vector();
+	List<HydroBase_CUPenmanMonteith> v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -24159,26 +24230,30 @@ throws Exception {
 	while (rs.next()) {
 		index = 1;
 		data = new HydroBase_CUPenmanMonteith();
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setCropnum(i);
+		if ( !distinct ) {
+			// Do all the fields
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setCropnum(i);
+			}
+			s = rs.getString(index++);
+			if (!rs.wasNull()) {
+				data.setCropname(s.trim());
+			}
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setGrowthstage_no(i);
+			}
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setCurve_value(i);
+			}
+			f = rs.getFloat(index++);		
+			if (!rs.wasNull()) {
+				data.setCropgrowcoeff(f);
+			}
 		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setCropname(s.trim());
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setGrowthstage_no(i);
-		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setCurve_value(i);
-		}
-		f = rs.getFloat(index++);		
-		if (!rs.wasNull()) {
-			data.setCropgrowcoeff(f);
-		}
+		// Always do the method
 		s = rs.getString(index++);
 		if (!rs.wasNull()) {
 			data.setMethod_desc(s.trim());
@@ -24190,15 +24265,14 @@ throws Exception {
 }
 
 /**
-Convert a ResultSet from a stored procedure to a Vector 
-of HydroBase_CUPenmanMonteith
+Convert a ResultSet from a stored procedure to a list of HydroBase_CUPenmanMonteith
 @param rs ResultSet from a query
-@return a Vector of HydroBase_CUPenmanMonteith
+@return a list of HydroBase_CUPenmanMonteith
 */
-private List toCUPenmanMonteithSPList(ResultSet rs) 
+private List<HydroBase_CUPenmanMonteith> toCUPenmanMonteithSPList(ResultSet rs) 
 throws Exception {
 	HydroBase_CUPenmanMonteith data = null;
-	List v = new Vector();
+	List<HydroBase_CUPenmanMonteith> v = new Vector();
 	int index = 1;
 	
 	int i;
