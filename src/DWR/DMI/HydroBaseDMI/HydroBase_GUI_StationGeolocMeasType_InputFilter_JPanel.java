@@ -20,7 +20,6 @@ import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
-import RTi.Util.IO.PropList;
 import RTi.Util.String.StringUtil;
 
 public class HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel
@@ -31,12 +30,10 @@ extends InputFilter_JPanel
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_StationGeolocMeasType queries.  This is used by TSTool.
 @param hbdmi HydroBaseDMI instance.
-@return a JPanel containing InputFilter instances for 
-HydroBase_StationGeolocMeasType queries.
+@return a JPanel containing InputFilter instances for HydroBase_StationGeolocMeasType queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel (
-						HydroBaseDMI hbdmi )
+public HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel ( HydroBaseDMI hbdmi )
 throws Exception
 {	List division_Vector = new Vector ( 7 );
 	List division_internal_Vector = new Vector ( 7 );
@@ -65,8 +62,7 @@ throws Exception
 	int size = county_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
 		county = (HydroBase_CountyRef)county_data_Vector.get(i);
-		county_Vector.add (
-			county.getCounty() + ", " + county.getST() );
+		county_Vector.add ( county.getCounty() + ", " + county.getST() );
 		county_internal_Vector.add (county.getCounty() );
 	}
 	HydroBase_WaterDistrict wd;
@@ -120,13 +116,8 @@ throws Exception
 		"Station Name", "station.station_name", "station_name",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );
-	PropList filter_props = new PropList ( "InputFilter" );
-	filter_props.set ( "NumFilterGroups=3" );
-	setToolTipText (
-		"<HTML>HydroBase queries can be filtered" +
-		"<BR>based on station data." +
-		"</HTML>" );
-	setInputFilters ( input_filters, filter_props );
+	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on station data.</html>" );
+	setInputFilters ( input_filters, 3, -1 );
 }
 
 }

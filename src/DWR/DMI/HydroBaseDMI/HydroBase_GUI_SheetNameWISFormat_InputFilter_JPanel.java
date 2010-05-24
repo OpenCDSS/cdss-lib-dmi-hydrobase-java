@@ -25,7 +25,6 @@ import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
-import RTi.Util.IO.PropList;
 import RTi.Util.String.StringUtil;
 
 public class HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel
@@ -36,8 +35,7 @@ extends InputFilter_JPanel
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_SheetNameWISFormat queries.  This is used by TSTool.
 @param hdmi HydroBaseDMI instance.
-@return a JPanel containing InputFilter instances for 
-HydroBase_SheetNameWISFormat queries.
+@return a JPanel containing InputFilter instances for HydroBase_SheetNameWISFormat queries.
 @exception Exception if there is an error.
 */
 public HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel (HydroBaseDMI hbdmi )
@@ -49,9 +47,7 @@ throws Exception
 		size = sheet_names.size();
 	}
 	for ( int i = 0; i < size; i++ ) {
-		sheet_name_Vector.add (
-			((HydroBase_WISSheetName)sheet_names.get(i)).
-			getSheet_name() );
+		sheet_name_Vector.add ( ((HydroBase_WISSheetName)sheet_names.get(i)).getSheet_name() );
 	}
 
 	List input_filters = new Vector(8);
@@ -68,13 +64,9 @@ throws Exception
 	// REVISIT SAM 2004-05-19 - might want to add row identifier and
 	// row label, but these are in separate tables that are difficult to
 	// join with in a general filter
-	PropList filter_props = new PropList ( "InputFilter" );
-	filter_props.set ( "NumFilterGroups=1" );
-	setToolTipText (
-		"<HTML>HydroBase queries can be filtered" +
-		"<BR>based on the Water Information Sheet (WIS) name." +
-		"</HTML>" );
-	setInputFilters ( input_filters, filter_props );
+
+	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on the Water Information Sheet (WIS) name.</html>" );
+	setInputFilters ( input_filters, 1, -1 );
 }
 
 }

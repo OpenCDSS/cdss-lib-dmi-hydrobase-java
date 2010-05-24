@@ -25,13 +25,10 @@ import java.util.Vector;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 /**
-This class is an input filter for querying geophlog ground water data in 
-the Ground Water GUI.
+This class is an input filter for querying geophlog ground water data in the Ground Water GUI.
 */
 public class HydroBase_GUI_GroundWater_InputFilter_JPanel
 extends InputFilter_JPanel {
@@ -42,14 +39,12 @@ Constructor.
 @param listener the mouse listener to use for responding when the Location
 entry text field is clicked in.  Cannot be null.
 */
-public HydroBase_GUI_GroundWater_InputFilter_JPanel(HydroBaseDMI dmi,
-MouseListener listener, boolean tstool) {
+public HydroBase_GUI_GroundWater_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener listener, boolean tstool) {
 	InputFilter filter = null;
 
 	List filters = new Vector();
 
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
 	// Fill in the water district data for input filters...
 
@@ -73,8 +68,7 @@ MouseListener listener, boolean tstool) {
 	size = division_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
 		div =(HydroBase_WaterDivision)division_data_Vector.get(i);
-		division_Vector.add (div.getDiv() + " - " +
-			div.getDiv_name());
+		division_Vector.add (div.getDiv() + " - " + div.getDiv_name());
 		division_internal_Vector.add ("" + div.getDiv() );
 	}
 
@@ -134,9 +128,7 @@ MouseListener listener, boolean tstool) {
 		// dialog can be opened when the PLSS Location text field 
 		// is clicked on.
 		filter.addInputComponentMouseListener(listener);
-		filter.setInputComponentToolTipText(
-			"Click in this field to build "
-			+ "a location to use as a query constraint.");
+		filter.setInputComponentToolTipText( "Click in this field to build a location to use as a query constraint.");
 		filter.setInputJTextFieldWidth(20);
 		filters.add(filter);
 	}
@@ -169,12 +161,8 @@ MouseListener listener, boolean tstool) {
 		"", "well_name", StringUtil.TYPE_STRING,
 		null, null, false));		
 
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=3");
-	filterProps.set("NumWhereRowsToDisplay=12");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on ground water data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on ground water data.</html>");
+	setInputFilters(filters, 3, 12);
 }
 
 }

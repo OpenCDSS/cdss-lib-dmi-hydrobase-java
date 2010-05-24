@@ -17,7 +17,6 @@ import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
-import RTi.Util.IO.PropList;
 import RTi.Util.String.StringUtil;
 
 public class HydroBase_GUI_CUPopulation_InputFilter_JPanel
@@ -25,11 +24,9 @@ extends InputFilter_JPanel
 {
 
 /**
-Create an InputFilter_JPanel for creating where clauses
-for HydroBase_CUPopulation queries.  This is used by TSTool.
+Create an InputFilter_JPanel for creating where clauses for HydroBase_CUPopulation queries.  This is used by TSTool.
 @param hdmi HydroBaseDMI instance.
-@return a JPanel containing InputFilter instances for HydroBase_CUPopulation
-queries.
+@return a JPanel containing InputFilter instances for HydroBase_CUPopulation queries.
 @exception Exception if there is an error.
 */
 public HydroBase_GUI_CUPopulation_InputFilter_JPanel ( HydroBaseDMI hbdmi )
@@ -63,8 +60,7 @@ throws Exception
 		pop_type_size = pop_type_Vector.size();
 		found = false;
 		for ( j = 0; j < area_type_size; j++ ) {
-			if (	area_type.equalsIgnoreCase(
-				(String)area_type_Vector.get(j))){
+			if ( area_type.equalsIgnoreCase((String)area_type_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -74,8 +70,7 @@ throws Exception
 		}
 		found = false;
 		for ( j = 0; j < area_name_size; j++ ) {
-			if (	area_name.equalsIgnoreCase(
-				(String)area_name_Vector.get(j))){
+			if ( area_name.equalsIgnoreCase((String)area_name_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -85,8 +80,7 @@ throws Exception
 		}
 		found = false;
 		for ( j = 0; j < pop_type_size; j++ ) {
-			if (	pop_type.equalsIgnoreCase(
-				(String)pop_type_Vector.get(j))){
+			if ( pop_type.equalsIgnoreCase( (String)pop_type_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -115,13 +109,8 @@ throws Exception
 		"Population Type", "CUPopulation.pop_type", "pop_type",
 		StringUtil.TYPE_STRING,
 		pop_type_Vector, pop_type_Vector, true ) );
-	PropList filter_props = new PropList ( "InputFilter" );
-	filter_props.set ( "NumFilterGroups=3" );
-	setToolTipText (
-		"<HTML>HydroBase queries can be filtered" +
-		"<BR>based on population data." +
-		"</HTML>" );
-	setInputFilters ( input_filters, filter_props );
+	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on population data.</html>" );
+	setInputFilters ( input_filters, 3, -1 );
 }
 
 }

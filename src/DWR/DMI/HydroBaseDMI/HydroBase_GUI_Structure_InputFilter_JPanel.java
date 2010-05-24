@@ -33,13 +33,10 @@ import RTi.DMI.DMIUtil;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 /**
-This class is an input filter for querying structure data from the Structure 
-GUI.
+This class is an input filter for querying structure data from the Structure GUI.
 */
 public class HydroBase_GUI_Structure_InputFilter_JPanel
 extends InputFilter_JPanel {
@@ -76,8 +73,7 @@ MouseListener listener) {
 	List v1 = null;
 	List v2 = null;
 
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
 	v1 = new Vector();
 	v2 = new Vector();
@@ -90,10 +86,8 @@ MouseListener listener) {
 		v2.add(ciu.getCode());
 	}
 
-	String structureTableName = HydroBase_GUI_Util._STRUCTURE_TABLE_NAME 
-		+ "." + ld;
-	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." 
-		+ ld;
+	String structureTableName = HydroBase_GUI_Util._STRUCTURE_TABLE_NAME + "." + ld;
+	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." + ld;
 
 	InputFilter filter = new InputFilter("CIU",
 		structureTableName + "ciu" + rd, "ciu", 
@@ -210,12 +204,8 @@ MouseListener listener) {
 		structureTableName + "wd" + rd, "wd", 
 		StringUtil.TYPE_INTEGER, null, null, false));
 
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=3");
-	filterProps.set("NumWhereRowsToDisplay=18");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on structure data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on structure data.</html>");
+	setInputFilters(filters, 3, 18);
 }
 
 /**
@@ -234,13 +224,10 @@ MouseListener listener) {
 	List v1 = null;
 	List v2 = null;
 
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
-	String structureTableName = HydroBase_GUI_Util._STRUCTURE_TABLE_NAME 
-		+ "." + ld;
-	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." 
-		+ ld;
+	String structureTableName = HydroBase_GUI_Util._STRUCTURE_TABLE_NAME + "." + ld;
+	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." + ld;
 
 	v1 = new Vector();
 	v2 = new Vector();
@@ -387,12 +374,8 @@ MouseListener listener) {
 		structureTableName + "wd" + rd, "wd", 
 		StringUtil.TYPE_INTEGER, null, null, false));
 
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=3");
-	filterProps.set("NumWhereRowsToDisplay=26");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on structure data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on structure data.</html>");
+	setInputFilters(filters, 3, 26);
 }
 
 }

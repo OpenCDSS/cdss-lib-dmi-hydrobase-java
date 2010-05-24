@@ -29,8 +29,6 @@ import java.util.Vector;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 public class HydroBase_GUI_Transact_InputFilter_JPanel
@@ -74,11 +72,9 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	types.add("C");
 	types.add("CA");
 
-	String tableName = HydroBase_GUI_Util._TRANS_TABLE_NAME 
-		+ "." + ld;
+	String tableName = HydroBase_GUI_Util._TRANS_TABLE_NAME + "." + ld;
 
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
 	filters.add(new InputFilter("Aband",
 		tableName + "aband" + rd, "aband", StringUtil.TYPE_STRING,
@@ -218,8 +214,7 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	v2 = new Vector();
 	for (int i = 0; i < strTypes.size(); i++) {
 		strType = (HydroBase_StrType)strTypes.get(i);
-		v1.add(strType.getStr_type() + " - " 
-			+ strType.getStr_type_desc());
+		v1.add(strType.getStr_type() + " - " + strType.getStr_type_desc());
 		v2.add(strType.getStr_type());
 	}
 		
@@ -251,12 +246,8 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 		tableName + "wd" + rd, "wd",
 		StringUtil.TYPE_INTEGER, null, null, false));
 
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=3");
-	filterProps.set("NumWhereRowsToDisplay=42");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on ground water data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on ground water data.</html>");
+	setInputFilters(filters, 3, 42);
 }
 
 /**
@@ -273,8 +264,7 @@ private void setupStructureFilter(HydroBaseDMI dmi) {
 
 	List filters = new Vector();
 
-	String tableName = HydroBase_GUI_Util._TRANS_TABLE_NAME 
-		+ "." + ld;
+	String tableName = HydroBase_GUI_Util._TRANS_TABLE_NAME + "." + ld;
 
 	filter = new InputFilter("Structure Number",
 		tableName + "structure_num" + rd, "structure_num", 
@@ -287,12 +277,8 @@ private void setupStructureFilter(HydroBaseDMI dmi) {
 	filter.setInputJTextFieldEditable(false);
 	filters.add(filter);
 
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=1");
-	filterProps.set("NumWhereRowsToDisplay=1");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on ground water data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on ground water data.</html>");
+	setInputFilters(filters, 1, 1);
 }
 
 }

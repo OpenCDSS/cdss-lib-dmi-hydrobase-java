@@ -29,13 +29,10 @@ import java.util.Vector;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 /**
-This class is an input filter for querying net amts data from the Water
-Rights GUI.
+This class is an input filter for querying net amts data from the Water Rights GUI.
 */
 public class HydroBase_GUI_NetAmts_InputFilter_JPanel
 extends InputFilter_JPanel {
@@ -73,8 +70,7 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 
 	List filters = new Vector();
 
-	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME 
-		+ "." + ld;
+	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME + "." + ld;
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,	null, null, false));
 
@@ -153,8 +149,7 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	// this listener must be set up so that the location builder dialog
 	// can be opened when the PLSS Location text field is clicked on.
 	filter.addInputComponentMouseListener(listener);
-	filter.setInputComponentToolTipText("Click in this field to build "
-		+ "a PLSS Location to use as a query constraint.");
+	filter.setInputComponentToolTipText("Click in this field to build a PLSS Location to use as a query constraint.");
 	filter.setInputJTextFieldWidth(20);
 	filters.add(filter);
 
@@ -183,8 +178,7 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	v2 = new Vector();
 	for (int i = 0; i < strTypes.size(); i++) {
 		strType = (HydroBase_StrType)strTypes.get(i);
-		v1.add(strType.getStr_type() + " - " 
-			+ strType.getStr_type_desc());
+		v1.add(strType.getStr_type() + " - " + strType.getStr_type_desc());
 		v2.add(strType.getStr_type());
 	}
 		
@@ -204,12 +198,8 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 		tableName + "wd" + rd, "wd",
 		StringUtil.TYPE_INTEGER, null, null, false));		
 
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=3");
-	filterProps.set("NumWhereRowsToDisplay=22");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on ground water data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on ground water data.</html>");
+	setInputFilters(filters, 3, 22);
 }
 
 /**
@@ -226,8 +216,7 @@ private void setupStructureFilter(HydroBaseDMI dmi) {
 
 	List filters = new Vector();
 
-	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME 
-		+ "." + ld;
+	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME + "." + ld;
 
 	filter = new InputFilter("Structure Number",
 		tableName + "structure_num" + rd, "structure_num", 
@@ -240,12 +229,8 @@ private void setupStructureFilter(HydroBaseDMI dmi) {
 	filter.setInputJTextFieldEditable(false);
 	filters.add(filter);
 
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=1");
-	filterProps.set("NumWhereRowsToDisplay=1");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on ground water data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on ground water data.</html>");
+	setInputFilters(filters, 1, 1);
 }
 
 }

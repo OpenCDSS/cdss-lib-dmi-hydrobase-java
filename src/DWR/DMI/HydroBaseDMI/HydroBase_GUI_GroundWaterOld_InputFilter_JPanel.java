@@ -23,13 +23,10 @@ import java.util.Vector;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 /**
-This class is an input filter for querying ground water data in the Ground Water
-GUI.
+This class is an input filter for querying ground water data in the Ground Water GUI.
 */
 public class HydroBase_GUI_GroundWaterOld_InputFilter_JPanel
 extends InputFilter_JPanel {
@@ -40,8 +37,7 @@ Constructor.
 @param listener the mouse listener to use for responding when the Location
 entry text field is clicked in.  Cannot be null.
 */
-public HydroBase_GUI_GroundWaterOld_InputFilter_JPanel(HydroBaseDMI dmi,
-MouseListener listener) {
+public HydroBase_GUI_GroundWaterOld_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener listener) {
 	String rd = dmi.getRightIdDelim();
 	String ld = dmi.getLeftIdDelim();
 
@@ -49,8 +45,7 @@ MouseListener listener) {
 
 	List filters = new Vector();
 
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
 	// create the input filter for the PLSS Location
 	filter = new InputFilter(
@@ -84,12 +79,8 @@ MouseListener listener) {
 		+ "str_name" + rd, "str_name", StringUtil.TYPE_STRING,
 		null, null, false));
 
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=3");
-	filterProps.set("NumWhereRowsToDisplay=4");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on ground water data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on ground water data.</html>");
+	setInputFilters(filters, 3, 4);
 }
 
 }

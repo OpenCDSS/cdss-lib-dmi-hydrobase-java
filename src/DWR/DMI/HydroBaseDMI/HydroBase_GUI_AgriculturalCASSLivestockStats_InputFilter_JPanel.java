@@ -17,7 +17,6 @@ import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
-import RTi.Util.IO.PropList;
 import RTi.Util.String.StringUtil;
 
 public class HydroBase_GUI_AgriculturalCASSLivestockStats_InputFilter_JPanel
@@ -32,8 +31,7 @@ for HydroBase_AgriculturalCASSLivestockStats queries.  This is used by TSTool.
 HydroBase_AgriculturalCASSLivestockStats queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_AgriculturalCASSLivestockStats_InputFilter_JPanel (
-							HydroBaseDMI hbdmi )
+public HydroBase_GUI_AgriculturalCASSLivestockStats_InputFilter_JPanel ( HydroBaseDMI hbdmi )
 throws Exception
 {	// For now do these queries here with available low-level code...
 
@@ -56,16 +54,14 @@ throws Exception
 	int commodity_size = 0, type_size = 0, j = 0;
 	boolean found = false;
 	for ( int i = 0; i < size; i++ ) {
-		agstats = (HydroBase_AgriculturalCASSLivestockStats)
-			v.get(i);
+		agstats = (HydroBase_AgriculturalCASSLivestockStats)v.get(i);
 		commodity = agstats.getCommodity();
 		type = agstats.getType();
 		commodity_size = commodity_Vector.size();
 		type_size = type_Vector.size();
 		found = false;
 		for ( j = 0; j < commodity_size; j++ ) {
-			if (	commodity.equalsIgnoreCase(
-				(String)commodity_Vector.get(j))){
+			if ( commodity.equalsIgnoreCase((String)commodity_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -75,8 +71,7 @@ throws Exception
 		}
 		found = false;
 		for ( j = 0; j < type_size; j++ ) {
-			if (	type.equalsIgnoreCase(
-				(String)type_Vector.get(j))){
+			if ( type.equalsIgnoreCase( (String)type_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -93,12 +88,11 @@ throws Exception
 	HydroBase_CountyRef county;
 	for ( int i = 0; i < size; i++ ) {
 		county = (HydroBase_CountyRef)county_data_Vector.get(i);
-		county_Vector.add (
-			county.getCounty() + ", " + county.getST() );
+		county_Vector.add ( county.getCounty() + ", " + county.getST() );
 		county_internal_Vector.add (county.getCounty() );
 	}
 
-	// REVISIT - remove hard-code later
+	// TODO - remove hard-code later
 	//Vector st_Vector = new Vector(1);	// Hard-code for now.
 	//st_Vector.addElement ( "CO" );
 	//Vector st_internal_Vector = new Vector(1);
@@ -130,13 +124,9 @@ throws Exception
 		"type",
 		StringUtil.TYPE_STRING,
 		type_Vector, type_Vector, true ) );
-	PropList filter_props = new PropList ( "InputFilter" );
-	filter_props.set ( "NumFilterGroups=3" );
 	setToolTipText (
-		"<HTML>HydroBase queries can be filtered" +
-		"<BR>based on county agricultural statistics data." +
-		"</HTML>" );
-	setInputFilters ( input_filters, filter_props );
+		"<html>HydroBase queries can be filtered<br>based on county agricultural statistics data.</html>" );
+	setInputFilters ( input_filters, 3, -1 );
 }
 
 }

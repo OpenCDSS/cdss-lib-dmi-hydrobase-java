@@ -33,8 +33,6 @@ import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.GUI.JGUIUtil;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 public class HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel
@@ -46,34 +44,27 @@ implements MouseListener
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_StructureGeolocStructMeasType queries.  This is used by TSTool.
 Default filter panel properties are used (e.g., 3 filter groups).
-@return a JPanel containing InputFilter instances for 
-HydroBase_StructureGeolocStructMeasType queries.
+@return a JPanel containing InputFilter instances for HydroBase_StructureGeolocStructMeasType queries.
 @param hdmi HydroBaseDMI instance.
 @param include_SFUT If true, include a filter for the SFUT.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel (
-						HydroBaseDMI hbdmi,
-						boolean include_SFUT )
+public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel ( HydroBaseDMI hbdmi, boolean include_SFUT )
 throws Exception
-{	this ( hbdmi, include_SFUT, null );
+{	this ( hbdmi, include_SFUT, -1, -1 );
 }
 
 /**
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_StructureGeolocStructMeasType queries.  This is used by TSTool.
-@return a JPanel containing InputFilter instances for 
-HydroBase_StructureGeolocStructMeasType queries.
+@return a JPanel containing InputFilter instances for HydroBase_StructureGeolocStructMeasType queries.
 @param hdmi HydroBaseDMI instance.
 @param include_SFUT If true, include a filter for the SFUT.
-@param filter_props Properties to configure the input filter, passed to the base
-class.
+@param filter_props Properties to configure the input filter, passed to the base class.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel (
-						HydroBaseDMI hbdmi,
-						boolean include_SFUT,
-						PropList filter_props )
+public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel ( HydroBaseDMI hbdmi, boolean include_SFUT,
+	int numFilterGroups, int numWhereChoicesToDisplay )
 throws Exception
 {	// Fill in the county for input filters...
 
@@ -84,8 +75,7 @@ throws Exception
 	int size = county_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
 		county = (HydroBase_CountyRef)county_data_Vector.get(i);
-		county_Vector.add (
-			county.getCounty() + ", " + county.getST() );
+		county_Vector.add ( county.getCounty() + ", " + county.getST() );
 		county_internal_Vector.add (county.getCounty() );
 	}
 
@@ -111,8 +101,7 @@ throws Exception
 	size = division_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
 		div =(HydroBase_WaterDivision)division_data_Vector.get(i);
-		division_Vector.add (div.getDiv() + " - " +
-			div.getDiv_name());
+		division_Vector.add (div.getDiv() + " - " + div.getDiv_name());
 		division_internal_Vector.add ("" + div.getDiv() );
 	}
 
@@ -191,8 +180,7 @@ throws Exception
 	// this listener must be set up so that the location builder dialog
 	// can be opened when the PLSS Location text field is clicked on.
 	filter.addInputComponentMouseListener(this);
-	filter.setInputComponentToolTipText("Click in this field to build "
-		+ "a PLSS Location to use as a query constraint.");
+	filter.setInputComponentToolTipText("Click in this field to build a PLSS Location to use as a query constraint.");
 	filter.setInputJTextFieldWidth(20);
 	input_filters.add(filter);
 
@@ -237,20 +225,13 @@ throws Exception
 		StringUtil.TYPE_DOUBLE,
 		null, null, true ) );		
 
-	if ( filter_props == null ) {
-		filter_props = new PropList ( "InputFilter" );
-	}
-	if ( filter_props.getValue ( "NumFilterGroups" ) == null ) {
+	if ( numFilterGroups < 0 ) {
 		// REVISIT - need larger default?
-		filter_props.set ( "NumFilterGroups=3" );
-		filter_props.set("NumWhereRowsToDisplay=" 
-			+ input_filters.size());
+		numFilterGroups = 3;
+		numWhereChoicesToDisplay = input_filters.size();
 	}
-	setToolTipText (
-		"<HTML>HydroBase queries can be filtered" +
-		"<BR>based on structure data." +
-		"</HTML>" );
-	setInputFilters ( input_filters, filter_props );
+	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on structure data.</html>" );
+	setInputFilters ( input_filters, numFilterGroups, numWhereChoicesToDisplay );
 }
 
 public void mouseClicked(MouseEvent event) {}

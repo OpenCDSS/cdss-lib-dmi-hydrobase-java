@@ -20,7 +20,6 @@ import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
-import RTi.Util.IO.PropList;
 import RTi.Util.String.StringUtil;
 
 public class HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel
@@ -35,8 +34,7 @@ for HydroBase_StructureIrrigSummaryTS queries.  This is used by TSTool.
 HydroBase_StructureIrrigSummaryTS queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel (
-						HydroBaseDMI hbdmi )
+public HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel ( HydroBaseDMI hbdmi )
 throws Exception
 {	// Fill in the district data for input filters...
 
@@ -60,8 +58,7 @@ throws Exception
 	size = division_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
 		div =(HydroBase_WaterDivision)division_data_Vector.get(i);
-		division_Vector.add (div.getDiv() + " - " +
-			div.getDiv_name());
+		division_Vector.add (div.getDiv() + " - " + div.getDiv_name());
 		division_internal_Vector.add ("" + div.getDiv() );
 	}
 
@@ -108,14 +105,9 @@ throws Exception
 		"Land Use/Crop Type", "irrig_summary_ts.land_use", "land_use",
 		StringUtil.TYPE_STRING,
 		crop_Vector, crop_internal_Vector, true ) );
-	PropList filter_props = new PropList ( "InputFilter" );
-	filter_props.set ( "NumFilterGroups=3" );
-	setToolTipText (
-		"<HTML>HydroBase queries can be filtered" +
-		"<BR>based on irrigation summary time series data." +
-		"</HTML>" );
+	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on irrigation summary time series data.</html>" );
 	// Call base class method...
-	setInputFilters ( input_filters, filter_props );
+	setInputFilters ( input_filters, 3, -1 );
 }
 
 }

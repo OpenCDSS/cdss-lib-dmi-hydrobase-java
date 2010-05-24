@@ -17,12 +17,10 @@ import java.util.Vector;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 /**
-This class in an input filter for querying nass data in the Other Data GUI.
+This class in an input filter for querying NASS data in the Other Data GUI.
 */
 public class HydroBase_GUI_NASS_InputFilter_JPanel
 extends InputFilter_JPanel {
@@ -41,8 +39,7 @@ public HydroBase_GUI_NASS_InputFilter_JPanel(HydroBaseDMI dmi) {
 	
 	String tableName = HydroBase_GUI_Util._NASS_TABLE_NAME + "." + ld;
 	
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
 	List counties = dmi.getCountyRef();
 	HydroBase_CountyRef county = null;
@@ -59,12 +56,8 @@ public HydroBase_GUI_NASS_InputFilter_JPanel(HydroBaseDMI dmi) {
 		tableName + "county" + rd, "county", StringUtil.TYPE_STRING,
 		v1, v1, false));
 		
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=1");
-	filterProps.set("NumWhereRowsToDisplay=2");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on agricultural statistic data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on agricultural statistic data.</html>");
+	setInputFilters(filters, 1, 2);
 }
 
 }

@@ -19,8 +19,6 @@ import java.util.Vector;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 /**
@@ -39,15 +37,11 @@ public HydroBase_GUI_Station_InputFilter_JPanel(HydroBaseDMI dmi) {
 
 	List filters = new Vector();
 
-	String stationTableName = HydroBase_GUI_Util._STATION_TABLE_NAME 
-		+ "." + ld;
-	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME 
-		+ "." + ld;
-	String measTypeTableName = HydroBase_GUI_Util._MEASTYPE_TABLE_NAME
-		+ "." + ld;
+	String stationTableName = HydroBase_GUI_Util._STATION_TABLE_NAME + "." + ld;
+	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." + ld;
+	String measTypeTableName = HydroBase_GUI_Util._MEASTYPE_TABLE_NAME + "." + ld;
 
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
 	filters.add(new InputFilter("Abbreviation",
 		stationTableName + "abbrev" + rd, "abbrev", 
@@ -116,12 +110,8 @@ public HydroBase_GUI_Station_InputFilter_JPanel(HydroBaseDMI dmi) {
 		geolocTableName + "wd" + rd, "wd",
 		StringUtil.TYPE_INTEGER, null, null, false));
 		
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=2");
-	filterProps.set("NumWhereRowsToDisplay=18");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on station data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on station data.</html>");
+	setInputFilters(filters, 2, 18);
 }
 
 }

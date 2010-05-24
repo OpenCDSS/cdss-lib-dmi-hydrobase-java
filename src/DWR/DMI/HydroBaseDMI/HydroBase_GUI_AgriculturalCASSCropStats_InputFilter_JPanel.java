@@ -20,7 +20,6 @@ import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
-import RTi.Util.IO.PropList;
 import RTi.Util.String.StringUtil;
 
 public class HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel extends
@@ -35,8 +34,7 @@ for HydroBase_AgriculturalCASSCropStats queries.  This is used by TSTool.
 HydroBase_AgriculturalCASSCropStats queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel (
-							HydroBaseDMI hbdmi )
+public HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel ( HydroBaseDMI hbdmi )
 throws Exception
 {	// For now do these queries here with available low-level code...
 
@@ -66,8 +64,7 @@ throws Exception
 		practice_size = practice_Vector.size();
 		found = false;
 		for ( j = 0; j < commodity_size; j++ ) {
-			if (	commodity.equalsIgnoreCase(
-				(String)commodity_Vector.get(j))){
+			if ( commodity.equalsIgnoreCase((String)commodity_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -77,8 +74,7 @@ throws Exception
 		}
 		found = false;
 		for ( j = 0; j < practice_size; j++ ) {
-			if (	practice.equalsIgnoreCase(
-				(String)practice_Vector.get(j))){
+			if ( practice.equalsIgnoreCase( (String)practice_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -95,12 +91,11 @@ throws Exception
 	HydroBase_CountyRef county;
 	for ( int i = 0; i < size; i++ ) {
 		county = (HydroBase_CountyRef)county_data_Vector.get(i);
-		county_Vector.add (
-			county.getCounty() + ", " + county.getST() );
+		county_Vector.add ( county.getCounty() + ", " + county.getST() );
 		county_internal_Vector.add (county.getCounty() );
 	}
 
-	// REVISIT - remove hard-code later
+	// TODO - remove hard-code later
 	//Vector st_Vector = new Vector(1);	// Hard-code for now.
 	//st_Vector.addElement ( "CO" );
 	//Vector st_internal_Vector = new Vector(1);
@@ -132,13 +127,9 @@ throws Exception
 		"practice",
 		StringUtil.TYPE_STRING,
 		practice_Vector, practice_Vector, true ) );
-	PropList filter_props = new PropList ( "InputFilter" );
-	filter_props.set ( "NumFilterGroups=3" );
 	setToolTipText (
-		"<HTML>HydroBase queries can be filtered" +
-		"<BR>based on county agricultural statistics data." +
-		"</HTML>" );
-	setInputFilters ( input_filters, filter_props );
+		"<html>HydroBase queries can be filtered<br>based on county agricultural statistics data.</html>" );
+	setInputFilters ( input_filters, 3, -1 );
 }
 
 }

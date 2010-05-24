@@ -26,8 +26,6 @@ import java.util.Vector;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 
-import RTi.Util.IO.PropList;
-
 import RTi.Util.String.StringUtil;
 
 /**
@@ -42,21 +40,17 @@ Constructor.
 @param listener the mouse listener to use for responding when the Location
 entry text field is clicked in.  Cannot be null.
 */
-public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi,
-MouseListener listener) {
+public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener listener) {
 	String rd = dmi.getRightIdDelim();
 	String ld = dmi.getLeftIdDelim();
 
 	InputFilter filter = null;
 	List filters = new Vector();
 
-	String wellTableName = HydroBase_GUI_Util._WELL_APPLICATION_TABLE_NAME 
-		+ "." + ld;
-	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME
-		+ "." + ld;
+	String wellTableName = HydroBase_GUI_Util._WELL_APPLICATION_TABLE_NAME + "." + ld;
+	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." + ld;
 
-	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING,
-		null, null, false));
+	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
 	filter = new InputFilter("ABCODate",
 		wellTableName + "abcodate" + rd, "abcodate",
@@ -374,12 +368,8 @@ MouseListener listener) {
 		wellTableName + "yield" + rd, "yield", StringUtil.TYPE_DOUBLE,
 		null, null, false));
 		
-	PropList filterProps = new PropList("InputFilter");
-	filterProps.set("NumFilterGroups=3");
-	filterProps.set("NumWhereRowsToDisplay=30");
-	setToolTipText("<HTML>HydroBase queries can be filtered" 
-		+ "<BR>based on well data.</HTML>");
-	setInputFilters(filters, filterProps);
+	setToolTipText("<html>HydroBase queries can be filtered<br>based on well data.</html>");
+	setInputFilters(filters, 3, 30);
 }
 
 }
