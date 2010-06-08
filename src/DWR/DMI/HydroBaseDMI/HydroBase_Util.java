@@ -92,6 +92,7 @@ import RTi.TS.DayTS;
 import RTi.TS.MonthTS;
 import RTi.TS.TS;
 import RTi.TS.TSData;
+import RTi.TS.TSDataFlagMetadata;
 import RTi.TS.YearTS;
 
 import RTi.Util.GUI.InputFilter_JPanel;
@@ -1103,8 +1104,7 @@ throws Exception
 			if ( max_DateTime.lessThan(tsdate2) ) {
 				max_DateTime = new DateTime ( tsdate2 );
 			}
-			ts.addToGenesis("Change period because all data are " +
-			"requested and diversion comments are available.");
+			ts.addToGenesis("Change period because all data are requested and diversion comments are available.");
 			ts.changePeriodOfRecord ( min_DateTime, max_DateTime );
 		}
 	}
@@ -1203,10 +1203,26 @@ throws Exception
 		// Print/save a message for the year...
 		if ( fill_count > 0 ) {
 			String comment_string = "Filled " + fill_count + " values in irrigation year " +
-			iyear + " (Nov " + (iyear - 1) + "-Oct " + iyear +
-			") with zero because not_used=\"" + not_used + "\"";
+			iyear + " (Nov " + (iyear - 1) + "-Oct " + iyear + ") with zero because not_used=\"" + not_used + "\"";
 			ts.addToGenesis(comment_string);
 			Message.printStatus(2, routine, comment_string);
+			// Save the flags that are used
+			if ( fillflag_boolean ) {
+                // Set the data flag, appending to the old value...
+                if ( fillflag_auto ) {
+                    // Use the standard values as documented by DWR
+                    ts.addDataFlagMetadata(new TSDataFlagMetadata("A","STRUCTURE NOT USABLE") );
+                    ts.addDataFlagMetadata(new TSDataFlagMetadata("B","NO WATER AVAILABLE") );
+                    ts.addDataFlagMetadata(new TSDataFlagMetadata("C","WATER AVAILABLE BUT NOT TAKEN") );
+                    ts.addDataFlagMetadata(new TSDataFlagMetadata("D","WATER TAKEN IN ANOTHER STRUCTURE") );
+                    ts.addDataFlagMetadata(new TSDataFlagMetadata("E","WATER TAKEN BUT NO DATA AVAILABLE") );
+                    ts.addDataFlagMetadata(new TSDataFlagMetadata("F","NO INFORMATION AVAILABLE") );
+                }
+                else {
+                    // User-defined value
+                    ts.addDataFlagMetadata(new TSDataFlagMetadata(fillflag,"User-defined.") );
+                }
+            }
 		}
 	}
 }
