@@ -15885,12 +15885,12 @@ throws Exception, NoDataFoundException
 		ts = new DayTS ();
 		if (data_type.equalsIgnoreCase("Precip")) {
 			// Allow data flags - HydroBase has 1 character flags...
-			((DayTS)ts).hasDataFlags(true, 1);
+			((DayTS)ts).hasDataFlags(true,true);
 		}
 		else if (data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("DivClass") ||
 			data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("RelClass")) {
 			// Allow data flags - HydroBase has 2 character flags...
-			((DayTS)ts).hasDataFlags(true,2);
+			((DayTS)ts).hasDataFlags(true,true);
 		}
 	}
 	else if (interval.equalsIgnoreCase("Month")) {
@@ -15900,14 +15900,14 @@ throws Exception, NoDataFoundException
 		ts = new YearTS ();
 		if (data_type.equalsIgnoreCase("DivComment")) {
 			// Allow data flags - HydroBase has 1 character flags...
-			((YearTS)ts).hasDataFlags(true,1);
+			((YearTS)ts).hasDataFlags(true,true);
 		}
 		else if (data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("DivTotal") ||
 			data_type.equalsIgnoreCase("IDivClass") || data_type.equalsIgnoreCase("IDivTotal") ||
 			data_type.equalsIgnoreCase("IRelClass") || data_type.equalsIgnoreCase("IRelTotal") ||
 			data_type.equalsIgnoreCase("RelClass") || data_type.equalsIgnoreCase("RelTotal")) {
 			// Allow quality flags - HydroBase has 1 character flags...
-			((YearTS)ts).hasDataFlags(true,1);
+			((YearTS)ts).hasDataFlags(true,true);
 		}
 	}
 	else if (interval.equalsIgnoreCase("Irreg") || interval.equalsIgnoreCase("Irregular") ||

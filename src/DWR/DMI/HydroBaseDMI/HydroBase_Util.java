@@ -859,7 +859,6 @@ throws Exception
 		FillDailyDivFlag_boolean = true;
 		// Make sure that the data flag is allocated.
 		ts.allocateDataFlagSpace (
-			FillDailyDivFlag.length(),	// Max length of flag
 			null,	// Initial flag value
 			true );	// Keep old flags if already allocated
 	}
@@ -1117,13 +1116,10 @@ throws Exception
 	if ( (fill_count > 0) && (fillflag != null) && (fillflag.length() > 0)){
 		fillflag_boolean = true;
 		// Make sure that the data flag is allocated.
-		int fillflag_length = fillflag.length();
 		if ( fillflag.equalsIgnoreCase("Auto") ) {
-			fillflag_length = 1;
 			fillflag_auto = true;
 		}
 		ts.allocateDataFlagSpace (
-			fillflag_length,	// Max length of flag
 			null,	// Initial flag value
 			true );	// Keep old flags if already allocated
 	}
