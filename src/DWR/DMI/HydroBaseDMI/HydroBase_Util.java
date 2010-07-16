@@ -1794,12 +1794,12 @@ used in cases where a data type is listed as both a station and structure (e.g.,
 WellLevel) but the interval is different for each case (e.g., WellLevel
 Irregular for station, WellLevel Day for structure).
 */
-public static List getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String data_type, int include_types )
+public static List<String> getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String data_type, int include_types )
 {	String Month = "Month";
 	String Day = "Day";
 	String Year = "Year";
 	String Irregular = "Irregular";
-	List v = new Vector();
+	List<String> v = new Vector();
 	// Alphabetize by data type, as much as possible...
 	if ( data_type.equalsIgnoreCase("AdminFlow") ) {
 		v.add ( Day );

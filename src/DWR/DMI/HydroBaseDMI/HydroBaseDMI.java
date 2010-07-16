@@ -14665,8 +14665,7 @@ throws Exception {
 }
 
 /**
-Read the structure and irrig_summary_ts tables for all data with the matching
-criteria.<p>
+Read the structure and irrig_summary_ts tables for all data with the matching criteria.<p>
 This is called by:<ul>
 <li>readTimeSeries</li>
 </ul>
@@ -14675,8 +14674,7 @@ This method uses the following view:<p><ul>
 <li>vw_CDSS_StructureIrrigSummaryTS</li></ul>
 @param panel the input filter panel to use for where clauses
 @param orderby_clauses additional order by clauses to use for SQL queries.
-@param structure_num the structure_num to query for.  If missing, will be
-ignored.
+@param structure_num the structure_num to query for.  If missing, will be ignored.
 @param wd the wd to query for.  If missing, will be ignored.
 @param id the id to query for.  If missing, will be ignored.
 @param str_name the structure name to query for.  If null, will be ignored.
@@ -14684,9 +14682,8 @@ ignored.
 @param req_date1 First year to read - specify null to ignore.
 @param req_date2 Last year to read - specify null to ignore.
 @param distinct whether to do distinct queries.  Ignored for stored procedures.
-@return a Vector of HydroBase_StructureView objects.
-The objects are sorted by year, structure identifier (WDID), and 
-land_use (crops).
+@return a list of HydroBase_StructureView objects.
+The objects are sorted by year, structure identifier (WDID), and land_use (crops).
 @throws Exception if an error occurs
 */
 public List readStructureIrrigSummaryTSList(InputFilter_JPanel panel,
@@ -14694,8 +14691,7 @@ List orderby_clauses, int structure_num, int wd, int id, String str_name,
 String land_use, DateTime req_date1, DateTime req_date2, boolean distinct ) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			panel, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(panel, null);
 		String[] triplet = null;
 
 		if (!DMIUtil.isMissing(structure_num)) {
@@ -14758,8 +14754,7 @@ throws Exception {
 		String viewName = "vw_CDSS_StructureIrrigSummaryTS";
 		if (distinct) {
 			orderNumber = 47;
-			viewName = 
-			     "vw_CDSS_StructureIrrigSummaryTS_Distinct_LU";
+			viewName = "vw_CDSS_StructureIrrigSummaryTS_Distinct_LU";
 		}
 			
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
@@ -14772,20 +14767,16 @@ throws Exception {
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
 		if (distinct) {
-			buildSQL(q,
-				__S_STRUCTURE_IRRIG_SUMMARY_TS_DISTINCT_VIEW);
+			buildSQL(q, __S_STRUCTURE_IRRIG_SUMMARY_TS_DISTINCT_VIEW);
 			q.selectDistinct(true);
 		}
 		else {
-			buildSQL(q,
-				__S_STRUCTURE_IRRIG_SUMMARY_TS_VIEW);
+			buildSQL(q, __S_STRUCTURE_IRRIG_SUMMARY_TS_VIEW);
 		}
 	
 		List where_clauses = null;
 		if (panel != null) {
-			where_clauses 
-				= HydroBase_GUI_Util
-				.getWhereClausesFromInputFilter(this, panel);
+			where_clauses = HydroBase_GUI_Util.getWhereClausesFromInputFilter(this, panel);
 		}
 
 		if (where_clauses != null) {
@@ -14804,8 +14795,7 @@ throws Exception {
 			}
 //		}
 		if (!DMIUtil.isMissing(structure_num)) {
-			q.addWhereClause("structure.structure_num = " 
-				+ structure_num);
+			q.addWhereClause("structure.structure_num = " + structure_num);
 		}
 		if (!DMIUtil.isMissing(wd)) {
 			q.addWhereClause("structure.wd = " + wd);
@@ -14814,20 +14804,16 @@ throws Exception {
 			q.addWhereClause("structure.id = " + id);
 		}
 		if ((str_name != null) && (str_name.length() > 0)) {
-			q.addWhereClause("structure.str_name = '" 
-				+ str_name + "'");
+			q.addWhereClause("structure.str_name = '" + str_name + "'");
 		}
 		if ((land_use != null) && (land_use.length() > 0)) {
-			q.addWhereClause("irrig_summary_ts.land_use = '" 
-				+ land_use+"'");
+			q.addWhereClause("irrig_summary_ts.land_use = '" + land_use+"'");
 		}
 		if (req_date1 != null && !distinct) {
-			q.addWhereClause("irrig_summary_ts.cal_year >= " +
-				req_date1.getYear());
+			q.addWhereClause("irrig_summary_ts.cal_year >= " + req_date1.getYear());
 			}
 		if (req_date2 != null && !distinct) {
-			q.addWhereClause("irrig_summary_ts.cal_year <= " + 
-				req_date2.getYear());
+			q.addWhereClause("irrig_summary_ts.cal_year <= " + req_date2.getYear());
 		}
 	
 		ResultSet rs = dmiSelect(q);
@@ -14838,8 +14824,7 @@ throws Exception {
 }
 
 /**
-Read the structure and irrig_summary_ts tables for all data with the matching
-criteria.<p>
+Read the structure and irrig_summary_ts tables for all data with the matching criteria.<p>
 This is called by:<ul>
 <li>readTimeSeries</li>
 </ul>
