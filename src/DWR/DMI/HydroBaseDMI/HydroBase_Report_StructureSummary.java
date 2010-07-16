@@ -331,9 +331,9 @@ Append the irrigated acres query results to the report.
 private void appendIrrigatedAcresResults(List results)
 throws Exception {	
 	__reportVector.add("");
-        double curDouble;
+    double curDouble;
 	HydroBase_StructureView data = null;
-        int curInt;
+    int curInt;
 	String curString;
 	List v = null;
  
@@ -358,8 +358,7 @@ throws Exception {
 	}
 
 	int size = results.size();
-	String format="%6.6s%22.22s%12.12s%12.12s%12.12s%12.12s%12.12s%12.12s"
-		+ "%12.12s";
+	String format="%6.6s%22.22s%12.12s%12.12s%12.12s%12.12s%12.12s%12.12s%12.12s";
 
 	double sum = 0;
 	double diff = 0;
@@ -373,6 +372,7 @@ throws Exception {
 		acres[i] = data.getAcres_total();
 	}
 
+	List<String> formattedOutput = new Vector();
 	for (int i = 0; i < size; i++) {
 		data = (HydroBase_StructureView)results.get(i);
 		v = new Vector();
@@ -451,11 +451,13 @@ throws Exception {
 			v.add("");
 			v.add("");
 		}
-
-		v.add(determineIrrigLineTotal(i, years, acres));
-
-		__reportVector.add(StringUtil.formatString(v, format));
+		v.add(determineIrrigLineTotal ( results, curInt ) );
+		formattedOutput.add(StringUtil.formatString(v, format));
 	}
+	// Sort the results, which will be by year and crop type.  This used to happen but
+	// the stored procedure order by is not working somehow.
+	StringUtil.addListToStringList(__reportVector,
+		StringUtil.sortStringList(formattedOutput) );
 	__reportVector.add("");
 }                 
 
@@ -2270,12 +2272,13 @@ Constructs and submits the irrigated acres query.
 */
 private void submitIrrigatedAcresQuery()
 throws Exception {	
-        if (!__dmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990202)) {
-		throw new Exception("Irrigation summary not available "
-			+ "in database.");
+    if (!__dmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990202)) {
+		throw new Exception("Irrigation summary not available in database.");
 	}
 
-        List order = new Vector();
+    // TODO SAM 2010-07-15 The order by is not used by the stored procedure so
+    // sort the results during formatting.
+    List<String> order = new Vector();
 	order.add("irrig_summary_ts.cal_year");
 	order.add("irrig_summary_ts.land_use");
 	List results = null;
@@ -2294,15 +2297,15 @@ throws Exception {
 			false);		// distinct?
 	}
 		
-        if (results == null || (results.size() == 0)) {
+    if (results == null || (results.size() == 0)) {
 		__reportVector.add("                        IRRIGATED "
 			+ "ACRES FROM "
 			+ "GIS DATA -- BY CROP, YEAR, AND IRRIGATION METHOD");
 		__reportVector.add("No GIS irrigated acres records to display");
-        }
+    }
 	else {	
 		appendIrrigatedAcresResults(results);            
-        }
+    }
 }
 
 /**
@@ -2417,68 +2420,20 @@ throws Exception {
 }
 
 /**
-Determines the crops total to print for an irrig summary ts line.  The crops
-total is printed for years with more than one crop in the same year and
-for crops with only one crop in the year, and is
-a total of the total acres for each crop.  It is only printed for the final
-crop in the year.
-@param pos the position of the data line being printed, also the position within
-the arrays of the data value's values.
-@param years an array of all the years for every data object.
-@param acres an array of all the total acres for every data object.
-@return the total value to be printed IF this is the final data object for the
-year.  Otherwise, just return an empty String.
+Determines the crops total to print for an irrig summary ts line.  Add up the total for
+all crops in the year.
+@param results the list of results being displayed.
+@param year the total number of acres for the year.
+@return the total value to be printed.
 */
-private String determineIrrigLineTotal(int pos, int[] years, double[] acres) {
-	int size = years.length;
-	
-	if (pos == (size - 1)) {
-		// for the last value something will always be printed
-	}
-	else {
-		// for all the other intermediate values ...
-		if (years[pos] == years[pos + 1]) {
-			// if it has the same year as the next value, then
-			// it's not the last crop for years >1 crops, so
-			// nothing will be printed
-			return "";
-		}
-		else {
-			if (pos == 0) {
-				// it's the first value in the list and 
-				// the next year is different, so a total will
-				// be printed
-			}
-			else if (years[pos] == years[pos - 1]) {
-				// it doesn't have the same year as the next
-				// value, but it does have the same year as
-				// the previous value, so it's the last crop
-				// in a year with >1 crops, so something will
-				// be printed
-			}
-			else {
-				// it doesn't have the same year as the previous
-				// or next value, so it's a year with a single
-				// crop.  Something will be printed.
-			}
+private String determineIrrigLineTotal( List<HydroBase_StructureView> results, int year )
+{
+	double total = 0.0;
+	for ( HydroBase_StructureView v: results ) {
+		if ( (v.getCal_year() == year) && (v.getAcres_total() > 0.0) ) {
+			total += v.getAcres_total();
 		}
 	}
-	
-	// at this point, pos has to be the last crop in a year with multiple
-	// crops, so run backwards from pos, compiling a running total of the
-	// acres until a different year (or the start of the data) is reached.
-
-	double total = acres[pos];
-	int year = years[pos];
-
-	for (int i = (pos - 1); i >= 0; i--) {
-		if (year != years[i]) {
-			// new year encountered -- don't add acres to total
-			break;
-		}
-		total += acres[i];
-	}
-
 	return StringUtil.formatString(total, "%10.3f");
 }
 
