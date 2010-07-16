@@ -1787,7 +1787,7 @@ private void setupGUI(boolean visible) {
 		"Change Password for StateView/CWRAT");
 	generalWJPanel.setBorder(generalTitle);
 
-        JGUIUtil.addComponent(generalWJPanel, new JLabel("User Level:"), 
+    JGUIUtil.addComponent(generalWJPanel, new JLabel("User Level:"), 
 		0, 0, 1, 1, 1, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	__userLevelJComboBox = new SimpleJComboBox();
