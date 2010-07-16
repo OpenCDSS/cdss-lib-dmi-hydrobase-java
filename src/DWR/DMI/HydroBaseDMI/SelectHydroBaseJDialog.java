@@ -364,12 +364,12 @@ private String __selectedModel = __MODEL_StateCU;
 /**
 A list of available ODBC DSNs.
 */
-private List __available_OdbcDsn = null;
+private List<String> __available_OdbcDsn = null;
 
 /**
 The names of the servers that can appear in the server combo box.
 */
-private List __serverNames = null;
+private List<String> __serverNames = null;
 
 /**
 The username that was automatically detected by trying to create a connection to a database.
@@ -605,7 +605,7 @@ private void checkServerForDatabaseNames(String server)
 		Message.printWarning(3, routine, "Error getting database names (" + e + ").");
 		Message.printWarning(3,routine,e);
 		__databaseNamesJComboBox.removeAllItems();
-		List v = new Vector();
+		List<String> v = new Vector();
 		v.add(__NO_DATABASES);
 		__databaseNamesJComboBox.add(__NO_DATABASES);
 		ok(false);
@@ -1150,7 +1150,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
    	JGUIUtil.addComponent(northWJPanel, __odbcDSNJComboBox,
 		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
-	__databaseNamesJLabel = new JLabel("Database Names:");
+	__databaseNamesJLabel = new JLabel("Database Name:");
    	JGUIUtil.addComponent(northWJPanel, __databaseNamesJLabel, 
 		0, y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		
