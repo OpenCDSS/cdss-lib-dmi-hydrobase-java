@@ -165,6 +165,7 @@ import RTi.Util.String.StringUtil;
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.DateTimeBuilderJDialog;
 import RTi.Util.Time.TimeUtil;
+import RTi.Util.Time.YearType;
 
 /**
 Display a list of diversion time series for the structure.
@@ -1251,7 +1252,7 @@ private void getData(String flag) {
 	try {	
 		// Set properties common to all views...
 		PropList tsviewProps = new PropList("tsview");
-		tsviewProps.set("CalendarType", "WaterYear");
+		tsviewProps.set("CalendarType", "" + YearType.WATER);
 		tsviewProps.set("TotalWidth", "600");
 		tsviewProps.set("TotalHeight", "550");
 		tsviewProps.set("DisplayFont", "Courier");

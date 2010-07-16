@@ -112,6 +112,7 @@ import RTi.Util.String.StringUtil;
 
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.TimeInterval;
+import RTi.Util.Time.YearType;
 
 /**
 JDialog with a multiple selection list to select the
@@ -499,7 +500,7 @@ private void graphClicked() {
 
 	try {	
 		// Set properties common to all views...
-		tsview_props.set("CalendarType", "WaterYear");
+		tsview_props.set("CalendarType", "" + YearType.WATER);
 		tsview_props.set("TotalWidth", "750");
 		tsview_props.set("TotalHeight", "550");
 		tsview_props.set("DisplayFont", "Courier");

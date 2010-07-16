@@ -149,6 +149,7 @@ import RTi.Util.String.StringUtil;
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.DateTimeBuilderJDialog;
 import RTi.Util.Time.TimeUtil;
+import RTi.Util.Time.YearType;
 
 /**
 This class manipulates a pre-built WIS(water information sheet).  There are
@@ -2958,7 +2959,7 @@ private void graphCell() {
 
 	PropList props = new PropList("LineGraph");
 	props.set("InitialView", "Graph");
-	props.set("CalendarType", "WaterYear");
+	props.set("CalendarType", "" + YearType.WATER);
 	props.set("TotalWidth", "750");
 	props.set("TotalHeight", "550");
 	props.set("DisplayFont", "Courier");
