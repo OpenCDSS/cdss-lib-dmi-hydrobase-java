@@ -754,6 +754,15 @@ private void setupGUI() {
 			0, y++, 1, 1, 1, 0, 
 			GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);
 	}
+	
+	JGUIUtil.addComponent(northJPanel, 
+		new JLabel("<html><b>The TSTool software also can be used to automate plot generation.</b></html>"),
+		0, y, 1, 1, 1, 0, 
+		GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);
+	JGUIUtil.addComponent(northJPanel, 
+		new JLabel(" "),
+		0, y++, 1, 1, 1, 0, 
+		GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);		
 
 	JGUIUtil.addComponent(northJPanel, 
 		new JLabel(" "),
