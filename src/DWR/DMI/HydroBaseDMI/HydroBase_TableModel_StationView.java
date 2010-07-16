@@ -30,26 +30,26 @@ private final static int __COLUMNS = 20;
 References to the column numbers.
 */
 public static final int	
-	COL_DIV =		0,
-	COL_WD =		1,
-	COL_ID =		2,
-	COL_ABBREV = 		3,
-	COL_NAME = 		4,
-	COL_DATA_SOURCE =	5,
-	COL_DATA_TYPE =	 	6,
-	COL_TIME_STEP =		7,
-	COL_START =		8,
-	COL_END =		9,
-	COL_COUNTY = 		10,
-	COL_STATE = 		11,
-	COL_HUC = 		12,
-	COL_ELEVATION = 	13,
-	COL_UTMX = 		14,
-	COL_UTMY = 		15,
-	COL_LONGITUDE = 	16,
-	COL_LATITUDE = 		17,
-	COL_DRAIN = 		18,
-	COL_CONTR = 		19;
+	COL_DIV = 0,
+	COL_WD = 1,
+	COL_ID = 2,
+	COL_ABBREV = 3,
+	COL_NAME = 4,
+	COL_DATA_SOURCE = 5,
+	COL_DATA_TYPE = 6,
+	COL_TIME_STEP = 7,
+	COL_START = 8,
+	COL_END = 9,
+	COL_COUNTY = 10,
+	COL_STATE = 11,
+	COL_HUC = 12,
+	COL_ELEVATION = 13,
+	COL_UTMX = 14,
+	COL_UTMY = 15,
+	COL_LONGITUDE = 16,
+	COL_LATITUDE = 17,
+	COL_DRAIN = 18,
+	COL_CONTR = 19;
 	
 /**
 A reference to an open dmi object (for use in pulling out some lookup table
@@ -67,7 +67,6 @@ If not null, the time step to display instead of that read from the database.
 */
 private String __timeStep = null;
 
-
 /**
 Constructor.  This builds the Model for displaying the given station results.
 @param results the results that will be displayed in the table.
@@ -77,7 +76,7 @@ Constructor.  This builds the Model for displaying the given station results.
 public HydroBase_TableModel_StationView(List results, HydroBaseDMI dmi)
 throws Exception {
 	if (results == null) {
-		throw new Exception ("Invalid results Vector passed to " 
+		throw new Exception ("Invalid results list passed to " 
 			+ "HydroBase_TableModel_StationView constructor.");
 	}
 	if (dmi == null || (dmi.isOpen() == false)) {
@@ -178,13 +177,11 @@ public String[] getColumnToolTips() {
 	tips[COL_DIV] = "Water division.";
 	tips[COL_WD] = "Water district.";
 	tips[COL_ID] = "Identifier used by data source.";
-	tips[COL_ABBREV] =
-		"State of Colorado Satellite Monitoring System abbreviation.";
+	tips[COL_ABBREV] = "State of Colorado Satellite Monitoring System abbreviation.";
 	tips[COL_NAME] = "Station name.";
 	tips[COL_DATA_SOURCE] =	"Data source for time series.";
 	tips[COL_DATA_TYPE] = "Time series data type.";
-	tips[COL_TIME_STEP] =
-		"<HTML>Time series time step (data interval).<BR>" +
+	tips[COL_TIME_STEP] = "<HTML>Time series time step (data interval).<BR>" +
 		"Irregular is typically real-time data.</HTML>";
 	tips[COL_START] = "<HTML>Starting year for time series.<BR>" +
 		"May not be available for real-time data.</HTML>";
@@ -198,10 +195,8 @@ public String[] getColumnToolTips() {
 	tips[COL_UTMY] = "Station UTM Y coordinate.";
 	tips[COL_LONGITUDE] = "Station longitude, decimal degrees.";
 	tips[COL_LATITUDE] = "Station latitude, decimal degrees.";
-	tips[COL_DRAIN] =
-		"Drainage area (SQMI), in particular for streamflow stations.";
-	tips[COL_CONTR] =
-		"<HTML>Any non-natural area that supplies water to the " +
+	tips[COL_DRAIN] = "Drainage area (SQMI), in particular for streamflow stations.";
+	tips[COL_CONTR] = "<HTML>Any non-natural area that supplies water to the " +
 		"station, in square miles,<BR>" +
 		"in particular for streamflow stations.</HTML>";
 
@@ -219,26 +214,26 @@ public int[] getColumnWidths() {
 		widths[i] = 0;
 	}
 
-	widths[COL_DIV] =		3;
-	widths[COL_WD] = 		2;
-	widths[COL_ID] = 		8;
-	widths[COL_ABBREV] = 		11;
-	widths[COL_NAME] = 		40;
-	widths[COL_DATA_SOURCE] = 	6;
-	widths[COL_DATA_TYPE] = 	12;
-	widths[COL_TIME_STEP] = 	4;
-	widths[COL_START] = 		4;
-	widths[COL_END] = 		3;
-	widths[COL_COUNTY] = 		7;
-	widths[COL_STATE] = 		5;
-	widths[COL_HUC] = 		6;
-	widths[COL_ELEVATION] = 	9;
-	widths[COL_UTMX] = 		9;
-	widths[COL_UTMY] = 		9;
-	widths[COL_LONGITUDE] = 	8;
-	widths[COL_LATITUDE] = 		8;
-	widths[COL_DRAIN] = 		6;
-	widths[COL_CONTR] = 		6;
+	widths[COL_DIV] = 3;
+	widths[COL_WD] = 2;
+	widths[COL_ID] = 8;
+	widths[COL_ABBREV] = 11;
+	widths[COL_NAME] = 40;
+	widths[COL_DATA_SOURCE] = 6;
+	widths[COL_DATA_TYPE] = 12;
+	widths[COL_TIME_STEP] = 4;
+	widths[COL_START] = 4;
+	widths[COL_END] = 3;
+	widths[COL_COUNTY] = 7;
+	widths[COL_STATE] = 5;
+	widths[COL_HUC] = 6;
+	widths[COL_ELEVATION] = 9;
+	widths[COL_UTMX] = 9;
+	widths[COL_UTMY] = 9;
+	widths[COL_LONGITUDE] = 8;
+	widths[COL_LATITUDE] = 8;
+	widths[COL_DRAIN] = 6;
+	widths[COL_CONTR] = 6;
 	return widths;
 }
 
@@ -246,8 +241,7 @@ public int[] getColumnWidths() {
 Returns the format that the specified column should be displayed in when
 the table is being displayed in the given table format. 
 @param column column for which to return the format.
-@return the format (as used by StringUtil.formatString() in which to display the
-column.
+@return the format (as used by StringUtil.formatString() in which to display the column.
 */
 public String getFormat(int column) {
 	switch (column) {
@@ -322,8 +316,7 @@ public Object getValueAt(int row, int col) {
 					return s.getTime_step();
 		case COL_START:		return new Integer(s.getStart_year());
 		case COL_END:		return new Integer(s.getEnd_year());
-		case COL_COUNTY:	return __dmi.lookupCountyName(
-						s.getCty());
+		case COL_COUNTY:	return __dmi.lookupCountyName(s.getCty());
 		case COL_STATE:		return s.getST();
 		case COL_HUC:		return s.getHUC();
 		case COL_ELEVATION:	return new Double(s.getElev());
@@ -338,8 +331,7 @@ public Object getValueAt(int row, int col) {
 }
 
 /**
-Sets the alternate data type to display, rather than the one read from the
-database.
+Sets the alternate data type to display, rather than the one read from the database.
 @param dataType the alternate data type to display.
 */
 public void setDataType(String dataType) {
@@ -347,8 +339,7 @@ public void setDataType(String dataType) {
 }
 
 /**
-Sets the alternate time step to display, rather than the one read from the
-database.
+Sets the alternate time step to display, rather than the one read from the database.
 */
 public void setTimeStep(String timeStep) {
 	__timeStep = timeStep;
