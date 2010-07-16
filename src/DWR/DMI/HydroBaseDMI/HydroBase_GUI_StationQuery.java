@@ -194,6 +194,7 @@ import RTi.GR.GRLimits;
 import RTi.GR.GRPoint;
 import RTi.GR.GRShape;
 
+import RTi.GRTS.GRTS_Util;
 import RTi.GRTS.TSViewJFrame;
 
 import RTi.TS.TS;
@@ -219,6 +220,7 @@ import RTi.Util.String.StringUtil;
 
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.StopWatch;
+import RTi.Util.Time.YearType;
 
 public class HydroBase_GUI_StationQuery 
 extends JFrame 
@@ -229,46 +231,45 @@ MouseListener, WindowListener, DragAndDropListener {
 Miscellaneous Strings.
 */
 private final String	
-	__HELP_STRING =      	"CWRAT.HydroBase_GUI_StationQuery",
-	__REPORT_HELP_STRING = 	"CWRAT.StationSummary",
-	__SUMMARY = 		"Time Series Summary",
-	__GRAPH = 		"Time Series Graph",
-	__TABLE = 		"Time Series Table",
-	//__DTYP_EVAP = 		"Evaporation",
-	__DTYP_FROSTD = 	"Frost Dates",
-	__DTYP_TEMP = 		"Temp",
-	__DTYP_NATFLOW = 	"Natural Flow",
-	__DTYP_PTPX = 		"Precip",
-	//__DTYP_RTH = 		"Height",
-	//__DTYP_RTM =	 	"Misc.",
-	//__DTYP_RTR =	 	"Rate",
-	//__DTYP_RTV = 		"Volume",
-	//__DTYP_SNOW =		 "Snow",
-	//__DTYP_SNOWC = 		"Snow Course",
-	//__DTYP_SOLAR = 		"Solar",
-	__DTYP_STREAM = 	"Streamflow",
-	//__DTYP_VP = 		"Vapor Pressure",
-	//__DTYP_WIND = 		"Wind",
-	__TIMES_DAILY = 	"Day",
-	__TIMES_MONTHLY = 	"Month",
-	__TIMES_ANNUAL = 	"Year",
-	//__TIMES_REAL = 		"Real-time",
-	//__MOD_TOTAL = 		"Total",
-	//__MOD_MEAN = 		"Mean",
-	//__MOD_AVG = 		"Average",
-	//__MOD_RUN = 		"Run",
-	//__MOD_MIN = 		"Minimum",
-	//__MOD_MAX = 		"Maximum",		
-	__BUTTON_CLOSE = 	"Close",
-	__BUTTON_EXPORT = 	"Export",
-	__BUTTON_GET_DATA = 	"Get Data",
-	__BUTTON_HELP = 	"Help",
-	__BUTTON_PRINT = 	"Print",
-	__BUTTON_SELECT_ON_MAP ="Select On Map";
+	//__HELP_STRING = "CWRAT.HydroBase_GUI_StationQuery",
+	__REPORT_HELP_STRING = "CWRAT.StationSummary",
+	__SUMMARY = "Time Series Summary",
+	__GRAPH = "Time Series Graph",
+	__TABLE = "Time Series Table",
+	//__DTYP_EVAP = "Evaporation",
+	__DTYP_FROSTD = "Frost Dates",
+	__DTYP_TEMP = "Temp",
+	__DTYP_NATFLOW = "Natural Flow",
+	__DTYP_PTPX = "Precip",
+	//__DTYP_RTH = "Height",
+	//__DTYP_RTM = "Misc.",
+	//__DTYP_RTR = "Rate",
+	//__DTYP_RTV = "Volume",
+	//__DTYP_SNOW = "Snow",
+	//__DTYP_SNOWC = "Snow Course",
+	//__DTYP_SOLAR = "Solar",
+	__DTYP_STREAM = "Streamflow",
+	//__DTYP_VP = "Vapor Pressure",
+	//__DTYP_WIND = "Wind",
+	__TIMES_DAILY = "Day",
+	__TIMES_MONTHLY = "Month",
+	__TIMES_ANNUAL = "Year",
+	//__TIMES_REAL = "Real-time",
+	//__MOD_TOTAL = "Total",
+	//__MOD_MEAN = "Mean",
+	//__MOD_AVG = "Average",
+	//__MOD_RUN = "Run",
+	//__MOD_MIN = "Minimum",
+	//__MOD_MAX = "Maximum",		
+	__BUTTON_CLOSE = "Close",
+	__BUTTON_EXPORT = "Export",
+	__BUTTON_GET_DATA = "Get Data",
+	__BUTTON_HELP = "Help",
+	__BUTTON_PRINT = "Print",
+	__BUTTON_SELECT_ON_MAP = "Select On Map";
 
 /**
-Whether the query being run is one in which location from a GeoView needs
-to be considered.
+Whether the query being run is one in which location from a GeoView needs to be considered.
 */
 private boolean __geoViewSelectQuery = false;
 
@@ -347,8 +348,7 @@ Create the interface and make visible.
 @param geoview_ui GeoViewUI for map interaction.
 @throws Exception if an error occurs
 */
-public HydroBase_GUI_StationQuery(HydroBaseDMI dmi, JFrame parent,
-		GeoViewUI geoview_ui )
+public HydroBase_GUI_StationQuery(HydroBaseDMI dmi, JFrame parent, GeoViewUI geoview_ui )
 throws Exception {
 	this(dmi, parent, geoview_ui, true);
 }
@@ -367,16 +367,12 @@ throws Exception {
 	__geoview_ui = geoview_ui;
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());	
 	if (dmi == null) {
-		throw new Exception ("Null dmi passed to "
-			+ "HydroBase_GUI_StationQuery "
-			+ "constructor.  DMI object must be open and "
-			+ "connected before passing in.");
+		throw new Exception ("Null dmi passed to HydroBase_GUI_StationQuery "
+			+ "constructor.  DMI object must be open and connected before passing in.");
 	}
 	if (!dmi.isOpen()) {
-		throw new Exception ("Unopened dmi passed to "
-			+ "HydroBase_GUI_StationQuery "
-			+ "constructor.  DMI object must be open and "
-			+ "connected before passing in.");
+		throw new Exception ("Unopened dmi passed to HydroBase_GUI_StationQuery "
+			+ "constructor.  DMI object must be open and connected before passing in.");
 	}
 	
 	__dmi = dmi;
@@ -393,15 +389,12 @@ public void actionPerformed(ActionEvent evt) {
 	String routine = "HydroBase_GUI_StationQuery.actionPerformed()";
 
 	if (s.equals(__BUTTON_CLOSE)) { 
-                closeClicked();
-        }
-        else if (s.equals(__BUTTON_EXPORT)) {
+        closeClicked();
+    }
+    else if (s.equals(__BUTTON_EXPORT)) {
 		try {
-			String[] eff = 
-				HydroBase_GUI_Util.getExportFilenameAndFormat(
-				this, 
-				HydroBase_GUI_Util
-				.getDelimitedFormatsAndExtensions());
+			String[] eff = HydroBase_GUI_Util.getExportFilenameAndFormat( this, 
+				HydroBase_GUI_Util.getDelimitedFormatsAndExtensions());
 
 			if (eff == null) {
 				return ;
@@ -410,15 +403,12 @@ public void actionPerformed(ActionEvent evt) {
 			int format = new Integer(eff[1]).intValue();
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		 		// First format the output...
-				List outputStrings = formatOutput(format);
-	 			// Now export, letting the user decide 
-				// the file...
-				HydroBase_GUI_Util.export(this, eff[0], 
-					outputStrings);
+				List<String> outputStrings = formatOutput(format);
+	 			// Now export, letting the user decide the file...
+				HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 			}
 			else {
-                		char delim = HydroBase_GUI_Util
-					.getDelimiterForFormat(format);	
+                char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);	
 				__worksheet.saveToFile(eff[0], "" + delim);
 			}			
 		} 
@@ -428,19 +418,18 @@ public void actionPerformed(ActionEvent evt) {
         }
         else if (s.equals(__BUTTON_GET_DATA)) {
 		try {
-	                submitQuery();
+	        submitQuery();
 		}
 		catch (Exception e) {
 			Message.printWarning(1, routine, "Error reading data.");
-			Message.printWarning(2, routine, e);
+			Message.printWarning(3, routine, e);
 		}
         }
         else if (s.equals(__BUTTON_HELP)) {
         }
         else if (s.equals(__BUTTON_PRINT)) {
 		try {
-			SelectFormatTypeJDialog d = 
-				new SelectFormatTypeJDialog(this, 
+			SelectFormatTypeJDialog d = new SelectFormatTypeJDialog(this, 
 				HydroBase_GUI_Util.getDelimitedFormats());
 			int format = d.getSelected();
 			if (format == HydroBase_GUI_Util.CANCEL) {
@@ -448,7 +437,7 @@ public void actionPerformed(ActionEvent evt) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -461,7 +450,7 @@ public void actionPerformed(ActionEvent evt) {
         }
         else if (s.equals(__SUMMARY) || s.equals(__GRAPH) || s.equals(__TABLE)){
 		viewJComboBoxClicked(s);
-        }
+    }
 }
 
 /**
@@ -493,12 +482,12 @@ private void dataTypeJComboBoxClicked() {
 	// Clear the list since it is no longer compatible...
 	clearWorksheet();
 
-        // initialize variables
-        String dtype  = parseDataType(__dataTypeJComboBox.getSelected().trim());
+    // initialize variables
+    String dtype  = parseDataType(__dataTypeJComboBox.getSelected().trim());
 
 	// let's set the time step options and data type modifier options
 	__timeStepJComboBox.removeAll();
-	List v = HydroBase_Util.getTimeSeriesTimeSteps(__dmi, dtype,
+	List<String> v = HydroBase_Util.getTimeSeriesTimeSteps(__dmi, dtype,
 		HydroBase_Util.DATA_TYPE_STATION_ALL);
 	__timeStepJComboBox.setData(v);
 	if (__timeStepJComboBox.getItemCount() > 0) {
@@ -512,12 +501,10 @@ Display the results of the query in the spreadsheet.
 private void displayResults()
 throws Exception {
 	
-	HydroBase_TableModel_StationView tm = 
-		new HydroBase_TableModel_StationView(__results, __dmi);
+	HydroBase_TableModel_StationView tm = new HydroBase_TableModel_StationView(__results, __dmi);
 	HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 
-	tm.setDataType(parseDataType(
-		__dataTypeJComboBox.getSelected().trim()));
+	tm.setDataType(parseDataType(__dataTypeJComboBox.getSelected().trim()));
 	tm.setTimeStep(__timeStepJComboBox.getSelected().trim());
 	__worksheet.setCellRenderer(cr);
 	__worksheet.setModel(tm);	
@@ -535,8 +522,7 @@ public boolean dragAboutToStart() {
 	String data_source = null;
 
 	Object o = __worksheet.getRowData(__worksheet.getSelectedRow());
-	HydroBase_StationView data 
-		= (HydroBase_StationView)o;
+	HydroBase_StationView data = (HydroBase_StationView)o;
 	station_id = data.getStation_id();
 	data_source = data.getData_source();
 
@@ -544,28 +530,21 @@ public boolean dragAboutToStart() {
 	DateTime date2 = null;
 
 	String timestep = "";
-	// Create a TS identifier string to query the
-	// database...
-       	timestep = __timestepJComboBoxString;
+	// Create a TS identifier string to query the database...
+    timestep = __timestepJComboBoxString;
 
-	String id = 
-		  station_id + "." 
-		+ data_source + "." 
-		+ parseDataType(__dataTypeJComboBox.getSelected()) + "."
-		+ timestep;
+	String id = station_id + "." + data_source + "." 
+		+ parseDataType(__dataTypeJComboBox.getSelected()) + "." + timestep;
 	id = id.trim();
 
 	TS ts = null;
-	Message.printStatus(1, routine,
-		"Getting TS \"" + id + "\" for " + date1 + " to " + date2);
+	Message.printStatus(1, routine, "Getting TS \"" + id + "\" for " + date1 + " to " + date2);
 
-    	try {
-	    	ts = __dmi.readTimeSeries(id, date1, 
-			date2, null, true, null);
+    try {
+    	ts = __dmi.readTimeSeries(id, date1, date2, null, true, null);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine,
-			"Error reading time series from database.");
+		Message.printWarning(1, routine, "Error reading time series from database.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -620,10 +599,8 @@ private void enableMapLayers() {
 	if (__geoview_ui.isMapVisible()) {
 		JGUIUtil.setWaitCursor(this, true);
 		
-		__statusJTextField.setText(
-			"Updating map to show only station layers.");
-		Message.printStatus(1, "",
-			"Turning on station GIS layer types.");
+		__statusJTextField.setText("Updating map to show only station layers.");
+		Message.printStatus(1, "","Turning on station GIS layer types.");
 			
 		List enabledAppLayerTypes = new Vector();
 		enabledAppLayerTypes.add("Climate");
@@ -633,16 +610,14 @@ private void enableMapLayers() {
 		
 		// Base layers are always visible...
 		enabledAppLayerTypes.add("BaseLayer");
-		__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(
-			enabledAppLayerTypes, false);
+		__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(enabledAppLayerTypes, false);
 		enabledAppLayerTypes = null;
 
 		// We want this GUI to listen to the map...
 		// SAMX do this in the constructor now
 		//__parent.getGeoViewJPanel()
 		//	.getGeoView().addGeoViewListener(this);
-		__statusJTextField.setText(
-			"Map shows base layers and station layers.  Ready.");
+		__statusJTextField.setText( "Map shows base layers and station layers.  Ready.");
 		ready();
 	}
 }
@@ -677,50 +652,48 @@ throws Throwable {
 /**
 Responsible for formatting output.
 @param format format delimiter flag defined in this class
-@return ormatted Vector for exporting, printing, etc..
+@return formatted list for exporting, printing, etc..
 */
-private List formatOutput(int format) {
-	List v = new Vector(50, 50);
-        int numCols = __worksheet.getColumnCount();
-        int numRows = __worksheet.getRowCount();
-        String rowString;
+private List<String> formatOutput(int format) {
+	List<String> v = new Vector(50, 50);
+    int numCols = __worksheet.getColumnCount();
+    int numRows = __worksheet.getRowCount();
+    String rowString;
 
-        char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);
-       
-       	rowString = "";
-       	for (int j = 0; j < numCols; j++) {
+    char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);
+   
+   	rowString = "";
+   	for (int j = 0; j < numCols; j++) {
 		rowString += __worksheet.getColumnName(j, true) + "" + delim;
 	}
 	v.add(rowString);
        
-       	int selected = __worksheet.getSelectedRowCount();
-       
-       	String s = null;
+   	int selected = __worksheet.getSelectedRowCount();
+   
+   	String s = null;
 	boolean useComma = false;
 	if (delim == ',') {
 		useComma = true;
 	}
-        for (int i = 0; i < numRows; i++) {
-		if ((selected > 0 && __worksheet.rowIsSelected(i))
-			|| selected == 0) {
-	                rowString = "";
-	                for (int j = 0; j < numCols; j++) {
+    for (int i = 0; i < numRows; i++) {
+		if ((selected > 0 && __worksheet.rowIsSelected(i)) || selected == 0) {
+            rowString = "";
+            for (int j = 0; j < numCols; j++) {
 				s = __worksheet.getValueAtAsString(i, j);
 				if (useComma && s.indexOf(",") > -1) {
 					s = "\"" + s + "\"";
 				}
-	                        rowString += s + delim;
-	                }
-	                v.add(rowString);
+				rowString += s + delim;
+            }
+            v.add(rowString);
 		}
-        }
-        return v;
+    }
+    return v;
 }
 
 /**
 Handle the label redraw event from another GeoView (likely a ReferenceGeoView).
-Do not do anything here because we assume that application code is setting
-the labels.
+Do not do anything here because we assume that application code is setting the labels.
 @param record Feature being draw.
 */
 public String geoViewGetLabel(GeoRecord record) {
@@ -728,8 +701,7 @@ public String geoViewGetLabel(GeoRecord record) {
 }
 
 /**
-Handle the mouse motion event from another GeoView (likely a ReferenceGeoView).
-Does nothing.
+Handle the mouse motion event from another GeoView (likely a ReferenceGeoView).  Does nothing.
 @param devpt Coordinates of mouse in device coordinates(pixels).
 @param datapt Coordinates of mouse in data coordinates.
 */
@@ -741,14 +713,11 @@ Do nothing.  REVISIT - Should this do the same as a select?
 @param datalimits Limits of select in data coordinates.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
-public void geoViewInfo(GRShape devlimits, GRShape datalimits,
-		List selected) {}
+public void geoViewInfo(GRShape devlimits, GRShape datalimits, List selected) {}
 
-public void geoViewInfo(GRPoint devlimits, GRPoint datalimits, 
-		List selected) {}
+public void geoViewInfo(GRPoint devlimits, GRPoint datalimits, List selected) {}
 
-public void geoViewInfo(GRLimits devlimits, GRLimits datalimits,
-		List selected) {}
+public void geoViewInfo(GRLimits devlimits, GRLimits datalimits, List selected) {}
 
 /**
 If a selection is made from the map, query the database for region that was
@@ -759,15 +728,13 @@ listener from the GeoView.
 @param datalimits Limits of select in data coordinates.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
-public void geoViewSelect(GRShape devlimits, GRShape datalimits,
-		List selected, boolean append) {
+public void geoViewSelect(GRShape devlimits, GRShape datalimits, List selected, boolean append) {
 	String routine = "geoViewSelect";
 
 	// Figure out which app layer types are selected.  If one that is
 	// applicable to this GUI, execute a query...
 
-	List appLayerTypes = __geoview_ui.getGeoViewJPanel(
-		).getLegendJTree().getSelectedAppLayerTypes(true);
+	List appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree().getSelectedAppLayerTypes(true);
 	int size = appLayerTypes.size();
 	String app_layer_type;
 	boolean view_needed = false;
@@ -783,9 +750,7 @@ public void geoViewSelect(GRShape devlimits, GRShape datalimits,
 
 	String[] vals = null;
 	
-	vals = HydroBase_GUI_Util
-		.getTimeSeriesDataTypeAndIntervalForAppLayerType(
-		app_layer_type);
+	vals = HydroBase_GUI_Util.getTimeSeriesDataTypeAndIntervalForAppLayerType(app_layer_type);
 
 	if (vals == null) {
 		return;
@@ -793,8 +758,7 @@ public void geoViewSelect(GRShape devlimits, GRShape datalimits,
 
 	if (app_layer_type.equalsIgnoreCase("Streamflow")) {
 		// Make sure the Streamflow data type is selected...
-		if (!parseDataType(__dataTypeJComboBox.getSelected())
-			.equals(vals[0])) {
+		if (!parseDataType(__dataTypeJComboBox.getSelected()).equals(vals[0])) {
 			selectDataType(vals[0]);
 			// Refresh other choices...
 			dataTypeJComboBoxClicked();
@@ -803,8 +767,7 @@ public void geoViewSelect(GRShape devlimits, GRShape datalimits,
 		view_needed = true;
 	}
 	else if (app_layer_type.equalsIgnoreCase("Precipitation")) {
-		if (!parseDataType(__dataTypeJComboBox.getSelected())
-			.equals(vals[0])) {
+		if (!parseDataType(__dataTypeJComboBox.getSelected()).equals(vals[0])) {
 			selectDataType(vals[0]);
 			// Refresh other choices...
 			dataTypeJComboBoxClicked();
@@ -813,8 +776,7 @@ public void geoViewSelect(GRShape devlimits, GRShape datalimits,
 		view_needed = true;
 	}
 	else if (app_layer_type.equalsIgnoreCase("Temperature")) {
-		if (!parseDataType(__dataTypeJComboBox.getSelected())
-			.equals(vals[0])) {
+		if (!parseDataType(__dataTypeJComboBox.getSelected()).equals(vals[0])) {
 			selectDataType(vals[0]);
 			// Refresh other choices ...
 			dataTypeJComboBoxClicked();
@@ -830,8 +792,7 @@ public void geoViewSelect(GRShape devlimits, GRShape datalimits,
 
 	if (!isVisible()) {
 		//return;
-		// If not visible, set to visible if the selected map layers
-		// apply to this window...
+		// If not visible, set to visible if the selected map layers apply to this window...
 		setVisible(true);
 	}
 
@@ -862,16 +823,12 @@ public void geoViewSelect(GRShape devlimits, GRShape datalimits,
 	}
 }
 
-public void geoViewSelect(GRPoint devlimits, GRPoint datalimits, 
-		List selected, boolean append) {
-	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, 
-		append);
+public void geoViewSelect(GRPoint devlimits, GRPoint datalimits, List selected, boolean append) {
+	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, append);
 }
 
-public void geoViewSelect(GRLimits devlimits, GRLimits datalimits,
-		List selected, boolean append) {
-	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, 
-		append);
+public void geoViewSelect(GRLimits devlimits, GRLimits datalimits, List selected, boolean append) {
+	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, append);
 }
 
 /**
@@ -891,20 +848,15 @@ Returns a Vector with the visible App Layer Type.
 */
 private List getVisibleAppLayerType() {
 	List appLayerTypes = new Vector(2);
-	if (	parseDataType(__dataTypeJComboBox.getSelected()).equals(
-			__DTYP_STREAM) ||
-		parseDataType(__dataTypeJComboBox.getSelected()).equals(
-			__DTYP_NATFLOW)) {
+	if ( parseDataType(__dataTypeJComboBox.getSelected()).equals(__DTYP_STREAM) ||
+		parseDataType(__dataTypeJComboBox.getSelected()).equals(__DTYP_NATFLOW)) {
 		appLayerTypes.add("Streamflow");
 	}
-	else if (parseDataType(__dataTypeJComboBox.getSelected()).equals(
-		__DTYP_TEMP)
-		|| parseDataType(__dataTypeJComboBox.getSelected())
-		.startsWith("Temp")) {
+	else if (parseDataType(__dataTypeJComboBox.getSelected()).equals(__DTYP_TEMP)
+		|| parseDataType(__dataTypeJComboBox.getSelected()).startsWith("Temp")) {
 		appLayerTypes.add("Temperature");
 	}
-	else if (parseDataType(__dataTypeJComboBox.getSelected()).equals(
-		__DTYP_PTPX)) {
+	else if (parseDataType(__dataTypeJComboBox.getSelected()).equals(__DTYP_PTPX)) {
 		appLayerTypes.add("Precipitation");
 	}
 	else {	
@@ -918,7 +870,7 @@ private List getVisibleAppLayerType() {
 Display a station summary.
 @param tsVector Vector of time series to display.
 */
-private void getSummary(List tsVector) {
+private void getSummary(List<TS> tsVector) {
 	String  routine = "getSummary";
 
 	if (tsVector == null) {
@@ -928,37 +880,37 @@ private void getSummary(List tsVector) {
 		return;
 	}
 
-        __statusJTextField.setText("Please Wait...generating Summary...");
+    __statusJTextField.setText("Please Wait...generating Summary...");
 
-        PropList props = new PropList("Summary");
-        props.set("Format", "Summary");
-        props.set("CalendarType", "WaterYear");
-        props.set("Format", "Summary");
+    PropList props = new PropList("Summary");
+    props.set("Format", "Summary");
+    props.set("CalendarType", "" + YearType.WATER);
+    props.set("Format", "Summary");
 	// Put this in to get the format that Ray wants...
-        props.set("UseCommentsForHeader", "true");
-        props.set("PrintHeader", "true");
-        props.set("PrintComments", "true");
-        props.set("PrintMinStats", "true");
-        props.set("PrintMaxStats", "true");
-        props.set("PrintMeanStats", "true");
-        props.set("PrintNotes", "true");
+    props.set("UseCommentsForHeader", "true");
+    props.set("PrintHeader", "true");
+    props.set("PrintComments", "true");
+    props.set("PrintMinStats", "true");
+    props.set("PrintMaxStats", "true");
+    props.set("PrintMeanStats", "true");
+    props.set("PrintNotes", "true");
 
-        PropList reportProp = new PropList("ReportJFrame.props");
-        reportProp.set("HelpKey=" + __REPORT_HELP_STRING);
-        reportProp.set("TotalWidth=750");
-        reportProp.set("TotalHeight=550"); 
-        reportProp.set("Title=" + __SUMMARY);
-        reportProp.set("DisplayFont=Courier");
-        reportProp.set("DisplayStyle=" + Font.PLAIN);
-        reportProp.set("DisplaySize=11");
-        reportProp.set("PrintFont=Courier");
-        reportProp.set("PrintStyle=" + Font.PLAIN);
-        reportProp.set("PrintSize=7");
-        reportProp.set("PageLength=100");
+    PropList reportProp = new PropList("ReportJFrame.props");
+    reportProp.set("HelpKey=" + __REPORT_HELP_STRING);
+    reportProp.set("TotalWidth=750");
+    reportProp.set("TotalHeight=550"); 
+    reportProp.set("Title=" + __SUMMARY);
+    reportProp.set("DisplayFont=Courier");
+    reportProp.set("DisplayStyle=" + Font.PLAIN);
+    reportProp.set("DisplaySize=11");
+    reportProp.set("PrintFont=Courier");
+    reportProp.set("PrintStyle=" + Font.PLAIN);
+    reportProp.set("PrintSize=7");
+    reportProp.set("PageLength=100");
 
-        // display the summary
+    // display the summary
 
-        List summary = null;
+    List<String> summary = null;
 	boolean frost = false;
 	try {   
 		// If frost dates, get the time series using special code.
@@ -983,12 +935,11 @@ private void getSummary(List tsVector) {
 		else {	
 			summary = TSUtil.formatOutput(tsVector, props);
 		}
-               	new ReportJFrame(summary, reportProp);
-        }
+       	new ReportJFrame(summary, reportProp);
+    }
 	catch(Exception e) {
-		Message.printWarning(1, routine,		
-			"Error creating time series summary.");
-        }
+		Message.printWarning(1, routine, "Error creating time series summary.");
+    }
 }
 
 /**
@@ -996,14 +947,14 @@ Responds to itemStateChanged events.
 @param evt the ItemEvent that happened.
 */
 public void itemStateChanged(ItemEvent evt) {
-        Object o = evt.getItemSelectable();
-                
-        if (o.equals(__dataTypeJComboBox)) {
-                dataTypeJComboBoxClicked();
-        }
-        else if (o.equals(__timeStepJComboBox)) {
-                timeStepJComboBoxClicked();
-        }
+    Object o = evt.getItemSelectable();
+            
+    if (o.equals(__dataTypeJComboBox)) {
+        dataTypeJComboBoxClicked();
+    }
+    else if (o.equals(__timeStepJComboBox)) {
+        timeStepJComboBoxClicked();
+    }
 }
 
 /**
@@ -1012,17 +963,17 @@ Responds to key pressed events.
 */
 public void keyPressed(KeyEvent event) {
 	String routine = "HydroBase_GUI_StationQuery.keyPressed";
-        int code = event.getKeyCode();
-        
-        if (code == KeyEvent.VK_ENTER) {
+    int code = event.getKeyCode();
+    
+    if (code == KeyEvent.VK_ENTER) {
 		try {
-	                submitQuery();
+            submitQuery();
 		}
 		catch (Exception e) {
 			Message.printWarning(1, routine, "Error reading data.");
 			Message.printWarning(2, routine, e);
 		}
-        }
+    }
 }
 
 /**
@@ -1058,13 +1009,12 @@ Responds to mouse pressed events.
 public void mousePressed(MouseEvent event) {
 	Object ob = event.getComponent();
 	
-        if (ob.equals(__worksheet)) {
-                int row = __worksheet.getSelectedRow();
+    if (ob.equals(__worksheet)) {
+        int row = __worksheet.getSelectedRow();
 		// Selected data so enable...
 		if (row > -1) {
 			// Frost dates only have a summary...
-			if (parseDataType(__dataTypeJComboBox.getSelected())
-				.equals(__DTYP_FROSTD)) {
+			if (parseDataType(__dataTypeJComboBox.getSelected()).equals(__DTYP_FROSTD)) {
 				__tsSummaryJButton.setEnabled(true);
 			}
 			else {	
@@ -1079,14 +1029,12 @@ public void mousePressed(MouseEvent event) {
 				}
 			}
 		}
-        }
+    }
 	else {	
 		int numFilters = __filterJPanel.getNumFilterGroups();
 		for (int i = 0; i < numFilters; i++) {
-			if (event.getSource() == __filterJPanel.getInputFilter(
-				i).getInputComponent()) {
-				HydroBase_GUI_Util.buildLocation(this,
-					(JTextField)event.getSource());
+			if (event.getSource() == __filterJPanel.getInputFilter(i).getInputComponent()) {
+				HydroBase_GUI_Util.buildLocation(this, (JTextField)event.getSource());
 			}
 		}
 	}	
@@ -1119,8 +1067,7 @@ public void mouseReleased(MouseEvent event) {
 }
 
 /**
-Parses out the data type from a string.  A simple utility method used throughout
-this class.
+Parses out the data type from a string.  A simple utility method used throughout this class.
 @param type the data string
 @return the data type from the string
 */
@@ -1134,19 +1081,16 @@ Readies the GUI for user interaction.
 private void ready() {
 	if (__worksheet.getRowCount() > 0) {
 		__statusJTextField.setText("Select one or more stations "
-			+ "and then press Time Series buttons or select "
-			+ "other choices.");
+			+ "and then press Time Series buttons or select other choices.");
 	}
 	else {	
-		__statusJTextField.setText("Select a location, data type, etc. "
-			+ "and then press Get Data.");
+		__statusJTextField.setText("Select a location, data type, etc. and then press Get Data.");
 	}
 	JGUIUtil.setWaitCursor(this, false);
 }
 
 /**
-Selects a row from the data type combo box based on the data type that should
-be selected.
+Selects a row from the data type combo box based on the data type that should be selected.
 @param dataType the data type that should be selected.
 */
 private void selectDataType(String dataType) {
@@ -1169,80 +1113,77 @@ Sets up the GUI.
 private void setupGUI(boolean isVisible) {
 	Message.setTopLevel(this);
 
-        addWindowListener(this);
-        addKeyListener(this);
-        
-        // objects used throughout the GUI layout
-        Insets insetsNNNR = new Insets(0,0,0,7);
-        Insets insetsNLNN = new Insets(0,7,0,0);
-        Insets insetsTLNN = new Insets(7,7,0,0);
-        Insets insetsNLBR = new Insets(0,7,7,7);
-        Insets insetsTLNR = new Insets(7,7,0,7);
-        GridBagLayout gbl = new GridBagLayout();
-        
-        // North JPanel
-        JPanel northJPanel = new JPanel();
-        northJPanel.setLayout(new BorderLayout());
-        getContentPane().add("North", northJPanel);
-        
-        // North West JPanel
-        JPanel northWJPanel = new JPanel();
-        northWJPanel.setLayout(gbl);
-        northJPanel.add("West", northWJPanel);
-        
-        JGUIUtil.addComponent(northWJPanel, new JLabel("Query Options:"), 
-                0, 0, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
-        
-        JGUIUtil.addComponent(northWJPanel, new JLabel(
-		"Div/Dist:"), 
-                0, 1, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
-        
-        __waterDistrictJComboBox = new SimpleJComboBox();
-        JGUIUtil.addComponent(northWJPanel, __waterDistrictJComboBox, 
-                1, 1, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+    addWindowListener(this);
+    addKeyListener(this);
+    
+    // objects used throughout the GUI layout
+    Insets insetsNNNR = new Insets(0,0,0,7);
+    Insets insetsNLNN = new Insets(0,7,0,0);
+    Insets insetsTLNN = new Insets(7,7,0,0);
+    Insets insetsNLBR = new Insets(0,7,7,7);
+    Insets insetsTLNR = new Insets(7,7,0,7);
+    GridBagLayout gbl = new GridBagLayout();
+    
+    // North JPanel
+    JPanel northJPanel = new JPanel();
+    northJPanel.setLayout(new BorderLayout());
+    getContentPane().add("North", northJPanel);
+    
+    // North West JPanel
+    JPanel northWJPanel = new JPanel();
+    northWJPanel.setLayout(gbl);
+    northJPanel.add("West", northWJPanel);
+    
+    JGUIUtil.addComponent(northWJPanel, new JLabel("Query Options:"), 
+            0, 0, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
+    
+    JGUIUtil.addComponent(northWJPanel, new JLabel("Div/Dist:"), 
+            0, 1, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
+    
+    __waterDistrictJComboBox = new SimpleJComboBox();
+    JGUIUtil.addComponent(northWJPanel, __waterDistrictJComboBox, 
+            1, 1, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
 	JGUIUtil.addComponent(northWJPanel, new JLabel("Data Type:"), 
 		0, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	__dataTypeJComboBox = new SimpleJComboBox();
-	List v = HydroBase_Util.getTimeSeriesDataTypes(__dmi,
-		HydroBase_Util.DATA_TYPE_STATION_ALL, true);
+	List<String> v = HydroBase_Util.getTimeSeriesDataTypes(
+		__dmi, HydroBase_Util.DATA_TYPE_STATION_ALL, true);
 	__dataTypeJComboBox.setData(v);
-	__dataTypeJComboBox.select(HydroBase_Util.getDefaultTimeSeriesDataType(
-		__dmi, true));
+	__dataTypeJComboBox.select(HydroBase_Util.getDefaultTimeSeriesDataType(__dmi, true));
 	__dataTypeJComboBox.addItemListener(this);
 	JGUIUtil.addComponent(northWJPanel, __dataTypeJComboBox, 
 		1, 2, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
-        JGUIUtil.addComponent(northWJPanel, new JLabel("Time Step:"), 
+    JGUIUtil.addComponent(northWJPanel, new JLabel("Time Step:"), 
 		0, 3, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
         
-        __timeStepJComboBox = new SimpleJComboBox();
-        __timeStepJComboBox.addItemListener(this);
-        JGUIUtil.addComponent(northWJPanel, __timeStepJComboBox, 
+    __timeStepJComboBox = new SimpleJComboBox();
+    __timeStepJComboBox.addItemListener(this);
+    JGUIUtil.addComponent(northWJPanel, __timeStepJComboBox, 
 		1, 3, 1, 1, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
-        SimpleJButton get = new SimpleJButton(__BUTTON_GET_DATA, this);
+    SimpleJButton get = new SimpleJButton(__BUTTON_GET_DATA, this);
 	get.setToolTipText("Read data from database.");
         JGUIUtil.addComponent(northWJPanel, get, 
 		5, 4, 1, 1, 0, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH);
 
 	__filterJPanel = new HydroBase_GUI_Station_InputFilter_JPanel(__dmi);
 	__filterJPanel.addEventListeners(this);
-        JGUIUtil.addComponent(northWJPanel, __filterJPanel,
+    JGUIUtil.addComponent(northWJPanel, __filterJPanel,
 		0, 4, 4, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
-        // Center JPanel
-        JPanel centerJPanel = new JPanel();
-        centerJPanel.setLayout(gbl);
-        getContentPane().add("Center", centerJPanel);        
+    // Center JPanel
+    JPanel centerJPanel = new JPanel();
+    centerJPanel.setLayout(gbl);
+    getContentPane().add("Center", centerJPanel);        
         
-        __tableJLabel = new JLabel(HydroBase_GUI_Util.LIST_LABEL);
-        JGUIUtil.addComponent(centerJPanel, __tableJLabel, 1, 1, 
-                7, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+    __tableJLabel = new JLabel(HydroBase_GUI_Util.LIST_LABEL);
+    JGUIUtil.addComponent(centerJPanel, __tableJLabel, 1, 1, 
+        7, 1, 0, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
-	PropList p = new PropList("HydroBase_GUI_StationQuery"
-		+ ".DragAndDropJWorksheet");
+	PropList p = new PropList("HydroBase_GUI_StationQuery.DragAndDropJWorksheet");
 
 	p.add("JWorksheet.ShowRowHeader=true");
 	p.add("JWorksheet.AllowCopy=true");	
@@ -1258,43 +1199,39 @@ private void setupGUI(boolean isVisible) {
 	JGUIUtil.addComponent(centerJPanel, new JScrollPane(__worksheet),
 		1, 2, 7, 3, 1, 1, insetsNLBR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
         
-        //Bottom JPanel(Consist of three more JPanels)
-        JPanel bottomJPanel = new JPanel();
-        bottomJPanel.setLayout(new BorderLayout());
-        getContentPane().add("South", bottomJPanel);
+    //Bottom JPanel(Consist of three more JPanels)
+    JPanel bottomJPanel = new JPanel();
+    bottomJPanel.setLayout(new BorderLayout());
+    getContentPane().add("South", bottomJPanel);
         
-        // Bottom: North JPanel
-        JPanel bottomNorthJPanel = new JPanel();
-        bottomNorthJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        bottomJPanel.add("North", bottomNorthJPanel);
+    // Bottom: North JPanel
+    JPanel bottomNorthJPanel = new JPanel();
+    bottomNorthJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+    bottomJPanel.add("North", bottomNorthJPanel);
         
-        JPanel displayJPanel = new JPanel();
-        displayJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        bottomNorthJPanel.add(displayJPanel);
+    JPanel displayJPanel = new JPanel();
+    displayJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+    bottomNorthJPanel.add(displayJPanel);
 
 	__tsGraphJButton = new SimpleJButton(__GRAPH, __GRAPH, this);
 	__tsGraphJButton.setToolTipText("Graph selected time series.");
 	displayJPanel.add(__tsGraphJButton);
 	__tsSummaryJButton = new SimpleJButton(__SUMMARY, __SUMMARY, this);
-	__tsSummaryJButton.setToolTipText("Display summaries for selected "
-		+ "time series.");
+	__tsSummaryJButton.setToolTipText("Display summaries for selected time series.");
 	displayJPanel.add(__tsSummaryJButton);
 	__tsTableJButton = new SimpleJButton(__TABLE, __TABLE, this);
-	__tsTableJButton.setToolTipText("Display selected time series in "
-		+ "tabular form.");
+	__tsTableJButton.setToolTipText("Display selected time series in tabular form.");
 	displayJPanel.add(__tsTableJButton);
         
-        // Bottom Center JPanel
-        JPanel bottomCJPanel = new JPanel();
-        bottomCJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        bottomJPanel.add("Center", bottomCJPanel);
+    // Bottom Center JPanel
+    JPanel bottomCJPanel = new JPanel();
+    bottomCJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+    bottomJPanel.add("Center", bottomCJPanel);
  
-        __selectOnMapJButton = new SimpleJButton(__BUTTON_SELECT_ON_MAP,
-		__BUTTON_SELECT_ON_MAP, this);
-	__selectOnMapJButton.setToolTipText("Select selected stations on "
-		+ "GIS map.");
-        __selectOnMapJButton.setEnabled(false);	// Until data selected
-        bottomCJPanel.add(__selectOnMapJButton);
+    __selectOnMapJButton = new SimpleJButton(__BUTTON_SELECT_ON_MAP, __BUTTON_SELECT_ON_MAP, this);
+	__selectOnMapJButton.setToolTipText("Select selected stations on GIS map.");
+    __selectOnMapJButton.setEnabled(false);	// Until data selected
+    bottomCJPanel.add(__selectOnMapJButton);
 
 	__printJButton = new SimpleJButton(__BUTTON_PRINT, this);
 	__printJButton.setToolTipText("Print selected data.  If no records "
@@ -1308,48 +1245,47 @@ private void setupGUI(boolean isVisible) {
 	__exportJButton.setEnabled(false);
         bottomCJPanel.add(__exportJButton);
         
-        SimpleJButton close = new SimpleJButton(__BUTTON_CLOSE, this);
+    SimpleJButton close = new SimpleJButton(__BUTTON_CLOSE, this);
 	close.setToolTipText("Close form.");
-        bottomCJPanel.add(close);
+    bottomCJPanel.add(close);
 
-        // Bottom South JPanel
-        JPanel bottomSJPanel = new JPanel();
-        bottomSJPanel.setLayout(gbl);
-        bottomJPanel.add("South", bottomSJPanel);
+    // Bottom South JPanel
+    JPanel bottomSJPanel = new JPanel();
+    bottomSJPanel.setLayout(gbl);
+    bottomJPanel.add("South", bottomSJPanel);
         
-        __statusJTextField = new JTextField();
-        __statusJTextField.setEditable(false);
-        JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 0, 1, 
-                10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+    __statusJTextField = new JTextField();
+    __statusJTextField.setEditable(false);
+    JGUIUtil.addComponent(bottomSJPanel, __statusJTextField, 0, 1, 
+        10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
                 
 	// set defaults, based off initial data type choice
 	__dataTypeJComboBox.select(__DTYP_STREAM); // default upon create
 	dataTypeJComboBoxClicked();
 
-        // Frame settings
-        setTitle("Station Data Query");
-	if (	(JGUIUtil.getAppNameForWindows() == null) ||
-		JGUIUtil.getAppNameForWindows().equals("") ) {
+    // Frame settings
+    setTitle("Station Data Query");
+	if ( (JGUIUtil.getAppNameForWindows() == null) || JGUIUtil.getAppNameForWindows().equals("") ) {
 		setTitle ( "Station Data - Query" );
 	}
-	else {	setTitle( JGUIUtil.getAppNameForWindows() +
-		" - Station Data - Query" );
+	else {
+		setTitle( JGUIUtil.getAppNameForWindows() + " - Station Data - Query" );
 	}		
 	// set the items for from user preferences for division/district
 	// Now set this in setVisible...
-        pack();
+    pack();
 
 	// Disable displays until the user picks something...
 	clearWorksheet();
 
-        setSize(700, 500);
-        JGUIUtil.center(this);
+    setSize(700, 500);
+    JGUIUtil.center(this);
 
 	// We want this GUI to listen to the map.  If no map is used no
 	// listener calls will be generated...
 	__geoview_ui.getGeoViewJPanel().getGeoView().addGeoViewListener(this);
 
-        setVisible(isVisible);
+    setVisible(isVisible);
 }
 
 /**
@@ -1359,49 +1295,44 @@ Show/hide the frame, resetting the choices.
 public void setVisible(boolean state) {
 	String routine = "HydroBase_GUI_StationQuery.setVisible";
 	if (state) {
-                clearWorksheet();
-                __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);
-// REVISIT (JTS - 2005-01-10)
-// select station id for the filter
-		__dataTypeJComboBox.select(__DTYP_STREAM);
-		dataTypeJComboBoxClicked();
+    clearWorksheet();
+    __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);
+    // TODO (JTS - 2005-01-10) select station id for the filter
+	__dataTypeJComboBox.select(__DTYP_STREAM);
+	dataTypeJComboBoxClicked();
 
-		// set up current choices for data type and time step
-        	__dtypeJComboBoxString = 
-			parseDataType(__dataTypeJComboBox.getSelected().trim());
-        	__timestepJComboBoxString = 
-			__timeStepJComboBox.getSelected();
-		if (__timestepJComboBoxString != null) {
-			__timestepJComboBoxString = 
-				__timestepJComboBoxString.trim();
-		}
-                ready();
-		try {
-		HydroBase_GUI_Util.setWaterDistrictJComboBox(__dmi, 
-			__waterDistrictJComboBox, null, true, false, true);
-		}
-		catch (Exception e) {
-			Message.printWarning (2, routine, e);
-		}		
-		if (__worksheet.getRowCount()> 0) {
-			__printJButton.setEnabled(true);
-			__exportJButton.setEnabled(true);
-		}
-		else {	
-			__printJButton.setEnabled(false);
-			__exportJButton.setEnabled(false);
-		}
-		if (__geoview_ui.isMapVisible() && (__worksheet.getRowCount() > 0) 
-			&& __geoview_ui.getGeoViewJPanel().hasAppLayerType(
-		    	getVisibleAppLayerType())) {
-        		__selectOnMapJButton.setEnabled(true);
-		}
-		else {	
-			__selectOnMapJButton.setEnabled(false);
-		}
-		enableMapLayers();
-        }
-        super.setVisible(state);
+	// set up current choices for data type and time step
+	__dtypeJComboBoxString = parseDataType(__dataTypeJComboBox.getSelected().trim());
+	__timestepJComboBoxString = __timeStepJComboBox.getSelected();
+	if (__timestepJComboBoxString != null) {
+		__timestepJComboBoxString = __timestepJComboBoxString.trim();
+	}
+    ready();
+	try {
+	HydroBase_GUI_Util.setWaterDistrictJComboBox(__dmi, 
+		__waterDistrictJComboBox, null, true, false, true);
+	}
+	catch (Exception e) {
+		Message.printWarning (2, routine, e);
+	}		
+	if (__worksheet.getRowCount()> 0) {
+		__printJButton.setEnabled(true);
+		__exportJButton.setEnabled(true);
+	}
+	else {	
+		__printJButton.setEnabled(false);
+		__exportJButton.setEnabled(false);
+	}
+	if (__geoview_ui.isMapVisible() && (__worksheet.getRowCount() > 0) 
+		&& __geoview_ui.getGeoViewJPanel().hasAppLayerType(getVisibleAppLayerType())) {
+    		__selectOnMapJButton.setEnabled(true);
+	}
+	else {	
+		__selectOnMapJButton.setEnabled(false);
+	}
+	enableMapLayers();
+    }
+	super.setVisible(state);
 }
 
 /**
@@ -1411,9 +1342,8 @@ GeoView Project as AppJoinField="wd,id".
 */
 private void selectOnMap() {
 	int size = __worksheet.getRowCount();
-	List idlist = new Vector(size);
-        __statusJTextField.setText(
-		"Selecting and zooming to stations on map.  Please wait...");
+	List<String> idlist = new Vector(size);
+    __statusJTextField.setText("Selecting and zooming to stations on map.  Please wait...");
 	JGUIUtil.setWaitCursor(this, true);
 	int rows[] = __worksheet.getSelectedRows();
 	HydroBase_StationView view = null;
@@ -1436,15 +1366,13 @@ private void selectOnMap() {
 			row = rows[i];
 		}
 		
-		view = (HydroBase_StationView)
-			__worksheet.getRowData(row);
+		view = (HydroBase_StationView)__worksheet.getRowData(row);
 		idlist.add(view.getStation_id());
 	}
 	// Select the features, specifying the AppLayerType corresponding to the
 	// currently selected data type, and zoom to the selected shapes...
 	List matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
-			getVisibleAppLayerType(),
-			idlist, true, .05, .05);
+			getVisibleAppLayerType(), idlist, true, .05, .05);
 	int matches = 0;
 	if (matching_features != null) {
 		matches = matching_features.size();
@@ -1461,8 +1389,7 @@ private void selectOnMap() {
 		" records were found in map data.\n" +
 		"This may be because of incomplete location data.");
 	}
-        __statusJTextField.setText(
-	"Map is zoomed to selected stations.  Ready.");
+    __statusJTextField.setText("Map is zoomed to selected stations.  Ready.");
 	JGUIUtil.setWaitCursor(this, false);
 	idlist = null;
 }
@@ -1481,12 +1408,10 @@ throws Exception {
 	// the station list.  Otherwise, the user could select other data
 	// types, for instance, and then select a station without selecting
 	// "get data" and the previous values for data would be used.
-        __dtypeJComboBoxString = 
-		parseDataType(__dataTypeJComboBox.getSelected().trim());
-        __timestepJComboBoxString = __timeStepJComboBox.getSelected();
+    __dtypeJComboBoxString = parseDataType(__dataTypeJComboBox.getSelected().trim());
+    __timestepJComboBoxString = __timeStepJComboBox.getSelected();
 	if (__timestepJComboBoxString != null) {
-		__timestepJComboBoxString = 
-			__timestepJComboBoxString.trim();
+		__timestepJComboBoxString = __timestepJComboBoxString.trim();
 	}
 	else {
 		new ResponseJDialog(this, "No time step available",
@@ -1497,7 +1422,7 @@ throws Exception {
 	}
 
 	JGUIUtil.setWaitCursor(this, true);
-        __statusJTextField.setText("Retrieving data...");
+    __statusJTextField.setText("Retrieving data...");
 
 	// the following is not really necessary, because the filter currently
 	// accepts no numeric data, but it is good to have in for the future.
@@ -1513,9 +1438,9 @@ throws Exception {
 	setVisible(true);
 	toFront();
 
-        String status = "Please Wait... Retrieving Data";
-        Message.printStatus(10, routine, status);
-        __statusJTextField.setText(status);
+    String status = "Please Wait... Retrieving Data";
+    Message.printStatus(10, routine, status);
+    __statusJTextField.setText(status);
 
 	StopWatch sw = new StopWatch();
 	try {
@@ -1526,8 +1451,7 @@ throws Exception {
         	String time_step = hbMt[2];
 
 		sw.start();
-		List v = __dmi.readStationGeolocMeasTypeList(
-				__filterJPanel, 
+		List v = __dmi.readStationGeolocMeasTypeList( __filterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, 
 					HydroBase_GUI_Util._GEOLOC_TABLE_NAME,
@@ -1539,19 +1463,17 @@ throws Exception {
 		sw.stop();			
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading station geoloc "
-			+ "meas type data.");
+		Message.printWarning(1, routine, "Error reading station geoloc meas type data.");
 		Message.printWarning (2, routine, e);
 	}
 
-        int displayed = __worksheet.getRowCount();
+    int displayed = __worksheet.getRowCount();
 	String plural = "";
 	if (displayed != 1) {
 		plural = "s";
 	}
 
-        status = "" + __results.size() + " record" + plural + " returned in " 
-		+ sw.getSeconds() + " seconds";
+    status = "" + __results.size() + " record" + plural + " returned in " + sw.getSeconds() + " seconds";
 	if (__geoViewSelectQuery) {
 		status += ", queried using map coordinates.";
 		__geoViewSelectQuery = false;
@@ -1560,18 +1482,17 @@ throws Exception {
 		status += ".";
 	}
 
-        __statusJTextField.setText(status);
+    __statusJTextField.setText(status);
 	
-        // set the record display       
+    // set the record display       
 	plural = "s";
 	if (displayed == 1) {
 		plural = "";
 	}
-        __tableJLabel.setText("Stations for selected data type"
-		+ " (" + displayed + " station" + plural + " returned in " 
-                + sw.getSeconds() + " seconds):");		
+    __tableJLabel.setText("Stations for selected data type"
+		+ " (" + displayed + " station" + plural + " returned in " + sw.getSeconds() + " seconds):");		
 
-        ready();
+    ready();
                                                                                 
 	if (displayed == 0) {
 		__tsGraphJButton.setEnabled(false);
@@ -1591,7 +1512,7 @@ throws Exception {
 		__exportJButton.setEnabled(true);
 	}		
                         
-        ready();
+    ready();
 }
 
 /**
@@ -1605,41 +1526,29 @@ private void timeStepJComboBoxClicked() {
 /**
 This routine displays the desired view for the selected station if
 data is present in the MuiltiList object.  This used to be triggered by an
-item state event from a list of display views but now the button label is
-passed in.
+item state event from a list of display views but now the button label is passed in.
 @param viewJComboBox String corresponding to button that was pressed.
 */
 private void viewJComboBoxClicked(String viewJComboBox) {
 	int dl = 20;	// Debug level for this routine,
 
-        // initialize variables
+    // initialize variables
 	String routine = "HydroBase_GUI_StationQuery.displayInfo()";
-	PropList props = new PropList("TSView.props");
-	props.set("HelpKey=" + __HELP_STRING);
-	props.set("TotalWidth=500");
-	props.set("TotalHeight=560");
-	props.set("TotalGraphWidth=300");
-	props.set("TotalGraphHeight=400");
-	props.set("TitleString=");
-	props.set("XAxisJLabelString=Date");
-	props.set("ExtendedLegend=true");
-	props.set("TSPerPlot=10");
-	props.set("DisplayStationsCombined", "true");
-   
-        String display  = viewJComboBox;
-        List selectedResults = new Vector(10, 10);
-        int[] rows = __worksheet.getSelectedRows();
+ 
+    String display  = viewJComboBox;
+    List selectedResults = new Vector(10, 10);
+    int[] rows = __worksheet.getSelectedRows();
  
  	JGUIUtil.setWaitCursor(this, true);
-        __statusJTextField.setText("Please Wait... Displaying View");
+    __statusJTextField.setText("Please Wait... Displaying View");
 
-        // nothing has been selected. post warning and return.
-        if (rows.length == 0) {
-                Message.printWarning(1, routine, "Select a station from the"
-                        + " list before displaying additional information.");
-                ready();
-                return;
-        }
+    // nothing has been selected. post warning and return.
+    if (rows.length == 0) {
+        Message.printWarning(1, routine, "Select a station from the"
+                + " list before displaying additional information.");
+        ready();
+        return;
+    }
 
 	// collect all selected rows into a new vector, selectedResults
 
@@ -1649,15 +1558,12 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 	// Retrieve user specified start/end dates for display
 
 	TSLimits limits = null;
-	if (display.equals(__GRAPH) || display.equals(__TABLE) 
-	    || display.equals(__SUMMARY)) {
+	if (display.equals(__GRAPH) || display.equals(__TABLE) || display.equals(__SUMMARY)) {
 		TS ts;
-		PropList periodProps = new PropList(
-			"DateTimeSelectPeriodJDialog.props");
+		PropList periodProps = new PropList( "DateTimeSelectPeriodJDialog.props");
 		periodProps.set("PreferredState", "Maximum");
-		// Set the date precision based on the time step seleted in the
-		// GUI...
-        	String tstep  = __timeStepJComboBox.getSelected();
+		// Set the date precision based on the time step selected in the GUI...
+    	String tstep  = __timeStepJComboBox.getSelected();
 		if (tstep != null) {
 			tstep = tstep.trim();
 		}
@@ -1671,18 +1577,15 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 			periodProps.set("DatePrecision", "Year");
 		}
 		periodProps.set("DateFormat", "Y2K");
-		List tsV = new Vector(selectedResults.size(), 1);
+		List<TS> tsV = new Vector(selectedResults.size(), 1);
 		String alias;
 		String location;
 		for (int i = 0; i < selectedResults.size(); i++) {
-			HydroBase_StationView data = 
-				(HydroBase_StationView)
-				selectedResults.get(i);
+			HydroBase_StationView data = (HydroBase_StationView)selectedResults.get(i);
 
 			ts = new TS();
 			if (data.getStation_id().length() == 0) {
-				// Identifier is missing, so use the
-				// abbreviation...
+				// Identifier is missing, so use the abbreviation...
 				location = data.getAbbrev();
 				alias = location;
 			}
@@ -1693,14 +1596,12 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 			ts.setLocation(location);
 			ts.setAlias(alias);
 			ts.setDescription(data.getStation_name());
-			DateTime date1 = new DateTime(
-				DateTime.PRECISION_YEAR);
+			DateTime date1 = new DateTime( DateTime.PRECISION_YEAR);
 			date1.setYear(data.getStart_year());
 			date1.setMonth(1);
 			date1.setDay(1);
 			ts.setDate1(date1); 
-			DateTime date2 = new DateTime(	
-				DateTime.PRECISION_YEAR);
+			DateTime date2 = new DateTime( DateTime.PRECISION_YEAR);
 			date2.setYear(data.getEnd_year());
 			date2.setMonth(12);
 			date2.setDay(31);
@@ -1709,11 +1610,10 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 		}
 
 		// Modal dialog...
-		DateTimeSelectPeriodJDialog selector = 
-			new DateTimeSelectPeriodJDialog(this, tsV, periodProps);
+		DateTimeSelectPeriodJDialog selector = new DateTimeSelectPeriodJDialog(this, tsV, periodProps);
 		limits = selector.getLimits();
 		if (limits == null) {
-			// Cancelled...
+			// Canceled...
 			ready();
 			return;
 		}
@@ -1723,8 +1623,7 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 		DateTime date2 = null;
 		if (isMaxPeriod) {
 			// Just get all the data but don't specifically set
-			// the output period (otherwise performance may be
-			// slower)...
+			// the output period (otherwise performance may be slower)...
 			date1 = null;
 			date2 = null;
 		}
@@ -1735,53 +1634,67 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 		tsV.clear();
 		String timestep = "";
 		String id = null;
+		PropList tsview_props = new PropList("tsview"); // Properties for graph
 		for (int i = 0; i < selectedResults.size(); i++) {
-			HydroBase_StationView data = 
-				(HydroBase_StationView)
-				selectedResults.get(i);
-        		timestep = __timestepJComboBoxString;
+			HydroBase_StationView data = (HydroBase_StationView)selectedResults.get(i);
+        	timestep = __timestepJComboBoxString;
 
-			id = data.getStation_id() + "."
-				+ data.getData_source() + "." 
-				+ parseDataType(__dataTypeJComboBox
-				.getSelected()) + "."
-				+ timestep;
+			id = data.getStation_id() + "." + data.getData_source() + "." 
+				+ parseDataType(__dataTypeJComboBox.getSelected()) + "." + timestep;
 			id = id.trim();
 
 			ts = null;
 			if (Message.isDebugOn) {
-				Message.printDebug(dl, routine,
-					"Getting TS \"" + id
-					+ "\" for " + date1 + " to " + date2);
+				Message.printDebug(dl, routine, "Getting TS \"" + id + "\" for " + date1 + " to " + date2);
 			}
 
-		    	try {
-			    	ts = __dmi.readTimeSeries(id, date1, 
-					date2, null, true, null);
+		    try {
+		    	// Read the time series
+			   	ts = __dmi.readTimeSeries(id, date1, date2, null, true, null);
 			}
 			catch (Exception e) {
 				Message.printWarning(1, routine,
-					"Error reading time series "
-					+ "#" + (i + 1) + " from "
-					+ "database.");
+					"Error reading time series #" + (i + 1) + " from database.");
 				Message.printWarning(2, routine, e);
 			}
 
 			if (ts != null) {
 				tsV.add(ts);
+			   	// Evaluate whether the data are sparse and symbols should be shown by default to
+			   	// emphasize data.
+			   	try {
+				   	int isolatedCount = TSUtil.countIsolatedPoints ( ts, null, null );
+				   	double isolatedFraction = 0.0;
+				   	int nonMissingCount = ts.getDataLimits().getNonMissingDataCount();
+				   	if ( nonMissingCount > 0 ) {
+				   		isolatedFraction = isolatedCount/(double)nonMissingCount;
+				   	}
+				   	if ( isolatedFraction > .10 ) {
+				   		// A significant number (10%) of isolated points are present in the data so
+				   		// show points on the line.  This will ensure that users don't miss data.  For
+				   		// data types that are non-sparse, this should not be an issue and a simple line
+				   		// will be shown.
+				   		Message.printStatus( 2, routine, "> 10% of values (" + isolatedFraction*100.0 +
+				   			") are isolated so show the graph with symbols." +
+				   			GRTS_Util.formatDataProperty ( 1, tsV.size(), "SymbolSize") );
+				   		tsview_props.set( GRTS_Util.formatDataProperty ( 1, tsV.size(), "SymbolSize"), "5" );
+				   		tsview_props.set( GRTS_Util.formatDataProperty ( 1, tsV.size(), "SymbolStyle"),
+				   			"Circle-Filled" );
+				   	}
+			   	}
+			   	catch ( Exception e ) {
+			   		// Just show data as default of lines - gaps will result in less visible data.
+			   		Message.printWarning ( 3, routine, e );
+			   	}
 			}
 		}
 		if (tsV.size() == 0) {
 			ready();
 			return;
 		}
-		props.set("DataUnits",((TS)tsV.get(0)).getDataUnits());
-		props.set("YAxisJLabelString", 
-			((TS)tsV.get(0)).getDataUnits());
 		try {	
 			// Set properties common to all views...
-			PropList tsview_props = new PropList("tsview");
-			tsview_props.set("CalendarType", "WaterYear");
+			tsview_props.set("CalendarType", "" + YearType.WATER);
 			tsview_props.set("TotalWidth", "600");
 			tsview_props.set("TotalHeight", "400");
 			tsview_props.set("DisplayFont", "Courier");
@@ -1789,8 +1702,7 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 			tsview_props.set("PrintFont", "Courier");
 			tsview_props.set("PrintSize", "7");
 			tsview_props.set("PageLength", "100");
-        		String dtype = parseDataType(
-				__dataTypeJComboBox.getSelected().trim());
+        	String dtype = parseDataType(__dataTypeJComboBox.getSelected().trim());
 			String ttstep = __timeStepJComboBox.getSelected();
 			if (ttstep != null) {
 				ttstep = ttstep.trim();
@@ -1805,38 +1717,30 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 				new TSViewJFrame(tsV, tsview_props);
 			}
 			else if (display.equals(__TABLE)) {
-				// If daily data and more than one time series
-				// print a warning...
+				// If daily data and more than one time series print a warning...
 				boolean doit = true;
 				if (doit) {
-					tsview_props.set("InitialView",
-						"Table");
+					tsview_props.set("InitialView", "Table");
 					new TSViewJFrame(tsV, tsview_props);
 				}
 			}
-        		else if (display.equals(__SUMMARY)) {
+        	else if (display.equals(__SUMMARY)) {
 				if (dtype.equals(__DTYP_FROSTD)) {
-                			getSummary(tsV);
+                	getSummary(tsV);
 				}
 				else {	
-					tsview_props.set("InitialView",
-						"Summary");
-					tsview_props.set("TotalWidth", 
-						"1000");
+					tsview_props.set("InitialView", "Summary");
+					tsview_props.set("TotalWidth", "1000");
 					new TSViewJFrame(tsV, tsview_props);
 				}
 			}
-			// Clean up...
-			props = null;
-			tsview_props = null;
 		}
 		catch(Exception e) {
-			Message.printWarning(1, "HydroBase_GUI_StationQuery",
-			"Error displaying data.");
+			Message.printWarning(1, "HydroBase_GUI_StationQuery", "Error displaying data.");
+			Message.printWarning(3, routine, e);
 		}
 	}
-
-        ready();
+    ready();
 }
 
 /**
@@ -1844,7 +1748,7 @@ Responds to the window closing event.
 @param evt the window event that happened.
 */
 public void windowClosing(WindowEvent evt) {
-        closeClicked();
+    closeClicked();
 }
 
 /**
@@ -1885,7 +1789,5 @@ public void windowIconified(WindowEvent evt) {}
 
 }
 
-// REVISIT (SAM -- 2005-01-12)
-// with the ability to sort the column headings, I wonder if we even need
-// the sort options.  We will bring this up to the state along with other
-// issues.  
+// TODO (SAM -- 2005-01-12) with the ability to sort the column headings, I wonder if we even need
+// the sort options. 
