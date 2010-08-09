@@ -33,23 +33,43 @@ Class to store data from the HydroBase water_division table.
 public class HydroBase_WaterDivision 
 extends DMIDataObject {
 
-protected int _div = 		DMIUtil.MISSING_INT;
-protected String _div_name = 	DMIUtil.MISSING_STRING;
+protected int _div = DMIUtil.MISSING_INT;
+protected String _div_name = DMIUtil.MISSING_STRING;
 
 /**
-Constructor.
+Constructor, typically used when attributes are added sequentially during database processing.
 */
 public HydroBase_WaterDivision() {
 	super();
 }
 
-protected final static String[] divisions = {"Division 1: South Platte",
-					"Division 2: Arkansas River",
-					"Division 3: Rio Grande",
-					"Division 4: Gunnison River",
-					"Division 5: Colorado River",
-					"Division 6: Yampa River",
-					"Division 7: San Juan/Dolores River" };
+/**
+Constructor, typically used when instances must be manually defined.
+@param div division number (1+)
+@param name division name (e.g., "South Platte").
+*/
+public HydroBase_WaterDivision ( int div, String name )
+{
+    super();
+    setDiv ( div );
+    setDiv_name ( name );
+}
+
+/**
+Static list of divisions that are commonly used, in format "Division 1:  South Platte".
+*/
+protected final static String[] divisions = {
+    "Division 1: South Platte",
+	"Division 2: Arkansas River",
+	"Division 3: Rio Grande",
+	"Division 4: Gunnison River",
+	"Division 5: Colorado River",
+	"Division 6: Yampa River",
+	"Division 7: San Juan/Dolores River" };
+
+/**
+Static hashtable mapping division numbers as Integer to divisions string.
+*/
 protected final static Hashtable divisionTable = new Hashtable();
 
 // map a name to a number for storage
@@ -118,8 +138,7 @@ throws Exception {
 	int num = DMIUtil.MISSING_INT;
 
 	if (name == null) {
-		throw new Exception("null parameter passed to "
-			+ "getDivisionNumber");
+		throw new Exception("null parameter passed to getDivisionNumber");
 	}
 
 	for (int i = 0; i < divisions.length; i++) {
@@ -158,4 +177,5 @@ public String toString() {
 		"Div:      " + _div + "\n" + 
 		"Div_name: " + _div_name + "\n}\n";
 }
+
 }

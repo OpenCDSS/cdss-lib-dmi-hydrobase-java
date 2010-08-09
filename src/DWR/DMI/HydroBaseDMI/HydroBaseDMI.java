@@ -14138,8 +14138,7 @@ the identifier string, as needed.
 null or blank.
 @return a Vector of HydroBase_StructMeasType objects.
 */
-private List readStructMeasTypeListForWDIDStructure_num(int wd, int id,
-int structure_num, 
+private List readStructMeasTypeListForWDIDStructure_num(int wd, int id, int structure_num, 
 String meas_type, String identifier, String time_step, String data_source) 
 throws Exception {
 	if (__useSP) {
@@ -14186,7 +14185,7 @@ throws Exception {
 			27, null);
 		ResultSet rs = runSPFlex(parameters);
 		// use the toStructureStructMeas...
-		List v = toStructMeasTypeSPList(rs);
+		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
@@ -14195,24 +14194,20 @@ throws Exception {
 		buildSQL(q, __S_STRUCT_MEAS_TYPE_VIEW);
 		q.addWhereClause("structure.structure_num = " + structure_num);
 		if ((meas_type != null) && (meas_type.length() > 0)) {
-			q.addWhereClause("struct_meas_type.meas_type = '" +
-			meas_type + "'");
+			q.addWhereClause("struct_meas_type.meas_type = '" + meas_type + "'");
 		}
 		if ((identifier != null) && (identifier.length() > 0)) {
-			q.addWhereClause("struct_meas_type.identifier = '" +
-			identifier + "'");
+			q.addWhereClause("struct_meas_type.identifier = '" + identifier + "'");
 		}
 		if ((time_step != null) && (time_step.length() > 0)) {
-			q.addWhereClause("struct_meas_type.time_step = '" +
-			time_step + "'");
+			q.addWhereClause("struct_meas_type.time_step = '" + time_step + "'");
 		}
 		if ((data_source != null) && (data_source.length() > 0)) {
-			q.addWhereClause("struct_meas_type.data_source = '" +
-			data_source + "'");
+			q.addWhereClause("struct_meas_type.data_source = '" + data_source + "'");
 		}
 		q.addOrderByClause("struct_meas_type.meas_type");
 		ResultSet rs = dmiSelect(q);
-		List v = toStructMeasTypeSPList(rs);
+		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -14234,12 +14229,10 @@ The following views are used by this method:<p><ul>
 stored procedures.
 @return a Vector of HydroBase_StructMeasType objects.
 */
-public List readStructMeasTypeListForStructure_num(int structure_num,
-boolean distinct) 
+public List readStructMeasTypeListForStructure_num(int structure_num, boolean distinct) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			
 		String[] triplet = new String[3];
 		triplet[0] = "structure_num";
@@ -14252,7 +14245,7 @@ throws Exception {
 			27, null);
 		ResultSet rs = runSPFlex(parameters);
 		// use the toStructureStructMeas...
-		List v = toStructMeasTypeSPList(rs);
+		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 	}
@@ -14268,7 +14261,7 @@ throws Exception {
 		q.addWhereClause("structure.structure_num = " + structure_num);
 		q.addOrderByClause("struct_meas_type.identifier");
 		ResultSet rs = dmiSelect(q);
-		List v = toStructMeasTypeSPList(rs);
+		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -14287,14 +14280,13 @@ The following views are used by this method:<p><ul>
 <li>vw_CDSS_StructureStructMeasType</li></ul>
 @param structure_num the structure_num for which to read data
 @param meas_type the meas_type for which to read data.  Cannot be null.
-@return a Vector of HydroBase_StructMeasType objects.
+@return a list of HydroBase_StructMeasType objects.
 */
-public List readStructMeasTypeListForStructure_numMeas_type(int structure_num,
+public List<HydroBase_StructMeasTypeView> readStructMeasTypeListForStructure_numMeas_type(int structure_num,
 String meas_type) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			
 		String[] triplet = new String[3];
 		triplet[0] = "structure_num";
@@ -14313,7 +14305,7 @@ throws Exception {
 			27, null);
 		ResultSet rs = runSPFlex(parameters);
 		// use the toStructureStructMeas...
-		List v = toStructMeasTypeSPList(rs);
+		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;	
 
@@ -14322,11 +14314,10 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_STRUCT_MEAS_TYPE_VIEW);
 		q.addWhereClause("structure.structure_num = " + structure_num);
-		q.addWhereClause("struct_meas_type.meas_type = '" 
-			+ meas_type + "'");
+		q.addWhereClause("struct_meas_type.meas_type = '" + meas_type + "'");
 		q.addOrderByClause("struct_meas_type.identifier");
 		ResultSet rs = dmiSelect(q);
-		List v = toStructMeasTypeSPList(rs);
+		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -15359,7 +15350,8 @@ This method uses the following view:<p><ul>
 @throws Exception if an error occurs.
 @junit do it view
 */
-public List readStructureGeolocStructMeasTypeList(InputFilter_JPanel panel, String meas_type, String time_step)
+public List<HydroBase_StructMeasTypeView> readStructureGeolocStructMeasTypeList(
+    InputFilter_JPanel panel, String meas_type, String time_step)
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( panel, null);
@@ -15382,7 +15374,7 @@ throws Exception {
 
 		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_StructureStructMeasType"), 74, null);
 		ResultSet rs = runSPFlex(parameters);
-		List v = toStructMeasTypeSPList(rs);
+		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -31131,13 +31123,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_StructMeasTypeView objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_StructMeasType
+@return a list of HydroBase_StructMeasTypeView
 @throws Exception if an error occurs.
 */
-private List toStructMeasTypeSPList (ResultSet rs)
+private List<HydroBase_StructMeasTypeView> toStructMeasTypeSPList (ResultSet rs)
 throws Exception {
 	HydroBase_StructMeasTypeView data = null;
-	List v = new Vector();
+	List<HydroBase_StructMeasTypeView> v = new Vector();
 	int index = 1;
 	
 	int i;

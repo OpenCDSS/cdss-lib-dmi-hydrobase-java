@@ -150,12 +150,11 @@ public final static int DATA_TYPE_ALL = DATA_TYPE_AGRICULTURE |
 					DATA_TYPE_WIS |
 					DATA_TYPE_DEMOGRAPHICS_ALL;
 
+/**
+The preferred length for WDID strings.  For example, TSTool uses this to know how to format WDIDs
+after interactively querying from HydroBase.
+ */
 private static int __preferred_WDID_length = 7;
-					// The preferred length for WDID
-					// strings.  For example, TSTool uses
-					// this to know how to format WDIDs
-					// after interactively querying from
-					// HydroBase.
 
 public final static String LOCAL = "local";
 
@@ -876,11 +875,11 @@ throws Exception
 	DateTime date = new DateTime ( FillStart_DateTime );
 	DateTime yearstart_DateTime = null;	// Fill dates for one year
 	DateTime yearend_DateTime = null;
-	int found_count = 0;		// Count of non-missing values in year
-	int missing_count = 0;		// Count of missing values in a year
-	double value = 0.0;		// Time series data value
-	double fill_value = 0.0;	// Value to be used to fill data.
-	TSData tsdata = null;		// Needed to retrieve time series data with flags.
+	int found_count = 0; // Count of non-missing values in year
+	int missing_count = 0; // Count of missing values in a year
+	double value = 0.0; // Time series data value
+	double fill_value = 0.0; // Value to be used to fill data.
+	TSData tsdata = new TSData(); // Needed to retrieve time series data with flags.
 	for ( ; date.lessThanOrEqualTo(FillEnd_DateTime); date.addDay(1) ) {
 		if ( (date.getMonth() == 11) && (date.getDay() == 1) ) {
 			// Start of a new irrigation year.
@@ -894,7 +893,7 @@ throws Exception
 			yearend_DateTime.setDay ( 31 );
 			if ( Message.isDebugOn ) {
 				Message.printDebug ( 2, routine,
-				"Checking for data in " + yearstart_DateTime + " to " + yearend_DateTime );
+				    "Checking for data in " + yearstart_DateTime + " to " + yearend_DateTime );
 			}
 			found_count = 0;
 			if ( Message.isDebugOn ) {
@@ -924,7 +923,7 @@ throws Exception
 					++missing_count;
 					if ( FillDailyDivFlag_boolean ) {
 						// Set the data flag, appending to the old value...
-						tsdata = ts.getDataPoint(date);
+						tsdata = ts.getDataPoint(date,tsdata);
 						ts.setDataValue ( date, fill_value, (tsdata.getDataFlag().trim() + FillDailyDivFlag), 1 );
 					}
 					else {
@@ -1051,7 +1050,7 @@ throws Exception
 	String zero_flags = "ABCD"; 	// "not used" flag that indicates a zero value.
 
 	String not_used = null; // Flag in diversion comments indicating whether diversion was used in irrigation year.
-	TSData tsdata = null; // Single data point from a time series.
+	TSData tsdata = new TSData(); // Single data point from a time series.
 	int fill_count = 0; // Number of data values filled in the irrigation year (or number of years with
 						// diversion comments below).
 	if ( (date1 == null) && (date2 == null) && extend_period ) {
@@ -1061,7 +1060,7 @@ throws Exception
 		int yearmin = 3000;
 		int yearmax = -3000;
 		for ( ; divcomdate.lessThanOrEqualTo(divcomend); divcomdate.addYear(1)) {
-			tsdata = divcomts.getDataPoint(divcomdate);
+			tsdata = divcomts.getDataPoint(divcomdate,tsdata);
 			not_used = tsdata.getDataFlag();
 			if ( (not_used == null)|| (not_used.length() == 0) || (zero_flags.indexOf(not_used) < 0) ) {
 				// No need to process the flag because a zero water use flag is not specified...
@@ -1125,12 +1124,12 @@ throws Exception
 	}
 	
 	DateTime tsdate;
-	int iyear = 0;		// Irrigation year to process.
+	int iyear = 0; // Irrigation year to process.
 	double dataValue = 0.0;	// Value from the time series.
 	String fillflag2 = null;// String used to do filling, reflecting "Auto" value
 	for ( divcomdate = new DateTime(divcomts.getDate1());
 		divcomdate.lessThanOrEqualTo(divcomend); divcomdate.addYear(1)) {
-		tsdata = divcomts.getDataPoint(divcomdate);
+		tsdata = divcomts.getDataPoint(divcomdate,tsdata);
 		not_used = tsdata.getDataFlag();
 		if ( (not_used == null) || (not_used.length() == 0) || (zero_flags.indexOf(not_used) < 0) ) {
 			// No need to process the flag because a zero water use flag is not specified.
@@ -1153,7 +1152,7 @@ throws Exception
 						// Automatically use the "not used" flag value...
 						fillflag2 = not_used;
 					}
-					tsdata =ts.getDataPoint(divcomdate);
+					tsdata = ts.getDataPoint(divcomdate,tsdata);
 					ts.setDataValue ( divcomdate, 0.0, (tsdata.getDataFlag().trim() + fillflag2), 1 );
 				}
 				else {
@@ -1185,7 +1184,7 @@ throws Exception
 							// Automatically use the "not used" flag value...
 							fillflag2 = not_used;
 						}
-						tsdata =ts.getDataPoint(tsdate);
+						tsdata =ts.getDataPoint(tsdate,tsdata);
 						ts.setDataValue ( tsdate, 0.0, (tsdata.getDataFlag().trim() + fillflag2), 1 );
 					}
 					else {
@@ -1295,7 +1294,6 @@ public static int getPreferredWDIDLength ()
 }
 
 /**
-TODO NEED INPUT FROM DOUG ON WHETHER SUGGESTED DATA TYPES CAN BE USED NOW AND BE PHASED INTO HYDROBASE.
 Return a list of time series data types, suitable for listing in a graphical
 interface.  For example, this list is used in TSTool and StateView to list
 data types, which are then passed to the readTimeSeries(String TSID) method,
@@ -1313,8 +1311,8 @@ can be combined if appropriate.
 For example, all data related to reservoirs will be prefixed with
 "Reservoir - ".  This is useful for providing a better presentation to users in interfaces.
 */
-public static List getTimeSeriesDataTypes (	HydroBaseDMI hdmi, int include_types, boolean add_group )
-{	List types = new Vector();
+public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int include_types, boolean add_group )
+{	List<String> types = new Vector();
 	// Add these types exactly as they are listed in HydroBase.  If someone
 	// has a problem, HydroBase should be adjusted.  Notes are shown below
 	// where there may be an issue.  In all cases, documentation needs to
@@ -2098,12 +2096,12 @@ public static boolean isStructureTimeSeriesDataType ( HydroBaseDMI hbdmi, String
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,0) ;
 	}
-	List global_mt = hbdmi.getStructMeasType();
+	List<HydroBase_StructMeasType> global_mt = hbdmi.getStructMeasType();
 	int size = global_mt.size();
 	HydroBase_StructMeasType mt;
 	// Check the list of struct_meas_type.meas_type...
 	for ( int i = 0; i < size; i++ ) {
-		mt = (HydroBase_StructMeasType)global_mt.get(i);
+		mt = global_mt.get(i);
 		if ( data_type.equalsIgnoreCase(mt.getMeas_type()) ) {
 			return true;
 		}

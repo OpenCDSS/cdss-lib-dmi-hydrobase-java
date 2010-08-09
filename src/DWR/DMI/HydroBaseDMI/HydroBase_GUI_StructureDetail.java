@@ -143,6 +143,7 @@ import RTi.TS.IrregularTS;
 import RTi.TS.MinuteTS;
 import RTi.TS.MonthTS;
 import RTi.TS.TS;
+import RTi.TS.TSData;
 import RTi.TS.TSLimits;
 import RTi.TS.TSUtil;
 
@@ -610,6 +611,7 @@ throws Exception {
 	int year = 0;
 	int numValidDaysInMonth = 0;
 	
+	TSData tsdata = new TSData(); // Used to retrieve data flag
 	for (; date.lessThanOrEqualTo(endDate);
 		date.addInterval(dataIntervalBase, dataIntervalMult)) {
 		// Figure out if this is a new year.  If so, we reset
@@ -634,8 +636,7 @@ throws Exception {
 		// Save the data value for later use in output and
 		// statistics.  Allow missing data values to be saved...
 		data[row][column] = ts.getDataValue(date);
-		dataFlag[row][column] 
-			= ts.getDataPoint(date).getDataFlag().trim();
+		dataFlag[row][column] = ts.getDataPoint(date,tsdata).getDataFlag().trim();
 		if (dataFlag[row][column].equals("")) {
 			dataFlag[row][column] = " ";
 		}
