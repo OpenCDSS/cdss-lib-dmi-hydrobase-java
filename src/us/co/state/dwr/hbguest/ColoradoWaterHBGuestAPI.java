@@ -6,8 +6,12 @@ import java.util.Vector;
 import javax.xml.ws.Holder;
 
 import DWR.DMI.HydroBaseDMI.HydroBase_StationGeolocMeasType;
+import DWR.DMI.HydroBaseDMI.HydroBase_StructMeasTypeView;
+import DWR.DMI.HydroBaseDMI.HydroBase_Util;
+import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
+import RTi.Util.Time.StopWatch;
 
 //import java.util.List;
 //import java.util.Vector;
@@ -26,9 +30,9 @@ import RTi.Util.String.StringUtil;
 //import RTi.Util.Time.TimeInterval;
 
 /**
-API methods to simplify interaction with the ColoradoWaterSMS.
+API methods to simplify interaction with the ColoradoWaterHBGuest web services.
 These methods (and private data) are currently static because only one server is available for
-ColoradoWaterSMS.  If multiple servers become available and support multiple instances of web service
+ColoradoWaterHBGuest.  If multiple servers become available and support multiple instances of web service
 sessions, make this a class that needs to be instantiated, or put the cache in a hashtable or other data
 structure that is keyed to the server.
 */
@@ -41,104 +45,72 @@ Name of this class, for messaging.
 private static String __class = "ColoradoWaterHBGuestAPI";
 
 /**
-Authentication object to use when using the service.
-*/
-private static HBAuthenticationHeader __authenticationHeader = null;
-
-/**
-Cache of distinct station data types.
-*/
-private static List<String> __stationDataTypeList = new Vector();
-
-/**
-Cache of station measType objects.
-*/
-private static List<HydroBase_StationGeolocMeasType> __stationMeasTypeList = new Vector();
-
-/**
-Get the authentication header.
-*/
-private static HBAuthenticationHeader getAuthentication ()
-{
-    if ( __authenticationHeader == null ) {
-        __authenticationHeader = new HBAuthenticationHeader();
-        __authenticationHeader.setToken ("WirQg1zN");
-    }
-    return __authenticationHeader;
-}
-
-/**
-Return the cached list of station data types, for all meas types.
-*/
-private static List<String> getStationDataTypeListCache ()
-{
-    return __stationDataTypeList;
-}
-
-/**
-Return the cached list of station measType objects, for all time series.
-*/
-private static List<HydroBase_StationGeolocMeasType> getStationMeasTypeListCache ()
-{
-    return __stationMeasTypeList;
-}
-
-/**
 Read the list of distinct station data types.
 @param service the web service instance.
 @param useCache Indicate whether the cache should be used if available.
 */
-public static List<String> readDistinctStationDataTypeList ( ColoradoWaterHBGuest service, boolean useCache )
-{   String routine = __class + "readStationVariableList";
+public static List<String> readDistinctStationDataTypeList ( ColoradoWaterHBGuestService service,
+    boolean useCache )
+{   String routine = __class + "readDistinctStationDataTypeList";
     // Check to see if the cache is available
     List<String> dataTypesCached = null;
     if ( useCache ) {
         // Have a cache so use it
-        Message.printStatus(2, routine, "Getting distinct list of station data types from datatype cache.");
         // If the data types are cached, then return them...
-        dataTypesCached = getStationDataTypeListCache();
+        dataTypesCached = service.getStationDataTypeListCache();
         if ( (dataTypesCached != null) && (dataTypesCached.size() != 0) ) {
             // Return the cached data types
+            Message.printStatus(2, routine, "Got distinct list of station data types from datatype cache.");
             return dataTypesCached;
         }
     }
     List<HydroBase_StationGeolocMeasType> measTypesCached = new Vector();
     List<HydroBase_StationGeolocMeasType> measTypes = new Vector();
     if ( useCache ) {
-        measTypesCached = getStationMeasTypeListCache();
+        measTypesCached = service.getStationMeasTypeListCache();
         measTypes = measTypesCached;
     }
     // TODO SAM 2010-05-18 Carve this out into separate code to read station meas types to cache
     // If here try to use the cached station meas types.  If not available, query
     if ( (measTypesCached == null) || (measTypesCached.size() == 0) ) {
-        // Need to read the data.
-        Message.printStatus(2, routine, "Getting distinct list of station meas types from web service request.");
+        // Need to read the data (and will save in the cache at end).
+        Message.printStatus(2, routine, "Getting list of stations for all divisions from web service request.");
         // Loop through the divisions and read the station MeasType objects and create a cache
         int nStations = 0;
+        StopWatch swDiv = new StopWatch();
+        StopWatch swTotal = new StopWatch();
         for ( int div = 1; div <= 7; div++ ) {
+            swDiv.clearAndStart();
             Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
-            ArrayOfStation stationArray =
-                service.getColoradoWaterHBGuestSoap12().getHBGuestStationByDIV( div, getAuthentication(), status );
+            ArrayOfStation stationArray = service.getColoradoWaterHBGuestSoap12().getHBGuestStationByDIV( div,
+                service.getAuthentication(), status );
             // Check for error
             if ( (status.value != null) && (status.value.getError() != null) ) {
                 throw new RuntimeException ( "Error getting stations for division " + div + " (" +
                     status.value.getError().getErrorCode() + ": " + status.value.getError().getExceptionDescription() + ")." );
             }
             nStations += stationArray.getStation().size();
-            Message.printStatus(2, routine, "Retrieved " + stationArray.getStation().size() + " stations for division " + div );
-            // getStation() actually returns List<Station> 
+            swDiv.stop();
+            swTotal.add ( swDiv );
+            Message.printStatus(2, routine,
+                "Retrieved " + stationArray.getStation().size() + " stations for division " + div + " in " + 
+                swDiv.getSeconds() + " seconds.");
+            // getStation() actually returns List<Station>
+            swDiv.clearAndStart();
+            int numMeasTypeDiv = 0;
             for ( Station station : stationArray.getStation() ) {
                 // Now read the meas types for the station
                 Holder<HbStatusHeader> status2 = new Holder<HbStatusHeader>();
                 ArrayOfStationMeasType stationMeasTypeArray =
-                    service.getColoradoWaterHBGuestSoap12().getHBGuestStationMeasTypeByStationNum( station.getStationNum(),
-                        getAuthentication(), status2 );
+                    service.getColoradoWaterHBGuestSoap12().getHBGuestStationMeasTypeByStationNum(
+                        station.getStationNum(), service.getAuthentication(), status2 );
                 // Check for error
                 if ( (status2.value != null) && (status2.value.getError() != null) ) {
                     throw new RuntimeException ( "Error getting meas types for station_num " + station.getStationNum() + " (" +
                         status.value.getError().getErrorCode() + ": " + status.value.getError().getExceptionDescription() + ")." );
                 }
                 // Loop through the list of measurement types for the station
+                numMeasTypeDiv += stationMeasTypeArray.getStationMeasType().size();
                 for ( StationMeasType smt: stationMeasTypeArray.getStationMeasType() ) {
                     HydroBase_StationGeolocMeasType newStationMeasType = new HydroBase_StationGeolocMeasType ();
                     // TODO SAM 2010-05-18 Would need to join to Geoloc somehow
@@ -155,9 +127,15 @@ public static List<String> readDistinctStationDataTypeList ( ColoradoWaterHBGues
                     measTypes.add ( newStationMeasType );
                 }
             }
+            swDiv.stop();
+            swTotal.add ( swDiv );
+            Message.printStatus(2, routine,
+                "Retrieved " + numMeasTypeDiv + " measTypes for division " + div + " stations in " + 
+                swDiv.getSeconds() + " seconds.");
         }
-        Message.printStatus(2, routine, "Retrieved " + nStations + " stations and " + measTypes.size() + " meas types total." );
-        setStationMeasTypeListCache(measTypes);
+        Message.printStatus(2, routine, "Retrieved " + nStations + " stations and " + measTypes.size() +
+            " station meas types total in " + swTotal.getSeconds() + " seconds." );
+        service.setStationMeasTypeListCache(measTypes);
     }
     // Now get the data types from the meastypes...
     List<String> dataTypes = new Vector();
@@ -183,10 +161,8 @@ public static List<String> readDistinctStationDataTypeList ( ColoradoWaterHBGues
     }
     // Save the MeasType and DataType caches
     if ( useCache ) {
-        setStationMeasTypeListCache ( measTypes );
-    }
-    if ( useCache ) {
-        setStationDataTypeListCache ( dataTypes );
+        service.setStationMeasTypeListCache ( measTypes );
+        service.setStationDataTypeListCache ( dataTypes );
     }
     return dataTypes;
 }
@@ -441,19 +417,15 @@ throws Exception
 */
 
 /**
-Set the cache of station data types.
+Read a list of structure meas type objects corresponding to the query criteria.
 */
-private static void setStationDataTypeListCache ( List<String> dataTypes )
-{
-    __stationDataTypeList = dataTypes;
+public static List<HydroBase_StructMeasTypeView> readStructureGeolocStructMeasTypeList( ColoradoWaterHBGuest service,
+    InputFilter_JPanel ifp, String measType, String timeStep )
+{   // Call the web service to get the list of meastype for the location.
+    List<HydroBase_StructMeasTypeView> measTypeList = new Vector();
+    return measTypeList;
 }
 
-/**
-Set the cache of station measTypes.
-*/
-private static void setStationMeasTypeListCache ( List<HydroBase_StationGeolocMeasType> variables )
-{
-    __stationMeasTypeList = variables;
-}
+
 
 }
