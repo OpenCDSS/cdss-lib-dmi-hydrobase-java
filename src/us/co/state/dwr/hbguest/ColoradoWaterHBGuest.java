@@ -31,7 +31,8 @@ public class ColoradoWaterHBGuest
         URL url = null;
         try {
             URL baseUrl;
-            boolean readFromPath = true;
+            // Try reading the URL from the DWR web site (sometimes slow if the net is slow).
+            boolean readFromPath = false;
             String routine = "ColoradoWaterHBGuest";
             try {
                 // Distribute the WSDL with the app to improve startup performance
@@ -40,7 +41,12 @@ public class ColoradoWaterHBGuest
                 if ( readFromPath ) {
                     url = ColoradoWaterHBGuest.class.getResource("/us/co/state/dwr/hbguest/HBGuestWebService.asmx.xml");
                     Message.printStatus ( 2, routine, "Loaded ColoradoWaterHBGuest from local WSDL." );
-                }   
+                }
+                else {
+                    baseUrl = us.co.state.dwr.hbguest.ColoradoWaterHBGuest.class.getResource(".");
+                    url = new URL(baseUrl, "http://www.dwr.state.co.us/HBGuest/HBGuestWebService.asmx?WSDL");
+                    Message.printStatus ( 2, routine, "Loaded ColoradoWaterHBGuest from internet WSDL." );
+                }
             }
             catch ( Exception e2 ) {
                 // As a backup, read the WSDL from the State's web site...

@@ -36,7 +36,7 @@ public ColoradoWaterHBGuestService ()
 {
     super();
     // Turn on whether to dump requests...
-    System.setProperty( "com.sun.xml.ws.transport.http.HttpAdapter.dump", "true" );
+    //System.setProperty( "com.sun.xml.ws.transport.http.HttpAdapter.dump", "true" );
 }
 
 /**
