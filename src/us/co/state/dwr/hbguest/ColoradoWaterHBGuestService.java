@@ -75,12 +75,13 @@ Cache of station measType objects.
 private List<HydroBase_StationGeolocMeasType> __stationMeasTypeListCache = new Vector();
 
 /**
-Cache of distinct structure data types, from the service (e.g., "DivTotal").
+Cache of distinct structure data types (e.g., "DivTotal"), 
 */
 private List<String> __structureDataTypeListCache = new Vector();
 
 /**
-Cache of HydroBase_StructureGeolocStructMeasType objects, with the key being MeasType + "-" + wd.
+Cache of HydroBase_StructureGeolocStructMeasType objects, with the key being MeasType + "-" + interval + "-" + wd,
+where the interval is generic "Year" and NOT the internal HydroBase interval like "Annual".
 Combine the lists if getting information for more than one district.
 */
 private Hashtable<String,List<HydroBase_StructureGeolocStructMeasType>> __structureGeolocMeasTypeByWDListCache = new Hashtable();
@@ -141,6 +142,18 @@ Return the cached list of structure data types, for all meas types.
 public List<String> getStructureDataTypeList ()
 {
     return __structureDataTypeListCache;
+}
+
+/**
+Determine the hash key for the StructureGeolocMeasTypeList caches.
+*/
+private String getStructureGeolocMeasTypeByWDListCacheKey ( String dataType, String timeStep, int wd )
+{   // Make sure that the water district is zero padded.
+    String wdString = "" + wd;
+    if ( wd < 10 ) {
+        wdString = "0" + wd;
+    }
+    return dataType.toUpperCase() + "-" + timeStep.toUpperCase() + "-" + wdString;
 }
 
 /**
@@ -471,7 +484,7 @@ If possible, information from the cache is returned.  Otherwise, a new query is 
 is updated.
 @param service the web service being used
 @param dataType the data type being queried (e.g., "DivTotal" or "Diversion).
-@param timeStep the time step being queried as per TS conventions.
+@param timeStep the time step being queried as per TS conventions (e.g., "Month" NOT HydroBase "Monthly").
 @param ifp the input filter panel that provides additional filter criteria
 @return a list of time series header objects suitable for listing time series
 */
@@ -505,15 +518,19 @@ public List<HydroBase_StructureGeolocStructMeasType> getTimeSeriesHeaderObjects 
         // Get the cached objects if available.  If not, read them.  Optimize a bit by handling divisions
         // and districts separately.  District takes precedence over division
         if ( district > 0 ) {
+            String key = getStructureGeolocMeasTypeByWDListCacheKey(dataType, timeStep, district);
             List<HydroBase_StructureGeolocStructMeasType> cacheList =
-                __structureGeolocMeasTypeByWDListCache.get(dataType + "-" + district);
+                __structureGeolocMeasTypeByWDListCache.get(key );
             List<HydroBase_StructureGeolocStructMeasType> dataList = null;
             if ( cacheList == null ) {
-                // No data have been read for the district so do it...
-                dataList = readStructureGeolocMeasTypeList(div, district, dataType, true);
+                // No data have been read for the district and measType so do it.  This will actually read
+                // all timesteps also and populate multiple hash tables, however, it will only return the
+                // timestep of interest
+                dataList = readStructureGeolocMeasTypeList(div, district, dataType, timeStep, true);
             }
             else {
                 dataList = cacheList;
+                Message.printStatus(2, routine, "Got cached data using key \"" + key + "\" size=" + cacheList.size() );
             }
             // Add to the returned list
             tslist.addAll( dataList );
@@ -739,14 +756,38 @@ public boolean isStructureTimeSeriesDataType ( String dataTypeToCheck )
 }
 
 /**
+Lookup a cached HydroBase_StructureGeolocStructMeasType instance.  This is used to set metadata on the time
+series.
+@param dataType structure data type (measType) of interest (e.g., "DivTotal").
+@param timeStep time series time step (e.g., "Month" NOT HydroBase "Monthly")
+@param wd water district
+@param id structure identifier within water district
+@return the matching HydroBase_StructureGeolocStructMeasType instance, or null if not matched.
+*/
+private HydroBase_StructureGeolocStructMeasType
+    lookupStructureGeolocMeasType ( String dataType, String timeStep, int wd, int id )
+{
+    // First get the cache
+    List<HydroBase_StructureGeolocStructMeasType> cacheList =
+        __structureGeolocMeasTypeByWDListCache.get(getStructureGeolocMeasTypeByWDListCacheKey(
+            dataType, timeStep, wd));
+    // Next loop through the returned list and find the specific ID match
+    for ( HydroBase_StructureGeolocStructMeasType mt: cacheList ) {
+        if ( mt.getID() == id ) {
+            return mt;
+        }
+    }
+    return null;
+}
+
+/**
 Helper method to create a HydroBase_StructureGeolocStructMeasType object from a web service
 StructureGeolocMeasType object.
-@param count count of objects, used to initialize data until service bugs figured out
 @param sgmt service object
 @return HydroBase_StructureGeolocStructMeasType instance constructed from service object
 */
 private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeasType (
-    int count, StructureGeolocMeasType sgmt )
+    StructureGeolocMeasType sgmt, String measType, String timeStep )
 {   HydroBase_StructureGeolocStructMeasType hbstruct = new HydroBase_StructureGeolocStructMeasType();
     hbstruct.setDiv(sgmt.getDiv());
     hbstruct.setWD(sgmt.getWd());
@@ -772,24 +813,16 @@ private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeas
             "" );
     if ( sgmt.getWd() == 0 ) {
         // Assign default to help with testing
-        //hbstruct.setWD(47);
-        //hbstruct.setID(500);
-        //hbstruct.setStr_name("ARAPAHOE DITCH");
-        hbstruct.setWD(20);
-        hbstruct.setID(812);
-        hbstruct.setStr_name("RIO GRANDE CNL");
+        hbstruct.setWD(47);
+        hbstruct.setID(500);
+        hbstruct.setStr_name("ARAPAHOE DITCH");
+        //hbstruct.setWD(20);
+        //hbstruct.setID(812);
+        //hbstruct.setStr_name("RIO GRANDE CNL");
         hbstruct.setStart_year(1950);
         hbstruct.setEnd_year(2009);
-        hbstruct.setMeas_type("DivTotal");
-        if ( (count %2) == 0 ) {
-            hbstruct.setTime_step("Month");
-        }
-        else if ( (count %3) == 0 ) {
-            hbstruct.setTime_step("Day");
-        }
-        else {
-            hbstruct.setTime_step("Year");
-        }
+        hbstruct.setMeas_type(measType);
+        hbstruct.setTime_step(timeStep);
     }
     return hbstruct;
 }
@@ -829,14 +862,18 @@ private List<HydroBase_StructMeasTypeView> readStructureList ( int div, boolean 
 }
 
 /**
-Read HydroBase_StructureGeolocStructMeasType objects using web services.
+Read HydroBase_StructureGeolocStructMeasType objects using web services.  The list for a water district and
+measType combination are read.  This method should only be called if reading every time or the cache does not
+exist and needs to be initialized.
 @param div division of interest (-1 to ignore constraint)
 @param wd water district of interest (-1 to ignore constraint)
 @param measType structure measType to return (e.g., "DivTotal")
-@param cacheIt if true, cache the result, false to not cache (slower but use less memory long-term)
+@param timeStep time series time step as per TS conventions (e.g, "Month" NOT HydroBase "Monthly")
+@param cacheIt if true, cache the result, false to not cache (slower but use less memory long-term) - caches
+are saved by measType-timeStep-wd combination
 */
 private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTypeList(
-    int div, int wd, String measType, boolean cacheIt )
+    int div, int wd, String measType, String timeStep, boolean cacheIt )
 {   String routine = __class + ".readStructureGeolocMeasTypeList";
     Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
     StopWatch sw = new StopWatch();
@@ -859,16 +896,59 @@ private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTyp
         Message.printStatus(2, routine,
             "Retrieved " + sgmtArray.getStructureGeolocMeasType().size() + " StructureGeolocMeasType for WD=" + wd +
             " MeasType=\"" + measType + "\" in " + sw.getSeconds() + " seconds.");
-        List<HydroBase_StructureGeolocStructMeasType> structList = new Vector();
-        int count = 0;
+        // Loop through once and get the list of unique timesteps
+        List<String> timeStepList = new Vector();
+        boolean found;
+        String timeStepUpper;
+        if ( cacheIt ) {
+            for ( StructureGeolocMeasType sgmt : sgmtArray.getStructureGeolocMeasType() ) {
+                found = false;
+                timeStepUpper = HydroBase_Util.convertFromHydroBaseTimeStep(sgmt.getTimeStep()).toUpperCase();
+                for ( String timeStepInList: timeStepList ) {
+                    if ( timeStepInList.equals(timeStepUpper) ) {
+                        found = true;
+                        break;
+                    }
+                }
+                if ( !found ) {
+                    timeStepList.add ( timeStepUpper );
+                }
+            }
+            // Initialize each cache
+            for ( String timeStepInList: timeStepList ) {
+                String key = getStructureGeolocMeasTypeByWDListCacheKey(measType, timeStepInList, wd);
+                Message.printStatus ( 2, routine, "Initializing cache with key \"" + key + "\"." );
+                __structureGeolocMeasTypeByWDListCache.put(key, new Vector() );
+            }
+        }
+        // Loop through the results (by water district and division) and add to the cached list
+        List<HydroBase_StructureGeolocStructMeasType> cacheList;
         for ( StructureGeolocMeasType sgmt : sgmtArray.getStructureGeolocMeasType() ) {
-            structList.add ( newHydroBase_StructureGeolocMeasType( ++count, sgmt ) );
+            // Only the timestep varies by the record since the measType and district were passed in
+            cacheList = __structureGeolocMeasTypeByWDListCache.get (getStructureGeolocMeasTypeByWDListCacheKey(
+                measType, HydroBase_Util.convertFromHydroBaseTimeStep(sgmt.getTimeStep()), wd));
+            cacheList.add ( newHydroBase_StructureGeolocMeasType( sgmt, measType, timeStep ) );
         }
         if ( cacheIt ) {
-            __structureGeolocMeasTypeByWDListCache.put( measType + "-" + wd , structList );
+            // Logging...
+            for ( String timeStepInList: timeStepList ) {
+                String key = getStructureGeolocMeasTypeByWDListCacheKey(measType, timeStepInList, wd);
+                cacheList = __structureGeolocMeasTypeByWDListCache.get(key);
+                Message.printStatus ( 2, routine,
+                    "After reading data, cache for key \"" + key + "\" has size=" + cacheList.size() );
+            }
         }
-        // Add to the returned list
-        returnList.addAll ( structList );
+        // Add to the returned list only the requested list
+        String key = getStructureGeolocMeasTypeByWDListCacheKey(measType, timeStep, wd);
+        cacheList = __structureGeolocMeasTypeByWDListCache.get(key);
+        if ( cacheList != null ) {
+            Message.printStatus ( 2, routine, "Returning cache for key \"" + key + "\" size=" +
+                cacheList.size() + "." );
+            returnList.addAll ( cacheList );
+        }
+        else {
+            Message.printStatus ( 2, routine, "Problem?  No cache for key \"" + key + "\"." );
+        }
     }
     return returnList;
 }
@@ -920,13 +1000,15 @@ throws Exception
     ts.setDataUnitsOriginal(ts.getDataUnits());
     
     // Lookup the StructureGeolocMeasType instance
+    HydroBase_StructureGeolocStructMeasType hbstruct =
+        lookupStructureGeolocMeasType ( dataType, timeStep, wdidParts[0], wdidParts[1] );
     
     Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
     
     StopWatch sw = new StopWatch();
     sw.start();
     if ( dataType.equalsIgnoreCase("DivTotal") ) {
-        //ts.setDescription ( hbstruct.getStr_name()) );
+        ts.setDescription ( hbstruct.getStr_name() );
         String wdid = HydroBase_WaterDistrict.formWDID(7, wdidParts[0], wdidParts[1]);
         if ( timeStep.equalsIgnoreCase("Year") && readData ) {
             ArrayOfStructureAnnuallyTS ytsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureAnnuallyTSByWDID(
@@ -992,6 +1074,7 @@ throws Exception
                 ts.setDataValue(date,dts.getAmt(),dts.getObs(),0);
             }
         }
+        ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
     }
     else {
         throw new Exception ( "Data type \"" + dataType + "\" is not supported." );
