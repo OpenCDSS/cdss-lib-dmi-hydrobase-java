@@ -53,7 +53,20 @@ public HydroBase_WaterDistrict() {
 }
 
 /**
-cleans up variables when the class is disposed of.  Sets all the member
+Constructor.
+@param div division
+@param wd water district number
+@param name water district name
+*/
+public HydroBase_WaterDistrict( int div, int wd, String name ) {
+    super();
+    setDiv( div );
+    setWD ( wd );
+    setWd_name ( name );
+}
+
+/**
+Cleans up variables when the class is disposed of.  Sets all the member
 variables (that aren't primitives) to null
 @exception Throwable if an error occurs.
 */
@@ -69,6 +82,7 @@ throws Throwable {
 Form a WDID string from its parts.  The default is a 7-character id.
 @param wd Water district.
 @param id Identifier.
+@return the formatted WDID string
 */
 public static String formWDID (int wd, int id) {
 	return formWDID (7, wd, id);
@@ -100,6 +114,7 @@ public static String formWDID ( int length, int wd, int id ) {
 Form a WDID string from its parts.  The default is a 7-character id.
 @param wd Water district
 @param id Identifier
+@return the formatted WDID string
 */
 public static String formWDID ( String wd, String id )
 {	Vector v = new Vector (2,1);
@@ -114,6 +129,7 @@ Form a WDID string from its parts.
 @param length the length to which the WDID should be built.
 @param wd Water district
 @param id Identifier
+@return the formatted WDID string
 */
 public static String formWDID (int length, String wd, String id)
 {	Vector v = new Vector (2, 1);
