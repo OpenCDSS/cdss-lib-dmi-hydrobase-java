@@ -59,7 +59,7 @@ public class ColoradoWaterHBGuest
             logger.warning(e.getMessage());
         }
         COLORADOWATERHBGUEST_WSDL_LOCATION = url;
-    }
+    }    
 
     public ColoradoWaterHBGuest(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -76,6 +77,9 @@ import javax.xml.bind.annotation.XmlType;
     "locTypeDesc",
     "accuracy",
     "st"
+})
+@XmlSeeAlso({
+    StationGeolocMeasType.class
 })
 public class Station {
 

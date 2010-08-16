@@ -721,6 +721,54 @@ public interface ColoradoWaterHBGuestSoap {
         Holder<HbStatusHeader> hbStatusHeader);
 
     /**
+     * Retrieve HBGuest StationGeolocMeasType records by water division (must be between 1 and 7).
+     * 
+     * @param hbStatusHeader
+     * @param div
+     * @param measType
+     * @param hbAuthenticationHeader
+     * @return
+     *     returns us.co.state.dwr.ArrayOfStationGeolocMeasType
+     */
+    @WebMethod(operationName = "GetHBGuestStationGeolocMeasTypeByDIV", action = "http://www.dwr.state.co.us/GetHBGuestStationGeolocMeasTypeByDIV")
+    @WebResult(name = "GetHBGuestStationGeolocMeasTypeByDIVResult", targetNamespace = "http://www.dwr.state.co.us/")
+    @RequestWrapper(localName = "GetHBGuestStationGeolocMeasTypeByDIV", targetNamespace = "http://www.dwr.state.co.us/", className = "us.co.state.dwr.GetHBGuestStationGeolocMeasTypeByDIV")
+    @ResponseWrapper(localName = "GetHBGuestStationGeolocMeasTypeByDIVResponse", targetNamespace = "http://www.dwr.state.co.us/", className = "us.co.state.dwr.GetHBGuestStationGeolocMeasTypeByDIVResponse")
+    public ArrayOfStationGeolocMeasType getHBGuestStationGeolocMeasTypeByDIV(
+        @WebParam(name = "div", targetNamespace = "http://www.dwr.state.co.us/")
+        int div,
+        @WebParam(name = "measType", targetNamespace = "http://www.dwr.state.co.us/")
+        String measType,
+        @WebParam(name = "HBAuthenticationHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, partName = "HBAuthenticationHeader")
+        HBAuthenticationHeader hbAuthenticationHeader,
+        @WebParam(name = "HbStatusHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, mode = WebParam.Mode.OUT, partName = "HbStatusHeader")
+        Holder<HbStatusHeader> hbStatusHeader);
+
+    /**
+     * Retrieve HBGuest StationGeolocMeasType records by water district (must be between 1 and 80).
+     * 
+     * @param hbStatusHeader
+     * @param measType
+     * @param wd
+     * @param hbAuthenticationHeader
+     * @return
+     *     returns us.co.state.dwr.ArrayOfStationGeolocMeasType
+     */
+    @WebMethod(operationName = "GetHBGuestStationGeolocMeasTypeByWD", action = "http://www.dwr.state.co.us/GetHBGuestStationGeolocMeasTypeByWD")
+    @WebResult(name = "GetHBGuestStationGeolocMeasTypeByWDResult", targetNamespace = "http://www.dwr.state.co.us/")
+    @RequestWrapper(localName = "GetHBGuestStationGeolocMeasTypeByWD", targetNamespace = "http://www.dwr.state.co.us/", className = "us.co.state.dwr.GetHBGuestStationGeolocMeasTypeByWD")
+    @ResponseWrapper(localName = "GetHBGuestStationGeolocMeasTypeByWDResponse", targetNamespace = "http://www.dwr.state.co.us/", className = "us.co.state.dwr.GetHBGuestStationGeolocMeasTypeByWDResponse")
+    public ArrayOfStationGeolocMeasType getHBGuestStationGeolocMeasTypeByWD(
+        @WebParam(name = "wd", targetNamespace = "http://www.dwr.state.co.us/")
+        int wd,
+        @WebParam(name = "measType", targetNamespace = "http://www.dwr.state.co.us/")
+        String measType,
+        @WebParam(name = "HBAuthenticationHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, partName = "HBAuthenticationHeader")
+        HBAuthenticationHeader hbAuthenticationHeader,
+        @WebParam(name = "HbStatusHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, mode = WebParam.Mode.OUT, partName = "HbStatusHeader")
+        Holder<HbStatusHeader> hbStatusHeader);
+
+    /**
      * Retrieve HBGuest structure records by water division (must be between 1 and 7).
      * 
      * @param hbStatusHeader
@@ -1096,6 +1144,54 @@ public interface ColoradoWaterHBGuestSoap {
         short startYear,
         @WebParam(name = "endYear", targetNamespace = "http://www.dwr.state.co.us/")
         short endYear,
+        @WebParam(name = "HBAuthenticationHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, partName = "HBAuthenticationHeader")
+        HBAuthenticationHeader hbAuthenticationHeader,
+        @WebParam(name = "HbStatusHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, mode = WebParam.Mode.OUT, partName = "HbStatusHeader")
+        Holder<HbStatusHeader> hbStatusHeader);
+
+    /**
+     * Retrieve HBGuest StructureGeolocMeasType records by water division (must be between 1 and 7).
+     * 
+     * @param hbStatusHeader
+     * @param div
+     * @param measType
+     * @param hbAuthenticationHeader
+     * @return
+     *     returns us.co.state.dwr.ArrayOfStructureGeolocMeasType
+     */
+    @WebMethod(operationName = "GetHBGuestStructureGeolocMeasTypeByDIV", action = "http://www.dwr.state.co.us/GetHBGuestStructureGeolocMeasTypeByDIV")
+    @WebResult(name = "GetHBGuestStructureGeolocMeasTypeByDIVResult", targetNamespace = "http://www.dwr.state.co.us/")
+    @RequestWrapper(localName = "GetHBGuestStructureGeolocMeasTypeByDIV", targetNamespace = "http://www.dwr.state.co.us/", className = "us.co.state.dwr.GetHBGuestStructureGeolocMeasTypeByDIV")
+    @ResponseWrapper(localName = "GetHBGuestStructureGeolocMeasTypeByDIVResponse", targetNamespace = "http://www.dwr.state.co.us/", className = "us.co.state.dwr.GetHBGuestStructureGeolocMeasTypeByDIVResponse")
+    public ArrayOfStructureGeolocMeasType getHBGuestStructureGeolocMeasTypeByDIV(
+        @WebParam(name = "div", targetNamespace = "http://www.dwr.state.co.us/")
+        int div,
+        @WebParam(name = "measType", targetNamespace = "http://www.dwr.state.co.us/")
+        String measType,
+        @WebParam(name = "HBAuthenticationHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, partName = "HBAuthenticationHeader")
+        HBAuthenticationHeader hbAuthenticationHeader,
+        @WebParam(name = "HbStatusHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, mode = WebParam.Mode.OUT, partName = "HbStatusHeader")
+        Holder<HbStatusHeader> hbStatusHeader);
+
+    /**
+     * Retrieve HBGuest StructureGeolocMeasType records by water district (must be between 1 and 80).
+     * 
+     * @param hbStatusHeader
+     * @param measType
+     * @param wd
+     * @param hbAuthenticationHeader
+     * @return
+     *     returns us.co.state.dwr.ArrayOfStructureGeolocMeasType
+     */
+    @WebMethod(operationName = "GetHBGuestStructureGeolocMeasTypeByWD", action = "http://www.dwr.state.co.us/GetHBGuestStructureGeolocMeasTypeByWD")
+    @WebResult(name = "GetHBGuestStructureGeolocMeasTypeByWDResult", targetNamespace = "http://www.dwr.state.co.us/")
+    @RequestWrapper(localName = "GetHBGuestStructureGeolocMeasTypeByWD", targetNamespace = "http://www.dwr.state.co.us/", className = "us.co.state.dwr.GetHBGuestStructureGeolocMeasTypeByWD")
+    @ResponseWrapper(localName = "GetHBGuestStructureGeolocMeasTypeByWDResponse", targetNamespace = "http://www.dwr.state.co.us/", className = "us.co.state.dwr.GetHBGuestStructureGeolocMeasTypeByWDResponse")
+    public ArrayOfStructureGeolocMeasType getHBGuestStructureGeolocMeasTypeByWD(
+        @WebParam(name = "wd", targetNamespace = "http://www.dwr.state.co.us/")
+        int wd,
+        @WebParam(name = "measType", targetNamespace = "http://www.dwr.state.co.us/")
+        String measType,
         @WebParam(name = "HBAuthenticationHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, partName = "HBAuthenticationHeader")
         HBAuthenticationHeader hbAuthenticationHeader,
         @WebParam(name = "HbStatusHeader", targetNamespace = "http://www.dwr.state.co.us/", header = true, mode = WebParam.Mode.OUT, partName = "HbStatusHeader")

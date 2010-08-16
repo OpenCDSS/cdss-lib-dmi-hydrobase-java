@@ -6,17 +6,14 @@ import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JFrame;
-import javax.swing.JTextField;
-
+import DWR.DMI.HydroBaseDMI.HydroBase_WaterDistrict;
 import DWR.DMI.HydroBaseDMI.HydroBase_WaterDivision;
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
-import RTi.Util.GUI.JGUIUtil;
 
 import RTi.Util.String.StringUtil;
 
-public class ColoradoWaterHBGuest_GUI_StructureGeolocStructMeasType_InputFilter_JPanel
+public class ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel
 extends InputFilter_JPanel
 implements MouseListener
 {
@@ -30,7 +27,7 @@ Default filter panel properties are used (e.g., 3 filter groups).
 @param include_SFUT If true, include a filter for the SFUT.
 @exception Exception if there is an error.
 */
-public ColoradoWaterHBGuest_GUI_StructureGeolocStructMeasType_InputFilter_JPanel (
+public ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel (
     ColoradoWaterHBGuestService service, boolean include_SFUT )
 throws Exception
 {	this ( service, include_SFUT, -1, -1 );
@@ -45,7 +42,7 @@ HydroBase_StructureGeolocStructMeasType in the Java API, consistent with HydroBa
 @param filter_props Properties to configure the input filter, passed to the base class.
 @exception Exception if there is an error.
 */
-public ColoradoWaterHBGuest_GUI_StructureGeolocStructMeasType_InputFilter_JPanel (
+public ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel (
     ColoradoWaterHBGuestService service, boolean include_SFUT,
 	int numFilterGroups, int numWhereChoicesToDisplay )
 throws Exception
@@ -65,18 +62,13 @@ throws Exception
 
 	// Fill in the water district data for input filters...
 
-    /*
-	List district_data_Vector = hbdmi.getWaterDistricts();
+	List<HydroBase_WaterDistrict> district_data_Vector = service.getWaterDistrictList();
 	List district_Vector = new Vector ( district_data_Vector.size() );
-	List district_internal_Vector=new Vector(district_data_Vector.size());
-	HydroBase_WaterDistrict wd;
-	size = district_data_Vector.size();
-	for ( int i = 0; i < size; i++ ) {
-		wd = (HydroBase_WaterDistrict)district_data_Vector.get(i);
-		district_Vector.add (wd.getWD() + " - "+wd.getWd_name());
+	List district_internal_Vector = new Vector(district_data_Vector.size());
+	for ( HydroBase_WaterDistrict wd : district_data_Vector ) {
+		district_Vector.add (wd.getWD() + " - " + wd.getWd_name());
 		district_internal_Vector.add ("" + wd.getWD() );
 	}
-    */
 
 	// Fill in the division data for input filters...
 
@@ -115,15 +107,13 @@ throws Exception
 	input_filters.add ( filter );
 	*/
 	
-	/*
 	filter = new InputFilter ( "District", "geoloc.wd", "wd",
-		StringUtil.TYPE_INTEGER, district_Vector, district_internal_Vector, true );
+		StringUtil.TYPE_INTEGER, district_Vector, district_internal_Vector, false );
 	filter.setTokenInfo("-",0);
 	input_filters.add ( filter );
-	*/
 
 	filter = new InputFilter ( "Division", "geoloc.div", "div",
-		StringUtil.TYPE_INTEGER, division_Vector, division_internal_Vector, true );
+		StringUtil.TYPE_INTEGER, division_Vector, division_internal_Vector, false );
 	filter.setTokenInfo("-",0);
 	input_filters.add ( filter );
 	
@@ -137,11 +127,13 @@ throws Exception
 		StringUtil.TYPE_STRING, null, null, true ) );
 		*/
 
+	/*
 	input_filters.add ( new InputFilter ( "Latitude", "geoloc.latdecdeg", "latdecdeg",
-		StringUtil.TYPE_DOUBLE, null, null, true ) );	
+		StringUtil.TYPE_DOUBLE, null, null, true ) );
 		
 	input_filters.add ( new InputFilter ( "Longitude", "geoloc.longdecdeg", "longdecdeg",
-		StringUtil.TYPE_DOUBLE, null, null, true ) );	
+		StringUtil.TYPE_DOUBLE, null, null, true ) );
+		*/
 
 	/*
 	// create the input filter for the PLSS Location
@@ -167,8 +159,10 @@ throws Exception
 	input_filters.add(filter);
 	*/
 
+	/*
 	input_filters.add(new InputFilter("Stream Mile", "str_mile", "str_mile", 
-		StringUtil.TYPE_DOUBLE, null, null, false));
+		StringUtil.TYPE_DOUBLE, null, null, true));
+		*/
 
 	input_filters.add ( new InputFilter ( "Structure ID", "id", "id",
 		StringUtil.TYPE_INTEGER, null, null, true ) );
@@ -176,8 +170,10 @@ throws Exception
 	input_filters.add ( new InputFilter ( "Structure Name", "str_name", "str_name",
 		StringUtil.TYPE_STRING, null, null, true ) );
 	
+	/*
     input_filters.add ( new InputFilter ( "Structure WDID", "wdid", "wdid",
         StringUtil.TYPE_INTEGER, null, null, true ) );
+        */
 
 	/* Not enabled yet
 	if ( include_SFUT ) {
@@ -186,18 +182,20 @@ throws Exception
 	}
 	*/
 
+	/*
 	input_filters.add ( new InputFilter ( "UTM X", "utm_x", "utm_x",
 		StringUtil.TYPE_DOUBLE, null, null, true ) );		
 
 	input_filters.add ( new InputFilter ( "UTM Y", "utm_y", "utm_y",
 		StringUtil.TYPE_DOUBLE, null, null, true ) );
+		*/
 
 	if ( numFilterGroups < 0 ) {
 		// TODO SAM 2010-07-21 need larger default?
 		numFilterGroups = 3;
 		numWhereChoicesToDisplay = input_filters.size();
 	}
-	setToolTipText ( "<html>HBGuest queries can be filtered<br>based on structure data.</html>" );
+	setToolTipText ( "<html>ColoradoWaterHBGuest queries can be filtered based on structure data.</html>" );
 	setInputFilters ( input_filters, numFilterGroups, numWhereChoicesToDisplay );
 }
 

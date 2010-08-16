@@ -9,22 +9,28 @@ import javax.xml.ws.Holder;
 import DWR.DMI.HydroBaseDMI.HydroBaseDMI;
 import DWR.DMI.HydroBaseDMI.HydroBase_StationGeolocMeasType;
 import DWR.DMI.HydroBaseDMI.HydroBase_StructMeasTypeView;
+import DWR.DMI.HydroBaseDMI.HydroBase_StructureGeolocStructMeasType;
 import DWR.DMI.HydroBaseDMI.HydroBase_Util;
+import DWR.DMI.HydroBaseDMI.HydroBase_WaterDistrict;
 import DWR.DMI.HydroBaseDMI.HydroBase_WaterDivision;
+import RTi.TS.TS;
+import RTi.TS.TSIdent;
+import RTi.TS.TSUtil;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
+import RTi.Util.Time.DateTime;
 import RTi.Util.Time.StopWatch;
 
 /**
 This class extends the auto-generated ColoradoWaterHBGuest SOAP web service class and adds
 caches and methods to access the caches.  In this way a service object and its associated caches can
 be reused and separate caches can exist for different services (for example if different versions of
-the services and backend databases are available).  Because the caches are non-static and could get
+the services and back-end databases are available).  Because the caches are non-static and could get
 large, care should be taken to reuse the service object as much as possible.  This class has public get methods
 for data and private read methods to utilize the SOAP API.  In this way, the API is more service-like with
 get methods.  HydroBase package objects are returned in some cases to facilitate use in existing code such
-as TSTool, although the domain-specific object conventions will be evaluated with use.
+as TSTool, although the ColoradoWaterHBGuest object types will be evaluated with use.
 */
 public class ColoradoWaterHBGuestService extends ColoradoWaterHBGuest
 {
@@ -74,9 +80,15 @@ Cache of distinct structure data types, from the service (e.g., "DivTotal").
 private List<String> __structureDataTypeListCache = new Vector();
 
 /**
-Cache of HydroBase_StructMeasTypeView objects, with one complete list per division.
+Cache of HydroBase_StructureGeolocStructMeasType objects, with the key being MeasType + "-" + wd.
+Combine the lists if getting information for more than one district.
 */
-private Hashtable<String,List<HydroBase_StructMeasTypeView>> __structureMeasTypeViewListCache = new Hashtable();
+private Hashtable<String,List<HydroBase_StructureGeolocStructMeasType>> __structureGeolocMeasTypeByWDListCache = new Hashtable();
+
+/**
+Cache of HydroBase water districts from the service.
+*/
+private List<HydroBase_WaterDistrict> __waterDistrictListCache = new Vector();
 
 /**
 Cache of HydroBase water divisions from the service.
@@ -91,6 +103,8 @@ public HBAuthenticationHeader getAuthentication ()
     if ( __authenticationHeader == null ) {
         __authenticationHeader = new HBAuthenticationHeader();
         __authenticationHeader.setToken ("WirQg1zN"); // OK to put here as purpose is to track use
+        // User ID is defaulted to 0
+        //Message.printStatus(2, "", "UserID=" + __authenticationHeader.getUserID() );
     }
     return __authenticationHeader;
 }
@@ -387,38 +401,30 @@ public List<String> getTimeSeriesDataTypes ( int include_types, boolean add_grou
         if ( add_group ) {
             prefix = "Diversion - ";
         }
-        types.add ( prefix + "DivClass" );// These are probably
-        types.add ( prefix + "DivComment" );// OK - will use
+        //types.add ( prefix + "DivClass" );// These are probably
+        //types.add ( prefix + "DivComment" );// OK - will use
         types.add ( prefix + "DivTotal" );// SFUT as the sub data type.
-        types.add ( prefix + "IDivClass" );
-        types.add ( prefix + "IDivTotal" );
+        //types.add ( prefix + "IDivClass" );
+        //types.add ( prefix + "IDivTotal" );
     }
-    /* Not yet supported
     if ( (include_types&HydroBase_Util.DATA_TYPE_STRUCTURE_RESERVOIR) > 0 ) {
         prefix = "";
         if ( add_group ) {
             prefix = "Reservoir - ";
         }
-        types.add ( prefix + "IRelClass" );
-        types.add ( prefix + "IRelTotal" );
-        types.add ( prefix + "RelClass" );
-        types.add ( prefix + "RelComment" );
+        //types.add ( prefix + "IRelClass" );
+        //types.add ( prefix + "IRelTotal" );
+        //types.add ( prefix + "RelClass" );
+        //types.add ( prefix + "RelComment" );
         types.add ( prefix + "RelTotal" );
-        types.add ( prefix + "ResEOM" );
-        types.add ( prefix + "ResEOY" );
-        //types.add ( "ResMeas" );  // Would be better as
-                            // "ResMeasFill",
-                            // "ResMeasRelease",
-                            // "ResMeasElev",
-                            // "ResMeasEvap"
-        types.add ( prefix + "ResMeasElev" );
-                            // Add to evaluate...
-        types.add ( prefix + "ResMeasEvap" );
-        types.add ( prefix + "ResMeasFill" );
-        types.add ( prefix + "ResMeasRelease" );
-        types.add ( prefix + "ResMeasStorage" );
+        //types.add ( prefix + "ResEOM" );
+        //types.add ( prefix + "ResEOY" );
+        //types.add ( prefix + "ResMeasElev" );
+        //types.add ( prefix + "ResMeasEvap" );
+        //types.add ( prefix + "ResMeasFill" );
+        //types.add ( prefix + "ResMeasRelease" );
+        //types.add ( prefix + "ResMeasStorage" );
     }
-    */
     /* Not yet supported
     if ( (include_types&HydroBase_Util.DATA_TYPE_STRUCTURE_WELL) > 0 ) {
         prefix = "";
@@ -469,35 +475,54 @@ is updated.
 @param ifp the input filter panel that provides additional filter criteria
 @return a list of time series header objects suitable for listing time series
 */
-public List<HydroBase_StructMeasTypeView> getTimeSeriesHeaderObjects (
+public List<HydroBase_StructureGeolocStructMeasType> getTimeSeriesHeaderObjects (
         String dataType, String timeStep, InputFilter_JPanel ifp )
 {   String routine = __class + ".getTimeSeriesHeaderObjects";
-    List<HydroBase_StructMeasTypeView> tslist = new Vector();
+    List<HydroBase_StructureGeolocStructMeasType> tslist = new Vector(); // List that matches the input request
+    // If data type has "-", assume something like "Diversion - DivTotal" and need second part
+    // TODO SAM 2010-08-13 Evaluate moving this to calling code
+    dataType = dataType.split("-")[1].trim();
     if( isStructureTimeSeriesDataType(dataType)){
-        // Division is required from the input filter so get the 
-        List<String> input = ifp.getInput("Division", false, null );
-        if ( input.size() < 0 ) {
+        // District or division is required from the input filter to improve performance
+        // The input string is something like "Equals;1" so get from the last part.
+        List<String> inputDistrict = ifp.getInput("District", false, null );
+        int district = -1;
+        if ( inputDistrict.size() > 0 ) {
+            String districtString = inputDistrict.get(0).split(";")[1];
+            district = Integer.parseInt ( districtString );
+        }
+        List<String> inputDivision = ifp.getInput("Division", false, null );
+        int div = -1;
+        if ( inputDivision.size() > 0 ) {
+            String divString = inputDivision.get(0).split(";")[1];
+            div = Integer.parseInt ( divString );
+        }
+        if ( (district < 0) && (div < 0) ) {
             Message.printWarning ( 3, routine,
-                "You must specify the division as a Where in the input filter (only 1 can be selected)." );
+                "You must specify a district or division as a Where in the input filter." );
             return tslist;
         }
-        // Get the cached objects if available.  If not, read them.
-        // The input string is something like "Equals;1" so get the division from the last part.
-        String divString = input.get(0).split(";")[1];
-        List<HydroBase_StructMeasTypeView> cacheList = __structureMeasTypeViewListCache.get(divString);
-        if ( cacheList == null ) {
-            // No data have been read for the division so do it...
-            int div = Integer.parseInt(divString);
-            cacheList = readStructureList(div, true);
-            // TODO SAM need to ensure that structures actually do have the type
-            for ( HydroBase_StructMeasTypeView structView : cacheList ) {
-                structView.setMeas_type(dataType);
+        // Get the cached objects if available.  If not, read them.  Optimize a bit by handling divisions
+        // and districts separately.  District takes precedence over division
+        if ( district > 0 ) {
+            List<HydroBase_StructureGeolocStructMeasType> cacheList =
+                __structureGeolocMeasTypeByWDListCache.get(dataType + "-" + district);
+            List<HydroBase_StructureGeolocStructMeasType> dataList = null;
+            if ( cacheList == null ) {
+                // No data have been read for the district so do it...
+                dataList = readStructureGeolocMeasTypeList(div, district, dataType, true);
             }
-            // Set back in the cache
-            __structureMeasTypeViewListCache.put(divString, cacheList);
+            else {
+                dataList = cacheList;
+            }
+            // Add to the returned list
+            tslist.addAll( dataList );
         }
-        // Now filter the list based on the parameters and input filter.
-        tslist = cacheList;
+        else if ( div > 0 ) {
+            // Loop through the districts in the division and append to the returned list
+        }
+        // Now further filter the list based on the parameters and input filter.  Remove items that do not
+        // match the constraints.
     }
     else {
         Message.printWarning(3, routine, "Data type \"" + dataType + "\" is not a supported HBGuest type." );
@@ -664,6 +689,18 @@ public List<String> getTimeSeriesTimeSteps ( String data_type, int include_types
 }
 
 /**
+Return the list of water districts.  If available, the cached list is returned.  If not, a service get occurs.
+*/
+public List<HydroBase_WaterDistrict> getWaterDistrictList ()
+{
+    if ( __waterDistrictListCache.size() == 0 ) {
+        // Not available so read
+        __waterDistrictListCache = readWaterDistrictList ();
+    }
+    return __waterDistrictListCache;
+}
+
+/**
 Return the list of water divisions.  If available, the cached list is returned.  If not, a service get occurs.
 */
 public List<HydroBase_WaterDivision> getWaterDivisionList ()
@@ -702,6 +739,62 @@ public boolean isStructureTimeSeriesDataType ( String dataTypeToCheck )
 }
 
 /**
+Helper method to create a HydroBase_StructureGeolocStructMeasType object from a web service
+StructureGeolocMeasType object.
+@param count count of objects, used to initialize data until service bugs figured out
+@param sgmt service object
+@return HydroBase_StructureGeolocStructMeasType instance constructed from service object
+*/
+private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeasType (
+    int count, StructureGeolocMeasType sgmt )
+{   HydroBase_StructureGeolocStructMeasType hbstruct = new HydroBase_StructureGeolocStructMeasType();
+    hbstruct.setDiv(sgmt.getDiv());
+    hbstruct.setWD(sgmt.getWd());
+    hbstruct.setID(sgmt.getId());
+    hbstruct.setStr_name(sgmt.getStrName());
+    hbstruct.setCounty(sgmt.getCounty());
+    hbstruct.setST(sgmt.getSt());
+    hbstruct.setHUC(sgmt.getHuc());
+    // Meastype
+    hbstruct.setStart_year(sgmt.getStartYear());
+    hbstruct.setEnd_year(sgmt.getEndYear());
+    hbstruct.setMeas_type(sgmt.getMeasType());
+    // FIXME SAM 2010-08-13 Need to not hard-code this
+    hbstruct.setData_source("DWR");
+    // Meas count not available?
+    hbstruct.setMeas_num(sgmt.getMeasNum());
+    hbstruct.setTime_step(HydroBase_Util.convertFromHydroBaseTimeStep(sgmt.getTimeStep()));
+    Message.printStatus(2, "", "Data from service:" +
+            "Name=" + sgmt.getStrName() + "\n " +
+            " WD=" + sgmt.getWd() + "\n " +
+            " ID=" + sgmt.getId() + "\n" +
+            " Timestep=" + sgmt.getTimeStep() + "\n" +
+            "" );
+    if ( sgmt.getWd() == 0 ) {
+        // Assign default to help with testing
+        //hbstruct.setWD(47);
+        //hbstruct.setID(500);
+        //hbstruct.setStr_name("ARAPAHOE DITCH");
+        hbstruct.setWD(20);
+        hbstruct.setID(812);
+        hbstruct.setStr_name("RIO GRANDE CNL");
+        hbstruct.setStart_year(1950);
+        hbstruct.setEnd_year(2009);
+        hbstruct.setMeas_type("DivTotal");
+        if ( (count %2) == 0 ) {
+            hbstruct.setTime_step("Month");
+        }
+        else if ( (count %3) == 0 ) {
+            hbstruct.setTime_step("Day");
+        }
+        else {
+            hbstruct.setTime_step("Year");
+        }
+    }
+    return hbstruct;
+}
+
+/**
 Read and return the structure list for a division.
 @param div the division to read
 @param returnMeasType if true, return HydroBase_StructMeasTypeView instances, in preparation for joining
@@ -736,6 +829,177 @@ private List<HydroBase_StructMeasTypeView> readStructureList ( int div, boolean 
 }
 
 /**
+Read HydroBase_StructureGeolocStructMeasType objects using web services.
+@param div division of interest (-1 to ignore constraint)
+@param wd water district of interest (-1 to ignore constraint)
+@param measType structure measType to return (e.g., "DivTotal")
+@param cacheIt if true, cache the result, false to not cache (slower but use less memory long-term)
+*/
+private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTypeList(
+    int div, int wd, String measType, boolean cacheIt )
+{   String routine = __class + ".readStructureGeolocMeasTypeList";
+    Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
+    StopWatch sw = new StopWatch();
+    sw.start();
+    if ( measType == null ) {
+        measType = ""; // Web service does not like null
+    }
+    List<HydroBase_StructureGeolocStructMeasType> returnList = new Vector();
+    if ( wd > 0 ) {
+        // Read data for one water district
+        ArrayOfStructureGeolocMeasType sgmtArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureGeolocMeasTypeByWD(
+            wd, measType, getAuthentication(), status );
+        sw.stop();
+        // Check for error
+        if ( (status.value != null) && (status.value.getError() != null) ) {
+            throw new RuntimeException ( "Error getting StructureGeolocMeasType for wd=" + wd +
+                " measType=\"" + measType + "\" (" + status.value.getError().getErrorCode() + ": " +
+                status.value.getError().getExceptionDescription() + ")." );
+        }
+        Message.printStatus(2, routine,
+            "Retrieved " + sgmtArray.getStructureGeolocMeasType().size() + " StructureGeolocMeasType for WD=" + wd +
+            " MeasType=\"" + measType + "\" in " + sw.getSeconds() + " seconds.");
+        List<HydroBase_StructureGeolocStructMeasType> structList = new Vector();
+        int count = 0;
+        for ( StructureGeolocMeasType sgmt : sgmtArray.getStructureGeolocMeasType() ) {
+            structList.add ( newHydroBase_StructureGeolocMeasType( ++count, sgmt ) );
+        }
+        if ( cacheIt ) {
+            __structureGeolocMeasTypeByWDListCache.put( measType + "-" + wd , structList );
+        }
+        // Add to the returned list
+        returnList.addAll ( structList );
+    }
+    return returnList;
+}
+
+/**
+Read time series for the requested time series identifier.
+*/
+public TS readTimeSeries ( String tsidentString, DateTime readStart, DateTime readEnd, String units,
+    boolean readData )
+throws Exception
+{   String routine = __class + ".readTimeSeries";
+    TS ts = TSUtil.newTimeSeries(tsidentString, true);
+    TSIdent tsident = new TSIdent(tsidentString);
+    String dataType = tsident.getType();
+    String timeStep = tsident.getInterval();
+    int [] wdidParts = HydroBase_WaterDistrict.parseWDID(tsident.getLocation());
+    ts.setIdentifier(tsident);
+    // Default the dates to 1900 to current time
+    if ( readStart == null ) {
+        if ( timeStep.equalsIgnoreCase("Month")) {
+            readStart = DateTime.parse("1900-01");
+        }
+        else if ( timeStep.equalsIgnoreCase("Day")) {
+            readStart = DateTime.parse("1900-01-01");
+        }
+        else if ( timeStep.equalsIgnoreCase("Year")) {
+            readStart = DateTime.parse("1900", DateTime.FORMAT_YYYY);
+        }
+    }
+    if ( readEnd == null ) {
+        if ( timeStep.equalsIgnoreCase("Month")) {
+            readEnd = new DateTime (DateTime.DATE_CURRENT|DateTime.PRECISION_MONTH );
+        }
+        else if ( timeStep.equalsIgnoreCase("Day")) {
+            readEnd = new DateTime (DateTime.DATE_CURRENT|DateTime.PRECISION_DAY );
+        }
+        else if ( timeStep.equalsIgnoreCase("Year")) {
+            readEnd = new DateTime (DateTime.DATE_CURRENT|DateTime.PRECISION_YEAR );
+        }
+    }
+    // TODO SAM 2010-08-15 Why do we need to specify dates?  Should be able to get all data
+    ts.setDate1 ( readStart );
+    ts.setDate1Original ( readStart );
+    ts.setDate2 ( readEnd );
+    ts.setDate2Original ( readEnd);
+    ts.allocateDataSpace();
+    ts.allocateDataFlagSpace("", false);
+    ts.setDataUnits(HydroBase_Util.getTimeSeriesDataUnits(null, dataType, timeStep));
+    ts.setDataUnitsOriginal(ts.getDataUnits());
+    
+    // Lookup the StructureGeolocMeasType instance
+    
+    Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
+    
+    StopWatch sw = new StopWatch();
+    sw.start();
+    if ( dataType.equalsIgnoreCase("DivTotal") ) {
+        //ts.setDescription ( hbstruct.getStr_name()) );
+        String wdid = HydroBase_WaterDistrict.formWDID(7, wdidParts[0], wdidParts[1]);
+        if ( timeStep.equalsIgnoreCase("Year") && readData ) {
+            ArrayOfStructureAnnuallyTS ytsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureAnnuallyTSByWDID(
+                wdid, (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
+            sw.stop();
+            // Check for error
+            if ( (status.value != null) && (status.value.getError() != null) ) {
+                throw new RuntimeException ( "Error getting StructureAnnuallyTS for WDID=" + wdid +
+                    " (" + status.value.getError().getErrorCode() + ": " +
+                    status.value.getError().getExceptionDescription() + ")." );
+            }
+            Message.printStatus(2, routine,
+                "Retrieved " + ytsArray.getStructureAnnuallyTS().size() + " StructureAnnuallyTS for wdid=\"" +
+                wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                sw.getSeconds() + " seconds.");
+            // Transfer the data
+            DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+            for ( StructureAnnuallyTS yts : ytsArray.getStructureAnnuallyTS() ) {
+                date.setYear(yts.getIrrYear());
+                ts.setDataValue(date,yts.getAnnAmt());
+            }
+        }
+        else if ( timeStep.equalsIgnoreCase("Month") && readData ) {
+            ArrayOfStructureMonthlyTS mtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureMonthlyTSByWDID(
+                wdid, (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
+            sw.stop();
+            // Check for error
+            if ( (status.value != null) && (status.value.getError() != null) ) {
+                throw new RuntimeException ( "Error getting StructureMonthlyTS for WDID=" + wdid +
+                    " (" + status.value.getError().getErrorCode() + ": " +
+                    status.value.getError().getExceptionDescription() + ")." );
+            }
+            Message.printStatus(2, routine,
+                "Retrieved " + mtsArray.getStructureMonthlyTS().size() + " StructureMonthlyTS for wdid=\"" +
+                wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                sw.getSeconds() + " seconds.");
+            // Transfer the data
+            DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+            for ( StructureMonthlyTS mts : mtsArray.getStructureMonthlyTS() ) {
+                date.setMonth(mts.getCalMonth());
+                date.setYear(mts.getCalYear());
+                ts.setDataValue(date,mts.getAmt());
+            }
+        }
+        else if ( timeStep.equalsIgnoreCase("Day") && readData ) {
+            ArrayOfStructureDailyTS dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureDailyTSByWDID(
+                wdid, readStart.toString(), readEnd.toString(), getAuthentication(), status );
+            sw.stop();
+            // Check for error
+            if ( (status.value != null) && (status.value.getError() != null) ) {
+                throw new RuntimeException ( "Error getting StructureDailyTS for WDID=" + wdid +
+                    " (" + status.value.getError().getErrorCode() + ": " +
+                    status.value.getError().getExceptionDescription() + ")." );
+            }
+            Message.printStatus(2, routine,
+                "Retrieved " + dtsArray.getStructureDailyTS().size() + " StructureDailyTS for wdid=\"" +
+                wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                sw.getSeconds() + " seconds.");
+            // Transfer the data
+            DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+            for ( StructureDailyTS dts : dtsArray.getStructureDailyTS() ) {
+                Message.printStatus(2,routine, "Date is \"" + dts.getMeasDate() + "\"");
+                ts.setDataValue(date,dts.getAmt(),dts.getObs(),0);
+            }
+        }
+    }
+    else {
+        throw new Exception ( "Data type \"" + dataType + "\" is not supported." );
+    }
+    return ts;
+}
+
+/**
 Read a list of objects that contain time series header information.  This is used, for example, to populate the
 time series list area of TSTool and to get a list of time series for the TSTool ReadColoradoWaterHBGuest(Where...)
 command.
@@ -749,7 +1013,7 @@ time step choice, or a simple string "Day", "Month", etc.
 @return a list of objects for the data type.
 @exception if there is an error reading the data.
 */
-private List readTimeSeriesHeaderObjects ( String data_type, String time_step, int div, InputFilter_JPanel ifp )
+private List XreadTimeSeriesHeaderObjects ( String data_type, String time_step, int div, InputFilter_JPanel ifp )
 throws Exception
 {   String routine = "ColoradoWaterHBGuestAPI.readTimeSeriesHeaderObjects", message;
     List tsMeasTypeList = null;
@@ -848,6 +1112,30 @@ throws Exception
         }
     }
     return tsMeasTypeList;
+}
+
+/**
+Read and return the water district list.
+@param service the web service from which to read the water districts.
+@return the water district list
+*/
+private List<HydroBase_WaterDistrict> readWaterDistrictList ()
+{   String routine = __class + ".readWaterDistrictList";
+    Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
+    ArrayOfWaterDistrict districtArray = getColoradoWaterHBGuestSoap12().getHBGuestWaterDistrict(
+        getAuthentication(), status );
+    // Check for error
+    if ( (status.value != null) && (status.value.getError() != null) ) {
+        throw new RuntimeException ( "Error getting water districts (" +
+            status.value.getError().getErrorCode() + ": " + status.value.getError().getExceptionDescription() + ")." );
+    }
+    Message.printStatus(2, routine,
+        "Retrieved " + districtArray.getWaterDistrict().size() + " water districts." );
+    List<HydroBase_WaterDistrict> waterDistrictList = new Vector();
+    for ( WaterDistrict district : districtArray.getWaterDistrict() ) {
+        waterDistrictList.add(new HydroBase_WaterDistrict(district.getDiv(), district.getWd(), district.getWdName()));
+    }
+    return waterDistrictList;
 }
 
 /**
