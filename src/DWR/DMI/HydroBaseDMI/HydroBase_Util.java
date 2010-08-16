@@ -462,6 +462,28 @@ String q10) {
 }
 
 /**
+Convert a HydroBase timestep string to time series notation.
+"Annual" and "Annually" are converted to "Year", "Daily" to "Day", "Monthly" to "Month".
+@param hbTimestep HydroBase timestep used with Meastype.
+@return time series interval or null if not found
+*/
+public final static String convertFromHydroBaseTimeStep ( String hbTimestep )
+{
+    if ( hbTimestep.equalsIgnoreCase("Annual") || hbTimestep.equalsIgnoreCase("Annually") ) {
+        return "Year";
+    }
+    else if ( hbTimestep.equalsIgnoreCase("Monthly") ) {
+        return "Month";
+    }
+    else if ( hbTimestep.equalsIgnoreCase("Daily") ) {
+        return "Day";
+    }
+    else {
+        return null;
+    }
+}
+
+/**
 Convert a data type and data interval from general time series notation to HydroBase meas_type, struct_meas_type
 table convention.  For example, "StreamflowMax", "Month" will be converted to "Streamflow", "Monthly".
 Specific actions are taken for station and structure data and other
