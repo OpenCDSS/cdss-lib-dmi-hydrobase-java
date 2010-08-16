@@ -19,8 +19,7 @@ import java.util.Date;
 
 /**
 Class to store data from the HydroBase rolodex, wdwater, irrig summary, 
-structure decree summary, geoloc and structure
-tables.
+structure decree summary, geoloc and structure tables.
 */
 public class HydroBase_StructMeasTypeView
 extends HydroBase_StructureView {

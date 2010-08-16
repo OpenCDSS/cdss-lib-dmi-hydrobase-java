@@ -15786,12 +15786,12 @@ throws Exception, NoDataFoundException
 	// Make sure that no invalid properties have been specified (this should
 	// also occur in higher level code (e.g., for DMI commands)...
 
-	List valid_props = new Vector ();
+	List<String> valid_props = new Vector ();
 	valid_props.add ( "FillDailyDiv" );
 	valid_props.add ( "FillDailyDivFlag" );
 	valid_props.add ( "FillUsingDivComments" );
 	valid_props.add ( "FillUsingDivCommentsFlag" );
-	List warnings = props.validatePropNames (
+	List<String> warnings = props.validatePropNames (
 					valid_props,	// These are supported
 					null,		// Deprecated props
 					null,		// Deprecated notes
