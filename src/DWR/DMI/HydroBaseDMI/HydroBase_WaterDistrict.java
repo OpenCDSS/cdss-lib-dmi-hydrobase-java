@@ -29,6 +29,7 @@ package DWR.DMI.HydroBaseDMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
+import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.Message.Message;
@@ -185,6 +186,24 @@ public static boolean isWDID ( String wdid )
 	catch ( Exception e ) {
 		return false;
 	}
+}
+
+/**
+Lookup the water districts for a division.
+@param districts list of water districts to search.
+@param div water division to search for
+@return the list of water districts for the division (guaranteed to be non-null). 
+*/
+public static List<HydroBase_WaterDistrict> lookupWaterDistrictsForDivision (
+    List<HydroBase_WaterDistrict> districts, int div )
+{
+    List<HydroBase_WaterDistrict> wdList = new Vector();
+    for ( HydroBase_WaterDistrict wd : districts ) {
+        if ( wd.getDiv() == div ) {
+            wdList.add(wd);
+        }
+    }
+    return wdList;
 }
 
 /**
