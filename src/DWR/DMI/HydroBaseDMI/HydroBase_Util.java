@@ -193,6 +193,18 @@ public final static void addAlternateWellIdentifiers ( HydroBaseDMI dmi, List li
 }
 
 /**
+Add data flag descriptions to daily structure time series.  These will then be available for annotation of
+data flags.
+@param ts time series to update.
+*/
+public static void addDailyTSStructureDataFlagDescriptions ( TS ts )
+{
+    ts.addDataFlagMetadata(new TSDataFlagMetadata("*", "Measured/observed."));
+    ts.addDataFlagMetadata(new TSDataFlagMetadata("U", "User-supplied."));
+    // TODO SAM 2010-08-16 What about E and other values?
+}
+
+/**
 Adjust the struct_meas_type SFUT identifier for the database version as follows.
 If the database is at least the 20061003, then the new G: is included in the identifier
 in the database, and the F: if specified is 7-digits padded to zeros.  Requests using
