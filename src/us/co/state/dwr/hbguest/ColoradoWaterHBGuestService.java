@@ -16,6 +16,7 @@ import DWR.DMI.HydroBaseDMI.HydroBase_WaterDivision;
 import RTi.TS.TS;
 import RTi.TS.TSIdent;
 import RTi.TS.TSUtil;
+import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
@@ -95,6 +96,50 @@ private List<HydroBase_WaterDistrict> __waterDistrictListCache = new Vector();
 Cache of HydroBase water divisions from the service.
 */
 private List<HydroBase_WaterDivision> __waterDivisionListCache = new Vector();
+
+/**
+Filter a List of HydroBase_StructureGeolocStructMeasType according to the input filter.  This is used
+in queries.  The District and Division have already been accounted for.
+*/
+private void filterStructureGeolocMeasType ( List<HydroBase_StructureGeolocStructMeasType>mtList,
+    InputFilter_JPanel ifp )
+{
+    List<InputFilter> constraintList1 = ifp.getInputFilters("Structure ID");
+    Message.printStatus(2, "", "Have " + constraintList1.size() + " Structure ID constraints");
+    List<InputFilter> constraintList2 = ifp.getInputFilters("Structure Name");
+    Message.printStatus(2, "", "Have " + constraintList2.size() + " Structure Name constraints");
+    String [] tokens; // tokens in input filter constraint
+    String valueString; // Value in constraint (string)
+    int valueInt; // Value in constraint (integer)
+    String operatorString; // operator string in constraint
+    HydroBase_StructureGeolocStructMeasType mt;
+    for ( int i = 0; i < mtList.size(); i++ ) {
+        mt = mtList.get(i);
+        /*
+        for ( InputFilter constraint : constraintList1 ) {
+            tokens = constraint.split(";");
+            valueString = tokens[1];
+            valueInt = Integer.parseInt ( valueString );
+            operatorString = tokens[0];
+            if ( !InputFilter.matches(mt.getID(), operatorString, valueInt ) ) {
+                // Data record does not match so remove from list and continue comparing objects.
+                mtList.remove(mt);
+                continue;
+            }
+        }
+        */
+        for ( InputFilter constraint : constraintList2 ) {
+            // TODO SAM 2010-08-16 Need to get the operator dynamically
+            operatorString = "Contains";
+            if ( !constraint.matches(mt.getStr_name(), operatorString, true ) ) {
+                // Data record does not match so remove from list and continue comparing objects.
+                mtList.remove(i);
+                --i;
+                continue;
+            }
+        }
+    }
+}
 
 /**
 Get the authentication header.
@@ -517,8 +562,21 @@ public List<HydroBase_StructureGeolocStructMeasType> getTimeSeriesHeaderObjects 
         }
         // Get the cached objects if available.  If not, read them.  Optimize a bit by handling divisions
         // and districts separately.  District takes precedence over division
+        List<Integer> districtList = new Vector();
         if ( district > 0 ) {
-            String key = getStructureGeolocMeasTypeByWDListCacheKey(dataType, timeStep, district);
+            districtList.add(new Integer(district));
+        }
+        else if ( div > 0 ) {
+            // Get the list of districts to process.  Could process with a division call but try this first
+            // since the code can be reused
+            List<HydroBase_WaterDistrict> wdList = HydroBase_WaterDistrict.lookupWaterDistrictsForDivision(
+                getWaterDistrictList(), div );
+            for ( HydroBase_WaterDistrict wd: wdList ) {
+                districtList.add(new Integer(wd.getWD()));
+            }
+        }
+        for ( Integer districtInList : districtList ) {
+            String key = getStructureGeolocMeasTypeByWDListCacheKey(dataType, timeStep, districtInList);
             List<HydroBase_StructureGeolocStructMeasType> cacheList =
                 __structureGeolocMeasTypeByWDListCache.get(key );
             List<HydroBase_StructureGeolocStructMeasType> dataList = null;
@@ -526,20 +584,18 @@ public List<HydroBase_StructureGeolocStructMeasType> getTimeSeriesHeaderObjects 
                 // No data have been read for the district and measType so do it.  This will actually read
                 // all timesteps also and populate multiple hash tables, however, it will only return the
                 // timestep of interest
-                dataList = readStructureGeolocMeasTypeList(div, district, dataType, timeStep, true);
+                dataList = readStructureGeolocMeasTypeList(div, districtInList, dataType, timeStep, true);
             }
             else {
                 dataList = cacheList;
                 Message.printStatus(2, routine, "Got cached data using key \"" + key + "\" size=" + cacheList.size() );
             }
-            // Add to the returned list
+            // Add to the returned list - this ensures that the cache list itself does not get manipulated
             tslist.addAll( dataList );
-        }
-        else if ( div > 0 ) {
-            // Loop through the districts in the division and append to the returned list
         }
         // Now further filter the list based on the parameters and input filter.  Remove items that do not
         // match the constraints.
+        filterStructureGeolocMeasType ( tslist, ifp );
     }
     else {
         Message.printWarning(3, routine, "Data type \"" + dataType + "\" is not a supported HBGuest type." );
@@ -756,21 +812,25 @@ public boolean isStructureTimeSeriesDataType ( String dataTypeToCheck )
 }
 
 /**
-Lookup a cached HydroBase_StructureGeolocStructMeasType instance.  This is used to set metadata on the time
-series.
-@param dataType structure data type (measType) of interest (e.g., "DivTotal").
+Get a HydroBase_StructureGeolocStructMeasType instance for a WDID.  This is used to set metadata during
+a time series read.  If necessary, the cache for the water district meas types will be read.
+@param measType structure data type (measType) of interest (e.g., "DivTotal").
 @param timeStep time series time step (e.g., "Month" NOT HydroBase "Monthly")
 @param wd water district
 @param id structure identifier within water district
 @return the matching HydroBase_StructureGeolocStructMeasType instance, or null if not matched.
 */
 private HydroBase_StructureGeolocStructMeasType
-    lookupStructureGeolocMeasType ( String dataType, String timeStep, int wd, int id )
+    getStructureGeolocMeasTypeForWDID ( String measType, String timeStep, int wd, int id )
 {
     // First get the cache
     List<HydroBase_StructureGeolocStructMeasType> cacheList =
         __structureGeolocMeasTypeByWDListCache.get(getStructureGeolocMeasTypeByWDListCacheKey(
-            dataType, timeStep, wd));
+            measType, timeStep, wd));
+    if ( cacheList == null ) {
+        // Read the data and initialize the cache
+        cacheList = readStructureGeolocMeasTypeList( -1, wd, measType, timeStep, true );
+    }
     // Next loop through the returned list and find the specific ID match
     for ( HydroBase_StructureGeolocStructMeasType mt: cacheList ) {
         if ( mt.getID() == id ) {
@@ -804,26 +864,9 @@ private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeas
     hbstruct.setData_source("DWR");
     // Meas count not available?
     hbstruct.setMeas_num(sgmt.getMeasNum());
-    hbstruct.setTime_step(HydroBase_Util.convertFromHydroBaseTimeStep(sgmt.getTimeStep()));
-    Message.printStatus(2, "", "Data from service:" +
-            "Name=" + sgmt.getStrName() + "\n " +
-            " WD=" + sgmt.getWd() + "\n " +
-            " ID=" + sgmt.getId() + "\n" +
-            " Timestep=" + sgmt.getTimeStep() + "\n" +
-            "" );
-    if ( sgmt.getWd() == 0 ) {
-        // Assign default to help with testing
-        hbstruct.setWD(47);
-        hbstruct.setID(500);
-        hbstruct.setStr_name("ARAPAHOE DITCH");
-        //hbstruct.setWD(20);
-        //hbstruct.setID(812);
-        //hbstruct.setStr_name("RIO GRANDE CNL");
-        hbstruct.setStart_year(1950);
-        hbstruct.setEnd_year(2009);
-        hbstruct.setMeas_type(measType);
-        hbstruct.setTime_step(timeStep);
-    }
+    // This comes from the calling code, in particular because HydroBase Annual corresponds to
+    // Year and Month data
+    hbstruct.setTime_step(timeStep);
     return hbstruct;
 }
 
@@ -912,6 +955,10 @@ private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTyp
                 }
                 if ( !found ) {
                     timeStepList.add ( timeStepUpper );
+                    if ( timeStepUpper.equals("YEAR") ) {
+                        // Also add "MONTH" because HydroBase Annual refers to monthly and annual values
+                        timeStepList.add ( "MONTH" );
+                    }
                 }
             }
             // Initialize each cache
@@ -921,13 +968,32 @@ private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTyp
                 __structureGeolocMeasTypeByWDListCache.put(key, new Vector() );
             }
         }
-        // Loop through the results (by water district and division) and add to the cached list
+        // Loop through the results (by water district and division) and add to the appropriate cached list
+        // Sometimes multiple records are returned because the results are a join with owners (multiple owners)
+        // Therefore check the results against the previous record and only add if not the same
         List<HydroBase_StructureGeolocStructMeasType> cacheList;
+        String cacheTimeStep;
+        StructureGeolocMeasType sgmtPrev = null;
         for ( StructureGeolocMeasType sgmt : sgmtArray.getStructureGeolocMeasType() ) {
             // Only the timestep varies by the record since the measType and district were passed in
+            // sgmt.getTimeStep() will return "Daily" or "Annual"
+            if ( (sgmtPrev != null) && (sgmt.getWd() == sgmtPrev.getWd()) &&
+                (sgmt.getId() == sgmtPrev.getId()) && sgmt.getTimeStep().equals(sgmtPrev.getTimeStep()) ) {
+                // Critical information is the same as the previous record so skip
+                continue;
+            }
+            cacheTimeStep = HydroBase_Util.convertFromHydroBaseTimeStep(sgmt.getTimeStep());
             cacheList = __structureGeolocMeasTypeByWDListCache.get (getStructureGeolocMeasTypeByWDListCacheKey(
-                measType, HydroBase_Util.convertFromHydroBaseTimeStep(sgmt.getTimeStep()), wd));
-            cacheList.add ( newHydroBase_StructureGeolocMeasType( sgmt, measType, timeStep ) );
+                measType, cacheTimeStep, wd));
+            cacheList.add ( newHydroBase_StructureGeolocMeasType( sgmt, measType, cacheTimeStep ) );
+            if ( cacheTimeStep.equalsIgnoreCase("YEAR") ) {
+                // Also need to save for "MONTH" since in the same HydroBase "Annual" MeasType
+                cacheTimeStep = "MONTH";
+                cacheList = __structureGeolocMeasTypeByWDListCache.get (getStructureGeolocMeasTypeByWDListCacheKey(
+                    measType, cacheTimeStep, wd));
+                cacheList.add ( newHydroBase_StructureGeolocMeasType( sgmt, measType, "Month" ) );
+            }
+            sgmtPrev = sgmt;
         }
         if ( cacheIt ) {
             // Logging...
@@ -966,7 +1032,12 @@ throws Exception
     String timeStep = tsident.getInterval();
     int [] wdidParts = HydroBase_WaterDistrict.parseWDID(tsident.getLocation());
     ts.setIdentifier(tsident);
+    // Lookup the StructureGeolocMeasType instance - used for description and default period (the available)
+    HydroBase_StructureGeolocStructMeasType hbstruct =
+        getStructureGeolocMeasTypeForWDID ( dataType, timeStep, wdidParts[0], wdidParts[1] );
+    String description = ts.getLocation();
     // Default the dates to 1900 to current time
+    // TODO SAM 2010-08-16 Need to set date to available from hbstruct.start/end year
     if ( readStart == null ) {
         if ( timeStep.equalsIgnoreCase("Month")) {
             readStart = DateTime.parse("1900-01");
@@ -998,18 +1069,18 @@ throws Exception
     ts.allocateDataFlagSpace("", false);
     ts.setDataUnits(HydroBase_Util.getTimeSeriesDataUnits(null, dataType, timeStep));
     ts.setDataUnitsOriginal(ts.getDataUnits());
-    
-    // Lookup the StructureGeolocMeasType instance
-    HydroBase_StructureGeolocStructMeasType hbstruct =
-        lookupStructureGeolocMeasType ( dataType, timeStep, wdidParts[0], wdidParts[1] );
+    if ( hbstruct != null ) {
+        description = hbstruct.getStr_name();
+    }
+    ts.setDescription ( description );
     
     Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
     
     StopWatch sw = new StopWatch();
     sw.start();
     if ( dataType.equalsIgnoreCase("DivTotal") ) {
-        ts.setDescription ( hbstruct.getStr_name() );
         String wdid = HydroBase_WaterDistrict.formWDID(7, wdidParts[0], wdidParts[1]);
+        String s, f, u, t, g; // Parts of SFUT - need to check for all nulls to assign DivTotal
         if ( timeStep.equalsIgnoreCase("Year") && readData ) {
             ArrayOfStructureAnnuallyTS ytsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureAnnuallyTSByWDID(
                 wdid, (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
@@ -1027,9 +1098,18 @@ throws Exception
             // Transfer the data
             DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
             for ( StructureAnnuallyTS yts : ytsArray.getStructureAnnuallyTS() ) {
-                date.setYear(yts.getIrrYear());
-                ts.setDataValue(date,yts.getAnnAmt());
+                s = yts.getS();
+                f = yts.getF();
+                u = yts.getU();
+                t = yts.getT();
+                g = yts.getG();
+                if ( (s.length() == 0) && (f.length() == 0) && (u.length() == 0) && (t.length() == 0) &&
+                    (g.length() == 0) ) {
+                    date.setYear(yts.getIrrYear());
+                    ts.setDataValue(date,yts.getAnnAmt());
+                }
             }
+            ts.addToGenesis ( "Annual values are for irrigation year Nov to Oct." );
         }
         else if ( timeStep.equalsIgnoreCase("Month") && readData ) {
             ArrayOfStructureMonthlyTS mtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureMonthlyTSByWDID(
@@ -1048,9 +1128,17 @@ throws Exception
             // Transfer the data
             DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
             for ( StructureMonthlyTS mts : mtsArray.getStructureMonthlyTS() ) {
-                date.setMonth(mts.getCalMonth());
-                date.setYear(mts.getCalYear());
-                ts.setDataValue(date,mts.getAmt());
+                s = mts.getS();
+                f = mts.getF();
+                u = mts.getU();
+                t = mts.getT();
+                g = mts.getG();
+                if ( (s.length() == 0) && (f.length() == 0) && (u.length() == 0) && (t.length() == 0) &&
+                    (g.length() == 0) ) {
+                    date.setMonth(mts.getCalMonth());
+                    date.setYear(mts.getCalYear());
+                    ts.setDataValue(date,mts.getAmt());
+                }
             }
         }
         else if ( timeStep.equalsIgnoreCase("Day") && readData ) {
@@ -1067,12 +1155,30 @@ throws Exception
                 "Retrieved " + dtsArray.getStructureDailyTS().size() + " StructureDailyTS for wdid=\"" +
                 wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
                 sw.getSeconds() + " seconds.");
-            // Transfer the data
-            DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+            // Transfer the data - do simple string parse of date to improve performance
+            // (should work as long as WS spec does not change)
+            DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
+            String dateString;
+            String[] dateParts;
             for ( StructureDailyTS dts : dtsArray.getStructureDailyTS() ) {
-                Message.printStatus(2,routine, "Date is \"" + dts.getMeasDate() + "\"");
-                ts.setDataValue(date,dts.getAmt(),dts.getObs(),0);
+                s = dts.getS();
+                f = dts.getF();
+                u = dts.getU();
+                t = dts.getT();
+                g = dts.getG();
+                if ( (s.length() == 0) && (f.length() == 0) && (u.length() == 0) && (t.length() == 0) &&
+                    (g.length() == 0) ) {
+                    dateString = dts.getMeasDate();
+                    dateParts = dateString.split("/");
+                    // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
+                    Message.printStatus(2,routine,dateString);
+                    date.setMonth(Integer.parseInt(dateParts[0]));
+                    date.setDay(Integer.parseInt(dateParts[1]));
+                    date.setYear(Integer.parseInt(dateParts[2]));
+                    ts.setDataValue(date,dts.getAmt(),dts.getObs(),0);
+                }
             }
+            HydroBase_Util.addDailyTSStructureDataFlagDescriptions ( ts );
         }
         ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
     }

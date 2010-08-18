@@ -3,6 +3,7 @@ package us.co.state.dwr.hbguest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -28,6 +29,8 @@ public class ColoradoWaterHBGuest
     private final static Logger logger = Logger.getLogger(us.co.state.dwr.hbguest.ColoradoWaterHBGuest.class.getName());
 
     static {
+        // Uncomment to debug
+        //logger.setLevel(Level.FINE);
         URL url = null;
         try {
             URL baseUrl;
