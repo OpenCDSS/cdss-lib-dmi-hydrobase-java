@@ -854,7 +854,9 @@ public static PropList createFillConstantPropList( TS inputTS, String value,
 
 /**
 Fill a daily diversion (DivTotal or DivClass) or reservoir (RelTotal, RelClass)
-time series by carrying forward data.  The following rules are applied:
+time series by carrying forward data.  This method is typically only called by internal database
+API code (should be part of data retrieval process, not user-driven data filling).
+The following rules are applied:
 <ol>
 <li>	Filling considers data in blocks of irrigation years (Nov to Oct).</li>
 <li>	If an entire irrigation year is missing, no filling occurs.</li>
@@ -869,10 +871,10 @@ time series by carrying forward data.  The following rules are applied:
 	months of daily data, as per the rules.</li>
 </ol>
 @param ts Time series to fill.
-@param FillDailyDivFlag A one-character value used to flag filled data.
+@param fillDailyDivFlag a string used to flag filled data.
 @exception Exception if there is an error filling the data.
 */
-static void fillTSIrrigationYearCarryForward ( DayTS ts, String FillDailyDivFlag )
+static public void fillTSIrrigationYearCarryForward ( DayTS ts, String fillDailyDivFlag )
 throws Exception
 {	String routine = "HydroBase_Util.fillTSIrrigationYearCarryForward";
 	if ( ts == null ) {
@@ -888,7 +890,7 @@ throws Exception
 	// Allocate fill flag space in the time series, if necessary...
 
 	boolean FillDailyDivFlag_boolean = false;	// Indicate whether to use flag
-	if ( (FillDailyDivFlag != null) && (FillDailyDivFlag.length() > 0) ) {
+	if ( (fillDailyDivFlag != null) && (fillDailyDivFlag.length() > 0) ) {
 		FillDailyDivFlag_boolean = true;
 		// Make sure that the data flag is allocated.
 		ts.allocateDataFlagSpace (
@@ -905,7 +907,7 @@ throws Exception
 		FillStart_DateTime.addYear ( -1 );
 	}
 
-	List messages = new Vector();
+	List<String> messages = new Vector();
 	DateTime date = new DateTime ( FillStart_DateTime );
 	DateTime yearstart_DateTime = null;	// Fill dates for one year
 	DateTime yearend_DateTime = null;
@@ -958,7 +960,7 @@ throws Exception
 					if ( FillDailyDivFlag_boolean ) {
 						// Set the data flag, appending to the old value...
 						tsdata = ts.getDataPoint(date,tsdata);
-						ts.setDataValue ( date, fill_value, (tsdata.getDataFlag().trim() + FillDailyDivFlag), 1 );
+						ts.setDataValue ( date, fill_value, (tsdata.getDataFlag().trim() + fillDailyDivFlag), 1 );
 					}
 					else {
 					    // No data flag...
@@ -984,16 +986,19 @@ throws Exception
 
 	// Add to the genesis...
 
-	int size = messages.size();
-	if ( size > 0 ) {
+	if ( messages.size() > 0 ) {
 		ts.addToGenesis("Filled " + ts.getDate1() + " to " +
 		ts.getDate2() + " using carry forward within irrigation year." );
 		if ( Message.isDebugOn ) {
 			// TODO SAM 2006-04-27 Evaluate whether this should always be saved in the
 			// genesis.  The problem is that the genesis can get very long.
-			for ( int i = 0; i < size; i++ ) {
-				ts.addToGenesis ((String)messages.get(i));
+			for ( String message: messages) {
+				ts.addToGenesis ( message );
 			}
+		}
+		if ( (fillDailyDivFlag != null) && !fillDailyDivFlag.equals("") ) {
+		    ts.addDataFlagMetadata(
+		        new TSDataFlagMetadata(fillDailyDivFlag, "Filled within irrigation year using DWR carry-forward approach."));
 		}
 	}
 }
