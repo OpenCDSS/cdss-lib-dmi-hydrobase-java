@@ -51,7 +51,7 @@ public class ColoradoWaterHBGuest
                     Message.printStatus ( 2, routine, "Loaded ColoradoWaterHBGuest from internet WSDL." );
                 }
             }
-            catch ( Exception e2 ) {
+            catch ( Throwable e2 ) {
                 // As a backup, read the WSDL from the State's web site...
                 baseUrl = us.co.state.dwr.hbguest.ColoradoWaterHBGuest.class.getResource(".");
                 url = new URL(baseUrl, "http://www.dwr.state.co.us/HBGuest/HBGuestWebService.asmx?WSDL");
