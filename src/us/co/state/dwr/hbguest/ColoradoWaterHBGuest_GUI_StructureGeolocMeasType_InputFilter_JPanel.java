@@ -163,12 +163,13 @@ throws Exception
 	input_filters.add(new InputFilter("Stream Mile", "str_mile", "str_mile", 
 		StringUtil.TYPE_DOUBLE, null, null, true));
 		*/
-
+/*
 	input_filters.add ( new InputFilter ( "Structure ID", "id", "id",
 		StringUtil.TYPE_INTEGER, null, null, true ) );
 		
 	input_filters.add ( new InputFilter ( "Structure Name", "str_name", "str_name",
 		StringUtil.TYPE_STRING, null, null, true ) );
+		*/
 	
 	/*
     input_filters.add ( new InputFilter ( "Structure WDID", "wdid", "wdid",
