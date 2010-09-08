@@ -1648,13 +1648,13 @@ in meas_type; however, some time series tables store more than one time series
 data type and the units are constant.  If units are variable and are stored in
 time series data records, return blank.
 @return the data units for a time series data type.
-@param hbdmi Reserved for future use.
+@param hbdmi Reserved for future use (can pass as null).
 @param data_type the time series data type, using time series data conventions
 (e.g., use "StreamflowMax" and "Month" rather than "Streamflow", "Monthly", which is not specific enough).
 @param interval Data interval for time series.
 */
 public static String getTimeSeriesDataUnits ( HydroBaseDMI hbdmi, String data_type, String interval )
-{	String	ACRE = "ACRE", ACFT = "ACFT", CFS = "CFS", DAY = "DAY",
+{	String ACRE = "ACRE", ACFT = "ACFT", CFS = "CFS", DAY = "DAY",
 		FT = "FT", HEAD = "HEAD",
 		IN = "IN", KM = "KM",
 		KPA = "KPA", MJM2 = "MJ/M2", PERSONS = "PERSONS",
