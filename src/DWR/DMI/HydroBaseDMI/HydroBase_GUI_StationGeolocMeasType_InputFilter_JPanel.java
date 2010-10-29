@@ -43,7 +43,7 @@ throws Exception
 	List county_data_Vector = hbdmi.getCountyRef();
 	List county_Vector = new Vector ( county_data_Vector.size() );
 	List county_internal_Vector = new Vector ( county_data_Vector.size());
-	// REVISIT - hard-code for now since no HydroBaseDMI global data.
+	// TODO - hard-code for now since no HydroBaseDMI global data.
 	division_Vector.add ( "1 - South Platte" );
 	division_Vector.add ( "2 - Arkansas" );
 	division_Vector.add ( "3 - Rio Grande" );
@@ -103,7 +103,7 @@ throws Exception
 		"HUC", "geoloc.huc", "huc",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );
-	// REVISIT - ..."Data Source";
+	// TODO - ..."Data Source";
 	input_filters.add ( new InputFilter (
 		"Station Abbreviation", "station.abbrev", "abbrev",
 		StringUtil.TYPE_STRING,
