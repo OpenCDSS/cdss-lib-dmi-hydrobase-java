@@ -1873,6 +1873,12 @@ public static List<String> getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String d
 		data_type.equalsIgnoreCase("FrostDateF32F") || data_type.equalsIgnoreCase("FrostDateF28F") ) {
 		v.add ( Year );
 	}
+    else if ( data_type.equalsIgnoreCase("HumanPopulation") ) {
+        v.add ( Year );
+    }
+    else if ( data_type.equalsIgnoreCase("LivestockHead") ) {
+        v.add ( Year );
+    }
 	else if ( data_type.equalsIgnoreCase("NaturalFlow") ) {
 		v.add ( Month );
 	}
