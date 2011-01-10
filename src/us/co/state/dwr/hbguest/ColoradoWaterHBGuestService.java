@@ -546,13 +546,13 @@ public List<HydroBase_StructureGeolocStructMeasType> getTimeSeriesHeaderObjects 
     if( isStructureTimeSeriesDataType(dataType)){
         // District or division is required from the input filter to improve performance
         // The input string is something like "Equals;1" so get from the last part.
-        List<String> inputDistrict = ifp.getInput("District", false, null );
+        List<String> inputDistrict = ifp.getInput("District", null, false, null );
         int district = -1;
         if ( inputDistrict.size() > 0 ) {
             String districtString = inputDistrict.get(0).split(";")[1];
             district = Integer.parseInt ( districtString );
         }
-        List<String> inputDivision = ifp.getInput("Division", false, null );
+        List<String> inputDivision = ifp.getInput("Division", null, false, null );
         int div = -1;
         if ( inputDivision.size() > 0 ) {
             String divString = inputDivision.get(0).split(";")[1];
