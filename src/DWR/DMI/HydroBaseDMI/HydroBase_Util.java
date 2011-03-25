@@ -2307,21 +2307,18 @@ Lookup a HydroBaseDMI instance using the input name.  This is useful, for exampl
 instance matching at time series identifier that includes the input name.
 @return the HydroBaseDMI instance with an input name that matches the requested
 input name.  The first match is found.
-@param HydroBaseDMI_Vector List of HydroBaseDMI to search.
-@parma input_name HydroBaseDMI input name to find.
+@param hydroBaseDMIList List of HydroBaseDMI to search.
+@param inputName HydroBaseDMI input name to find.
 */
-public static HydroBaseDMI lookupHydroBaseDMI ( List HydroBaseDMI_Vector, String input_name )
-{	int size = 0;
-	if ( HydroBaseDMI_Vector != null ) {
-		size = HydroBaseDMI_Vector.size();
+public static HydroBaseDMI lookupHydroBaseDMI ( List<HydroBaseDMI> hydroBaseDMIList, String inputName )
+{	if ( hydroBaseDMIList == null ) {
+		return null;
 	}
-	HydroBaseDMI dmi = null;
-	for ( int i = 0; i < size; i++ ) {
-		dmi = (HydroBaseDMI)HydroBaseDMI_Vector.get(i);
+	for ( HydroBaseDMI dmi : hydroBaseDMIList ) {
 		if ( dmi == null ) {
 			continue;
 		}
-		if ( dmi.getInputName().equalsIgnoreCase(input_name) ) {
+		if ( dmi.getInputName().equalsIgnoreCase(inputName) ) {
 			return dmi;
 		}
 	}
@@ -2361,10 +2358,10 @@ throws Exception {
 			return sfut_parts;
 		}
 		// Now break each field by ':' and use the second part.  Do not handle more than five parts.
-		List sfut2;
+		List<String> sfut2;
 		for ( int is = 0; (is < sfut_size) && (is < 5); is++ ) {
 			sfut2 = StringUtil.breakStringList ( sfut.get(is) + ":", ":", 0 );
-			sfut_parts[is] = (String)sfut2.get(1);
+			sfut_parts[is] = sfut2.get(1);
 			if ( sfut_parts[is] == null ) {
 				sfut_parts[is] = "";
 			}
@@ -2373,21 +2370,20 @@ throws Exception {
 	else {
 	    // Assume the simple format of: xx:xx:xx:xx
 		String sfut0 = sfut_string + ":";
-		List sfut = StringUtil.breakStringList ( sfut0, ":", 0 );
+		List<String> sfut = StringUtil.breakStringList ( sfut0, ":", 0 );
 		if ( sfut.size() < 4 ) {
 			Message.printWarning ( 2, routine, "SFUT must have 4 parts" );
 			return sfut_parts;
 		}
-		sfut_parts[0] = (String)sfut.get(0);
-		sfut_parts[1] = (String)sfut.get(1);
-		sfut_parts[2] = (String)sfut.get(2);
-		sfut_parts[3] = (String)sfut.get(3);
+		sfut_parts[0] = sfut.get(0);
+		sfut_parts[1] = sfut.get(1);
+		sfut_parts[2] = sfut.get(2);
+		sfut_parts[3] = sfut.get(3);
 		if ( sfut.size() > 4 ) {
 			// G: at end, for database after 20061003
-			sfut_parts[4] = (String)sfut.get(4);
+			sfut_parts[4] = sfut.get(4);
 		}
 	}
-
 	return sfut_parts;
 }
 
