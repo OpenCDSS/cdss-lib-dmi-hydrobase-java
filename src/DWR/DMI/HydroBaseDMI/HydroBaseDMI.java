@@ -15389,11 +15389,11 @@ throws Exception {
 			q.addWhereClause("struct_meas_type.time_step='" + time_step+"'");
 		}
 
-		List wheres = HydroBase_GUI_Util.getWhereClausesFromInputFilter(this, panel);
+		List<String> wheres = HydroBase_GUI_Util.getWhereClausesFromInputFilter(this, panel);
 
 		if (wheres != null) {
 			for (int i = 0; i < wheres.size(); i++) {
-				q.addWhereClause((String)wheres.get(i));
+				q.addWhereClause(wheres.get(i));
 			}
 		}
 		q.addOrderByClause("structure.wd");
