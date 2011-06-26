@@ -1154,8 +1154,7 @@ public PageFormat getPageFormat() {
 	String routine = CLASS + ".getPageFormat";
 	PageFormat pageFormat = PrintUtil.getPageFormat("Letter");
 	try {
-		PrintUtil.setPageFormatOrientation(pageFormat, 
-			PrintUtil.LANDSCAPE);
+		PrintUtil.setPageFormatOrientation(pageFormat, PageFormat.LANDSCAPE);
 		PrintUtil.setPageFormatMargins(pageFormat, .75, .75, .75, .75);
 	}
 	catch (Exception e) {
