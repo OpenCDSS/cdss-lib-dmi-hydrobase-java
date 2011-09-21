@@ -212,9 +212,15 @@ private final String __NO_DATABASES = "[No HydroBase databases available]";
 /**
 Strings that specify how to connect, remote or local.
 */
-private final String	
+private final String
+	// Access has not been supported for years so don't even shown (set __accessDbSupported=false below)
 	__LOCAL = "Use Access Database",
 	__REMOTE = "Use SQL Server Database";
+
+/**
+Whether Microsoft a access database is supported (kept in as a place holder for legacy functionality)
+*/
+private boolean __accessDbSupported = false;
 
 /**
 Whether the Dialog was closed with the cancel button.
@@ -665,7 +671,7 @@ private void connectionSelected(String connection) {
 			int size = __serverNames.size();
 			String s = null;
 			for (int i = 0; i < size; i++) {
-				s = (String)__serverNames.get(i);
+				s = __serverNames.get(i);
 				__hostnameJComboBox.addItem(s);
 
 				// make sure the dmi's server is the selected one, if it is in the list
@@ -716,7 +722,7 @@ private void connectionSelected(String connection) {
 				dmiName = __hbdmi.getDatabaseName();
 			}
 			for (int i = 0; i < size; i++) {
-				odbc = (String)__available_OdbcDsn.get(i);
+				odbc = __available_OdbcDsn.get(i);
 				__odbcDSNJComboBox.addItem(odbc);
 
 				// Try to default to the existing DMI selection
@@ -969,7 +975,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 			String host = null;
 
 			for (int i = 0; i < size; i++ ) {
-				host = (String)__serverNames.get(i);
+				host = __serverNames.get(i);
 				if (host.equalsIgnoreCase(__dbhost)) {
 					found = true;
 					break;
@@ -1054,14 +1060,23 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	
 	if (__serverNames.size() == 0) {
 		// Only the local connection is available
-		__connectionJComboBox.addItem(__LOCAL);
-		__connectionJComboBox.setSelectedIndex(0);
+		if ( __accessDbSupported ) {
+			__connectionJComboBox.addItem(__LOCAL);
+			__connectionJComboBox.setSelectedIndex(0);
+		}
 	}
 	else {	
 		// Local and remote hosts (remote will be the default)
-		__connectionJComboBox.addItem(__LOCAL);
+		if ( __accessDbSupported ) {
+			__connectionJComboBox.addItem(__LOCAL);
+		}
 		__connectionJComboBox.addItem(__REMOTE);
-		__connectionJComboBox.setSelectedIndex(1);
+		if ( __accessDbSupported ) {
+			__connectionJComboBox.setSelectedIndex(1);
+		}
+		else {
+			__connectionJComboBox.setSelectedIndex(0);
+		}
 	}
 	
    	JGUIUtil.addComponent(northWJPanel, __connectionJComboBox, 
@@ -1089,14 +1104,14 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Add the data source (only enabled if using a local database).
 	// Get the data source names from the system.
 
-    List available_OdbcDsn = DMIUtil.getDefinedOdbcDsn(true);
+    List<String> available_OdbcDsn = DMIUtil.getDefinedOdbcDsn(true);
 	int size = available_OdbcDsn.size();
 	String s = null;
 	__available_OdbcDsn = new Vector();
 
 	// Only add DSNs that have "HydroBase" in the name.
 	for (int i = 0; i < size; i++) {
-		s = (String)available_OdbcDsn.get(i);
+		s = available_OdbcDsn.get(i);
 		if (StringUtil.indexOfIgnoreCase(s, __DEFAULT_ODBC_DSN, 0)> -1){
 			__available_OdbcDsn.add(s);
 		}
@@ -1111,7 +1126,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	if (__defaultOdbcDsn != null) {
 		boolean found = false;
 		for (int i = 0; i < size; i++) {
-			s = (String)__available_OdbcDsn.get(i);
+			s = __available_OdbcDsn.get(i);
 			if (s.equals(__defaultOdbcDsn)) {
 				found = true;
 			}
@@ -1126,7 +1141,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	String longest_odbc = "Unable to Determine";
 	String odbc;
 	for (int i = 0; i < size; i++) {
-		odbc = (String)__available_OdbcDsn.get(i);
+		odbc = __available_OdbcDsn.get(i);
 		if (odbc.length() > longest_odbc.length()) {
 			longest_odbc = odbc;
 		}
@@ -1507,10 +1522,10 @@ throws Exception {
 
 	try {	
 		if (__connectionJComboBox.getSelectedItem().equals(__LOCAL)) {
-             message = "Establishing local connection...";
+             message = "Establishing Microsoft Access connection...";
 		}
 		else {	
-			message = "Establishing remote connection...";
+			message = "Establishing SQL Server connection...";
 		}
 		__statusJTextField.setText(message);
 		hbdmi.open();
@@ -1599,7 +1614,7 @@ private void readConfigurationFile() {
 	int size = __serverNames.size();
 	String s = null;
 	for (int i = 0; i < size; i++) {
-		s = (String)__serverNames.get(i);
+		s = __serverNames.get(i);
 		if (s.equalsIgnoreCase("local")) {
 			s = IOUtil.getProgramHost();
 		}
