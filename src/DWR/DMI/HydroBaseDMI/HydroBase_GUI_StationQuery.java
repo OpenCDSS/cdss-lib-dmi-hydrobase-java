@@ -326,6 +326,7 @@ private SimpleJComboBox
 	__dataTypeJComboBox,
 	__timeStepJComboBox,
 	__waterDistrictJComboBox;
+
 /**
 String for holding the selected data type.
 */
@@ -1295,42 +1296,42 @@ Show/hide the frame, resetting the choices.
 public void setVisible(boolean state) {
 	String routine = "HydroBase_GUI_StationQuery.setVisible";
 	if (state) {
-    clearWorksheet();
-    __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);
-    // TODO (JTS - 2005-01-10) select station id for the filter
-	__dataTypeJComboBox.select(__DTYP_STREAM);
-	dataTypeJComboBoxClicked();
-
-	// set up current choices for data type and time step
-	__dtypeJComboBoxString = parseDataType(__dataTypeJComboBox.getSelected().trim());
-	__timestepJComboBoxString = __timeStepJComboBox.getSelected();
-	if (__timestepJComboBoxString != null) {
-		__timestepJComboBoxString = __timestepJComboBoxString.trim();
-	}
-    ready();
-	try {
-	HydroBase_GUI_Util.setWaterDistrictJComboBox(__dmi, 
-		__waterDistrictJComboBox, null, true, false, true);
-	}
-	catch (Exception e) {
-		Message.printWarning (2, routine, e);
-	}		
-	if (__worksheet.getRowCount()> 0) {
-		__printJButton.setEnabled(true);
-		__exportJButton.setEnabled(true);
-	}
-	else {	
-		__printJButton.setEnabled(false);
-		__exportJButton.setEnabled(false);
-	}
-	if (__geoview_ui.isMapVisible() && (__worksheet.getRowCount() > 0) 
-		&& __geoview_ui.getGeoViewJPanel().hasAppLayerType(getVisibleAppLayerType())) {
-    		__selectOnMapJButton.setEnabled(true);
-	}
-	else {	
-		__selectOnMapJButton.setEnabled(false);
-	}
-	enableMapLayers();
+	    clearWorksheet();
+	    __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);
+	    // TODO (JTS - 2005-01-10) select station id for the filter
+		__dataTypeJComboBox.select(__DTYP_STREAM);
+		dataTypeJComboBoxClicked();
+	
+		// set up current choices for data type and time step
+		__dtypeJComboBoxString = parseDataType(__dataTypeJComboBox.getSelected().trim());
+		__timestepJComboBoxString = __timeStepJComboBox.getSelected();
+		if (__timestepJComboBoxString != null) {
+			__timestepJComboBoxString = __timestepJComboBoxString.trim();
+		}
+	    ready();
+		try {
+			HydroBase_GUI_Util.setWaterDistrictJComboBox(__dmi, 
+			__waterDistrictJComboBox, null, true, false, true);
+		}
+		catch (Exception e) {
+			Message.printWarning (2, routine, e);
+		}		
+		if (__worksheet.getRowCount()> 0) {
+			__printJButton.setEnabled(true);
+			__exportJButton.setEnabled(true);
+		}
+		else {	
+			__printJButton.setEnabled(false);
+			__exportJButton.setEnabled(false);
+		}
+		if (__geoview_ui.isMapVisible() && (__worksheet.getRowCount() > 0) 
+			&& __geoview_ui.getGeoViewJPanel().hasAppLayerType(getVisibleAppLayerType())) {
+	    		__selectOnMapJButton.setEnabled(true);
+		}
+		else {	
+			__selectOnMapJButton.setEnabled(false);
+		}
+		enableMapLayers();
     }
 	super.setVisible(state);
 }
@@ -1399,9 +1400,9 @@ Submits a query and display the results.
 */
 private void submitQuery() 
 throws Exception {
-        // initialize variables
-        String routine = "HydroBase_GUI_StationQuery.submitQuery()";
-        __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);
+    // initialize variables
+    String routine = "HydroBase_GUI_StationQuery.submitQuery()";
+    __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);
 
 	// set these when user clicks on getDataClicked because these
 	// are the appropriate choices for whatever is displayed then, in
@@ -1435,7 +1436,8 @@ throws Exception {
 	String measType = __dtypeJComboBoxString;
 
 	// Make the structure window go to the top so that it is obvious what is going on.
-	setVisible(true);
+	//FIXME SAM 2011-09-19 this causes the choices to reset to the initial defaults
+	//setVisible(true);
 	toFront();
 
     String status = "Please Wait... Retrieving Data";
