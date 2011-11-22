@@ -164,6 +164,7 @@ private List __records;
 /**
 Constructor; private so that it can't be used.
 */
+@SuppressWarnings("unused")
 private HydroBase_GUI_WISDiagram() {}
 
 /**

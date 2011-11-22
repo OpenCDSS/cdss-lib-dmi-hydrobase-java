@@ -135,6 +135,7 @@ private SimpleJList __list = null;
 /**
 Private to avoid use.
 */
+@SuppressWarnings("unused")
 private HydroBase_GUI_SelectTSProduct() {}
 
 /**
