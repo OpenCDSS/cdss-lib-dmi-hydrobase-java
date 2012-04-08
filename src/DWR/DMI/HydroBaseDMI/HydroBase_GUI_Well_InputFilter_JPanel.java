@@ -41,8 +41,8 @@ Constructor.
 entry text field is clicked in.  Cannot be null.
 */
 public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener listener) {
-	String rd = dmi.getRightIdDelim();
-	String ld = dmi.getLeftIdDelim();
+	String rd = dmi.getFieldRightEscape();
+	String ld = dmi.getFieldLeftEscape();
 
 	InputFilter filter = null;
 	List filters = new Vector();

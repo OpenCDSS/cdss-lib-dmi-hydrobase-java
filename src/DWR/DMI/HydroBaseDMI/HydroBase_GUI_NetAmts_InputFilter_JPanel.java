@@ -63,8 +63,8 @@ Sets up filters for regular GUI operation when query by example must be done.
 entry text field is clicked in.  Cannot be null.
 */
 private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
-	String rd = dmi.getRightIdDelim();
-	String ld = dmi.getLeftIdDelim();
+	String rd = dmi.getFieldRightEscape();
+	String ld = dmi.getFieldLeftEscape();
 
 	InputFilter filter = null;
 
@@ -209,8 +209,8 @@ Sets up filters for GUI operation when query by example cannot be done.
 entry text field is clicked in.  Cannot be null.
 */
 private void setupStructureFilter(HydroBaseDMI dmi) {
-	String rd = dmi.getRightIdDelim();
-	String ld = dmi.getLeftIdDelim();
+	String rd = dmi.getFieldRightEscape();
+	String ld = dmi.getFieldLeftEscape();
 
 	InputFilter filter = null;
 

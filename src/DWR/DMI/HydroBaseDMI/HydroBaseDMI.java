@@ -6081,8 +6081,8 @@ public String convertCounty(String where) {
 		return where;
 	}
 	
-	String rd = getRightIdDelim();
-	String ld = getLeftIdDelim();
+	String rd = getFieldRightEscape();
+	String ld = getFieldLeftEscape();
 	
 	String s = "";
 	

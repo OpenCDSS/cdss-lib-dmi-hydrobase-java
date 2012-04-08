@@ -36,8 +36,8 @@ Constructor.
 @param dmi the dmi to use to connect to the database.  Cannot be null.
 */
 public HydroBase_GUI_CASSCropStats_InputFilter_JPanel(HydroBaseDMI dmi) {
-	String rd = dmi.getRightIdDelim();
-	String ld = dmi.getLeftIdDelim();
+	String rd = dmi.getFieldRightEscape();
+	String ld = dmi.getFieldLeftEscape();
 
 	List filters = new Vector();
 	

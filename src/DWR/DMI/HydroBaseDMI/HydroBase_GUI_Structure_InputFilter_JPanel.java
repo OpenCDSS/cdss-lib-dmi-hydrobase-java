@@ -65,8 +65,8 @@ entry text field is clicked in.  Cannot be null.
 */
 private void setupOldFilters(HydroBaseDMI dmi, 
 MouseListener listener) {
-	String rd = dmi.getRightIdDelim();
-	String ld = dmi.getLeftIdDelim();
+	String rd = dmi.getFieldRightEscape();
+	String ld = dmi.getFieldLeftEscape();
 
 	List filters = new Vector();
 
@@ -216,8 +216,8 @@ entry text field is clicked in.  Cannot be null.
 */
 private void setupStoredProceduresFilters(HydroBaseDMI dmi, 
 MouseListener listener) {
-	String rd = dmi.getRightIdDelim();
-	String ld = dmi.getLeftIdDelim();
+	String rd = dmi.getFieldRightEscape();
+	String ld = dmi.getFieldLeftEscape();
 
 	List filters = new Vector();
 
