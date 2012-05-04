@@ -6,6 +6,8 @@ import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.Vector;
 
+import us.co.state.dwr.hbguest.datastore.ColoradoWaterHBGuestDataStore;
+
 import DWR.DMI.HydroBaseDMI.HydroBase_WaterDistrict;
 import DWR.DMI.HydroBaseDMI.HydroBase_WaterDivision;
 import RTi.Util.GUI.InputFilter;
@@ -17,36 +19,44 @@ public class ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel
 extends InputFilter_JPanel
 implements MouseListener
 {
+    
+/**
+Service object for this panel
+*/
+private ColoradoWaterHBGuestDataStore __dataStore = null;
 
 /**
 Create an InputFilter_JPanel for ColoradoWaterHBGuest web services queries, which will return
 HydroBase_StructureGeolocStructMeasType in the Java API, consistent with HydroBase.  This is used by TSTool.
 Default filter panel properties are used (e.g., 3 filter groups).
 @return a JPanel containing InputFilter instances for HydroBase_StructureGeolocStructMeasType queries.
-@param hdmi HydroBaseDMI instance.
+@param dataStore ColoradoWaterHBGuestDataStore instance.
 @param include_SFUT If true, include a filter for the SFUT.
 @exception Exception if there is an error.
 */
 public ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel (
-    ColoradoWaterHBGuestService service, boolean include_SFUT )
+    ColoradoWaterHBGuestDataStore dataStore, boolean include_SFUT )
 throws Exception
-{	this ( service, include_SFUT, -1, -1 );
+{	this ( dataStore, include_SFUT, -1, -1 );
 }
 
 /**
 Create an InputFilter_JPanel for ColoradoWaterHBGuest web services queries, which will return
 HydroBase_StructureGeolocStructMeasType in the Java API, consistent with HydroBase.  This is used by TSTool.
 @return a JPanel containing InputFilter instances for HydroBase_StructureGeolocStructMeasType queries.
-@param hdmi HydroBaseDMI instance.
+@param dataStore ColoradoWaterHBGuestDataStore instance.
 @param include_SFUT If true, include a filter for the SFUT.
-@param filter_props Properties to configure the input filter, passed to the base class.
+@param numFilterGroups the number of filter groups to display
+@param numWhereChoicesToDisplay the number of where choices to display in each filter
 @exception Exception if there is an error.
 */
 public ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel (
-    ColoradoWaterHBGuestService service, boolean include_SFUT,
+    ColoradoWaterHBGuestDataStore dataStore, boolean include_SFUT,
 	int numFilterGroups, int numWhereChoicesToDisplay )
 throws Exception
-{	// Fill in the county for input filters...
+{	__dataStore = dataStore;
+    ColoradoWaterHBGuestService service = dataStore.getColoradoWaterHBGuestService();
+    // Fill in the county for input filters...
     /*
 	List county_data_Vector = hbdmi.getCountyRef();
 	List county_Vector = new Vector ( county_data_Vector.size() );
@@ -198,6 +208,11 @@ throws Exception
 	}
 	setToolTipText ( "<html>ColoradoWaterHBGuest queries can be filtered based on structure data.</html>" );
 	setInputFilters ( input_filters, numFilterGroups, numWhereChoicesToDisplay );
+}
+
+public ColoradoWaterHBGuestDataStore getColoradoWaterHBGuestDataStore ()
+{
+    return __dataStore;
 }
 
 public void mouseClicked(MouseEvent event) {}

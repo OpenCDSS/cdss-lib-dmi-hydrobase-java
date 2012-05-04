@@ -1,5 +1,6 @@
 package us.co.state.dwr.hbguest;
 
+import java.net.MalformedURLException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -40,9 +41,10 @@ public class ColoradoWaterHBGuestService extends ColoradoWaterHBGuest
 /**
 Constructor.
 */
-public ColoradoWaterHBGuestService ()
+public ColoradoWaterHBGuestService ( String wsdlLocation )
+throws MalformedURLException
 {
-    super();
+    super( wsdlLocation );
     // Turn on whether to dump requests...
     //System.setProperty( "com.sun.xml.ws.transport.http.HttpAdapter.dump", "true" );
 }
@@ -69,7 +71,7 @@ Singleton for the once instance of this class.  In the future a more complex app
 to allow multiple instances, for example pointing to different service providers (e.g., different
 versions of the database).
 */
-private static ColoradoWaterHBGuestService __serviceSingleton = new ColoradoWaterHBGuestService();
+//private static ColoradoWaterHBGuestService __serviceSingleton = new ColoradoWaterHBGuestService();
 
 /**
 Cache of station measType objects.
@@ -163,10 +165,12 @@ public HBAuthenticationHeader getAuthentication ()
 /**
 Return the singleton instance of this class.
 */
+/*
 public static ColoradoWaterHBGuestService getService()
 {
     return __serviceSingleton;
 }
+*/
 
 /**
 Return the cached list of station data types, for all meas types.

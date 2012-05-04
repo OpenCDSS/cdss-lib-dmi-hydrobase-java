@@ -3,7 +3,6 @@ package us.co.state.dwr.hbguest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -64,10 +63,33 @@ public class ColoradoWaterHBGuest
         COLORADOWATERHBGUEST_WSDL_LOCATION = url;
     }    
 
+    /**
+    Constructor version that calls the parent constructor that comes with the auto-generated SOAP framework.
+    This is generally only called by other versions of the constructor.
+    @param wsdlLocation
+    @param serviceName
+    */
     public ColoradoWaterHBGuest(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
+    
+    /**
+    Construct a SOAP object to allow API interaction.
+    This version is called when constructing a data store.
+    @param wsdlLocation the WSDL location for the ColoradoWaterHBGuest web service
+    @throws MalformedURLException
+    */
+    public ColoradoWaterHBGuest(String wsdlLocation)
+    throws MalformedURLException
+    {
+        super(new URL(us.co.state.dwr.hbguest.ColoradoWaterHBGuest.class.getResource("."),wsdlLocation),
+            new QName("http://www.dwr.state.co.us/", "ColoradoWaterHBGuest"));
+    }
 
+    /**
+    This version of the constructor hard-codes the default web service location - used in older code
+    that did not allow the WSDL URL to be specified.  This will break if the State of CO moves their service.
+    */
     public ColoradoWaterHBGuest() {
         super(COLORADOWATERHBGUEST_WSDL_LOCATION, new QName("http://www.dwr.state.co.us/", "ColoradoWaterHBGuest"));
     }
