@@ -490,6 +490,7 @@ public final static String convertFromHydroBaseTimeStep ( String hbTimestep )
     else if ( hbTimestep.equalsIgnoreCase("Daily") ) {
         return "Day";
     }
+    // TODO SAM 2012-05-04 Not sure what to do about "Random" since not always daily?
     else {
         return null;
     }

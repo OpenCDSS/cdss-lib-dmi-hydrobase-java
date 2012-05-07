@@ -470,7 +470,7 @@ public List<String> getTimeSeriesDataTypes ( int include_types, boolean add_grou
         //types.add ( prefix + "DivComment" );// OK - will use
         types.add ( prefix + "DivTotal" );// SFUT as the sub data type.
         //types.add ( prefix + "IDivClass" );
-        //types.add ( prefix + "IDivTotal" );
+        types.add ( prefix + "IDivTotal" );
     }
     if ( (include_types&HydroBase_Util.DATA_TYPE_STRUCTURE_RESERVOIR) > 0 ) {
         prefix = "";
@@ -478,17 +478,17 @@ public List<String> getTimeSeriesDataTypes ( int include_types, boolean add_grou
             prefix = "Reservoir - ";
         }
         //types.add ( prefix + "IRelClass" );
-        //types.add ( prefix + "IRelTotal" );
+        types.add ( prefix + "IRelTotal" );
         //types.add ( prefix + "RelClass" );
         //types.add ( prefix + "RelComment" );
-        //types.add ( prefix + "RelTotal" );
-        //types.add ( prefix + "ResEOM" );
-        //types.add ( prefix + "ResEOY" );
-        //types.add ( prefix + "ResMeasElev" );
-        //types.add ( prefix + "ResMeasEvap" );
-        //types.add ( prefix + "ResMeasFill" );
-        //types.add ( prefix + "ResMeasRelease" );
-        //types.add ( prefix + "ResMeasStorage" );
+        types.add ( prefix + "RelTotal" );
+        types.add ( prefix + "ResEOM" );
+        types.add ( prefix + "ResEOY" );
+        types.add ( prefix + "ResMeasElev" );
+        types.add ( prefix + "ResMeasEvap" );
+        types.add ( prefix + "ResMeasFill" );
+        types.add ( prefix + "ResMeasRelease" );
+        types.add ( prefix + "ResMeasStorage" );
     }
     /* Not yet supported
     if ( (include_types&HydroBase_Util.DATA_TYPE_STRUCTURE_WELL) > 0 ) {
@@ -850,7 +850,12 @@ private HydroBase_StructureGeolocStructMeasType
 /**
 Helper method to create a HydroBase_StructureGeolocStructMeasType object from a web service
 StructureGeolocMeasType object.
-@param sgmt service object
+@param sgmt web service object
+@param measType the measType to use with TSTool and other software, which may be different from the
+HydroBase measType, needed, for example because HydroBase measType may not be unique enough
+(ResMeas vs. ResMeasElev)
+@param timeStep the timeStep to use with TSTool and other software, which is likely different than
+HydroBase; for example use "Day" instead of "Daily"
 @return HydroBase_StructureGeolocStructMeasType instance constructed from service object
 */
 private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeasType (
@@ -866,7 +871,7 @@ private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeas
     // Meastype
     hbstruct.setStart_year(sgmt.getStartYear());
     hbstruct.setEnd_year(sgmt.getEndYear());
-    hbstruct.setMeas_type(sgmt.getMeasType());
+    hbstruct.setMeas_type(measType);
     // FIXME SAM 2010-08-13 Need to not hard-code this
     hbstruct.setData_source("DWR");
     // Meas count not available?
@@ -932,28 +937,41 @@ private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTyp
         measType = ""; // Web service does not like null
     }
     List<HydroBase_StructureGeolocStructMeasType> returnList = new Vector();
+    String measTypeHydroBase = measType; // Only used for query but all else uses more specific data type
+    if ( measType.toUpperCase().startsWith("RESMEAS") ) {
+        // Replace TSTool ResMeasXXXX with ResMeas since HydroBase has multiple data types in one table
+        measTypeHydroBase = measType.substring(0,7);
+    }
     if ( wd > 0 ) {
         // Read data for one water district
         ArrayOfStructureGeolocMeasType sgmtArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureGeolocMeasTypeByWD(
-            wd, measType, getAuthentication(), status );
+            wd, measTypeHydroBase, getAuthentication(), status );
         sw.stop();
         // Check for error
         if ( (status.value != null) && (status.value.getError() != null) ) {
             throw new RuntimeException ( "Error getting StructureGeolocMeasType for wd=" + wd +
-                " measType=\"" + measType + "\" (" + status.value.getError().getErrorCode() + ": " +
+                " measType=\"" + measTypeHydroBase + "\" (" + status.value.getError().getErrorCode() + ": " +
                 status.value.getError().getExceptionDescription() + ")." );
         }
         Message.printStatus(2, routine,
             "Retrieved " + sgmtArray.getStructureGeolocMeasType().size() + " StructureGeolocMeasType for WD=" + wd +
             " MeasType=\"" + measType + "\" in " + sw.getSeconds() + " seconds.");
-        // Loop through once and get the list of unique timesteps
+        // Loop through once and get the list of unique timesteps so a cache can be created for each
         List<String> timeStepList = new Vector();
         boolean found;
+        String hbTimeStep;
         String timeStepUpper;
         if ( cacheIt ) {
             for ( StructureGeolocMeasType sgmt : sgmtArray.getStructureGeolocMeasType() ) {
                 found = false;
-                timeStepUpper = HydroBase_Util.convertFromHydroBaseTimeStep(sgmt.getTimeStep()).toUpperCase();
+                hbTimeStep = sgmt.getTimeStep();
+                if ( hbTimeStep.equalsIgnoreCase("Random") ) {
+                    // For reservoir measurements (Day) and well level (also day?)
+                    timeStepUpper = timeStep.toUpperCase();
+                }
+                else {
+                    timeStepUpper = HydroBase_Util.convertFromHydroBaseTimeStep(hbTimeStep).toUpperCase();
+                }
                 for ( String timeStepInList: timeStepList ) {
                     if ( timeStepInList.equals(timeStepUpper) ) {
                         found = true;
@@ -989,7 +1007,14 @@ private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTyp
                 // Critical information is the same as the previous record so skip
                 continue;
             }
-            cacheTimeStep = HydroBase_Util.convertFromHydroBaseTimeStep(sgmt.getTimeStep());
+            hbTimeStep = sgmt.getTimeStep();
+            if ( hbTimeStep.equalsIgnoreCase("Random") ) {
+                // For reservoir measurements (Day) and well level (also day?)
+                cacheTimeStep = "Day";
+            }
+            else {
+                cacheTimeStep = HydroBase_Util.convertFromHydroBaseTimeStep(hbTimeStep);
+            }
             cacheList = __structureGeolocMeasTypeByWDListCache.get (getStructureGeolocMeasTypeByWDListCacheKey(
                 measType, cacheTimeStep, wd));
             cacheList.add ( newHydroBase_StructureGeolocMeasType( sgmt, measType, cacheTimeStep ) );
@@ -1028,6 +1053,12 @@ private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTyp
 
 /**
 Read time series for the requested time series identifier.
+@param tsidentString time series identifier string, as per ColoradoWaterHBGuest data store documentation
+@param readStart starting date/time for period to read
+@param readEnd ending date/time for period to read
+@param units requested data units (currently ignored - no conversion occurs)
+@param readData if true read the data records; if false initialize the time series header information but
+don't read data records
 */
 public TS readTimeSeries ( String tsidentString, DateTime readStart, DateTime readEnd, String units,
     boolean readData )
@@ -1040,8 +1071,13 @@ throws Exception
     int [] wdidParts = HydroBase_WaterDistrict.parseWDID(tsident.getLocation());
     ts.setIdentifier(tsident);
     // Lookup the StructureGeolocMeasType instance - used for description and default period (the available)
+    String measTypeHydroBase = dataType;
+    if ( dataType.toUpperCase().startsWith("RESMEAS") ) {
+        // Replace TSTool ResMeasXXXX with ResMeas since HydroBase has multiple data types in one table
+        measTypeHydroBase = dataType.substring(0,7);
+    }
     HydroBase_StructureGeolocStructMeasType hbstruct =
-        getStructureGeolocMeasTypeForWDID ( dataType, timeStep, wdidParts[0], wdidParts[1] );
+        getStructureGeolocMeasTypeForWDID ( measTypeHydroBase, timeStep, wdidParts[0], wdidParts[1] );
     if ( hbstruct == null ) {
         String message =
             "Unable to get StructureGeolocMeasType information for WDID \"" + tsident.getLocation() + "\" - " +
@@ -1103,98 +1139,217 @@ throws Exception
     
     StopWatch sw = new StopWatch();
     sw.start();
-    if ( dataType.equalsIgnoreCase("DivTotal") ) {
+    // Whether the time series data type, interval, etc. are handled; 
+    // however, there may still be errors (no data in period, etc.) that lead to exceptions
+    boolean tsIsHandled = false;
+    if ( dataType.equalsIgnoreCase("DivTotal") ||
+        dataType.equalsIgnoreCase("IDivTotal") ||
+        dataType.equalsIgnoreCase("RelTotal") ||
+        dataType.equalsIgnoreCase("IRelTotal") ||
+        dataType.equalsIgnoreCase("ResEOM") ||
+        dataType.equalsIgnoreCase("ResEOY") ||
+        dataType.equalsIgnoreCase("ResMeasElev") ||
+        dataType.equalsIgnoreCase("ResMeasEvap") ||
+        dataType.equalsIgnoreCase("ResMeasFill") ||
+        dataType.equalsIgnoreCase("ResMeasRelease") ||
+        dataType.equalsIgnoreCase("ResMeasStorage") ) {
+        // Structure queries...
         String wdid = HydroBase_WaterDistrict.formWDID(7, wdidParts[0], wdidParts[1]);
         if ( timeStep.equalsIgnoreCase("Year") && readData ) {
-            ArrayOfStructureAnnuallyTS ytsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureAnnuallyTSByMeasNum(
-                hbstruct.getMeas_num(), (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
-            sw.stop();
-            // Check for error
-            if ( (status.value != null) && (status.value.getError() != null) ) {
-                throw new RuntimeException ( "Error getting StructureAnnuallyTS for WDID=" + wdid +
-                    " (" + status.value.getError().getErrorCode() + ": " +
-                    status.value.getError().getExceptionDescription() + ")." );
+            if ( (dataType.equalsIgnoreCase("DivTotal") ||
+                dataType.equalsIgnoreCase("IDivTotal") ||
+                dataType.equalsIgnoreCase("RelTotal") ||
+                dataType.equalsIgnoreCase("IRelTotal") ||
+                dataType.equalsIgnoreCase("ResEOM") ||
+                dataType.equalsIgnoreCase("ResEOY")) ) {
+                // Get data from structure time series
+                tsIsHandled = true;
+                ArrayOfStructureAnnuallyTS ytsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureAnnuallyTSByMeasNum(
+                    hbstruct.getMeas_num(), (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
+                sw.stop();
+                // Check for error
+                if ( (status.value != null) && (status.value.getError() != null) ) {
+                    throw new RuntimeException ( "Error getting StructureAnnuallyTS for WDID=" + wdid +
+                        " (" + status.value.getError().getErrorCode() + ": " +
+                        status.value.getError().getExceptionDescription() + ")." );
+                }
+                Message.printStatus(2, routine,
+                    "Retrieved " + ytsArray.getStructureAnnuallyTS().size() + " StructureAnnuallyTS for wdid=\"" +
+                    wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    sw.getSeconds() + " seconds.");
+                // Transfer the data
+                DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+                for ( StructureAnnuallyTS yts : ytsArray.getStructureAnnuallyTS() ) {
+                    date.setYear(yts.getIrrYear());
+                    ts.setDataValue(date,yts.getAnnAmt());
+                }
+                ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
+                ts.addToGenesis ( "Annual values are for irrigation year Nov to Oct." );
             }
-            Message.printStatus(2, routine,
-                "Retrieved " + ytsArray.getStructureAnnuallyTS().size() + " StructureAnnuallyTS for wdid=\"" +
-                wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
-                sw.getSeconds() + " seconds.");
-            // Transfer the data
-            DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
-            for ( StructureAnnuallyTS yts : ytsArray.getStructureAnnuallyTS() ) {
-                date.setYear(yts.getIrrYear());
-                ts.setDataValue(date,yts.getAnnAmt());
-            }
-            ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
-            ts.addToGenesis ( "Annual values are for irrigation year Nov to Oct." );
         }
         else if ( timeStep.equalsIgnoreCase("Month") && readData ) {
-            ArrayOfStructureMonthlyTS mtsArray = null;
-            // Read using the Measnum, which allows direct access to the time series of interest.
-            mtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureMonthlyTSByMeasNum(
-                hbstruct.getMeas_num(), (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
-            // TODO Evaluate whether the following should be used in any cases
-            // The following returns all meas types, DivTotal and classes, which is a performance hit
-            //mtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureMonthlyTSByWDID(
-            //    wdid, (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
-            sw.stop();
-            // Check for error
-            if ( (status.value != null) && (status.value.getError() != null) ) {
-                throw new RuntimeException ( "Error getting StructureMonthlyTS for WDID=" + wdid +
-                    " (" + status.value.getError().getErrorCode() + ": " +
-                    status.value.getError().getExceptionDescription() + ")." );
+            if ( (dataType.equalsIgnoreCase("DivTotal") ||
+                dataType.equalsIgnoreCase("IDivTotal") ||
+                dataType.equalsIgnoreCase("RelTotal") ||
+                dataType.equalsIgnoreCase("IRelTotal") ||
+                dataType.equalsIgnoreCase("ResEOM") ||
+                dataType.equalsIgnoreCase("ResEOY")) ) {
+                // Structure time series
+                tsIsHandled = true;
+                ArrayOfStructureMonthlyTS mtsArray = null;
+                // Read using the Measnum, which allows direct access to the time series of interest.
+                mtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureMonthlyTSByMeasNum(
+                    hbstruct.getMeas_num(), (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
+                // TODO Evaluate whether the following should be used in any cases
+                // The following returns all meas types, DivTotal and classes, which is a performance hit
+                //mtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureMonthlyTSByWDID(
+                //    wdid, (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
+                sw.stop();
+                // Check for error
+                if ( (status.value != null) && (status.value.getError() != null) ) {
+                    throw new RuntimeException ( "Error getting StructureMonthlyTS for WDID=" + wdid +
+                        " (" + status.value.getError().getErrorCode() + ": " +
+                        status.value.getError().getExceptionDescription() + ")." );
+                }
+                Message.printStatus(2, routine,
+                    "Retrieved " + mtsArray.getStructureMonthlyTS().size() + " StructureMonthlyTS for wdid=\"" +
+                    wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    sw.getSeconds() + " seconds.");
+                // Transfer the data
+                DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+                for ( StructureMonthlyTS mts : mtsArray.getStructureMonthlyTS() ) {
+                    date.setMonth(mts.getCalMonth());
+                    date.setYear(mts.getCalYear());
+                    ts.setDataValue(date,mts.getAmt());
+                }
+                ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
             }
-            Message.printStatus(2, routine,
-                "Retrieved " + mtsArray.getStructureMonthlyTS().size() + " StructureMonthlyTS for wdid=\"" +
-                wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
-                sw.getSeconds() + " seconds.");
-            // Transfer the data
-            DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
-            for ( StructureMonthlyTS mts : mtsArray.getStructureMonthlyTS() ) {
-                date.setMonth(mts.getCalMonth());
-                date.setYear(mts.getCalYear());
-                ts.setDataValue(date,mts.getAmt());
-            }
-            ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
         }
         else if ( timeStep.equalsIgnoreCase("Day") && readData ) {
-            ArrayOfStructureDailyTS dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureDailyTSByMeasNum(
-                hbstruct.getMeas_num(), readStart.toString(), readEnd.toString(), getAuthentication(), status );
-            sw.stop();
-            // Check for error
-            if ( (status.value != null) && (status.value.getError() != null) ) {
-                throw new RuntimeException ( "Error getting StructureDailyTS for WDID=" + wdid +
-                    " (" + status.value.getError().getErrorCode() + ": " +
-                    status.value.getError().getExceptionDescription() + ")." );
+            if (dataType.equalsIgnoreCase("DivTotal") ||
+                dataType.equalsIgnoreCase("IDivTotal") ||
+                dataType.equalsIgnoreCase("RelTotal") ||
+                dataType.equalsIgnoreCase("IRelTotal") ||
+                dataType.equalsIgnoreCase("ResEOM") ||
+                dataType.equalsIgnoreCase("ResEOY") ) {
+                // Structure time series
+                tsIsHandled = true;
+                ArrayOfStructureDailyTS dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureDailyTSByMeasNum(
+                    hbstruct.getMeas_num(), readStart.toString(), readEnd.toString(), getAuthentication(), status );
+                sw.stop();
+                // Check for error
+                if ( (status.value != null) && (status.value.getError() != null) ) {
+                    throw new RuntimeException ( "Error getting StructureDailyTS for WDID=" + wdid +
+                        " (" + status.value.getError().getErrorCode() + ": " +
+                        status.value.getError().getExceptionDescription() + ")." );
+                }
+                Message.printStatus(2, routine,
+                    "Retrieved " + dtsArray.getStructureDailyTS().size() + " StructureDailyTS for wdid=\"" +
+                    wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    sw.getSeconds() + " seconds.");
+                // Transfer the data - do simple string parse of date to improve performance
+                // (should work as long as WS spec does not change)
+                DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
+                String dateString;
+                String[] dateParts;
+                for ( StructureDailyTS dts : dtsArray.getStructureDailyTS() ) {
+                    dateString = dts.getMeasDate();
+                    dateParts = dateString.split("/");
+                    // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
+                    Message.printStatus(2,routine,dateString);
+                    date.setMonth(Integer.parseInt(dateParts[0]));
+                    date.setDay(Integer.parseInt(dateParts[1]));
+                    date.setYear(Integer.parseInt(dateParts[2]));
+                    // Set the data flag
+                    ts.setDataValue(date,dts.getAmt(),dts.getObs(),0);
+                }
+                ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
+                HydroBase_Util.addDailyTSStructureDataFlagDescriptions ( ts );
+                // Also fill daily diversions as per the accepted DWR approach because HydroBase does not
+                // store filled daily data
+                HydroBase_Util.fillTSIrrigationYearCarryForward((DayTS)ts, "C" );
             }
-            Message.printStatus(2, routine,
-                "Retrieved " + dtsArray.getStructureDailyTS().size() + " StructureDailyTS for wdid=\"" +
-                wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
-                sw.getSeconds() + " seconds.");
-            // Transfer the data - do simple string parse of date to improve performance
-            // (should work as long as WS spec does not change)
-            DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
-            String dateString;
-            String[] dateParts;
-            for ( StructureDailyTS dts : dtsArray.getStructureDailyTS() ) {
-                dateString = dts.getMeasDate();
-                dateParts = dateString.split("/");
-                // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
-                Message.printStatus(2,routine,dateString);
-                date.setMonth(Integer.parseInt(dateParts[0]));
-                date.setDay(Integer.parseInt(dateParts[1]));
-                date.setYear(Integer.parseInt(dateParts[2]));
-                ts.setDataValue(date,dts.getAmt(),dts.getObs(),0);
+            else if ( dataType.equalsIgnoreCase("ResMeasElev") ||
+                dataType.equalsIgnoreCase("ResMeasEvap") ||
+                dataType.equalsIgnoreCase("ResMeasFill") ||
+                dataType.equalsIgnoreCase("ResMeasRelease") ||
+                dataType.equalsIgnoreCase("ResMeasStorage")  ) {
+                // ResMeas time series
+                // Set some booleans to speed processing - only one will be set to true
+                boolean doReasMeasElev = false;
+                boolean doReasMeasEvap = false;
+                boolean doReasMeasFill = false;
+                boolean doReasMeasRelease = false;
+                boolean doReasMeasStorage = false;
+                if ( dataType.equalsIgnoreCase("ResMeasElev") ) {
+                    doReasMeasElev = true;
+                }
+                else if ( dataType.equalsIgnoreCase("ResMeasEvap") ) {
+                    doReasMeasEvap = true;
+                }
+                else if ( dataType.equalsIgnoreCase("ResMeasFill") ) {
+                    doReasMeasEvap = true;
+                }
+                else if ( dataType.equalsIgnoreCase("ResMeasRelease") ) {
+                    doReasMeasEvap = true;
+                }
+                else if ( dataType.equalsIgnoreCase("ResMeasStorage") ) {
+                    doReasMeasEvap = true;
+                }
+                tsIsHandled = true;
+                ArrayOfStructureResMeas dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureResMeas(
+                    wdid, readStart.toString(), readEnd.toString(), getAuthentication(), status );
+                //getHBGuestStructureDailyTSByMeasNum(
+                //    hbstruct.getMeas_num(), readStart.toString(), readEnd.toString(), getAuthentication(), status );
+                sw.stop();
+                // Check for error
+                if ( (status.value != null) && (status.value.getError() != null) ) {
+                    throw new RuntimeException ( "Error getting StructureDailyTS for WDID=" + wdid +
+                        " (" + status.value.getError().getErrorCode() + ": " +
+                        status.value.getError().getExceptionDescription() + ")." );
+                }
+                Message.printStatus(2, routine,
+                    "Retrieved " + dtsArray.getStructureResMeas().size() + " StructureMeasType for wdid=\"" +
+                    wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    sw.getSeconds() + " seconds.");
+                // Transfer the data - do simple string parse of date to improve performance
+                // (should work as long as WS spec does not change)
+                DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
+                String dateString;
+                String[] dateParts;
+                for ( StructureResMeas dts : dtsArray.getStructureResMeas() ) {
+                    dateString = dts.getDateTime();
+                    dateParts = dateString.split("/");
+                    // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
+                    Message.printStatus(2,routine,dateString);
+                    date.setMonth(Integer.parseInt(dateParts[0]));
+                    date.setDay(Integer.parseInt(dateParts[1]));
+                    date.setYear(Integer.parseInt(dateParts[2]));
+                    // Set the data flag
+                    if ( doReasMeasElev ) {
+                        ts.setDataValue(date,dts.getGageHeight());
+                    }
+                    else if ( doReasMeasEvap ) {
+                        ts.setDataValue(date,dts.getEvapLossAmt());
+                    }
+                    else if ( doReasMeasFill ) {
+                        ts.setDataValue(date,dts.getFillAmt());
+                    }
+                    else if ( doReasMeasRelease ) {
+                        ts.setDataValue(date,dts.getReleaseAmt());
+                    }
+                    else if ( doReasMeasStorage ) {
+                        ts.setDataValue(date,dts.getStorageAmt());
+                    }
+                }
+                ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
             }
-            ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
-            HydroBase_Util.addDailyTSStructureDataFlagDescriptions ( ts );
-            // Also fill daily diversions as per the accepted DWR approach because HydroBase does not
-            // store filled daily data
-            HydroBase_Util.fillTSIrrigationYearCarryForward((DayTS)ts, "C" );
         }
     }
-    else {
-        throw new Exception ( "Data type \"" + dataType + "\" is not supported." );
+    if ( readData && !tsIsHandled ) {
+        // tsIsHandled only gets set to true if readData=true
+        throw new Exception ( "Reading HBGuest time series for data type \"" + dataType +
+            "\" and timestep \"" + timeStep + "\" is not supported." );
     }
     return ts;
 }
