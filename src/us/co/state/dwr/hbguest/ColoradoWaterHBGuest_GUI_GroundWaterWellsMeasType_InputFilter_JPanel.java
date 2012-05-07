@@ -15,7 +15,7 @@ import RTi.Util.GUI.InputFilter_JPanel;
 
 import RTi.Util.String.StringUtil;
 
-public class ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel
+public class ColoradoWaterHBGuest_GUI_GroundWaterWellsMeasType_InputFilter_JPanel
 extends InputFilter_JPanel
 implements MouseListener
 {
@@ -27,32 +27,30 @@ private ColoradoWaterHBGuestDataStore __dataStore = null;
 
 /**
 Create an InputFilter_JPanel for ColoradoWaterHBGuest web services queries, which will return
-HydroBase_StructureGeolocStructMeasType in the Java API, consistent with HydroBase.  This is used by TSTool.
+HydroBase_GroundWaterWellsView in the Java API, consistent with HydroBase.  This is used by TSTool.
 Default filter panel properties are used (e.g., 3 filter groups).
-@return a JPanel containing InputFilter instances for HydroBase_StructureGeolocStructMeasType queries.
+@return a JPanel containing InputFilter instances for HydroBase_GroundWaterWellsView queries.
 @param dataStore ColoradoWaterHBGuestDataStore instance.
-@param include_SFUT If true, include a filter for the SFUT.
 @exception Exception if there is an error.
 */
-public ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel (
-    ColoradoWaterHBGuestDataStore dataStore, boolean include_SFUT )
+public ColoradoWaterHBGuest_GUI_GroundWaterWellsMeasType_InputFilter_JPanel (
+    ColoradoWaterHBGuestDataStore dataStore )
 throws Exception
-{	this ( dataStore, include_SFUT, -1, -1 );
+{	this ( dataStore, -1, -1 );
 }
 
 /**
 Create an InputFilter_JPanel for ColoradoWaterHBGuest web services queries, which will return
-HydroBase_StructureGeolocStructMeasType in the Java API, consistent with HydroBase.  This is used by TSTool.
-@return a JPanel containing InputFilter instances for HydroBase_StructureGeolocStructMeasType queries.
+HydroBase_GroundWaterWellsView in the Java API, consistent with HydroBase.  This is used by TSTool.
+@return a JPanel containing InputFilter instances for HydroBase_GroundWaterWellsView queries.
 @param dataStore ColoradoWaterHBGuestDataStore instance.
 @param include_SFUT If true, include a filter for the SFUT.
 @param numFilterGroups the number of filter groups to display
 @param numWhereChoicesToDisplay the number of where choices to display in each filter
 @exception Exception if there is an error.
 */
-public ColoradoWaterHBGuest_GUI_StructureGeolocMeasType_InputFilter_JPanel (
-    ColoradoWaterHBGuestDataStore dataStore, boolean include_SFUT,
-	int numFilterGroups, int numWhereChoicesToDisplay )
+public ColoradoWaterHBGuest_GUI_GroundWaterWellsMeasType_InputFilter_JPanel (
+    ColoradoWaterHBGuestDataStore dataStore, int numFilterGroups, int numWhereChoicesToDisplay )
 throws Exception
 {	__dataStore = dataStore;
     ColoradoWaterHBGuestService service = dataStore.getColoradoWaterHBGuestService();
@@ -206,7 +204,7 @@ throws Exception
 		numFilterGroups = 3;
 		numWhereChoicesToDisplay = input_filters.size();
 	}
-	setToolTipText ( "<html>ColoradoWaterHBGuest structure queries can be filtered based on structure data.</html>" );
+	setToolTipText ( "<html>ColoradoWaterHBGuest well queries can be filtered based on well data.</html>" );
 	setInputFilters ( input_filters, numFilterGroups, numWhereChoicesToDisplay );
 }
 

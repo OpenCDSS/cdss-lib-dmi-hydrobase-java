@@ -140,8 +140,7 @@ public final static int DATA_TYPE_STRUCTURE_ALL = DATA_TYPE_STRUCTURE_DIVERSION|
 public final static int DATA_TYPE_WIS = 0x100000;
 
 public final static int DATA_TYPE_DEMOGRAPHICS_POPULATION = 0x1000000;
-public final static int DATA_TYPE_DEMOGRAPHICS_ALL =
-					DATA_TYPE_DEMOGRAPHICS_POPULATION;
+public final static int DATA_TYPE_DEMOGRAPHICS_ALL = DATA_TYPE_DEMOGRAPHICS_POPULATION;
 
 public final static int DATA_TYPE_ALL = DATA_TYPE_AGRICULTURE |
 					DATA_TYPE_HARDWARE |
@@ -153,13 +152,13 @@ public final static int DATA_TYPE_ALL = DATA_TYPE_AGRICULTURE |
 /**
 The preferred length for WDID strings.  For example, TSTool uses this to know how to format WDIDs
 after interactively querying from HydroBase.
- */
+*/
 private static int __preferred_WDID_length = 7;
 
 public final static String LOCAL = "local";
 
 /**
-For a Vector of HydroBase_StructureGeolocStructMeasType, use the WD, ID in each
+For a list of HydroBase_StructureGeolocStructMeasType, use the WD, ID in each
 data object to query the unpermitted_wells table and then set the common_id in
 the objects to the USGS or USBR identifier from unpermitted_wells.  This is a
 work-around until HydroBase is redesigned to better handle well data.
@@ -481,13 +480,14 @@ Convert a HydroBase timestep string to time series notation.
 */
 public final static String convertFromHydroBaseTimeStep ( String hbTimestep )
 {
-    if ( hbTimestep.equalsIgnoreCase("Annual") || hbTimestep.equalsIgnoreCase("Annually") ) {
+    if ( hbTimestep.equalsIgnoreCase("Annual") || hbTimestep.equalsIgnoreCase("Annually") ||
+        hbTimestep.equalsIgnoreCase("Yearly") || hbTimestep.equalsIgnoreCase("Year") ) {
         return "Year";
     }
-    else if ( hbTimestep.equalsIgnoreCase("Monthly") ) {
+    else if ( hbTimestep.equalsIgnoreCase("Monthly") || hbTimestep.equalsIgnoreCase("Month")) {
         return "Month";
     }
-    else if ( hbTimestep.equalsIgnoreCase("Daily") ) {
+    else if ( hbTimestep.equalsIgnoreCase("Daily") || (hbTimestep.equalsIgnoreCase("Day"))) {
         return "Day";
     }
     // TODO SAM 2012-05-04 Not sure what to do about "Random" since not always daily?

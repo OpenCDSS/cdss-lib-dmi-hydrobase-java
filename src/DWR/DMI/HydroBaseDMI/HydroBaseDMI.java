@@ -11583,13 +11583,13 @@ throws Exception {
 Reads the database for the data necessary to fill groundwater well and
 groundwater meas type information.  For pre-20050701 databases, this method
 can be called, but it will immediately call 
-'readUnpermittedWellStructMeasTypeList' and return THAT query's Vector.
+'readUnpermittedWellStructMeasTypeList' and return THAT query's list.
 <p><b>Stored Procedures</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType</li></ul>
 @param panel the panel of InputFilters that hold the query constraints.
 @param districtWhere the value returned by getWaterDistrictWhereClause().
-@return a Vector of HydroBase_StructureGeolocStructMeasType or 
+@return a list of HydroBase_StructureGeolocStructMeasType or 
 HydroBase_StructureGeolocStructMeasTypeView objects.
 @throws Exception if there is an error running the query.
 */
@@ -11597,18 +11597,14 @@ public List readGroundWaterWellsMeasTypeList(InputFilter_JPanel panel,
 String[] districtWhere)
 throws Exception {
 	if (getDatabaseVersion() < VERSION_20050701) {
-		return readUnpermittedWellStructMeasTypeList(panel, 
-			districtWhere);
+		return readUnpermittedWellStructMeasTypeList(panel, districtWhere);
 	}
 
-	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-		panel, districtWhere);
+	String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(panel, districtWhere);
 	HydroBase_GUI_Util.fillSPParameters(parameters, 
-		getViewNumber(
-	    "vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType"),
-		83, null);
+		getViewNumber("vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType"),83, null);
 	ResultSet rs = runSPFlex(parameters);
-	List v = toGroundWaterWellMeasTypeList(rs);
+	List<HydroBase_GroundWaterWellsView> v = toGroundWaterWellMeasTypeList(rs);
 	closeResultSet(rs, __lastStatement);
 	return v;
 }
@@ -34216,10 +34212,10 @@ Translate a ResultSet to HydroBase_StructureGeolocStructMeasTypeView objects.
 @return a Vector of HydroBase_StructureGeolocStructMeasTypeView
 @throws Exception if an error occurs.
 */
-private List toGroundWaterWellMeasTypeList(ResultSet rs) 
+private List<HydroBase_GroundWaterWellsView> toGroundWaterWellMeasTypeList(ResultSet rs) 
 throws Exception {
 	HydroBase_GroundWaterWellsView data = null;
-	List v = new Vector();
+	List<HydroBase_GroundWaterWellsView> v = new Vector();
 	int index = 1;
 	
 	int i;
