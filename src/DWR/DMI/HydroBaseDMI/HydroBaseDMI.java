@@ -15733,7 +15733,7 @@ This property will only be applied to the DivTotal and DivClass data types.
 <td><b>A single-character that will be used as a flag for values that are
 filled with daily carry forward method.
 </b>
-<td>No flag will be set.</td>
+<td>If FillDailyDiv=True but a flag is not specified, then "C" is used.  Otherwise, no flag will be set.</td>
 </tr>
 
 <tr>
@@ -18657,7 +18657,6 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}	
-	// XJTSX
 	else if (well != null) {
 		// Set comments for structure data.  Crop types will have a
 		// null str_mt since they are not managed in struct_meas_type...
@@ -18718,7 +18717,6 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}	
-	// XJTSX
 
 	// For diversion time series, read additional data or autofill.  These
 	// data will be considered as original data and will therefore be
@@ -18731,10 +18729,14 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("RelClass"))) {
 		String FillDailyDiv = props.getValue ( "FillDailyDiv" );
 		if ( (FillDailyDiv == null) || FillDailyDiv.equals("") ) {
-			FillDailyDiv = "true";	// Default is to fill.
+			FillDailyDiv = "true"; // Default is to fill.
 		}
 		if ( FillDailyDiv.equalsIgnoreCase("true") ) {
 			String FillDailyDivFlag = props.getValue ( "FillDailyDivFlag" );
+			if ( (FillDailyDivFlag == null) || FillDailyDivFlag.equals("") ) {
+			    // Default is "C"
+			    FillDailyDivFlag = "C";
+			}
 			// TODO SAM 2006-04-25 This throws an Exception.  Leave it for now but need
 			// to evaluate how to handle errors..
 			HydroBase_Util.fillTSIrrigationYearCarryForward ( (DayTS)ts, FillDailyDivFlag );
@@ -34209,7 +34211,7 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_StructureGeolocStructMeasTypeView objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_StructureGeolocStructMeasTypeView
+@return a list of HydroBase_StructureGeolocStructMeasTypeView
 @throws Exception if an error occurs.
 */
 private List<HydroBase_GroundWaterWellsView> toGroundWaterWellMeasTypeList(ResultSet rs) 
