@@ -240,7 +240,6 @@ private String getGroundWaterWellsMeasTypeByWDListCacheKey ( String dataType, St
     if ( wd < 10 ) {
         wdString = "0" + wd;
     }
-    Message.printStatus(2, "", "dataType=\"" + dataType + "\" timeStep=\"" + timeStep + "\" wdstring=\"" + wdString + "\"" );
     return dataType.toUpperCase() + "-" + timeStep.toUpperCase() + "-" + wdString;
 }
 
@@ -629,7 +628,9 @@ public List<String> getTimeSeriesDataTypes ( int include_types, boolean add_grou
         if ( add_group ) {
             prefix = "Well - ";
         }
-        types.add ( prefix + "WellLevel" ); // Also somehow need to hook in "WellPumping"
+        // Also somehow need to hook in "WellPumping"
+        types.add ( prefix + "WellLevelDepth" );
+        types.add ( prefix + "WellLevelElev" );
     }
     /* Not yet supported
     if ( (include_types&HydroBase_Util.DATA_TYPE_WIS) > 0 ) {
@@ -665,17 +666,13 @@ Return the list of time series header objects used to list available time series
 If possible, information from the cache is returned.  Otherwise, a new query is performed and the cache
 is updated.
 @param service the web service being used
-@param dataType the data type being queried (e.g., "DivTotal" or "Diversion).
+@param dataType the data type being queried (e.g., "DivTotal" or "Diversion), with no note.
 @param timeStep the time step being queried as per TS conventions (e.g., "Month" NOT HydroBase "Monthly").
 @param ifp the input filter panel that provides additional filter criteria
 @return a list of time series header objects suitable for listing time series
 */
-public List getTimeSeriesHeaderObjects (
-        String dataType, String timeStep, InputFilter_JPanel ifp )
+public List getTimeSeriesHeaderObjects ( String dataType, String timeStep, InputFilter_JPanel ifp )
 {   String routine = __class + ".getTimeSeriesHeaderObjects";
-    // If data type has "-", assume something like "Diversion - DivTotal" and need second part
-    // TODO SAM 2010-08-13 Evaluate moving this to calling code
-    dataType = dataType.split("-")[1].trim();
     // Get the water district and division if necessary.
     boolean wdRequired = true; // Currently required on all queries
     List<Integer> districtList = new Vector(); // Districts to query from cache
@@ -715,12 +712,13 @@ public List getTimeSeriesHeaderObjects (
         }
     }
     // Well is a structure but has special handling so put before the structure code
-    if( dataType.equalsIgnoreCase("WellLevel") && timeStep.equalsIgnoreCase("Day") ){
+    if ( (dataType.equalsIgnoreCase("WellLevelElev") || dataType.equalsIgnoreCase("WellLevelDepth"))
+        && timeStep.equalsIgnoreCase("Day") ){
         List<HydroBase_GroundWaterWellsView> tslist = new Vector(); // List that matches the input request
+        String dataTypeForCache = "WellLevel";
         for ( Integer districtInList : districtList ) {
-            String key = getGroundWaterWellsMeasTypeByWDListCacheKey(dataType, timeStep, districtInList);
-            List<HydroBase_GroundWaterWellsView> cacheList =
-                __groundWaterWellsMeasTypeByWDListCache.get(key );
+            String key = getGroundWaterWellsMeasTypeByWDListCacheKey(dataTypeForCache, timeStep, districtInList);
+            List<HydroBase_GroundWaterWellsView> cacheList = __groundWaterWellsMeasTypeByWDListCache.get(key );
             List<HydroBase_GroundWaterWellsView> dataList = null;
             if ( cacheList == null ) {
                 // No data have been read for the district and measType so do it.  This will actually read
@@ -919,6 +917,12 @@ public List<String> getTimeSeriesTimeSteps ( String data_type, int include_types
             v.add ( Irregular );
         }
     }
+    else if ( data_type.equalsIgnoreCase("WellLevelElev") || data_type.equalsIgnoreCase("WellLevelDepth")) {
+        // Implemented for GroundWaterWells
+        if ( (include_types&HydroBase_Util.DATA_TYPE_STRUCTURE_WELL) != 0 ) {
+            v.add ( Day );
+        }
+    }
     else if ( data_type.equalsIgnoreCase("Wind") ) {
         v.add ( Day );
     }
@@ -991,8 +995,10 @@ HydroBase; for example use "Day" instead of "Daily"
 @return HydroBase_StructureGeolocStructMeasType instance constructed from service object
 */
 private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
-    GroundWaterWellsMeasType mt, String measType, String timeStep )
+    GroundWaterWellsMeasType mt, String measType, String timeStep, String units )
 {   HydroBase_GroundWaterWellsView hbwell = new HydroBase_GroundWaterWellsView();
+    // Passed in
+    hbwell.setData_units(units);
     // From Structure
     hbwell.setDiv(mt.getDiv());
     hbwell.setWD(mt.getWd());
@@ -1080,7 +1086,7 @@ private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
     //hbwell.setUsgs_id(mt.getUsgs_id());
     //hbwell.setUsbr_id(mt.getUsbr_id());
     hbwell.setWell_meas_num(mt.getWellMeasNum());
-    hbwell.setMeas_type(mt.getMeasType());
+    //hbwell.setMeas_type(mt.getMeasType()); // Set above with requested value
     hbwell.setTime_step(mt.getTimeStep());
     hbwell.setMeas_count(mt.getMeasCount());
     hbwell.setIdentifier(mt.getIdentifier());
@@ -1092,7 +1098,6 @@ private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
     hbwell.setDSS_aquifer1(mt.getDSSAquifer1());
     hbwell.setDSS_aquifer2(mt.getDSSAquifer2());
     hbwell.setDSS_aquifer_comment(mt.getDSSAquiferComment());
-    
     return hbwell;
 }
 
@@ -1137,7 +1142,7 @@ measType combination are read.  This method should only be called if reading eve
 exist and needs to be initialized.
 @param div division of interest (-1 to ignore constraint)
 @param wd water district of interest (-1 to ignore constraint)
-@param measType structure measType to return (e.g., "WellLevel")
+@param measType structure measType to return (e.g., "WellLevelElev")
 @param timeStep time series time step as per TS conventions (e.g, "Day" NOT HydroBase "Daily")
 @param cacheIt if true, cache the result, false to not cache (slower but use less memory long-term) - caches
 are saved by measType-timeStep-wd combination
@@ -1151,6 +1156,7 @@ private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
     if ( measType == null ) {
         measType = ""; // Web service does not like null
     }
+    String measTypeForCache = "WellLevel"; // Needed because 2 values are stored in each record
     List<HydroBase_GroundWaterWellsView> returnList = new Vector();
     if ( wd > 0 ) {
         // Read data for one water district
@@ -1169,11 +1175,11 @@ private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
         // Loop through once and get the list of unique timesteps so a cache can be created for each
         List<String> timeStepList = new Vector();
         boolean found;
-        String hbTimeStep;
+        String hbTimeStep = "";
         String timeStepUpper;
         if ( cacheIt ) {
             // Initialize each cache
-            String key = getStructureGeolocMeasTypeByWDListCacheKey(measType, "Day", wd);
+            String key = getStructureGeolocMeasTypeByWDListCacheKey(measTypeForCache, "Day", wd);
             Message.printStatus ( 2, routine, "Initializing cache with key \"" + key + "\"." );
             __groundWaterWellsMeasTypeByWDListCache.put(key, new Vector() );
         }
@@ -1194,7 +1200,6 @@ private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
             }
             */
             hbTimeStep = mt.getTimeStep();
-            Message.printStatus(2,"","hbTimeStep=\"" + hbTimeStep + "\"" );
             if ( hbTimeStep.equalsIgnoreCase("Random") ) {
                 // For reservoir measurements (Day) and well level (also day?)
                 cacheTimeStep = "Day";
@@ -1203,21 +1208,21 @@ private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
                 cacheTimeStep = HydroBase_Util.convertFromHydroBaseTimeStep(hbTimeStep);
             }
             cacheList = __groundWaterWellsMeasTypeByWDListCache.get (getGroundWaterWellsMeasTypeByWDListCacheKey(
-                measType, cacheTimeStep, wd));
-            cacheList.add ( newHydroBase_GroundWaterWellsView( mt, measType, cacheTimeStep ) );
+                measTypeForCache, cacheTimeStep, wd));
+            cacheList.add ( newHydroBase_GroundWaterWellsView( mt, measType, cacheTimeStep, "FT" ) );
             mtPrev = mt;
         }
         if ( cacheIt ) {
             // Logging...
             for ( String timeStepInList: timeStepList ) {
-                String key = getGroundWaterWellsMeasTypeByWDListCacheKey(measType, timeStepInList, wd);
+                String key = getGroundWaterWellsMeasTypeByWDListCacheKey(measTypeForCache, timeStepInList, wd);
                 cacheList = __groundWaterWellsMeasTypeByWDListCache.get(key);
                 Message.printStatus ( 2, routine,
                     "After reading data, cache for key \"" + key + "\" has size=" + cacheList.size() );
             }
         }
         // Add to the returned list only the requested list
-        String key = getGroundWaterWellsMeasTypeByWDListCacheKey(measType, timeStep, wd);
+        String key = getGroundWaterWellsMeasTypeByWDListCacheKey(measTypeForCache, timeStep, wd);
         cacheList = __groundWaterWellsMeasTypeByWDListCache.get(key);
         if ( cacheList != null ) {
             Message.printStatus ( 2, routine, "Returning cache for key \"" + key + "\" size=" +
@@ -1418,7 +1423,7 @@ throws Exception
     String dataType = tsident.getType();
     String timeStep = tsident.getInterval();
     String locID = tsident.getLocation();
-    int [] wdidParts = HydroBase_WaterDistrict.parseWDID(locID);
+    int [] wdidParts = null;
     ts.setIdentifier(tsident);
     // Lookup the StructureGeolocMeasType instance - used for description and default period (the available)
     String measTypeHydroBase = dataType;
@@ -1432,9 +1437,10 @@ throws Exception
         // Replace TSTool ResMeasXXXX with ResMeas since HydroBase has multiple data types in one table
         measTypeHydroBase = dataType.substring(0,7);
     }
-    if ( dataType.equalsIgnoreCase("WellLevel") ) {
+    if ( dataType.equalsIgnoreCase("WellLevelElev") || dataType.equalsIgnoreCase("WellLevelDepth")) {
         // GroundWaterWell data type
-        hbwell = getGroundWaterWellsMeasTypeForIdentifier ( dataType, timeStep, locID );
+        String dataTypeForCache = "WellLevel"; // Use because 2 values are stored
+        hbwell = getGroundWaterWellsMeasTypeForIdentifier ( dataTypeForCache, timeStep, locID );
         if ( hbwell == null ) {
             String message =
                 "Unable to get GroundWaterWellsView information for identifier \"" + locID + "\" - " +
@@ -1448,6 +1454,7 @@ throws Exception
     }
     else if ( isStructureTimeSeriesDataType(dataType) ) {
         // Structure data type
+        wdidParts = HydroBase_WaterDistrict.parseWDID(locID);
         hbstruct = getStructureGeolocMeasTypeForWDID ( measTypeHydroBase, timeStep, wdidParts[0], wdidParts[1] );
         if ( hbstruct == null ) {
             String message =
@@ -1505,7 +1512,6 @@ throws Exception
     ts.setDate2 ( readEnd );
     ts.setDate2Original ( readEnd);
     ts.allocateDataSpace();
-    ts.allocateDataFlagSpace("", false);
     ts.setDataUnits(HydroBase_Util.getTimeSeriesDataUnits(null, dataType, timeStep));
     ts.setDataUnitsOriginal(ts.getDataUnits());
     ts.setDescription ( description );
@@ -1517,7 +1523,12 @@ throws Exception
     // Whether the time series data type, interval, etc. are handled; 
     // however, there may still be errors (no data in period, etc.) that lead to exceptions
     boolean tsIsHandled = false;
-    if ( dataType.equalsIgnoreCase("WellLevel") && timeStep.equalsIgnoreCase("Day") && readData ) {
+    if ( (dataType.equalsIgnoreCase("WellLevelElev") || dataType.equalsIgnoreCase("WellLevelDepth"))
+        && timeStep.equalsIgnoreCase("Day") && readData ) {
+        boolean readElev = false; // use to handle elevation vs. depth
+        if ( dataType.equalsIgnoreCase("WellLevelElev") ) {
+            readElev = true;
+        }
         tsIsHandled = true;
         ArrayOfGroundWaterWellsWellMeasTS dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestGroundWaterWellsWellMeasTS(
             hbwell.getWell_num(), readStart.toString(), readEnd.toString(), getAuthentication(), status );
@@ -1541,12 +1552,16 @@ throws Exception
             dateString = dts.getMeasDate();
             dateParts = dateString.split("/");
             // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
-            Message.printStatus(2,routine,dateString);
             date.setMonth(Integer.parseInt(dateParts[0]));
             date.setDay(Integer.parseInt(dateParts[1]));
             date.setYear(Integer.parseInt(dateParts[2]));
             // Set the data flag
-            ts.setDataValue(date,dts.getWlElev());
+            if ( readElev ) {
+                ts.setDataValue(date,dts.getWlElev());
+            }
+            else {
+                ts.setDataValue(date,dts.getWlDepth());
+            }
         }
         ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
     }
@@ -1628,6 +1643,7 @@ throws Exception
                 for ( StructureMonthlyTS mts : mtsArray.getStructureMonthlyTS() ) {
                     date.setMonth(mts.getCalMonth());
                     date.setYear(mts.getCalYear());
+                    //Message.printStatus(2, routine, "Date=" + date + " value=" + mts.getAmt());
                     ts.setDataValue(date,mts.getAmt());
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
@@ -1637,9 +1653,7 @@ throws Exception
             if (dataType.equalsIgnoreCase("DivTotal") ||
                 dataType.equalsIgnoreCase("IDivTotal") ||
                 dataType.equalsIgnoreCase("RelTotal") ||
-                dataType.equalsIgnoreCase("IRelTotal") ||
-                dataType.equalsIgnoreCase("ResEOM") ||
-                dataType.equalsIgnoreCase("ResEOY") ) {
+                dataType.equalsIgnoreCase("IRelTotal") ) {
                 // Structure time series
                 tsIsHandled = true;
                 ArrayOfStructureDailyTS dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureDailyTSByMeasNum(
@@ -1664,7 +1678,7 @@ throws Exception
                     dateString = dts.getMeasDate();
                     dateParts = dateString.split("/");
                     // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
-                    Message.printStatus(2,routine,dateString);
+                    //Message.printStatus(2,routine,dateString);
                     date.setMonth(Integer.parseInt(dateParts[0]));
                     date.setDay(Integer.parseInt(dateParts[1]));
                     date.setYear(Integer.parseInt(dateParts[2]));
@@ -1675,13 +1689,18 @@ throws Exception
                 HydroBase_Util.addDailyTSStructureDataFlagDescriptions ( ts );
                 // Also fill daily diversions as per the accepted DWR approach because HydroBase does not
                 // store filled daily data
-                HydroBase_Util.fillTSIrrigationYearCarryForward((DayTS)ts, "C" );
+                if (dataType.equalsIgnoreCase("DivTotal") ||
+                    dataType.equalsIgnoreCase("DivClass") ||
+                    dataType.equalsIgnoreCase("RelTotal") ||
+                    dataType.equalsIgnoreCase("RelClass") ) {
+                    HydroBase_Util.fillTSIrrigationYearCarryForward((DayTS)ts, "C" );
+                }
             }
             else if ( dataType.equalsIgnoreCase("ResMeasElev") ||
                 dataType.equalsIgnoreCase("ResMeasEvap") ||
                 dataType.equalsIgnoreCase("ResMeasFill") ||
                 dataType.equalsIgnoreCase("ResMeasRelease") ||
-                dataType.equalsIgnoreCase("ResMeasStorage")  ) {
+                dataType.equalsIgnoreCase("ResMeasStorage") ) {
                 // ResMeas time series
                 // Set some booleans to speed processing - only one will be set to true
                 boolean doReasMeasElev = false;
@@ -1696,13 +1715,13 @@ throws Exception
                     doReasMeasEvap = true;
                 }
                 else if ( dataType.equalsIgnoreCase("ResMeasFill") ) {
-                    doReasMeasEvap = true;
+                    doReasMeasFill = true;
                 }
                 else if ( dataType.equalsIgnoreCase("ResMeasRelease") ) {
-                    doReasMeasEvap = true;
+                    doReasMeasRelease = true;
                 }
                 else if ( dataType.equalsIgnoreCase("ResMeasStorage") ) {
-                    doReasMeasEvap = true;
+                    doReasMeasStorage = true;
                 }
                 tsIsHandled = true;
                 ArrayOfStructureResMeas dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureResMeas(
@@ -1729,7 +1748,7 @@ throws Exception
                     dateString = dts.getDateTime();
                     dateParts = dateString.split("/");
                     // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
-                    Message.printStatus(2,routine,dateString);
+                    //Message.printStatus(2,routine,dateString);
                     date.setMonth(Integer.parseInt(dateParts[0]));
                     date.setDay(Integer.parseInt(dateParts[1]));
                     date.setYear(Integer.parseInt(dateParts[2]));

@@ -1799,7 +1799,8 @@ public static String getTimeSeriesDataUnits ( HydroBaseDMI hbdmi, String data_ty
 	else if ( data_type.equalsIgnoreCase("VaporPressure") ) {
 		return KPA;
 	}
-	else if ( data_type.equalsIgnoreCase("WellLevel") ) {
+	else if ( data_type.equalsIgnoreCase("WellLevel") || data_type.equalsIgnoreCase("WellLevelElev") ||
+	    data_type.equalsIgnoreCase("WellLevelDepth")) {
 		return FT;
 	}
 	else if ( data_type.equalsIgnoreCase("WatTemp") ) {
@@ -1968,6 +1969,11 @@ public static List<String> getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String d
 		if ( (include_types&DATA_TYPE_STATION_WELL) != 0 ) {
 			v.add ( Irregular );
 		}
+	}
+	else if ( data_type.equalsIgnoreCase("WellLevelElev") || data_type.equalsIgnoreCase("WellLevelDepth")) {
+        if ( (include_types&DATA_TYPE_STRUCTURE_WELL) != 0 ) {
+            v.add ( Day );
+        }
 	}
 	else if ( data_type.equalsIgnoreCase("Wind") ) {
 		v.add ( Day );
@@ -2657,7 +2663,6 @@ throws Exception
 	}
 	else if (meas_type.equalsIgnoreCase("WellLevel")) {
 		try {
-		    // Note multiple SFUT and data sources can be returned below...
 			tslist = hbdmi.readGroundWaterWellsMeasTypeList(ifp, null);
 			// Convert HydroBase data to make it more consistent with how TSTool handles time series...
 			if ( tslist != null ) {
@@ -2671,13 +2676,7 @@ throws Exception
 			for ( int i = 0; i < size; i++ ) {
 				view = (HydroBase_GroundWaterWellsView)v.get(i);
 				// Set to the value used in TSTool...
-				if ( view.getIdentifier().length() > 0){
-					// Merged SFUT...
-					view.setMeas_type(data_type + "-" + view.getIdentifier());
-				}
-				else {
-				    view.setMeas_type( data_type);
-				}
+			    view.setMeas_type( data_type);
 				view.setTime_step(time_step);
 				view.setData_units ( data_units );
 				tslist.add(view);
