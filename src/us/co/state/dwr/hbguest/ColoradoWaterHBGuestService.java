@@ -26,6 +26,7 @@ import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.StopWatch;
+import RTi.Util.Time.TimeUtil;
 
 // TODO SAM 2012-05-09 Might move the contents of this class to the ColoradoWaterHBGuest data store so as
 // to not commingle the auto-generated code with the data store code
@@ -524,11 +525,10 @@ public List<String> getTimeSeriesDataTypes ( int include_types, boolean add_grou
             prefix = "Climate - ";
         }
         types.add ( prefix + "EvapPan" ); // Time step:  Day and Month, consistent with HydroBaseDMI
-        // TODO SAM 2012-05-14 Enable later.
-        //types.add ( prefix + "FrostDateF32F" ); // Time step:  Year, consistent with HydroBaseDMI
-        //types.add ( prefix + "FrostDateF28F" );
-        //types.add ( prefix + "FrostDateL28S" );
-        //types.add ( prefix + "FrostDateL32S" );
+        types.add ( prefix + "FrostDateF32F" ); // Time step:  Year, consistent with HydroBaseDMI
+        types.add ( prefix + "FrostDateF28F" );
+        types.add ( prefix + "FrostDateL28S" );
+        types.add ( prefix + "FrostDateL32S" );
         types.add ( prefix + "Precip" ); // Time step:  Month, Day, consistent with HydroBaseDMI
         types.add ( prefix + "TempMax" );// Time step:  Month, Day, consistent with HydroBaseDMI
         types.add ( prefix + "TempMean" ); // Time step:  Month, Day, consistent with HydroBaseDMI
@@ -1345,7 +1345,7 @@ private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
     }
     else if ( dataType.toUpperCase().startsWith("FROSTDATE") ) {
         // Replace TSTool FrostDateXXXX with FrostDate since HydroBase has multiple data values in one table
-        measTypeHydroBase = dataType.substring(0,9);
+        measTypeHydroBase = "FrostDate";
     }
     else if ( dataType.equalsIgnoreCase("SnowCourseSWE") || dataType.equalsIgnoreCase("SnowCourseDepth")) {
         // Replace TSTool SnowCourseXXXX with SnowCourse since HydroBase has multiple values in one table
@@ -1823,7 +1823,10 @@ throws Exception
     boolean tsIsHandled = false;
     if ( dataType.equalsIgnoreCase("AdminFlow") ||
         dataType.equalsIgnoreCase("EvapPan") ||
-        dataType.equalsIgnoreCase("FrostDate") || // Use frost date query
+        dataType.equalsIgnoreCase("FrostDateF28F") ||
+        dataType.equalsIgnoreCase("FrostDateF32F") ||
+        dataType.equalsIgnoreCase("FrostDateL28S") ||
+        dataType.equalsIgnoreCase("FrostDateL32S") ||
         dataType.equalsIgnoreCase("Precip") ||
         dataType.equalsIgnoreCase("Snow") ||
         dataType.equalsIgnoreCase("SnowCourseDepth") || // Use SnowCourse query
@@ -1836,7 +1839,77 @@ throws Exception
         dataType.equalsIgnoreCase("VaporPressure") ||
         dataType.equalsIgnoreCase("Wind") ) {
         // Station queries...
-        if ( timeStep.equalsIgnoreCase("Month") && readData ) {
+        if ( timeStep.equalsIgnoreCase("Year") && readData ) {
+            if ( (dataType.equalsIgnoreCase("FrostDateF28F") ||
+                dataType.equalsIgnoreCase("FrostDateF32F") ||
+                dataType.equalsIgnoreCase("FrostDateL28S") ||
+                dataType.equalsIgnoreCase("FrostDateL32S")) ) {
+                boolean doF28F = false;
+                boolean doF32F = false;
+                boolean doL32S = false;
+                boolean doL28S = false;
+                if ( dataType.equalsIgnoreCase("FrostDateF28F") ) {
+                    doF28F = true;
+                }
+                else if ( dataType.equalsIgnoreCase("FrostDateF32F") ) {
+                    doF32F = true;
+                }
+                else if ( dataType.equalsIgnoreCase("FrostDateL28S") ) {
+                    doL28S = true;
+                }
+                else if ( dataType.equalsIgnoreCase("FrostDateL32S") ) {
+                    doL32S = true;
+                }
+                // Get data from frost dates time series
+                tsIsHandled = true;
+                ArrayOfFrostDates ytsArray = getColoradoWaterHBGuestSoap12().getHBGuestFrostDates(
+                    hbsta.getMeas_num(), (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
+                sw.stop();
+                // Check for error
+                if ( (status.value != null) && (status.value.getError() != null) ) {
+                    throw new RuntimeException ( "Error getting FrostDates for ID=" + locID +
+                        " (" + status.value.getError().getErrorCode() + ": " +
+                        status.value.getError().getExceptionDescription() + ")." );
+                }
+                Message.printStatus(2, routine,
+                    "Retrieved " + ytsArray.getFrostDates().size() + " StructureAnnuallyTS for ID=\"" +
+                    locID + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    sw.getSeconds() + " seconds.");
+                // Transfer the data
+                DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+                String dateString = null;
+                String [] dateParts;
+                for ( FrostDates yts : ytsArray.getFrostDates() ) {
+                    date.setYear(yts.getCalYear());
+                    if ( doF28F ) {
+                        dateString = yts.getF28F();
+                    }
+                    else if ( doF32F ) {
+                        dateString = yts.getF32F();
+                    }
+                    else if ( doL28S ) {
+                        dateString = yts.getL28S();
+                    }
+                    else if ( doL32S ) {
+                        dateString = yts.getL32S();
+                    }
+                    if ( (dateString != null) && !dateString.trim().equals("") ) {
+                        dateParts = dateString.split("/");
+                        // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
+                        //Message.printStatus(2,routine,"Date=\"" + dateString + " value=" + dts.getAmt() +
+                        //    " flag=" + dts.getObs() );
+                        date.setMonth(Integer.parseInt(dateParts[0]));
+                        date.setDay(Integer.parseInt(dateParts[1]));
+                        date.setYear(Integer.parseInt(dateParts[2]));
+                        // Parse the date string
+                        ts.setDataValue(date,TimeUtil.dayOfYear(date));
+                    }
+                }
+                ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
+                ts.addToGenesis ( "Frost date is day of year (1-366) relative to Jan 1." );
+            }
+        }
+        else if ( timeStep.equalsIgnoreCase("Month") && readData ) {
             if ( dataType.equalsIgnoreCase("AdminFlow") ||
                 dataType.equalsIgnoreCase("EvapPan") ||
                 dataType.equalsIgnoreCase("Precip") ||
