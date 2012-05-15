@@ -1,5 +1,6 @@
 package us.co.state.dwr.hbguest;
 
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -1348,8 +1349,8 @@ private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
         measTypeHydroBase = "FrostDate";
     }
     else if ( dataType.equalsIgnoreCase("SnowCourseSWE") || dataType.equalsIgnoreCase("SnowCourseDepth")) {
-        // Replace TSTool SnowCourseXXXX with SnowCourse since HydroBase has multiple values in one table
-        measTypeHydroBase = "SnowCrs";
+        // Replace TSTool SnowCourseXXXX with SnowCrse since HydroBase has multiple values in one table
+        measTypeHydroBase = "SnowCrse";
     }
     else if ( dataType.equalsIgnoreCase("TempMax") ) {
         // TSTool reverse order for consistency and readability.
@@ -1664,8 +1665,8 @@ throws Exception
         measTypeHydroBase = "Evap";
     }
     else if ( dataType.toUpperCase().startsWith("SNOWCOURSE") ) {
-        // Replace TSTool SnowCourseXXXX with SnowCrs since HydroBase has multiple data types in one table
-        measTypeHydroBase = "SnowCrs";
+        // Replace TSTool SnowCourseXXXX with SnowCrse since HydroBase has multiple data types in one table
+        measTypeHydroBase = "SnowCrse";
     }
     else if ( dataType.equalsIgnoreCase("TempMax") ) {
         // TSTool reverse order for consistency and readability.
@@ -1981,8 +1982,6 @@ throws Exception
                 dataType.equalsIgnoreCase("EvapPan") ||
                 dataType.equalsIgnoreCase("Precip") ||
                 dataType.equalsIgnoreCase("Snow") ||
-                dataType.equalsIgnoreCase("SnowCourseDepth") || // Use SnowCourse query
-                dataType.equalsIgnoreCase("SnowCourseSWE") || // Use SnowCourse query
                 dataType.equalsIgnoreCase("Solar") ||
                 dataType.equalsIgnoreCase("Streamflow") ||
                 dataType.equalsIgnoreCase("TempMax") ||
@@ -2028,82 +2027,63 @@ throws Exception
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
             }
-            /*
-            else if ( dataType.equalsIgnoreCase("ResMeasElev") ||
-                dataType.equalsIgnoreCase("ResMeasEvap") ||
-                dataType.equalsIgnoreCase("ResMeasFill") ||
-                dataType.equalsIgnoreCase("ResMeasRelease") ||
-                dataType.equalsIgnoreCase("ResMeasStorage") ) {
-                // ResMeas time series
-                // Set some booleans to speed processing - only one will be set to true
-                boolean doReasMeasElev = false;
-                boolean doReasMeasEvap = false;
-                boolean doReasMeasFill = false;
-                boolean doReasMeasRelease = false;
-                boolean doReasMeasStorage = false;
-                if ( dataType.equalsIgnoreCase("ResMeasElev") ) {
-                    doReasMeasElev = true;
-                }
-                else if ( dataType.equalsIgnoreCase("ResMeasEvap") ) {
-                    doReasMeasEvap = true;
-                }
-                else if ( dataType.equalsIgnoreCase("ResMeasFill") ) {
-                    doReasMeasFill = true;
-                }
-                else if ( dataType.equalsIgnoreCase("ResMeasRelease") ) {
-                    doReasMeasRelease = true;
-                }
-                else if ( dataType.equalsIgnoreCase("ResMeasStorage") ) {
-                    doReasMeasStorage = true;
-                }
+            else if ( dataType.equalsIgnoreCase("SnowCourseDepth") ||
+                dataType.equalsIgnoreCase("SnowCourseSWE") ) {
+                // Snow course time series
                 tsIsHandled = true;
-                ArrayOfStructureResMeas dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureResMeas(
-                    wdid, readStart.toString(), readEnd.toString(), getAuthentication(), status );
-                //getHBGuestStructureDailyTSByMeasNum(
-                //    hbstruct.getMeas_num(), readStart.toString(), readEnd.toString(), getAuthentication(), status );
+                boolean doDepth = false; // false means do SWE
+                if ( dataType.equalsIgnoreCase("SnowCourseDepth") ) {
+                    doDepth = true;
+                }
+                ArrayOfSnowCourse dtsArray = null;
+                // Read using the Measnum, which allows direct access to the time series of interest.
+                Holder<WSDisclaimerHeader> disclaimer = new Holder<WSDisclaimerHeader>();
+                dtsArray = getColoradoWaterHBGuestSoap12().getHBGuestSnowCourse(
+                    hbsta.getMeas_num(), readStart.toString(), readEnd.toString(), getAuthentication(), status );
                 sw.stop();
                 // Check for error
                 if ( (status.value != null) && (status.value.getError() != null) ) {
-                    throw new RuntimeException ( "Error getting StructureDailyTS for WDID=" + wdid +
+                    throw new RuntimeException ( "Error getting SnowCourse for ID=" + locID +
                         " (" + status.value.getError().getErrorCode() + ": " +
                         status.value.getError().getExceptionDescription() + ")." );
                 }
                 Message.printStatus(2, routine,
-                    "Retrieved " + dtsArray.getStructureResMeas().size() + " StructureMeasType for wdid=\"" +
-                    wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    "Retrieved " + dtsArray.getSnowCourse().size() + " SnowCourse for ID=\"" +
+                    locID + "\" " + readStart + " to " + readEnd + " in " +
                     sw.getSeconds() + " seconds.");
                 // Transfer the data - do simple string parse of date to improve performance
                 // (should work as long as WS spec does not change)
                 DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
                 String dateString;
                 String[] dateParts;
-                for ( StructureResMeas dts : dtsArray.getStructureResMeas() ) {
-                    dateString = dts.getDateTime();
-                    dateParts = dateString.split("/");
-                    // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
-                    //Message.printStatus(2,routine,dateString);
-                    date.setMonth(Integer.parseInt(dateParts[0]));
-                    date.setDay(Integer.parseInt(dateParts[1]));
-                    date.setYear(Integer.parseInt(dateParts[2]));
-                    // Set the data flag
-                    if ( doReasMeasElev ) {
-                        ts.setDataValue(date,dts.getGageHeight());
-                    }
-                    else if ( doReasMeasEvap ) {
-                        ts.setDataValue(date,dts.getEvapLossAmt());
-                    }
-                    else if ( doReasMeasFill ) {
-                        ts.setDataValue(date,dts.getFillAmt());
-                    }
-                    else if ( doReasMeasRelease ) {
-                        ts.setDataValue(date,dts.getReleaseAmt());
-                    }
-                    else if ( doReasMeasStorage ) {
-                        ts.setDataValue(date,dts.getStorageAmt());
+                String flag = "";
+                for ( SnowCourse dts : dtsArray.getSnowCourse() ) {
+                    dateString = dts.getMeasDate();
+                    if ( (dateString != null) && !dateString.trim().equals("") ) {
+                        dateParts = dateString.split("/");
+                        // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
+                        //Message.printStatus(2,routine,"Date=\"" + dateString + " value=" + dts.getAmt() +
+                        //    " flag=" + dts.getObs() );
+                        date.setMonth(Integer.parseInt(dateParts[0]));
+                        date.setDay(Integer.parseInt(dateParts[1]));
+                        date.setYear(Integer.parseInt(dateParts[2]));
+                        // Set the data flag
+                        if ( doDepth ) {
+                            int depth = dts.getDepth();
+                            if ( depth >= 0 ) {
+                                ts.setDataValue(date,depth,dts.getFlag(),0);
+                            }
+                        }
+                        else {
+                            BigDecimal swe = dts.getSnowWaterEquiv();
+                            if ( (swe != null) && (swe.doubleValue() >= 0.0) ) {
+                                ts.setDataValue(date,swe.doubleValue(),dts.getFlag(),0);
+                            }
+                        }
                     }
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
-            }*/
+            }
         }
     }
     else if ( (dataType.equalsIgnoreCase("WellLevelElev") || dataType.equalsIgnoreCase("WellLevelDepth"))
