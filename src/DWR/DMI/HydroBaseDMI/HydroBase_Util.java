@@ -890,12 +890,13 @@ throws Exception
 
 	// Allocate fill flag space in the time series, if necessary...
 
-	boolean FillDailyDivFlag_boolean = false;	// Indicate whether to use flag
+	boolean FillDailyDivFlag_boolean = false; // Indicate whether to use flag
 	if ( (fillDailyDivFlag != null) && (fillDailyDivFlag.length() > 0) ) {
 		FillDailyDivFlag_boolean = true;
 		// Make sure that the data flag is allocated.
+		// TODO SAM 2012-05-09 Can get rid of this at some point since automatic allocation when set
 		ts.allocateDataFlagSpace (
-			null,	// Initial flag value
+			null, // Initial flag value
 			true );	// Keep old flags if already allocated
 	}
 
@@ -1717,6 +1718,7 @@ public static String getTimeSeriesDataUnits ( HydroBaseDMI hbdmi, String data_ty
 		return FT;
 	}
 	else if ( data_type.equalsIgnoreCase("Precip") ) {
+	    // TODO SAM 2012-05-15 Is this true - need this for web services
 		// Units are in data records and can be IN or mm...
 		return "";
 	}

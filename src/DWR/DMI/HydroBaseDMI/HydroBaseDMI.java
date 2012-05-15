@@ -13547,8 +13547,7 @@ throws Exception {
 }
 
 /**
-Read the station, geoloc and meas_type tables for a record that has the given
-meas_type.<p>
+Read the station, geoloc and meas_type tables for a record that has the given meas_type.<p>
 This is used by TSTool and HydroBase_Util.
 <p><b>Stored Procedures</b><p>
 This method uses the following view:<p><ul>
@@ -13556,19 +13555,13 @@ This method uses the following view:<p><ul>
 @param panel an InputFilter_JPanel containing what to limit the query by.  
 Specify null if no panel contains query limits.
 @param districtWhere the value returned by getWaterDistrictWhereClause().
-@param mapQueryLimits the GRLimits defining the geographical area for which
-to query.
-@param meas_type the meas_type for which to return the record (specify null to
-read all).
-@param time_step the time_step for which to return the record (specify null to
-read all).
-@param vax_field the vax_field for which to return the record (specify null to
-read all).
-@param data_source the data_source for which to return the record (specify null
-to read all).
+@param mapQueryLimits the GRLimits defining the geographical area for which to query.
+@param meas_type the meas_type for which to return the record (specify null to read all).
+@param time_step the time_step for which to return the record (specify null to read all).
+@param vax_field the vax_field for which to return the record (specify null to read all).
+@param data_source the data_source for which to return the record (specify null to read all).
 @param transmit the transmit value to read for (specify null to read all).
-@return a Vector of HydroBase_StationGeolocMeasType or HydroBase_StationView
-objects.
+@return a list of HydroBase_StationGeolocMeasType or HydroBase_StationView objects.
 @throws Exception if an error occurs.
 */
 public List readStationGeolocMeasTypeList(InputFilter_JPanel panel, 
@@ -13577,8 +13570,7 @@ String time_step, String vax_field, String data_source, String transmit,
 boolean meas_typeContains)
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			panel, districtWhere);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(panel, districtWhere);
 
 		String[] triplet = null;
 		if (meas_type != null && meas_type.length() > 0) {
@@ -13674,9 +13666,7 @@ throws Exception {
 //		q.addOrderByClauses(orderBys);
 
 		if (panel != null) {
-			List where_clauses 
-				= DMIUtil.getWhereClausesFromInputFilter(
-					this, panel);		
+			List<String> where_clauses = DMIUtil.getWhereClausesFromInputFilter(this, panel);		
 			// Add additional where clauses...
 			if (where_clauses == null) {
 				where_clauses = new Vector();
@@ -13685,8 +13675,7 @@ throws Exception {
 				where_clauses.add(districtWhere[0]);
 			}
 			for (int i = 0; i < where_clauses.size(); i++) {
-				q.addWhereClause(convertCounty(
-					(String)where_clauses.get(i)));
+				q.addWhereClause(convertCounty(where_clauses.get(i)));
 			}
 		}
 
@@ -15733,7 +15722,8 @@ This property will only be applied to the DivTotal and DivClass data types.
 <td><b>A single-character that will be used as a flag for values that are
 filled with daily carry forward method.
 </b>
-<td>If FillDailyDiv=True but a flag is not specified, then "C" is used.  Otherwise, no flag will be set.</td>
+<td>If FillDailyDiv=True but a flag is not specified, then "c" is used.  Otherwise, no flag will be set.
+Do not use "C" because that is used when filling with diversion comments.</td>
 </tr>
 
 <tr>
@@ -15788,10 +15778,10 @@ throws Exception, NoDataFoundException
 	valid_props.add ( "FillUsingDivComments" );
 	valid_props.add ( "FillUsingDivCommentsFlag" );
 	List<String> warnings = props.validatePropNames (
-					valid_props,	// These are supported
-					null,		// Deprecated props
-					null,		// Deprecated notes
-					null );		// Target descriptor
+					valid_props, // These are supported
+					null, // Deprecated props
+					null, // Deprecated notes
+					null ); // Target descriptor
 
 	if ( warnings != null ) {
 		StringBuffer warning = new StringBuffer ();
@@ -15813,19 +15803,19 @@ throws Exception, NoDataFoundException
 
 	int mt_meas_num = DMIUtil.MISSING_INT;
 
-	int mt_start_year = 0;	// Used for both stations and structures to
-	int mt_end_year = 0;	// indicate database period and set dates.
+	int mt_start_year = 0; // Used for both stations and structures to
+	int mt_end_year = 0; // indicate database period and set dates.
 
 	TSIdent tsident = new TSIdent ( tsident_string);
-	String data_source = tsident.getSource();	// TSID data source
-	String data_type = tsident.getType();		// TSID data type 
-	String sub_data_type = "";			// Sub-data type.
-	String agstats_commodity = "";			// Agstats commodity
-	String agstats_practice = "";			// Agstats practice
-	String agstats_type = "";			// Agstats type
-	String cupop_area_type = "";			//CUPopulation area type
-	String cupop_area_name = "";			//CUPopulation area name
-	String cupop_pop_type = "";			//CUPopulation pop. type
+	String data_source = tsident.getSource(); // TSID data source
+	String data_type = tsident.getType(); // TSID data type 
+	String sub_data_type = ""; // Sub-data type.
+	String agstats_commodity = ""; // Agstats commodity
+	String agstats_practice = ""; // Agstats practice
+	String agstats_type = ""; // Agstats type
+	String cupop_area_type = ""; // CUPopulation area type
+	String cupop_area_name = ""; // CUPopulation area name
+	String cupop_pop_type = ""; // CUPopulation pop. type
 	List sheet_names = null; // List of sheet_name needed to get list of wis_num for data queries.
 	List wis_formats = null; // The list of formats describing the rows of interest.
 	String wis_sheet_name = ""; // WIS sheet name, used with WIS time series
@@ -15835,7 +15825,7 @@ throws Exception, NoDataFoundException
 		sub_data_type = StringUtil.getToken ( data_type, "-", 0, 1);
 		data_type = StringUtil.getToken ( data_type, "-", 0, 0);
 	}
-	String interval = tsident.getInterval();	// TSID data interval 
+	String interval = tsident.getInterval(); // TSID data interval 
 
 	// Convert the requested data type and interval to a HydroBase meas_type and time_step for the queries...
 	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType(data_type, interval);
@@ -18734,8 +18724,8 @@ throws Exception, NoDataFoundException
 		if ( FillDailyDiv.equalsIgnoreCase("true") ) {
 			String FillDailyDivFlag = props.getValue ( "FillDailyDivFlag" );
 			if ( (FillDailyDivFlag == null) || FillDailyDivFlag.equals("") ) {
-			    // Default is "C"
-			    FillDailyDivFlag = "C";
+			    // Default is "c"
+			    FillDailyDivFlag = "c";
 			}
 			// TODO SAM 2006-04-25 This throws an Exception.  Leave it for now but need
 			// to evaluate how to handle errors..
@@ -30796,14 +30786,14 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_StationView objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_StationView
+@return a list of HydroBase_StationView
 @throws Exception if an error occurs.
 @param distinct whether this is a distinct query or not
 */
-private List toStationMeasTypeSPList(ResultSet rs, boolean distinct)
+private List<HydroBase_StationView> toStationMeasTypeSPList(ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_StationView data = null;
-	List v = new Vector();
+	List<HydroBase_StationView> v = new Vector();
 	int index = 1;
 	
 	int i;
@@ -30901,6 +30891,8 @@ throws Exception {
 		s = rs.getString(index++);
 		if (!rs.wasNull()) {
 			data.setData_source(s.trim());
+			//Message.printStatus(2, "", "Data_source=\"" + data.getData_source() + "\", source=\"" +
+			//    data.getSource() + "\"");
 		}
 		d = rs.getDouble(index++);
 		if (!rs.wasNull()) {
