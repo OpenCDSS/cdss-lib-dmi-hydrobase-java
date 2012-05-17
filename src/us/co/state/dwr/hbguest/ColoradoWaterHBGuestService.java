@@ -2,7 +2,6 @@ package us.co.state.dwr.hbguest;
 
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -820,9 +819,8 @@ public List getTimeSeriesHeaderObjects ( String dataType, String timeStep, Input
     else if ( (dataType.equalsIgnoreCase("WellLevelElev") || dataType.equalsIgnoreCase("WellLevelDepth"))
         && timeStep.equalsIgnoreCase("Day") ){
         List<HydroBase_GroundWaterWellsView> tslist = new Vector(); // List that matches the input request
-        String dataTypeForCache = "WellLevel";
         for ( Integer districtInList : districtList ) {
-            String key = getGroundWaterWellsMeasTypeByWDListCacheKey(dataTypeForCache, timeStep, districtInList);
+            String key = getGroundWaterWellsMeasTypeByWDListCacheKey(dataType, timeStep, districtInList);
             List<HydroBase_GroundWaterWellsView> cacheList = __groundWaterWellsMeasTypeByWDListCache.get(key );
             List<HydroBase_GroundWaterWellsView> dataList = null;
             if ( cacheList == null ) {
@@ -1152,7 +1150,6 @@ private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
     // This comes from the calling code, in particular because HydroBase Annual corresponds to
     // Year and Month data
     hbwell.setTime_step(timeStep);
-    
     // from Geoloc
     hbwell.setPM(mt.getPm());
     hbwell.setTS(mt.getTs());
@@ -1166,13 +1163,24 @@ private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
     hbwell.setQ160(mt.getQ160());
     hbwell.setQ40(mt.getQ40());
     hbwell.setQ10(mt.getQ10());
-
+    BigDecimal d = mt.getLongdecdeg();
+    if ( d != null ) {
+        hbwell.setLongdecdeg(d.doubleValue());
+    }
+    d = mt.getLatdecdeg();
+    if ( d != null ) {
+        hbwell.setLatdecdeg(d.doubleValue());
+    }
+    d = mt.getUTMX();
+    if ( d != null ) {
+        hbwell.setUtm_x(d.doubleValue());
+    }
+    d = mt.getUTMY();
+    if ( d != null ) {
+        hbwell.setUtm_y(d.doubleValue());
+    }
     // From new groundwater well data ...
     hbwell.setWell_num(mt.getWellNum());
-    hbwell.setUtm_x(mt.getUTMX().doubleValue());
-    hbwell.setUtm_y(mt.getUTMY().doubleValue());
-    hbwell.setLatdecdeg(mt.getLatdecdeg().doubleValue());
-    hbwell.setLongdecdeg(mt.getLongdecdeg().doubleValue());
     hbwell.setCounty(mt.getCounty());
     //hbwell.setSt(mt.getSt());
     hbwell.setTopomap(mt.getTopomap());
@@ -1256,6 +1264,22 @@ private HydroBase_StationGeolocMeasType newHydroBase_StationGeolocMeasType (
     hbsta.setCounty(sgmt.getCounty());
     hbsta.setST(sgmt.getSt());
     hbsta.setHUC(sgmt.getHuc());
+    BigDecimal d = sgmt.getLongdecdeg();
+    if ( d != null ) {
+        hbsta.setLongdecdeg(d.doubleValue());
+    }
+    d = sgmt.getLatdecdeg();
+    if ( d != null ) {
+        hbsta.setLatdecdeg(d.doubleValue());
+    }
+    d = sgmt.getUTMX();
+    if ( d != null ) {
+        hbsta.setUtm_x(d.doubleValue());
+    }
+    d = sgmt.getUTMY();
+    if ( d != null ) {
+        hbsta.setUtm_y(d.doubleValue());
+    }
     // Meastype
     hbsta.setStart_year(sgmt.getStartYear());
     hbsta.setEnd_year(sgmt.getEndYear());
@@ -1293,9 +1317,26 @@ private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeas
     hbstruct.setWD(sgmt.getWd());
     hbstruct.setID(sgmt.getId());
     hbstruct.setStr_name(sgmt.getStrName());
+    // Geoloc
     hbstruct.setCounty(sgmt.getCounty());
     hbstruct.setST(sgmt.getSt());
     hbstruct.setHUC(sgmt.getHuc());
+    BigDecimal d = sgmt.getLongdecdeg();
+    if ( d != null ) {
+        hbstruct.setLongdecdeg(d.doubleValue());
+    }
+    d = sgmt.getLatdecdeg();
+    if ( d != null ) {
+        hbstruct.setLatdecdeg(d.doubleValue());
+    }
+    d = sgmt.getUTMX();
+    if ( d != null ) {
+        hbstruct.setUtm_x(d.doubleValue());
+    }
+    d = sgmt.getUTMY();
+    if ( d != null ) {
+        hbstruct.setUtm_y(d.doubleValue());
+    }
     // Meastype
     hbstruct.setStart_year(sgmt.getStartYear());
     hbstruct.setEnd_year(sgmt.getEndYear());
@@ -1313,23 +1354,22 @@ private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeas
 /**
 Read HydroBase_GroundWaterWellsView objects using web services.  The list for a water district and
 measType combination are read.  This method should only be called if reading every time or the cache does not
-exist and needs to be initialized.
+exist and needs to be initialized.  Caches are initialized for both WellLevelEleve and WellLevelDepth data types
+(takes more memory but is consistent with design since data type is used from object later).
 @param wd water district of interest (-1 to ignore constraint)
-@param measType structure measType to return (e.g., "WellLevelElev")
+@param dataTypeReq requested data type from TSTool ("WellLevelElev" or "WellLevelDepth")
 @param timeStep time series time step as per TS conventions (e.g, "Day" NOT HydroBase "Daily")
 @param cacheIt if true, cache the result, false to not cache (slower but use less memory long-term) - caches
 are saved by measType-timeStep-wd combination
 */
 private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
-    int wd, String measType, String timeStep, boolean cacheIt )
+    int wd, String dataTypeReq, String timeStep, boolean cacheIt )
 {   String routine = __class + ".readGroundWaterWellsMeasTypeList";
     Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
     StopWatch sw = new StopWatch();
     sw.start();
-    if ( measType == null ) {
-        measType = ""; // Web service does not like null
-    }
-    String measTypeForCache = "WellLevel"; // Needed because 2 values are stored in each record
+    String dataType1 = "WellLevelElev";
+    String dataType2 = "WellLevelDepth";
     List<HydroBase_GroundWaterWellsView> returnList = new Vector();
     if ( wd > 0 ) {
         // Read data for one water district
@@ -1339,12 +1379,12 @@ private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
         // Check for error
         if ( (status.value != null) && (status.value.getError() != null) ) {
             throw new RuntimeException ( "Error getting GroundWaterWellsMeasType for wd=" + wd +
-                " measType=\"" + measType + "\" (" + status.value.getError().getErrorCode() + ": " +
+                " dataType=\"" + dataTypeReq + "\" (" + status.value.getError().getErrorCode() + ": " +
                 status.value.getError().getExceptionDescription() + ")." );
         }
         Message.printStatus(2, routine,
             "Retrieved " + mtArray.getGroundWaterWellsMeasType().size() + " GroundWaterWellsMeasType for WD=" + wd +
-            " MeasType=\"" + measType + "\" in " + sw.getSeconds() + " seconds.");
+            " MeasType=\"" + dataTypeReq + "\" in " + sw.getSeconds() + " seconds.");
         // Loop through once and get the list of unique timesteps so a cache can be created for each
         List<String> timeStepList = new Vector();
         boolean found;
@@ -1352,9 +1392,12 @@ private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
         String timeStepUpper;
         if ( cacheIt ) {
             // Initialize each cache
-            String key = getStructureGeolocMeasTypeByWDListCacheKey(measTypeForCache, "Day", wd);
-            Message.printStatus ( 2, routine, "Initializing cache with key \"" + key + "\"." );
-            __groundWaterWellsMeasTypeByWDListCache.put(key, new Vector() );
+            String cacheKey = getStructureGeolocMeasTypeByWDListCacheKey(dataType1, "Day", wd);
+            Message.printStatus ( 2, routine, "Initializing cache with key \"" + cacheKey + "\"." );
+            __groundWaterWellsMeasTypeByWDListCache.put(cacheKey, new Vector() );
+            cacheKey = getStructureGeolocMeasTypeByWDListCacheKey(dataType2, "Day", wd);
+            Message.printStatus ( 2, routine, "Initializing cache with key \"" + cacheKey + "\"." );
+            __groundWaterWellsMeasTypeByWDListCache.put(cacheKey, new Vector() );
         }
         // Loop through the results (by water district and division) and add to the appropriate cached list
         // Sometimes multiple records are returned because the results are a join with owners (multiple owners)
@@ -1381,29 +1424,36 @@ private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
                 cacheTimeStep = HydroBase_Util.convertFromHydroBaseTimeStep(hbTimeStep);
             }
             cacheList = __groundWaterWellsMeasTypeByWDListCache.get (getGroundWaterWellsMeasTypeByWDListCacheKey(
-                measTypeForCache, cacheTimeStep, wd));
-            cacheList.add ( newHydroBase_GroundWaterWellsView( mt, measType, cacheTimeStep, "FT" ) );
+                dataType1, cacheTimeStep, wd));
+            cacheList.add ( newHydroBase_GroundWaterWellsView( mt, dataType1, cacheTimeStep, "FT" ) );
+            cacheList = __groundWaterWellsMeasTypeByWDListCache.get (getGroundWaterWellsMeasTypeByWDListCacheKey(
+                dataType2, cacheTimeStep, wd));
+            cacheList.add ( newHydroBase_GroundWaterWellsView( mt, dataType2, cacheTimeStep, "FT" ) );
             mtPrev = mt;
         }
         if ( cacheIt ) {
             // Logging...
             for ( String timeStepInList: timeStepList ) {
-                String key = getGroundWaterWellsMeasTypeByWDListCacheKey(measTypeForCache, timeStepInList, wd);
-                cacheList = __groundWaterWellsMeasTypeByWDListCache.get(key);
+                String cacheKey = getGroundWaterWellsMeasTypeByWDListCacheKey(dataType1, timeStepInList, wd);
+                cacheList = __groundWaterWellsMeasTypeByWDListCache.get(cacheKey);
                 Message.printStatus ( 2, routine,
-                    "After reading data, cache for key \"" + key + "\" has size=" + cacheList.size() );
+                    "After reading data, cache for key \"" + cacheKey + "\" has size=" + cacheList.size() );
+                cacheKey = getGroundWaterWellsMeasTypeByWDListCacheKey(dataType2, timeStepInList, wd);
+                cacheList = __groundWaterWellsMeasTypeByWDListCache.get(cacheKey);
+                Message.printStatus ( 2, routine,
+                    "After reading data, cache for key \"" + cacheKey + "\" has size=" + cacheList.size() );
             }
         }
         // Add to the returned list only the requested list
-        String key = getGroundWaterWellsMeasTypeByWDListCacheKey(measTypeForCache, timeStep, wd);
-        cacheList = __groundWaterWellsMeasTypeByWDListCache.get(key);
+        String cacheKey = getGroundWaterWellsMeasTypeByWDListCacheKey(dataTypeReq, timeStep, wd);
+        cacheList = __groundWaterWellsMeasTypeByWDListCache.get(cacheKey);
         if ( cacheList != null ) {
-            Message.printStatus ( 2, routine, "Returning cache for key \"" + key + "\" size=" +
+            Message.printStatus ( 2, routine, "Returning cache for key \"" + cacheKey + "\" size=" +
                 cacheList.size() + "." );
             returnList.addAll ( cacheList );
         }
         else {
-            Message.printStatus ( 2, routine, "Problem?  No cache for key \"" + key + "\"." );
+            Message.printStatus ( 2, routine, "Problem?  No cache for key \"" + cacheKey + "\"." );
         }
     }
     return returnList;
