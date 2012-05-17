@@ -33,6 +33,7 @@ import RTi.Util.Time.TimeUtil;
 // to not commingle the auto-generated code with the data store code
 
 /**
+<p>
 This class extends the auto-generated ColoradoWaterHBGuest SOAP web service class and adds
 caches and methods to access the caches.  In this way a service object and its associated caches can
 be reused and separate caches can exist for different services (for example if different versions of
@@ -41,6 +42,39 @@ large, care should be taken to reuse the service object as much as possible.  Th
 for data and private read methods to utilize the SOAP API.  In this way, the API is more service-like with
 get methods.  HydroBase package objects are returned in some cases to facilitate use in existing code such
 as TSTool, although the ColoradoWaterHBGuest object types will be evaluated with use.
+</p>
+<p>
+The ColoradoWaterHBGuest SOAP API in some cases provides methods to query lists of "meas types" by water district
+or division (join of station or structure, geoloc, meastype) - this is utilized by TSTool's UI to list
+time series for the user and generally includes enough useful metadata; however, in some cases information such
+as units may not be accessible.  The API also provides methods to read specific time series identified by
+a WDID or "meas_num".  Because web services incur a performance hit and in particular querying time series data
+can be a big hit, this data store attempts to optimize performance by caching the "meas type" query results.
+HydroBase meas type strings can be different from TSTool for a couple of reasons:  1) the HydroBase string is not
+clear enough (e.g., station "Evap" does not indicate what type of evaporation), 2) The HydroBase "meas type"
+refers to a table that has multiple values (e.g., Structure "ResMeas" has multiple values).
+</p>
+<p>
+In order to have reasonable performance, this data store caches the meas type list results using a string key
+of the form "DATATYPE-INTERVAL-WD".  The WD corresponds to the water district query parameter for the SOAP API methods.
+The DataType corresponds to the TSTool data type (NOT the HydroBase measType).  This may result in some redundant
+caches (list of time series may be the essentially the same except that the data object "data type" is that of
+TSTool, not overlapping HydroBase meas type like "ResMeas"), but it makes data management logic more
+straightforward.  Caches are initialized in a lazy fashion.  If a request for a division or water district is made,
+the corresponding water district caches are initialized.  Subsequent queries will be used as needed.  For example,
+if a request is made to list a meas-type and the list has been cached, it is returned immediately.  If a time
+series is requested, the cache is checked for a meas type object and the corresponding meas_num can be used
+for queries.  This works well with structure queries because structure identifiers include the WD and consequently
+the relationship between individual time series and meas type cache is clear.  However, this does not work when the
+time series query is based on meas_num (e.g., stations and groundwater wells).  In this latter case when requesting
+a specific time series, the approach is to search the cache in memory for the time series (for example to
+match the station identifier).  If found, then sufficient information is available to query the time series.  If
+not found, additional water districts are queried for meas type data until the time series is matched.  This is
+not ideal because if a time series is queried for a water district that has not been read, intervening water
+district lists have to be read in order to search the lists.  This could be improved if the SOAP API is updated
+to allow station and groundwater wells time series to be read by specific ID (then the corresponding WD mead type
+list can be read and cached to facilitate possible subsequent queries).
+</p>
 */
 public class ColoradoWaterHBGuestService extends ColoradoWaterHBGuest
 {
@@ -303,34 +337,93 @@ private String getGroundWaterWellsMeasTypeByWDListCacheKey ( String dataType, St
 /**
 Get a HydroBase_GroundWaterWellsView instance for a WDID.  This is used to set metadata during
 a time series read.  If necessary, the cache for the water district meas types will be read.
-@param measType structure data type (measType) of interest (e.g., "DivTotal").
+@param dataType structure data type (measType) of interest (e.g., "DivTotal").
 @param timeStep time series time step (e.g., "Month" NOT HydroBase "Monthly")
 @param identifier unique well identifier
 @return the matching HydroBase_GroundWaterWellsView instance, or null if not matched.
 */
 private HydroBase_GroundWaterWellsView
-    getGroundWaterWellsMeasTypeForIdentifier ( String measType, String timeStep, String identifier )
+    getGroundWaterWellsMeasTypeForIdentifier ( String identifier, String dataSource, String dataType, String timeStep )
 {
-    // First get the cache - although the caches are stored by WD, the identifier does not indicate
-    // the WD so loop through all the caches and search
-    Enumeration e = __groundWaterWellsMeasTypeByWDListCache.keys();
-    while ( e.hasMoreElements() ) {
-        Object key = e.nextElement();
-        List<HydroBase_GroundWaterWellsView> cacheList = __groundWaterWellsMeasTypeByWDListCache.get(key);
-        /* TODO SAM 2012-05-07 Figure out if needed
+    // Check for nulls to simplify logic below
+    if ( identifier == null ) {
+        identifier = "";
+    }
+    if ( dataSource == null ) {
+        dataSource = "";
+    }
+    // Because well identifiers don't include the water district, have to search all caches to find the
+    // matching identifier.
+    // Loop through all the water districts, this will be a performance hit if the requested well is in a
+    // large-number water district and the water district has not been cached.
+    boolean useCache = true;
+    for ( HydroBase_WaterDistrict wd : __waterDistrictListCache ) {
+        String cacheKey = getGroundWaterWellsMeasTypeByWDListCacheKey(dataType, timeStep, wd.getWD());
+        List<HydroBase_GroundWaterWellsView> cacheList = __groundWaterWellsMeasTypeByWDListCache.get(cacheKey);
         if ( cacheList == null ) {
-            // Read the data and initialize the cache
-            cacheList = readGroundWaterWellsMeasTypeList( -1, wd, measType, timeStep, true );
+            // Read the data for the water district and initialize the cache
+            cacheList = readGroundWaterWellsMeasTypeList( wd.getWD(), dataType, timeStep, useCache );
         }
-        */
-        // Next loop through the returned list and find the specific ID match
+        // Next loop through the returned list and find the specific match
         for ( HydroBase_GroundWaterWellsView mt: cacheList ) {
-            if ( mt.getIdentifier().equalsIgnoreCase(identifier) ) {
+            String mtIdentifier = mt.getIdentifier();
+            String source = mt.getData_source();
+            // Only compare the data items that are not empty
+            // In other words, don't compare station_id unless both have something to compare
+            if ( ((mtIdentifier != null) && !mtIdentifier.equals("") && mtIdentifier.equalsIgnoreCase(identifier)) && // Matched identifier
+                ((source != null) && !source.equals("") && source.equalsIgnoreCase(dataSource)) ) { // Matched source
                 return mt;
             }
         }
     }
     return null;
+}
+
+/**
+Lookup the HydroBase measType from the TSTool data type.  This is used in cases where the TSTool data type
+is different for clarity/usability (e.g., TSTool "EvapPan" versus HydroBase "Evap") and in cases where HydroBase
+has multiple data types stored in one reacord (e.g., TSTool "ResMeasStorage" versus HydroBase "ResMeas").
+This method can be called regardless of whether the time series is for a station, structure, etc.
+@param dataType TSTool data type
+@return HydroBase measType
+*/
+private String getHydroBaseMeasTypeFromDataType ( String dataType )
+{   String measTypeHydroBase = dataType;
+    // Station data...
+    if ( dataType.equalsIgnoreCase("EvapPan") ) {
+        // TSTool more specific to avoid confusion with reservoir evaporation, etc.
+        measTypeHydroBase = "Evap";
+    }
+    else if ( dataType.toUpperCase().startsWith("FROSTDATE") ) {
+        // Replace TSTool FrostDateXXXX with FrostDate since HydroBase has multiple data types in one table
+        measTypeHydroBase = "FrostDate";
+    }
+    else if ( dataType.toUpperCase().startsWith("SNOWCOURSE") ) {
+        // Replace TSTool SnowCourseXXXX with SnowCrse since HydroBase has multiple data types in one table
+        measTypeHydroBase = "SnowCrse";
+    }
+    else if ( dataType.equalsIgnoreCase("TempMax") ) {
+        // TSTool reverse order for consistency and readability.
+        measTypeHydroBase = "MaxTemp";
+    }
+    else if ( dataType.equalsIgnoreCase("TempMean") ) {
+        // TSTool reverse order for consistency and readability.
+        measTypeHydroBase = "MeanTemp";
+    }
+    else if ( dataType.equalsIgnoreCase("TempMin") ) {
+        // TSTool reverse order for consistency and readability.
+        measTypeHydroBase = "MinTemp";
+    }
+    else if ( dataType.equalsIgnoreCase("VaporPressure") ) {
+        // TSTool more specific for readability.
+        measTypeHydroBase = "VP";
+    }
+    // Structure data...
+    else if ( dataType.toUpperCase().startsWith("RESMEAS") ) {
+        // Replace TSTool ResMeasXXXX with ResMeas since HydroBase has multiple data types in one table
+        measTypeHydroBase = "ResMeas";
+    }
+    return measTypeHydroBase;
 }
 
 /**
@@ -358,12 +451,12 @@ Get a HydroBase_StationGeolocMeasType instance for a station ID.  This is used t
 a time series read.  If necessary, the cache for the water district meas types will be read.
 @param stationID station identifier within water district
 @param dataSource data source (provider) for data (e.g., "NOAA", "DWR")
-@param measType station data type (measType) of interest (e.g., "AdminFlow").
+@param dataType station data type of interest (e.g., "AdminFlow"), used by TSTool (not internal HydroBase).
 @param timeStep time series time step (e.g., "Month" NOT HydroBase "Monthly")
 @return the matching HydroBase_StructureGeolocStructMeasType instance, or null if not matched.
 */
 private HydroBase_StationGeolocMeasType
-    getStationGeolocMeasTypeForStationID ( String stationID, String dataSource, String measType, String timeStep )
+    getStationGeolocMeasTypeForStationID ( String stationID, String dataSource, String dataType, String timeStep )
 {   // Check for nulls to simplify logic below
     if ( stationID == null ) {
         stationID = "";
@@ -374,27 +467,25 @@ private HydroBase_StationGeolocMeasType
     // Because station identifiers don't include the water district, have to search all caches to find the
     // matching identifier.
     // Looping through all the water districts
+    boolean useCache = true;
     for ( HydroBase_WaterDistrict wd : __waterDistrictListCache ) {
-        String cacheKey = getStationGeolocMeasTypeByWDListCacheKey(measType, timeStep, wd.getWD());
+        String cacheKey = getStationGeolocMeasTypeByWDListCacheKey(dataType, timeStep, wd.getWD());
         List<HydroBase_StationGeolocMeasType> cacheList =
             __stationGeolocMeasTypeByWDListCache.get(cacheKey);
         if ( cacheList == null ) {
-            // Read the data and initialize the cache
-            cacheList = readStationGeolocMeasTypeList( -1, wd.getWD(), measType, timeStep, true );
-            // For some combinations there may be no stations so initialize an empty list
-            if ( cacheList == null ) {
-                cacheList = new Vector();
-            }
-            __stationGeolocMeasTypeByWDListCache.put(cacheKey,cacheList);
+            // Read the data for the water district and initialize the cache
+            cacheList = readStationGeolocMeasTypeList( wd.getWD(), dataType, timeStep, useCache );
         }
         // Next loop through the returned list and find the specific match
         for ( HydroBase_StationGeolocMeasType mt: cacheList ) {
             String abbrev = mt.getAbbrev();
             String station_id = mt.getStation_id();
-            String source = mt.getSource();
-            if ( ((station_id != null) && !station_id.equals("") && station_id.equalsIgnoreCase(stationID)) ||
-                ((abbrev != null) && !abbrev.equals("") && abbrev.equalsIgnoreCase(stationID)) &&
-                ((source != null) && !source.equals("") && source.equalsIgnoreCase(dataSource)) ) {
+            String source = mt.getData_source();
+            // Only compare the data items that are not empty
+            // In other words, don't compare station_id unless both have something to compare
+            if ( (((station_id != null) && !station_id.equals("") && station_id.equalsIgnoreCase(stationID)) ||
+                ((abbrev != null) && !abbrev.equals("") && abbrev.equalsIgnoreCase(stationID))) && // Matched ID or abbrev
+                ((source != null) && !source.equals("") && source.equalsIgnoreCase(dataSource)) ) { // Matched source
                 return mt;
             }
         }
@@ -433,14 +524,14 @@ private String getStructureGeolocMeasTypeByWDListCacheKey ( String dataType, Str
 /**
 Get a HydroBase_StructureGeolocStructMeasType instance for a WDID.  This is used to set metadata during
 a time series read.  If necessary, the cache for the water district meas types will be read.
-@param measType structure data type (measType) of interest (e.g., "DivTotal").
-@param timeStep time series time step (e.g., "Month" NOT HydroBase "Monthly")
 @param wd water district
 @param id structure identifier within water district
+@param measType structure data type (measType) of interest (e.g., "DivTotal").
+@param timeStep time series time step (e.g., "Month" NOT HydroBase "Monthly")
 @return the matching HydroBase_StructureGeolocStructMeasType instance, or null if not matched.
 */
 private HydroBase_StructureGeolocStructMeasType
-    getStructureGeolocMeasTypeForWDID ( String measType, String timeStep, int wd, int id )
+    getStructureGeolocMeasTypeForWDID ( int wd, int id, String measType, String timeStep )
 {
     // First get the cache
     String cacheKey = getStructureGeolocMeasTypeByWDListCacheKey( measType, timeStep, wd );
@@ -566,9 +657,9 @@ public List<String> getTimeSeriesDataTypes ( int include_types, boolean add_grou
         //types.add ( prefix + "StreamflowMax" ); // Time step:  Month, Day, consistent with HydroBaseDMI
         //types.add ( prefix + "StreamflowMin" ); // Time step:  Month, Day, consistent with HydroBaseDMI
     }
-    /* Not yet supported
     if ( (include_types&HydroBase_Util.DATA_TYPE_AGRICULTURE) > 0 ) {
         prefix = "";
+        /* Not yet supported
         // Colorado agricultural statistics
         if ( add_group ) {
             prefix = "Agriculture/CASS - ";
@@ -581,23 +672,18 @@ public List<String> getTimeSeriesDataTypes ( int include_types, boolean add_grou
             prefix = "Agriculture/NASS - ";
         }
         types.add ( prefix + "CropArea" );
+        */
         // Data derived from DSS GIS work...
         if ( add_group ) {
             prefix = "Agriculture/GIS - ";
         }
+        // irrig_summary_ts table
         types.add ( prefix + "CropAreaAllIrrigation" );
         types.add ( prefix + "CropAreaFlood" );
         types.add ( prefix + "CropAreaDrip" );
         types.add ( prefix + "CropAreaFurrow" );
         types.add ( prefix + "CropAreaSprinkler" );
-                            // This is something
-                            // new, which will
-                            // support StateDMI and
-                            // TSTool -
-                            // irrig_summary_ts
-                            // table
     }
-    */
     /* Not yet supported
     if ( (include_types&HydroBase_Util.DATA_TYPE_DEMOGRAPHICS_POPULATION) > 0 ) {
         prefix = "";
@@ -703,22 +789,24 @@ public List getTimeSeriesHeaderObjects ( String dataType, String timeStep, Input
             }
         }
     }
+    // Currently want to use caches, unless that becomes a problem.
+    // Caches are necessary to have reasonable performance
+    boolean useCache = true;
     if( isStationTimeSeriesDataType(dataType)){
         List<HydroBase_StationGeolocMeasType> tslist = new Vector(); // List that matches the input request
         for ( Integer districtInList : districtList ) {
-            String key = getStationGeolocMeasTypeByWDListCacheKey(dataType, timeStep, districtInList);
-            List<HydroBase_StationGeolocMeasType> cacheList =
-                __stationGeolocMeasTypeByWDListCache.get(key );
+            String cacheKey = getStationGeolocMeasTypeByWDListCacheKey(dataType, timeStep, districtInList);
+            List<HydroBase_StationGeolocMeasType> cacheList = __stationGeolocMeasTypeByWDListCache.get(cacheKey );
             List<HydroBase_StationGeolocMeasType> dataList = null;
             if ( cacheList == null ) {
                 // No data have been read for the district and measType so do it.  This will actually read
                 // all timesteps also and populate multiple hash tables, however, it will only return the
                 // timestep of interest
-                dataList = readStationGeolocMeasTypeList(div, districtInList, dataType, timeStep, true);
+                dataList = readStationGeolocMeasTypeList( districtInList, dataType, timeStep, useCache );
             }
             else {
                 dataList = cacheList;
-                Message.printStatus(2, routine, "Got cached data using key \"" + key + "\" size=" + cacheList.size() );
+                Message.printStatus(2, routine, "Got cached data using key \"" + cacheKey + "\" size=" + cacheList.size() );
             }
             // Add to the returned list - this ensures that the cache list itself does not get manipulated
             tslist.addAll( dataList );
@@ -741,7 +829,7 @@ public List getTimeSeriesHeaderObjects ( String dataType, String timeStep, Input
                 // No data have been read for the district and measType so do it.  This will actually read
                 // all timesteps also and populate multiple hash tables, however, it will only return the
                 // timestep of interest
-                dataList = readGroundWaterWellsMeasTypeList(div, districtInList, dataType, timeStep, true);
+                dataList = readGroundWaterWellsMeasTypeList( districtInList, dataType, timeStep, useCache );
             }
             else {
                 dataList = cacheList;
@@ -766,7 +854,7 @@ public List getTimeSeriesHeaderObjects ( String dataType, String timeStep, Input
                 // No data have been read for the district and measType so do it.  This will actually read
                 // all timesteps also and populate multiple hash tables, however, it will only return the
                 // timestep of interest
-                dataList = readStructureGeolocMeasTypeList(div, districtInList, dataType, timeStep, true);
+                dataList = readStructureGeolocMeasTypeList(div, districtInList, dataType, timeStep, useCache);
             }
             else {
                 dataList = cacheList;
@@ -994,7 +1082,7 @@ public boolean isStationTimeSeriesDataType ( String dataTypeToCheck )
     // This should match the data type to check if a station
     List<String> dataTypes = getTimeSeriesDataTypes ( HydroBase_Util.DATA_TYPE_STATION_ALL, false );
     for ( String dataType: dataTypes ) {
-        Message.printStatus(2, "", "Comparing \"" + dataTypeToCheck + "\" against \"" + dataType + "\".");
+        //Message.printStatus(2, "", "Comparing \"" + dataTypeToCheck + "\" against \"" + dataType + "\".");
         if ( dataType.equalsIgnoreCase(dataTypeToCheck) ) {
             return true;
         }
@@ -1020,7 +1108,7 @@ public boolean isStructureTimeSeriesDataType ( String dataTypeToCheck )
     List<String> dataTypes = getTimeSeriesDataTypes ( HydroBase_Util.DATA_TYPE_STRUCTURE_ALL, false );
     // Check the list of struct_meas_type.meas_type...
     for ( String dataType: dataTypes ) {
-        Message.printStatus(2, "", "Comparing \"" + dataTypeToCheck + "\" against \"" + dataType + "\".");
+        //Message.printStatus(2, "", "Comparing \"" + dataTypeToCheck + "\" against \"" + dataType + "\".");
         if ( dataType.equalsIgnoreCase(dataTypeToCheck) ) {
             return true;
         }
@@ -1173,7 +1261,12 @@ private HydroBase_StationGeolocMeasType newHydroBase_StationGeolocMeasType (
     hbsta.setEnd_year(sgmt.getEndYear());
     hbsta.setMeas_type(measType);
     hbsta.setMeas_count(sgmt.getMeasCount());
+    // FIXME SAM 2012-050-15 does not seem consistent with HydroBase
+    // For now set data source to be same as source
+    // Data source is what we want to use for time series.
+    //hbsta.setData_source(sgmt.getData_source()); // Use this for the time series
     hbsta.setData_source(sgmt.getSource());
+    hbsta.setSource(sgmt.getSource()); // This is for the station
     // Meas count not available?
     hbsta.setMeas_num(sgmt.getMeasNum());
     // This comes from the calling code, in particular because HydroBase Annual corresponds to
@@ -1207,7 +1300,7 @@ private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeas
     hbstruct.setStart_year(sgmt.getStartYear());
     hbstruct.setEnd_year(sgmt.getEndYear());
     hbstruct.setMeas_type(measType);
-    // FIXME SAM 2010-08-13 Need to not hard-code this
+    // FIXME SAM 2010-08-13 Need to not hard-code this, but does not seem to be available from web service
     hbstruct.setData_source("DWR");
     // Meas count not available?
     hbstruct.setMeas_num(sgmt.getMeasNum());
@@ -1221,7 +1314,6 @@ private HydroBase_StructureGeolocStructMeasType newHydroBase_StructureGeolocMeas
 Read HydroBase_GroundWaterWellsView objects using web services.  The list for a water district and
 measType combination are read.  This method should only be called if reading every time or the cache does not
 exist and needs to be initialized.
-@param div division of interest (-1 to ignore constraint)
 @param wd water district of interest (-1 to ignore constraint)
 @param measType structure measType to return (e.g., "WellLevelElev")
 @param timeStep time series time step as per TS conventions (e.g, "Day" NOT HydroBase "Daily")
@@ -1229,7 +1321,7 @@ exist and needs to be initialized.
 are saved by measType-timeStep-wd combination
 */
 private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
-    int div, int wd, String measType, String timeStep, boolean cacheIt )
+    int wd, String measType, String timeStep, boolean cacheIt )
 {   String routine = __class + ".readGroundWaterWellsMeasTypeList";
     Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
     StopWatch sw = new StopWatch();
@@ -1320,17 +1412,18 @@ private List<HydroBase_GroundWaterWellsView> readGroundWaterWellsMeasTypeList(
 /**
 Read HydroBase_StationGeolocStructMeasType objects using web services.  The list for a water district and
 measType combination are read.  This method should only be called if reading every time or the cache does not
-exist and needs to be initialized.
-@param div division of interest (-1 to ignore constraint)
+exist and needs to be initialized.  Important, use the getTimeSeriesHeaderObjects() to retrieve the list for
+the application, which will check for a cached item first.
 @param wd water district of interest (-1 to ignore constraint)
 @param dataType time series data type as per TSTool (e.g., "Streamflow") - may be slightly different
 for HydroBase query
 @param timeStep time series time step as per TS conventions (e.g, "Month" NOT HydroBase "Monthly")
-@param cacheIt if true, cache the result, false to not cache (slower but use less memory long-term) - caches
+@param useCache if true, cache the result, false to not cache (slower but use less memory long-term) - caches
 are saved by measType-timeStep-wd combination
+@return the list of HydroBase_StationGeolocMeasType, guaranteed to be non-null
 */
 private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
-    int div, int wd, String dataType, String timeStep, boolean cacheIt )
+    int wd, String dataType, String timeStep, boolean useCache )
 {   String routine = __class + ".readStationGeolocMeasTypeList";
     Holder<HbStatusHeader> status = new Holder<HbStatusHeader>();
     StopWatch sw = new StopWatch();
@@ -1339,37 +1432,15 @@ private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
         dataType = ""; // Web service does not like null
     }
     List<HydroBase_StationGeolocMeasType> returnList = new Vector();
-    String measTypeHydroBase = dataType; // Only used for query but all else uses more specific data type
-    if ( dataType.equalsIgnoreCase("EvapPan") ) {
-        // Replace TSTool EvapPan with Evap since HydroBase uses the latter
-        measTypeHydroBase = "Evap";
-    }
-    else if ( dataType.toUpperCase().startsWith("FROSTDATE") ) {
-        // Replace TSTool FrostDateXXXX with FrostDate since HydroBase has multiple data values in one table
-        measTypeHydroBase = "FrostDate";
-    }
-    else if ( dataType.equalsIgnoreCase("SnowCourseSWE") || dataType.equalsIgnoreCase("SnowCourseDepth")) {
-        // Replace TSTool SnowCourseXXXX with SnowCrse since HydroBase has multiple values in one table
-        measTypeHydroBase = "SnowCrse";
-    }
-    else if ( dataType.equalsIgnoreCase("TempMax") ) {
-        // TSTool reverse order for consistency and readability.
-        measTypeHydroBase = "MaxTemp";
-    }
-    else if ( dataType.equalsIgnoreCase("TempMean") ) {
-        // TSTool reverse order for consistency and readability.
-        measTypeHydroBase = "MeanTemp";
-    }
-    else if ( dataType.equalsIgnoreCase("TempMin") ) {
-        // TSTool reverse order for consistency and readability.
-        measTypeHydroBase = "MinTemp";
-    }
-    else if ( dataType.equalsIgnoreCase("VaporPressure") ) {
-        // Replace TSTool VaporPressure with VP since HydroBase uses the latter
-        measTypeHydroBase = "VP";
-    }
+    // Only used for query but all else uses more specific data type
+    String measTypeHydroBase = getHydroBaseMeasTypeFromDataType(dataType);
     if ( wd > 0 ) {
         // Read data for one water district
+        // This query does NOT take into account the requested time step so multiple intervals may be returned
+        // for a data type (e.g., "Precip" will have "Daily" and "Monthly" time series).  In these cases,
+        // caches are returned for each interval, using the requested data type
+        // This may take more memory but keeps the lists separate... and there is potential that the list for
+        // one interval actually is different from other intervals
         ArrayOfStationGeolocMeasType sgmtArray = getColoradoWaterHBGuestSoap12().getHBGuestStationGeolocMeasTypeByWD(
             wd, measTypeHydroBase, getAuthentication(), status );
         sw.stop();
@@ -1384,12 +1455,14 @@ private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
             "Retrieved " + sgmtArray.getStationGeolocMeasType().size() + " StationGeolocMeasType for WD=" + wd +
             " MeasType(HydroBase)=\"" + dataType + "\" (" + measTypeHydroBase + ") in " + sw.getSeconds() +
             " seconds.");
-        // Loop through once and get the list of unique timesteps so a cache can be created for each
+        // Loop through once and get the list of unique timesteps so a cache can be created for each.
+        // This is necessary because, for example, requesting "Precip" meastypes for a WD may return
+        // day and month intervals
         List<String> timeStepList = new Vector();
         boolean found;
         String hbTimeStep;
         String timeStepUpper;
-        if ( cacheIt ) {
+        if ( useCache ) {
             for ( StationGeolocMeasType sgmt : sgmtArray.getStationGeolocMeasType() ) {
                 found = false;
                 hbTimeStep = sgmt.getTimeStep();
@@ -1400,6 +1473,7 @@ private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
                 else {
                     timeStepUpper = HydroBase_Util.convertFromHydroBaseTimeStep(hbTimeStep).toUpperCase();
                 }
+                // Check the timesteps that previously have been added to the list
                 for ( String timeStepInList: timeStepList ) {
                     if ( timeStepInList.equals(timeStepUpper) ) {
                         found = true;
@@ -1410,7 +1484,7 @@ private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
                     timeStepList.add ( timeStepUpper );
                 }
             }
-            // Initialize each cache
+            // Initialize a cache for each timestep
             for ( String timeStepInList: timeStepList ) {
                 String key = getStationGeolocMeasTypeByWDListCacheKey(dataType, timeStepInList, wd);
                 Message.printStatus ( 2, routine, "Initializing cache with key \"" + key + "\"." );
@@ -1418,24 +1492,30 @@ private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
             }
         }
         // Loop through the results (by water district and division) and add to the appropriate cached list.
+        // There are a lot of lookups to get the appropriate cache
         List<HydroBase_StationGeolocMeasType> cacheList;
         String cacheTimeStep;
         for ( StationGeolocMeasType sgmt : sgmtArray.getStationGeolocMeasType() ) {
             hbTimeStep = sgmt.getTimeStep();
             if ( hbTimeStep.equalsIgnoreCase("Random") ) {
+                // TODO SAM 2012-05-16 Is this clause relevant here? copied code from structures
                 // For reservoir measurements (Day) and well level (also day?)
                 cacheTimeStep = "Day";
             }
             else {
                 cacheTimeStep = HydroBase_Util.convertFromHydroBaseTimeStep(hbTimeStep);
             }
-            String key = getStationGeolocMeasTypeByWDListCacheKey(dataType, cacheTimeStep, wd);
-            cacheList = __stationGeolocMeasTypeByWDListCache.get (key);
+            String cacheKey = getStationGeolocMeasTypeByWDListCacheKey(dataType, cacheTimeStep, wd);
+            cacheList = __stationGeolocMeasTypeByWDListCache.get (cacheKey);
+            if ( cacheList == null ) {
+                // Create a new list
+                cacheList = new Vector();
+            }
             //Message.printStatus(2,routine,"Adding stationMeasType to key \"" + key + "\" for dataType=\"" +
             //    dataType + "\", timeStep=\"" + cacheTimeStep + "\"" );
             cacheList.add ( newHydroBase_StationGeolocMeasType( sgmt, dataType, cacheTimeStep ) );
         }
-        if ( cacheIt ) {
+        if ( useCache ) {
             // Logging...
             for ( String timeStepInList: timeStepList ) {
                 String key = getStationGeolocMeasTypeByWDListCacheKey(dataType, timeStepInList, wd);
@@ -1444,16 +1524,16 @@ private List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeList(
                     "After reading data, cache for key \"" + key + "\" has size=" + cacheList.size() );
             }
         }
-        // Add to the returned list only the requested list
-        String key = getStationGeolocMeasTypeByWDListCacheKey(dataType, timeStep, wd);
-        cacheList = __stationGeolocMeasTypeByWDListCache.get(key);
+        // Add to the returned list only that which matches the requested parameters
+        String cacheKey = getStationGeolocMeasTypeByWDListCacheKey(dataType, timeStep, wd);
+        cacheList = __stationGeolocMeasTypeByWDListCache.get(cacheKey);
         if ( cacheList != null ) {
-            Message.printStatus ( 2, routine, "Returning cache for key \"" + key + "\" size=" +
+            Message.printStatus ( 2, routine, "Returning cache for key \"" + cacheKey + "\" size=" +
                 cacheList.size() + "." );
             returnList.addAll ( cacheList );
         }
         else {
-            Message.printStatus ( 2, routine, "Problem?  No cache for key \"" + key + "\"." );
+            Message.printStatus ( 2, routine, "Problem?  No cache for key \"" + cacheKey + "\"." );
         }
     }
     return returnList;
@@ -1514,11 +1594,8 @@ private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTyp
         measType = ""; // Web service does not like null
     }
     List<HydroBase_StructureGeolocStructMeasType> returnList = new Vector();
-    String measTypeHydroBase = measType; // Only used for query but all else uses more specific data type
-    if ( measType.toUpperCase().startsWith("RESMEAS") ) {
-        // Replace TSTool ResMeasXXXX with ResMeas since HydroBase has multiple data types in one table
-        measTypeHydroBase = measType.substring(0,7);
-    }
+    // Only use measTypeHydroBase for query but all else uses more specific data type
+    String measTypeHydroBase = getHydroBaseMeasTypeFromDataType ( measType );
     if ( wd > 0 ) {
         // Read data for one water district
         ArrayOfStructureGeolocMeasType sgmtArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureGeolocMeasTypeByWD(
@@ -1629,7 +1706,8 @@ private List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocMeasTyp
 }
 
 /**
-Read time series for the requested time series identifier.
+Read time series for the requested time series identifier.  The data type in the TSID should match the TSTool
+convention, not the HydroBase measType string.
 @param tsidentString time series identifier string, as per ColoradoWaterHBGuest data store documentation
 @param readStart starting date/time for period to read
 @param readEnd ending date/time for period to read
@@ -1650,7 +1728,6 @@ throws Exception
     int [] wdidParts = null;
     ts.setIdentifier(tsident);
     // Lookup the StructureGeolocMeasType instance - used for description and default period (the available)
-    String measTypeHydroBase = dataType;
     // Start and end years from data
     int dataStartYear = -999;
     int dataEndYear = -999;
@@ -1660,40 +1737,12 @@ throws Exception
     HydroBase_GroundWaterWellsView hbwell = null;
     // Replace TSTool data type with HydroBase MeasType (differences are mainly for usability/uniqueness)
     // Station types...
-    if ( dataType.equalsIgnoreCase("EvapPan") ) {
-        // TSTool more specific to avoid confusion with reservoir evaporation, etc.
-        measTypeHydroBase = "Evap";
-    }
-    else if ( dataType.toUpperCase().startsWith("SNOWCOURSE") ) {
-        // Replace TSTool SnowCourseXXXX with SnowCrse since HydroBase has multiple data types in one table
-        measTypeHydroBase = "SnowCrse";
-    }
-    else if ( dataType.equalsIgnoreCase("TempMax") ) {
-        // TSTool reverse order for consistency and readability.
-        measTypeHydroBase = "MaxTemp";
-    }
-    else if ( dataType.equalsIgnoreCase("TempMean") ) {
-        // TSTool reverse order for consistency and readability.
-        measTypeHydroBase = "MeanTemp";
-    }
-    else if ( dataType.equalsIgnoreCase("TempMin") ) {
-        // TSTool reverse order for consistency and readability.
-        measTypeHydroBase = "MinTemp";
-    }
-    else if ( dataType.equalsIgnoreCase("VaporPressure") ) {
-        // TSTool more specific for readability.
-        measTypeHydroBase = "VP";
-    }
-    // Structure types...
-    else if ( dataType.toUpperCase().startsWith("RESMEAS") ) {
-        // Replace TSTool ResMeasXXXX with ResMeas since HydroBase has multiple data types in one table
-        measTypeHydroBase = dataType.substring(0,7);
-    }
     boolean isStation = false;
     if ( isStationTimeSeriesDataType(dataType) ) {
         // Station data type
         isStation = true;
-        hbsta = getStationGeolocMeasTypeForStationID ( locID, dataSource, measTypeHydroBase, timeStep );
+        // The following will initialize caches if necessary
+        hbsta = getStationGeolocMeasTypeForStationID ( locID, dataSource, dataType, timeStep );
         if ( hbsta == null ) {
             String message =
                 "Unable to get StationGeolocMeasType information for ID \"" + locID + "\" - " +
@@ -1708,7 +1757,7 @@ throws Exception
     else if ( dataType.equalsIgnoreCase("WellLevelElev") || dataType.equalsIgnoreCase("WellLevelDepth")) {
         // GroundWaterWell data type
         String dataTypeForCache = "WellLevel"; // Use because 2 values are stored
-        hbwell = getGroundWaterWellsMeasTypeForIdentifier ( dataTypeForCache, timeStep, locID );
+        hbwell = getGroundWaterWellsMeasTypeForIdentifier ( locID, dataSource, dataType, timeStep );
         if ( hbwell == null ) {
             String message =
                 "Unable to get GroundWaterWellsView information for identifier \"" + locID + "\" - " +
@@ -1723,7 +1772,7 @@ throws Exception
     else if ( isStructureTimeSeriesDataType(dataType) ) {
         // Structure data type
         wdidParts = HydroBase_WaterDistrict.parseWDID(locID);
-        hbstruct = getStructureGeolocMeasTypeForWDID ( measTypeHydroBase, timeStep, wdidParts[0], wdidParts[1] );
+        hbstruct = getStructureGeolocMeasTypeForWDID ( wdidParts[0], wdidParts[1], dataType, timeStep );
         if ( hbstruct == null ) {
             String message =
                 "Unable to get StructureGeolocMeasType information for WDID \"" + locID + "\" - " +
