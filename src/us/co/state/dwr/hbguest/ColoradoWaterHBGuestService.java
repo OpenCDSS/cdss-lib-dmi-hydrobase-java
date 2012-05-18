@@ -356,7 +356,7 @@ private HydroBase_GroundWaterWellsView
     // Loop through all the water districts, this will be a performance hit if the requested well is in a
     // large-number water district and the water district has not been cached.
     boolean useCache = true;
-    for ( HydroBase_WaterDistrict wd : __waterDistrictListCache ) {
+    for ( HydroBase_WaterDistrict wd : getWaterDistrictList() ) {
         String cacheKey = getGroundWaterWellsMeasTypeByWDListCacheKey(dataType, timeStep, wd.getWD());
         List<HydroBase_GroundWaterWellsView> cacheList = __groundWaterWellsMeasTypeByWDListCache.get(cacheKey);
         if ( cacheList == null ) {
@@ -467,7 +467,7 @@ private HydroBase_StationGeolocMeasType
     // matching identifier.
     // Looping through all the water districts
     boolean useCache = true;
-    for ( HydroBase_WaterDistrict wd : __waterDistrictListCache ) {
+    for ( HydroBase_WaterDistrict wd : getWaterDistrictList() ) {
         String cacheKey = getStationGeolocMeasTypeByWDListCacheKey(dataType, timeStep, wd.getWD());
         List<HydroBase_StationGeolocMeasType> cacheList =
             __stationGeolocMeasTypeByWDListCache.get(cacheKey);
@@ -1806,7 +1806,6 @@ throws Exception
     }
     else if ( dataType.equalsIgnoreCase("WellLevelElev") || dataType.equalsIgnoreCase("WellLevelDepth")) {
         // GroundWaterWell data type
-        String dataTypeForCache = "WellLevel"; // Use because 2 values are stored
         hbwell = getGroundWaterWellsMeasTypeForIdentifier ( locID, dataSource, dataType, timeStep );
         if ( hbwell == null ) {
             String message =
