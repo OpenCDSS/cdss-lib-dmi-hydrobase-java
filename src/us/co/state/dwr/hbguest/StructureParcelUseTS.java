@@ -46,9 +46,9 @@ public class StructureParcelUseTS {
     protected String wdid;
     @XmlElement(name = "cal_year")
     protected short calYear;
-    @XmlElement(name = "percent_irrig", required = true)
+    @XmlElement(name = "percent_irrig", required = true, nillable = true)
     protected BigDecimal percentIrrig;
-    @XmlElement(required = true)
+    @XmlElement(required = true, nillable = true)
     protected BigDecimal area;
     @XmlElement(name = "land_use")
     protected String landUse;

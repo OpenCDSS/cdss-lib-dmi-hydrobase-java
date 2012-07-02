@@ -55,8 +55,8 @@ public class StructureDiversionComments {
     protected String notUsed;
     @XmlElement(name = "Comment")
     protected String comment;
-    @XmlElement(name = "acres_irrig")
-    protected float acresIrrig;
+    @XmlElement(name = "acres_irrig", required = true, type = Float.class, nillable = true)
+    protected Float acresIrrig;
 
     /**
      * Gets the value of the wdid property.
@@ -189,16 +189,24 @@ public class StructureDiversionComments {
     /**
      * Gets the value of the acresIrrig property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getAcresIrrig() {
+    public Float getAcresIrrig() {
         return acresIrrig;
     }
 
     /**
      * Sets the value of the acresIrrig property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setAcresIrrig(float value) {
+    public void setAcresIrrig(Float value) {
         this.acresIrrig = value;
     }
 

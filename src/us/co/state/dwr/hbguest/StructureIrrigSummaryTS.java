@@ -53,18 +53,18 @@ public class StructureIrrigSummaryTS {
     protected short calYear;
     @XmlElement(name = "land_use")
     protected String landUse;
-    @XmlElement(name = "acres_total")
-    protected double acresTotal;
-    @XmlElement(name = "acres_by_drip")
-    protected double acresByDrip;
-    @XmlElement(name = "acres_by_flood")
-    protected double acresByFlood;
-    @XmlElement(name = "acres_by_furrow")
-    protected double acresByFurrow;
-    @XmlElement(name = "acres_by_sprinkler")
-    protected double acresBySprinkler;
-    @XmlElement(name = "acres_by_groundwater")
-    protected double acresByGroundwater;
+    @XmlElement(name = "acres_total", required = true, type = Double.class, nillable = true)
+    protected Double acresTotal;
+    @XmlElement(name = "acres_by_drip", required = true, type = Double.class, nillable = true)
+    protected Double acresByDrip;
+    @XmlElement(name = "acres_by_flood", required = true, type = Double.class, nillable = true)
+    protected Double acresByFlood;
+    @XmlElement(name = "acres_by_furrow", required = true, type = Double.class, nillable = true)
+    protected Double acresByFurrow;
+    @XmlElement(name = "acres_by_sprinkler", required = true, type = Double.class, nillable = true)
+    protected Double acresBySprinkler;
+    @XmlElement(name = "acres_by_groundwater", required = true, type = Double.class, nillable = true)
+    protected Double acresByGroundwater;
 
     /**
      * Gets the value of the wdid property.
@@ -133,96 +133,144 @@ public class StructureIrrigSummaryTS {
     /**
      * Gets the value of the acresTotal property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getAcresTotal() {
+    public Double getAcresTotal() {
         return acresTotal;
     }
 
     /**
      * Sets the value of the acresTotal property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setAcresTotal(double value) {
+    public void setAcresTotal(Double value) {
         this.acresTotal = value;
     }
 
     /**
      * Gets the value of the acresByDrip property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getAcresByDrip() {
+    public Double getAcresByDrip() {
         return acresByDrip;
     }
 
     /**
      * Sets the value of the acresByDrip property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setAcresByDrip(double value) {
+    public void setAcresByDrip(Double value) {
         this.acresByDrip = value;
     }
 
     /**
      * Gets the value of the acresByFlood property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getAcresByFlood() {
+    public Double getAcresByFlood() {
         return acresByFlood;
     }
 
     /**
      * Sets the value of the acresByFlood property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setAcresByFlood(double value) {
+    public void setAcresByFlood(Double value) {
         this.acresByFlood = value;
     }
 
     /**
      * Gets the value of the acresByFurrow property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getAcresByFurrow() {
+    public Double getAcresByFurrow() {
         return acresByFurrow;
     }
 
     /**
      * Sets the value of the acresByFurrow property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setAcresByFurrow(double value) {
+    public void setAcresByFurrow(Double value) {
         this.acresByFurrow = value;
     }
 
     /**
      * Gets the value of the acresBySprinkler property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getAcresBySprinkler() {
+    public Double getAcresBySprinkler() {
         return acresBySprinkler;
     }
 
     /**
      * Sets the value of the acresBySprinkler property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setAcresBySprinkler(double value) {
+    public void setAcresBySprinkler(Double value) {
         this.acresBySprinkler = value;
     }
 
     /**
      * Gets the value of the acresByGroundwater property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getAcresByGroundwater() {
+    public Double getAcresByGroundwater() {
         return acresByGroundwater;
     }
 
     /**
      * Sets the value of the acresByGroundwater property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setAcresByGroundwater(double value) {
+    public void setAcresByGroundwater(Double value) {
         this.acresByGroundwater = value;
     }
 

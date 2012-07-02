@@ -45,8 +45,9 @@ public class SnowCourse {
     protected int measNum;
     @XmlElement(name = "meas_date")
     protected String measDate;
-    protected short depth;
-    @XmlElement(name = "snow_water_equiv", required = true)
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short depth;
+    @XmlElement(name = "snow_water_equiv", required = true, nillable = true)
     protected BigDecimal snowWaterEquiv;
     protected String flag;
 
@@ -93,16 +94,24 @@ public class SnowCourse {
     /**
      * Gets the value of the depth property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getDepth() {
+    public Short getDepth() {
         return depth;
     }
 
     /**
      * Sets the value of the depth property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setDepth(short value) {
+    public void setDepth(Short value) {
         this.depth = value;
     }
 

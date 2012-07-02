@@ -3,6 +3,7 @@ package us.co.state.dwr.hbguest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -36,7 +37,8 @@ public class GroundWaterWellsVolcanics
 {
 
     protected int voltop;
-    protected int volbase;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer volbase;
 
     /**
      * Gets the value of the voltop property.
@@ -57,16 +59,24 @@ public class GroundWaterWellsVolcanics
     /**
      * Gets the value of the volbase property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getVolbase() {
+    public Integer getVolbase() {
         return volbase;
     }
 
     /**
      * Sets the value of the volbase property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setVolbase(int value) {
+    public void setVolbase(Integer value) {
         this.volbase = value;
     }
 

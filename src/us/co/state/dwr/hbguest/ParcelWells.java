@@ -83,23 +83,29 @@ public class ParcelWells {
     protected short wd;
     protected String wdid;
     protected String receipt;
-    protected int permitno;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer permitno;
     protected String permitsuf;
     protected String permitrpl;
     @XmlElement(name = "well_name")
     protected String wellName;
-    protected double yield;
-    @XmlElement(name = "yield_apex")
-    protected double yieldApex;
+    @XmlElement(required = true, type = Double.class, nillable = true)
+    protected Double yield;
+    @XmlElement(name = "yield_apex", required = true, type = Double.class, nillable = true)
+    protected Double yieldApex;
     @XmlElement(name = "perm_date")
     protected String permDate;
     @XmlElement(name = "appr_date")
     protected String apprDate;
-    protected int tperf;
-    protected int bperf;
-    protected int depth;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer tperf;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer bperf;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer depth;
     protected String aquifer1;
-    protected int flag;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer flag;
     protected String use1;
     protected String use2;
     protected String use3;
@@ -107,9 +113,9 @@ public class ParcelWells {
     protected String wellId;
     @XmlElement(name = "id_type")
     protected String idType;
-    @XmlElement(name = "utm_x", required = true)
+    @XmlElement(name = "utm_x", required = true, nillable = true)
     protected BigDecimal utmX;
-    @XmlElement(name = "utm_y", required = true)
+    @XmlElement(name = "utm_y", required = true, nillable = true)
     protected BigDecimal utmY;
 
     /**
@@ -195,16 +201,24 @@ public class ParcelWells {
     /**
      * Gets the value of the permitno property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getPermitno() {
+    public Integer getPermitno() {
         return permitno;
     }
 
     /**
      * Sets the value of the permitno property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setPermitno(int value) {
+    public void setPermitno(Integer value) {
         this.permitno = value;
     }
 
@@ -283,32 +297,48 @@ public class ParcelWells {
     /**
      * Gets the value of the yield property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getYield() {
+    public Double getYield() {
         return yield;
     }
 
     /**
      * Sets the value of the yield property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setYield(double value) {
+    public void setYield(Double value) {
         this.yield = value;
     }
 
     /**
      * Gets the value of the yieldApex property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getYieldApex() {
+    public Double getYieldApex() {
         return yieldApex;
     }
 
     /**
      * Sets the value of the yieldApex property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setYieldApex(double value) {
+    public void setYieldApex(Double value) {
         this.yieldApex = value;
     }
 
@@ -363,48 +393,72 @@ public class ParcelWells {
     /**
      * Gets the value of the tperf property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getTperf() {
+    public Integer getTperf() {
         return tperf;
     }
 
     /**
      * Sets the value of the tperf property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setTperf(int value) {
+    public void setTperf(Integer value) {
         this.tperf = value;
     }
 
     /**
      * Gets the value of the bperf property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getBperf() {
+    public Integer getBperf() {
         return bperf;
     }
 
     /**
      * Sets the value of the bperf property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setBperf(int value) {
+    public void setBperf(Integer value) {
         this.bperf = value;
     }
 
     /**
      * Gets the value of the depth property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getDepth() {
+    public Integer getDepth() {
         return depth;
     }
 
     /**
      * Sets the value of the depth property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setDepth(int value) {
+    public void setDepth(Integer value) {
         this.depth = value;
     }
 
@@ -435,16 +489,24 @@ public class ParcelWells {
     /**
      * Gets the value of the flag property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getFlag() {
+    public Integer getFlag() {
         return flag;
     }
 
     /**
      * Sets the value of the flag property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setFlag(int value) {
+    public void setFlag(Integer value) {
         this.flag = value;
     }
 

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="strtype" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="str_name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="transbsn" type="{http://www.w3.org/2001/XMLSchema}short"/>
- *         &lt;element name="xtia" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="xtia" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="str_type_desc" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="UTM_x" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *         &lt;element name="UTM_y" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
@@ -54,9 +54,9 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="county" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="topomap" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="huc" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="elev" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="elev" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="loc_type_desc" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="str_mile" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="str_mile" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="strno" type="{http://www.w3.org/2001/XMLSchema}short"/>
  *         &lt;element name="strname" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="strtribto" type="{http://www.w3.org/2001/XMLSchema}int"/>
@@ -66,22 +66,22 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="city" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="st" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="zip" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tia_gis" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="tia_gis" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="tia_gis_calyear" type="{http://www.w3.org/2001/XMLSchema}short"/>
- *         &lt;element name="tia_div" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="tia_div" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="tia_div_calyear" type="{http://www.w3.org/2001/XMLSchema}short"/>
- *         &lt;element name="tia_struct" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="tia_struct" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="tia_struct_calyear" type="{http://www.w3.org/2001/XMLSchema}short"/>
- *         &lt;element name="dcr_rate_abs" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_rate_cond" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_rate_APEX_abs" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_rate_APEX_cond" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_vol_abs" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_vol_cond" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_vol_APEX_abs" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_vol_APEX_cond" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_rate_total" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="dcr_vol_total" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="dcr_rate_abs" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_rate_cond" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_rate_APEX_abs" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_rate_APEX_cond" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_vol_abs" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_vol_cond" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_vol_APEX_abs" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_vol_APEX_cond" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_rate_total" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="dcr_vol_total" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -171,50 +171,58 @@ public class Structure {
     protected String strtype;
     @XmlElement(name = "str_name")
     protected String strName;
-    protected short transbsn;
-    @XmlElement(required = true)
-    protected BigDecimal xtia;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short transbsn;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float xtia;
     @XmlElement(name = "str_type_desc")
     protected String strTypeDesc;
-    @XmlElement(name = "UTM_x", required = true)
+    @XmlElement(name = "UTM_x", required = true, nillable = true)
     protected BigDecimal utmx;
-    @XmlElement(name = "UTM_y", required = true)
+    @XmlElement(name = "UTM_y", required = true, nillable = true)
     protected BigDecimal utmy;
-    @XmlElement(required = true)
+    @XmlElement(required = true, nillable = true)
     protected BigDecimal latdecdeg;
-    @XmlElement(required = true)
+    @XmlElement(required = true, nillable = true)
     protected BigDecimal longdecdeg;
     protected String pm;
-    protected short ts;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short ts;
     protected String tdir;
     protected String tsa;
-    protected short rng;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short rng;
     protected String rdir;
     protected String rnga;
-    protected short sec;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short sec;
     protected String seca;
     protected String q160;
     protected String q40;
     protected String q10;
-    protected short coordsns;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short coordsns;
     @XmlElement(name = "coordsns_dir")
     protected String coordsnsDir;
-    protected short coordsew;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short coordsew;
     @XmlElement(name = "coordsew_dir")
     protected String coordsewDir;
     protected String accuracy;
     protected String county;
     protected String topomap;
     protected String huc;
-    @XmlElement(required = true)
-    protected BigDecimal elev;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float elev;
     @XmlElement(name = "loc_type_desc")
     protected String locTypeDesc;
-    @XmlElement(name = "str_mile", required = true)
-    protected BigDecimal strMile;
-    protected short strno;
+    @XmlElement(name = "str_mile", required = true, type = Float.class, nillable = true)
+    protected Float strMile;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short strno;
     protected String strname;
-    protected int strtribto;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer strtribto;
     @XmlElement(name = "full_name")
     protected String fullName;
     protected String address1;
@@ -222,38 +230,38 @@ public class Structure {
     protected String city;
     protected String st;
     protected String zip;
-    @XmlElement(name = "tia_gis", required = true)
-    protected BigDecimal tiaGis;
-    @XmlElement(name = "tia_gis_calyear")
-    protected short tiaGisCalyear;
-    @XmlElement(name = "tia_div", required = true)
-    protected BigDecimal tiaDiv;
-    @XmlElement(name = "tia_div_calyear")
-    protected short tiaDivCalyear;
-    @XmlElement(name = "tia_struct", required = true)
-    protected BigDecimal tiaStruct;
-    @XmlElement(name = "tia_struct_calyear")
-    protected short tiaStructCalyear;
-    @XmlElement(name = "dcr_rate_abs", required = true)
-    protected BigDecimal dcrRateAbs;
-    @XmlElement(name = "dcr_rate_cond", required = true)
-    protected BigDecimal dcrRateCond;
-    @XmlElement(name = "dcr_rate_APEX_abs", required = true)
-    protected BigDecimal dcrRateAPEXAbs;
-    @XmlElement(name = "dcr_rate_APEX_cond", required = true)
-    protected BigDecimal dcrRateAPEXCond;
-    @XmlElement(name = "dcr_vol_abs", required = true)
-    protected BigDecimal dcrVolAbs;
-    @XmlElement(name = "dcr_vol_cond", required = true)
-    protected BigDecimal dcrVolCond;
-    @XmlElement(name = "dcr_vol_APEX_abs", required = true)
-    protected BigDecimal dcrVolAPEXAbs;
-    @XmlElement(name = "dcr_vol_APEX_cond", required = true)
-    protected BigDecimal dcrVolAPEXCond;
-    @XmlElement(name = "dcr_rate_total", required = true)
-    protected BigDecimal dcrRateTotal;
-    @XmlElement(name = "dcr_vol_total", required = true)
-    protected BigDecimal dcrVolTotal;
+    @XmlElement(name = "tia_gis", required = true, type = Float.class, nillable = true)
+    protected Float tiaGis;
+    @XmlElement(name = "tia_gis_calyear", required = true, type = Short.class, nillable = true)
+    protected Short tiaGisCalyear;
+    @XmlElement(name = "tia_div", required = true, type = Float.class, nillable = true)
+    protected Float tiaDiv;
+    @XmlElement(name = "tia_div_calyear", required = true, type = Short.class, nillable = true)
+    protected Short tiaDivCalyear;
+    @XmlElement(name = "tia_struct", required = true, type = Float.class, nillable = true)
+    protected Float tiaStruct;
+    @XmlElement(name = "tia_struct_calyear", required = true, type = Short.class, nillable = true)
+    protected Short tiaStructCalyear;
+    @XmlElement(name = "dcr_rate_abs", required = true, type = Float.class, nillable = true)
+    protected Float dcrRateAbs;
+    @XmlElement(name = "dcr_rate_cond", required = true, type = Float.class, nillable = true)
+    protected Float dcrRateCond;
+    @XmlElement(name = "dcr_rate_APEX_abs", required = true, type = Float.class, nillable = true)
+    protected Float dcrRateAPEXAbs;
+    @XmlElement(name = "dcr_rate_APEX_cond", required = true, type = Float.class, nillable = true)
+    protected Float dcrRateAPEXCond;
+    @XmlElement(name = "dcr_vol_abs", required = true, type = Float.class, nillable = true)
+    protected Float dcrVolAbs;
+    @XmlElement(name = "dcr_vol_cond", required = true, type = Float.class, nillable = true)
+    protected Float dcrVolCond;
+    @XmlElement(name = "dcr_vol_APEX_abs", required = true, type = Float.class, nillable = true)
+    protected Float dcrVolAPEXAbs;
+    @XmlElement(name = "dcr_vol_APEX_cond", required = true, type = Float.class, nillable = true)
+    protected Float dcrVolAPEXCond;
+    @XmlElement(name = "dcr_rate_total", required = true, type = Float.class, nillable = true)
+    protected Float dcrRateTotal;
+    @XmlElement(name = "dcr_vol_total", required = true, type = Float.class, nillable = true)
+    protected Float dcrVolTotal;
 
     /**
      * Gets the value of the div property.
@@ -426,16 +434,24 @@ public class Structure {
     /**
      * Gets the value of the transbsn property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTransbsn() {
+    public Short getTransbsn() {
         return transbsn;
     }
 
     /**
      * Sets the value of the transbsn property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTransbsn(short value) {
+    public void setTransbsn(Short value) {
         this.transbsn = value;
     }
 
@@ -444,10 +460,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getXtia() {
+    public Float getXtia() {
         return xtia;
     }
 
@@ -456,10 +472,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setXtia(BigDecimal value) {
+    public void setXtia(Float value) {
         this.xtia = value;
     }
 
@@ -610,16 +626,24 @@ public class Structure {
     /**
      * Gets the value of the ts property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTs() {
+    public Short getTs() {
         return ts;
     }
 
     /**
      * Sets the value of the ts property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTs(short value) {
+    public void setTs(Short value) {
         this.ts = value;
     }
 
@@ -674,16 +698,24 @@ public class Structure {
     /**
      * Gets the value of the rng property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getRng() {
+    public Short getRng() {
         return rng;
     }
 
     /**
      * Sets the value of the rng property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setRng(short value) {
+    public void setRng(Short value) {
         this.rng = value;
     }
 
@@ -738,16 +770,24 @@ public class Structure {
     /**
      * Gets the value of the sec property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getSec() {
+    public Short getSec() {
         return sec;
     }
 
     /**
      * Sets the value of the sec property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setSec(short value) {
+    public void setSec(Short value) {
         this.sec = value;
     }
 
@@ -850,16 +890,24 @@ public class Structure {
     /**
      * Gets the value of the coordsns property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getCoordsns() {
+    public Short getCoordsns() {
         return coordsns;
     }
 
     /**
      * Sets the value of the coordsns property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setCoordsns(short value) {
+    public void setCoordsns(Short value) {
         this.coordsns = value;
     }
 
@@ -890,16 +938,24 @@ public class Structure {
     /**
      * Gets the value of the coordsew property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getCoordsew() {
+    public Short getCoordsew() {
         return coordsew;
     }
 
     /**
      * Sets the value of the coordsew property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setCoordsew(short value) {
+    public void setCoordsew(Short value) {
         this.coordsew = value;
     }
 
@@ -1028,10 +1084,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getElev() {
+    public Float getElev() {
         return elev;
     }
 
@@ -1040,10 +1096,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setElev(BigDecimal value) {
+    public void setElev(Float value) {
         this.elev = value;
     }
 
@@ -1076,10 +1132,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getStrMile() {
+    public Float getStrMile() {
         return strMile;
     }
 
@@ -1088,26 +1144,34 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setStrMile(BigDecimal value) {
+    public void setStrMile(Float value) {
         this.strMile = value;
     }
 
     /**
      * Gets the value of the strno property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getStrno() {
+    public Short getStrno() {
         return strno;
     }
 
     /**
      * Sets the value of the strno property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setStrno(short value) {
+    public void setStrno(Short value) {
         this.strno = value;
     }
 
@@ -1138,16 +1202,24 @@ public class Structure {
     /**
      * Gets the value of the strtribto property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getStrtribto() {
+    public Integer getStrtribto() {
         return strtribto;
     }
 
     /**
      * Sets the value of the strtribto property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setStrtribto(int value) {
+    public void setStrtribto(Integer value) {
         this.strtribto = value;
     }
 
@@ -1300,10 +1372,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getTiaGis() {
+    public Float getTiaGis() {
         return tiaGis;
     }
 
@@ -1312,26 +1384,34 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setTiaGis(BigDecimal value) {
+    public void setTiaGis(Float value) {
         this.tiaGis = value;
     }
 
     /**
      * Gets the value of the tiaGisCalyear property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTiaGisCalyear() {
+    public Short getTiaGisCalyear() {
         return tiaGisCalyear;
     }
 
     /**
      * Sets the value of the tiaGisCalyear property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTiaGisCalyear(short value) {
+    public void setTiaGisCalyear(Short value) {
         this.tiaGisCalyear = value;
     }
 
@@ -1340,10 +1420,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getTiaDiv() {
+    public Float getTiaDiv() {
         return tiaDiv;
     }
 
@@ -1352,26 +1432,34 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setTiaDiv(BigDecimal value) {
+    public void setTiaDiv(Float value) {
         this.tiaDiv = value;
     }
 
     /**
      * Gets the value of the tiaDivCalyear property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTiaDivCalyear() {
+    public Short getTiaDivCalyear() {
         return tiaDivCalyear;
     }
 
     /**
      * Sets the value of the tiaDivCalyear property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTiaDivCalyear(short value) {
+    public void setTiaDivCalyear(Short value) {
         this.tiaDivCalyear = value;
     }
 
@@ -1380,10 +1468,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getTiaStruct() {
+    public Float getTiaStruct() {
         return tiaStruct;
     }
 
@@ -1392,26 +1480,34 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setTiaStruct(BigDecimal value) {
+    public void setTiaStruct(Float value) {
         this.tiaStruct = value;
     }
 
     /**
      * Gets the value of the tiaStructCalyear property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTiaStructCalyear() {
+    public Short getTiaStructCalyear() {
         return tiaStructCalyear;
     }
 
     /**
      * Sets the value of the tiaStructCalyear property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTiaStructCalyear(short value) {
+    public void setTiaStructCalyear(Short value) {
         this.tiaStructCalyear = value;
     }
 
@@ -1420,10 +1516,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrRateAbs() {
+    public Float getDcrRateAbs() {
         return dcrRateAbs;
     }
 
@@ -1432,10 +1528,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrRateAbs(BigDecimal value) {
+    public void setDcrRateAbs(Float value) {
         this.dcrRateAbs = value;
     }
 
@@ -1444,10 +1540,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrRateCond() {
+    public Float getDcrRateCond() {
         return dcrRateCond;
     }
 
@@ -1456,10 +1552,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrRateCond(BigDecimal value) {
+    public void setDcrRateCond(Float value) {
         this.dcrRateCond = value;
     }
 
@@ -1468,10 +1564,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrRateAPEXAbs() {
+    public Float getDcrRateAPEXAbs() {
         return dcrRateAPEXAbs;
     }
 
@@ -1480,10 +1576,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrRateAPEXAbs(BigDecimal value) {
+    public void setDcrRateAPEXAbs(Float value) {
         this.dcrRateAPEXAbs = value;
     }
 
@@ -1492,10 +1588,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrRateAPEXCond() {
+    public Float getDcrRateAPEXCond() {
         return dcrRateAPEXCond;
     }
 
@@ -1504,10 +1600,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrRateAPEXCond(BigDecimal value) {
+    public void setDcrRateAPEXCond(Float value) {
         this.dcrRateAPEXCond = value;
     }
 
@@ -1516,10 +1612,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrVolAbs() {
+    public Float getDcrVolAbs() {
         return dcrVolAbs;
     }
 
@@ -1528,10 +1624,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrVolAbs(BigDecimal value) {
+    public void setDcrVolAbs(Float value) {
         this.dcrVolAbs = value;
     }
 
@@ -1540,10 +1636,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrVolCond() {
+    public Float getDcrVolCond() {
         return dcrVolCond;
     }
 
@@ -1552,10 +1648,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrVolCond(BigDecimal value) {
+    public void setDcrVolCond(Float value) {
         this.dcrVolCond = value;
     }
 
@@ -1564,10 +1660,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrVolAPEXAbs() {
+    public Float getDcrVolAPEXAbs() {
         return dcrVolAPEXAbs;
     }
 
@@ -1576,10 +1672,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrVolAPEXAbs(BigDecimal value) {
+    public void setDcrVolAPEXAbs(Float value) {
         this.dcrVolAPEXAbs = value;
     }
 
@@ -1588,10 +1684,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrVolAPEXCond() {
+    public Float getDcrVolAPEXCond() {
         return dcrVolAPEXCond;
     }
 
@@ -1600,10 +1696,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrVolAPEXCond(BigDecimal value) {
+    public void setDcrVolAPEXCond(Float value) {
         this.dcrVolAPEXCond = value;
     }
 
@@ -1612,10 +1708,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrRateTotal() {
+    public Float getDcrRateTotal() {
         return dcrRateTotal;
     }
 
@@ -1624,10 +1720,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrRateTotal(BigDecimal value) {
+    public void setDcrRateTotal(Float value) {
         this.dcrRateTotal = value;
     }
 
@@ -1636,10 +1732,10 @@ public class Structure {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getDcrVolTotal() {
+    public Float getDcrVolTotal() {
         return dcrVolTotal;
     }
 
@@ -1648,10 +1744,10 @@ public class Structure {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setDcrVolTotal(BigDecimal value) {
+    public void setDcrVolTotal(Float value) {
         this.dcrVolTotal = value;
     }
 

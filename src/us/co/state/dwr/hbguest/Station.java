@@ -24,10 +24,10 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="station_id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="cooperator_id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="nesdis_id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="drain_area" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *         &lt;element name="contr_area" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *         &lt;element name="source" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="abbrev" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="drain_area" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="contr_area" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="transbsn" type="{http://www.w3.org/2001/XMLSchema}short"/>
  *         &lt;element name="UTM_x" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *         &lt;element name="UTM_y" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="topomap" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="cty" type="{http://www.w3.org/2001/XMLSchema}short"/>
  *         &lt;element name="huc" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="elev" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="elev" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="loc_type_desc" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="accuracy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="st" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -58,10 +58,10 @@ import javax.xml.bind.annotation.XmlType;
     "stationId",
     "cooperatorId",
     "nesdisId",
-    "drainArea",
-    "contrArea",
     "source",
     "abbrev",
+    "drainArea",
+    "contrArea",
     "transbsn",
     "utmx",
     "utmy",
@@ -93,12 +93,12 @@ public class Station {
     protected String cooperatorId;
     @XmlElement(name = "nesdis_id")
     protected String nesdisId;
-    @XmlElement(name = "drain_area", required = true)
-    protected BigDecimal drainArea;
-    @XmlElement(name = "contr_area", required = true)
-    protected BigDecimal contrArea;
     protected String source;
     protected String abbrev;
+    @XmlElement(name = "drain_area", required = true, type = Float.class, nillable = true)
+    protected Float drainArea;
+    @XmlElement(name = "contr_area", required = true, type = Float.class, nillable = true)
+    protected Float contrArea;
     @XmlElement(required = true, type = Short.class, nillable = true)
     protected Short transbsn;
     @XmlElement(name = "UTM_x", required = true, nillable = true)
@@ -118,8 +118,8 @@ public class Station {
     @XmlElement(required = true, type = Short.class, nillable = true)
     protected Short cty;
     protected String huc;
-    @XmlElement(required = true, nillable = true)
-    protected BigDecimal elev;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float elev;
     @XmlElement(name = "loc_type_desc")
     protected String locTypeDesc;
     protected String accuracy;
@@ -238,54 +238,6 @@ public class Station {
     }
 
     /**
-     * Gets the value of the drainArea property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getDrainArea() {
-        return drainArea;
-    }
-
-    /**
-     * Sets the value of the drainArea property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setDrainArea(BigDecimal value) {
-        this.drainArea = value;
-    }
-
-    /**
-     * Gets the value of the contrArea property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getContrArea() {
-        return contrArea;
-    }
-
-    /**
-     * Sets the value of the contrArea property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setContrArea(BigDecimal value) {
-        this.contrArea = value;
-    }
-
-    /**
      * Gets the value of the source property.
      * 
      * @return
@@ -331,6 +283,54 @@ public class Station {
      */
     public void setAbbrev(String value) {
         this.abbrev = value;
+    }
+
+    /**
+     * Gets the value of the drainArea property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
+     */
+    public Float getDrainArea() {
+        return drainArea;
+    }
+
+    /**
+     * Sets the value of the drainArea property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
+     */
+    public void setDrainArea(Float value) {
+        this.drainArea = value;
+    }
+
+    /**
+     * Gets the value of the contrArea property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
+     */
+    public Float getContrArea() {
+        return contrArea;
+    }
+
+    /**
+     * Sets the value of the contrArea property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
+     */
+    public void setContrArea(Float value) {
+        this.contrArea = value;
     }
 
     /**
@@ -602,10 +602,10 @@ public class Station {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getElev() {
+    public Float getElev() {
         return elev;
     }
 
@@ -614,10 +614,10 @@ public class Station {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setElev(BigDecimal value) {
+    public void setElev(Float value) {
         this.elev = value;
     }
 

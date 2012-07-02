@@ -169,7 +169,8 @@ public class GroundWaterWells {
     protected short wd;
     protected int id;
     protected String receipt;
-    protected int permitno;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer permitno;
     protected String permitsuf;
     protected String permitrpl;
     protected String locnum;
@@ -177,66 +178,76 @@ public class GroundWaterWells {
     protected String siteID;
     protected String basin;
     protected String md;
-    @XmlElement(name = "well_depth")
-    protected int wellDepth;
+    @XmlElement(name = "well_depth", required = true, type = Integer.class, nillable = true)
+    protected Integer wellDepth;
     protected String aquifer1;
     protected String aquifer2;
     @XmlElement(name = "aquifer_comment")
     protected String aquiferComment;
-    protected int tperf;
-    protected int bperf;
-    protected float yield;
-    @XmlElement(name = "bedrock_elev")
-    protected float bedrockElev;
-    @XmlElement(name = "sat_1965")
-    protected float sat1965;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer tperf;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer bperf;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float yield;
+    @XmlElement(name = "bedrock_elev", required = true, type = Float.class, nillable = true)
+    protected Float bedrockElev;
+    @XmlElement(name = "sat_1965", required = true, type = Float.class, nillable = true)
+    protected Float sat1965;
     protected String remarks1;
     protected String remarks2;
     @XmlElement(name = "data_source_id")
     protected String dataSourceId;
     @XmlElement(name = "data_source")
     protected String dataSource;
-    @XmlElement(name = "UTM_x", required = true)
+    @XmlElement(name = "UTM_x", required = true, nillable = true)
     protected BigDecimal utmx;
-    @XmlElement(name = "UTM_y", required = true)
+    @XmlElement(name = "UTM_y", required = true, nillable = true)
     protected BigDecimal utmy;
-    @XmlElement(required = true)
+    @XmlElement(required = true, nillable = true)
     protected BigDecimal latdecdeg;
-    @XmlElement(required = true)
+    @XmlElement(required = true, nillable = true)
     protected BigDecimal longdecdeg;
     protected String pm;
-    protected short ts;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short ts;
     protected String tdir;
     protected String tsa;
-    protected short rng;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short rng;
     protected String rdir;
     protected String rnga;
-    protected short sec;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short sec;
     protected String seca;
     protected String q160;
     protected String q40;
     protected String q10;
-    protected short coordsns;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short coordsns;
     @XmlElement(name = "coordsns_dir")
     protected String coordsnsDir;
-    protected short coordsew;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short coordsew;
     @XmlElement(name = "coordsew_dir")
     protected String coordsewDir;
     protected String county;
     protected String topomap;
-    protected short cty;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short cty;
     protected String huc;
-    protected float elev;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float elev;
     @XmlElement(name = "elev_accuracy")
     protected String elevAccuracy;
     @XmlElement(name = "loc_type_desc")
     protected String locTypeDesc;
     @XmlElement(name = "loc_accuracy")
     protected String locAccuracy;
-    @XmlElement(name = "stream_num")
-    protected int streamNum;
-    @XmlElement(name = "str_mile")
-    protected float strMile;
+    @XmlElement(name = "stream_num", required = true, type = Integer.class, nillable = true)
+    protected Integer streamNum;
+    @XmlElement(name = "str_mile", required = true, type = Float.class, nillable = true)
+    protected Float strMile;
     @XmlElement(name = "spotter_version")
     protected String spotterVersion;
     @XmlElement(name = "DSS_aquifer1")
@@ -361,16 +372,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the permitno property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getPermitno() {
+    public Integer getPermitno() {
         return permitno;
     }
 
     /**
      * Sets the value of the permitno property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setPermitno(int value) {
+    public void setPermitno(Integer value) {
         this.permitno = value;
     }
 
@@ -521,16 +540,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the wellDepth property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getWellDepth() {
+    public Integer getWellDepth() {
         return wellDepth;
     }
 
     /**
      * Sets the value of the wellDepth property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setWellDepth(int value) {
+    public void setWellDepth(Integer value) {
         this.wellDepth = value;
     }
 
@@ -609,80 +636,120 @@ public class GroundWaterWells {
     /**
      * Gets the value of the tperf property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getTperf() {
+    public Integer getTperf() {
         return tperf;
     }
 
     /**
      * Sets the value of the tperf property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setTperf(int value) {
+    public void setTperf(Integer value) {
         this.tperf = value;
     }
 
     /**
      * Gets the value of the bperf property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getBperf() {
+    public Integer getBperf() {
         return bperf;
     }
 
     /**
      * Sets the value of the bperf property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setBperf(int value) {
+    public void setBperf(Integer value) {
         this.bperf = value;
     }
 
     /**
      * Gets the value of the yield property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getYield() {
+    public Float getYield() {
         return yield;
     }
 
     /**
      * Sets the value of the yield property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setYield(float value) {
+    public void setYield(Float value) {
         this.yield = value;
     }
 
     /**
      * Gets the value of the bedrockElev property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getBedrockElev() {
+    public Float getBedrockElev() {
         return bedrockElev;
     }
 
     /**
      * Sets the value of the bedrockElev property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setBedrockElev(float value) {
+    public void setBedrockElev(Float value) {
         this.bedrockElev = value;
     }
 
     /**
      * Gets the value of the sat1965 property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getSat1965() {
+    public Float getSat1965() {
         return sat1965;
     }
 
     /**
      * Sets the value of the sat1965 property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setSat1965(float value) {
+    public void setSat1965(Float value) {
         this.sat1965 = value;
     }
 
@@ -905,16 +972,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the ts property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTs() {
+    public Short getTs() {
         return ts;
     }
 
     /**
      * Sets the value of the ts property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTs(short value) {
+    public void setTs(Short value) {
         this.ts = value;
     }
 
@@ -969,16 +1044,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the rng property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getRng() {
+    public Short getRng() {
         return rng;
     }
 
     /**
      * Sets the value of the rng property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setRng(short value) {
+    public void setRng(Short value) {
         this.rng = value;
     }
 
@@ -1033,16 +1116,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the sec property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getSec() {
+    public Short getSec() {
         return sec;
     }
 
     /**
      * Sets the value of the sec property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setSec(short value) {
+    public void setSec(Short value) {
         this.sec = value;
     }
 
@@ -1145,16 +1236,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the coordsns property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getCoordsns() {
+    public Short getCoordsns() {
         return coordsns;
     }
 
     /**
      * Sets the value of the coordsns property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setCoordsns(short value) {
+    public void setCoordsns(Short value) {
         this.coordsns = value;
     }
 
@@ -1185,16 +1284,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the coordsew property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getCoordsew() {
+    public Short getCoordsew() {
         return coordsew;
     }
 
     /**
      * Sets the value of the coordsew property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setCoordsew(short value) {
+    public void setCoordsew(Short value) {
         this.coordsew = value;
     }
 
@@ -1273,16 +1380,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the cty property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getCty() {
+    public Short getCty() {
         return cty;
     }
 
     /**
      * Sets the value of the cty property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setCty(short value) {
+    public void setCty(Short value) {
         this.cty = value;
     }
 
@@ -1313,16 +1428,24 @@ public class GroundWaterWells {
     /**
      * Gets the value of the elev property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getElev() {
+    public Float getElev() {
         return elev;
     }
 
     /**
      * Sets the value of the elev property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setElev(float value) {
+    public void setElev(Float value) {
         this.elev = value;
     }
 
@@ -1401,32 +1524,48 @@ public class GroundWaterWells {
     /**
      * Gets the value of the streamNum property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getStreamNum() {
+    public Integer getStreamNum() {
         return streamNum;
     }
 
     /**
      * Sets the value of the streamNum property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setStreamNum(int value) {
+    public void setStreamNum(Integer value) {
         this.streamNum = value;
     }
 
     /**
      * Gets the value of the strMile property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getStrMile() {
+    public Float getStrMile() {
         return strMile;
     }
 
     /**
      * Sets the value of the strMile property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setStrMile(float value) {
+    public void setStrMile(Float value) {
         this.strMile = value;
     }
 

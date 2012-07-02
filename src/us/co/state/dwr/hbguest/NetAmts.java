@@ -113,19 +113,22 @@ public class NetAmts {
     protected String wdid;
     @XmlElement(name = "wr_name")
     protected String wrName;
-    @XmlElement(name = "wr_stream_no")
-    protected short wrStreamNo;
+    @XmlElement(name = "wr_stream_no", required = true, type = Short.class, nillable = true)
+    protected Short wrStreamNo;
     @XmlElement(name = "wd_stream_name")
     protected String wdStreamName;
     protected String strtype;
     protected String pm;
-    protected short rng;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short rng;
     protected String rdir;
     protected String rnga;
-    protected short ts;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short ts;
     protected String tdir;
     protected String tsa;
-    protected short sec;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short sec;
     protected String seca;
     protected String q160;
     protected String q40;
@@ -137,27 +140,27 @@ public class NetAmts {
     protected String padjDate;
     @XmlElement(name = "apro_date")
     protected String aproDate;
-    @XmlElement(name = "admin_no", required = true)
+    @XmlElement(name = "admin_no", required = true, nillable = true)
     protected BigDecimal adminNo;
-    @XmlElement(name = "order_no")
-    protected short orderNo;
+    @XmlElement(name = "order_no", required = true, type = Short.class, nillable = true)
+    protected Short orderNo;
     @XmlElement(name = "pri_case_no")
     protected String priCaseNo;
     @XmlElement(name = "adj_type")
     protected String adjType;
     @XmlElement(name = "use_types")
     protected String useTypes;
-    @XmlElement(name = "net_rate_abs", required = true)
+    @XmlElement(name = "net_rate_abs", required = true, nillable = true)
     protected BigDecimal netRateAbs;
-    @XmlElement(name = "net_vol_abs", required = true)
+    @XmlElement(name = "net_vol_abs", required = true, nillable = true)
     protected BigDecimal netVolAbs;
-    @XmlElement(name = "net_rate_cond", required = true)
+    @XmlElement(name = "net_rate_cond", required = true, nillable = true)
     protected BigDecimal netRateCond;
-    @XmlElement(name = "net_vol_cond", required = true)
+    @XmlElement(name = "net_vol_cond", required = true, nillable = true)
     protected BigDecimal netVolCond;
-    @XmlElement(name = "net_rate_apex", required = true)
+    @XmlElement(name = "net_rate_apex", required = true, nillable = true)
     protected BigDecimal netRateApex;
-    @XmlElement(name = "net_vol_apex", required = true)
+    @XmlElement(name = "net_vol_apex", required = true, nillable = true)
     protected BigDecimal netVolApex;
     @XmlElement(name = "action_comment")
     protected String actionComment;
@@ -285,16 +288,24 @@ public class NetAmts {
     /**
      * Gets the value of the wrStreamNo property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getWrStreamNo() {
+    public Short getWrStreamNo() {
         return wrStreamNo;
     }
 
     /**
      * Sets the value of the wrStreamNo property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setWrStreamNo(short value) {
+    public void setWrStreamNo(Short value) {
         this.wrStreamNo = value;
     }
 
@@ -373,16 +384,24 @@ public class NetAmts {
     /**
      * Gets the value of the rng property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getRng() {
+    public Short getRng() {
         return rng;
     }
 
     /**
      * Sets the value of the rng property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setRng(short value) {
+    public void setRng(Short value) {
         this.rng = value;
     }
 
@@ -437,16 +456,24 @@ public class NetAmts {
     /**
      * Gets the value of the ts property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTs() {
+    public Short getTs() {
         return ts;
     }
 
     /**
      * Sets the value of the ts property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTs(short value) {
+    public void setTs(Short value) {
         this.ts = value;
     }
 
@@ -501,16 +528,24 @@ public class NetAmts {
     /**
      * Gets the value of the sec property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getSec() {
+    public Short getSec() {
         return sec;
     }
 
     /**
      * Sets the value of the sec property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setSec(short value) {
+    public void setSec(Short value) {
         this.sec = value;
     }
 
@@ -733,16 +768,24 @@ public class NetAmts {
     /**
      * Gets the value of the orderNo property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getOrderNo() {
+    public Short getOrderNo() {
         return orderNo;
     }
 
     /**
      * Sets the value of the orderNo property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setOrderNo(short value) {
+    public void setOrderNo(Short value) {
         this.orderNo = value;
     }
 

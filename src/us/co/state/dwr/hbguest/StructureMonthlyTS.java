@@ -46,7 +46,8 @@ public class StructureMonthlyTS
     protected short calYear;
     @XmlElement(name = "cal_month")
     protected short calMonth;
-    protected double amt;
+    @XmlElement(required = true, type = Double.class, nillable = true)
+    protected Double amt;
 
     /**
      * Gets the value of the irrYear property.
@@ -99,16 +100,24 @@ public class StructureMonthlyTS
     /**
      * Gets the value of the amt property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getAmt() {
+    public Double getAmt() {
         return amt;
     }
 
     /**
      * Sets the value of the amt property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setAmt(double value) {
+    public void setAmt(Double value) {
         this.amt = value;
     }
 

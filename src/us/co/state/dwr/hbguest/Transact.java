@@ -133,19 +133,22 @@ public class Transact {
     protected String wdid;
     @XmlElement(name = "wr_name")
     protected String wrName;
-    @XmlElement(name = "wr_stream_no")
-    protected short wrStreamNo;
+    @XmlElement(name = "wr_stream_no", required = true, type = Short.class, nillable = true)
+    protected Short wrStreamNo;
     @XmlElement(name = "wd_stream_name")
     protected String wdStreamName;
     protected String strtype;
     protected String pm;
-    protected short rng;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short rng;
     protected String rdir;
     protected String rnga;
-    protected short ts;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short ts;
     protected String tdir;
     protected String tsa;
-    protected short sec;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short sec;
     protected String seca;
     protected String q160;
     protected String q40;
@@ -157,16 +160,16 @@ public class Transact {
     protected String padjDate;
     @XmlElement(name = "apro_date")
     protected String aproDate;
-    @XmlElement(name = "admin_no", required = true)
+    @XmlElement(name = "admin_no", required = true, nillable = true)
     protected BigDecimal adminNo;
-    @XmlElement(name = "order_no")
-    protected short orderNo;
+    @XmlElement(name = "order_no", required = true, type = Short.class, nillable = true)
+    protected Short orderNo;
     @XmlElement(name = "adj_type")
     protected String adjType;
     protected String use;
-    @XmlElement(name = "rate_amt", required = true)
+    @XmlElement(name = "rate_amt", required = true, nillable = true)
     protected BigDecimal rateAmt;
-    @XmlElement(name = "vol_amt", required = true)
+    @XmlElement(name = "vol_amt", required = true, nillable = true)
     protected BigDecimal volAmt;
     @XmlElement(name = "status_type")
     protected String statusType;
@@ -187,18 +190,18 @@ public class Transact {
     protected String actionComment;
     @XmlElement(name = "action_update")
     protected String actionUpdate;
-    @XmlElement(name = "assoc_wd")
-    protected short assocWd;
-    @XmlElement(name = "assoc_id")
-    protected int assocId;
-    @XmlElement(name = "plan_wd")
-    protected short planWd;
-    @XmlElement(name = "plan_id")
-    protected int planId;
-    @XmlElement(name = "tran_wd")
-    protected short tranWd;
-    @XmlElement(name = "tran_id")
-    protected int tranId;
+    @XmlElement(name = "assoc_wd", required = true, type = Short.class, nillable = true)
+    protected Short assocWd;
+    @XmlElement(name = "assoc_id", required = true, type = Integer.class, nillable = true)
+    protected Integer assocId;
+    @XmlElement(name = "plan_wd", required = true, type = Short.class, nillable = true)
+    protected Short planWd;
+    @XmlElement(name = "plan_id", required = true, type = Integer.class, nillable = true)
+    protected Integer planId;
+    @XmlElement(name = "tran_wd", required = true, type = Short.class, nillable = true)
+    protected Short tranWd;
+    @XmlElement(name = "tran_id", required = true, type = Integer.class, nillable = true)
+    protected Integer tranId;
 
     /**
      * Gets the value of the div property.
@@ -323,16 +326,24 @@ public class Transact {
     /**
      * Gets the value of the wrStreamNo property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getWrStreamNo() {
+    public Short getWrStreamNo() {
         return wrStreamNo;
     }
 
     /**
      * Sets the value of the wrStreamNo property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setWrStreamNo(short value) {
+    public void setWrStreamNo(Short value) {
         this.wrStreamNo = value;
     }
 
@@ -411,16 +422,24 @@ public class Transact {
     /**
      * Gets the value of the rng property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getRng() {
+    public Short getRng() {
         return rng;
     }
 
     /**
      * Sets the value of the rng property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setRng(short value) {
+    public void setRng(Short value) {
         this.rng = value;
     }
 
@@ -475,16 +494,24 @@ public class Transact {
     /**
      * Gets the value of the ts property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTs() {
+    public Short getTs() {
         return ts;
     }
 
     /**
      * Sets the value of the ts property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTs(short value) {
+    public void setTs(Short value) {
         this.ts = value;
     }
 
@@ -539,16 +566,24 @@ public class Transact {
     /**
      * Gets the value of the sec property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getSec() {
+    public Short getSec() {
         return sec;
     }
 
     /**
      * Sets the value of the sec property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setSec(short value) {
+    public void setSec(Short value) {
         this.sec = value;
     }
 
@@ -771,16 +806,24 @@ public class Transact {
     /**
      * Gets the value of the orderNo property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getOrderNo() {
+    public Short getOrderNo() {
         return orderNo;
     }
 
     /**
      * Sets the value of the orderNo property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setOrderNo(short value) {
+    public void setOrderNo(Short value) {
         this.orderNo = value;
     }
 
@@ -1123,96 +1166,144 @@ public class Transact {
     /**
      * Gets the value of the assocWd property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getAssocWd() {
+    public Short getAssocWd() {
         return assocWd;
     }
 
     /**
      * Sets the value of the assocWd property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setAssocWd(short value) {
+    public void setAssocWd(Short value) {
         this.assocWd = value;
     }
 
     /**
      * Gets the value of the assocId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getAssocId() {
+    public Integer getAssocId() {
         return assocId;
     }
 
     /**
      * Sets the value of the assocId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setAssocId(int value) {
+    public void setAssocId(Integer value) {
         this.assocId = value;
     }
 
     /**
      * Gets the value of the planWd property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getPlanWd() {
+    public Short getPlanWd() {
         return planWd;
     }
 
     /**
      * Sets the value of the planWd property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setPlanWd(short value) {
+    public void setPlanWd(Short value) {
         this.planWd = value;
     }
 
     /**
      * Gets the value of the planId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getPlanId() {
+    public Integer getPlanId() {
         return planId;
     }
 
     /**
      * Sets the value of the planId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setPlanId(int value) {
+    public void setPlanId(Integer value) {
         this.planId = value;
     }
 
     /**
      * Gets the value of the tranWd property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getTranWd() {
+    public Short getTranWd() {
         return tranWd;
     }
 
     /**
      * Sets the value of the tranWd property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setTranWd(short value) {
+    public void setTranWd(Short value) {
         this.tranWd = value;
     }
 
     /**
      * Gets the value of the tranId property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getTranId() {
+    public Integer getTranId() {
         return tranId;
     }
 
     /**
      * Sets the value of the tranId property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setTranId(int value) {
+    public void setTranId(Integer value) {
         this.tranId = value;
     }
 

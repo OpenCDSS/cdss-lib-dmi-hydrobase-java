@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="lot" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="block" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="county_parcel_id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="parcel_size" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="parcel_size" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="pm" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="ts" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *         &lt;element name="tdir" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="seca" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="q160" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="q40" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="coordsns" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="coordsns" type="{http://www.w3.org/2001/XMLSchema}short"/>
  *         &lt;element name="coordsns_dir" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="coordsew" type="{http://www.w3.org/2001/XMLSchema}short"/>
  *         &lt;element name="coordsew_dir" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -66,9 +66,9 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="use3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="aquifer1_name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="aquifer2_name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="permitted_area" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="permitted_area" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="permitted_area_units" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="annual_appropriation" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="annual_appropriation" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="date_permit_issued" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="date_permit_expires" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="date_well_constructed" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -80,7 +80,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="well_depth" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="tperf" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="bperf" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="pump_rate" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *         &lt;element name="pump_rate" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         &lt;element name="static_water_level" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="full_name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="mailing_address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -180,11 +180,13 @@ import javax.xml.bind.annotation.XmlType;
 public class WellPermits {
 
     protected String receipt;
-    protected int permitno;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer permitno;
     protected String permitsuf;
     protected String permitrpl;
     protected String statusdesc;
-    protected int currentstatusnum;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer currentstatusnum;
     protected String wellname;
     protected String caseno;
     @XmlElement(name = "WDID")
@@ -193,12 +195,15 @@ public class WellPermits {
     protected String ogccid;
     protected short div;
     protected short wd;
-    protected short cty;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short cty;
     protected String county;
-    protected short managementdistrictnum;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short managementdistrictnum;
     @XmlElement(name = "ManagementDistrict")
     protected String managementDistrict;
-    protected short designatedbasinnum;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short designatedbasinnum;
     @XmlElement(name = "DesignatedBasin")
     protected String designatedBasin;
     protected String subdivisionname;
@@ -207,28 +212,31 @@ public class WellPermits {
     protected String block;
     @XmlElement(name = "county_parcel_id")
     protected String countyParcelId;
-    @XmlElement(name = "parcel_size", required = true)
-    protected BigDecimal parcelSize;
+    @XmlElement(name = "parcel_size", required = true, type = Float.class, nillable = true)
+    protected Float parcelSize;
     protected String pm;
-    @XmlElement(required = true)
+    @XmlElement(required = true, nillable = true)
     protected BigDecimal ts;
     protected String tdir;
-    @XmlElement(required = true)
+    @XmlElement(required = true, nillable = true)
     protected BigDecimal rng;
     protected String rdir;
-    protected short sec;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short sec;
     protected String seca;
     protected String q160;
     protected String q40;
-    protected int coordsns;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short coordsns;
     @XmlElement(name = "coordsns_dir")
     protected String coordsnsDir;
-    protected short coordsew;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short coordsew;
     @XmlElement(name = "coordsew_dir")
     protected String coordsewDir;
-    @XmlElement(name = "UTMx", required = true)
+    @XmlElement(name = "UTMx", required = true, nillable = true)
     protected BigDecimal utMx;
-    @XmlElement(name = "UTMy", required = true)
+    @XmlElement(name = "UTMy", required = true, nillable = true)
     protected BigDecimal utMy;
     @XmlElement(name = "loc_accuracy")
     protected String locAccuracy;
@@ -245,12 +253,12 @@ public class WellPermits {
     protected String aquifer1Name;
     @XmlElement(name = "aquifer2_name")
     protected String aquifer2Name;
-    @XmlElement(name = "permitted_area", required = true)
-    protected BigDecimal permittedArea;
+    @XmlElement(name = "permitted_area", required = true, type = Float.class, nillable = true)
+    protected Float permittedArea;
     @XmlElement(name = "permitted_area_units")
     protected String permittedAreaUnits;
-    @XmlElement(name = "annual_appropriation", required = true)
-    protected BigDecimal annualAppropriation;
+    @XmlElement(name = "annual_appropriation", required = true, type = Float.class, nillable = true)
+    protected Float annualAppropriation;
     @XmlElement(name = "date_permit_issued")
     protected String datePermitIssued;
     @XmlElement(name = "date_permit_expires")
@@ -264,15 +272,18 @@ public class WellPermits {
     @XmlElement(name = "date_well_plugged")
     protected String dateWellPlugged;
     protected String comment;
-    protected int elev;
-    @XmlElement(name = "well_depth")
-    protected int wellDepth;
-    protected int tperf;
-    protected int bperf;
-    @XmlElement(name = "pump_rate", required = true)
-    protected BigDecimal pumpRate;
-    @XmlElement(name = "static_water_level")
-    protected int staticWaterLevel;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer elev;
+    @XmlElement(name = "well_depth", required = true, type = Integer.class, nillable = true)
+    protected Integer wellDepth;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer tperf;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer bperf;
+    @XmlElement(name = "pump_rate", required = true, type = Float.class, nillable = true)
+    protected Float pumpRate;
+    @XmlElement(name = "static_water_level", required = true, type = Integer.class, nillable = true)
+    protected Integer staticWaterLevel;
     @XmlElement(name = "full_name")
     protected String fullName;
     @XmlElement(name = "mailing_address")
@@ -321,16 +332,24 @@ public class WellPermits {
     /**
      * Gets the value of the permitno property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getPermitno() {
+    public Integer getPermitno() {
         return permitno;
     }
 
     /**
      * Sets the value of the permitno property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setPermitno(int value) {
+    public void setPermitno(Integer value) {
         this.permitno = value;
     }
 
@@ -409,16 +428,24 @@ public class WellPermits {
     /**
      * Gets the value of the currentstatusnum property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getCurrentstatusnum() {
+    public Integer getCurrentstatusnum() {
         return currentstatusnum;
     }
 
     /**
      * Sets the value of the currentstatusnum property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setCurrentstatusnum(int value) {
+    public void setCurrentstatusnum(Integer value) {
         this.currentstatusnum = value;
     }
 
@@ -553,16 +580,24 @@ public class WellPermits {
     /**
      * Gets the value of the cty property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getCty() {
+    public Short getCty() {
         return cty;
     }
 
     /**
      * Sets the value of the cty property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setCty(short value) {
+    public void setCty(Short value) {
         this.cty = value;
     }
 
@@ -593,16 +628,24 @@ public class WellPermits {
     /**
      * Gets the value of the managementdistrictnum property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getManagementdistrictnum() {
+    public Short getManagementdistrictnum() {
         return managementdistrictnum;
     }
 
     /**
      * Sets the value of the managementdistrictnum property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setManagementdistrictnum(short value) {
+    public void setManagementdistrictnum(Short value) {
         this.managementdistrictnum = value;
     }
 
@@ -633,16 +676,24 @@ public class WellPermits {
     /**
      * Gets the value of the designatedbasinnum property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getDesignatedbasinnum() {
+    public Short getDesignatedbasinnum() {
         return designatedbasinnum;
     }
 
     /**
      * Sets the value of the designatedbasinnum property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setDesignatedbasinnum(short value) {
+    public void setDesignatedbasinnum(Short value) {
         this.designatedbasinnum = value;
     }
 
@@ -795,10 +846,10 @@ public class WellPermits {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getParcelSize() {
+    public Float getParcelSize() {
         return parcelSize;
     }
 
@@ -807,10 +858,10 @@ public class WellPermits {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setParcelSize(BigDecimal value) {
+    public void setParcelSize(Float value) {
         this.parcelSize = value;
     }
 
@@ -937,16 +988,24 @@ public class WellPermits {
     /**
      * Gets the value of the sec property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getSec() {
+    public Short getSec() {
         return sec;
     }
 
     /**
      * Sets the value of the sec property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setSec(short value) {
+    public void setSec(Short value) {
         this.sec = value;
     }
 
@@ -1025,16 +1084,24 @@ public class WellPermits {
     /**
      * Gets the value of the coordsns property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public int getCoordsns() {
+    public Short getCoordsns() {
         return coordsns;
     }
 
     /**
      * Sets the value of the coordsns property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setCoordsns(int value) {
+    public void setCoordsns(Short value) {
         this.coordsns = value;
     }
 
@@ -1065,16 +1132,24 @@ public class WellPermits {
     /**
      * Gets the value of the coordsew property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getCoordsew() {
+    public Short getCoordsew() {
         return coordsew;
     }
 
     /**
      * Sets the value of the coordsew property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setCoordsew(short value) {
+    public void setCoordsew(Short value) {
         this.coordsew = value;
     }
 
@@ -1371,10 +1446,10 @@ public class WellPermits {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getPermittedArea() {
+    public Float getPermittedArea() {
         return permittedArea;
     }
 
@@ -1383,10 +1458,10 @@ public class WellPermits {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setPermittedArea(BigDecimal value) {
+    public void setPermittedArea(Float value) {
         this.permittedArea = value;
     }
 
@@ -1419,10 +1494,10 @@ public class WellPermits {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getAnnualAppropriation() {
+    public Float getAnnualAppropriation() {
         return annualAppropriation;
     }
 
@@ -1431,10 +1506,10 @@ public class WellPermits {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setAnnualAppropriation(BigDecimal value) {
+    public void setAnnualAppropriation(Float value) {
         this.annualAppropriation = value;
     }
 
@@ -1609,64 +1684,96 @@ public class WellPermits {
     /**
      * Gets the value of the elev property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getElev() {
+    public Integer getElev() {
         return elev;
     }
 
     /**
      * Sets the value of the elev property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setElev(int value) {
+    public void setElev(Integer value) {
         this.elev = value;
     }
 
     /**
      * Gets the value of the wellDepth property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getWellDepth() {
+    public Integer getWellDepth() {
         return wellDepth;
     }
 
     /**
      * Sets the value of the wellDepth property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setWellDepth(int value) {
+    public void setWellDepth(Integer value) {
         this.wellDepth = value;
     }
 
     /**
      * Gets the value of the tperf property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getTperf() {
+    public Integer getTperf() {
         return tperf;
     }
 
     /**
      * Sets the value of the tperf property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setTperf(int value) {
+    public void setTperf(Integer value) {
         this.tperf = value;
     }
 
     /**
      * Gets the value of the bperf property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getBperf() {
+    public Integer getBperf() {
         return bperf;
     }
 
     /**
      * Sets the value of the bperf property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setBperf(int value) {
+    public void setBperf(Integer value) {
         this.bperf = value;
     }
 
@@ -1675,10 +1782,10 @@ public class WellPermits {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public BigDecimal getPumpRate() {
+    public Float getPumpRate() {
         return pumpRate;
     }
 
@@ -1687,26 +1794,34 @@ public class WellPermits {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Float }
      *     
      */
-    public void setPumpRate(BigDecimal value) {
+    public void setPumpRate(Float value) {
         this.pumpRate = value;
     }
 
     /**
      * Gets the value of the staticWaterLevel property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getStaticWaterLevel() {
+    public Integer getStaticWaterLevel() {
         return staticWaterLevel;
     }
 
     /**
      * Sets the value of the staticWaterLevel property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setStaticWaterLevel(int value) {
+    public void setStaticWaterLevel(Integer value) {
         this.staticWaterLevel = value;
     }
 

@@ -48,12 +48,12 @@ public class StationMeasType {
     protected String measType;
     @XmlElement(name = "time_step")
     protected String timeStep;
-    @XmlElement(name = "start_year")
-    protected short startYear;
-    @XmlElement(name = "end_year")
-    protected short endYear;
-    @XmlElement(name = "meas_count")
-    protected int measCount;
+    @XmlElement(name = "start_year", required = true, type = Short.class, nillable = true)
+    protected Short startYear;
+    @XmlElement(name = "end_year", required = true, type = Short.class, nillable = true)
+    protected Short endYear;
+    @XmlElement(name = "meas_count", required = true, type = Integer.class, nillable = true)
+    protected Integer measCount;
 
     /**
      * Gets the value of the measNum property.
@@ -122,48 +122,72 @@ public class StationMeasType {
     /**
      * Gets the value of the startYear property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getStartYear() {
+    public Short getStartYear() {
         return startYear;
     }
 
     /**
      * Sets the value of the startYear property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setStartYear(short value) {
+    public void setStartYear(Short value) {
         this.startYear = value;
     }
 
     /**
      * Gets the value of the endYear property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getEndYear() {
+    public Short getEndYear() {
         return endYear;
     }
 
     /**
      * Sets the value of the endYear property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setEndYear(short value) {
+    public void setEndYear(Short value) {
         this.endYear = value;
     }
 
     /**
      * Gets the value of the measCount property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getMeasCount() {
+    public Integer getMeasCount() {
         return measCount;
     }
 
     /**
      * Sets the value of the measCount property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setMeasCount(int value) {
+    public void setMeasCount(Integer value) {
         this.measCount = value;
     }
 

@@ -1140,8 +1140,12 @@ private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
     //hbwell.setST(mt.getSt());
     hbwell.setHUC(mt.getHuc());
     // Meastype
-    hbwell.setStart_year(mt.getStartYear());
-    hbwell.setEnd_year(mt.getEndYear());
+    if ( mt.getStartYear() != null ) {
+        hbwell.setStart_year(mt.getStartYear());
+    }
+    if ( mt.getEndYear() != null ) {
+        hbwell.setEnd_year(mt.getEndYear());
+    }
     hbwell.setMeas_type(measType);
     // FIXME SAM 2010-08-13 Need to not hard-code this
     hbwell.setData_source("DWR");
@@ -1152,13 +1156,19 @@ private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
     hbwell.setTime_step(timeStep);
     // from Geoloc
     hbwell.setPM(mt.getPm());
-    hbwell.setTS(mt.getTs());
+    if ( mt.getTs() != null ) {
+        hbwell.setTS(mt.getTs());
+    }
     hbwell.setTdir(mt.getTdir());
     hbwell.setTsa(mt.getTsa());
-    hbwell.setRng(mt.getRng());
+    if ( mt.getRng() != null ) {
+        hbwell.setRng(mt.getRng());
+    }
     hbwell.setRdir(mt.getRdir());
     hbwell.setRnga(mt.getRnga());
-    hbwell.setSec(mt.getSec());
+    if ( mt.getSec() != null ) {
+        hbwell.setSec(mt.getSec());
+    }
     hbwell.setSeca(mt.getSeca());
     hbwell.setQ160(mt.getQ160());
     hbwell.setQ40(mt.getQ40());
@@ -1184,31 +1194,51 @@ private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
     hbwell.setCounty(mt.getCounty());
     //hbwell.setSt(mt.getSt());
     hbwell.setTopomap(mt.getTopomap());
-    hbwell.setCty(mt.getCty());
+    if ( mt.getCty() != null ) {
+        hbwell.setCty(mt.getCty());
+    }
     hbwell.setHUC(mt.getHuc());
-    hbwell.setElev(mt.getElev());
+    if ( mt.getElev() != null ) {
+        hbwell.setElev(mt.getElev());
+    }
     //hbwell.setElev_accuracy(mt.getElevAccuracy());
     hbwell.setLoc_type(mt.getLocTypeDesc());
-    hbwell.setCoordsns(mt.getCoordsns());
+    if ( mt.getCoordsns() != null ) {
+        hbwell.setCoordsns(mt.getCoordsns());
+    }
     hbwell.setCoordsns_dir(mt.getCoordsnsDir());
-    hbwell.setCoordsew(mt.getCoordsew());
+    if ( mt.getCoordsew() != null ) {
+        hbwell.setCoordsew(mt.getCoordsew());
+    }
     hbwell.setCoordsew_dir(mt.getCoordsewDir());
 
     hbwell.setWell_name(mt.getWellName());
     hbwell.setReceipt(mt.getReceipt());
-    hbwell.setPermitno(mt.getPermitno());
+    if ( mt.getPermitno() != null ) {
+        hbwell.setPermitno(mt.getPermitno());
+    }
     hbwell.setPermitsuf(mt.getPermitsuf());
     hbwell.setPermitrpl(mt.getPermitrpl());
     hbwell.setMD(mt.getMd());
     hbwell.setBasin(mt.getBasin());
     hbwell.setAquifer1(mt.getAquifer1());
     hbwell.setAquifer2(mt.getAquifer2());
-    hbwell.setTperf(mt.getTperf());
-    hbwell.setBperf(mt.getBperf());
-    hbwell.setYield(mt.getYield());
+    if ( mt.getTperf() != null ) {
+        hbwell.setTperf(mt.getTperf());
+    }
+    if ( mt.getBperf() != null ) {
+        hbwell.setBperf(mt.getBperf());
+    }
+    if ( mt.getYield() != null ) {
+        hbwell.setYield(mt.getYield());
+    }
     hbwell.setAquifer_comment(mt.getAquiferComment());
-    hbwell.setBedrock_elev(mt.getBedrockElev());
-    hbwell.setSat_1965(mt.getSat1965());
+    if ( mt.getBedrockElev() != null ) {
+        hbwell.setBedrock_elev(mt.getBedrockElev());
+    }
+    if ( mt.getSat1965() != null ) {
+        hbwell.setSat_1965(mt.getSat1965());
+    }
     hbwell.setRemarks1(mt.getRemarks1());
     hbwell.setRemarks2(mt.getRemarks2());
     hbwell.setData_source(mt.getDataSource());
@@ -1216,20 +1246,32 @@ private HydroBase_GroundWaterWellsView newHydroBase_GroundWaterWellsView (
     //hbwell.setData_units(mt.getData_units);
     hbwell.setLocnum(mt.getLocnum());
     hbwell.setSite_id(mt.getSiteID());
-    hbwell.setWell_depth(mt.getWellDepth());
+    if ( mt.getWellDepth() != null ) {
+        hbwell.setWell_depth(mt.getWellDepth());
+    }
     //hbwell.setAccuracy(mt.getAccuracy());
-    hbwell.setStream_num(mt.getStreamNum());
-    hbwell.setStr_mile(mt.getStrMile());
+    if ( mt.getStreamNum() != null ) {
+        hbwell.setStream_num(mt.getStreamNum());
+    }
+    if ( mt.getStrMile() != null ) {
+        hbwell.setStr_mile(mt.getStrMile());
+    }
     hbwell.setSpotter_version(mt.getSpotterVersion());
-    hbwell.setStart_year(mt.getStartYear());
-    hbwell.setEnd_year(mt.getEndYear());
+    if ( mt.getStartYear() != null ) {
+        hbwell.setStart_year(mt.getStartYear());
+    }
+    if ( mt.getEndYear() != null ) {
+        hbwell.setEnd_year(mt.getEndYear());
+    }
     //hbwell.setStructure_num(mt.getStructure_num());
     //hbwell.setUsgs_id(mt.getUsgs_id());
     //hbwell.setUsbr_id(mt.getUsbr_id());
     hbwell.setWell_meas_num(mt.getWellMeasNum());
     //hbwell.setMeas_type(mt.getMeasType()); // Set above with requested value
     hbwell.setTime_step(mt.getTimeStep());
-    hbwell.setMeas_count(mt.getMeasCount());
+    if ( mt.getMeasCount() != null ) {
+        hbwell.setMeas_count(mt.getMeasCount());
+    }
     hbwell.setIdentifier(mt.getIdentifier());
     //hbwell.setLog_depth(mt.getLog_depth());
     //hbwell.setLog_type(mt.getLog_type());
@@ -1255,8 +1297,12 @@ HydroBase; for example use "Day" instead of "Daily"
 private HydroBase_StationGeolocMeasType newHydroBase_StationGeolocMeasType (
     StationGeolocMeasType sgmt, String measType, String timeStep )
 {   HydroBase_StationGeolocMeasType hbsta = new HydroBase_StationGeolocMeasType();
-    hbsta.setDiv(sgmt.getDiv());
-    hbsta.setWD(sgmt.getWd());
+    if ( sgmt.getDiv() != null ) {
+        hbsta.setDiv(sgmt.getDiv());
+    }
+    if ( sgmt.getWd() != null ) {
+        hbsta.setWD(sgmt.getWd());
+    }
     hbsta.setAbbrev(sgmt.getAbbrev());
     hbsta.setStation_id(sgmt.getStationId());
     hbsta.setStation_name(sgmt.getStationName());
@@ -1281,10 +1327,16 @@ private HydroBase_StationGeolocMeasType newHydroBase_StationGeolocMeasType (
         hbsta.setUtm_y(d.doubleValue());
     }
     // Meastype
-    hbsta.setStart_year(sgmt.getStartYear());
-    hbsta.setEnd_year(sgmt.getEndYear());
+    if ( sgmt.getStartYear() != null ) {
+        hbsta.setStart_year(sgmt.getStartYear());
+    }
+    if ( sgmt.getEndYear() != null ) {
+        hbsta.setEnd_year(sgmt.getEndYear());
+    }
     hbsta.setMeas_type(measType);
-    hbsta.setMeas_count(sgmt.getMeasCount());
+    if ( sgmt.getMeasCount() != null ) {
+        hbsta.setMeas_count(sgmt.getMeasCount());
+    }
     // FIXME SAM 2012-050-15 does not seem consistent with HydroBase
     // For now set data source to be same as source
     // Data source is what we want to use for time series.
@@ -1834,14 +1886,15 @@ throws Exception
         description = hbstruct.getStr_name();
     }
     // Default the dates to 1900 to current time
-    // TODO SAM 2010-08-16 Need to set date to available from hbstruct.start/end year
     if ( readStart == null ) {
         int startYear = dataStartYear;
         if ( startYear <= 0 ) {
             // Default to 1900
             startYear = 1900; // This is irrigation year
         }
-        --startYear; // To get to previous calendar year
+        if ( !isStation ) {
+            --startYear; // HydroBase has irrigattion year so decrement to get to previous calendar year
+        }
         if ( timeStep.equalsIgnoreCase("Month")) {
             if ( isStation ) {
                 // Apparently also need day
@@ -1857,7 +1910,7 @@ throws Exception
                 readStart = DateTime.parse("" + startYear + "-01-01");
             }
             else {
-                readStart = DateTime.parse("" + startYear + "-01-01");
+                readStart = DateTime.parse("" + startYear + "-11-01");
             }
         }
         else if ( timeStep.equalsIgnoreCase("Year")) {
@@ -2042,8 +2095,10 @@ throws Exception
                 DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
                 String dateString;
                 String [] dateParts;
+                Double amt;
                 String flag = "";
                 String flagA, flagB;
+                double missing = ts.getMissing();
                 for ( StationTS mts : mtsArray.getStationTS() ) {
                     flag = "";
                     dateString = mts.getMeasDate();
@@ -2058,18 +2113,26 @@ throws Exception
                     //Message.printStatus(2, routine, "Date=" + date + " value=" + mts.getAmt());
                     flagA = mts.getFlagA();
                     flagB = mts.getFlagB();
+                    amt = mts.getAmt();
                     if ( (flagA != null) && !flagA.equals("") ) {
                         flag = flagA;
                     }
                     if ( (flagB != null) && !flagB.equals("") ) {
                         flag += "/" + flagB;
                     }
-                    if ( flag.equals("") ) {
-                        // Don't set flag because flags (even all blank) my still trigger some display behavior
-                        ts.setDataValue(date,mts.getAmt());
+                    if ( amt == null ) {
+                        if ( !flag.equals("") ) {
+                            ts.setDataValue(date,missing,flag,0);
+                        }
                     }
                     else {
-                        ts.setDataValue(date,mts.getAmt(),flag,0);
+                        if ( flag.equals("") ) {
+                            // Don't set flag because flags (even all blank) my still trigger some display behavior
+                            ts.setDataValue(date,amt);
+                        }
+                        else {
+                            ts.setDataValue(date,amt,flag,0);
+                        }
                     }
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
@@ -2110,18 +2173,52 @@ throws Exception
                 DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
                 String dateString;
                 String[] dateParts;
-                String flag = "";
+                String flag = "", flagA = "", flagB = "";
+                Double amt = null;
+                double missing = ts.getMissing();
                 for ( StationTS dts : dtsArray.getStationTS() ) {
                     dateString = dts.getMeasDate();
                     dateParts = dateString.split("/");
                     // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
                     //Message.printStatus(2,routine,"Date=\"" + dateString + " value=" + dts.getAmt() +
-                    //    " flag=" + dts.getObs() );
+                    //    " flagA=" + dts.getFlagA() + ", flagB=" + dts.getFlagB() );
+                    flag = "";
+                    flagA = dts.getFlagA();
+                    flagB = dts.getFlagB();
+                    if ( (flagA != null) && !flagA.equals("") ) {
+                        flag = flagA;
+                    }
+                    // TODO SAM 2012-06-28 Need to evaluate whether 
+                    if ( (flagB != null) && !flagB.equals("") ) {
+                        if ( flag.equals("") ) {
+                            // Use flag B
+                            flag = flagB;
+                        }
+                        else {
+                            // Append to previous
+                            flag = flag + flagB;
+                        }
+                    }
                     date.setMonth(Integer.parseInt(dateParts[0]));
                     date.setDay(Integer.parseInt(dateParts[1]));
                     date.setYear(Integer.parseInt(dateParts[2]));
                     // Set the data flag
-                    ts.setDataValue(date,dts.getAmt(),flag,0);
+                    amt = dts.getAmt();
+                    if ( amt == null ) {
+                        if ( !flag.equals("") ) {
+                            // Flag indicates something so set with missing
+                            ts.setDataValue(date,missing,flag,0);
+                        }
+                    }
+                    else {
+                        // Have a value so set
+                        if ( flag.equals("") ) {
+                            ts.setDataValue(date,amt);
+                        }
+                        else {
+                            ts.setDataValue(date,amt,flag,0);
+                        }
+                    }
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
             }
@@ -2155,8 +2252,11 @@ throws Exception
                 String dateString;
                 String[] dateParts;
                 String flag = "";
+                Double value;
+                Short depth;
                 for ( SnowCourse dts : dtsArray.getSnowCourse() ) {
                     dateString = dts.getMeasDate();
+                    flag = "";
                     if ( (dateString != null) && !dateString.trim().equals("") ) {
                         dateParts = dateString.split("/");
                         // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
@@ -2164,19 +2264,26 @@ throws Exception
                         //    " flag=" + dts.getObs() );
                         date.setMonth(Integer.parseInt(dateParts[0]));
                         date.setDay(Integer.parseInt(dateParts[1]));
-                        date.setYear(Integer.parseInt(dateParts[2]));
+                        date.setYear(Integer.parseInt(dateParts[2]));            
                         // Set the data flag
+                        flag = dts.getFlag();
+                        value = null;
                         if ( doDepth ) {
-                            int depth = dts.getDepth();
-                            if ( depth >= 0 ) {
-                                ts.setDataValue(date,depth,dts.getFlag(),0);
+                            depth = dts.getDepth();
+                            if ( depth != null ) {
+                                if ( depth >= 0 ) {
+                                    value = new Double(depth);
+                                }
                             }
                         }
                         else {
                             BigDecimal swe = dts.getSnowWaterEquiv();
                             if ( (swe != null) && (swe.doubleValue() >= 0.0) ) {
-                                ts.setDataValue(date,swe.doubleValue(),dts.getFlag(),0);
+                                 value = swe.doubleValue();
                             }
+                        }
+                        if ( value != null ) {
+                            ts.setDataValue(date,value,flag,0);
                         }
                     }
                 }
@@ -2209,6 +2316,7 @@ throws Exception
         DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
         String dateString;
         String[] dateParts;
+        Double value;
         for ( GroundWaterWellsWellMeasTS dts : dtsArray.getGroundWaterWellsWellMeasTS() ) {
             dateString = dts.getMeasDate();
             dateParts = dateString.split("/");
@@ -2217,11 +2325,15 @@ throws Exception
             date.setDay(Integer.parseInt(dateParts[1]));
             date.setYear(Integer.parseInt(dateParts[2]));
             // Set the data flag
+            value = null;
             if ( readElev ) {
-                ts.setDataValue(date,dts.getWlElev());
+                value = dts.getWlElev();
             }
             else {
-                ts.setDataValue(date,dts.getWlDepth());
+                value = dts.getWlDepth();
+            }
+            if ( value != null ) {
+                ts.setDataValue(date,value);
             }
         }
         ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
@@ -2239,6 +2351,12 @@ throws Exception
         dataType.equalsIgnoreCase("ResMeasStorage") ) {
         // Structure queries...
         String wdid = HydroBase_WaterDistrict.formWDID(7, wdidParts[0], wdidParts[1]);
+        // Because the web service API uses irrigation year for some methods, get one more year on either end to
+        // make sure that the user's requested period (calendar) is covered.  This should not impact anything
+        // because the period for the time series is set and memory allocated in previous code.  It just means
+        // that a few records may be ignored because they are outside the time series period.
+        int irrigationYearStart = readStart.getYear() - 1;
+        int irrigationYearEnd = readEnd.getYear() + 1;
         if ( timeStep.equalsIgnoreCase("Year") && readData ) {
             if ( (dataType.equalsIgnoreCase("DivTotal") ||
                 dataType.equalsIgnoreCase("IDivTotal") ||
@@ -2249,7 +2367,7 @@ throws Exception
                 // Get data from structure time series
                 tsIsHandled = true;
                 ArrayOfStructureAnnuallyTS ytsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureAnnuallyTSByMeasNum(
-                    hbstruct.getMeas_num(), (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
+                    hbstruct.getMeas_num(), (short)irrigationYearStart, (short)irrigationYearEnd, getAuthentication(), status );
                 sw.stop();
                 // Check for error
                 if ( (status.value != null) && (status.value.getError() != null) ) {
@@ -2259,13 +2377,17 @@ throws Exception
                 }
                 Message.printStatus(2, routine,
                     "Retrieved " + ytsArray.getStructureAnnuallyTS().size() + " StructureAnnuallyTS for wdid=\"" +
-                    wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    wdid + "\" irrigation years " + irrigationYearStart + " to " + irrigationYearEnd + " in " +
                     sw.getSeconds() + " seconds.");
                 // Transfer the data
                 DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+                Double annAmt;
                 for ( StructureAnnuallyTS yts : ytsArray.getStructureAnnuallyTS() ) {
                     date.setYear(yts.getIrrYear());
-                    ts.setDataValue(date,yts.getAnnAmt());
+                    annAmt = yts.getAnnAmt();
+                    if ( annAmt != null ) {
+                        ts.setDataValue(date,annAmt);
+                    }
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
                 ts.addToGenesis ( "Annual values are for irrigation year Nov to Oct." );
@@ -2283,7 +2405,7 @@ throws Exception
                 ArrayOfStructureMonthlyTS mtsArray = null;
                 // Read using the Measnum, which allows direct access to the time series of interest.
                 mtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureMonthlyTSByMeasNum(
-                    hbstruct.getMeas_num(), (short)readStart.getYear(), (short)readEnd.getYear(), getAuthentication(), status );
+                    hbstruct.getMeas_num(), (short)irrigationYearStart, (short)irrigationYearEnd, getAuthentication(), status );
                 // TODO Evaluate whether the following should be used in any cases
                 // The following returns all meas types, DivTotal and classes, which is a performance hit
                 //mtsArray = getColoradoWaterHBGuestSoap12().getHBGuestStructureMonthlyTSByWDID(
@@ -2297,15 +2419,19 @@ throws Exception
                 }
                 Message.printStatus(2, routine,
                     "Retrieved " + mtsArray.getStructureMonthlyTS().size() + " StructureMonthlyTS for wdid=\"" +
-                    wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    wdid + "\" irrigation years " + irrigationYearStart + " to " + irrigationYearEnd + " in " +
                     sw.getSeconds() + " seconds.");
                 // Transfer the data
                 DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_MONTH);
+                Double amt;
                 for ( StructureMonthlyTS mts : mtsArray.getStructureMonthlyTS() ) {
                     date.setMonth(mts.getCalMonth());
                     date.setYear(mts.getCalYear());
                     //Message.printStatus(2, routine, "Date=" + date + " value=" + mts.getAmt());
-                    ts.setDataValue(date,mts.getAmt());
+                    amt = mts.getAmt();
+                    if ( amt != null ) {
+                        ts.setDataValue(date,amt);
+                    }
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
             }
@@ -2335,6 +2461,9 @@ throws Exception
                 DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
                 String dateString;
                 String[] dateParts;
+                String obs;
+                Double amt;
+                double missing = ts.getMissing();
                 for ( StructureDailyTS dts : dtsArray.getStructureDailyTS() ) {
                     dateString = dts.getMeasDate();
                     dateParts = dateString.split("/");
@@ -2344,8 +2473,24 @@ throws Exception
                     date.setMonth(Integer.parseInt(dateParts[0]));
                     date.setDay(Integer.parseInt(dateParts[1]));
                     date.setYear(Integer.parseInt(dateParts[2]));
+                    obs = dts.getObs();
+                    amt = dts.getAmt();
                     // Set the data flag
-                    ts.setDataValue(date,dts.getAmt(),dts.getObs(),0);
+                    if ( amt == null ) {
+                        if ( (obs != null) && !obs.equals("") ) {
+                            // Have flag but missing value
+                            ts.setDataValue(date,missing,obs,0);
+                        }
+                    }
+                    else {
+                        // Have a data value
+                        if ( (obs == null) || obs.equals("") ) {
+                            ts.setDataValue(date,amt);
+                        }
+                        else {
+                            ts.setDataValue(date,amt,obs,0);
+                        }
+                    }
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );
                 HydroBase_Util.addDailyTSStructureDataFlagDescriptions ( ts );
@@ -2400,13 +2545,14 @@ throws Exception
                 }
                 Message.printStatus(2, routine,
                     "Retrieved " + dtsArray.getStructureResMeas().size() + " StructureMeasType for wdid=\"" +
-                    wdid + "\" " + readStart.getYear() + " to " + readEnd.getYear() + " in " +
+                    wdid + "\" " + readStart + " to " + readEnd + " in " +
                     sw.getSeconds() + " seconds.");
                 // Transfer the data - do simple string parse of date to improve performance
                 // (should work as long as WS spec does not change)
                 DateTime date = new DateTime(DateTime.DATE_FAST|DateTime.PRECISION_DAY);
                 String dateString;
                 String[] dateParts;
+                Double value;
                 for ( StructureResMeas dts : dtsArray.getStructureResMeas() ) {
                     dateString = dts.getDateTime();
                     dateParts = dateString.split("/");
@@ -2415,21 +2561,25 @@ throws Exception
                     date.setMonth(Integer.parseInt(dateParts[0]));
                     date.setDay(Integer.parseInt(dateParts[1]));
                     date.setYear(Integer.parseInt(dateParts[2]));
-                    // Set the data flag
+                    // No data flag but no need to set value if missing
+                    value = null;
                     if ( doReasMeasElev ) {
-                        ts.setDataValue(date,dts.getGageHeight());
+                        value = dts.getGageHeight();
                     }
                     else if ( doReasMeasEvap ) {
-                        ts.setDataValue(date,dts.getEvapLossAmt());
+                        value = dts.getEvapLossAmt();
                     }
                     else if ( doReasMeasFill ) {
-                        ts.setDataValue(date,dts.getFillAmt());
+                        value = dts.getFillAmt();
                     }
                     else if ( doReasMeasRelease ) {
-                        ts.setDataValue(date,dts.getReleaseAmt());
+                        value = dts.getReleaseAmt();
                     }
                     else if ( doReasMeasStorage ) {
-                        ts.setDataValue(date,dts.getStorageAmt());
+                        value = dts.getStorageAmt();
+                    }
+                    if ( value != null ) {
+                        ts.setDataValue(date,value);
                     }
                 }
                 ts.addToGenesis ( "Read from ColoradoWaterHBGuest web service for " + readStart + " to " + readEnd );

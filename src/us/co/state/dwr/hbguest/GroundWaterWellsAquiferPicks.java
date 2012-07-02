@@ -3,6 +3,7 @@ package us.co.state.dwr.hbguest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -40,9 +41,12 @@ public class GroundWaterWellsAquiferPicks
 {
 
     protected String aquifer;
-    protected int pickstop;
-    protected int picksbase;
-    protected int picksthickness;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer pickstop;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer picksbase;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer picksthickness;
 
     /**
      * Gets the value of the aquifer property.
@@ -71,48 +75,72 @@ public class GroundWaterWellsAquiferPicks
     /**
      * Gets the value of the pickstop property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getPickstop() {
+    public Integer getPickstop() {
         return pickstop;
     }
 
     /**
      * Sets the value of the pickstop property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setPickstop(int value) {
+    public void setPickstop(Integer value) {
         this.pickstop = value;
     }
 
     /**
      * Gets the value of the picksbase property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getPicksbase() {
+    public Integer getPicksbase() {
         return picksbase;
     }
 
     /**
      * Sets the value of the picksbase property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setPicksbase(int value) {
+    public void setPicksbase(Integer value) {
         this.picksbase = value;
     }
 
     /**
      * Gets the value of the picksthickness property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getPicksthickness() {
+    public Integer getPicksthickness() {
         return picksthickness;
     }
 
     /**
      * Sets the value of the picksthickness property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setPicksthickness(int value) {
+    public void setPicksthickness(Integer value) {
         this.picksthickness = value;
     }
 

@@ -3,6 +3,7 @@ package us.co.state.dwr.hbguest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -40,9 +41,12 @@ public class GroundWaterWellsGeophlogs
 {
 
     protected String aquifer;
-    protected short glogtop;
-    protected short glogbase;
-    protected short glogthickness;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short glogtop;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short glogbase;
+    @XmlElement(required = true, type = Short.class, nillable = true)
+    protected Short glogthickness;
 
     /**
      * Gets the value of the aquifer property.
@@ -71,48 +75,72 @@ public class GroundWaterWellsGeophlogs
     /**
      * Gets the value of the glogtop property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getGlogtop() {
+    public Short getGlogtop() {
         return glogtop;
     }
 
     /**
      * Sets the value of the glogtop property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setGlogtop(short value) {
+    public void setGlogtop(Short value) {
         this.glogtop = value;
     }
 
     /**
      * Gets the value of the glogbase property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getGlogbase() {
+    public Short getGlogbase() {
         return glogbase;
     }
 
     /**
      * Sets the value of the glogbase property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setGlogbase(short value) {
+    public void setGlogbase(Short value) {
         this.glogbase = value;
     }
 
     /**
      * Gets the value of the glogthickness property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Short }
+     *     
      */
-    public short getGlogthickness() {
+    public Short getGlogthickness() {
         return glogthickness;
     }
 
     /**
      * Sets the value of the glogthickness property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Short }
+     *     
      */
-    public void setGlogthickness(short value) {
+    public void setGlogthickness(Short value) {
         this.glogthickness = value;
     }
 

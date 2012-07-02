@@ -47,16 +47,16 @@ public class StructureResMeas {
     protected String wdid;
     @XmlElement(name = "date_time")
     protected String dateTime;
-    @XmlElement(name = "gage_height")
-    protected double gageHeight;
-    @XmlElement(name = "storage_amt")
-    protected double storageAmt;
-    @XmlElement(name = "fill_amt")
-    protected double fillAmt;
-    @XmlElement(name = "release_amt")
-    protected double releaseAmt;
-    @XmlElement(name = "evap_loss_amt")
-    protected double evapLossAmt;
+    @XmlElement(name = "gage_height", required = true, type = Double.class, nillable = true)
+    protected Double gageHeight;
+    @XmlElement(name = "storage_amt", required = true, type = Double.class, nillable = true)
+    protected Double storageAmt;
+    @XmlElement(name = "fill_amt", required = true, type = Double.class, nillable = true)
+    protected Double fillAmt;
+    @XmlElement(name = "release_amt", required = true, type = Double.class, nillable = true)
+    protected Double releaseAmt;
+    @XmlElement(name = "evap_loss_amt", required = true, type = Double.class, nillable = true)
+    protected Double evapLossAmt;
 
     /**
      * Gets the value of the wdid property.
@@ -109,80 +109,120 @@ public class StructureResMeas {
     /**
      * Gets the value of the gageHeight property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getGageHeight() {
+    public Double getGageHeight() {
         return gageHeight;
     }
 
     /**
      * Sets the value of the gageHeight property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setGageHeight(double value) {
+    public void setGageHeight(Double value) {
         this.gageHeight = value;
     }
 
     /**
      * Gets the value of the storageAmt property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getStorageAmt() {
+    public Double getStorageAmt() {
         return storageAmt;
     }
 
     /**
      * Sets the value of the storageAmt property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setStorageAmt(double value) {
+    public void setStorageAmt(Double value) {
         this.storageAmt = value;
     }
 
     /**
      * Gets the value of the fillAmt property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getFillAmt() {
+    public Double getFillAmt() {
         return fillAmt;
     }
 
     /**
      * Sets the value of the fillAmt property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setFillAmt(double value) {
+    public void setFillAmt(Double value) {
         this.fillAmt = value;
     }
 
     /**
      * Gets the value of the releaseAmt property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getReleaseAmt() {
+    public Double getReleaseAmt() {
         return releaseAmt;
     }
 
     /**
      * Sets the value of the releaseAmt property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setReleaseAmt(double value) {
+    public void setReleaseAmt(Double value) {
         this.releaseAmt = value;
     }
 
     /**
      * Gets the value of the evapLossAmt property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getEvapLossAmt() {
+    public Double getEvapLossAmt() {
         return evapLossAmt;
     }
 
     /**
      * Sets the value of the evapLossAmt property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setEvapLossAmt(double value) {
+    public void setEvapLossAmt(Double value) {
         this.evapLossAmt = value;
     }
 

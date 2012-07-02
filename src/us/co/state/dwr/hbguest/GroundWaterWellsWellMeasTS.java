@@ -42,10 +42,10 @@ public class GroundWaterWellsWellMeasTS
 
     @XmlElement(name = "meas_date")
     protected String measDate;
-    @XmlElement(name = "wl_depth")
-    protected double wlDepth;
-    @XmlElement(name = "wl_elev")
-    protected double wlElev;
+    @XmlElement(name = "wl_depth", required = true, type = Double.class, nillable = true)
+    protected Double wlDepth;
+    @XmlElement(name = "wl_elev", required = true, type = Double.class, nillable = true)
+    protected Double wlElev;
     @XmlElement(name = "meas_by")
     protected String measBy;
 
@@ -76,32 +76,48 @@ public class GroundWaterWellsWellMeasTS
     /**
      * Gets the value of the wlDepth property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getWlDepth() {
+    public Double getWlDepth() {
         return wlDepth;
     }
 
     /**
      * Sets the value of the wlDepth property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setWlDepth(double value) {
+    public void setWlDepth(Double value) {
         this.wlDepth = value;
     }
 
     /**
      * Gets the value of the wlElev property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Double }
+     *     
      */
-    public double getWlElev() {
+    public Double getWlElev() {
         return wlElev;
     }
 
     /**
      * Sets the value of the wlElev property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Double }
+     *     
      */
-    public void setWlElev(double value) {
+    public void setWlElev(Double value) {
         this.wlElev = value;
     }
 

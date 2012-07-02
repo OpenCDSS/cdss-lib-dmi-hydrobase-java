@@ -68,103 +68,151 @@ public class GroundWaterWellsPumpingTests
     extends GroundWaterWells
 {
 
-    protected float tswl;
-    protected float tfwl;
-    protected float testq;
-    protected float testtime;
-    protected int trans;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float tswl;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float tfwl;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float testq;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float testtime;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer trans;
     protected String k;
     protected String storativity;
     protected String leakance;
-    protected int toptestint;
-    protected int basetestint;
-    protected float drawdown;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer toptestint;
+    @XmlElement(required = true, type = Integer.class, nillable = true)
+    protected Integer basetestint;
+    @XmlElement(required = true, type = Float.class, nillable = true)
+    protected Float drawdown;
     protected String testdate;
     protected String ptsource;
     protected String pttype;
     protected boolean ptmon;
     protected boolean ptobs;
     protected boolean ptmultiple;
-    @XmlElement(name = "sp_cap")
-    protected float spCap;
+    @XmlElement(name = "sp_cap", required = true, type = Float.class, nillable = true)
+    protected Float spCap;
 
     /**
      * Gets the value of the tswl property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getTswl() {
+    public Float getTswl() {
         return tswl;
     }
 
     /**
      * Sets the value of the tswl property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setTswl(float value) {
+    public void setTswl(Float value) {
         this.tswl = value;
     }
 
     /**
      * Gets the value of the tfwl property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getTfwl() {
+    public Float getTfwl() {
         return tfwl;
     }
 
     /**
      * Sets the value of the tfwl property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setTfwl(float value) {
+    public void setTfwl(Float value) {
         this.tfwl = value;
     }
 
     /**
      * Gets the value of the testq property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getTestq() {
+    public Float getTestq() {
         return testq;
     }
 
     /**
      * Sets the value of the testq property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setTestq(float value) {
+    public void setTestq(Float value) {
         this.testq = value;
     }
 
     /**
      * Gets the value of the testtime property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getTesttime() {
+    public Float getTesttime() {
         return testtime;
     }
 
     /**
      * Sets the value of the testtime property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setTesttime(float value) {
+    public void setTesttime(Float value) {
         this.testtime = value;
     }
 
     /**
      * Gets the value of the trans property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getTrans() {
+    public Integer getTrans() {
         return trans;
     }
 
     /**
      * Sets the value of the trans property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setTrans(int value) {
+    public void setTrans(Integer value) {
         this.trans = value;
     }
 
@@ -243,48 +291,72 @@ public class GroundWaterWellsPumpingTests
     /**
      * Gets the value of the toptestint property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getToptestint() {
+    public Integer getToptestint() {
         return toptestint;
     }
 
     /**
      * Sets the value of the toptestint property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setToptestint(int value) {
+    public void setToptestint(Integer value) {
         this.toptestint = value;
     }
 
     /**
      * Gets the value of the basetestint property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
      */
-    public int getBasetestint() {
+    public Integer getBasetestint() {
         return basetestint;
     }
 
     /**
      * Sets the value of the basetestint property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
      */
-    public void setBasetestint(int value) {
+    public void setBasetestint(Integer value) {
         this.basetestint = value;
     }
 
     /**
      * Gets the value of the drawdown property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getDrawdown() {
+    public Float getDrawdown() {
         return drawdown;
     }
 
     /**
      * Sets the value of the drawdown property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setDrawdown(float value) {
+    public void setDrawdown(Float value) {
         this.drawdown = value;
     }
 
@@ -411,16 +483,24 @@ public class GroundWaterWellsPumpingTests
     /**
      * Gets the value of the spCap property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Float }
+     *     
      */
-    public float getSpCap() {
+    public Float getSpCap() {
         return spCap;
     }
 
     /**
      * Sets the value of the spCap property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Float }
+     *     
      */
-    public void setSpCap(float value) {
+    public void setSpCap(Float value) {
         this.spCap = value;
     }
 
