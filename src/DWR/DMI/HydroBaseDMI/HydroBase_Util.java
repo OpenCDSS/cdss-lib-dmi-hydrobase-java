@@ -506,7 +506,9 @@ corresponding to an entry in the HydroBase meas_type or struct_meas_type table.
 @param interval A time series notation interval (e.g., "Day", "Month").
 @return The HydroBase equivalent meas_type data, as an array.  The [0] position
 will contain the data type.  The [1] position will contain a sub data type,
-if appropriate, or an empty string.  The [2] position will contain the data interval.
+if appropriate, or an empty string.  The [2] position will contain the data interval.  It is possible that
+the HydroBase meas_type will correspond to multiple data_type because of the HydroBase design storing more than
+one value per record.
 */
 public final static String [] convertToHydroBaseMeasType ( String data_type, String interval )
 {	String [] hb = new String[3];
@@ -793,7 +795,8 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 		hb[1] = "WATTEMP";
 		hb[2] = "Real-time";
 	}
-	else if ( data_type.equalsIgnoreCase("WellLevel") ) {
+	else if ( data_type.equalsIgnoreCase("WellLevel") || // Legacy - replaced by WellLevelDepth and WellLevelElev
+	    data_type.equalsIgnoreCase("WellLevelDepth") || data_type.equalsIgnoreCase("WellLevelElev") ) {
 		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
 			hb[0] = "RT_Misc";
 			hb[1] = "WELL_1";
@@ -1531,9 +1534,9 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 		if ( add_group ) {
 			prefix = "Well - ";
 		}
-		types.add ( prefix + "WellLevel");// Also see WellLevel
-							// for structures.
-							// RT_Misc WELL_1
+		types.add ( prefix + "WellLevel (phasing out)"); // RT_Misc WELL_1
+		types.add ( prefix + "WellLevelElev"); // Replaces legacy WellLevel
+		// Also see WellLevel for structures.
 	}
 	if ( (include_types&DATA_TYPE_AGRICULTURE) > 0 ) {
 		prefix = "";
@@ -1613,9 +1616,10 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 		if ( add_group ) {
 			prefix = "Well - ";
 		}
-		types.add ( prefix + "WellLevel" );
-							// Also somehow need to
-							// hook in "WellPumping"
+		types.add ( prefix + "WellLevel (phasing out)" );
+		types.add ( prefix + "WellLevelDepth" );
+		types.add ( prefix + "WellLevelElev" ); // Replaces legacy WellLevel
+		// TODO SAM 2012-07-02 Also somehow need to hook in "WellPumping"
 	}
 	if ( (include_types&DATA_TYPE_WIS) > 0 ) {
 		prefix = "";
@@ -1801,7 +1805,8 @@ public static String getTimeSeriesDataUnits ( HydroBaseDMI hbdmi, String data_ty
 	else if ( data_type.equalsIgnoreCase("VaporPressure") ) {
 		return KPA;
 	}
-	else if ( data_type.equalsIgnoreCase("WellLevel") || data_type.equalsIgnoreCase("WellLevelElev") ||
+	else if ( data_type.equalsIgnoreCase("WellLevel") || // Legacy
+	    data_type.equalsIgnoreCase("WellLevelElev") || // New conventions
 	    data_type.equalsIgnoreCase("WellLevelDepth")) {
 		return FT;
 	}
@@ -1965,6 +1970,7 @@ public static List<String> getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String d
 		v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("WellLevel") ) {
+	    // Legacy, replaced by WellLevelElev
 		if ( (include_types&DATA_TYPE_STRUCTURE_WELL) != 0 ) {
 			v.add ( Day );
 		}
@@ -1972,11 +1978,20 @@ public static List<String> getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String d
 			v.add ( Irregular );
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("WellLevelElev") || data_type.equalsIgnoreCase("WellLevelDepth")) {
+	else if ( data_type.equalsIgnoreCase("WellLevelDepth")) {
         if ( (include_types&DATA_TYPE_STRUCTURE_WELL) != 0 ) {
             v.add ( Day );
         }
 	}
+    else if ( data_type.equalsIgnoreCase("WellLevelElev") ) {
+        // Replaces legacy "WellLevel"
+        if ( (include_types&DATA_TYPE_STATION_WELL) != 0 ) {
+            v.add ( Irregular );
+        }
+        if ( (include_types&DATA_TYPE_STRUCTURE_WELL) != 0 ) {
+            v.add ( Day );
+        }
+    }
 	else if ( data_type.equalsIgnoreCase("Wind") ) {
 		v.add ( Day );
 	}
@@ -2067,10 +2082,11 @@ public static boolean isCUPopulationTimeSeriesDataType ( HydroBaseDMI hbdmi, Str
 Indicate whether a time series data type is for a groundwater well time series.
 @param hbdmi An instance of HydroBaseDMI. 
 @param data_type A HydroBase data type.  Currently, the string is compared
-against the hard-coded strings "WellLevel"
+against the hard-coded strings "WellLevel", "WellLevelElev", and "WellLevelDepth"
 */
 public static boolean isGroundWaterWellTimeSeriesDataType (HydroBaseDMI hbdmi, String data_type )
-{	if (data_type.equalsIgnoreCase("WellLevel")) {
+{	if (data_type.equalsIgnoreCase("WellLevel") || data_type.equalsIgnoreCase("WellLevelDepth") ||
+        data_type.equalsIgnoreCase("WellLevelElev") ) {
 		return true;
 	}
 	return false;
@@ -2650,7 +2666,8 @@ throws Exception
 				// TODO (JTS - 2005-04-06) THIS SHOULDn"T BE DONE ONCE WE CAN RECOMPILE TSTOOL!!!
 				tslist.add(new HydroBase_StructureGeolocStructMeasType(view));
 			}
-			if ( data_type.equals("WellLevel") && time_step.equalsIgnoreCase("Day")){
+			if ( (data_type.equals("WellLevel") || data_type.equals("WellLevelDepth") || data_type.equals("WellLevelElev")) &&
+			    time_step.equalsIgnoreCase("Day")){
 				// Add the common identifiers to the normal data.  This is a work-around until HydroBase is redesigned.
 				// TODO SAM 2004-01-13
 				HydroBase_Util.addAlternateWellIdentifiers ( hbdmi, tslist );
@@ -2663,7 +2680,8 @@ throws Exception
 			throw new Exception ( message );
 		}
 	}
-	else if (meas_type.equalsIgnoreCase("WellLevel")) {
+	else if (meas_type.equalsIgnoreCase("WellLevel")|| data_type.equals("WellLevelDepth") ||
+	    data_type.equals("WellLevelElev")) {
 		try {
 			tslist = hbdmi.readGroundWaterWellsMeasTypeList(ifp, null);
 			// Convert HydroBase data to make it more consistent with how TSTool handles time series...

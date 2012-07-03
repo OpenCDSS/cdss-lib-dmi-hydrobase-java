@@ -1868,7 +1868,7 @@ throws Exception
         }
         dataStartYear = hbwell.getStart_year();
         dataEndYear = hbwell.getEnd_year();
-        description = hbwell.getWell_name();
+        description = hbwell.getWell_name() + " (datum " + StringUtil.formatString(hbwell.getElev(),"%.1f") + " FT)";
     }
     else if ( isStructureTimeSeriesDataType(dataType) ) {
         // Structure data type

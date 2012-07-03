@@ -15932,7 +15932,9 @@ throws Exception, NoDataFoundException
 		// structure table.  There are not a lot of these time series 
 		// so doing an extra lookup here is not much of a penalty.
 
-		if ( data_type.equals("WellLevel") && interval.equalsIgnoreCase("Day")) {
+		if ( (data_type.equals("WellLevel") || // legacy
+		    data_type.equals("WellLevelDepth") || data_type.equals("WellLevelElev")) 
+		    && interval.equalsIgnoreCase("Day")) {
 			// First try to get an unpermitted_wells record matching the USGS id...
 			HydroBase_GroundWaterWellsView tempWell = null;
 			if (data_source.equalsIgnoreCase("USGS")) {
@@ -15947,15 +15949,15 @@ throws Exception, NoDataFoundException
 				wdid_parts = new int[2];
 				wdid_parts[0] = well_str.getWD();
 				wdid_parts[1] = well_str.getID();
-				Message.printStatus(2, routine, "For WellLevel, found unpermitted well for data source \"" +
+				Message.printStatus(2, routine, "For " + data_type + ", found unpermitted well for data source \"" +
 				    data_source + "\", location \"" + tsident.getLocation() + "\", wd=" + wdid_parts[0] +
 	                ", id=" + wdid_parts[1] );
 			}
 			else {
 				// No unpermitted well so the original WDID is OK and will be processed below...
 				wdid = tsident.getLocation();
-				Message.printStatus(2, routine, "For WellLevel, found NO unpermitted well for data source \"" +
-	                    data_source + "\", location \"" + tsident.getLocation() + "\", using WDID=\"" + wdid + "\"" );
+				Message.printStatus(2, routine, "For " + data_type + ", found NO unpermitted well for data source \"" +
+	                data_source + "\", location \"" + tsident.getLocation() + "\", using WDID=\"" + wdid + "\"" );
 			}
 		}
 		else {
@@ -16003,10 +16005,11 @@ throws Exception, NoDataFoundException
 		ts.setIdentifier(tsident_string);
 		ts.setDescription(strView.getStr_name());
 	}
-	// XJTSX
-	// added this because WellLevel as a MeasType was not being recognized
+	// Added this because WellLevel as a MeasType was not being recognized
 	// as one of the structure time series data types.
 	else if (meas_type.equalsIgnoreCase("WellLevel")) {
+	    // OK to check "WellLevel" since this is the internal HydroBase meas_type (may match requested TSID data type
+	    // "WellLevel", "WellLevelDepth", or "WellLevelElev" (same as legacy "WellLevel").
 		// TODO (SAM 2004-01-14) START - Fix when well data redesign is done
 		// If the data type is "WellLevel" and time step is "Day", then
 		// the incoming data type may be a USGS, USGS, or WDID id.
@@ -16650,19 +16653,16 @@ throws Exception, NoDataFoundException
 		ts.setInputName ( "HydroBase daily_vp.day*");
 		v = readDailyStationData ( __S_DAILY_VP, mt_meas_num, req_date1, req_date2);
 	}
-	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("WellLevel")) {
-	    // TODO SAM 2008-05-12 Why the XJTSX comments?
-		// XJTSX
+	else if ((interval_base == TimeInterval.DAY) && (data_type.equalsIgnoreCase("WellLevel") ||
+	    data_type.equalsIgnoreCase("WellLevelDepth") || data_type.equalsIgnoreCase("WellLevelElev")) ) {
 		if (getDatabaseVersion() < VERSION_20050701) {
-		// XJTSX
 		    Message.printStatus ( 2, routine, "Reading well level data using structure meas_num (OLD database) " +
-		            str_mt_v.getMeas_num() );
+		        str_mt_v.getMeas_num() );
 			ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
 			ts.setDataUnitsOriginal ( ts.getDataUnits());
 			ts.setInputName ( "HydroBase well_meas.wat_level");
 			v = readWellMeasList ( str_mt_v.getMeas_num(), req_date1,req_date2);
 		}
-		// XJTSX
 		else {
 		    Message.printStatus ( 2, routine, "Reading well level data using well meas_num " + well.getWell_meas_num() );
 			ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
@@ -16712,7 +16712,7 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Streamflow") ||
 		data_type.equalsIgnoreCase("Temp") ||
 		data_type.equalsIgnoreCase("WatTemp") ||
-		data_type.equalsIgnoreCase("WellLevel"))) {
+		data_type.equalsIgnoreCase("WellLevel") || data_type.equalsIgnoreCase("WellLevelElev"))) {
 		// Data units must be set from data records.
 		ts.setInputName ( "HydroBase RT_meas.amt");
 		Message.printStatus ( 2, routine, "Reading from meas_num" + mt_meas_num + " for " + req_date1 + " to " + req_date2);
@@ -17208,7 +17208,8 @@ throws Exception, NoDataFoundException
 		data_date2.setMonth ( data.getCal_mon_num());
 		data_date2.setDay ( TimeUtil.numDaysInMonth(data_date2));
 	}
-	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("WellLevel")) {
+	else if ((interval_base == TimeInterval.DAY) && (data_type.equalsIgnoreCase("WellLevel") ||
+	    data_type.equalsIgnoreCase("WellLevelDepth") || data_type.equalsIgnoreCase("WellLevelElev")) ) {
 		// Get the first and last dates...
 		HydroBase_WellMeas data = (HydroBase_WellMeas)v.get(0);
 		data_date1 = new DateTime ( data.getMeas_date());
@@ -17249,7 +17250,7 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Streamflow") ||
 		data_type.equalsIgnoreCase("Temp") ||
 		data_type.equalsIgnoreCase("WatTemp") ||
-		data_type.equalsIgnoreCase("WellLevel"))) {
+		data_type.equalsIgnoreCase("WellLevel") || data_type.equalsIgnoreCase("WellLevelElev"))) {
 		// Get the first and last dates...
 		HydroBase_RTMeas data = (HydroBase_RTMeas)v.get(0);
 		data_date1 = new DateTime ( data.getDate_time());
@@ -18311,42 +18312,72 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("WellLevel")) {
+	else if ((interval_base == TimeInterval.DAY) && (data_type.equalsIgnoreCase("WellLevel") ||
+	    data_type.equalsIgnoreCase("WellLevelDepth") || data_type.equalsIgnoreCase("WellLevelElev"))) {
 		HydroBase_WellMeas data;
-		double elevation = DMIUtil.MISSING_DOUBLE;
-		// XJTSX
+		boolean isElev = true; // which value to use below
+		if ( data_type.equalsIgnoreCase("WellLevelDepth") ) {
+		    isElev = false;
+		}
+		double elevDatum = DMIUtil.MISSING_DOUBLE; // datum
 		boolean newFormat = false;
 		if (well != null) {
-			elevation = well.getElev();
+			elevDatum = well.getElev();
 			newFormat = true;
 		}
 		else {
-		// XJTSX
-			elevation = strView.getElevation();
+			elevDatum = strView.getElevation();
 		}
-		if (DMIUtil.isMissing(elevation)) {
+		if (DMIUtil.isMissing(elevDatum)) {
 			ts.setDescription ( ts.getDescription() + " (no elevation datum)");
-			elevation = 0.0;
+			elevDatum = 0.0;
 		}
 		else {
-			ts.setDescription ( ts.getDescription() + " (datum " + StringUtil.formatString(elevation,"%.1f") + " FT)");
+			ts.setDescription ( ts.getDescription() + " (datum " + StringUtil.formatString(elevDatum,"%.1f") + " FT)");
 		}
 		ts.addToGenesis ( "Time series values = HydroBase geoloc.elevation - well_meas.wat_level (" +
-			StringUtil.formatString(elevation,"%.1f") + ")");
+			StringUtil.formatString(elevDatum,"%.1f") + ")");
 
+		double missing = ts.getMissing();
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
 			data = (HydroBase_WellMeas)v.get(i);
 			date = new DateTime ( data.getMeas_date());
 			date.setPrecision ( DateTime.PRECISION_DAY);
-			if (newFormat) {
-				value = data.getWl_depth();
+			value = missing;
+			if ( isElev ) {
+			    // Want the elevation "WellLevelElev" or legacy "WellLevel"
+    			if (newFormat) {
+    			    // First try to use the elevation
+    			    value = data.getWl_elev();
+    			    // If that is missing, get the depth and 
+    			    // First get the depth and then 
+    				//value = data.getWl_depth();
+    				//value = (elevDatum - value);
+    			}
+    			else {
+    			    // Get the water level directly.
+    				value = data.getWat_level();
+    			}
+    			if (!DMIUtil.isMissing(value)) {
+    				ts.setDataValue ( date, value );
+    			}
 			}
 			else {
-				value = data.getWat_level();
-			}
-			if (!DMIUtil.isMissing(value)) {
-				ts.setDataValue ( date, (elevation - value));
+			    // Want the depth "WellLevelDepth"
+			    if (newFormat) {
+                    value = data.getWl_depth();
+                }
+                else {
+                    // Back-calculate depth from the elevation.
+                    value = data.getWat_level();
+                    if ( !DMIUtil.isMissing(value) ) {
+                        value = elevDatum - value;
+                    }
+                }
+                if (!DMIUtil.isMissing(value)) {
+                    ts.setDataValue ( date, value );
+                }
 			}
 		}
 	}
@@ -18450,7 +18481,7 @@ throws Exception, NoDataFoundException
 		data_type.equalsIgnoreCase("Streamflow") ||
 		data_type.equalsIgnoreCase("Temp") ||
 		data_type.equalsIgnoreCase("WatTemp") ||
-		data_type.equalsIgnoreCase("WellLevel"))) {
+		data_type.equalsIgnoreCase("WellLevel") || data_type.equalsIgnoreCase("WellLevelElev"))) {
 		HydroBase_RTMeas data;
 		for ( int i = 0; i < size; i++) {
 			data = (HydroBase_RTMeas)v.get(i);

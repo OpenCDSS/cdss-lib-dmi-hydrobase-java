@@ -25,38 +25,38 @@ Class to store data from the HydroBase well_meas table.
 public class HydroBase_WellMeas 
 extends DMIDataObject {
 
-protected int _meas_num = 		DMIUtil.MISSING_INT;
-protected Date _meas_date = 		DMIUtil.MISSING_DATE;
-protected double _wat_level =	 	DMIUtil.MISSING_DOUBLE;
-protected int _structure_num = 		DMIUtil.MISSING_INT;
+protected int _meas_num = DMIUtil.MISSING_INT;
+protected Date _meas_date = DMIUtil.MISSING_DATE;
+protected double _wat_level = DMIUtil.MISSING_DOUBLE;
+protected int _structure_num = DMIUtil.MISSING_INT;
 
 // Structure
-protected int _wd = 			DMIUtil.MISSING_INT;
-protected int _id = 			DMIUtil.MISSING_INT;
-protected String _str_name = 		DMIUtil.MISSING_STRING;
+protected int _wd = DMIUtil.MISSING_INT;
+protected int _id = DMIUtil.MISSING_INT;
+protected String _str_name = DMIUtil.MISSING_STRING;
 
 // Geoloc
-protected String _pm = 			DMIUtil.MISSING_STRING;
-protected int _ts = 			DMIUtil.MISSING_INT;
-protected String _tdir =	 	DMIUtil.MISSING_STRING;
-protected String _tsa = 		DMIUtil.MISSING_STRING;
-protected int _rng = 			DMIUtil.MISSING_INT;
-protected String _rdir = 		DMIUtil.MISSING_STRING;
-protected String _rnga = 		DMIUtil.MISSING_STRING;
-protected int _sec = 			DMIUtil.MISSING_INT;
-protected String _seca = 		DMIUtil.MISSING_STRING;
-protected String _q160 = 		DMIUtil.MISSING_STRING;
-protected String _q40 = 		DMIUtil.MISSING_STRING;
-protected String _q10 = 		DMIUtil.MISSING_STRING;
+protected String _pm = DMIUtil.MISSING_STRING;
+protected int _ts = DMIUtil.MISSING_INT;
+protected String _tdir = DMIUtil.MISSING_STRING;
+protected String _tsa = DMIUtil.MISSING_STRING;
+protected int _rng = DMIUtil.MISSING_INT;
+protected String _rdir = DMIUtil.MISSING_STRING;
+protected String _rnga = DMIUtil.MISSING_STRING;
+protected int _sec = DMIUtil.MISSING_INT;
+protected String _seca = DMIUtil.MISSING_STRING;
+protected String _q160 = DMIUtil.MISSING_STRING;
+protected String _q40 = DMIUtil.MISSING_STRING;
+protected String _q10 = DMIUtil.MISSING_STRING;
 
 // View
-protected int _well_meas_num = 		DMIUtil.MISSING_INT;
-protected int _well_num = 		DMIUtil.MISSING_INT;
-protected double _wl_depth = 		DMIUtil.MISSING_DOUBLE;
-protected double _wl_elev = 		DMIUtil.MISSING_DOUBLE;
-protected String _meas_by = 		DMIUtil.MISSING_STRING;
-protected Date _modified = 		DMIUtil.MISSING_DATE;
-protected String _user = 		DMIUtil.MISSING_STRING;
+protected int _well_meas_num = DMIUtil.MISSING_INT;
+protected int _well_num = DMIUtil.MISSING_INT;
+protected double _wl_depth = DMIUtil.MISSING_DOUBLE;
+protected double _wl_elev = DMIUtil.MISSING_DOUBLE;
+protected String _meas_by = DMIUtil.MISSING_STRING;
+protected Date _modified = DMIUtil.MISSING_DATE;
+protected String _user = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
