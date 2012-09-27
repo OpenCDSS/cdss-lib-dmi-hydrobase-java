@@ -32,15 +32,22 @@ extends InputFilter_JPanel
 {
 
 /**
+HydroBase datastore used by the filter.
+*/
+private HydroBaseDataStore __dataStore = null;
+
+/**
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_SheetNameWISFormat queries.  This is used by TSTool.
-@param hdmi HydroBaseDMI instance.
+@param dataStore HydroBase datastore for database connection.
 @return a JPanel containing InputFilter instances for HydroBase_SheetNameWISFormat queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel (HydroBaseDMI hbdmi )
+public HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel ( HydroBaseDataStore dataStore )
 throws Exception
-{	List sheet_name_Vector = new Vector();	
+{	__dataStore = dataStore;
+    HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
+    List sheet_name_Vector = new Vector();	
 	List sheet_names = hbdmi.readWISSheetNameList(-999, -999, null, null);
 	int size = 0;
 	if ( sheet_names != null ) {
@@ -61,12 +68,20 @@ throws Exception
 		StringUtil.TYPE_STRING,
 		sheet_name_Vector, sheet_name_Vector, true );
 	input_filters.add ( filter );
-	// REVISIT SAM 2004-05-19 - might want to add row identifier and
+	// TODO SAM 2004-05-19 - might want to add row identifier and
 	// row label, but these are in separate tables that are difficult to
 	// join with in a general filter
 
 	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on the Water Information Sheet (WIS) name.</html>" );
 	setInputFilters ( input_filters, 1, -1 );
+}
+
+/**
+Return the datastore used with the filter.
+*/
+public HydroBaseDataStore getDataStore ()
+{
+    return __dataStore;
 }
 
 }

@@ -24,14 +24,21 @@ extends InputFilter_JPanel
 {
 
 /**
+HydroBase datastore used by the filter.
+*/
+private HydroBaseDataStore __dataStore = null;
+
+/**
 Create an InputFilter_JPanel for creating where clauses for HydroBase_CUPopulation queries.  This is used by TSTool.
-@param hdmi HydroBaseDMI instance.
+@param dataStore HydroBase datastore for database connection.
 @return a JPanel containing InputFilter instances for HydroBase_CUPopulation queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_CUPopulation_InputFilter_JPanel ( HydroBaseDMI hbdmi )
+public HydroBase_GUI_CUPopulation_InputFilter_JPanel ( HydroBaseDataStore dataStore )
 throws Exception
-{	List v = hbdmi.readCUPopulationList (
+{	__dataStore = dataStore;
+    HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
+    List v = hbdmi.readCUPopulationList (
 		(InputFilter_JPanel)null,	// Where clauses
 					null,	// area_type
 					null,	// area_name
@@ -111,6 +118,14 @@ throws Exception
 		pop_type_Vector, pop_type_Vector, true ) );
 	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on population data.</html>" );
 	setInputFilters ( input_filters, 3, -1 );
+}
+
+/**
+Return the datastore used with the filter.
+*/
+public HydroBaseDataStore getDataStore ()
+{
+    return __dataStore;
 }
 
 }

@@ -27,15 +27,22 @@ public class HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel extends 
 {
 
 /**
+HydroBase datastore used by the filter.
+*/
+private HydroBaseDataStore __dataStore = null;
+
+/**
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_AgriculturalNASSCropStats queries.  This is used by TSTool.
-@param hdmi HydroBaseDMI instance.
+@param dataStore HydroBase datastore for database connection.
 @return a JPanel containing InputFilter instances for HydroBase_AgriculturalNASSCropStats queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel ( HydroBaseDMI hbdmi )
+public HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel ( HydroBaseDataStore dataStore )
 throws Exception
-{	// For now do these queries here with available low-level code...
+{	__dataStore = dataStore;
+    HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
+    // For now do these queries here with available low-level code...
 
 	List v = hbdmi.readAgriculturalNASSCropStatsList (
 					null,	// Where clauses
@@ -112,6 +119,14 @@ throws Exception
 		"<br>based on county agricultural statistics data." +
 		"</html>" );
 	setInputFilters ( input_filters, 3, -1 );
+}
+
+/**
+Return the datastore used with the filter.
+*/
+public HydroBaseDataStore getDataStore ()
+{
+    return __dataStore;
 }
 
 }

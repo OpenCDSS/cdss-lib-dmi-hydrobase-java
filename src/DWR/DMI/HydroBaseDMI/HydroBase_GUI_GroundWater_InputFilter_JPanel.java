@@ -34,12 +34,19 @@ public class HydroBase_GUI_GroundWater_InputFilter_JPanel
 extends InputFilter_JPanel {
 
 /**
+HydroBase datastore used by the filter.
+*/
+private HydroBaseDataStore __dataStore = null;
+
+/**
 Constructor.
-@param dmi the dmi to use to connect to the database.  Cannot be null.
+@param dataStore the dataStore to use to connect to the database.  Cannot be null.
 @param listener the mouse listener to use for responding when the Location
 entry text field is clicked in.  Cannot be null.
 */
-public HydroBase_GUI_GroundWater_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener listener, boolean tstool) {
+public HydroBase_GUI_GroundWater_InputFilter_JPanel( HydroBaseDataStore dataStore, MouseListener listener, boolean tstool)
+{   __dataStore = dataStore;
+    HydroBaseDMI dmi = (HydroBaseDMI)dataStore.getDMI();
 	InputFilter filter = null;
 
 	List filters = new Vector();
@@ -163,6 +170,14 @@ public HydroBase_GUI_GroundWater_InputFilter_JPanel(HydroBaseDMI dmi, MouseListe
 
 	setToolTipText("<html>HydroBase queries can be filtered<br>based on ground water data.</html>");
 	setInputFilters(filters, 3, 12);
+}
+
+/**
+Return the datastore used with the filter.
+*/
+public HydroBaseDataStore getDataStore ()
+{
+    return __dataStore;
 }
 
 }

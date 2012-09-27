@@ -1,23 +1,3 @@
-//------------------------------------------------------------------------------
-// HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel -
-//	input filter panel for HydroBase_StructureGeolocStructMeasType data 
-//------------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//------------------------------------------------------------------------------
-// History:
-//
-// 2004-08-27	Steven A. Malers, RTi	Implement to simplify generic code that
-//					can use instanceof to figure out the
-//					input filter panel type.
-// 2004-08-31	SAM, RTi		Add a proplist to set the number of
-//					input filters.
-// 2005-04-05	J. Thomas Sapienza, RTi	Adapted the fields for use with 
-//					stored procedures.
-// 2005-07-14	JTS, RTi		Added all the structure fields from
-//					HydroBase_GUI_Structure
-//					_InputFilter_JPanel.
-//------------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.event.MouseEvent;
@@ -35,110 +15,137 @@ import RTi.Util.GUI.JGUIUtil;
 
 import RTi.Util.String.StringUtil;
 
+/**
+Filter for HydroBase_StructureGeolocStructMeasType object queries.
+*/
 public class HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel
 extends InputFilter_JPanel
 implements MouseListener
 {
 
 /**
+Data store used with input filter.
+*/
+private HydroBaseDataStore __dataStore = null;
+
+/**
+Indicates whether the filter is for SFUT time series.
+*/
+private boolean __includeSFUT = false;
+
+/**
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_StructureGeolocStructMeasType queries.  This is used by TSTool.
 Default filter panel properties are used (e.g., 3 filter groups).
 @return a JPanel containing InputFilter instances for HydroBase_StructureGeolocStructMeasType queries.
-@param hdmi HydroBaseDMI instance.
-@param include_SFUT If true, include a filter for the SFUT.
+@param dataStore HydroBase datastore for database connection.
+@param includeSFUT If true, include a filter for the SFUT.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel ( HydroBaseDMI hbdmi, boolean include_SFUT )
+public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel ( HydroBaseDataStore dataStore, boolean includeSFUT )
 throws Exception
-{	this ( hbdmi, include_SFUT, -1, -1 );
+{	this ( dataStore, includeSFUT, -1, -1 );
 }
 
 /**
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_StructureGeolocStructMeasType queries.  This is used by TSTool.
 @return a JPanel containing InputFilter instances for HydroBase_StructureGeolocStructMeasType queries.
-@param hdmi HydroBaseDMI instance.
-@param include_SFUT If true, include a filter for the SFUT.
-@param filter_props Properties to configure the input filter, passed to the base class.
+@param dataStore HydroBase datastore for database connection.
+@param includeSFUT If true, include a filter for the SFUT.
+@param numFilterGroups number of filter groups to display
+@param numWhereChoicesToDisplay maximum number of choices to display in drop down lists.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel ( HydroBaseDMI hbdmi, boolean include_SFUT,
-	int numFilterGroups, int numWhereChoicesToDisplay )
+public HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel (
+    HydroBaseDataStore dataStore, boolean includeSFUT, int numFilterGroups, int numWhereChoicesToDisplay )
 throws Exception
-{	// Fill in the county for input filters...
-
-	List county_data_Vector = hbdmi.getCountyRef();
-	List county_Vector = new Vector ( county_data_Vector.size() );
-	List county_internal_Vector = new Vector ( county_data_Vector.size());
+{   __dataStore = dataStore;
+    __includeSFUT = includeSFUT;
+    HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
+    // County choices...
+	List<HydroBase_CountyRef> countyDataList = hbdmi.getCountyRef();
+	List<String> countyList = new Vector<String> ( countyDataList.size() );
+	List<String> countyInternalList = new Vector<String> ( countyDataList.size());
 	HydroBase_CountyRef county;
-	int size = county_data_Vector.size();
+	int size = countyDataList.size();
 	for ( int i = 0; i < size; i++ ) {
-		county = (HydroBase_CountyRef)county_data_Vector.get(i);
-		county_Vector.add ( county.getCounty() + ", " + county.getST() );
-		county_internal_Vector.add (county.getCounty() );
+		county = countyDataList.get(i);
+		countyList.add ( county.getCounty() + ", " + county.getST() );
+		countyInternalList.add (county.getCounty() );
 	}
 
-	// Fill in the water district data for input filters...
-
-	List district_data_Vector = hbdmi.getWaterDistricts();
-	List district_Vector = new Vector ( district_data_Vector.size() );
-	List district_internal_Vector=new Vector(district_data_Vector.size());
+	// Water district choices...
+	List<HydroBase_WaterDistrict> districtDataList = hbdmi.getWaterDistricts();
+	List<String> districtList = new Vector<String> ( districtDataList.size() );
+	List<String> districtInternalList=new Vector<String>(districtDataList.size());
 	HydroBase_WaterDistrict wd;
-	size = district_data_Vector.size();
+	size = districtDataList.size();
 	for ( int i = 0; i < size; i++ ) {
-		wd = (HydroBase_WaterDistrict)district_data_Vector.get(i);
-		district_Vector.add (wd.getWD() + " - "+wd.getWd_name());
-		district_internal_Vector.add ("" + wd.getWD() );
+		wd = districtDataList.get(i);
+		districtList.add (wd.getWD() + " - "+wd.getWd_name());
+		districtInternalList.add ("" + wd.getWD() );
 	}
 
-	// Fill in the division data for input filters...
-
-	List division_data_Vector = hbdmi.getWaterDivisions();
-	List division_Vector = new Vector ( 7 );
-	List division_internal_Vector = new Vector ( 7 );
+	// Water division choices...
+	List<HydroBase_WaterDivision> divisionDataList = hbdmi.getWaterDivisions();
+	List<String> divisionList = new Vector<String>( 7 );
+	List<String> divisionInternalList = new Vector<String>( 7 );
 	HydroBase_WaterDivision div;
-	size = division_data_Vector.size();
+	size = divisionDataList.size();
 	for ( int i = 0; i < size; i++ ) {
-		div =(HydroBase_WaterDivision)division_data_Vector.get(i);
-		division_Vector.add (div.getDiv() + " - " + div.getDiv_name());
-		division_internal_Vector.add ("" + div.getDiv() );
+		div = divisionDataList.get(i);
+		divisionList.add (div.getDiv() + " - " + div.getDiv_name());
+		divisionInternalList.add ("" + div.getDiv() );
 	}
+	
+	// Structure type choices...
+    List<HydroBase_StrType> structureTypeDataList = hbdmi.getStrTypesVector();
+    List<String> structureTypeList = new Vector<String>();
+    List<String> structureTypeInternalList = new Vector<String>();
+    HydroBase_StrType structureType;
+    size = structureTypeDataList.size();
+    for ( int i = 0; i < size; i++ ) {
+        structureType = structureTypeDataList.get(i);
+        structureTypeList.add (structureType.getStr_type() + " - " + structureType.getStr_type_desc());
+        structureTypeInternalList.add ("" + structureType.getStr_type() );
+    }
 
-	List input_filters = new Vector(8);
+	// Currently in use choices
+    List<HydroBase_RefCIU> ciuDataList = hbdmi.getCIUVector();
+    List<String> ciuList = new Vector<String>();
+    List<String> ciuInternalList = new Vector<String>();
+    size = ciuDataList.size();
+    HydroBase_RefCIU ciu = null;
+    for (int i = 0; i < size; i++) {
+        ciu = ciuDataList.get(i);
+        ciuList.add(ciu.getCode() + " - " + ciu.getDescription());
+        ciuInternalList.add(ciu.getCode());
+    }
+    
+	List<InputFilter> input_filters = new Vector<InputFilter>(8);
 	input_filters.add ( new InputFilter (
 		"", "", StringUtil.TYPE_STRING,
 		null, null, true ) );	// Blank to disable filter
 		
-	List v1 = new Vector();
-	List v2 = new Vector();
-	List cius = hbdmi.getCIUVector();
-	size = cius.size();
-	HydroBase_RefCIU ciu = null;
-	for (int i = 0; i < size; i++) {
-		ciu = (HydroBase_RefCIU)cius.get(i);
-		v1.add(ciu.getCode() + " - " + ciu.getDescription());
-		v2.add(ciu.getCode());
-	}
-
 	InputFilter filter = new InputFilter (
 		"County Name", "geoloc.county", "county",
 		StringUtil.TYPE_STRING,
-		county_Vector, county_internal_Vector, true );
+		countyList, countyInternalList, true );
 	filter.setTokenInfo(",",0);
 	input_filters.add ( filter );
 	
 	filter = new InputFilter (
 		"District", "geoloc.wd", "wd",
 		StringUtil.TYPE_INTEGER,
-		district_Vector, district_internal_Vector, true );
+		districtList, districtInternalList, true );
 	filter.setTokenInfo("-",0);
 	input_filters.add ( filter );
 
 	filter = new InputFilter (
 		"Division", "geoloc.div", "div",
 		StringUtil.TYPE_INTEGER,
-		division_Vector, division_internal_Vector, true );
+		divisionList, divisionInternalList, true );
 	filter.setTokenInfo("-",0);
 	input_filters.add ( filter );
 	
@@ -184,6 +191,13 @@ throws Exception
 	filter.setInputJTextFieldWidth(20);
 	input_filters.add(filter);
 
+    if ( includeSFUT ) {
+        input_filters.add ( new InputFilter (
+            "SFUT", "struct_meas_type.identifier", "identifier",
+            StringUtil.TYPE_STRING,
+            null, null, true ) );
+    }
+
 	if (hbdmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990305)) {
 		input_filters.add(new InputFilter("Stream Mile",
 			"geoloc.str_mile", "str_mile", 
@@ -194,6 +208,13 @@ throws Exception
 			"structure.abbrev", "abbrev", 
 			StringUtil.TYPE_DOUBLE, null, null, false));
 	}
+	
+	/* Not in HydroBase StructureStructMeasType view
+    input_filters.add ( new InputFilter (
+       "Structure CIU", "structure.ciu", "ciu",
+       StringUtil.TYPE_STRING,
+       ciuList, ciuInternalList, true ) );
+       */
 
 	input_filters.add ( new InputFilter (
 		"Structure ID", "structure.id", "id",
@@ -204,16 +225,13 @@ throws Exception
 		"Structure Name", "structure.str_name", "str_name",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );
-
-	if ( include_SFUT ) {
-		input_filters.add ( new InputFilter (
-			"SFUT", "struct_meas_type.identifier", "identifier",
-			StringUtil.TYPE_STRING,
-			null, null, true ) );
-	}
-
-	v1 = new Vector();
-	v1.add("1");
+	
+   /* Not in HydroBase StructureStructMeasType view
+   input_filters.add ( new InputFilter (
+       "Structure Type", "structure.str_type", "str_type",
+       StringUtil.TYPE_STRING,
+       structureTypeList, structureTypeInternalList, true ) );
+       */
 
 	input_filters.add ( new InputFilter (
 		"UTM X", "geoloc.utm_x", "utm_x",
@@ -226,12 +244,32 @@ throws Exception
 		null, null, true ) );		
 
 	if ( numFilterGroups < 0 ) {
-		// REVISIT - need larger default?
+		// TODO SAM 2012-09-05 - need larger default?
 		numFilterGroups = 3;
-		numWhereChoicesToDisplay = input_filters.size();
 	}
-	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on structure data.</html>" );
+    // Now create the filters, in alphabetical order of the label
+    if ( numWhereChoicesToDisplay < 0 ) {
+        // Default to 20
+        numWhereChoicesToDisplay = 20;
+    }
+	setToolTipText ( "<html>HydroBase queries can be filtered based on structure data.</html>" );
 	setInputFilters ( input_filters, numFilterGroups, numWhereChoicesToDisplay );
+}
+
+/**
+Return the datastore used with the filter.
+*/
+public HydroBaseDataStore getDataStore ()
+{
+    return __dataStore;
+}
+
+/**
+Return whether the filter includes SFUT.
+*/
+public boolean getIncludeSFUT()
+{
+    return __includeSFUT;
 }
 
 public void mouseClicked(MouseEvent event) {}

@@ -27,16 +27,22 @@ extends InputFilter_JPanel
 {
 
 /**
+HydroBase datastore used by the filter.
+*/
+private HydroBaseDataStore __dataStore = null;
+    
+/**
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_StructureIrrigSummaryTS queries.  This is used by TSTool.
-@param hdmi HydroBaseDMI instance.
-@return a JPanel containing InputFilter instances for 
-HydroBase_StructureIrrigSummaryTS queries.
+@param dataStore HydroBase datastore for database connection.
+@return a JPanel containing InputFilter instances for HydroBase_StructureIrrigSummaryTS queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel ( HydroBaseDMI hbdmi )
+public HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel ( HydroBaseDataStore dataStore )
 throws Exception
-{	// Fill in the district data for input filters...
+{	__dataStore = dataStore;
+    HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
+    // Fill in the district data for input filters...
 
 	List district_data_Vector = hbdmi.getWaterDistricts();
 	List district_Vector = new Vector ( district_data_Vector.size() );
@@ -108,6 +114,14 @@ throws Exception
 	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on irrigation summary time series data.</html>" );
 	// Call base class method...
 	setInputFilters ( input_filters, 3, -1 );
+}
+
+/**
+Return the datastore used with the filter.
+*/
+public HydroBaseDataStore getDataStore ()
+{
+    return __dataStore;
 }
 
 }

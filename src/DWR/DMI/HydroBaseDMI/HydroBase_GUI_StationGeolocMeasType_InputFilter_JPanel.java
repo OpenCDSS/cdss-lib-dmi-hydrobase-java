@@ -27,15 +27,22 @@ extends InputFilter_JPanel
 {
 
 /**
+HydroBase datastore used by the filter.
+*/
+private HydroBaseDataStore __dataStore = null;
+
+/**
 Create an InputFilter_JPanel for creating where clauses
 for HydroBase_StationGeolocMeasType queries.  This is used by TSTool.
-@param hbdmi HydroBaseDMI instance.
+@param dataStore HydroBase datastore for database connection.
 @return a JPanel containing InputFilter instances for HydroBase_StationGeolocMeasType queries.
 @exception Exception if there is an error.
 */
-public HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel ( HydroBaseDMI hbdmi )
+public HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel ( HydroBaseDataStore dataStore )
 throws Exception
-{	List division_Vector = new Vector ( 7 );
+{	__dataStore = dataStore;
+    HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
+    List division_Vector = new Vector ( 7 );
 	List division_internal_Vector = new Vector ( 7 );
 	List district_data_Vector = hbdmi.getWaterDistricts();
 	List district_Vector = new Vector ( district_data_Vector.size() );
@@ -118,6 +125,14 @@ throws Exception
 		null, null, true ) );
 	setToolTipText ( "<html>HydroBase queries can be filtered<br>based on station data.</html>" );
 	setInputFilters ( input_filters, 3, -1 );
+}
+
+/**
+Return the datastore used with the filter.
+*/
+public HydroBaseDataStore getDataStore ()
+{
+    return __dataStore;
 }
 
 }
