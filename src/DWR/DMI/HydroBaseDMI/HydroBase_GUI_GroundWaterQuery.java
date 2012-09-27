@@ -978,7 +978,7 @@ private void setupGUI() {
 
 	__newFilterJPanel 
 		= new HydroBase_GUI_GroundWater_InputFilter_JPanel(
-		__dmi, this, false);
+		new HydroBaseDataStore("HydroBase","CDSS HydroBase database", __dmi,true), this, false);
 	__newFilterJPanel.addEventListeners(this);
         JGUIUtil.addComponent(northWJPanel, __newFilterJPanel,
       		0, y, 3, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
