@@ -1754,8 +1754,10 @@ Constructor for a database server and database name, to use an automatically cre
 @param database_engine The database engine to use (see the DMI constructor).
 If null, default to "SQLServer".
 @param database_server The IP address or DSN-resolvable database server machine name.
+If the server name contains the instance, then the port number will not be used.
 @param database_name The database name on the server.  If null, default to "HydroBase".
-@param port Port number used by the database.  If negative, default to that for the database engine.
+@param port Port number used by the database.  If negative, default to that for the database engine (or let the driver
+determine if the server name includes the instance (e.g., Server\CDSS).
 @param system_login If not null, this is used as the system login to make the
 connection.  If null, the default system login is used ("guest").
 @param system_password If not null, this is used as the system password to make
@@ -1763,7 +1765,7 @@ the connection.  If null, the default system password is used ("guest").
 @param useStoredProcedures specifies whether stored procedures should be used.
 */
 public HydroBaseDMI ( String database_engine, String database_server, String database_name, int port,
-			String system_login, String system_password, boolean useStoredProcedures)
+	String system_login, String system_password, boolean useStoredProcedures)
 throws Exception
 {	// Use the default system login and password
 	super ( database_engine, database_server, database_name, port, system_login, system_password );
@@ -6782,8 +6784,7 @@ public List getCIUVector() {
 			__RefCIU_Vector = readRefCIUList();
 		}
 		catch (Exception e) {
-			Message.printWarning ( 2, routine,
-				"Unable to read ref_ciu data.");
+			Message.printWarning ( 2, routine, "Unable to read ref_ciu data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__RefCIU_Vector == null) {
@@ -8410,6 +8411,7 @@ throws Exception {
 	return true;
 }
 
+// TODO FIXME SAM 2012-09-10 This is used in commented-out code that needs to be evaluated
 /**
 Determine whether a view number is available in HydroBase for use with its SPFLEX
 features.  The usp_Developer_FLEX_codes stored procedure is executed and
@@ -8714,21 +8716,47 @@ super.open() is called first in this method, prior to any other setup.
 */
 public void open() 
 throws Exception, java.sql.SQLException
-{
+{   String routine = getClass().getName() + ".open";
     // Try opening a connection using the first port number (SQL Server)...
-	if (__localPorts == null) {
+    String databaseServer = getDatabaseServer();
+	if ( (__localPorts == null) || (databaseServer.indexOf("\\") > 0) ) {
 	    // Open using the default information.
+	    Message.printStatus(2,routine,"Instance specified (no ports to try), trying to open HydroBase...");
 		super.open();
 	}
 	else {
-	    // Try opening a connection using the second port number (older MSDE)...
+	    // Try opening a connection using the other port numbers (older MSDE)...
+
 		try {
+		    Message.printStatus(2,routine,"Local ports specified, trying to open HydroBase with default port " +
+		        getPort() );
 			super.open();
 		}
 		catch (Throwable t) {
-			setPort(__localPorts[1]);
-			super.open();
-		}
+		    // Try the other ports that may have been used for HydroBase
+		    boolean success = false;
+		    for ( int i = 1; i < __localPorts.length; i++ ) {
+		        if ( __localPorts[i] >= 0 ) {
+		            try {
+            		    Message.printStatus(2,routine,"Error opening database (" + t + ") trying alternate port "
+            		        + __localPorts[i] );
+            			setPort(__localPorts[i]);
+            			super.open();
+            			// Above will throw an exception if a problem
+            			success = true;
+            			break;
+		            }
+		            catch ( Throwable t2 ) {
+		                t = t2;
+		                continue;
+		            }
+		        }
+	        }
+		    if ( !success ) {
+		        throw new java.sql.SQLException (
+		            "Unable to open HydroBase connection given database configuration information." );
+		    }
+	    }
 	}
 	if (__useSP) {
 		setupViewNumbersHashtable();
@@ -9725,10 +9753,10 @@ This method is used by:<ul>
 <p><b>Stored Procedure</b><p>
 The stored procedure that corresponds to this query is:<ul>
 <li>usp_CDSS_refCounty_Sel</li>
-@return a Vector of HydroBase_CountyRef.
+@return a list of HydroBase_CountyRef.
 @throws Exception if an error occurs.
 */
-public List readCountyRefList()
+public List<HydroBase_CountyRef> readCountyRefList()
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_REF_COUNTY);
@@ -9738,7 +9766,7 @@ throws Exception {
 	}	
 	q.addOrderByClause(table + ".county");
 	ResultSet rs = dmiSelect(q);
-	List v = toCountyRefList (rs);
+	List<HydroBase_CountyRef> v = toCountyRefList (rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -12867,15 +12895,15 @@ This method is called by:<p>
 The stored procedure that corresponds to this query is:<ul>
 <li>usp_CDSS_refCIU_Sel</li>
 </ul>
-@return a Vector of HydroBase_RefCIUs
+@return a list of HydroBase_RefCIUs
 @throws Exception if an error occurs.
 */
-public List readRefCIUList() 
+public List<HydroBase_RefCIU> readRefCIUList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_REF_CIU);
 	ResultSet rs = dmiSelect(q);
-	List v = toRefCIUList(rs);
+	List<HydroBase_RefCIU> v = toRefCIUList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -14021,10 +14049,10 @@ This method is used by:<ul>
 The stored procedure that corresponds to this query is:<ul>
 <li>usp_CDSS_refStructureType_Sel</li>
 </ul>
-@return a Vector of HydroBase_StrType objects.
+@return a list of HydroBase_StrType objects.
 @throws Exception if an error occurs.
 */
-public List readStrTypeList() 
+public List<HydroBase_StrType> readStrTypeList() 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_STR_TYPE);
@@ -14035,7 +14063,7 @@ throws Exception {
 		q.addOrderByClause("str_type.str_type");
 	}
 	ResultSet rs = dmiSelect(q);
-	List v = toStrTypeList(rs);
+	List<HydroBase_StrType> v = toStrTypeList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -16027,13 +16055,12 @@ throws Exception, NoDataFoundException
 		    message = "Cannot determine groundwater well measurement type for \"" + tsident.getLocation() + "\"";
 		    Message.printWarning ( 2, routine, message );
 		}
-
-//Message.printStatus(1, "", "WELL? " + well);
-
-		mt_start_year = well.getStart_year();
-		mt_end_year = well.getEnd_year();
-		ts.setIdentifier(tsident_string);
-		ts.setDescription(well.getWell_name());
+		else {
+    		mt_start_year = well.getStart_year();
+    		mt_end_year = well.getEnd_year();
+    		ts.setIdentifier(tsident_string);
+    		ts.setDescription(well.getWell_name());
+		}
 	}
 	else if (HydroBase_Util.isAgriculturalCASSCropStatsTimeSeriesDataType(this,data_type)) {
 		// The sub-datatype has the comodity and practice, separated by an underscore
@@ -19521,7 +19548,7 @@ false, it is just sorted by water district.
 @return a Vector of HydroBase_WaterDistrict objects.
 @throws Exception if an error occurs.
 */
-public List readWaterDistrictList(boolean byDivision) 
+public List<HydroBase_WaterDistrict> readWaterDistrictList(boolean byDivision) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	if (byDivision) {
@@ -19533,7 +19560,7 @@ throws Exception {
 	}
 	q.addOrderByClause("water_district.wd");
 	ResultSet rs = dmiSelect(q);
-	List v = toWaterDistrictList(rs);
+	List<HydroBase_WaterDistrict> v = toWaterDistrictList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -19552,16 +19579,16 @@ This method is used by:<ul>
 The stored procedure that corresponds to this query is:<ul>
 <li>usp_CDSS_refWaterDivision_Sel</li>
 </ul>
-@return a Vector of HydroBase_WaterDivision objects.
+@return a list of HydroBase_WaterDivision objects.
 @throws Exception if an error occurs.
 */
-public List readWaterDivisionList () 
+public List<HydroBase_WaterDivision> readWaterDivisionList () 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
 	buildSQL(q, __S_WATER_DIVISION);
 	q.addOrderByClause("water_division.div");
 	ResultSet rs = dmiSelect(q);
-	List v = toWaterDivisionList(rs);
+	List<HydroBase_WaterDivision> v = toWaterDivisionList(rs);
 	if (__useSP) {
 		closeResultSet(rs, q);
 	}
@@ -23477,13 +23504,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_CountyRef objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_CountyRef.
+@return a list of HydroBase_CountyRef.
 @throws Exception if an error occurs.
 */
-private List toCountyRefList (ResultSet rs) 
+private List<HydroBase_CountyRef> toCountyRefList (ResultSet rs) 
 throws Exception {
 	HydroBase_CountyRef data = null;
-	List v = new Vector();
+	List<HydroBase_CountyRef> v = new Vector<HydroBase_CountyRef>();
 	int index = 1;
 	
 	int i;
@@ -29498,13 +29525,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_RefCIU objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_ResEOM
+@return a list of HydroBase_ResEOM
 @throws Exception if an error occurs.
 */
-private List toRefCIUList(ResultSet rs)
+private List<HydroBase_RefCIU> toRefCIUList(ResultSet rs)
 throws Exception {
 	HydroBase_RefCIU data = null;
-	List v = new Vector();
+	List<HydroBase_RefCIU> v = new Vector<HydroBase_RefCIU>();
 	int index = 1;
 	String s;
 
@@ -30990,13 +31017,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_StrType objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_StrType
+@return a list of HydroBase_StrType
 @throws Exception if an error occurs.
 */
-private List toStrTypeList (ResultSet rs) 
+private List<HydroBase_StrType> toStrTypeList (ResultSet rs) 
 throws Exception {
 	HydroBase_StrType data = null;
-	List v = new Vector();
+	List<HydroBase_StrType> v = new Vector<HydroBase_StrType>();
 	int index = 1;
 	
 	String s;
@@ -34775,10 +34802,10 @@ Translate a ResultSet to HydroBase_WaterDistrict objects.
 @return a Vector of HydroBase_WaterDistrict
 @throws Exception if an error occurs.
 */
-private List toWaterDistrictList (ResultSet rs) 
+private List<HydroBase_WaterDistrict> toWaterDistrictList (ResultSet rs) 
 throws Exception {
 	HydroBase_WaterDistrict data = null;
-	List v = new Vector();
+	List<HydroBase_WaterDistrict> v = new Vector<HydroBase_WaterDistrict>();
 	int index = 1;
 	
 	int i;
@@ -34809,13 +34836,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_WaterDivision objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_WaterDivision
+@return a list of HydroBase_WaterDivision
 @throws Exception if an error occurs.
 */
-private List toWaterDivisionList (ResultSet rs) 
+private List<HydroBase_WaterDivision> toWaterDivisionList (ResultSet rs) 
 throws Exception {
 	HydroBase_WaterDivision data = null;
-	List v = new Vector();
+	List<HydroBase_WaterDivision> v = new Vector<HydroBase_WaterDivision>();
 	int index = 1;
 	
 	int i;
