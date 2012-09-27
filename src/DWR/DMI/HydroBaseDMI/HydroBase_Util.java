@@ -501,16 +501,18 @@ Convert a data type and data interval from general time series notation to Hydro
 table convention.  For example, "StreamflowMax", "Month" will be converted to "Streamflow", "Monthly".
 Specific actions are taken for station and structure data and other
 data types (AgStats, irrig_ts_summary, and WIS) pass through the GUI values.
-@param data_type A data type from an application (e.g., "StreamflowMax"),
+Some data types have the same output value as the input because HydroBase does not internally use the string for
+queries (table design is hard-coded for data type).
+@param dataType a data type from an application such as TSTool (e.g., "StreamflowMax"),
 corresponding to an entry in the HydroBase meas_type or struct_meas_type table.
-@param interval A time series notation interval (e.g., "Day", "Month").
+@param interval a generic time series notation interval (e.g., "Day", "Month").
 @return The HydroBase equivalent meas_type data, as an array.  The [0] position
 will contain the data type.  The [1] position will contain a sub data type,
 if appropriate, or an empty string.  The [2] position will contain the data interval.  It is possible that
 the HydroBase meas_type will correspond to multiple data_type because of the HydroBase design storing more than
 one value per record.
 */
-public final static String [] convertToHydroBaseMeasType ( String data_type, String interval )
+public final static String [] convertToHydroBaseMeasType ( String dataType, String interval )
 {	String [] hb = new String[3];
 	hb[0] = "";
 	hb[1] = "";
@@ -536,15 +538,15 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 	// Conversions based on the data type...
 
 	String sub_data_type = "";
-	if ( data_type.indexOf("-") > 0 ) {
-		sub_data_type = StringUtil.getToken ( data_type, "-", 0, 1 );
-		data_type = StringUtil.getToken ( data_type, "-", 0, 0 );
+	if ( dataType.indexOf("-") > 0 ) {
+		sub_data_type = StringUtil.getToken ( dataType, "-", 0, 1 );
+		dataType = StringUtil.getToken ( dataType, "-", 0, 0 );
 	}
 
 	// Order by data types and group when multiple time series are in the same table...
 
-	if(data_type.equalsIgnoreCase("AdminFlow") || data_type.equalsIgnoreCase("AdminFlowMax") ||
-		data_type.equalsIgnoreCase("AdminFlowMin") ) {
+	if(dataType.equalsIgnoreCase("AdminFlow") || dataType.equalsIgnoreCase("AdminFlowMax") ||
+		dataType.equalsIgnoreCase("AdminFlowMin") ) {
 		// All these match the AdminFlow meas_type...
 		hb[0] = "AdminFlow";
 		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
@@ -559,12 +561,35 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Real-time";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("Battery") ) {
+	else if ( dataType.equalsIgnoreCase("Battery") ) {
 		hb[0] = "RT_Misc";
 		hb[1] = "BATTERY";
 		hb[2] = "Real-time";
 	}
-	else if ( data_type.equalsIgnoreCase("DivClass") ) {
+    else if ( dataType.equalsIgnoreCase("CropArea") ) {
+        // Pass through - used with NASS crop statistics - specific handling in database
+        hb[0] = dataType;
+        hb[1] = "";
+        hb[2] = "Annual";
+    }
+    else if ( dataType.equalsIgnoreCase("CropAreaAllIrrigation") ||
+        dataType.equalsIgnoreCase("CropAreaDrip") ||
+        dataType.equalsIgnoreCase("CropAreaFlood") ||
+        dataType.equalsIgnoreCase("CropAreaFurrow") ||
+        dataType.equalsIgnoreCase("CropAreaSprinkler") ) {
+        // Pass through - used with irrigation summary time series - specific handling in database
+        hb[0] = dataType;
+        hb[1] = "";
+        hb[2] = "Annual";
+    }
+    else if ( dataType.equalsIgnoreCase("CropAreaHarvested") ||
+        dataType.equalsIgnoreCase("CropAreaPlanted")) {
+        // Pass trough - used with CASS statistics - specific handling in database
+        hb[0] = dataType;
+        hb[1] = "";
+        hb[2] = "Annual";
+    }
+	else if ( dataType.equalsIgnoreCase("DivClass") ) {
 		hb[0] = "DivClass";
 		if ( sub_data_type.length() > 0 ) {
 			// Assume that the SFUT is accurate...
@@ -579,31 +604,36 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Annual";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("DivComment") ) {
+	else if ( dataType.equalsIgnoreCase("DivComment") ) {
 		hb[0] = "DivComment";
 		hb[2] = "Annual";
 	}
-	else if ( data_type.equalsIgnoreCase("DivTotal") ) {
+	else if ( dataType.equalsIgnoreCase("DivTotal") ) {
 		hb[0] = "DivTotal";
 		if ( interval.equalsIgnoreCase("Month") ) {
 			// HydroBase calls monthly diversions annual...
 			hb[2] = "Annual";
 		}
 		else if ( interval.equalsIgnoreCase("Year") ) {
-			// To get only the annual ammount...
+			// To get only the annual amount...
 			hb[2] = "Annual";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("EvapPan") ) {
+	else if ( dataType.equalsIgnoreCase("EvapPan") ) {
 		hb[0] = "Evap";
 		// Interval converted above.
 	}
-	else if( data_type.equalsIgnoreCase("FrostDateL28S") || data_type.equalsIgnoreCase("FrostDateL32S") ||
-		data_type.equalsIgnoreCase("FrostDateF32F") || data_type.equalsIgnoreCase("FrostDateF28F") ) {
+	else if( dataType.equalsIgnoreCase("FrostDateL28S") || dataType.equalsIgnoreCase("FrostDateL32S") ||
+		dataType.equalsIgnoreCase("FrostDateF32F") || dataType.equalsIgnoreCase("FrostDateF28F") ) {
 		hb[0] = "FrostDate";
 		hb[2] = "Annual";
 	}
-	else if ( data_type.equalsIgnoreCase("IDivClass") ) {
+    else if( dataType.equalsIgnoreCase("HumanPopulation") ) {
+       // Pass through - special table in HydroBase so just return what TSTool uses
+       hb[0] = dataType;
+       hb[2] = "Annual";
+    }
+	else if ( dataType.equalsIgnoreCase("IDivClass") ) {
 		hb[0] = "IDivClass";
 		if ( sub_data_type.length() > 0 ) {
 			// Assume that the SFUT is accurate...
@@ -618,7 +648,7 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Annual";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("IDivTotal") ) {
+	else if ( dataType.equalsIgnoreCase("IDivTotal") ) {
 		hb[0] = "IDivTotal";
 		if ( interval.equalsIgnoreCase("Month") ) {
 			// HydroBase calls monthly diversions annual...
@@ -629,7 +659,7 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Annual";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("IRelClass") ) {
+	else if ( dataType.equalsIgnoreCase("IRelClass") ) {
 		hb[0] = "IRelClass";
 		if ( sub_data_type.length() > 0 ) {
 			// Assume that the SFUT is accurate...
@@ -644,7 +674,7 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Annual";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("IRelTotal") ) {
+	else if ( dataType.equalsIgnoreCase("IRelTotal") ) {
 		hb[0] = "IRelTotal";
 		if ( interval.equalsIgnoreCase("Month") ) {
 			// HydroBase calls monthly releases annual...
@@ -655,21 +685,27 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Annual";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("Release") ) {
+    else if ( dataType.equalsIgnoreCase("LivestockHead") ) {
+        // Used with CASS livestock statistics - specific handling in database
+        hb[0] = dataType;
+        hb[1] = "";
+        hb[2] = "Annual";
+    }
+	else if ( dataType.equalsIgnoreCase("Release") ) {
 		hb[0] = "RT_Misc";
 		hb[1] = "OUTLETQ";
 		hb[2] = "Real-time";
 	}
-	else if ( data_type.equalsIgnoreCase("NaturalFlow") ) {
+	else if ( dataType.equalsIgnoreCase("NaturalFlow") ) {
 		hb[0] = "Nat_flow";
 		// Interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("PoolElev") ) {
+	else if ( dataType.equalsIgnoreCase("PoolElev") ) {
 		hb[0] = "RT_Height";
 		hb[1] = "ELEV";
 		hb[2] = "Real-time";
 	}
-	else if ( data_type.equalsIgnoreCase("Precip") ) {
+	else if ( dataType.equalsIgnoreCase("Precip") ) {
 		hb[0] = "Precip";
 		// Interval converted above.
 		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
@@ -679,7 +715,7 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Real-time";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("RelClass") ) {
+	else if ( dataType.equalsIgnoreCase("RelClass") ) {
 		hb[0] = "RelClass";
 		if ( sub_data_type.length() > 0 ) {
 			// Assume that the SFUT is accurate...
@@ -694,16 +730,16 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Annual";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("RelComment") ) {
+	else if ( dataType.equalsIgnoreCase("RelComment") ) {
 		hb[0] = "RelComment";
 		hb[2] = "Annual";
 	}
-	else if ( data_type.equalsIgnoreCase("Release") ) {
+	else if ( dataType.equalsIgnoreCase("Release") ) {
 		hb[0] = "RT_Misc";
 		hb[1] = "OUTLETQ";
 		hb[2] = "Real-time";
 	}
-	else if ( data_type.equalsIgnoreCase("RelTotal") ) {
+	else if ( dataType.equalsIgnoreCase("RelTotal") ) {
 		hb[0] = "RelTotal";
 		if ( interval.equalsIgnoreCase("Month") ) {
 			// HydroBase calls monthly releases annual...
@@ -714,45 +750,45 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Annual";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("ResEOM") ) {
+	else if ( dataType.equalsIgnoreCase("ResEOM") ) {
 		hb[0] = "ResEOM";
 		// Monthly interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("ResEOY") ) {
+	else if ( dataType.equalsIgnoreCase("ResEOY") ) {
 		hb[0] = "ResEOY";
 		// Monthly interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("ResMeasElev") || data_type.equalsIgnoreCase ( "ResMeasEvap" ) ||
-		data_type.equalsIgnoreCase ( "ResMeasFill" ) || data_type.equalsIgnoreCase ( "ResMeasRelease" ) ||
-		data_type.equalsIgnoreCase ( "ResMeasStorage" ) ) {
+	else if ( dataType.equalsIgnoreCase("ResMeasElev") || dataType.equalsIgnoreCase ( "ResMeasEvap" ) ||
+		dataType.equalsIgnoreCase ( "ResMeasFill" ) || dataType.equalsIgnoreCase ( "ResMeasRelease" ) ||
+		dataType.equalsIgnoreCase ( "ResMeasStorage" ) ) {
 		hb[0] = "ResMeas";
 		hb[2] = "Random";
 	}
-	else if ( data_type.equalsIgnoreCase("Snow") ) {
+	else if ( dataType.equalsIgnoreCase("Snow") ) {
 		hb[0] = "Snow";
 		// Interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("SnowCourseDepth") || data_type.equalsIgnoreCase("SnowCourseSWE") ) {
+	else if ( dataType.equalsIgnoreCase("SnowCourseDepth") || dataType.equalsIgnoreCase("SnowCourseSWE") ) {
 		hb[0] = "SnowCrse";
 		// Interval in HydroBase is monthly even though time series will be treated as daily.
 		hb[2] = "Monthly";
 	}
-	else if ( data_type.equalsIgnoreCase("Solar") ) {
+	else if ( dataType.equalsIgnoreCase("Solar") ) {
 		hb[0] = "Solar";
 		// Interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("Stage") ) {
+	else if ( dataType.equalsIgnoreCase("Stage") ) {
 		hb[0] = "RT_Misc";
 		hb[1] = "GAGE_HT";
 		hb[2] = "Real-time";
 	}
-	else if ( data_type.equalsIgnoreCase("Storage") ) {
+	else if ( dataType.equalsIgnoreCase("Storage") ) {
 		hb[0] = "RT_Vol";
 		hb[1] = "STORAGE";
 		hb[2] = "Real-time";
 	}
-	else if(data_type.equalsIgnoreCase("Streamflow") || data_type.equalsIgnoreCase("StreamflowMax") ||
-		data_type.equalsIgnoreCase("StreamflowMin") ) {
+	else if(dataType.equalsIgnoreCase("Streamflow") || dataType.equalsIgnoreCase("StreamflowMax") ||
+		dataType.equalsIgnoreCase("StreamflowMin") ) {
 		// All these match the Streamflow meas_type...
 		hb[0] = "Streamflow";
 		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
@@ -767,55 +803,58 @@ public final static String [] convertToHydroBaseMeasType ( String data_type, Str
 			hb[2] = "Real-time";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("Temp") ) {
+	else if ( dataType.equalsIgnoreCase("Temp") ) {
 		hb[0] = "RT_Misc";
 		hb[1] = "AIRTEMP";
 		// Interval converted above.
 		hb[2] = "Real-time";
 	}
-	else if ( data_type.equalsIgnoreCase("TempMax") ) {
+	else if ( dataType.equalsIgnoreCase("TempMax") ) {
 		hb[0] = "MaxTemp";
 		// Daily interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("TempMin") ) {
+	else if ( dataType.equalsIgnoreCase("TempMin") ) {
 		hb[0] = "MinTemp";
 		// Daily interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("TempMeanMax") || data_type.equalsIgnoreCase("TempMeanMin") ||
-		data_type.equalsIgnoreCase("TempMean") ) {
+	else if ( dataType.equalsIgnoreCase("TempMeanMax") || dataType.equalsIgnoreCase("TempMeanMin") ||
+		dataType.equalsIgnoreCase("TempMean") ) {
 		hb[0] = "MeanTemp";
 		// Monthly interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("VaporPressure") ) {
+	else if ( dataType.equalsIgnoreCase("VaporPressure") ) {
 		hb[0] = "VP";
 		// Interval converted above.
 	}
-	else if ( data_type.equalsIgnoreCase("WatTemp") ) {
+	else if ( dataType.equalsIgnoreCase("WatTemp") ) {
 		hb[0] = "RT_Misc";
 		hb[1] = "WATTEMP";
 		hb[2] = "Real-time";
 	}
-	else if ( data_type.equalsIgnoreCase("WellLevel") || // Legacy - replaced by WellLevelDepth and WellLevelElev
-	    data_type.equalsIgnoreCase("WellLevelDepth") || data_type.equalsIgnoreCase("WellLevelElev") ) {
+	else if ( dataType.equalsIgnoreCase("WellLevel") || // Legacy - replaced by WellLevelDepth and WellLevelElev
+	    dataType.equalsIgnoreCase("WellLevelDepth") || dataType.equalsIgnoreCase("WellLevelElev") ) {
 		if ( interval.equalsIgnoreCase("RealTime") || interval.equalsIgnoreCase("Irregular") ) {
 			hb[0] = "RT_Misc";
 			hb[1] = "WELL_1";
 		}
-		// XJTSX
 		else if (interval.equalsIgnoreCase("Day")) {
 			hb[0] = "WellLevel";
 			hb[2] = "Day";
 		}
-		// XJTSX
 		else {
 		    hb[0] = "WellLevel";
 			hb[2] = "Random";
 		}
 	}
-	else if ( data_type.equalsIgnoreCase("Wind") ) {
+	else if ( dataType.equalsIgnoreCase("Wind") ) {
 		hb[0] = "Wind";
 		// Interval converted above.
 	}
+    else if ( dataType.toUpperCase().startsWith("WIS") ) {
+        // Pass through WIS data types
+        hb[0] = dataType;
+        // Interval converted above.
+    }
 
 	return hb;
 }
@@ -2062,15 +2101,15 @@ public static boolean isAgriculturalNASSCropStatsTimeSeriesDataType ( HydroBaseD
 /**
 Indicate whether a time series data type is for CUPopulation.
 @param hbdmi An instance of HydroBaseDMI.  The data type is checked to see whether it is "HumanPopulation".
-@param data_type A HydroBase data type.  If the data_type has a "-",
+@param dataType A HydroBase data type.  If the data_type has a "-",
 then the token after the dash is compared.
 @return true if the data type is for CUPopulation.
 */
-public static boolean isCUPopulationTimeSeriesDataType ( HydroBaseDMI hbdmi, String data_type )
-{	if ( data_type.indexOf("-") >= 0) {
-		data_type = StringUtil.getToken(data_type,"-",0,1) ;
+public static boolean isCUPopulationTimeSeriesDataType ( HydroBaseDMI hbdmi, String dataType )
+{	if ( dataType.indexOf("-") >= 0) {
+		dataType = StringUtil.getToken(dataType,"-",0,1).trim();
 	}
-	if ( data_type.equalsIgnoreCase("HumanPopulation") ) {
+	if ( dataType.equalsIgnoreCase("HumanPopulation") ) {
 		return true;
 	}
 	else {
