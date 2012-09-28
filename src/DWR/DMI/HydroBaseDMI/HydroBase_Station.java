@@ -30,21 +30,21 @@ Class to store data from the HydroBase station table.
 public class HydroBase_Station 
 extends DMIDataObject {
 
-protected int _station_num = 		DMIUtil.MISSING_INT;
-protected int _geoloc_num = 		DMIUtil.MISSING_INT;
-protected String _station_name = 	DMIUtil.MISSING_STRING;
-protected String _station_id = 		DMIUtil.MISSING_STRING;
-protected String _nesdis_id = 		DMIUtil.MISSING_STRING;
-protected double _drain_area = 		DMIUtil.MISSING_DOUBLE;
-protected double _contr_area = 		DMIUtil.MISSING_DOUBLE;
-protected String _source = 		DMIUtil.MISSING_STRING;
-protected String _abbrev = 		DMIUtil.MISSING_STRING;
-protected int _transbsn = 		DMIUtil.MISSING_INT;
-protected Date _modified = 		DMIUtil.MISSING_DATE;
-protected int _user_num = 		DMIUtil.MISSING_INT;
-protected String _transmnt = 		DMIUtil.MISSING_STRING;
-protected String _transmit = 		DMIUtil.MISSING_STRING;
-protected String _cooperator_id = 	DMIUtil.MISSING_STRING;
+protected int _station_num = DMIUtil.MISSING_INT;
+protected int _geoloc_num = DMIUtil.MISSING_INT;
+protected String _station_name = DMIUtil.MISSING_STRING;
+protected String _station_id = DMIUtil.MISSING_STRING;
+protected String _nesdis_id = DMIUtil.MISSING_STRING;
+protected double _drain_area = DMIUtil.MISSING_DOUBLE;
+protected double _contr_area = DMIUtil.MISSING_DOUBLE;
+protected String _source = DMIUtil.MISSING_STRING;
+protected String _abbrev = DMIUtil.MISSING_STRING;
+protected int _transbsn = DMIUtil.MISSING_INT;
+protected Date _modified = DMIUtil.MISSING_DATE;
+protected int _user_num = DMIUtil.MISSING_INT;
+protected String _transmnt = DMIUtil.MISSING_STRING;
+protected String _transmit = DMIUtil.MISSING_STRING;
+protected String _cooperator_id = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
