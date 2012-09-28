@@ -15805,11 +15805,17 @@ throws Exception, NoDataFoundException
 	valid_props.add ( "FillDailyDivFlag" );
 	valid_props.add ( "FillUsingDivComments" );
 	valid_props.add ( "FillUsingDivCommentsFlag" );
+	valid_props.add ( "SetPropertiesFromMetadata" );
 	List<String> warnings = props.validatePropNames (
 					valid_props, // These are supported
 					null, // Deprecated props
 					null, // Deprecated notes
 					null ); // Target descriptor
+	boolean setPropertiesFromMetadata = true; // Default
+	String propVal = props.getValue("SetPropertiesFromMetadata" );
+	if ( (propVal != null) && propVal.equalsIgnoreCase("False") ) {
+	    setPropertiesFromMetadata = false;
+	}
 
 	if ( warnings != null ) {
 		StringBuffer warning = new StringBuffer ();
@@ -15947,6 +15953,43 @@ throws Exception, NoDataFoundException
 		mt_meas_num = mtsView.getMeas_num();
 		ts.setIdentifier ( tsident_string);
 		ts.setDescription ( staView.getStation_name());
+		if ( setPropertiesFromMetadata ) {
+		    // Use the same names as the database view columns, same order as view
+		    ts.setProperty("station_num", DMIUtil.isMissing(mtsView.getStation_num())? null : new Integer(mtsView.getStation_num()));
+		    ts.setProperty("geoloc_num", DMIUtil.isMissing(mtsView.getGeoloc_num())? null : new Integer(mtsView.getGeoloc_num()));
+		    ts.setProperty("station_name", mtsView.getStation_name());
+		    ts.setProperty("station_id", mtsView.getStation_id());
+		    ts.setProperty("cooperator_id", mtsView.getCooperator_id());
+		    ts.setProperty("nesdis_id", mtsView.getNesdis_id());
+		    ts.setProperty("drain_area", DMIUtil.isMissing(mtsView.getDrain_area())? Double.NaN : new Double(mtsView.getDrain_area()));
+	        ts.setProperty("contr_area", DMIUtil.isMissing(mtsView.getContr_area())? Double.NaN : new Double(mtsView.getContr_area()));
+	        ts.setProperty("source", mtsView.getSource());
+	        ts.setProperty("abbrev", mtsView.getAbbrev());
+	        ts.setProperty("transbsn", DMIUtil.isMissing(mtsView.getTransbsn())? null : new Integer(mtsView.getTransbsn()));
+	        ts.setProperty("meas_num", DMIUtil.isMissing(mtsView.getMeas_num())? null : new Integer(mtsView.getMeas_num()));
+	        ts.setProperty("meas_type", mtsView.getMeas_type());
+	        ts.setProperty("time_step", mtsView.getTime_step());
+	        ts.setProperty("start_year", DMIUtil.isMissing(mtsView.getStart_year())? null : new Integer(mtsView.getStart_year()));
+	        ts.setProperty("end_year", DMIUtil.isMissing(mtsView.getEnd_year())? null : new Integer(mtsView.getEnd_year()));
+	        ts.setProperty("vax_field", mtsView.getVax_field());
+	        ts.setProperty("transmit", mtsView.getTransmit());
+	        ts.setProperty("meas_count", DMIUtil.isMissing(mtsView.getMeas_count())? null : new Integer(mtsView.getMeas_count()));
+	        ts.setProperty("data_source", mtsView.getData_source());
+	        ts.setProperty("UTM_X", DMIUtil.isMissing(mtsView.getUtm_x())? Double.NaN : new Double(mtsView.getUtm_x()));
+            ts.setProperty("UTM_Y", DMIUtil.isMissing(mtsView.getUtm_y())? Double.NaN : new Double(mtsView.getUtm_y()));
+	        ts.setProperty("longdecdeg", DMIUtil.isMissing(mtsView.getLatdecdeg())? Double.NaN : new Double(mtsView.getLongdecdeg()));
+		    ts.setProperty("latdecdeg", DMIUtil.isMissing(mtsView.getLatdecdeg())? Double.NaN : new Double(mtsView.getLatdecdeg()));
+	        ts.setProperty("div", DMIUtil.isMissing(mtsView.getDiv())? null : new Integer(mtsView.getDiv()));
+	        ts.setProperty("wd", DMIUtil.isMissing(mtsView.getWD())? null : new Integer(mtsView.getWD()));
+	        ts.setProperty("county", mtsView.getCounty());
+	        ts.setProperty("topomap", mtsView.getTopomap());
+	        ts.setProperty("cty", DMIUtil.isMissing(mtsView.getCty())? null : new Integer(mtsView.getCty()));
+	        ts.setProperty("huc", mtsView.getHUC());
+	        ts.setProperty("elev", DMIUtil.isMissing(mtsView.getElev())? Double.NaN : new Double(mtsView.getElev()));
+	        ts.setProperty("loc_type", mtsView.getLoc_type());
+	        ts.setProperty("accuracy", DMIUtil.isMissing(mtsView.getAccuracy())? null : new Integer(mtsView.getAccuracy()));
+	        ts.setProperty("st", mtsView.getST());
+		}
 	}
 	else if (HydroBase_Util.isStructureTimeSeriesDataType (this, meas_type)) {
 		// Data types associated with structures...
@@ -16032,6 +16075,50 @@ throws Exception, NoDataFoundException
 		mt_end_year = str_mt_v.getEnd_year();
 		ts.setIdentifier(tsident_string);
 		ts.setDescription(strView.getStr_name());
+		if ( setPropertiesFromMetadata ) {
+            ts.setProperty("div", DMIUtil.isMissing(str_mt_v.getDiv())? null : new Integer(str_mt_v.getDiv()));
+            ts.setProperty("wd", DMIUtil.isMissing(str_mt_v.getWD())? null : new Integer(str_mt_v.getWD()));
+            ts.setProperty("id", DMIUtil.isMissing(str_mt_v.getID())? null : new Integer(str_mt_v.getID()));
+            ts.setProperty("str_name", str_mt_v.getStr_name());
+            ts.setProperty("UTM_X", DMIUtil.isMissing(str_mt_v.getUtm_x())? Double.NaN : new Double(str_mt_v.getUtm_x()));
+            ts.setProperty("UTM_Y", DMIUtil.isMissing(str_mt_v.getUtm_y())? Double.NaN : new Double(str_mt_v.getUtm_y()));
+            ts.setProperty("longdecdeg", DMIUtil.isMissing(str_mt_v.getLatdecdeg())? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
+            ts.setProperty("latdecdeg", DMIUtil.isMissing(str_mt_v.getLatdecdeg())? Double.NaN : new Double(str_mt_v.getLatdecdeg()));
+            ts.setProperty("pm", str_mt_v.getPM());
+            ts.setProperty("ts", DMIUtil.isMissing(str_mt_v.getTS())? null : new Integer(str_mt_v.getTS()));
+            ts.setProperty("tdir", str_mt_v.getTdir());
+            ts.setProperty("tsa", str_mt_v.getTsa());
+            ts.setProperty("rng", DMIUtil.isMissing(str_mt_v.getRng())? null : new Integer(str_mt_v.getRng()));
+            ts.setProperty("rdir", str_mt_v.getRdir());
+            ts.setProperty("rnga", str_mt_v.getRnga());
+            ts.setProperty("sec", DMIUtil.isMissing(str_mt_v.getSec())? null : new Integer(str_mt_v.getSec()));
+            ts.setProperty("seca", str_mt_v.getSeca());
+            ts.setProperty("q160", str_mt_v.getQ160());
+            ts.setProperty("q40", str_mt_v.getQ40());
+            ts.setProperty("q10", str_mt_v.getQ10());
+            ts.setProperty("coordsns", DMIUtil.isMissing(str_mt_v.getCoordsns())? null : new Integer(str_mt_v.getCoordsns()));
+            ts.setProperty("coordsns_dir", str_mt_v.getCoordsns_dir());
+            ts.setProperty("coordsew", DMIUtil.isMissing(str_mt_v.getCoordsew())? null : new Integer(str_mt_v.getCoordsew()));
+            ts.setProperty("coordsew_dir", str_mt_v.getCoordsew_dir());
+            ts.setProperty("county", str_mt_v.getCounty());
+            ts.setProperty("topomap", str_mt_v.getTopomap());
+            ts.setProperty("cty", DMIUtil.isMissing(str_mt_v.getCty())? null : new Integer(str_mt_v.getCty()));
+            ts.setProperty("huc", str_mt_v.getHUC());
+            ts.setProperty("elev", DMIUtil.isMissing(str_mt_v.getElev())? Double.NaN : new Double(str_mt_v.getElev()));
+            ts.setProperty("loc_type", str_mt_v.getLoc_type());
+            ts.setProperty("st", str_mt_v.getST());
+            ts.setProperty("str_mile", DMIUtil.isMissing(str_mt_v.getStr_mile())? null : new Double(str_mt_v.getStr_mile()));
+            ts.setProperty("meas_num", DMIUtil.isMissing(str_mt_v.getMeas_num())? null : new Integer(str_mt_v.getMeas_num()));
+            ts.setProperty("structure_num", DMIUtil.isMissing(str_mt_v.getStructure_num())? null : new Integer(str_mt_v.getStructure_num()));
+            ts.setProperty("meas_type", str_mt_v.getMeas_type());
+            ts.setProperty("time_step", str_mt_v.getTime_step());
+            ts.setProperty("start_year", DMIUtil.isMissing(str_mt_v.getStart_year())? null : new Integer(str_mt_v.getStart_year()));
+            ts.setProperty("end_year", DMIUtil.isMissing(str_mt_v.getEnd_year())? null : new Integer(str_mt_v.getEnd_year()));
+            ts.setProperty("identifier", str_mt_v.getIdentifier());
+            ts.setProperty("transmit", str_mt_v.getTransmit());     
+            ts.setProperty("meas_count", DMIUtil.isMissing(str_mt_v.getMeas_count())? null : new Integer(str_mt_v.getMeas_count()));
+            ts.setProperty("data_source", str_mt_v.getData_source());
+		}
 	}
 	// Added this because WellLevel as a MeasType was not being recognized
 	// as one of the structure time series data types.
@@ -16060,6 +16147,76 @@ throws Exception, NoDataFoundException
     		mt_end_year = well.getEnd_year();
     		ts.setIdentifier(tsident_string);
     		ts.setDescription(well.getWell_name());
+    		if ( setPropertiesFromMetadata ) {
+                // Use the same names as the database view columns, same order as view
+                ts.setProperty("well_num", DMIUtil.isMissing(well.getWell_num())? null : new Integer(well.getWell_num()));
+                ts.setProperty("well_name", well.getWell_name());
+                ts.setProperty("div", DMIUtil.isMissing(well.getDiv())? null : new Integer(well.getDiv()));
+                ts.setProperty("wd", DMIUtil.isMissing(well.getWD())? null : new Integer(well.getWD()));
+                ts.setProperty("id", DMIUtil.isMissing(well.getID())? null : new Integer(well.getID()));
+                ts.setProperty("receipt", well.getReceipt());
+                ts.setProperty("permitno", DMIUtil.isMissing(well.getPermitno())? null : new Integer(well.getPermitno()));
+                ts.setProperty("permitsuf", well.getPermitsuf());
+                ts.setProperty("permitrpl", well.getPermitrpl());
+                ts.setProperty("locnum", well.getLoc_num());
+                ts.setProperty("Site_ID", well.getSite_id());
+                ts.setProperty("basin", well.getBasin());
+                ts.setProperty("md", well.getMD());
+                ts.setProperty("well_depth", DMIUtil.isMissing(well.getWell_depth())? Double.NaN : new Double(well.getWell_depth()));
+                ts.setProperty("aquifer1", well.getAquifer1());
+                ts.setProperty("aquifer2", well.getAquifer2());
+                ts.setProperty("aquifer_comment", well.getAquifer_comment());
+                ts.setProperty("tperf", DMIUtil.isMissing(well.getTperf())? null : new Integer(well.getTperf()));
+                ts.setProperty("bperf", DMIUtil.isMissing(well.getBperf())? null : new Integer(well.getBperf()));
+                ts.setProperty("yield", DMIUtil.isMissing(well.getYield())? Double.NaN : new Double(well.getYield()));
+                ts.setProperty("bedrock_elev", DMIUtil.isMissing(well.getBedrock_elev())? Double.NaN : new Double(well.getBedrock_elev()));
+                ts.setProperty("sat_1965", DMIUtil.isMissing(well.getSat_1965())? Double.NaN : new Double(well.getSat_1965()));
+                ts.setProperty("remarks1", well.getRemarks1());
+                ts.setProperty("remarks2", well.getRemarks2());
+                ts.setProperty("well_meas_num", DMIUtil.isMissing(well.getWell_meas_num())? null : new Integer(well.getWell_meas_num()));
+                ts.setProperty("meas_type", well.getMeas_type());
+                ts.setProperty("time_step", well.getTime_step());
+                ts.setProperty("start_year", DMIUtil.isMissing(well.getStart_year())? null : new Integer(well.getStart_year()));
+                ts.setProperty("end_year", DMIUtil.isMissing(well.getEnd_year())? null : new Integer(well.getEnd_year()));
+                ts.setProperty("meas_count", DMIUtil.isMissing(well.getMeas_count())? null : new Integer(well.getMeas_count()));
+                ts.setProperty("identifier", well.getIdentifier());
+                ts.setProperty("data_source", well.getData_source());
+                ts.setProperty("UTM_X", DMIUtil.isMissing(well.getUtm_x())? Double.NaN : new Double(well.getUtm_x()));
+                ts.setProperty("UTM_Y", DMIUtil.isMissing(well.getUtm_y())? Double.NaN : new Double(well.getUtm_y()));
+                ts.setProperty("longdecdeg", DMIUtil.isMissing(well.getLatdecdeg())? Double.NaN : new Double(well.getLongdecdeg()));
+                ts.setProperty("latdecdeg", DMIUtil.isMissing(well.getLatdecdeg())? Double.NaN : new Double(well.getLatdecdeg()));
+                ts.setProperty("pm", well.getPM());
+                ts.setProperty("ts", DMIUtil.isMissing(well.getTS())? null : new Integer(well.getTS()));
+                ts.setProperty("tdir", well.getTdir());
+                ts.setProperty("tsa", well.getTsa());
+                ts.setProperty("rng", DMIUtil.isMissing(well.getRng())? null : new Integer(well.getRng()));
+                ts.setProperty("rdir", well.getRdir());
+                ts.setProperty("rnga", well.getRnga());
+                ts.setProperty("sec", DMIUtil.isMissing(well.getSec())? null : new Integer(well.getSec()));
+                ts.setProperty("seca", well.getSeca());
+                ts.setProperty("q160", well.getQ160());
+                ts.setProperty("q40", well.getQ40());
+                ts.setProperty("q10", well.getQ10());
+                ts.setProperty("coordsns", DMIUtil.isMissing(well.getCoordsns())? null : new Integer(well.getCoordsns()));
+                ts.setProperty("coordsns_dir", well.getCoordsns_dir());
+                ts.setProperty("coordsew", DMIUtil.isMissing(well.getCoordsew())? null : new Integer(well.getCoordsew()));
+                ts.setProperty("coordsew_dir", well.getCoordsew_dir());
+                ts.setProperty("county", well.getCounty());
+                ts.setProperty("topomap", well.getTopomap());
+                ts.setProperty("cty", DMIUtil.isMissing(well.getCty())? null : new Integer(well.getCty()));
+                ts.setProperty("huc", well.getHUC());
+                ts.setProperty("elev", DMIUtil.isMissing(well.getElev())? Double.NaN : new Double(well.getElev()));
+                ts.setProperty("elev_accuracy", DMIUtil.isMissing(well.getElev_accuracy())? null : new Double(well.getElev_accuracy()));
+                ts.setProperty("loc_type", well.getLoc_type());
+                ts.setProperty("loc_accuracy", DMIUtil.isMissing(well.getLoc_accuracy())? null : new Integer(well.getLoc_accuracy()));
+                ts.setProperty("st", well.getST());
+                ts.setProperty("stream_num", DMIUtil.isMissing(well.getStream_num())? null : new Integer(well.getStream_num()));
+                ts.setProperty("str_mile", DMIUtil.isMissing(well.getStr_mile())? null : new Double(well.getStr_mile()));
+                ts.setProperty("spotter_version", well.getSpotter_version());
+                ts.setProperty("DSS_aquifer1", well.getDSS_aquifer1());
+                ts.setProperty("DSS_aquifer2", well.getDSS_aquifer2());
+                ts.setProperty("DSS_aquifer_comment", well.getDSS_aquifer_comment());
+    		}
 		}
 	}
 	else if (HydroBase_Util.isAgriculturalCASSCropStatsTimeSeriesDataType(this,data_type)) {
@@ -16067,20 +16224,43 @@ throws Exception, NoDataFoundException
 		agstats_commodity = StringUtil.getToken (sub_data_type, "_", 0, 0);
 		agstats_practice = StringUtil.getToken (sub_data_type, "_", 0, 1);
 		ts.setIdentifier ( tsident_string);
-		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity + "," + agstats_practice); 
+		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity + "," + agstats_practice);
+		if ( setPropertiesFromMetadata ) {
+            // Use the same names as the database view columns, same order as view
+		    // Did not query the object above but can get out of the TSID parts
+            //ts.setProperty("st", ??);
+		    ts.setProperty("county", tsident.getLocation());
+		    ts.setProperty("commodity", agstats_commodity);
+		    ts.setProperty("practice", agstats_practice);
+		}
 	}
 	else if ( HydroBase_Util.isAgriculturalCASSLivestockStatsTimeSeriesDataType(this,data_type)) {
 		// The sub-datatype has the comodity and type, separated by an underscore
 		agstats_commodity = StringUtil.getToken ( sub_data_type, "_", 0, 0);
 		agstats_type = StringUtil.getToken (sub_data_type, "_", 0, 1);
 		ts.setIdentifier ( tsident_string);
-		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity + "," + agstats_type); 
+		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity + "," + agstats_type);
+        if ( setPropertiesFromMetadata ) {
+            // Use the same names as the database view columns, same order as view
+            // Did not query the object above but can get out of the TSID parts
+            //ts.setProperty("st", ??);
+            ts.setProperty("county", tsident.getLocation());
+            ts.setProperty("commodity", agstats_commodity);
+            ts.setProperty("type", agstats_type);
+        }
 	}
 	else if ( HydroBase_Util.isAgriculturalNASSCropStatsTimeSeriesDataType(this,data_type)) {
 		// The sub-datatype has the comodity and practice, only referred to as commodity by NASS
 		agstats_commodity = sub_data_type;
 		ts.setIdentifier ( tsident_string);
-		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity); 
+		ts.setDescription ( tsident.getLocation() + "," + agstats_commodity);
+        if ( setPropertiesFromMetadata ) {
+            // Use the same names as the database view columns, same order as view
+            // Did not query the object above but can get out of the TSID parts
+            //ts.setProperty("st", ??);
+            ts.setProperty("county", tsident.getLocation());
+            ts.setProperty("commodity", agstats_commodity);
+        }
 	}
 	else if ( HydroBase_Util.isCUPopulationTimeSeriesDataType(this, data_type)) {
 		// The location has the area type and name.
@@ -16089,7 +16269,15 @@ throws Exception, NoDataFoundException
 		// The sub-datatype has the population type.
 		cupop_pop_type = sub_data_type;
 		ts.setIdentifier ( tsident_string);
-		ts.setDescription ( cupop_area_name + "," + cupop_pop_type ); 
+		ts.setDescription ( cupop_area_name + "," + cupop_pop_type );
+        if ( setPropertiesFromMetadata ) {
+            // Use the same names as the database view columns, same order as view
+            // Did not query the object above but can get out of the TSID parts
+            //ts.setProperty("st", ??);
+            ts.setProperty("area_type", cupop_area_type);
+            ts.setProperty("area_name", cupop_area_name);
+            ts.setProperty("pop_type", cupop_pop_type);
+        }
 	}
 	else if (HydroBase_Util.isIrrigSummaryTimeSeriesDataType(this, data_type)) {
 		// Used for irrig_summary_ts.
@@ -16143,7 +16331,7 @@ throws Exception, NoDataFoundException
 		ts.setDescription ( ((HydroBase_WISFormat)wis_formats.get(0)).getRow_label());
 		// Read the vector of wis_comments for the sheet name, in order to get available dates...
 		List temp = readWISSheetNameList(DMIUtil.MISSING_INT, DMIUtil.MISSING_INT, wis_sheet_name, null);
-		List wis_nums	= new Vector();
+		List wis_nums = new Vector();
 		int sz = temp.size();
 		HydroBase_WISSheetName wss = null;
 		for (int i = 0; i < sz; i++) {
