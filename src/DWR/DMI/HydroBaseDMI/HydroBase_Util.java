@@ -2498,7 +2498,7 @@ throws Exception
 
 /**
 Read a list of objects that contain time series header information.  This is used, for example, to populate the
-time series list area of TSTool and to get a list of time series for the TSTool readHydroBase(Where...) command.
+time series list area of TSTool and to get a list of time series for the TSTool ReadHydroBase(Where...) command.
 @param hbdmi The HydroBaseDMI instance to use for queries.
 @param data_type The data type for time series, either from the TSTool
 data type choice for HydroBase, or a simple string.
