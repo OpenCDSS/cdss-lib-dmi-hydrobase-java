@@ -1837,6 +1837,8 @@ throws Exception
     HydroBase_StationGeolocMeasType hbsta = null;
     HydroBase_StructureGeolocStructMeasType hbstruct = null;
     HydroBase_GroundWaterWellsView hbwell = null;
+    // Set the metadata
+    boolean setPropertiesFromMetadata = true;
     // Replace TSTool data type with HydroBase MeasType (differences are mainly for usability/uniqueness)
     // Station types...
     boolean isStation = false;
@@ -1855,6 +1857,9 @@ throws Exception
         dataStartYear = hbsta.getStart_year();
         dataEndYear = hbsta.getEnd_year();
         description = hbsta.getStation_name();
+        if ( setPropertiesFromMetadata ) {
+            HydroBase_Util.setTimeSeriesProperties ( ts, hbsta );
+        }
     }
     else if ( dataType.equalsIgnoreCase("WellLevelElev") || dataType.equalsIgnoreCase("WellLevelDepth")) {
         // GroundWaterWell data type
@@ -1869,6 +1874,9 @@ throws Exception
         dataStartYear = hbwell.getStart_year();
         dataEndYear = hbwell.getEnd_year();
         description = hbwell.getWell_name() + " (datum " + StringUtil.formatString(hbwell.getElev(),"%.1f") + " FT)";
+        if ( setPropertiesFromMetadata ) {
+            HydroBase_Util.setTimeSeriesProperties ( ts, hbwell );
+        }
     }
     else if ( isStructureTimeSeriesDataType(dataType) ) {
         // Structure data type
@@ -1884,6 +1892,9 @@ throws Exception
         dataStartYear = hbstruct.getStart_year();
         dataEndYear = hbstruct.getEnd_year();
         description = hbstruct.getStr_name();
+        if ( setPropertiesFromMetadata ) {
+            HydroBase_Util.setTimeSeriesProperties ( ts, hbstruct );
+        }
     }
     // Default the dates to 1900 to current time
     if ( readStart == null ) {
@@ -1893,7 +1904,7 @@ throws Exception
             startYear = 1900; // This is irrigation year
         }
         if ( !isStation ) {
-            --startYear; // HydroBase has irrigattion year so decrement to get to previous calendar year
+            --startYear; // HydroBase has irrigation year so decrement to get to previous calendar year
         }
         if ( timeStep.equalsIgnoreCase("Month")) {
             if ( isStation ) {

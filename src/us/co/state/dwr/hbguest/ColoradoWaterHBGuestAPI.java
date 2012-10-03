@@ -7,7 +7,6 @@ import javax.xml.ws.Holder;
 
 import DWR.DMI.HydroBaseDMI.HydroBase_StationGeolocMeasType;
 import DWR.DMI.HydroBaseDMI.HydroBase_StructMeasTypeView;
-import DWR.DMI.HydroBaseDMI.HydroBase_Util;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
