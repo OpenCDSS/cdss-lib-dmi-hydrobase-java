@@ -2533,6 +2533,7 @@ throws Exception
 		(ifp instanceof HydroBase_GUI_CUPopulation_InputFilter_JPanel) ||
 		(ifp instanceof HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel) ||
 		(ifp instanceof HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel) ) {
+	    // TODO SAM 2012-10-01 How is this code used?
 	}
 	// Special cases first and then general lists...
 	if ( HydroBase_Util.isAgriculturalCASSCropStatsTimeSeriesDataType ( hbdmi, data_type ) ) {
