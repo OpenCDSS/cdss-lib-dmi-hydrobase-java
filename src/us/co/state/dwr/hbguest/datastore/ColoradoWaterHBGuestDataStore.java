@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import riverside.datastore.AbstractWebServiceDataStore;
-import us.co.state.dwr.hbguest.ColoradoWaterHBGuest;
 import us.co.state.dwr.hbguest.ColoradoWaterHBGuestService;
 
 import RTi.Util.IO.IOUtil;
