@@ -3058,6 +3058,7 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_GroundWaterWellsVi
     ts.setProperty("end_year", DMIUtil.isMissing(well.getEnd_year())? null : new Integer(well.getEnd_year()));
     ts.setProperty("meas_count", DMIUtil.isMissing(well.getMeas_count())? null : new Integer(well.getMeas_count()));
     ts.setProperty("identifier", well.getIdentifier());
+    ts.setProperty("data_source_id", well.getData_source_id());
     ts.setProperty("data_source", well.getData_source());
     ts.setProperty("UTM_X", DMIUtil.isMissing(well.getUtm_x())? Double.NaN : new Double(well.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(well.getUtm_y())? Double.NaN : new Double(well.getUtm_y()));
