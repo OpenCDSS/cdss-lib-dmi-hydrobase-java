@@ -17,6 +17,8 @@ package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
+import RTi.GIS.GeoView.DegMinSec;
+import RTi.GIS.GeoView.DegMinSecFormatType;
 
 import java.util.Date;
 
@@ -170,6 +172,31 @@ throws Throwable {
 	_DSS_aquifer2 = null;
 	_DSS_aquifer_comment = null;
 	super.finalize();
+}
+
+/**
+Format the identifier as a LL:LatLong string, where latitude and longitude are "DegMMSS", padded with zeros.
+This requires that the latitude and longitude are not missing.  If coordinates are missing, return "".
+@return a location ID formatted from the latitude and longitude, or an empty string if no coordinates.
+*/
+public String formatLatLongID ()
+{
+    double lat = getLatdecdeg();
+    double lon = getLongdecdeg();
+    if ( DMIUtil.isMissing(lat) || DMIUtil.isMissing(lon)) {
+        return "";
+    }
+    if ( lon < 0.0 ) {
+        lon = -lon;
+    }
+    DegMinSec dmsLat = new DegMinSec ( lat );
+    DegMinSec dmsLon = new DegMinSec ( lon );
+    //Message.printStatus(2, "formatLatLongID", "name = \"" + getWell_name() + "\" lat=" + lat + " lon=" + lon );
+    String latString = dmsLat.toString(DegMinSecFormatType.DEGMMSS);
+    String lonString = dmsLon.toString(DegMinSecFormatType.DEGMMSS);
+    //Message.printStatus(2, "formatLatLongID", "latstring=" + latString + " lonstring=" + lonString );
+
+    return "LL:" + latString + lonString;
 }
 
 /**
@@ -449,6 +476,7 @@ Returns _longdecdeg
 @return _longdecdeg
 */
 public double getLongdecdeg() {
+    //Message.printStatus(2, "getLongdecdeg", "Getting longitude " + _longdecdeg );
 	return _longdecdeg;
 }
 
@@ -1073,6 +1101,7 @@ Sets _longdecdeg
 @param longdecdeg value to put into _longdecdeg
 */
 public void setLongdecdeg(double longdecdeg) {
+    //Message.printStatus(2, "setLongdecdeg", "Setting longitude to " + longdecdeg );
 	_longdecdeg = longdecdeg;
 }
 

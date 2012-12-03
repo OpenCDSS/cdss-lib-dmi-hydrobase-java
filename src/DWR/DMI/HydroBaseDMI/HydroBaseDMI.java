@@ -785,6 +785,8 @@ import RTi.DMI.DMIWriteStatement;
 import RTi.DMI.DMIStatement;
 import RTi.DMI.DMIStoredProcedureData;
 
+import RTi.GIS.GeoView.DegMinSec;
+import RTi.GIS.GeoView.DegMinSecFormatType;
 import RTi.GR.GRLimits;
 
 import RTi.GRTS.TSProduct;
@@ -11555,6 +11557,77 @@ throws Exception {
 }
 
 /**
+Read a list ground water well meas type data matching a requested latitude and longitude box.
+<b>This method cannot be used with pre-20050701 databases.</b><p>
+This method is used by:<p>
+<ul><li>readTimeSeries</li></ul><p>
+when reading wells that have identifiers formed by the latitude and longitude.
+Because such identifiers have 4-digit coordinate decimals corresponding to minutes and seconds, which
+were computed from the decimal degrees, it is not possible to exactly match the coordinate.
+This method uses the following stored procedure:<p>
+<ul><li>vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType</li></ul>
+@param lonmin the minimum longitude in decimal degrees
+@param latmin the minimum latitude in decimal degrees
+@param lonmax the minimum longitude in decimal degrees, or null if an exact match of lonmin, lonmax is requested
+@param latmax the minimum latitude in decimal degrees, or null if an exact match of lonmin, lonmax is requested
+@return a list of matching HydroBase_GroundWaterWellsView objects
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_GroundWaterWellsView> readGroundWaterWellMeasTypeListForLatLong (
+    Double lonmin, Double latmin, Double lonmax, Double latmax )
+throws Exception {
+    String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
+        
+    String[] triplet = null;
+
+    if ( (lonmax == null) || (latmax == null) ) {
+        // Match minimum coordinates exactly.  This is probably not a good way to query because
+        // of precision issues.
+        triplet = new String[3];
+        triplet[0] = "longdecdeg";
+        triplet[1] = "EQ";
+        triplet[2] = "" + lonmin;
+        HydroBase_GUI_Util.addTriplet(parameters, triplet);
+        triplet = new String[3];
+        triplet[0] = "latdecdeg";
+        triplet[1] = "EQ";
+        triplet[2] = "" + latmin;
+        HydroBase_GUI_Util.addTriplet(parameters, triplet);
+    }
+    else {
+        // Bound the latitude and longitude to the 4th digit
+        triplet = new String[3];
+        triplet[0] = "longdecdeg";
+        triplet[1] = "GE";
+        triplet[2] = "" + lonmin;
+        HydroBase_GUI_Util.addTriplet(parameters, triplet);
+        triplet = new String[3];
+        triplet[0] = "longdecdeg";
+        triplet[1] = "LE";
+        triplet[2] = "" + lonmax;
+        HydroBase_GUI_Util.addTriplet(parameters, triplet);
+        triplet[0] = "latdecdeg";
+        triplet[1] = "GE";
+        triplet[2] = "" + latmin;
+        HydroBase_GUI_Util.addTriplet(parameters, triplet);
+        triplet = new String[3];
+        triplet[0] = "latdecdeg";
+        triplet[1] = "LE";
+        triplet[2] = "" + latmax;
+        HydroBase_GUI_Util.addTriplet(parameters, triplet);
+    }
+
+    HydroBase_GUI_Util.fillSPParameters(parameters, 
+        getViewNumber("vw_CDSS_GroundWaterWellsGroundWaterWellsMeasType"),83, null);
+
+    ResultSet rs = runSPFlex(parameters);
+    List<HydroBase_GroundWaterWellsView> v = toGroundWaterWellMeasTypeList(rs);
+    closeResultSet(rs, __lastStatement);
+
+    return v;
+}
+
+/**
 Reads the database for the data necessary to fill groundwater well and
 groundwater meas type information.  For pre-20050701 databases, this method
 can be called, but it will immediately call 
@@ -11621,8 +11694,7 @@ This method uses the following view:<p><ul>
 HydroBase_StructureGeolocStructMeasTypeView objects.
 @throws Exception if there is an error running the query.
 */
-public List readGroundWaterWellsMeasTypeList(InputFilter_JPanel panel, 
-String[] districtWhere)
+public List readGroundWaterWellsMeasTypeList(InputFilter_JPanel panel, String[] districtWhere)
 throws Exception {
 	if (getDatabaseVersion() < VERSION_20050701) {
 		return readUnpermittedWellStructMeasTypeList(panel, districtWhere);
@@ -16050,21 +16122,83 @@ throws Exception, NoDataFoundException
 	else if (meas_type.equalsIgnoreCase("WellLevel")) {
 	    // OK to check "WellLevel" since this is the internal HydroBase meas_type (may match requested TSID data type
 	    // "WellLevel", "WellLevelDepth", or "WellLevelElev" (same as legacy "WellLevel").
-		// TODO (SAM 2004-01-14) START - Fix when well data redesign is done
-		// If the data type is "WellLevel" and time step is "Day", then
-		// the incoming data type may be a USGS, USGS, or WDID id.
-		// Until HydroBase is redesigned, a work-around is in place
-		// below to convert this back to a WDID, which is found in the
-		// structure table.  There are not a lot of these time series 
-		// so doing an extra lookup here is not much of a penalty.
+		// TODO (SAM 2004-01-14) Old comment (not sure if HydroBase design will ever be changed)...
+	    //     Fix when well data redesign is done
+		//    If the data type is "WellLevel" and time step is "Day", then
+		//    the incoming data type may be a USGS, USGS, or WDID id.
+		//    Until HydroBase is redesigned, a work-around is in place
+		//    below to convert this back to a WDID, which is found in the
+		//    structure table.  There are not a lot of these time series 
+		//    so doing an extra lookup here is not much of a penalty.
+	    //
+	    // Current version handles WellLevel location identifiers as follows:
+	    // 1)  If the location starts with "LL:" then the well lat/long should match the location
+	    // 2)  If the location does not start with "LL:"
+	    // 2a)   the well "identifier" is queried - if non null well is returned it is used
+	    // 2b)   if no well is found and the location is a number, it is treated as a WDID (not sure if this is
+	    //       implemented)
 
 		// First try to get an unpermitted_wells record matching the USGS id...
 
 //Message.printStatus(1, "", "TSLOC: " + tsident.getLocation());
-		
-		well = readGroundWaterWellMeasType(tsident.getLocation());
+		if ( tsident.getLocation().startsWith("LL:") ) {
+		    // Read the well by matching the latitude and longitude
+		    // Because the floating point data cannot be directly matched with the coordinates back-calculated
+		    // from the degrees, minutes, seconds, get a list of candidate wells near the coordinate
+		    String loc = tsident.getLocation();
+		    DegMinSec latDms = DegMinSec.parseDegMinSec(loc.substring(3,9), DegMinSecFormatType.DEGMMSS);
+		    DegMinSec lonDms = DegMinSec.parseDegMinSec(loc.substring(9), DegMinSecFormatType.DEGMMSS);
+		    // Read the wells closest to the latitude and longitude and bound with a buffer because the
+		    // conversion from the integer DMS notation will not exactly match the coordinates
+		    double buffer = .001;
+		    double lat = latDms.getDecDegrees();
+		    double lon = lonDms.getDecDegrees();
+            if ( lon > 0.0 ) {
+                // Make negative to match database
+                lon = -lon;
+            }
+		    Double latmin = new Double(lat - buffer);
+		    Double latmax = new Double(lat + buffer);
+		    Double lonmin = new Double(lon - buffer);
+		    Double lonmax = new Double(lon + buffer);
+		    Message.printStatus(2, routine, "For location ID \"" + loc + "\" querying lon/lat " +
+	                lonmin + "," + latmin + " to " + lonmax + "," + latmax );
+		    List<HydroBase_GroundWaterWellsView> wellList0 = readGroundWaterWellMeasTypeListForLatLong(
+		        lonmin, latmin, lonmax, latmax );
+		    Message.printStatus(2, routine, "Got " + wellList0.size() + " wells in box...filtering to match ID." );
+		    // Now loop through the wells and re-calculate the LL: identifier to find the match.
+		    List<HydroBase_GroundWaterWellsView> wellList = new Vector<HydroBase_GroundWaterWellsView>();
+		    String ll;
+		    for ( HydroBase_GroundWaterWellsView iwell: wellList0 ) {
+		        ll = iwell.formatLatLongID();
+		        //Message.printStatus(2, routine, "Comparing \"" + ll + "\" to \"" + loc + "\"" );
+		        if ( ll.equalsIgnoreCase(loc) ) {
+		            wellList.add(iwell);
+		        }
+		    }
+		    // If there are more than one matches something is wrong
+		    if ( wellList.size() == 0 ) {
+		        message = "Location identifier \"" + tsident.getLocation() + "\" matched 0 wells.";
+                Message.printWarning ( 2, routine, message );
+                well = null;
+		    }
+		    else if ( wellList.size() > 1 ) {
+		        message = "Location identifier \"" + tsident.getLocation() + "\" matched " + wellList.size() +
+		            " wells.  Identifier is not unique so unable to read specific time series.";
+	            Message.printWarning ( 2, routine, message );
+		        well = null;
+		    }
+		    else {
+		        well = wellList.get(0);
+		    }
+		}
+		else {
+		    // Read the well using the "identifier"
+		    well = readGroundWaterWellMeasType(tsident.getLocation());
+		}
+		// TODO SAM 2012-11-27 What about the case where WDID is used?
 		if ( well == null ) {
-		    message = "Cannot determine groundwater well measurement type for \"" + tsident.getLocation() + "\"";
+		    message = "Cannot determine groundwater well/measurement type for \"" + tsident.getLocation() + "\"";
 		    Message.printWarning ( 2, routine, message );
 		}
 		else {
@@ -16740,11 +16874,16 @@ throws Exception, NoDataFoundException
 			v = readWellMeasList ( str_mt_v.getMeas_num(), req_date1,req_date2);
 		}
 		else {
-		    Message.printStatus ( 2, routine, "Reading well level data using well meas_num " + well.getWell_meas_num() );
-			ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
+		    // Possible for well to be null given missing/duplicate identifier
+		    if ( well != null ) {
+		        Message.printStatus ( 2, routine, "Reading well level data using well meas_num " + well.getWell_meas_num() );
+		    }
+		    ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
 			ts.setDataUnitsOriginal ( ts.getDataUnits());
 			ts.setInputName ( "HydroBase well_meas.wat_level");
-			v = readWellMeasList (well.getWell_meas_num(), req_date1, req_date2);
+			if ( well != null ) {
+			    v = readWellMeasList (well.getWell_meas_num(), req_date1, req_date2);
+			}
 		}
 	}
 	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("Wind")) {
@@ -34558,6 +34697,8 @@ throws Exception {
 		}
 		d = rs.getDouble(index++);
 		if (!rs.wasNull()) {
+		    //Message.printStatus(2,"toGroundWaterWellMeasTypeList","Calling setLongddecdeg(" + d + ") " +
+		    //    StringUtil.formatString(d,"%.6f"));
 			data.setLongdecdeg(d);
 		}
 		s = rs.getString(index++);

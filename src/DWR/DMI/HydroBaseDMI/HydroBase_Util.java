@@ -2731,10 +2731,10 @@ throws Exception
 			HydroBase_GroundWaterWellsView view;
 			String data_units = HydroBase_Util.getTimeSeriesDataUnits ( hbdmi, data_type, time_step );
 
-			List v = tslist;
+			List<HydroBase_GroundWaterWellsView> v = tslist;
 			tslist = new Vector();			
 			for ( int i = 0; i < size; i++ ) {
-				view = (HydroBase_GroundWaterWellsView)v.get(i);
+				view = v.get(i);
 				// Set to the value used in TSTool...
 			    view.setMeas_type( data_type);
 				view.setTime_step(time_step);
