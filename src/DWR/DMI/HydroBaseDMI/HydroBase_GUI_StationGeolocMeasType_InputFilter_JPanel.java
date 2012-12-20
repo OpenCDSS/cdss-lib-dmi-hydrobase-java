@@ -42,14 +42,14 @@ public HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel ( HydroBaseDataSto
 throws Exception
 {	__dataStore = dataStore;
     HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
-    List division_Vector = new Vector ( 7 );
-	List division_internal_Vector = new Vector ( 7 );
-	List district_data_Vector = hbdmi.getWaterDistricts();
-	List district_Vector = new Vector ( district_data_Vector.size() );
-	List district_internal_Vector=new Vector(district_data_Vector.size());
-	List county_data_Vector = hbdmi.getCountyRef();
-	List county_Vector = new Vector ( county_data_Vector.size() );
-	List county_internal_Vector = new Vector ( county_data_Vector.size());
+    List<String> division_Vector = new Vector ( 7 );
+	List<String> division_internal_Vector = new Vector<String> ( 7 );
+	List<HydroBase_WaterDistrict> district_data_Vector = hbdmi.getWaterDistricts();
+	List<String> district_Vector = new Vector<String> ( district_data_Vector.size() );
+	List<String> district_internal_Vector = new Vector<String>(district_data_Vector.size());
+	List<HydroBase_CountyRef> county_data_Vector = hbdmi.getCountyRef();
+	List<String> county_Vector = new Vector<String> ( county_data_Vector.size() );
+	List<String> county_internal_Vector = new Vector<String> ( county_data_Vector.size());
 	// TODO - hard-code for now since no HydroBaseDMI global data.
 	division_Vector.add ( "1 - South Platte" );
 	division_Vector.add ( "2 - Arkansas" );
