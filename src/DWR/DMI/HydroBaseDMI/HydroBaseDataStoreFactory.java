@@ -27,7 +27,7 @@ public DataStore create ( PropList props )
     String systemPassword = props.getValue ( "SystemPassword" );
     try {
         int port = -1; // Default
-        boolean useStoredProcedures = true;
+        boolean useStoredProcedures = true; // Always the case with newer HydroBase
         HydroBaseDMI dmi = new HydroBaseDMI ( databaseEngine, databaseServer, databaseName,
         port, // Don't use the port number - use the database instance instead
         systemLogin, // OK if null - use read-only guest

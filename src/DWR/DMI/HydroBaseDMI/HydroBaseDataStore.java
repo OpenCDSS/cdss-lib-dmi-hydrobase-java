@@ -71,7 +71,7 @@ throws IOException, Exception
     
     // Get the properties and create an instance
     int port = -1; // Determine port from instance name
-    boolean useStoredProcedures = true;
+    boolean useStoredProcedures = true; // Always the case with newer database
     HydroBaseDMI dmi = new HydroBaseDMI ( databaseEngine, databaseServer,
         databaseName, port, systemLogin, systemPassword, useStoredProcedures );
     dmi.open();
