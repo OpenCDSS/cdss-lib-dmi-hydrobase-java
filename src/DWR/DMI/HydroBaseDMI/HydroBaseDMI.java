@@ -1208,6 +1208,9 @@ private final int __S_GEOLOC_FOR_HUC = 921;
 // geophlogs
 private final int __S_GEOPHLOGS = 1000;
 
+// GroundwaterWellsGroundWaterWellsMeasType
+private final int __S_GW_WELLS_GW_WELLS_MT_DATA_SOURCE_DISTINCT = 1050;
+
 // loc_type
 private final int __S_LOC_TYPE = 1160;
 
@@ -2996,6 +2999,13 @@ throws Exception {
 			select.addField("geoloc.user_num");
 			select.addTable("geoloc");
 			break;
+		case __S_GW_WELLS_GW_WELLS_MT_DATA_SOURCE_DISTINCT:
+		    select = (DMISelectStatement)statement;
+		    select.addField("vw_CDSS_GroundwaterWellsGroundwaterWellsMeasType.data_source");
+		    select.addTable("vw_CDSS_GroundwaterWellsGroundwaterWellsMeasType");
+		    select.addOrderByClause("vw_CDSS_GroundwaterWellsGroundwaterWellsMeasType.data_source");
+		    select.selectDistinct(true);
+		    break;
 		case __S_LOC_TYPE:
 			select = (DMISelectStatement)statement;
 			select.addField("loc_type.loc_type");
@@ -6802,15 +6812,14 @@ Returns the global CountyRef data.
 This is used by StateDMI.
 @return the global CountyRef data.
 */
-public List getCountyRef() {	
+public List<HydroBase_CountyRef> getCountyRef() {	
 	String routine = "getCountyRef";
 	if (__CountyRef_Vector == null) {
 		try {
 			__CountyRef_Vector = readCountyRefList();
 		}
 		catch ( Exception e) {
-			Message.printWarning ( 2, routine,
-			"Unable to read County_Ref data.");
+			Message.printWarning ( 2, routine, "Unable to read County_Ref data.");
 			Message.printWarning ( 2, routine, e);
 		}
 		if (__CountyRef_Vector == null) {
@@ -7512,7 +7521,7 @@ public List getWaterDistrictsFromStructures() {
 Return the global list of water division objects, sorted by water division number.
 @return the global list of water division objects.
 */
-public List getWaterDivisions() {
+public List<HydroBase_WaterDivision> getWaterDivisions() {
 	String routine = "getWaterDivisions";
 	if (__WaterDivisions_Vector == null) {
 		try {
@@ -11707,6 +11716,34 @@ throws Exception {
 	List<HydroBase_GroundWaterWellsView> v = toGroundWaterWellMeasTypeList(rs);
 	closeResultSet(rs, __lastStatement);
 	return v;
+}
+
+/**
+Read the distinct data sources for HydroBase_GroundwaterWellsGroundwaterWellsMeasType.
+<p>
+The vw_CDSS_GroundwaterWellsGroundwterWellsMeasType 
+@return a list of distinct data source strings.
+@throws Exception if an error occurs.
+*/
+public List<String> readGroundWaterWellsMeasTypeListDistinctDataSource()
+throws Exception {
+    DMISelectStatement q = new DMISelectStatement(this);
+    buildSQL(q, __S_GW_WELLS_GW_WELLS_MT_DATA_SOURCE_DISTINCT);
+    String view = "vw_CDSS_GroundwaterWellsGroundwaterWellsMeasType";  
+    q.addOrderByClause(view + ".data_source");
+    ResultSet rs = dmiSelect(q);
+    List<String> v = new Vector<String>();
+    int index = 1;
+    String s;
+    while (rs.next()) {
+        index = 1;
+        s = rs.getString(index++);
+        if (!rs.wasNull() && !s.equals("") ) {
+            v.add(s);
+        }
+    }
+    closeResultSet(rs);
+    return v;
 }
 
 /**
