@@ -24,6 +24,7 @@ import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
+import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
 
@@ -45,7 +46,8 @@ Constructor.
 entry text field is clicked in.  Cannot be null.
 */
 public HydroBase_GUI_GroundWater_InputFilter_JPanel( HydroBaseDataStore dataStore, MouseListener listener, boolean tstool)
-{   __dataStore = dataStore;
+{   String routine = getClass().getName();
+    __dataStore = dataStore;
     HydroBaseDMI dmi = (HydroBaseDMI)dataStore.getDMI();
 	InputFilter filter = null;
 
@@ -55,22 +57,22 @@ public HydroBase_GUI_GroundWater_InputFilter_JPanel( HydroBaseDataStore dataStor
 
 	// Fill in the water district data for input filters...
 
-	List district_data_Vector = dmi.getWaterDistricts();
-	List district_Vector = new Vector ( district_data_Vector.size() );
-	List district_internal_Vector=new Vector(district_data_Vector.size());
+	List<HydroBase_WaterDistrict> district_data_Vector = dmi.getWaterDistricts();
+	List<String> district_Vector = new Vector<String> ( district_data_Vector.size() );
+	List<String> district_internal_Vector = new Vector<String>(district_data_Vector.size());
 	HydroBase_WaterDistrict wd;
 	int size = district_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		wd = (HydroBase_WaterDistrict)district_data_Vector.get(i);
+		wd = district_data_Vector.get(i);
 		district_Vector.add (wd.getWD() + " - "+wd.getWd_name());
 		district_internal_Vector.add ("" + wd.getWD() );
 	}
 
 	// Fill in the division data for input filters...
 
-	List division_data_Vector = dmi.getWaterDivisions();
-	List division_Vector = new Vector ( 7 );
-	List division_internal_Vector = new Vector ( 7 );
+	List<HydroBase_WaterDivision> division_data_Vector = dmi.getWaterDivisions();
+	List<String> division_Vector = new Vector<String> ( 7 );
+	List<String> division_internal_Vector = new Vector<String> ( 7 );
 	HydroBase_WaterDivision div;
 	size = division_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
@@ -84,6 +86,35 @@ public HydroBase_GUI_GroundWater_InputFilter_JPanel( HydroBaseDataStore dataStor
 			"", "basin", StringUtil.TYPE_STRING,
 			null, null, false));
 	}
+
+    List<HydroBase_CountyRef> county_data_Vector = dmi.getCountyRef();
+    List<String> county_Vector = new Vector<String> ( county_data_Vector.size() );
+    List<String> county_internal_Vector = new Vector<String> ( county_data_Vector.size());
+    for ( HydroBase_CountyRef county: county_data_Vector ) {
+        county_Vector.add ( county.getCounty() + ", " + county.getST() );
+        county_internal_Vector.add (county.getCounty() );
+    }
+    filter = new InputFilter (
+        "County Name", "county", "county",
+        StringUtil.TYPE_STRING,
+        county_Vector, county_internal_Vector, true );
+    filter.setTokenInfo(",",0);
+    filters.add ( filter );
+	
+    if (tstool) {
+        List<String> dsList = new Vector();
+        try {
+            dsList = dmi.readGroundWaterWellsMeasTypeListDistinctDataSource();
+            filter = new InputFilter (
+                "Data Source", "data_source", "data_source",
+                StringUtil.TYPE_STRING,
+                dsList, dsList, true );
+                filters.add ( filter );
+        }
+        catch ( Exception e ) {
+            Message.printWarning(2,routine,e);
+        }
+    }
 
 	if (tstool) {
 		filter = new InputFilter (
