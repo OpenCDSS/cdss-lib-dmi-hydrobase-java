@@ -2873,8 +2873,10 @@ Set time series properties from an HydroBase_StructureStructMeasType instance.  
 retrieved after the initial query.
 @param ts time series to update
 @param str_mt_v structure data to use for time series properties
+@param sfutg2 SFUTG2 diversion coding, used to set SFUTG2 parts as individual properties to facilitate processing
 */
-public static void setTimeSeriesProperties ( TS ts, HydroBase_StructMeasTypeView str_mt_v )
+public static void setTimeSeriesProperties ( TS ts, HydroBase_StructMeasTypeView str_mt_v,
+    HydroBase_SFUTG2 sfutg2 )
 {   // Use the same names as the database view columns, same order as view
     ts.setProperty("div", DMIUtil.isMissing(str_mt_v.getDiv())? null : new Integer(str_mt_v.getDiv()));
     ts.setProperty("wd", DMIUtil.isMissing(str_mt_v.getWD())? null : new Integer(str_mt_v.getWD()));
@@ -2915,6 +2917,14 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StructMeasTypeView
     ts.setProperty("start_year", DMIUtil.isMissing(str_mt_v.getStart_year())? null : new Integer(str_mt_v.getStart_year()));
     ts.setProperty("end_year", DMIUtil.isMissing(str_mt_v.getEnd_year())? null : new Integer(str_mt_v.getEnd_year()));
     ts.setProperty("identifier", str_mt_v.getIdentifier());
+    if ( sfutg2 != null ) {
+        ts.setProperty("identifier_S", sfutg2.getSource());
+        ts.setProperty("identifier_F", sfutg2.getFrom());
+        ts.setProperty("identifier_U", sfutg2.getUse());
+        ts.setProperty("identifier_T", sfutg2.getType());
+        ts.setProperty("identifier_G", sfutg2.getGroup());
+        ts.setProperty("identifier_2", sfutg2.getTo());
+    }
     ts.setProperty("transmit", str_mt_v.getTransmit());     
     ts.setProperty("meas_count", DMIUtil.isMissing(str_mt_v.getMeas_count())? null : new Integer(str_mt_v.getMeas_count()));
     ts.setProperty("data_source", str_mt_v.getData_source());

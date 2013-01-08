@@ -16132,6 +16132,13 @@ throws Exception, NoDataFoundException
 		String identifier = sub_data_type;
 		String identifier_adjusted = HydroBase_Util.adjustSFUTForHydroBaseVersion(
 				this,wdid_parts[0],wdid_parts[1],identifier);
+	    HydroBase_SFUTG2 sfutg2 = null;
+	    try {
+	        sfutg2 = new HydroBase_SFUTG2 ( sub_data_type );
+	    }
+	    catch ( Exception e ) {
+	        sfutg2 = null;
+	    }
 		// Next get the struct_meas_type for the structure...
 		List mts = readStructMeasTypeListForStructure_num
 			(strView.getStructure_num(), meas_type, identifier_adjusted,time_step, data_source);
@@ -16151,7 +16158,7 @@ throws Exception, NoDataFoundException
 		ts.setIdentifier(tsident_string);
 		ts.setDescription(strView.getStr_name());
 		if ( setPropertiesFromMetadata ) {
-		    HydroBase_Util.setTimeSeriesProperties ( ts, str_mt_v );
+		    HydroBase_Util.setTimeSeriesProperties ( ts, str_mt_v, sfutg2 );
 		}
 	}
 	// Added this because WellLevel as a MeasType was not being recognized
