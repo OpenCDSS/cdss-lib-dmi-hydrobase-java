@@ -11938,15 +11938,14 @@ be used.
 @param vax_field the vax_field to query for.  If null, will not be used.
 @param time_step the time_step to query for.  If null, will not be used.
 @param data_source the data_source to query for.  If null, will not be used.
-@return a Vector of HydroBase_MeasTypes.
+@return a list of HydroBase_MeasTypes.
 @throws Exception if there are any errors.
 */
 public List readMeasTypeList(int station_num, String meas_type, 
 String vax_field, String time_step, String data_source)
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			
 		String[] triplet = null;
 		if (!DMIUtil.isMissing(station_num)) {
@@ -11989,8 +11988,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_StationMeasType"), 70, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_StationMeasType"), 70, null);
 		ResultSet rs = runSPFlex(parameters);
 		List v = toStationMeasTypeSPList(rs, false);
 		closeResultSet(rs, __lastStatement);
