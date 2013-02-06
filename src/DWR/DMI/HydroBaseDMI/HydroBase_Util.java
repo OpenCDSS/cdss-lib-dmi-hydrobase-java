@@ -3037,6 +3037,8 @@ retrieved after the initial query.
 */
 public static void setTimeSeriesProperties ( TS ts, HydroBase_GroundWaterWellsView well )
 {   // Use the same names as the database view columns, same order as view
+    // tsid_loc is not in the original data but is a derived value based on other data
+    ts.setProperty("tsid_loc", DMIUtil.isMissing(ts.getIdentifier().getLocation())? null : ts.getIdentifier().getLocation());
     ts.setProperty("well_num", DMIUtil.isMissing(well.getWell_num())? null : new Integer(well.getWell_num()));
     ts.setProperty("well_name", well.getWell_name());
     ts.setProperty("div", DMIUtil.isMissing(well.getDiv())? null : new Integer(well.getDiv()));
