@@ -3038,7 +3038,18 @@ retrieved after the initial query.
 public static void setTimeSeriesProperties ( TS ts, HydroBase_GroundWaterWellsView well )
 {   // Use the same names as the database view columns, same order as view
     // tsid_loc is not in the original data but is a derived value based on other data
-    ts.setProperty("tsid_loc", DMIUtil.isMissing(ts.getIdentifier().getLocation())? null : ts.getIdentifier().getLocation());
+    String tsloc = ts.getIdentifier().getLocation();
+    ts.setProperty("tsid_loc", DMIUtil.isMissing(tsloc)? null : tsloc);
+    if ( tsloc.toUpperCase().startsWith("LL:") ) {
+        // TODO SAM 2013-02-10 This is needed because of bad well data in HydroBase, which triggers an
+        // artificial identifier starting with LL: followed by latitude and longitude
+        // The tsid_loc_file property without the colon is useful for filenames since the colon will be
+        // problematic on Windows systems
+        ts.setProperty("tsid_loc_file", DMIUtil.isMissing(tsloc)? null : tsloc.replace(":", "") );
+    }
+    else {
+        ts.setProperty("tsid_loc_file", DMIUtil.isMissing(tsloc)? null : tsloc );
+    }
     ts.setProperty("well_num", DMIUtil.isMissing(well.getWell_num())? null : new Integer(well.getWell_num()));
     ts.setProperty("well_name", well.getWell_name());
     ts.setProperty("div", DMIUtil.isMissing(well.getDiv())? null : new Integer(well.getDiv()));
