@@ -16918,7 +16918,10 @@ throws Exception, NoDataFoundException
 		else {
 		    // Possible for well to be null given missing/duplicate identifier
 		    if ( well != null ) {
-		        Message.printStatus ( 2, routine, "Reading well level data using well meas_num " + well.getWell_meas_num() );
+		        if ( Message.isDebugOn ) {
+		            Message.printDebug ( 1, routine, "Reading well level data using well meas_num " +
+		                well.getWell_meas_num() );
+		        }
 		    }
 		    ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits ( this, data_type, interval ));
 			ts.setDataUnitsOriginal ( ts.getDataUnits());
