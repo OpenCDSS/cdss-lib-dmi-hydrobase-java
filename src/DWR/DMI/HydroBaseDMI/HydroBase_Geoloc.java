@@ -1,28 +1,3 @@
-//------------------------------------------------------------------------------
-// HydroBase_Geoloc - data structure to hold data from the HydroBase 
-//	geoloc table
-//------------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//------------------------------------------------------------------------------
-// Notes:	(1)	This class has no knowledge of the database itself
-//			(aside from its own data members), and there is no
-//			knowledge of the connection with the database.
-//		(2)	This class only holds information from the geoloc
-//			table.
-//------------------------------------------------------------------------------
-// History:
-// 
-// 2002-11-08	Steven A. Malers, RTi	Initial version - only store HUC.
-// 2003-01-05	SAM, RTi		Update based on changes to the DMI
-//					package.
-// 2003-02-07	J. Thomas Sapienza, RTi	Began adding all the rest of the fields,
-//					get and set methods.
-// 2003-02-10	JTS, RTi		Completed the above.
-// 2003-02-19	JTS, RTi		Added methods to support different 
-//					database version.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//------------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIDataObject;
@@ -32,8 +7,7 @@ import java.util.Date;
 
 /**
 This class provides storage for data from the HydroBase geoloc table and 
-serves as a base class for joined objects that need geographic information,
-such as:
+serves as a base class for joined objects that need geographic information, such as:
 HydroBase_StationGeoloc
 HydroBase_StructureGeoloc
 Hydrobase_WellApplicationGeoloc

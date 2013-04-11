@@ -165,14 +165,14 @@ MouseListener listener) {
 		structureTableName + "str_name" + rd, "str_name", 
 		StringUtil.TYPE_STRING, null, null, false));
 	
-	List structureTypes = dmi.getStrTypesVector();
-	HydroBase_StrType type = null;
+	List structureTypes = dmi.getDssStructureTypeList();
+	HydroBase_DssStructureType type = null;
 	size = structureTypes.size();
 	v1 = new Vector();
 	v2 = new Vector();
 
 	for (int i = 0; i < size; i++) {
-		type = (HydroBase_StrType)structureTypes.get(i);
+		type = (HydroBase_DssStructureType)structureTypes.get(i);
 		if (DMIUtil.isMissing(type.getRpt_code())) {
 			v1.add(type.getStr_type_desc());
 			v2.add(type.getStr_type());
@@ -331,14 +331,14 @@ MouseListener listener) {
 		structureTableName + "str_name" + rd, "str_name", 
 		StringUtil.TYPE_STRING, null, null, false));
 	
-	List structureTypes = dmi.getStrTypesVector();
-	HydroBase_StrType type = null;
+	List structureTypes = dmi.getDssStructureTypeList();
+	HydroBase_DssStructureType type = null;
 	size = structureTypes.size();
 	v1 = new Vector();
 	v2 = new Vector();
 
 	for (int i = 0; i < size; i++) {
-		type = (HydroBase_StrType)structureTypes.get(i);
+		type = (HydroBase_DssStructureType)structureTypes.get(i);
 		if (DMIUtil.isMissing(type.getRpt_code())) {
 			v1.add(type.getStr_type_desc());
 			v2.add(type.getStr_type());

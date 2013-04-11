@@ -172,12 +172,12 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 		tableName + "id" + rd, "id", StringUtil.TYPE_INTEGER,
 		null, null, false));
 
-	List strTypes = dmi.getStrTypesVector();
-	HydroBase_StrType strType = null;
+	List strTypes = dmi.getDssStructureTypeList();
+	HydroBase_DssStructureType strType = null;
 	v1 = new Vector();
 	v2 = new Vector();
 	for (int i = 0; i < strTypes.size(); i++) {
-		strType = (HydroBase_StrType)strTypes.get(i);
+		strType = (HydroBase_DssStructureType)strTypes.get(i);
 		v1.add(strType.getStr_type() + " - " + strType.getStr_type_desc());
 		v2.add(strType.getStr_type());
 	}

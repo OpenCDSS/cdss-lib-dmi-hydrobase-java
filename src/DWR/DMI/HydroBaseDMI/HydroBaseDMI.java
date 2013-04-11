@@ -906,8 +906,9 @@ HydroBase release dates.  The value of each integer is the design version, follo
 These values must be handled in determineDatabaseVersion() and isVersionAtLeast().
 */
 
+public final static long VERSION_20130404 = 2013040420130404L;
 public final static long VERSION_20070525 = 2007052520070525L;
-public final static long VERSION_LATEST = VERSION_20070525;
+public final static long VERSION_LATEST = VERSION_20130404;
 
 public final static long VERSION_20070502 = 2007050220070502L;
 
@@ -1016,6 +1017,8 @@ public final static long VERSION_UNKNOWN  = 0L;
 /**
 Values to optimize database version checks.
 */
+private boolean __isVersion20130404Checked = false;
+private boolean __isVersionAtLeast20130404 = false;
 private boolean __isVersion20070525Checked = false;
 private boolean __isVersionAtLeast20070525 = false;
 private boolean __isVersion20070502Checked = false;
@@ -1306,7 +1309,8 @@ private final int __S_STATION_MEAS_TYPE_VIEW = 1648;
 private final int __S_STATION_MEAS_TYPE_DISTINCT_VIEW = 1649;
 
 // str_type
-private final int __S_STR_TYPE = 1670;
+private final int __S_DSS_STR_TYPE = 1670;
+private final int __S_ADMIN_STR_TYPE = 1671;
 
 // stream
 private final int __S_STREAM_FOR_WD = 1680;
@@ -1463,7 +1467,6 @@ private final int __D_WIS_SHEET_NAME = 1571;
 private final int __D_WIS_DATA_1 = 2100;
 private final int __D_WIS_DATA_2 = 2101;
 
-
 /**
 Used to denote that a user has all permissions.
 */
@@ -1536,6 +1539,11 @@ Vector of TSProductAnnotationProviders.
 private List __providers = new Vector();
 
 /**
+Admin structure types from the usp_CDSS_refStrType_Sel procedure.
+*/
+private List<HydroBase_AdminStructureType> __adminStructureTypeList = null;
+
+/**
 Distinct Aquifers from the refAquifer table.
 */
 private List __AquiferRef_Vector = null;
@@ -1561,6 +1569,11 @@ Crops from the refCrop table.
 private List __CropRef_Vector = null;
 
 /**
+DSS structure types from the usp_CDSS_refStructureType_Sel procedure.
+*/
+private List<HydroBase_DssStructureType> __dssStructureTypeList = null;
+
+/**
 HUC from Geoloc.HUC
 */
 private List __HUC_Vector = null;
@@ -1584,11 +1597,6 @@ private List<HydroBase_CUPenmanMonteith> __PenmanMonteithCUMethod_Vector = null;
 CIUs from the refCIU table.
 */
 private List __RefCIU_Vector = null;
-
-/**
-Structure types from the refStrType table.
-*/
-private List __StrTypes_Vector = null;
 
 /**
 Distinct StructMeasTypes.
@@ -3874,7 +3882,7 @@ throws Exception {
 			select.addInnerJoin("meas_type", "meas_type.station_num = station.station_num");
 			select.addInnerJoin("geoloc", "geoloc.geoloc_num = station.geoloc_num");
 			break;			
-		case __S_STR_TYPE:
+		case __S_DSS_STR_TYPE:
 			select = (DMISelectStatement)statement;
 			if (version > VERSION_20040701) {
 				select.addField("ref_Structure_Type.str_type");
@@ -4155,6 +4163,9 @@ throws Exception {
 			select.addField("Structure.wd");
 			select.addField("Structure.wdwater_num");
 			select.addField("structure.xtia");
+			if (version >= VERSION_20130404) {
+                select.addField("Structure.wdid");
+            }
 			select.addTable("Structure");
 			break;
 		case __S_STRUCTURE_GEOLOC:
@@ -5758,9 +5769,12 @@ throws Exception {
 		case __S_STREAM_FOR_WD_STR_TRIB_TO:
 			name = "usp_CDSS_Stream_Sel_By_WD_Str_trib_to";
 			break;
-		case __S_STR_TYPE:
+		case __S_DSS_STR_TYPE:
 			name = "usp_CDSS_refStructureType_Sel";
 			break;
+	    case __S_ADMIN_STR_TYPE:
+	            name = "usp_CDSS_refStrType_Sel";
+	            break;
 		case __S_STRUCT_MEAS_TYPE_DISTINCT_2:
 			name = "usp_CDSS_StructMeasType_Sel_Distinct";
 			break;
@@ -6532,8 +6546,12 @@ public void determineDatabaseVersion() {
 	boolean version_found = false;
 	long version = VERSION_UNKNOWN;
 	try {
+	    // VERSION_20130404
+        if (isVersionAtLeast(VERSION_20130404)) {
+            version = VERSION_20130404;
+        }
 		// VERSION_20070525
-		if (isVersionAtLeast(VERSION_20070525)) {
+        else if (isVersionAtLeast(VERSION_20070525)) {
 			version = VERSION_20070525;
 		}
 		// VERSION_20070502
@@ -6609,15 +6627,14 @@ public void determineDatabaseVersion() {
 		Message.printWarning (2, routine, e);
 	}
 	// Default case -- latest version
+	// TODO SAM 2013-04-08 Why isn't this the latest version?
 	if (!version_found) {
 		setDatabaseVersion ( VERSION_20010326);
 	}
 
 	setDatabaseVersion (version);
 
-	Message.printStatus (2, routine,
-		"HydroBase version determined to be at least " 
-		+ getDatabaseVersion());
+	Message.printStatus (2, routine, "HydroBase version determined to be at least " + getDatabaseVersion());
 }
 
 /**
@@ -6718,7 +6735,7 @@ throws Throwable {
 	__MeasType_Vector = null;
 	__PenmanMonteithCUMethod_Vector = null;
 	__RefCIU_Vector = null;
-	__StrTypes_Vector = null;
+	__dssStructureTypeList = null;
 	__StructMeasType_Vector = null;
 	__UseTypes_Vector = null;
 	__WaterDistricts_Vector = null;
@@ -6730,6 +6747,28 @@ throws Throwable {
 }
 
 // G METHODS
+
+/**
+Returns the list of admin structure types stored in global data.
+@return the list of admin structure types stored in global data.
+*/
+public List<HydroBase_AdminStructureType> getAdminStructureTypeList() {
+    String routine = "getAdminStructureTypeList";
+    if (__adminStructureTypeList == null) {
+        try {
+            __adminStructureTypeList = readAdminStructureTypeList();
+        }
+        catch (Exception e) {
+            Message.printWarning ( 2, routine, "Unable to read admin structure type data.");
+            Message.printWarning ( 2, routine, e);
+        }
+        if (__adminStructureTypeList == null) {
+            __adminStructureTypeList = new Vector<HydroBase_AdminStructureType>();
+        }
+    }
+    
+    return __adminStructureTypeList;
+}
 
 /**
 Returns this DMI's annotation providers.
@@ -6893,29 +6932,26 @@ information about the connection.
 <li>database revision history</li>
 </ul>
 */
-public List getDatabaseProperties () {
-	List v = new Vector();
+public List<String> getDatabaseProperties () {
+	List<String> v = new Vector<String>();
 	v.add("HydroBase Database Host: " + getDatabaseServer());
 	if (getODBCName() != null) {
-		v.add("ODBC Data Source Name:  " +
-		getODBCName());	
+		v.add("ODBC Data Source Name:  " + getODBCName());	
 	}
 	else {
-		v.add (
-		"ODBC Data Source Name:  HydroBase (internally defined)");
+		v.add ("ODBC Data Source Name:  HydroBase (internally defined)");
 	}
-	v.add("Database design version appears to be: " +
-		getDatabaseVersion());
+	v.add("Database design version appears to be: " + getDatabaseVersion() );
 	if (__useSP) {
 		v.add("Database does use stored procedures.");
 	}
-	else {	v.add("Database does not use stored procedures.");
+	else {
+	    v.add("Database does not use stored procedures.");
 	}
 	v.add("");
 
 	if (__providers.size() == 0) {
-		v.add("No time series product annotation " +
-		"provider choices available.");
+		v.add("No time series product annotation provider choices available.");
 	}
 	else {
 		v.add("Time series product annotation provider choices:");
@@ -6925,19 +6961,12 @@ public List getDatabaseProperties () {
 	}
 
 	v.add("");
-	v.add("The database used by " + IOUtil.getProgramName() +
-		" appears to include the following water");
-	v.add("districts, based on the structure information in the" +
-		" database");
+	v.add("The database used by " + IOUtil.getProgramName() + " appears to include the following water");
+	v.add("districts, based on the structure information in the database");
 	v.add ("(transbasin structures are not reflected in the list):");
 	v.add("");
 	
-	HydroBase_WaterDistrict hbwd;
-	List waterDistricts = getWaterDistricts();
-	int size = waterDistricts.size();
-	for (int i = 0; i < size; i++) {
-		hbwd = (HydroBase_WaterDistrict)waterDistricts
-			.get(i);
+	for (HydroBase_WaterDistrict hbwd : getWaterDistricts() ) {
 		v.add("   " + hbwd.getWD() + " - " + hbwd.getWd_name());
 	}
 
@@ -6946,7 +6975,7 @@ public List getDatabaseProperties () {
 	v.add("");
 	try {
 		List v2 = readDBVersionListForVersionType ( null);
-		size = 0;
+		int size = 0;
 		if (v2 != null) {
 			size = v2.size();
 		}
@@ -6956,8 +6985,7 @@ public List getDatabaseProperties () {
 			ver = (HydroBase_DBVersion)v2.get(i);
 			dt = new DateTime ( ver.getVersion_date());
 			v.add("" +
-				dt.toString(DateTime.FORMAT_YYYY_MM_DD) + " " +
-				ver.getVersion_comment());
+				dt.toString(DateTime.FORMAT_YYYY_MM_DD) + " " + ver.getVersion_comment());
 		}
 	}
 	catch ( Exception e) {
@@ -6975,6 +7003,28 @@ titles.  In this case, returns "HydroBase".  Method is from TSProductDMI.
 */
 public String getDMIName() {
 	return "HydroBase";
+}
+
+/**
+Returns the list of DSS structure types stored in global data.
+@return the list of DSS structure types stored in global data.
+*/
+public List<HydroBase_DssStructureType> getDssStructureTypeList() {
+    String routine = "getDssStructureTypeList";
+    if (__dssStructureTypeList == null) {
+        try {
+            __dssStructureTypeList = readDssStructureTypeList();
+        }
+        catch (Exception e) {
+            Message.printWarning ( 2, routine, "Unable to read DSS structure type data.");
+            Message.printWarning ( 2, routine, e);
+        }
+        if (__dssStructureTypeList == null) {
+            __dssStructureTypeList = new Vector<HydroBase_DssStructureType>();
+        }
+    }
+    
+    return __dssStructureTypeList;
 }
 
 /**
@@ -7180,28 +7230,6 @@ public static int getSPFlexMaxParameters()
 }
 
 /**
-Returns the Vector of structure types stored in global data.
-@return the Vector of structure types stored in global data.
-*/
-public List getStrTypesVector() {
-	String routine = "getStrTypesVector";
-	if (__StrTypes_Vector == null) {
-		try {
-			__StrTypes_Vector = readStrTypeList();
-		}
-		catch (Exception e) {
-			Message.printWarning ( 2, routine, "Unable to read StrTypes data.");
-			Message.printWarning ( 2, routine, e);
-		}
-		if (__StrTypes_Vector == null) {
-			__StrTypes_Vector = new Vector();
-		}
-	}
-	
-	return __StrTypes_Vector;
-}
-
-/**
 Returns the global distinct StructMeasType data.
 @return the global distinct StructMeasType data.
 */
@@ -7230,12 +7258,12 @@ abbreviation.  Data is read from internal Vectors that are populated when a user
 @return The structure type description given a structure type (abbreviation) or " " if none matched.
 */
 public String getStructureTypeDescription (String structureType) {
-	HydroBase_StrType strType;
-	List strTypes = getStrTypesVector();
+	HydroBase_DssStructureType strType;
+	List strTypes = getDssStructureTypeList();
 	int size = strTypes.size();
 
 	for (int i = 0; i < size; i++) {
-		strType = (HydroBase_StrType)(strTypes.get(i));
+		strType = (HydroBase_DssStructureType)(strTypes.get(i));
 		if (strType.getStr_type().equals(structureType)) {
 			return  strType.getStr_type_desc();
 		}
@@ -7606,7 +7634,14 @@ throws Exception
 		Message.printDebug(5, routine, "Checking to see if database version is at least " + versionRequested);
 	}
 
-	if ( versionRequested == VERSION_20070525 ) {
+    if ( versionRequested == VERSION_20130404 ) {
+        if ( !__isVersion20130404Checked ) {
+            __isVersionAtLeast20130404 = isVersion20130404();
+            __isVersion20130404Checked = true;
+        }
+        return __isVersionAtLeast20130404;
+    }
+    else if ( versionRequested == VERSION_20070525 ) {
 	    if ( !__isVersion20070525Checked ) {
 	        __isVersionAtLeast20070525 = isVersion20070525();
 	        __isVersion20070525Checked = true;
@@ -8079,6 +8114,44 @@ throws Exception {
 }
 
 /**
+Check the database version to see if it matches the 2001-03-26 database.
+The 2001-03-26 database includes the following change:
+<ul>
+<li>    geoloc.elev is present (used to be geoloc.elevation in RTi version)
+</ul>
+The database version is verified if the following is true:
+<p>
+<ul>
+<li>    "geoloc.elev" field exists.</li>
+</ul>
+@return true if the version matches the 2001-03-26 version.
+*/
+public boolean isVersion20010326 ()
+throws Exception {
+    String routine = "HydroBaseDMI.isVersion20010326";
+    int dl = 5;
+    
+    if (Message.isDebugOn) {
+        Message.printDebug(dl, routine, "Checking for well_to_structure table.");
+    }
+    
+    if (!DMIUtil.databaseTableHasColumn(this, "geoloc", "elev")) {
+        if (Message.isDebugOn) {
+            Message.printDebug(dl, routine, "geoloc.elev field not found: not 20010326 version");
+        }
+        return false;
+    }
+
+    // Satisfied all the criteria...
+
+    if (Message.isDebugOn) {
+        Message.printDebug(dl, routine, "Database is at least 20010326 version");
+    }
+    
+    return true;
+}
+
+/**
 Check the database version to see if it matches the 2003-07-01 database.
 The 2003-07-01 database includes the following change:
 <ul>
@@ -8108,44 +8181,6 @@ throws Exception {
 		Message.printDebug(dl, routine, "Database is at least 20030701 version");
 	}
 
-	return true;
-}
-
-/**
-Check the database version to see if it matches the 2001-03-26 database.
-The 2001-03-26 database includes the following change:
-<ul>
-<li>	geoloc.elev is present (used to be geoloc.elevation in RTi version)
-</ul>
-The database version is verified if the following is true:
-<p>
-<ul>
-<li>	"geoloc.elev" field exists.</li>
-</ul>
-@return true if the version matches the 2001-03-26 version.
-*/
-public boolean isVersion20010326 ()
-throws Exception {
-	String routine = "HydroBaseDMI.isVersion20010326";
-	int dl = 5;
-	
-	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine, "Checking for well_to_structure table.");
-	}
-	
-	if (!DMIUtil.databaseTableHasColumn(this, "geoloc", "elev")) {
-		if (Message.isDebugOn) {
-			Message.printDebug(dl, routine, "geoloc.elev field not found: not 20010326 version");
-		}
-		return false;
-	}
-
-	// Satisfied all the criteria...
-
-	if (Message.isDebugOn) {
-		Message.printDebug(dl, routine, "Database is at least 20010326 version");
-	}
-	
 	return true;
 }
 
@@ -8420,6 +8455,27 @@ throws Exception {
 	}
 
 	return true;
+}
+
+/**
+Check the database version to see if it matches the 2013-04-04 database, which includes the following changes:<p>
+<ul>
+<li>The view vw_CDSS_Structure includes the wdid column at the end.</li>
+</ul><p>
+@return true if the version matches the 2013-04-04 version.
+*/
+private boolean isVersion20130404 ()
+throws Exception {
+    String routine = "HydroBaseDMI.isVersion20130404";
+    if (!DMIUtil.databaseTableHasColumn(this, "vw_CDSS_Structure", "wdid")) {
+        if (Message.isDebugOn) {
+            //Message.printDebug(30, routine, "vw_CDSS_Structure does not have wdid: not 20130404 version");
+            Message.printStatus(2, routine, "vw_CDSS_Structure does not have wdid: not 20130404 version");
+        }
+        return false;
+    }
+
+    return true;
 }
 
 // TODO FIXME SAM 2012-09-10 This is used in commented-out code that needs to be evaluated
@@ -8797,6 +8853,39 @@ public boolean provides(String name) {
 
 // Q METHODS
 // R METHODS
+
+/**
+Read the strtype table for all data, which indicate admin structure types.
+<p><b>Stored Procedure</b><p>
+The stored procedure that corresponds to this query is:<ul>
+<li>usp_CDSS_refStrType_Sel</li>
+</ul>
+@return a list of HydroBase_AdminStructureType objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_AdminStructureType> readAdminStructureTypeList() 
+throws Exception {
+    DMISelectStatement q = new DMISelectStatement(this);
+    buildSQL(q, __S_ADMIN_STR_TYPE);
+    /* TODO SAM 2013-04-09 Evaluate whether similar needed here
+    if ( !__useSP) {
+        if (getDatabaseVersion() > VERSION_20040701) {
+            q.addOrderByClause("ref_Structure_Type.str_type");
+        }
+        else {
+            q.addOrderByClause("str_type.str_type");
+        }
+    }*/
+    ResultSet rs = dmiSelect(q);
+    List<HydroBase_AdminStructureType> v = toAdminStructureTypeList(rs);
+    if (__useSP) {
+        closeResultSet(rs, q);
+    }
+    else {
+        closeResultSet(rs);
+    }
+    return v;
+}
 
 /**
 Read the HydroBase agricultural_CASS_crop_stats table.<p>
@@ -11031,6 +11120,45 @@ throws Exception {
 }
 
 /**
+Read the str_type table for all data, which indicate DSS structure types.
+Used in generating water rights reports.
+<p>The SQL that is executed:<pre>
+This method is used by:<ul>
+<li>HydroBaseDMI.readGlobalData()</li>
+<li>HydroBase_Report_NetAmounts.createNetTabulationReport()</li>
+<li>HydroBase_Report_Transaction.HydroBase_Report_Transaction()</li>
+</ul>
+<p><b>Stored Procedure</b><p>
+The stored procedure that corresponds to this query is:<ul>
+<li>usp_CDSS_refStructureType_Sel</li>
+</ul>
+@return a list of HydroBase_DssStrType objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_DssStructureType> readDssStructureTypeList() 
+throws Exception {
+    DMISelectStatement q = new DMISelectStatement(this);
+    buildSQL(q, __S_DSS_STR_TYPE);
+    if ( !__useSP) {
+        if (getDatabaseVersion() > VERSION_20040701) {
+            q.addOrderByClause("ref_Structure_Type.str_type");
+        }
+        else {
+            q.addOrderByClause("str_type.str_type");
+        }
+    }
+    ResultSet rs = dmiSelect(q);
+    List<HydroBase_DssStructureType> v = toDssStructureTypeList(rs);
+    if (__useSP) {
+        closeResultSet(rs, q);
+    }
+    else {
+        closeResultSet(rs);
+    }
+    return v;
+}
+
+/**
 Read the emergency_plan table for all data matching the specified structure num.<p>
 This method is used by:<ul>
 <li>HydroBase_GUI_Dam.submitAndDisplayEmergencyPlanQuery()</li>
@@ -11271,7 +11399,9 @@ public void readGlobalData () {
 		dumpSQLOnExecution(false);
 	}
 	
+	// TODO SAM 2013-04-10 the data are read opportunisically to save memory so why all this code?
 	boolean readOnStart = false;
+	
 	
 	if (!readOnStart) {
 		return;
@@ -11350,17 +11480,29 @@ public void readGlobalData () {
 		__WaterDivisions_Vector = new Vector();
 	}
 
-	// read the structure types
+	// Read the DSS structure types
 	try {
-		__StrTypes_Vector = readStrTypeList();
+		__dssStructureTypeList = readDssStructureTypeList();
 	}
 	catch (Exception e) {
-		Message.printWarning ( 2, routine, "Unable to read StrTypes data.");
+		Message.printWarning ( 2, routine, "Unable to read DSS structure types data.");
 		Message.printWarning ( 2, routine, e);
 	}
-	if (__StrTypes_Vector == null) {
-		__StrTypes_Vector = new Vector();
+	if (__dssStructureTypeList == null) {
+		__dssStructureTypeList = new Vector<HydroBase_DssStructureType>();
 	}
+	
+	// Read the administrative structure types - only available via stored procedure as of db version 20130404
+    try {
+        __adminStructureTypeList = readAdminStructureTypeList();
+    }
+    catch (Exception e) {
+        Message.printWarning ( 2, routine, "Unable to read admin structure types data.");
+        Message.printWarning ( 2, routine, e);
+    }
+    if (__adminStructureTypeList == null) {
+        __adminStructureTypeList = new Vector<HydroBase_AdminStructureType>();
+    }
 
 	// read the loc types 
 	try {
@@ -14145,49 +14287,13 @@ throws Exception {
 }
 
 /**
-Read the str_type table for all data.  Used in generating water rights reports.
-<p>The SQL that is executed:<pre>
-This method is used by:<ul>
-<li>HydroBaseDMI.readGlobalData()</li>
-<li>HydroBase_Report_NetAmounts.createNetTabulationReport()</li>
-<li>HydroBase_Report_Transaction.HydroBase_Report_Transaction()</li>
-</ul>
-<p><b>Stored Procedure</b><p>
-The stored procedure that corresponds to this query is:<ul>
-<li>usp_CDSS_refStructureType_Sel</li>
-</ul>
-@return a list of HydroBase_StrType objects.
-@throws Exception if an error occurs.
-*/
-public List<HydroBase_StrType> readStrTypeList() 
-throws Exception {
-	DMISelectStatement q = new DMISelectStatement(this);
-	buildSQL(q, __S_STR_TYPE);
-	if (getDatabaseVersion() > VERSION_20040701) {
-		q.addOrderByClause("ref_Structure_Type.str_type");
-	}
-	else {
-		q.addOrderByClause("str_type.str_type");
-	}
-	ResultSet rs = dmiSelect(q);
-	List<HydroBase_StrType> v = toStrTypeList(rs);
-	if (__useSP) {
-		closeResultSet(rs, q);
-	}
-	else {
-		closeResultSet(rs);
-	}
-	return v;
-}
-
-/**
 Reads the struct_meas_type table for all distinct struct meas types.<p>
 This method is called by:<p>
 <ul><li>readGlobalData()</li></ul>
 <p><b>Stored Procedure</b><p>
 The stored procedure that corresponds to this query is:<ul>
 <li>usp_CDSS_StructMeasType_Sel_Distinct</li> </ul>
-@return a Vector of HydroBase_StructMeasTypes
+@return a list of HydroBase_StructMeasTypes
 @throws Exception if an error occurs.
 */
 public List readStructMeasTypeDistinctList()
@@ -14256,14 +14362,13 @@ structure identifier.  This method handles backward-compatibility by manipulatin
 the identifier string, as needed.
 @param time_step the struct_meas_type.time_step for which to read data.  Can be
 null or blank.
-@return a Vector of HydroBase_StructMeasType objects.
+@return a list of HydroBase_StructMeasType objects.
 */
 private List readStructMeasTypeListForWDIDStructure_num(int wd, int id, int structure_num, 
 String meas_type, String identifier, String time_step, String data_source) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			
 		String[] triplet = new String[3];
 		triplet[0] = "structure_num";
@@ -14301,8 +14406,7 @@ throws Exception {
 		}
 			
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_StructureStructMeasType"), 
-			27, null);
+			getViewNumber("vw_CDSS_StructureStructMeasType"), 27, null);
 		ResultSet rs = runSPFlex(parameters);
 		// use the toStructureStructMeas...
 		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
@@ -14345,9 +14449,8 @@ This method is used by:<ul>
 <p><b>Stored Procedure</b><p>
 The following views are used by this method:<p><ul>
 <li>vw_CDSS_StructureStructMeasType</li></ul>
-@param distinct if true, this will be a distinct query.  Ignored for
-stored procedures.
-@return a Vector of HydroBase_StructMeasType objects.
+@param distinct if true, this will be a distinct query.  Ignored for stored procedures.
+@return a list of HydroBase_StructMeasType objects.
 */
 public List readStructMeasTypeListForStructure_num(int structure_num, boolean distinct) 
 throws Exception {
@@ -15058,12 +15161,12 @@ throws Exception {
 	buildSQL(q, __S_STRUCTURE_FOR_STRUCTURE_NUM);
 	q.addWhereClause("structure.structure_num = " + structure_num);
 	ResultSet rs = dmiSelect(q);
-	List v = toStructureList(rs);	
+	List<HydroBase_Structure> v = toStructureList(rs);	
 	closeResultSet(rs);
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_Structure)v.get(0);	
+	return v.get(0);	
 }
 
 /**
@@ -15088,41 +15191,38 @@ throws Exception {
 	q.addWhereClause("Structure.wd = " + wd);
 	q.addWhereClause("Structure.id = " + id);
 	ResultSet rs = dmiSelect(q);
-	List v = toStructureList (rs);
+	List<HydroBase_Structure> v = toStructureList (rs);
 	closeResultSet(rs);
 
 	if (v == null || v.size() == 0) {
 		return null;
 	}
-	return (HydroBase_Structure)v.get(0);
+	return v.get(0);
 }
 
 /**
-Reads the structuer table for all records that match the specified where clauses
-and order by clauses.<p>
+Reads the structuer table for all records that match the specified where clauses and order by clauses.<p>
 This method is used by:<ul>
 <li>HydroBaseDMI.readWISStructures</li>
 <li>HydroBase_GUI_Headgate.HydroBase_GUI_Headgate()</li>
 </ul>
 <p><b>Stored Procedures</b><p>
 <b>THIS METHOD USES NO STORED PROCEDURES</b>
-@param where a Vector of structure nums to query for (as strings).  Cannot 
-be null.
-@param order a Vector of order-by Strings to use in the query.  Can be null.
-@return a Vector of matching HydroBase_Structure records, or 
+@param where a list of structure nums to query for (as strings).  Cannot be null.
+@param order a list of order-by Strings to use in the query.  Can be null.
+@return a list of matching HydroBase_Structure records, or 
 HydroBase_StructureView records if stored procedures are being used.
 @throws Exception if an error occurs.
 */
-public List readStructureListForStructure_nums(List structureNums, List order) 
+public List readStructureListForStructure_nums(List<String> structureNums, List<String> order) 
 throws Exception {
 	if (__useSP) {
 		String num = null;
 		int size = structureNums.size();
 		List results = new Vector();
 		for (int i = 0; i < size; i++) {
-			num = (String)structureNums.get(i);
-			results.add(readStructureViewForStructure_num(
-				StringUtil.atoi(num)));
+			num = structureNums.get(i);
+			results.add(readStructureViewForStructure_num(StringUtil.atoi(num)));
 		}
 		return results;
 	}
@@ -15133,19 +15233,18 @@ throws Exception {
 		List wheres = new Vector();
 		int size = structureNums.size();
 		for (int i = 0; i < size; i++) {
-			wheres.add("structure_num = " 
-				+ structureNums.get(i));
+			wheres.add("structure_num = " + structureNums.get(i));
 		}
-                q.addWhereClause(DMIUtil.getOrClause(wheres));
+        q.addWhereClause(DMIUtil.getOrClause(wheres));
 
 		if (order != null) {
 			size = order.size();
 			for (int i = 0; i < size; i++) {
-				q.addOrderByClause((String)order.get(i));
+				q.addOrderByClause(order.get(i));
 			}
 		}
 		ResultSet rs = dmiSelect(q);
-		List v = toStructureList(rs);
+		List<HydroBase_Structure> v = toStructureList(rs);
 		closeResultSet(rs);
 		return v;
 	}
@@ -22448,9 +22547,44 @@ public void setUseStoredProcedures(boolean useSP) {
 }
 
 // T METHODS
-// REVISIT (JTS - 2005-02-23)
-// we could trim about 14000 lines of code from this if we moved all the
-// toXXXXX() methods into a separate class and made them static.
+// TODO JTS 2005-02-23 could trim about 14000 lines of code from this if we moved all the
+// toXXXXX() methods into a separate class and made them static (or helper instance class).
+
+/**
+Translate a ResultSet to HydroBase_AdminStructureType objects.
+@param rs ResultSet to translate.
+@return a list of HydroBase_AdminStructureType
+@throws Exception if an error occurs.
+*/
+private List<HydroBase_AdminStructureType> toAdminStructureTypeList (ResultSet rs) 
+throws Exception {
+    HydroBase_AdminStructureType data = null;
+    List<HydroBase_AdminStructureType> v = new Vector<HydroBase_AdminStructureType>();
+    int index = 1;
+    
+    String s;
+
+    while (rs.next()) {
+        index = 1;
+        data = new HydroBase_AdminStructureType();
+        s = rs.getString(index++);
+        if (!rs.wasNull()) {
+            data.setStrtype(s.trim());
+        }
+        s = rs.getString(index++);
+        if (!rs.wasNull()) {
+            data.setStrtype_desc(s.trim());
+        }
+        s = rs.getString(index++);
+        if (!rs.wasNull()) {
+            data.setRpt_code(s.trim());
+        }
+
+        v.add(data);
+    }
+
+    return v;
+}
 
 /**
 Translate a ResultSet to HydroBase_AgriculturalCASSCropStats objects.
@@ -31248,22 +31382,22 @@ throws Exception {
 }
 
 /**
-Translate a ResultSet to HydroBase_StrType objects.
+Translate a ResultSet to HydroBase_DssStructureType objects.
 @param rs ResultSet to translate.
-@return a list of HydroBase_StrType
+@return a list of HydroBase_DssStructureType
 @throws Exception if an error occurs.
 */
-private List<HydroBase_StrType> toStrTypeList (ResultSet rs) 
+private List<HydroBase_DssStructureType> toDssStructureTypeList (ResultSet rs) 
 throws Exception {
-	HydroBase_StrType data = null;
-	List<HydroBase_StrType> v = new Vector<HydroBase_StrType>();
+	HydroBase_DssStructureType data = null;
+	List<HydroBase_DssStructureType> v = new Vector<HydroBase_DssStructureType>();
 	int index = 1;
 	
 	String s;
 
 	while (rs.next()) {
 		index = 1;
-		data = new HydroBase_StrType();
+		data = new HydroBase_DssStructureType();
 		s = rs.getString(index++);
 		if (!rs.wasNull()) {
 			data.setStr_type(s.trim());
@@ -31411,6 +31545,7 @@ private List<HydroBase_StructMeasTypeView> toStructMeasTypeSPList (ResultSet rs)
 throws Exception {
 	HydroBase_StructMeasTypeView data = null;
 	List<HydroBase_StructMeasTypeView> v = new Vector();
+	long version = getDatabaseVersion();
 	int index = 1;
 	
 	int i;
@@ -31598,6 +31733,22 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setData_source(s.trim());
 		}
+        if (version >= VERSION_20130404) {
+            s = rs.getString(index++);
+            if (!rs.wasNull()) {
+                data.setWDID(s.trim());
+            }
+            s = rs.getString(index++);
+            if (!rs.wasNull()) {
+                data.setStr_type(s.trim());
+            }
+            s = rs.getString(index++);
+            if (!rs.wasNull()) {
+                // TODO SAM 2013-04-09 Why are both of these used?
+                data.setStrtype(s.trim());
+                data.setSTRTYPE(s.trim());
+            }
+        }
 
 		v.add(data);
 	}
@@ -32223,12 +32374,13 @@ throws Exception {
 }
 
 /**
-Convert a ResultSet to a Vector of HydroBase_Structure
+Convert a ResultSet to a list of HydroBase_Structure
 @param rs ResultSet from a Structure table query.
 */
-private List toStructureList (ResultSet rs) throws Exception {
+private List<HydroBase_Structure> toStructureList (ResultSet rs) throws Exception {
 	HydroBase_Structure data = null;
- 	List v = new Vector();
+ 	List<HydroBase_Structure> v = new Vector<HydroBase_Structure>();
+ 	long version = getDatabaseVersion();
 	int index = 1;
 	int i;
 	String s;
@@ -32301,6 +32453,12 @@ private List toStructureList (ResultSet rs) throws Exception {
 		dd = rs.getDouble(index++);
 		if (!rs.wasNull()) {
 			data.setXtia(dd);
+		}
+		if (version >= VERSION_20130404) {
+	        s = rs.getString(index++);
+	        if (!rs.wasNull()) {
+	            data.setWDID(s.trim());
+	        }
 		}
 		
 		v.add(data);

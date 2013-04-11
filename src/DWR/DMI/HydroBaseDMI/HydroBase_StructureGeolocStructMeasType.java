@@ -1,22 +1,3 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StructureGeolocStructMeasType.java - Class to hold data from 
-//	the HydroBase structure, geoloc and struct_meas_type tables.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-11	J. Thomas Sapienza, RTi	Initial version from 
-//					HBStructureLocationMeasurementType.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2003-11-30	Steven A. Malers, RTi	Add _data_units - SAM is proposing
-// 					that this be added to HydroBase - it
-//					is used by TSTool.
-// 2004-05-17	JTS, RTi		* Added usgs_id.
-//					* Added usbr_id.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIUtil;
@@ -24,34 +5,33 @@ import RTi.DMI.DMIUtil;
 import java.util.Date;
 
 /**
-Class to store data from the the HydroBase structure, geoloc and
-struct_meas_type tables.
+Class to store data from the the HydroBase structure, geoloc, and struct_meas_type tables.
 */
 public class HydroBase_StructureGeolocStructMeasType 
 extends HydroBase_StructureGeoloc {
 
-protected int _meas_num = 		DMIUtil.MISSING_INT;
-protected int _structure_num = 		DMIUtil.MISSING_INT;
-protected String _meas_type = 		DMIUtil.MISSING_STRING;
-protected String _time_step = 		DMIUtil.MISSING_STRING;
-protected int _start_year = 		DMIUtil.MISSING_INT;
-protected int _end_year = 		DMIUtil.MISSING_INT;
-protected String _identifier = 		DMIUtil.MISSING_STRING;
-protected String _transmit = 		DMIUtil.MISSING_STRING;
-protected int _meas_count = 		DMIUtil.MISSING_INT;
-protected String _data_source = 	DMIUtil.MISSING_STRING;
-protected Date _modified = 		DMIUtil.MISSING_DATE;
-protected int _user_num = 		DMIUtil.MISSING_INT;
-protected String _str_name = 		DMIUtil.MISSING_STRING;
-protected int _id = 			DMIUtil.MISSING_INT;
-protected int _wd = 			DMIUtil.MISSING_INT;
-protected String _data_units = 		DMIUtil.MISSING_STRING;	
-							// Not in HydroBase but
-							// is used by software.
+protected int _meas_num = DMIUtil.MISSING_INT;
+protected int _structure_num = DMIUtil.MISSING_INT;
+protected String _meas_type = DMIUtil.MISSING_STRING;
+protected String _time_step = DMIUtil.MISSING_STRING;
+protected int _start_year = DMIUtil.MISSING_INT;
+protected int _end_year = DMIUtil.MISSING_INT;
+protected String _identifier = DMIUtil.MISSING_STRING;
+protected String _transmit = DMIUtil.MISSING_STRING;
+protected int _meas_count = DMIUtil.MISSING_INT;
+protected String _data_source = DMIUtil.MISSING_STRING;
+protected Date _modified = DMIUtil.MISSING_DATE;
+protected int _user_num = DMIUtil.MISSING_INT;
+protected String _str_name = DMIUtil.MISSING_STRING;
+// TODO SAM 2013-04-04 Why are the following wd and id redundant with the parent class?
+protected int _id = DMIUtil.MISSING_INT;
+protected int _wd = DMIUtil.MISSING_INT;
+// Not in HydroBase but is used by software.
+protected String _data_units = DMIUtil.MISSING_STRING;							
 
 // from unpermitted wells:
-protected String _usgs_id = 		DMIUtil.MISSING_STRING;
-protected String _usbr_id = 		DMIUtil.MISSING_STRING;
+protected String _usgs_id = DMIUtil.MISSING_STRING;
+protected String _usbr_id = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
@@ -64,8 +44,8 @@ public HydroBase_StructureGeolocStructMeasType() {
 Copy constructor to fill in all the values of this object from a corresponding
 view.  Used during unit tests.  
 */
-public HydroBase_StructureGeolocStructMeasType(
-HydroBase_StructureGeolocStructMeasTypeView view) {
+public HydroBase_StructureGeolocStructMeasType(HydroBase_StructureGeolocStructMeasTypeView view)
+{
 	_meas_num = view._meas_num;
 	_structure_num = view._structure_num;
 	_meas_type = view._meas_type;
@@ -81,6 +61,7 @@ HydroBase_StructureGeolocStructMeasTypeView view) {
 	_str_name = view._str_name;
 	_id = view._id;
 	_wd = view._wd;
+	_wdid = view._wdid;
 	_structure_num = view._structure_num;
 	_geoloc_num = view._geoloc_num;
 	_div = view._div;
@@ -140,11 +121,10 @@ HydroBase_StructureGeolocStructMeasTypeView view) {
 }	
 
 /**
-Copy constructor to fill in all the values of this object from a corresponding
-view.  Used during unit tests.  
+Copy constructor to fill in all the values of this object from a corresponding view.  
 */
-public HydroBase_StructureGeolocStructMeasType(
-HydroBase_StructMeasTypeView view) {
+public HydroBase_StructureGeolocStructMeasType(HydroBase_StructMeasTypeView view)
+{
 	_meas_num = view._meas_num;
 	_structure_num = view._structure_num;
 	_meas_type = view._meas_type;
@@ -160,6 +140,9 @@ HydroBase_StructMeasTypeView view) {
 	_str_name = view._str_name;
 	_id = view._id;
 	_wd = view._wd;
+	_wdid = view._wdid;
+	_str_type = view._str_type;
+	_STRTYPE = view._strtype;
 	_structure_num = view._structure_num;
 	_geoloc_num = view._geoloc_num;
 	_div = view._div;

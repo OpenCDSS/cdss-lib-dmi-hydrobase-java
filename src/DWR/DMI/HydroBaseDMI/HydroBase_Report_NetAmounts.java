@@ -220,9 +220,9 @@ to fill out the reports.
 private List __results = null;
 
 /**
-Vector of results from a query of the str_ype table.
+List of results from a query of the str_type table.
 */
-private List __strtypesVector = null;
+private List<HydroBase_DssStructureType> __strtypesVector = null;
 
 /**
 Vector of results from a query of the use table.
@@ -464,10 +464,9 @@ throws Exception {
 	}
 
 	// query the use and str_type table for all records.  These are small
-	// and fast queries, so they can be run everytime a report is 
-	// generated.
+	// and fast queries, so they can be run every time a report is generated.
 	__useVector = __dmi.getUseTypes();
-	__strtypesVector = __dmi.readStrTypeList();
+	__strtypesVector = __dmi.readDssStructureTypeList();
 	
 	// get the header for the report
 	__reportVector = getNetTabulationReportHeader();
@@ -1147,7 +1146,7 @@ Returns the structure type report code given a structure type (abbreviation)
 */
 public String getStructureTypeReportCode ( String structureType )
 throws Exception {
-	HydroBase_StrType hbst;
+	HydroBase_DssStructureType hbst;
 
 	if (__strtypesVector == null) {
 		return "";
@@ -1156,7 +1155,7 @@ throws Exception {
 	int size = __strtypesVector.size();
 
 	for (int i = 0; i < size; i++) {
-		hbst = (HydroBase_StrType)(__strtypesVector.get(i));
+		hbst = (HydroBase_DssStructureType)(__strtypesVector.get(i));
 
 		if (hbst.getStr_type().equalsIgnoreCase(structureType)) {
 			return  hbst.getRpt_code();

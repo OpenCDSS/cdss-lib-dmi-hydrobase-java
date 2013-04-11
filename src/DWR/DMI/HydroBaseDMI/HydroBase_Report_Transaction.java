@@ -211,7 +211,7 @@ throws Exception {
 	__reportVector = new Vector();
 
 	// query the str_type and use tables for all records.
-	__strtypesVector = __dmi.readStrTypeList();
+	__strtypesVector = __dmi.readDssStructureTypeList();
 	__useVector = __dmi.getUseTypes();
 
 	createReport(reportType);
@@ -774,7 +774,7 @@ Returns the structure type report code given a structure type (abbreviation)
 */
 private String getStructureTypeReportCode(String structureType)
 throws Exception {
-	HydroBase_StrType hbst;
+	HydroBase_DssStructureType hbst;
 
 	if (__strtypesVector == null) {
 		return "";
@@ -783,7 +783,7 @@ throws Exception {
 	int size = __strtypesVector.size();
 
 	for (int i = 0; i < size; i++) {
-		hbst = (HydroBase_StrType)(__strtypesVector.get(i));
+		hbst = (HydroBase_DssStructureType)(__strtypesVector.get(i));
 
 		if (hbst.getStr_type().equalsIgnoreCase(structureType)) {
 			return hbst.getRpt_code();

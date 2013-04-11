@@ -1,27 +1,9 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StructureUnpermittedWells.java - Class to hold data from 
-//	the HydroBase unpermitted_wells and structure tables.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-17	J. Thomas Sapienza, RTi	Initial version.
-// 2003-02-24	JTS, RTi		- Corrected error in finalize() so that 
-//					  super.finalize() gets called.
-//					- Class now extends structure and was
-//					  renamed appropriately.
-//					Renamed to match the naming scheme for
-//					classes that extend other classes.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIUtil;
 
 /**
-Class to store data from the the HydroBase unpermitted_wells and 
-structure tables.
+Class to store data from the the HydroBase unpermitted_wells and structure tables.
 */
 public class HydroBase_StructureUnpermittedWells 
 extends HydroBase_Structure {
@@ -70,7 +52,6 @@ throws Throwable {
 	
 	super.finalize();
 }
-
 
 /**
 Returns _apinumber
@@ -335,5 +316,4 @@ public String toString() {
 		"Sp_coord_e:     " + _sp_coord_e + "\n" + 
 		"Usgs_net:       " + _usgs_net + "\n}\n";
 		}
-
 }

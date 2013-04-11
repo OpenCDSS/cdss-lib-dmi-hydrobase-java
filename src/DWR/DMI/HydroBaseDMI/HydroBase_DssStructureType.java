@@ -1,34 +1,23 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StrType.java - Class to hold data from the HydroBase 
-//	str_type table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-18	J. Thomas Sapienza, RTi	Initial version from HBStructureType.
-// 2003-02-25	JTS, RTi		Finally actually added the data members!
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 /**
-Class to store data from the HydroBase str_type table.
+Class to store data for HydroBase DSS structure types as returned by
+usp_CDSS_refStructureType_Sel stored procedure.
 */
-public class HydroBase_StrType 
+public class HydroBase_DssStructureType 
 extends DMIDataObject {
 
-protected String _str_type = 		DMIUtil.MISSING_STRING;
-protected String _str_type_desc = 	DMIUtil.MISSING_STRING;
-protected String _rpt_code = 		DMIUtil.MISSING_STRING;
+protected String _str_type = DMIUtil.MISSING_STRING;
+protected String _str_type_desc = DMIUtil.MISSING_STRING;
+protected String _rpt_code = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
 */
-public HydroBase_StrType() {
+public HydroBase_DssStructureType() {
 	super();
 }
 

@@ -99,16 +99,28 @@ throws Exception
 		divisionInternalList.add ("" + div.getDiv() );
 	}
 	
-	// Structure type choices...
-    List<HydroBase_StrType> structureTypeDataList = hbdmi.getStrTypesVector();
-    List<String> structureTypeList = new Vector<String>();
-    List<String> structureTypeInternalList = new Vector<String>();
-    HydroBase_StrType structureType;
-    size = structureTypeDataList.size();
+	// DSS structure type choices...
+    List<HydroBase_DssStructureType> dssStructureTypeDataList = hbdmi.getDssStructureTypeList();
+    List<String> dssStructureTypeList = new Vector<String>();
+    List<String> dssStructureTypeInternalList = new Vector<String>();
+    HydroBase_DssStructureType dssStructureType;
+    size = dssStructureTypeDataList.size();
     for ( int i = 0; i < size; i++ ) {
-        structureType = structureTypeDataList.get(i);
-        structureTypeList.add (structureType.getStr_type() + " - " + structureType.getStr_type_desc());
-        structureTypeInternalList.add ("" + structureType.getStr_type() );
+        dssStructureType = dssStructureTypeDataList.get(i);
+        dssStructureTypeList.add (dssStructureType.getStr_type() + " - " + dssStructureType.getStr_type_desc());
+        dssStructureTypeInternalList.add ("" + dssStructureType.getStr_type() );
+    }
+    
+    // Admin structure type choices...
+    List<HydroBase_AdminStructureType> adminStructureTypeDataList = hbdmi.getAdminStructureTypeList();
+    List<String> adminStructureTypeList = new Vector<String>();
+    List<String> adminStructureTypeInternalList = new Vector<String>();
+    HydroBase_AdminStructureType adminStructureType;
+    size = adminStructureTypeDataList.size();
+    for ( int i = 0; i < size; i++ ) {
+        adminStructureType = adminStructureTypeDataList.get(i);
+        adminStructureTypeList.add (adminStructureType.getStrtype() + " - " + adminStructureType.getStrtype_desc());
+        adminStructureTypeInternalList.add ("" + adminStructureType.getStrtype() );
     }
 
 	// Currently in use choices
@@ -148,6 +160,13 @@ throws Exception
 		divisionList, divisionInternalList, true );
 	filter.setTokenInfo("-",0);
 	input_filters.add ( filter );
+	
+    if (hbdmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_20130404)) {
+        input_filters.add ( new InputFilter (
+            "DSS Structure Type", "structure.str_type", "str_type",
+            StringUtil.TYPE_STRING,
+            dssStructureTypeList, dssStructureTypeInternalList, true ) );
+    }
 	
 	input_filters.add ( new InputFilter (
 		"Elevation", "geoloc.elev", "elev",
@@ -225,13 +244,18 @@ throws Exception
 		"Structure Name", "structure.str_name", "str_name",
 		StringUtil.TYPE_STRING,
 		null, null, true ) );
-	
-   /* Not in HydroBase StructureStructMeasType view
-   input_filters.add ( new InputFilter (
-       "Structure Type", "structure.str_type", "str_type",
-       StringUtil.TYPE_STRING,
-       structureTypeList, structureTypeInternalList, true ) );
-       */
+
+	if (hbdmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_20130404)) {
+       input_filters.add ( new InputFilter (
+           "Structure Type", "structure.strtype", "strtype",
+           StringUtil.TYPE_STRING,
+           adminStructureTypeList, adminStructureTypeInternalList, true ) );
+       
+       input_filters.add ( new InputFilter (
+           "Structure WDID", "structure.wdid", "wdid",
+           StringUtil.TYPE_STRING,
+           null, null, true ) );
+	}
 
 	input_filters.add ( new InputFilter (
 		"UTM X", "geoloc.utm_x", "utm_x",

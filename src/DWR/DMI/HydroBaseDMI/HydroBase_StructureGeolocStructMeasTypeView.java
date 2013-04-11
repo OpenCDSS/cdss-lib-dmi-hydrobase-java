@@ -1,14 +1,3 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StructureGeolocStructMeasTypeView.java - Class to hold data from 
-//	the HydroBase structure struct meas type view.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2005-02-09	J. Thomas Sapienza, RTi	Initial version.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
@@ -19,32 +8,33 @@ import RTi.DMI.DMIUtil;
 Class to store data from the HydroBase struct_meas_type table.
 */
 public class HydroBase_StructureGeolocStructMeasTypeView 
-extends HydroBase_Geoloc {
+extends HydroBase_Geoloc { // HydroBase_Geoloc extends DMIDataObject
 
-protected int _meas_num = 		DMIUtil.MISSING_INT;
-protected int _structure_num = 		DMIUtil.MISSING_INT;
-protected String _meas_type = 		DMIUtil.MISSING_STRING;
-protected String _time_step = 		DMIUtil.MISSING_STRING;
-protected int _start_year = 		DMIUtil.MISSING_INT;
-protected int _end_year = 		DMIUtil.MISSING_INT;
-protected String _identifier = 		DMIUtil.MISSING_STRING;
-protected String _transmit = 		DMIUtil.MISSING_STRING;
-protected int _meas_count = 		DMIUtil.MISSING_INT;
-protected String _data_source = 	DMIUtil.MISSING_STRING;
-protected Date _modified = 		DMIUtil.MISSING_DATE;
-protected int _user_num = 		DMIUtil.MISSING_INT;
+protected int _meas_num = DMIUtil.MISSING_INT;
+protected int _structure_num = DMIUtil.MISSING_INT;
+protected String _meas_type = DMIUtil.MISSING_STRING;
+protected String _time_step = DMIUtil.MISSING_STRING;
+protected int _start_year = DMIUtil.MISSING_INT;
+protected int _end_year = DMIUtil.MISSING_INT;
+protected String _identifier = DMIUtil.MISSING_STRING;
+protected String _transmit = DMIUtil.MISSING_STRING;
+protected int _meas_count = DMIUtil.MISSING_INT;
+protected String _data_source = DMIUtil.MISSING_STRING;
+protected Date _modified = DMIUtil.MISSING_DATE;
+protected int _user_num = DMIUtil.MISSING_INT;
 
 // from Structure
-protected String _str_name = 		DMIUtil.MISSING_STRING;
-protected int _id = 			DMIUtil.MISSING_INT;
-protected int _wd = 			DMIUtil.MISSING_INT;
+protected String _str_name = DMIUtil.MISSING_STRING;
+protected int _id = DMIUtil.MISSING_INT;
+protected int _wd = DMIUtil.MISSING_INT;
+protected String _wdid = DMIUtil.MISSING_STRING;
 
 // from unpermitted wells
-protected String _usbr_id = 		DMIUtil.MISSING_STRING;
-protected String _usgs_id = 		DMIUtil.MISSING_STRING;
+protected String _usbr_id = DMIUtil.MISSING_STRING;
+protected String _usgs_id = DMIUtil.MISSING_STRING;
 
-protected String _common_id =	DMIUtil.MISSING_STRING;
-protected String _data_units = 		DMIUtil.MISSING_STRING;	
+protected String _common_id = DMIUtil.MISSING_STRING;
+protected String _data_units = DMIUtil.MISSING_STRING;	
 
 /**
 Constructor.
@@ -228,6 +218,14 @@ public int getWD() {
 }
 
 /**
+Returns _wdid
+@return _wdid
+*/
+public String getWDID() {
+    return _wdid;
+}
+
+/**
 Sets _common_id
 @param common_id the value to which _common_id will be set
 */
@@ -377,6 +375,14 @@ Sets _wd
 */
 public void setWD(int wd) {
 	_wd = wd;
+}
+
+/**
+Sets _wdid
+@param wdid value to put into _wdid
+*/
+public void setWD(String wdid) {
+    _wdid = wdid;
 }
 
 }

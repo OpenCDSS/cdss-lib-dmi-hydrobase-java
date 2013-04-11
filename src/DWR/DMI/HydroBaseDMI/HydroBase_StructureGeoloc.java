@@ -51,6 +51,8 @@ HydroBase_StructureGeolocStructMeasType
 public class HydroBase_StructureGeoloc 
 extends HydroBase_Structure {
 
+// TODO SAM 2013-04-04 Why are the HydroBase_Structure data members such as wd and id
+// redundant with some of the following?  Leave wdid in the parent class.
 protected int _geoloc_num = 		DMIUtil.MISSING_INT;
 protected double _utm_x = 		DMIUtil.MISSING_DOUBLE;
 protected double _utm_y = 		DMIUtil.MISSING_DOUBLE;
@@ -116,6 +118,7 @@ public HydroBase_StructureGeoloc(HydroBase_StructureView view) {
 	_div = view._div;
 	_wd = view._wd;
 	_id = view._id;
+	_wdid = view._wdid;
 	_ciu = view._ciu;
 	_str_type = view._str_type;
 	_STRTYPE = view._STRTYPE;

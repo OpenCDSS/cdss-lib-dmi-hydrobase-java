@@ -1,21 +1,3 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StructureView.java - Class to hold data from the HydroBase 
-//	vw_CDSS_Structure view.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2004-02-03	J. Thomas Sapienza, RTi	Initial version from HydroBase_Rolodex
-// 2005-02-16	JTS, RTi		Added irrig_summary_ts fields.
-// 2005-05-27	SAM, RTi		Add structure_id data member for
-//					internal use in StateDMI.  This is
-//					similar to what was done in the legacy
-//					HydroBase_StructureIrrigSummaryTS
-//					class.
-// 2005-08-03	JTS, RTi		Class is now sortable.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIUtil;
@@ -24,8 +6,7 @@ import java.util.Date;
 
 /**
 Class to store data from the HydroBase rolodex, wdwater, irrig summary, 
-structure decree summary, geoloc and structure
-tables.
+structure decree summary, geoloc and structure tables.
 */
 public class HydroBase_StructureView
 extends HydroBase_StructureGeoloc 
@@ -1012,6 +993,5 @@ public String toString() {
 		"Modified:     " + _modified + "\n" +
 		"User_num:     " + _user_num + "\n}\n";
 }
-
 
 }

@@ -1,34 +1,3 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StructureIrrigSummaryTS.java - Class to hold data from the
-//	HydroBase structure and irrig_summary_ts.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-27	J. Thomas Sapienza, RTi	Initial version.
-// 2003-12-18	Steven A. Malers, RTi	* Add the data members and methods for
-//					  acres_by_drip.
-//					* Add data_type as an internal data
-//					  member.  This is used by TSTool to
-//					  store a data type string for the
-//					  column that is currently being
-//					  processed - necessary because more
-//					  than one time series is stored in the
-//					  single table.
-//					* Change landuse to land_use as per the
-//					  database.
-// 2004-02-08	SAM, RTi		* Change the class name from
-//					  HydroBase_IrrigSummaryTSStructure, to
-//					  be consistent with class naming
-//					  convention.
-//					* Remove the data type - it is not
-//					  needed given recent changes in TSTool.
-//					* Remove the structure_num - it is in
-//					  the base class.
-// 2005-03-01	JTS, RTi		Added view copy constructor.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIUtil;
@@ -69,6 +38,7 @@ public HydroBase_StructureIrrigSummaryTS(HydroBase_StructureView view) {
 	_div = view._div;
 	_wd = view._wd;
 	_id = view._id;
+	_wdid = view._wdid;
 	_ciu = view._ciu;
 	_str_type = view._str_type;
 	_STRTYPE = view._STRTYPE;

@@ -1,37 +1,3 @@
-//------------------------------------------------------------------------------
-// HydroBase_Structure - data structure to hold data from the the HydroBase 
-//	structure table
-//------------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//------------------------------------------------------------------------------
-// Notes:	(1)	This class has no knowledge of the database itself
-//			(aside from its own data members), and there is no
-//			knowledge of the connection with the database.
-//		(2)	This class only holds information from the structure
-//			table.  It does not hold data for the Headgate and
-//			other tables.
-//------------------------------------------------------------------------------
-// History:
-// 
-// 2002-09-19	J. Thomas Sapienza, RTi	Initial version from DWR.DMI.HB.
-//					HBStructure.java
-// 2002-11-07	Steven A. Malers, RTi	Rework code to be a base class for all
-//					Structure-related objects (like
-//					HydroBase_StructureGeoloc) and name
-//					methods consistent with other DMI work.
-// 2003-01-05	SAM, RTi		Update based on changes to the DMI
-//					package.
-// 2003-02-14	JTS, RTi		Added xtia back in to satisfy an HBDMI
-//					query 
-// 2003-02-19	JTS, RTi		Added some fields to support older 
-//					versions of the database.
-// 2003-02-20	JTS, RTi		Commented out X* data
-// 2004-01-13	SAM, RTi		Added "common_id" as a data member to
-//					use in a work-around for the well data
-//					storage problems.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//------------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Date;
@@ -50,37 +16,31 @@ extends DMIDataObject {
 // List in the order of the ER diagram (March 2001) - xtia is not included
 // because it is do to be phased out...
 
-protected int _structure_num = 	DMIUtil.MISSING_INT;
-protected int _wdwater_num = 	DMIUtil.MISSING_INT;
-protected int _geoloc_num = 	DMIUtil.MISSING_INT;
-protected int _div = 		DMIUtil.MISSING_INT;
-protected int _wd = 		DMIUtil.MISSING_INT;
-protected int _id = 		DMIUtil.MISSING_INT;
-protected String _ciu = 	DMIUtil.MISSING_STRING;
-protected String _str_type = 	DMIUtil.MISSING_STRING;
-protected String _STRTYPE = 	DMIUtil.MISSING_STRING;
-protected String _str_name = 	DMIUtil.MISSING_STRING;
+protected int _structure_num = DMIUtil.MISSING_INT;
+protected int _wdwater_num = DMIUtil.MISSING_INT;
+protected int _geoloc_num = DMIUtil.MISSING_INT;
+protected int _div = DMIUtil.MISSING_INT;
+protected int _wd = DMIUtil.MISSING_INT;
+protected int _id = DMIUtil.MISSING_INT;
+protected String _wdid = DMIUtil.MISSING_STRING;
+protected String _ciu = DMIUtil.MISSING_STRING;
+protected String _str_type = DMIUtil.MISSING_STRING;
+protected String _STRTYPE = DMIUtil.MISSING_STRING;
+protected String _str_name = DMIUtil.MISSING_STRING;
 protected float _est_capacity = DMIUtil.MISSING_FLOAT;
-protected String _est_unit = 	DMIUtil.MISSING_STRING;
+protected String _est_unit = DMIUtil.MISSING_STRING;
 protected float _dcr_capacity = DMIUtil.MISSING_FLOAT;
-protected String _dcr_unit = 	DMIUtil.MISSING_STRING;
-protected int _transbsn = 	DMIUtil.MISSING_INT;
-protected Date _modified = 	DMIUtil.MISSING_DATE;
-protected int _user_num = 	DMIUtil.MISSING_INT;
-protected String _common_id =	DMIUtil.MISSING_STRING;
-						// This is used to store the
-						// common identifier that is
-						// different from the WDID, in
-						// particular for
-						// "unpermitted_wells" data.
-						// This is used in TSTool to
-						// Allow software to display
-						// the familiar ID, even though
-						// the data have been force fit
-						// to connect to structures.
-						//
-						// REVISIT - remove when
-						// HydroBase is redesigned.
+protected String _dcr_unit = DMIUtil.MISSING_STRING;
+protected int _transbsn = DMIUtil.MISSING_INT;
+protected Date _modified = DMIUtil.MISSING_DATE;
+protected int _user_num = DMIUtil.MISSING_INT;
+/*
+This is used to store the common identifier that is different from the WDID, in particular for
+"unpermitted_wells" data.  This is used in TSTool to allow software to display
+the familiar ID, even though the data have been force fit to connect to structures.
+TODO SAM 2013-04-04 Old comment: remove when HydroBase is redesigned.
+*/
+protected String _common_id = DMIUtil.MISSING_STRING;
 
 // fields used in older version of the database
 protected double _xtia = DMIUtil.MISSING_INT;
@@ -108,6 +68,7 @@ public HydroBase_Structure(HydroBase_StructureView view) {
 	_div = view._div;
 	_wd = view._wd;
 	_id = view._id;
+	_wdid = view._wdid;
 	_ciu = view._ciu;
 	_str_type = view._str_type;
 	_STRTYPE = view._strtype;
@@ -302,6 +263,14 @@ public int getWD() {
 }
 
 /**
+Returns _wdid
+@return _wdid
+*/
+public String getWDID() {
+    return _wdid;
+}
+
+/**
 Returns _wdwater_num
 @return _wdwater_num
 */
@@ -478,6 +447,14 @@ public void setWD(int wd) {
 }
 
 /**
+Sets _wdid
+@param wdid the value to which _wdid will be set
+*/
+public void setWDID(String wdid) {
+    _wdid = wdid;
+}
+
+/**
 Sets _wdwater_num 
 @param wdwater_num the value to which _wdwater_num will be set
 */
@@ -501,6 +478,7 @@ public String toString() {
 		"div:          " + _div 		+ "\n" +
 		"wd:           " + _wd 			+ "\n" +
 		"id:           " + _id			+ "\n" +
+		"wdid:         " + _wdid            + "\n" +
 		"ciu:          " + _ciu			+ "\n" +
 		"str_type:     " + _str_type		+ "\n" +
 		"STRTYPE:      " + _STRTYPE		+ "\n" +
@@ -515,4 +493,4 @@ public String toString() {
 		"user_num:     " + _user_num		+ "}";
 }
 
-} // End HydroBase_Structure
+}

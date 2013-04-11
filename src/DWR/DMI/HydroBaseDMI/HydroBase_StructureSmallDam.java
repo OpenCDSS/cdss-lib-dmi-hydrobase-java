@@ -1,21 +1,3 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StructureSmallDam.java - Class to hold data from the HydroBase 
-//	small_dam table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-11	J. Thomas Sapienza, RTi	Initial version from HBSmallDam.
-// 2003-02-24	JTS, RTi		- Corrected error in finalize() so that 
-//					  super.finalize() gets called.
-//					- HydroBase_SmallDam now extends
-//					  HydroBase_Structure and was renamed
-//					  accordingly.
-// 2004-02-09	JTS, RTi		Renamed to match the naming scheme
-//					for classes that extend other classes.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIUtil;

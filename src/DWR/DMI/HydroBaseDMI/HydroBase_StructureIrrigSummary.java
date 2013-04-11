@@ -1,21 +1,3 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StructureIrrigSummary.java - Class to hold data from the HydroBase 
-//	Irrig_Summary table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-11	J. Thomas Sapienza, RTi	Initial version from
-//					HBStructureIrrigSummary.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2004-02-09	JTS, RTi		Renamed to match the convention of
-//					naming classes that extend other 
-//					classes.
-// 2005-03-01	JTS, RTi		Added view copy constructor.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIUtil;
@@ -56,6 +38,7 @@ public HydroBase_StructureIrrigSummary(HydroBase_StructureView view) {
 	_div = view._div;
 	_wd = view._wd;
 	_id = view._id;
+	_wdid = view._wdid;
 	_ciu = view._ciu;
 	_str_type = view._str_type;
 	_STRTYPE = view._STRTYPE;

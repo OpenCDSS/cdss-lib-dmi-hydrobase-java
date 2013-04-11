@@ -2881,7 +2881,10 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StructMeasTypeView
     ts.setProperty("div", DMIUtil.isMissing(str_mt_v.getDiv())? null : new Integer(str_mt_v.getDiv()));
     ts.setProperty("wd", DMIUtil.isMissing(str_mt_v.getWD())? null : new Integer(str_mt_v.getWD()));
     ts.setProperty("id", DMIUtil.isMissing(str_mt_v.getID())? null : new Integer(str_mt_v.getID()));
+    ts.setProperty("wdid", DMIUtil.isMissing(str_mt_v.getWDID())? null : str_mt_v.getWDID());
     ts.setProperty("str_name", str_mt_v.getStr_name());
+    ts.setProperty("str_type", str_mt_v.getStr_type());
+    ts.setProperty("strtype", str_mt_v.getSTRTYPE());
     ts.setProperty("UTM_X", DMIUtil.isMissing(str_mt_v.getUtm_x())? Double.NaN : new Double(str_mt_v.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(str_mt_v.getUtm_y())? Double.NaN : new Double(str_mt_v.getUtm_y()));
     ts.setProperty("longdecdeg", DMIUtil.isMissing(str_mt_v.getLatdecdeg())? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
@@ -2943,7 +2946,10 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StructureGeolocStr
     ts.setProperty("div", DMIUtil.isMissing(str_mt_v.getDiv())? null : new Integer(str_mt_v.getDiv()));
     ts.setProperty("wd", DMIUtil.isMissing(str_mt_v.getWD())? null : new Integer(str_mt_v.getWD()));
     ts.setProperty("id", DMIUtil.isMissing(str_mt_v.getID())? null : new Integer(str_mt_v.getID()));
+    ts.setProperty("wdid", DMIUtil.isMissing(str_mt_v.getWDID())? null : str_mt_v.getWDID());
     ts.setProperty("str_name", str_mt_v.getStr_name());
+    ts.setProperty("str_type", str_mt_v.getStr_type());
+    ts.setProperty("strtype", str_mt_v.getSTRTYPE());
     ts.setProperty("UTM_X", DMIUtil.isMissing(str_mt_v.getUtm_x())? Double.NaN : new Double(str_mt_v.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(str_mt_v.getUtm_y())? Double.NaN : new Double(str_mt_v.getUtm_y()));
     ts.setProperty("longdecdeg", DMIUtil.isMissing(str_mt_v.getLatdecdeg())? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
@@ -2997,7 +3003,10 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StructureView hbst
     ts.setProperty("div", DMIUtil.isMissing(hbstr.getDiv())? null : new Integer(hbstr.getDiv()));
     ts.setProperty("wd", DMIUtil.isMissing(hbstr.getWD())? null : new Integer(hbstr.getWD()));
     ts.setProperty("id", DMIUtil.isMissing(hbstr.getID())? null : new Integer(hbstr.getID()));
+    ts.setProperty("wdid", DMIUtil.isMissing(hbstr.getWDID())? null : hbstr.getWDID());
     ts.setProperty("str_name", hbstr.getStr_name());
+    ts.setProperty("str_type", hbstr.getStr_type());
+    ts.setProperty("strtype", hbstr.getSTRTYPE());
     ts.setProperty("UTM_X", DMIUtil.isMissing(hbstr.getUtm_x())? Double.NaN : new Double(hbstr.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(hbstr.getUtm_y())? Double.NaN : new Double(hbstr.getUtm_y()));
     ts.setProperty("longdecdeg", DMIUtil.isMissing(hbstr.getLatdecdeg())? Double.NaN : new Double(hbstr.getLongdecdeg()));

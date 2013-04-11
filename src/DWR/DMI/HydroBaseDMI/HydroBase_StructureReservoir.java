@@ -1,25 +1,3 @@
-// ----------------------------------------------------------------------------
-// HydroBase_StructureReservoir.java - Class to hold data from the HydroBase 
-//	reservoir and structure tables.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-10	J. Thomas Sapienza, RTi	Initial version from HBReservoir.
-// 2003-02-19	JTS, RTi		Added some fields to accomodate older
-//					versions of the database.
-// 2003-02-20	JTS, RTi		Commented out X* data
-// 2003-02-24	JTS, RTi		- Corrected error in finalize() so that 
-//					super.finalize() gets called.
-//					- Reservoir now extends 
-//					  HydroBase_Structure and was renamed 
-//					  accordingly.
-// 2004-02-09	JTS, RTi		Renamed to be consistent with the naming
-//					scheme for classes that extend other
-//					classes.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIUtil;
@@ -40,6 +18,7 @@ protected int _drain_area = 	DMIUtil.MISSING_INT;
 protected Date _modified = 	DMIUtil.MISSING_DATE;
 protected int _user_num = 	DMIUtil.MISSING_INT;
 
+// TODO SAM 2013-04-08 Why are some of the following redundant with the parent class?
 protected String _ciu = 	DMIUtil.MISSING_STRING;
 protected int _div = 		DMIUtil.MISSING_INT;
 protected int _geoloc_num = 	DMIUtil.MISSING_INT;
@@ -370,9 +349,6 @@ public String toString() {
 		"Transbsn:       " + _transbsn + "\n" +
 		"WD:             " + _wd + "\n" +
 		"Wdwater_num:    " + _wdwater_num + "\n}\n";
-
-		
-	
 }
 
 }
