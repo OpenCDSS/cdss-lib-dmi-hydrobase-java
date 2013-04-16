@@ -111,16 +111,20 @@ throws Exception
         dssStructureTypeInternalList.add ("" + dssStructureType.getStr_type() );
     }
     
-    // Admin structure type choices...
-    List<HydroBase_AdminStructureType> adminStructureTypeDataList = hbdmi.getAdminStructureTypeList();
-    List<String> adminStructureTypeList = new Vector<String>();
-    List<String> adminStructureTypeInternalList = new Vector<String>();
-    HydroBase_AdminStructureType adminStructureType;
-    size = adminStructureTypeDataList.size();
-    for ( int i = 0; i < size; i++ ) {
-        adminStructureType = adminStructureTypeDataList.get(i);
-        adminStructureTypeList.add (adminStructureType.getStrtype() + " - " + adminStructureType.getStrtype_desc());
-        adminStructureTypeInternalList.add ("" + adminStructureType.getStrtype() );
+    List<String> adminStructureTypeList = null;
+    List<String> adminStructureTypeInternalList = null;
+    if (hbdmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_20130404)) {
+        // Admin structure type choices...
+        List<HydroBase_AdminStructureType> adminStructureTypeDataList = hbdmi.getAdminStructureTypeList();
+        adminStructureTypeList = new Vector<String>();
+        adminStructureTypeInternalList = new Vector<String>();
+        HydroBase_AdminStructureType adminStructureType;
+        size = adminStructureTypeDataList.size();
+        for ( int i = 0; i < size; i++ ) {
+            adminStructureType = adminStructureTypeDataList.get(i);
+            adminStructureTypeList.add (adminStructureType.getStrtype() + " - " + adminStructureType.getStrtype_desc());
+            adminStructureTypeInternalList.add ("" + adminStructureType.getStrtype() );
+        }
     }
 
 	// Currently in use choices
