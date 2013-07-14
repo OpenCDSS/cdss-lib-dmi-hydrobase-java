@@ -16118,7 +16118,8 @@ throws Exception, NoDataFoundException
 		ts = new IrregularTS ();
 	}
 	else {
-		Message.printWarning ( 3, routine, "Data interval \"" + interval + "\" is not supported.");
+		Message.printWarning ( 3, routine, "Data interval \"" + interval + "\" in TSID \"" + tsident_string +
+		    "\" is not supported.");
 		return null;
 	}
 	int interval_base = ts.getDataIntervalBase();
