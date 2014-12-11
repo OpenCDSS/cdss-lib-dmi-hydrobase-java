@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test/unit/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/RTi_Common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/cdss-lib-common-java"/>
 	<classpathentry kind="lib" path="lib/Microsoft_SQL_Server_JDBC/sqljdbc4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
