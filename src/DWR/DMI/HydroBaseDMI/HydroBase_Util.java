@@ -2854,7 +2854,7 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StationView hbsta 
     ts.setProperty("data_source", hbsta.getData_source());
     ts.setProperty("UTM_X", DMIUtil.isMissing(hbsta.getUtm_x())? Double.NaN : new Double(hbsta.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(hbsta.getUtm_y())? Double.NaN : new Double(hbsta.getUtm_y()));
-    ts.setProperty("longdecdeg", DMIUtil.isMissing(hbsta.getLatdecdeg())? Double.NaN : new Double(hbsta.getLongdecdeg()));
+    ts.setProperty("longdecdeg", DMIUtil.isMissing(hbsta.getLongdecdeg())? Double.NaN : new Double(hbsta.getLongdecdeg()));
     ts.setProperty("latdecdeg", DMIUtil.isMissing(hbsta.getLatdecdeg())? Double.NaN : new Double(hbsta.getLatdecdeg()));
     ts.setProperty("div", DMIUtil.isMissing(hbsta.getDiv())? null : new Integer(hbsta.getDiv()));
     ts.setProperty("wd", DMIUtil.isMissing(hbsta.getWD())? null : new Integer(hbsta.getWD()));
@@ -2887,7 +2887,7 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StructMeasTypeView
     ts.setProperty("strtype", str_mt_v.getSTRTYPE());
     ts.setProperty("UTM_X", DMIUtil.isMissing(str_mt_v.getUtm_x())? Double.NaN : new Double(str_mt_v.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(str_mt_v.getUtm_y())? Double.NaN : new Double(str_mt_v.getUtm_y()));
-    ts.setProperty("longdecdeg", DMIUtil.isMissing(str_mt_v.getLatdecdeg())? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
+    ts.setProperty("longdecdeg", DMIUtil.isMissing(str_mt_v.getLongdecdeg())? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
     ts.setProperty("latdecdeg", DMIUtil.isMissing(str_mt_v.getLatdecdeg())? Double.NaN : new Double(str_mt_v.getLatdecdeg()));
     ts.setProperty("pm", str_mt_v.getPM());
     ts.setProperty("ts", DMIUtil.isMissing(str_mt_v.getTS())? null : new Integer(str_mt_v.getTS()));
@@ -2952,7 +2952,7 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StructureGeolocStr
     ts.setProperty("strtype", str_mt_v.getSTRTYPE());
     ts.setProperty("UTM_X", DMIUtil.isMissing(str_mt_v.getUtm_x())? Double.NaN : new Double(str_mt_v.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(str_mt_v.getUtm_y())? Double.NaN : new Double(str_mt_v.getUtm_y()));
-    ts.setProperty("longdecdeg", DMIUtil.isMissing(str_mt_v.getLatdecdeg())? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
+    ts.setProperty("longdecdeg", DMIUtil.isMissing(str_mt_v.getLongdecdeg())? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
     ts.setProperty("latdecdeg", DMIUtil.isMissing(str_mt_v.getLatdecdeg())? Double.NaN : new Double(str_mt_v.getLatdecdeg()));
     ts.setProperty("pm", str_mt_v.getPM());
     ts.setProperty("ts", DMIUtil.isMissing(str_mt_v.getTS())? null : new Integer(str_mt_v.getTS()));
@@ -3009,7 +3009,7 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StructureView hbst
     ts.setProperty("strtype", hbstr.getSTRTYPE());
     ts.setProperty("UTM_X", DMIUtil.isMissing(hbstr.getUtm_x())? Double.NaN : new Double(hbstr.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(hbstr.getUtm_y())? Double.NaN : new Double(hbstr.getUtm_y()));
-    ts.setProperty("longdecdeg", DMIUtil.isMissing(hbstr.getLatdecdeg())? Double.NaN : new Double(hbstr.getLongdecdeg()));
+    ts.setProperty("longdecdeg", DMIUtil.isMissing(hbstr.getLongdecdeg())? Double.NaN : new Double(hbstr.getLongdecdeg()));
     ts.setProperty("latdecdeg", DMIUtil.isMissing(hbstr.getLatdecdeg())? Double.NaN : new Double(hbstr.getLatdecdeg()));
     ts.setProperty("pm", hbstr.getPM());
     ts.setProperty("ts", DMIUtil.isMissing(hbstr.getTS())? null : new Integer(hbstr.getTS()));
@@ -3094,7 +3094,7 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_GroundWaterWellsVi
     ts.setProperty("data_source", well.getData_source());
     ts.setProperty("UTM_X", DMIUtil.isMissing(well.getUtm_x())? Double.NaN : new Double(well.getUtm_x()));
     ts.setProperty("UTM_Y", DMIUtil.isMissing(well.getUtm_y())? Double.NaN : new Double(well.getUtm_y()));
-    ts.setProperty("longdecdeg", DMIUtil.isMissing(well.getLatdecdeg())? Double.NaN : new Double(well.getLongdecdeg()));
+    ts.setProperty("longdecdeg", DMIUtil.isMissing(well.getLongdecdeg())? Double.NaN : new Double(well.getLongdecdeg()));
     ts.setProperty("latdecdeg", DMIUtil.isMissing(well.getLatdecdeg())? Double.NaN : new Double(well.getLatdecdeg()));
     ts.setProperty("pm", well.getPM());
     ts.setProperty("ts", DMIUtil.isMissing(well.getTS())? null : new Integer(well.getTS()));
