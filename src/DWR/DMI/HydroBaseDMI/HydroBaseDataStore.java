@@ -68,15 +68,35 @@ throws IOException, Exception
     String databaseName = IOUtil.expandPropertyForEnvironment("DatabaseName",props.getValue("DatabaseName"));
     String systemLogin = IOUtil.expandPropertyForEnvironment("SystemLogin",props.getValue("SystemLogin"));
     String systemPassword = IOUtil.expandPropertyForEnvironment("SystemPassword",props.getValue("SystemPassword"));
+    // The following is used if making an ODBC DSN connection to a HydroBase database, rather than above
+    String odbcName = IOUtil.expandPropertyForEnvironment("OdbcName",props.getValue("OdbcName"));
     
-    // Get the properties and create an instance
-    int port = -1; // Determine port from instance name
-    boolean useStoredProcedures = true; // Always the case with newer database
-    HydroBaseDMI dmi = new HydroBaseDMI ( databaseEngine, databaseServer,
-        databaseName, port, systemLogin, systemPassword, useStoredProcedures );
-    dmi.open();
-    HydroBaseDataStore ds = new HydroBaseDataStore( name, description, dmi );
-    return ds;
+    if ( (odbcName != null) && !odbcName.equals("") ) {
+    	/*
+        // An ODBC connection is configured so use it
+        GenericDMI dmi = null;
+        dmi = new GenericDMI (
+            databaseEngine, // Needed for internal SQL handling
+            odbcName, // Must be configured on the machine
+            systemLogin, // OK if null - use read-only guest
+            systemPassword ); // OK if null - use read-only guest
+            */
+        // Have to substitute the DMI from above into a new HydroBaseDMI
+        HydroBaseDMI hdmi = new HydroBaseDMI(databaseEngine, odbcName, systemLogin, systemPassword );
+        hdmi.open();
+        HydroBaseDataStore ds = new HydroBaseDataStore( name, description, hdmi );
+        return ds;
+    }
+    else {
+	    // Get the properties and create an instance
+	    int port = -1; // Determine port from instance name
+	    boolean useStoredProcedures = true; // Always the case with newer database
+	    HydroBaseDMI dmi = new HydroBaseDMI ( databaseEngine, databaseServer,
+	        databaseName, port, systemLogin, systemPassword, useStoredProcedures );
+	    dmi.open();
+	    HydroBaseDataStore ds = new HydroBaseDataStore( name, description, dmi );
+	    return ds;
+    }
 }
 
 /**

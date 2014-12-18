@@ -8784,46 +8784,53 @@ super.open() is called first in this method, prior to any other setup.
 public void open() 
 throws Exception, java.sql.SQLException
 {   String routine = getClass().getName() + ".open";
-    // Try opening a connection using the first port number (SQL Server)...
-    String databaseServer = getDatabaseServer();
-	if ( (__localPorts == null) || (databaseServer.indexOf("\\") > 0) ) {
-	    // Open using the default information.
-	    Message.printStatus(2,routine,"Instance specified (no ports to try), trying to open HydroBase...");
-		super.open();
+	// If an ODBC DSN name is specified, connect using that
+	String odbcName = getODBCName();
+	if ( (odbcName != null) && !odbcName.equals("") ) {
+		super.open(); // This will pick up on the ODBC name - see GenericDatabaseDMI.open(), which is similar
 	}
 	else {
-	    // Try opening a connection using the other port numbers (older MSDE)...
-
-		try {
-		    Message.printStatus(2,routine,"Local ports specified, trying to open HydroBase with default port " +
-		        getPort() );
+	    // Try opening a connection using the first port number (SQL Server)...
+	    String databaseServer = getDatabaseServer();
+		if ( (__localPorts == null) || (databaseServer.indexOf("\\") > 0) ) {
+		    // Open using the default information.
+		    Message.printStatus(2,routine,"Instance specified (no ports to try), trying to open HydroBase...");
 			super.open();
 		}
-		catch (Throwable t) {
-		    // Try the other ports that may have been used for HydroBase
-		    boolean success = false;
-		    for ( int i = 1; i < __localPorts.length; i++ ) {
-		        if ( __localPorts[i] >= 0 ) {
-		            try {
-            		    Message.printStatus(2,routine,"Error opening database (" + t + ") trying alternate port "
-            		        + __localPorts[i] );
-            			setPort(__localPorts[i]);
-            			super.open();
-            			// Above will throw an exception if a problem
-            			success = true;
-            			break;
-		            }
-		            catch ( Throwable t2 ) {
-		                t = t2;
-		                continue;
-		            }
+		else {
+		    // Try opening a connection using the other port numbers (older MSDE)...
+	
+			try {
+			    Message.printStatus(2,routine,"Local ports specified, trying to open HydroBase with default port " +
+			        getPort() );
+				super.open();
+			}
+			catch (Throwable t) {
+			    // Try the other ports that may have been used for HydroBase
+			    boolean success = false;
+			    for ( int i = 1; i < __localPorts.length; i++ ) {
+			        if ( __localPorts[i] >= 0 ) {
+			            try {
+	            		    Message.printStatus(2,routine,"Error opening database (" + t + ") trying alternate port "
+	            		        + __localPorts[i] );
+	            			setPort(__localPorts[i]);
+	            			super.open();
+	            			// Above will throw an exception if a problem
+	            			success = true;
+	            			break;
+			            }
+			            catch ( Throwable t2 ) {
+			                t = t2;
+			                continue;
+			            }
+			        }
 		        }
-	        }
-		    if ( !success ) {
-		        throw new java.sql.SQLException (
-		            "Unable to open HydroBase connection given database configuration information." );
+			    if ( !success ) {
+			        throw new java.sql.SQLException (
+			            "Unable to open HydroBase connection given database configuration information." );
+			    }
 		    }
-	    }
+		}
 	}
 	if (__useSP) {
 		setupViewNumbersHashtable();
