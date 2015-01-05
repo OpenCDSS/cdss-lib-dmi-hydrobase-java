@@ -82,7 +82,8 @@ throws IOException, Exception
             systemPassword ); // OK if null - use read-only guest
             */
         // Have to substitute the DMI from above into a new HydroBaseDMI
-        HydroBaseDMI hdmi = new HydroBaseDMI(databaseEngine, odbcName, systemLogin, systemPassword );
+    	boolean useStoredProcedures = true; // Newer databases should have stored procedures
+        HydroBaseDMI hdmi = new HydroBaseDMI(databaseEngine, odbcName, systemLogin, systemPassword, useStoredProcedures );
         hdmi.open();
         HydroBaseDataStore ds = new HydroBaseDataStore( name, description, hdmi );
         return ds;
