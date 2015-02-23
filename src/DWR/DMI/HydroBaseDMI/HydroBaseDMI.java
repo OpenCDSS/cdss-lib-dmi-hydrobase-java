@@ -19147,7 +19147,7 @@ throws Exception, NoDataFoundException
 			// TODO SAM 2006-04-25 This throws an Exception.  Leave it for now but need
 			// to evaluate how to handle errors..
 			HydroBase_Util.fillTSUsingDiversionComments (
-				this, ts, req_date1, req_date2, FillUsingDivCommentsFlag,
+				this, ts, req_date1, req_date2, FillUsingDivCommentsFlag, "Auto",
 				true );	// Extend period if diversion comments are available
 		}
 	}
