@@ -2281,6 +2281,7 @@ throws Exception
                         value = null;
                         if ( doDepth ) {
                             depth = dts.getDepth();
+                            //Message.printStatus(2,routine,"For date " + date + " snow course depth=" + depth);
                             if ( depth != null ) {
                                 if ( depth >= 0 ) {
                                     value = new Double(depth);

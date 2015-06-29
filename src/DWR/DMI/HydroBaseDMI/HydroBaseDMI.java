@@ -18466,8 +18466,10 @@ throws Exception, NoDataFoundException
 			data = (HydroBase_SnowCrse)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
+			// The day in the records are set to a string
 			day = data.getDay();
 			if (!StringUtil.isInteger(day)) {
+				//Message.printStatus ( 2, routine, "Snow course \"day\" for:  " + date + " is \"" + day + "\"");
 				continue;
 			}
 			date.setDay ( StringUtil.atoi(day));
@@ -30587,14 +30589,19 @@ throws Exception {
 			data.setM_type(i);
 		}
 		i = rs.getInt(index++);
+		//Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() + " (cal_mon=" + data.getCal_mon() + ") depth=" + i);
 		if (!rs.wasNull()) {
 			data.setDepth(i);
 		}
+		else {
+			//Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() + " (cal_mon=" + data.getCal_mon() + ") null depth");
+		}
+		//Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() +
+		//	" (cal_mon=" + data.getCal_mon() + ") after set depth=" + data.getDepth());
 		d = rs.getDouble(index++);
 		if (!rs.wasNull()) {
 			data.setSwe(d);
 		}
-
 		v.add(data);
 	}
 
