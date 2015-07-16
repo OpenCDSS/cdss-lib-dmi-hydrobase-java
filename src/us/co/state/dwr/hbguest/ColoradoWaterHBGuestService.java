@@ -2113,7 +2113,7 @@ throws Exception
                 for ( StationTS mts : mtsArray.getStationTS() ) {
                     flag = "";
                     dateString = mts.getMeasDate();
-                    Message.printStatus(2,routine,dateString);
+                    //Message.printStatus(2,routine,dateString);
                     dateParts = dateString.split("/");
                     // Expected date format is MM/DD/YYYY, but can be 1 or 2 digit month and day
                     //Message.printStatus(2,routine,"Date=\"" + dateString + " value=" + dts.getAmt() +
