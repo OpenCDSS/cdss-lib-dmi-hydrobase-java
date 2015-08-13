@@ -1949,19 +1949,28 @@ throws Exception {
 		    // Connecting to the local machine.  Try the SQL Server Express/MSDE port first and 
 		    // full SQL Server port second.  Also get the specific machine name instead of "local".
 			database_server = IOUtil.getProgramHost();
-			__localPorts = new int[3];
-			__localPorts[0] = 5758; // SQL Server Express or full
-			__localPorts[1] = 21784; // MSDE or SQL Server Express
-			__localPorts[2] = 1433;
+			// SAM 2015-08-06 Doug Stenzel says only port 21784 is used but keep 1433
+			// in case someone manually sets up HydroBase on the default SQL Server port
+			//__localPorts = new int[3];
+			//__localPorts[0] = 5758; // SQL Server Express or full
+			//__localPorts[1] = 21784; // MSDE or SQL Server Express
+			//__localPorts[2] = 1433;
+			__localPorts = new int[2];
+			__localPorts[0] = 21784;
+			__localPorts[1] = 1433;
 			port = __localPorts[0];
 		}
 		else {
 		    // Connecting to a remote machine.  Try the SQL Server port first assuming a
 		    // full server (like at the State).
-			__localPorts = new int[3];
-			__localPorts[0] = 1433;
-			__localPorts[1] = 5758;
-			__localPorts[2] = 21784; // MSDE
+			// See above comments.
+			//__localPorts = new int[3];
+			//__localPorts[0] = 1433;
+			//__localPorts[1] = 5758;
+			//__localPorts[2] = 21784; // MSDE
+			__localPorts = new int[2];
+			__localPorts[0] = 21784;
+			__localPorts[1] = 1433;
 			port = __localPorts[0];
 		}
 	}
