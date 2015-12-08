@@ -1852,10 +1852,9 @@ crdss (if not using stored procedures)</td></tr>
 <td>HydroBase.SystemPassword</td><td>cdss%tools (if using stored procedures)<p>
 crdss3nt (if not using stored procedures)</td></tr>
 <tr>
-<td>HydroBase.Port</td><td>1433, then 5758, then 21784 (if connecting to a remote server)
-<p>5758, 21784, then 1433 (if connecting to a local machine).  1433 is the default for
-full SQL Server whereas 5758 is used for SQL Server Express and the older MSDE
-(previously 21784 was used).</td></tr>
+
+<td>HydroBase.Port</td><td>21784 and then 1433
+(previously 5758 was used for SQL Server Express and MSDE and before that the default of 1433).</td></tr>
 </table>
 */
 public HydroBaseDMI(PropList props) 
