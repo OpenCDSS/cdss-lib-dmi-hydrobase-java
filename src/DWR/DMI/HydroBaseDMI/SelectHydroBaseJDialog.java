@@ -1104,7 +1104,11 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Add the data source (only enabled if using a local database).
 	// Get the data source names from the system.
 
-    List<String> available_OdbcDsn = DMIUtil.getDefinedOdbcDsn(true);
+    // TODO SAM 2015-12-08 Disable getting ODBC names
+    // - calls shellcon.exe which is no longer distributed
+    // - moving to datastores where ODBC name is configured in datastore configuration file.
+    //List<String> available_OdbcDsn = DMIUtil.getDefinedOdbcDsn(true);
+    List<String> available_OdbcDsn = new Vector<String>();
 	int size = available_OdbcDsn.size();
 	String s = null;
 	__available_OdbcDsn = new Vector();
