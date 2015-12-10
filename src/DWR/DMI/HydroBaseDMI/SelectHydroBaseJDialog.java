@@ -495,35 +495,35 @@ of database names.
 */
 private void checkServerForDatabaseNames(String server)
 {	String routine = getClass().getName() + ".checkServerForDatabaseNames";
-	String[] usernames = new String[3];
-	String[] passwords = new String[3];
-	int[] ports = new int[3];
+	String[] usernames = new String[2];
+	String[] passwords = new String[2];
+	int[] ports = new int[2];
 
 	if (!__useSPJCheckBox.isSelected()) {
+		//usernames[0] = "crdss";	
+		//passwords[0] = "crdss3nt";    
+		//ports[0] = 5758;
+		
 		usernames[0] = "crdss";	
 		passwords[0] = "crdss3nt";    
-		ports[0] = 5758;
-		
+		ports[0] = 21784;
+
 		usernames[1] = "crdss";	
 		passwords[1] = "crdss3nt";    
-		ports[1] = 21784;
-
-		usernames[2] = "crdss";	
-		passwords[2] = "crdss3nt";    
-		ports[2] = 1433;
+		ports[1] = 1433;
 	}
 	else {
+		//usernames[0] = "cdss";
+		//passwords[0] = "cdss%tools";
+		//ports[0] = 5758;
+		
 		usernames[0] = "cdss";
 		passwords[0] = "cdss%tools";
-		ports[0] = 5758;
+		ports[0] = 21784;
 		
-		usernames[1] = "cdss";
-		passwords[1] = "cdss%tools";
-		ports[1] = 21784;
-		
-		usernames[2] = "cdss";	
-		passwords[2] = "cdss%tools";  
-		ports[2] = 1433;
+		usernames[1] = "cdss";	
+		passwords[1] = "cdss%tools";  
+		ports[1] = 1433;
 	}
 
 	GenericDMI dmi = null;
@@ -820,11 +820,11 @@ private void findDatabaseNames() {
 		
 	if (local) {
 		// For local hosts, do a quick check to see if a SQL Server
-		// instance is running -- see if port 5758 (newer) or 21784 (older) can be locked by
+		// instance is running - 21784 can be locked by
 		// Java.  If it can, then the port is open and SQL Server is
 		// probably (99.99999% of the time) not running.  Otherwise,
 		// SQL Server is probably (99.99999% of the time) up on that port.
-		if ( IOUtil.isPortOpen(5758) && IOUtil.isPortOpen(21784) ) {
+		if ( IOUtil.isPortOpen(21784) ) {
 			__databaseNamesJComboBox.removeAllItems();
 			__databaseNamesJComboBox.add(__NO_DATABASES);
 			ok(false);
@@ -1607,7 +1607,7 @@ private void readConfigurationFile() {
 		// TODO SAM 2009-05-21 Why is the following a "not"
 		// if SQL Server is running locally (eg, MSDE), 
 		// add the local machine to the list of servers that can be connected to.
-		if (!IOUtil.isPortOpen(5758) || !IOUtil.isPortOpen(21784)) {
+		if ( !IOUtil.isPortOpen(21784)) {
 			__serverNames.add("local");
 		}
 	}
