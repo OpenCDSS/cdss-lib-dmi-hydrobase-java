@@ -13556,7 +13556,8 @@ throws Exception {
 			triplet = new String[3];
 			triplet[0] = "amt";
 			triplet[1] = "NE";
-			triplet[2] = "" + DMIUtil.MISSING_DOUBLE;
+			// Missing in HydroBase is -999
+			triplet[2] = "-999";
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 

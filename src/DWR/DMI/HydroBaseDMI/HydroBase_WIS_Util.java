@@ -60,10 +60,16 @@ Static utility methods for WIS manipulation.
 */
 public class HydroBase_WIS_Util
 {
+	
+/**
+DMIUtil.MISSING_DOUBLE used to be -999 but was changed to NaN.
+Define the following to handle legacy values in the database.
+*/
+private static double LEGACY_MISSING_DOUBLE = -999.;
 
 /**
 Computes gain/loss at the specified node.  Gains/losses are based on stream mile.
-@param network the network the ndoe is in.
+@param network the network the node is in.
 @param curNode the node to check.
 */
 public static double[] computeGainLoss(HydroBase_NodeNetwork network, HydroBase_Node curNode) {
@@ -985,7 +991,7 @@ HydroBase_WISImport wis_import) {
 	// Get the correct value based on the defined import column which was
 	// requested.
 	double value = getWISColumnValue(data, wis_import.getImport_column());
-	if (value != DMIUtil.MISSING_DOUBLE) {
+	if ( !DMIUtil.isMissing(value) ) {
 		// If we get here than set the value
 		v.set(0,new Double(value));
 		v.set(1,new Integer(1));
@@ -1075,7 +1081,8 @@ public static double getWISColumnValue(HydroBase_WISData data, String s) {
 	else if (s.equals(HydroBase_GUI_WIS.DELIVERY_DIV)) {
 		value = data.getDelivery_divr();
 	}
-	if (DMIUtil.isMissing(value)) {
+	// New missing is NaN but -999 was used before
+	if (DMIUtil.isMissing(value) || (value == LEGACY_MISSING_DOUBLE) ) {
 		return 0;
 	}
 
@@ -1122,7 +1129,7 @@ public static double getWISDataValue(HydroBase_WISData data, int col) {
 			break;		
 	}
 
-	if (DMIUtil.isMissing(value)) {
+	if (DMIUtil.isMissing(value) || (value == LEGACY_MISSING_DOUBLE) ) {
 		return 0;
 	}
 	

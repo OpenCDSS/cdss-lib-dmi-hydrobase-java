@@ -462,7 +462,7 @@ HydroBase_Node downstreamNode) {
         JGUIUtil.addComponent(northWJPanel, new JLabel("Stream Mile:"), 
 		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField mileJTextField = new JTextField();
-	if (__wisFormat.getStr_mile() != DMIUtil.MISSING_DOUBLE) {
+	if ( !DMIUtil.isMissing(__wisFormat.getStr_mile()) ) {
 		mileJTextField.setText("" + __wisFormat.getStr_mile());
 	}
 	mileJTextField.setEditable(false);

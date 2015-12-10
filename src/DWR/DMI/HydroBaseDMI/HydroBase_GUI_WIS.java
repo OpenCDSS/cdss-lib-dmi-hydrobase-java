@@ -2550,7 +2550,7 @@ private HydroBase_WISData getRowValues(int row) {
 		curDouble = ((Double)__worksheet.getValueAt(row, 
 			POINT_FLOW_COL - 1)).doubleValue();
 		rowData.setDry_river(0);
-		if (curDouble == DMIUtil.MISSING_DOUBLE) {
+		if (DMIUtil.isMissing(curDouble) ) {
 			curDouble = 0.0;
 		}
 	}
@@ -2558,56 +2558,56 @@ private HydroBase_WISData getRowValues(int row) {
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		NATURAL_FLOW_COL - 1)).doubleValue();
-	if (curDouble == DMIUtil.MISSING_DOUBLE) {
+	if (DMIUtil.isMissing(curDouble) ) {
 		curDouble = 0.0;
 	}
 	rowData.setNat_flow(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		DELIVERY_FLOW_COL - 1)).doubleValue();
-	if (curDouble == DMIUtil.MISSING_DOUBLE) {
+	if (DMIUtil.isMissing(curDouble) ) {
 		curDouble = 0.0;
 	}
 	rowData.setDelivery_flow(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		GAIN_LOSS_COL - 1)).doubleValue();
-	if (curDouble == DMIUtil.MISSING_DOUBLE) {
+	if (DMIUtil.isMissing(curDouble) ) {
 		curDouble = 0.0;
 	}
 	rowData.setGain(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		TRIB_NATURAL_COL - 1)).doubleValue();
-	if (curDouble == DMIUtil.MISSING_DOUBLE) {
+	if (DMIUtil.isMissing(curDouble) ) {
 		curDouble = 0.0;
 	}
 	rowData.setTrib_natural(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		TRIB_DELIVERY_COL - 1)).doubleValue();
-	if (curDouble == DMIUtil.MISSING_DOUBLE) {
+	if (DMIUtil.isMissing(curDouble) ) {
 		curDouble = 0.0;
 	}
 	rowData.setTrib_delivery(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		PRIORITY_DIV_COL - 1)).doubleValue();
-	if (curDouble == DMIUtil.MISSING_DOUBLE) {
+	if (DMIUtil.isMissing(curDouble) ) {
 		curDouble = 0.0;
 	}
 	rowData.setPriority_divr(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		DELIVERY_DIV_COL - 1)).doubleValue();
-	if (curDouble == DMIUtil.MISSING_DOUBLE) {
+	if (DMIUtil.isMissing(curDouble) ) {
 		curDouble = 0.0;
 	}
 	rowData.setDelivery_divr(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		RELEASES_COL - 1)).doubleValue();
-	if (curDouble == DMIUtil.MISSING_DOUBLE) {
+	if (DMIUtil.isMissing(curDouble) ) {
 		curDouble = 0.0;
 	}
 	rowData.setRelease(curDouble);
@@ -5833,12 +5833,12 @@ public void showCellProperties(int row, int col) {
 					weight_values);
 
 				// make sure we have a valid computation.
-				if (mile_values[0] == DMIUtil.MISSING_DOUBLE) {
+				if (DMIUtil.isMissing(mile_values[0])) {
 					mileString = NA;
 				}
 
 				// make sure we have a valid computation.
-				if (weight_values[0] == DMIUtil.MISSING_DOUBLE){
+				if (DMIUtil.isMissing(weight_values[0])){
 					weightString = NA;
 				}
 

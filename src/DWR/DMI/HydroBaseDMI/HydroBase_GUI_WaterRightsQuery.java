@@ -907,8 +907,7 @@ throws Exception {
                         double rateabs = data.getNet_rate_abs();
                         double ratecond = data.getNet_rate_cond();
 			
-                        if ((rateabs != DMIUtil.MISSING_DOUBLE )
-				||(ratecond != DMIUtil.MISSING_DOUBLE)) {
+                        if ( !DMIUtil.isMissing(rateabs) ||!DMIUtil.isMissing(ratecond) ) {
                                 // Do flows...
                                 abs = rateabs;
                                 con = ratecond;
@@ -918,8 +917,7 @@ throws Exception {
 				// Check volumes...
 				double volabs = data.getNet_vol_abs();
 				double volcond = data.getNet_vol_cond();
-                                if ((volabs != DMIUtil.MISSING_DOUBLE) 
-					|| (volcond != DMIUtil.MISSING_DOUBLE)){
+                if ( !DMIUtil.isMissing(volabs) || !DMIUtil.isMissing(volcond) ) {
                                         // Do volumes...
                                         abs = volabs;
                                         con = volcond;
@@ -932,14 +930,14 @@ throws Exception {
                         double rateApex = data.getNet_rate_apex();
                         double volApex = data.getNet_vol_apex();
 
-                        if (rateApex != DMIUtil.MISSING_DOUBLE) {
+                        if ( !DMIUtil.isMissing(rateApex) ) {
                                 // Do flow...
                                 apex = rateApex;
                                 if (units.length() == 0) {
                                         units = "C";
                                 }
                         }
-                        else if (volApex != DMIUtil.MISSING_DOUBLE) {
+                        else if ( !DMIUtil.isMissing(volApex) ) {
                                 // Do volume...
                                 apex = volApex;
                                 if (units.length()== 0) {
