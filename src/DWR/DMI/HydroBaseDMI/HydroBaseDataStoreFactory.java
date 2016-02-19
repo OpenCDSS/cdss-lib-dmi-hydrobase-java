@@ -30,6 +30,8 @@ public DataStore create ( PropList props )
     // The following is used if making an ODBC DSN connection to a HydroBase database, rather than above
     String odbcName = IOUtil.expandPropertyForEnvironment("OdbcName",props.getValue("OdbcName"));
     String connectionProperties = IOUtil.expandPropertyForEnvironment("ConnectionProperties",props.getValue("ConnectionProperties"));
+    // Create an initial datastore instance here with null DMI placeholder - it will be recreated below with DMI
+    HydroBaseDataStore ds = new HydroBaseDataStore ( name, description, null );
     try {
         if ( (odbcName != null) && !odbcName.equals("") ) {
         	/*
@@ -46,7 +48,8 @@ public DataStore create ( PropList props )
             HydroBaseDMI hdmi = new HydroBaseDMI(databaseEngine, odbcName, systemLogin, systemPassword, useStoredProcedures );
             hdmi.setAdditionalConnectionProperties(connectionProperties);
             hdmi.open();
-            HydroBaseDataStore ds = new HydroBaseDataStore( name, description, hdmi );
+            ds = new HydroBaseDataStore( name, description, hdmi );
+            ds.setProperties(props);
             return ds;
         }
         else {
@@ -58,14 +61,18 @@ public DataStore create ( PropList props )
 	        systemPassword, // OK if null - use read-only guest
 	        useStoredProcedures );
 	        dmi.open();
-	        return new HydroBaseDataStore ( name, description, dmi );
+	        ds = new HydroBaseDataStore ( name, description, dmi );
+	        ds.setProperties(props);
+	        return ds;
         }
     }
     catch ( Exception e ) {
-        // TODO SAM 2010-09-02 Wrap the exception because need to move from default Exception
-    	Message.printWarning(2,routine,e);
-        throw new RuntimeException ( e );
+    	// Don't rethrow an exception because want datastore to be created with unopened DMI
+        Message.printWarning(3,routine,e);
+        ds.setStatus(1);
+        ds.setStatusMessage("" + e);
     }
+    return ds;
 }
 
 }

@@ -47,6 +47,7 @@ throws IOException, Exception
     // Read the properties from the file
     PropList props = new PropList ("");
     props.setPersistentName ( filename );
+    props.set("DataStoreConfigFile="+filename);
     props.readPersistent ( false );
     String name = IOUtil.expandPropertyForEnvironment("Name",props.getValue("Name"));
     String description = IOUtil.expandPropertyForEnvironment("Description",props.getValue("Description"));
