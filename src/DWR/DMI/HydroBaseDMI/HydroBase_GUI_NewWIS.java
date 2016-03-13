@@ -37,7 +37,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -46,7 +45,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import java.util.List;
 import java.util.Vector;
 
@@ -56,17 +54,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import RTi.DMI.DMIUtil;
-
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
-
 import RTi.Util.Message.Message;
-
 import RTi.Util.String.StringUtil;
-
 import RTi.Util.Time.DateTime;
+import RTi.Util.Time.TimeZoneDefaultType;
 
 public class HydroBase_GUI_NewWIS 
 extends JFrame 
@@ -483,20 +478,18 @@ private void okClicked() {
 	else {		
 		HydroBase_WISSheetName sn = new HydroBase_WISSheetName();
 		sn.setSheet_name(sheetName);
-		sn.setEffective_date(effectiveDate.getDate());
+		sn.setEffective_date(effectiveDate.getDate(TimeZoneDefaultType.LOCAL));
 		sn.setWD(StringUtil.atoi(wd));
 		try {
 			__dmi.writeWISSheetName(sn);
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, 
-				"Error writing to sheet_name "
-				+ "table.");
+			Message.printWarning(1, routine, "Error writing to sheet_name table.");
 			Message.printWarning(2, routine, e);
 			ready();
 			return;
 		}		
-       	}
+    }
 
 	// get the wis_num of the newly archived sheet using
 	// sheet_name and effective date
@@ -520,8 +513,8 @@ private void okClicked() {
 		// sheet can actually be used).
 		HydroBase_WISComments wc = new HydroBase_WISComments();
 		wc.setWis_num(data.getWis_num());
-		wc.setSet_date(currentDate.getDate());
-		wc.setArchive_date(currentDate.getDate());
+		wc.setSet_date(currentDate.getDate(TimeZoneDefaultType.LOCAL));
+		wc.setArchive_date(currentDate.getDate(TimeZoneDefaultType.LOCAL));
 		wc.setComment("");
 		try {
 			__dmi.writeWISComments(wc);

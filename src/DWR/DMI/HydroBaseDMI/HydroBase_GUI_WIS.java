@@ -96,7 +96,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -107,7 +106,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import java.util.List;
 import java.util.Vector;
 
@@ -122,11 +120,8 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import RTi.DMI.DMIUtil;
-
 import RTi.GRTS.TSViewJFrame;
-
 import RTi.TS.TS;
-
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.JWorksheet_CellAttributes;
@@ -134,21 +129,17 @@ import RTi.Util.GUI.ReportJFrame;
 import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJComboBox;
 import RTi.Util.GUI.SimpleJMenuItem;
-
 import RTi.Util.IO.HTMLWriter;
 import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PrintJGUI;
 import RTi.Util.IO.PropList;
-
 import RTi.Util.Math.MathUtil;
-
 import RTi.Util.Message.Message;
-
 import RTi.Util.String.StringUtil;
-
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.DateTimeBuilderJDialog;
 import RTi.Util.Time.TimeUtil;
+import RTi.Util.Time.TimeZoneDefaultType;
 import RTi.Util.Time.YearType;
 
 /**
@@ -4707,14 +4698,13 @@ private boolean saveClicked() {
 	try {
 		HydroBase_WISComments wc = new HydroBase_WISComments();
 		wc.setWis_num(__wisNum);
-		wc.setSet_date(tsDate.getDate());
-		wc.setArchive_date(archiveDateTime.getDate());
+		wc.setSet_date(tsDate.getDate(TimeZoneDefaultType.LOCAL));
+		wc.setArchive_date(archiveDateTime.getDate(TimeZoneDefaultType.LOCAL));
 		wc.setComment(sheetComments);
 		__dmi.writeWISComments(wc);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error writing wis_comments "
-			+ "data.");
+		Message.printWarning(1, routine, "Error writing wis_comments data.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -4755,21 +4745,15 @@ private boolean saveClicked() {
 			HydroBase_WISData wd = new HydroBase_WISData();
 			wd.setWis_num(__wisNum);
 			wd.setWis_row(curRow + 1);
-			wd.setSet_date(tsDate.getDate());
-			wd.setPoint_flow((new Double(point_flow))
-				.doubleValue());
+			wd.setSet_date(tsDate.getDate(TimeZoneDefaultType.LOCAL));
+			wd.setPoint_flow((new Double(point_flow)).doubleValue());
 			wd.setNat_flow((new Double(nat_flow)).doubleValue());
-			wd.setDelivery_flow((new Double(delivery_flow))
-				.doubleValue());
+			wd.setDelivery_flow((new Double(delivery_flow)).doubleValue());
 			wd.setGain((new Double(gain)).doubleValue());
-			wd.setTrib_natural((new Double(trib_natural))
-				.doubleValue());
-			wd.setTrib_delivery((new Double(trib_delivery))
-				.doubleValue());
-			wd.setPriority_divr((new Double(priority_divr))
-				.doubleValue());
-			wd.setDelivery_divr((new Double(delivery_divr))
-				.doubleValue());
+			wd.setTrib_natural((new Double(trib_natural)).doubleValue());
+			wd.setTrib_delivery((new Double(trib_delivery)).doubleValue());
+			wd.setPriority_divr((new Double(priority_divr)).doubleValue());
+			wd.setDelivery_divr((new Double(delivery_divr)).doubleValue());
 			wd.setRelease((new Double(release)).doubleValue());
 			wd.setComment(comment);
 			wd.setDry_river(dry_river);
@@ -5173,15 +5157,14 @@ private boolean saveDiversionCoding() {
 			wc.setF(record.getF());
 			wc.setU(record.getU());
 			wc.setT(record.getT());
-			wc.setModified(__adminDateTime.getDate());
+			wc.setModified(__adminDateTime.getDate(TimeZoneDefaultType.LOCAL));
 			wc.setUser_num(__dmi.getUserNum());
 
 			try {
 				__dmi.writeWISDailyWC(wc);
 			}
 			catch (Exception e) {
-				Message.printWarning(1, routine, "Error writing"
-					+ " wis_daily_wc data.");
+				Message.printWarning(1, routine, "Error writing wis_daily_wc data.");
 				Message.printWarning(2, routine, e);
 			}
 		}
@@ -5211,14 +5194,13 @@ private boolean saveDiversionCoding() {
 					record.getObservationForDay(
 					__adminDateTime.getDay()));
 				wc.setUnit("CFS");
-				wc.setModified(__adminDateTime.getDate());
+				wc.setModified(__adminDateTime.getDate(TimeZoneDefaultType.LOCAL));
 				wc.setUser_num(__dmi.getUserNum());
 				try {
 					__dmi.writeWISDailyWC(wc);
 				}
 				catch (Exception e) {
-					Message.printWarning(1, routine, "Error"
-						+" writing wis_daily_wc data.");
+					Message.printWarning(1, routine, "Error writing wis_daily_wc data.");
 					Message.printWarning(2, routine, e);
 				}
 			}

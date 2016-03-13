@@ -121,7 +121,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -132,7 +131,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -151,7 +149,6 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import RTi.DMI.DMIUtil;
-
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.JWorksheet;
 import RTi.Util.GUI.JWorksheet_CellAttributes;
@@ -160,15 +157,12 @@ import RTi.Util.GUI.ReportJFrame;
 import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJComboBox;
 import RTi.Util.GUI.SimpleJMenuItem;
-
 import RTi.Util.IO.PropList;
-
 import RTi.Util.Message.Message;
-
 import RTi.Util.String.StringUtil;
-
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.StopWatch;
+import RTi.Util.Time.TimeZoneDefaultType;
 
 // REVISIT (JTS - 2003-12-17)
 /*
@@ -2955,7 +2949,7 @@ private int getRecentFormatWISNum() {
 
 			HydroBase_WISSheetName sn =new HydroBase_WISSheetName();
 			sn.setSheet_name(__sheetName);
-			Date date = TSCurrent.getDate();
+			Date date = TSCurrent.getDate(TimeZoneDefaultType.LOCAL);
 			sn.setEffective_date(date);
 			sn.setWD(wd);
 

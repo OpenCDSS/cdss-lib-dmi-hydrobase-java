@@ -60,14 +60,12 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -81,27 +79,22 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import RTi.DMI.DMIUtil;
-
 import RTi.Util.GUI.FindInJListJDialog;
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.ResponseJDialog;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJList;
 import RTi.Util.GUI.SimpleJMenuItem;
-
 import RTi.Util.IO.PropList;
-
 import RTi.Util.Message.Message;
-
 import RTi.Util.String.StringUtil;
-
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.DateTimeBuilderJDialog;
+import RTi.Util.Time.TimeZoneDefaultType;
 
 /**
 GUI to assist in setting a call.
@@ -1426,7 +1419,7 @@ private void setCallClicked() {
 		newCall.setStructure_num(StringUtil.atoi(structure_num));
 		newCall.setNet_num(StringUtil.atoi(net_num));
 		newCall.setWdwater_num(StringUtil.atoi(wdwater_num));
-		newCall.setDate_time_set(date_time_set_DT.getDate());
+		newCall.setDate_time_set(date_time_set_DT.getDate(TimeZoneDefaultType.LOCAL));
 		newCall.setDate_time_released(null);
 		newCall.setDeleted(deleted);
 		newCall.setAdminno(StringUtil.atod(adminno));
@@ -1434,14 +1427,15 @@ private void setCallClicked() {
 		newCall.setRelease_comments(null);
 		newCall.setDiv(StringUtil.atoi(div));
 		newCall.setDistricts_affected(districts_affected);
-		newCall.setArchive_date(archive_date_DT.getDate());
+		newCall.setArchive_date(archive_date_DT.getDate(TimeZoneDefaultType.LOCAL));
 		newCall.setStr_name(structure_name);
 		newCall.setWD(StringUtil.atoi(wd));
 		newCall.setID(StringUtil.atoi(id));
 		newCall.setStrname(stream_name);
 		newCall.setStrtribto(StringUtil.atoi(trib_num));
 		newCall.setDcr_amt(dcr_amt);
-		newCall.setApro_date(apro_date_DT.getDate());
+		// Time zone not relevant - treat as GMT since precision to day
+		newCall.setApro_date(apro_date_DT.getDate(TimeZoneDefaultType.GMT));
 	try {
 	      	__dmi.writeCalls(newCall);
 	}
