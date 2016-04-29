@@ -93,7 +93,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
 import javax.swing.text.JTextComponent;
 
 import java.awt.BorderLayout;
@@ -101,7 +100,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -110,29 +108,23 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import java.io.File;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
 import RTi.DMI.GenericDMI;
-
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.GUI.SimpleJComboBox;
-
 import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
-
 import RTi.Util.Message.Message;
-
 import RTi.Util.String.StringUtil;
 
 /**
@@ -257,7 +249,7 @@ private boolean __validateLogin = false;
 /**
 A hashtable for typing server names to Vectors of the databases available in the server.
 */
-private Hashtable __databaseNames = null;
+private Hashtable<String,List<String>> __databaseNames = null;
 
 /**
 An existing HydroBaseDMI instance which can be used.
@@ -576,7 +568,7 @@ private void checkServerForDatabaseNames(String server)
 		
 		String s = null;
 		int count = 0;
-		List v3 = new Vector();
+		List<String> databaseNames = new ArrayList<String>();
 		for ( int i = 0; i < size; i++) {
 			v2 = (List)v.get(i);
 			if ( v2.size() < 1 ) {
@@ -589,8 +581,8 @@ private void checkServerForDatabaseNames(String server)
 	
 				// only add those database that start with "HydroBase"
 				if (StringUtil.startsWithIgnoreCase(s, __HYDROBASE)) {
-					v3.add(s);
-					__databaseNamesJComboBox.add(s);
+					databaseNames.add(s);
+					//__databaseNamesJComboBox.add(s);
 					count++;
 				}
 			}
@@ -598,14 +590,19 @@ private void checkServerForDatabaseNames(String server)
 
 		if (count == 0) {
 			// no databases were found that started with "HydroBase"
-			v3.add(__NO_DATABASES);
+			databaseNames.add(__NO_DATABASES);
 			__databaseNamesJComboBox.add(__NO_DATABASES);
 			ok(false);
 		}
 		else {
+			// Sort the HydroBase names in descending order so most recent will be listed first
+			databaseNames = StringUtil.sortStringList(databaseNames, StringUtil.SORT_DESCENDING, null, false, true);
+			__databaseNamesJComboBox.setData(databaseNames);
+			// Select the first (newest)
+			__databaseNamesJComboBox.select(0);
 			ok(true);
 		}
-		__databaseNames.put(server, v3);
+		__databaseNames.put(server, databaseNames);
 	}
 	catch (Exception e) {
 		Message.printWarning(3, routine, "Error getting database names (" + e + ").");
@@ -745,61 +742,30 @@ private void connectionSelected(String connection) {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__databaseNames = null;
-	__hbdmi = null;
-	__useSPJCheckBox = null;
-	__odbcDSNsJLabel = null;
-	__databaseNamesJLabel = null;
-	__passwordJPasswordField = null;
-	__loginJTextField = null;
-	__statusJTextField = null;
-	__configurationProps = null;
-	__okJButton = null;
-	__cancelJButton = null;
-	__connectionJComboBox = null;
-	__databaseNamesJComboBox = null;
-	__hostnameJComboBox = null;
-	__waterDivisionJComboBox = null;
-	__odbcDSNJComboBox = null;
-	__dbhost = null;
-	__defaultDatabaseName = null;
-	__defaultServerName = null;
-	__lastSelectedServer = null;
-	__selectedDivision = null;
-	__available_OdbcDsn = null;
-	__serverNames = null;
-
-	super.finalize();
-}
-
-/**
 Finds the names of the databases that correspond to the currently-selected
 database, and populates the database name combo box with them.
 */
 private void findDatabaseNames() {
-	String s = __hostnameJComboBox.getSelected().trim();
+	String serverName = __hostnameJComboBox.getSelected().trim();
 
 	// convert local and localpc to the actual name of the machine.
-	if (s.equalsIgnoreCase("local") || s.equalsIgnoreCase("localpc")) {
-		s = IOUtil.getProgramHost();
+	if (serverName.equalsIgnoreCase("local") || serverName.equalsIgnoreCase("localpc")) {
+		serverName = IOUtil.getProgramHost();
 	}
 	
 	// First check to see if the database names have been cached from the
 	// database server.  If so, use the cached copy rather than going out to the server again.
-	List v = (List)__databaseNames.get(s);
-	if (v != null) {
-		int size = v.size();
+	// The list of databases will have been sorted previously.
+	List<String> databaseNames = __databaseNames.get(serverName);
+	if (databaseNames != null) {
+		int size = databaseNames.size();
 		__databaseNamesJComboBox.removeAllItems();
 		for (int i = 0; i < size; i++) {
-			s = (String)v.get(i);
-			__databaseNamesJComboBox.add(s);
+			serverName = databaseNames.get(i);
+			__databaseNamesJComboBox.add(serverName);
 		}
 		
-		if (size == 0 || (size == 1 && s.equals(__NO_DATABASES))) {
+		if (size == 0 || (size == 1 && serverName.equals(__NO_DATABASES))) {
 			ok(false);
 		}
 		else {
@@ -808,13 +774,18 @@ private void findDatabaseNames() {
 	
 		if (__databaseNamesJComboBox.contains(__defaultDatabaseName)) {
 			__databaseNamesJComboBox.select(__defaultDatabaseName);
+			//Message.printStatus(2,"","Selecting default database \"" + __defaultDatabaseName + "\"");
+		}
+		else {
+			// Select first
+			__databaseNamesJComboBox.select(0);
 		}
 		return;
 	}
 	
 	// Determine whether currently-selected server is the localhost.
 	boolean local = false;
-	if (s.equalsIgnoreCase(IOUtil.getProgramHost())) {
+	if (serverName.equalsIgnoreCase(IOUtil.getProgramHost())) {
 		local = true;
 	}
 		
@@ -832,16 +803,21 @@ private void findDatabaseNames() {
 		}
 		// TODO SAM 2009-05-22 Why not just use the following always? speed?
 		else {
-			checkServerForDatabaseNames(s);
+			checkServerForDatabaseNames(serverName);
 		}
 	}
 	else {
 		// Check database names on server
-		checkServerForDatabaseNames(s);
+		checkServerForDatabaseNames(serverName);
 	}
 
 	if (__databaseNamesJComboBox.contains(__defaultDatabaseName)) {
 		__databaseNamesJComboBox.select(__defaultDatabaseName);
+		//Message.printStatus(2,"","Selecting default database \"" + __defaultDatabaseName + "\"");
+	}
+	else {
+		// Select first
+		__databaseNamesJComboBox.select(0);
 	}
 }
 
@@ -989,12 +965,13 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 			}
 
 			__defaultServerName = __dbhost;
-			__defaultDatabaseName = __hbdmi.getDatabaseName();
+			// TODO SAM 2016-04-25 This seems to foul up defaulting to the most recent
+			//__defaultDatabaseName = __hbdmi.getDatabaseName();
 		}
 
 		userLogin = __hbdmi.getUserLogin();
 		userPassword = __hbdmi.getUserPassword();
-		__selectedDivision =HydroBase_GUI_Util.getActiveWaterDivision();
+		__selectedDivision = HydroBase_GUI_Util.getActiveWaterDivision();
 	}
 
 	addWindowListener(this);
@@ -1646,6 +1623,7 @@ private void readConfigurationFile() {
 		__defaultDatabaseName = __HYDROBASE;
 	}
 	else {
+		//Message.printStatus(2,"","Setting default HydroBase from configuration properties:  \"" + defaultDatabaseName + "\"");
 		__defaultDatabaseName = defaultDatabaseName;
 	}
 }
