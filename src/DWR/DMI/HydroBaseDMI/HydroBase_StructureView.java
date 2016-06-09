@@ -114,40 +114,6 @@ public int compareTo(Object o) {
 }
 
 /**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_last_name = null;
-	_first_name = null;
-	_middle_name = null;
-	_title = null;
-	_prefix = null;
-	_suffix = null;
-	_full_name = null;
-	_address1 = null;
-	_address2 = null;
-	_city = null;
-	_st = null;
-	_zip = null;
-//	_xaoo = null;
-//	_xaoo2 = null;
-	_org_name = null;
-	_bond_co_name = null;
-	_lic_no = null;
-	_lic_type = null;
-	_str_type = null;
-	_str_type_desc = null;
-	_strtype = null;
-
-	_structure_id = null;
-	
-	super.finalize();
-}
-
-/**
 Returns _address1
 @return _address1
 */

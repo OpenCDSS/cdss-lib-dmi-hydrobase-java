@@ -36,6 +36,7 @@ protected int _div = DMIUtil.MISSING_INT;
 protected String _tab_trib = DMIUtil.MISSING_STRING;
 protected int _wd = DMIUtil.MISSING_INT;
 protected int _id = DMIUtil.MISSING_INT;
+protected String _wdid = DMIUtil.MISSING_STRING; // Was added in later HydroBase, not in original desing, which used int wd and id
 protected String _wr_name = DMIUtil.MISSING_STRING;
 protected int _xwr_stream_no = DMIUtil.MISSING_INT;
 protected int _wr_stream_no = DMIUtil.MISSING_INT;
@@ -81,11 +82,62 @@ protected int _right_num = DMIUtil.MISSING_INT;
 protected int _structure_num = DMIUtil.MISSING_INT;
 
 /**
+ * Collection part ID type, only used with StateDMI.
+ * This is either WDID or Receipt and allows water rights created from well permits to be clearly indicated.
+ * This is necessary because a lookup the other direction might have duplicates and have ambiguous lookup.
+ */
+protected String _collectionPartIdType = "WDID";
+
+/**
 The common identifier is used to store a formatted WDID or concatenated well
 permit number, suffix, replacement, when processing data.  This data member
 is currently only used by StateDMI. 
 */
 private String _common_id = DMIUtil.MISSING_STRING;
+
+//The following data are not part of the official StateMod specification but are useful
+//to output in order to understand how well rights are determined.
+//The data are specific to the State of Colorado due to its complex data model.
+
+/**
+ * Well permit receipt.	
+ */
+private String __xPermitReceipt = "";
+
+/**
+ * Well yield GPM
+ */
+private double __xYieldGPM = Double.NaN;
+
+/**
+ * Well yield alternate point/exchange (APEX) GPM
+ */
+private double __xYieldApexGPM = Double.NaN;
+
+/**
+ * Well permit date.
+ */
+private Date __xPermitDate = null;
+
+/**
+ * Well right appropriation date.
+ */
+private Date __xApproDate = null;
+
+/**
+ * Prorated yield based on parcel area
+ */
+private double __xProratedYield = Double.NaN;
+
+/**
+ * Fraction of yield (percent_yield in HydroBase) attributed to number of wells that are split.
+ */
+private double __xFractionYield = Double.NaN;
+
+/**
+ * Fraction of yield attributed to ditch proration for parcel.
+ */
+private double __xDitchFraction = Double.NaN;
 
 /**
 The parcel ID is used when processing well rights and is only used by StateDMI. 
@@ -196,6 +248,14 @@ Returns _apro_date
 */
 public Date getApro_date() {
 	return _apro_date;
+}
+
+/**
+Returns the collection part ID type ("WDID" or "Receipt")
+@return the collection part ID type ("WDID" or "Receipt")
+*/
+public String getCollectionPartIdType() {
+	return _collectionPartIdType;
 }
 
 /**
@@ -511,6 +571,14 @@ public int getWD() {
 }
 
 /**
+Returns the WDID from HydroBase.
+@return _wdid
+*/
+public String getWDID() {
+	return _wdid;
+}
+
+/**
 Returns _wd_stream_name
 @return _wd_stream_name
 */
@@ -548,6 +616,62 @@ Returns _xwr_stream_no
 */
 public int getXwr_stream_no() {
 	return _xwr_stream_no;
+}
+
+/**
+ * Return the well permit receipt.	
+ */
+public String getXPermitReceipt () {
+	return __xPermitReceipt;
+}
+
+/**
+ * Return the well yield GPM.
+ */
+public double getXYieldGPM () {
+	return __xYieldGPM;
+}
+
+/**
+ * Return the well yield alternate point/exchange (APEX) GPM
+ */
+public double getXYieldApexGPM () {
+	return __xYieldApexGPM;
+}
+
+/**
+ * Return the well permit date.
+ */
+public Date getXPermitDate () {
+	return __xPermitDate;
+}
+
+/**
+ * Well right appropriation date.
+ */
+public Date getXApproDate () {
+	return __xApproDate;
+}
+
+/**
+ * Return the prorated yield based on parcel area
+ */
+public double getXProratedYield () {
+	return __xProratedYield;
+}
+
+/**
+ * Return the fraction of yield (percent_yield in HydroBase)
+ */
+public double getXFractionYield () {
+	return __xFractionYield;
+}
+
+/**
+ * Return the fraction of ditch associated with parcel.
+ */
+public double getXDitchFraction () {
+	return __xDitchFraction;
 }
 
 /**
@@ -607,7 +731,16 @@ public void setApro_date(Date apro_date) {
 }
 
 /**
-Sets _common_id
+Sets the collection part ID type (should be "WDID" or "Receipt").
+@param common_id Common identifier for the well right.
+*/
+public void setCollectionIdPartType (String collectionPartIdType) {
+	_collectionPartIdType = collectionPartIdType;
+}
+
+/**
+Sets _common_id for the well right, always the formatted WDID.
+TODO SAM 2016-05-29 Could this also be the well receipt?
 @param common_id Common identifier for the well right.
 */
 public void setCommonID(String common_id) {
@@ -919,6 +1052,14 @@ public void setWD(int wd) {
 }
 
 /**
+Sets _wdid
+@param wdid value to put into _wdid
+*/
+public void setWDID(String wdid) {
+	_wdid = wdid;
+}
+
+/**
 Sets _wd_stream_name
 @param wd_stream_name value to put into _wd_stream_name
 */
@@ -956,6 +1097,65 @@ Sets _xwr_stream_no
 */
 public void setXwr_stream_no(int xwr_stream_no) {
 	_xwr_stream_no = xwr_stream_no;
+}
+
+// The following "X" data members are used with StateDMI when parcel/well/right/permit
+// data from WellsWellToParcel data are converted into rights.  These data members
+// allow carrying around the data in NetAmount form.
+/**
+ * Set the well permit receipt.	
+ */
+public void setXPermitReceipt ( String xPermitReceipt ) {
+	__xPermitReceipt = xPermitReceipt;
+}
+
+/**
+ * Set the well yield GPM.
+ */
+public void setXYieldGPM ( double xYieldGPM ) {
+	__xYieldGPM = xYieldGPM;
+}
+
+/**
+ * Set the well yield alternate point/exchange (APEX) GPM
+ */
+public void setXYieldApexGPM ( double xYieldApexGPM ) {
+	__xYieldApexGPM = xYieldApexGPM;
+}
+
+/**
+ * Set the well permit date.
+ */
+public void setXPermitDate ( Date xPermitDate ) {
+	__xPermitDate = xPermitDate;
+}
+
+/**
+ * Set the well right appropriation date.
+ */
+public void setXApproDate ( Date xApproDate ) {
+	__xApproDate = xApproDate;
+}
+
+/**
+ * Set the prorated yield based on parcel area
+ */
+public void setXProratedYield ( double xProratedYield ) {
+	__xProratedYield = xProratedYield;
+}
+
+/**
+ * Set the fraction of yield (percent_yield in HydroBase)
+ */
+public void setXFractionYield ( double xFractionYield) {
+	__xFractionYield = xFractionYield;
+}
+
+/**
+ * Set the fraction of yield (percent_yield in HydroBase)
+ */
+public void setXDitchFraction ( double xDitchFraction) {
+	__xDitchFraction = xDitchFraction;
 }
 
 /** 

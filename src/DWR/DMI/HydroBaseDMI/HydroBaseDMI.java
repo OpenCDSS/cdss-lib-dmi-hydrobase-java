@@ -770,7 +770,7 @@
 package DWR.DMI.HydroBaseDMI;
 
 import java.sql.ResultSet;
-
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
@@ -784,15 +784,12 @@ import RTi.DMI.DMISelectStatement;
 import RTi.DMI.DMIWriteStatement;
 import RTi.DMI.DMIStatement;
 import RTi.DMI.DMIStoredProcedureData;
-
 import RTi.GIS.GeoView.DegMinSec;
 import RTi.GIS.GeoView.DegMinSecFormatType;
 import RTi.GR.GRLimits;
-
 import RTi.GRTS.TSProduct;
 import RTi.GRTS.TSProductAnnotationProvider;
 import RTi.GRTS.TSProductDMI;
-
 import RTi.TS.DayTS;
 import RTi.TS.HourTS;
 import RTi.TS.IrregularTS;
@@ -801,18 +798,13 @@ import RTi.TS.MonthTS;
 import RTi.TS.TS;
 import RTi.TS.TSIdent;
 import RTi.TS.YearTS;
-
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.GUI.SimpleJComboBox;
-
 import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.Prop;
 import RTi.Util.IO.PropList;
-
 import RTi.Util.Message.Message;
-
 import RTi.Util.String.StringUtil;
-
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.TimeInterval;
 import RTi.Util.Time.TimeUtil;
@@ -14916,7 +14908,7 @@ This method uses the following view:<p><ul>
 The objects are sorted by year, structure identifier (WDID), and land_use (crops).
 @throws Exception if an error occurs
 */
-public List readStructureIrrigSummaryTSList(InputFilter_JPanel panel,
+public List<HydroBase_StructureView> readStructureIrrigSummaryTSList(InputFilter_JPanel panel,
 List orderby_clauses, int structure_num, int wd, int id, String str_name,
 String land_use, DateTime req_date1, DateTime req_date2, boolean distinct ) 
 throws Exception {
@@ -14987,10 +14979,9 @@ throws Exception {
 			viewName = "vw_CDSS_StructureIrrigSummaryTS_Distinct_LU";
 		}
 			
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber(viewName), orderNumber, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber(viewName), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
-		List v = toStructureIrrigSummaryTSSPList(rs, distinct);
+		List<HydroBase_StructureView> v = toStructureIrrigSummaryTSSPList(rs, distinct);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -15047,7 +15038,7 @@ throws Exception {
 		}
 	
 		ResultSet rs = dmiSelect(q);
-		List v = toStructureIrrigSummaryTSSPList(rs, distinct);	
+		List<HydroBase_StructureView> v = toStructureIrrigSummaryTSSPList(rs, distinct);	
 		closeResultSet(rs);
 		return v;
 	}
@@ -20033,15 +20024,13 @@ This method is used by:<ul>
 <p><b>Stored Procedures</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_WellApplications</li></ul>
-@return a Vector of HydroBase_WellApplication objects.
+@return a list of HydroBase_WellApplication objects.
 @throws Exception if an error occurs.
 */
-public List readWellApplicationList(String permitno, 
-String permitrpl, String permitsuf)
+public List<HydroBase_WellApplicationView> readWellApplicationList(String permitno, String permitrpl, String permitsuf)
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			
 		String[] triplet = null;
 		if (permitno != null && permitno.length() > 0) {
@@ -20068,10 +20057,9 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_WellApplications"), 0, null);
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_WellApplications"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		List v = toWellApplicationSPList(rs);
+		List<HydroBase_WellApplicationView> v = toWellApplicationSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -20079,16 +20067,13 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);	
 		buildSQL(q, __S_WELL_APPLICATION_VIEW);
 		if (permitno != null && permitno.length() > 0) {
-			q.addWhereClause("well_application.permitno = '" 
-				+ permitno + "'");
+			q.addWhereClause("well_application.permitno = '" + permitno + "'");
 		}
 		if (permitsuf != null && permitsuf.length() > 0) {
-			q.addWhereClause("well_application.permitsuf = '" 
-				+ permitsuf + "'");
+			q.addWhereClause("well_application.permitsuf = '" + permitsuf + "'");
 		}
 		if (permitrpl != null && permitrpl.length() > 0) {
-			q.addWhereClause("well_application.permitrpl = '" 
-				+ permitrpl + "'");
+			q.addWhereClause("well_application.permitrpl = '" + permitrpl + "'");
 		}
 		ResultSet rs = dmiSelect(q);
 		List v = toWellApplicationSPList(rs);
@@ -20103,14 +20088,14 @@ where clause.<p>
 This method is used by:<ul>
 <li>HydroBase_NodeNetwork.setDescriptions</li>
 </ul>
-@param permitData a Vector of permit identifiers.
-@return a Vector of HydroBase_WellApplication objects.
+@param permitData a list of permit identifiers.
+@return a list of HydroBase_WellApplication objects.
 @throws Exception if an error occurs.
 */
-public List readWellApplicationListForPermitData(List permitData) 
+public List<HydroBase_WellApplicationView> readWellApplicationListForPermitData(List<String> permitData) 
 throws Exception {
-	List results = new Vector();
-	Object o;
+	List<HydroBase_WellApplicationView> results = new ArrayList<HydroBase_WellApplicationView>();
+	List<HydroBase_WellApplicationView> o;
 	if (permitData != null) {
 		boolean isPermit = false;
 		int size = permitData.size();
@@ -20119,22 +20104,20 @@ throws Exception {
 			permitrpl = null,
 			permitsuf = null,
 			where = "";
-		List v = null;
+		List<String> v = null;
 		for (int i = 0; i < size; i++) {
 			if (i > 0) {
 				where += " OR ";
 			}
 			isPermit = true;
-			compos = (String)permitData.get(i);
+			compos = permitData.get(i);
 			if (compos.length() > 0) {
 				// Check for invalid permit identifier...
 				if (compos.charAt(0) == 'P') {
-					v = StringUtil.breakStringList(
-						compos.substring(1), "_", 0);
+					v = StringUtil.breakStringList(compos.substring(1), "_", 0);
 				}	
 				else {
-					v = StringUtil.breakStringList(
-						compos, "_", 0);
+					v = StringUtil.breakStringList(compos, "_", 0);
 				}
 				
 				if (v == null) {
@@ -20152,23 +20135,22 @@ throws Exception {
 				permitsuf = "";
 				permitrpl = "";
 				if (v.size() > 0) {
-					permitno = (String)v.get(0);
+					permitno = v.get(0);
 				}
 				if (v.size() > 1) {
-					permitsuf = (String)v.get(1);
+					permitsuf = v.get(1);
 				}
 				if (v.size() > 2) {
-					permitrpl = (String)v.get(2);
+					permitrpl = v.get(2);
 				}
 				if (!StringUtil.isInteger(permitno)) {
 					isPermit = false;
 				}
 			}
 			if (isPermit) {
-				o = readWellApplicationList(permitno,
-					permitsuf, permitrpl);
+				o = readWellApplicationList(permitno,permitsuf, permitrpl);
 				if (o != null) {
-					results.add(o);
+					results.addAll(o);
 				}
 			}
 		}
@@ -20449,7 +20431,7 @@ throws Exception
 {
 	if ( !cacheHydroBase ) {
 		// Pass the call through
-		return readWellsWellToParcelList( parcel_id, cal_year, div );
+		return readWellsWellToParcelList( parcel_id, cal_year, div, null );
 	}
 	else {
 		// Division is required for caching
@@ -20462,7 +20444,7 @@ throws Exception
 		List<HydroBase_Wells> list = readWellsWellToParcelListCacheGetCache(div);
 		if ( list == null ) {
 			// Initialize the cache for the division
-			list = readWellsWellToParcelList( -1, -1, div );
+			list = readWellsWellToParcelList( -1, -1, div, null );
 			readWellsWellToParcelListCacheSetCache ( div, list );
 		}
 		// Now search for the specific criteria.  Use the index based on calendar year to improve performance,
@@ -20593,9 +20575,10 @@ TODO (JTS - 2005-03-04) change the following to use -999 instead of -1
 @param parcel_id If >= 0, the parcel_id will be used to filter the query.
 @param cal_year If >= 0, the cal_year will be used to filter the query.
 @param div If >= 0, the div will be used to filter the query.
+@param receipt if not null or empty, the receipt will be used to filter the query.
 @throws Exception if an error occurs.
 */
-public List<HydroBase_Wells> readWellsWellToParcelList ( int parcel_id, int cal_year, int div ) 
+public List<HydroBase_Wells> readWellsWellToParcelList ( int parcel_id, int cal_year, int div, String receipt ) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
@@ -20623,6 +20606,14 @@ throws Exception {
 			triplet[0] = "div";
 			triplet[1] = "EQ";
 			triplet[2] = "" + div;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		
+		if ( (receipt != null) && !receipt.isEmpty() ) {
+			triplet = new String[3];
+			triplet[0] = "receipt";
+			triplet[1] = "MA";
+			triplet[2] = receipt;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
@@ -32116,15 +32107,15 @@ throws Exception {
 }
 
 /**
-Translate a ResultSet from a view to HydroBase_StructureIrrigSummaryTS objects.
+Translate a ResultSet from a view to HydroBase_StructureView objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_StructureView.
+@return a list of HydroBase_StructureView.
 @throws Exception if an error occurs.
 */
-private List toStructureIrrigSummaryTSSPList(ResultSet rs, boolean distinct)
+private List<HydroBase_StructureView> toStructureIrrigSummaryTSSPList(ResultSet rs, boolean distinct)
 throws Exception {
 	HydroBase_StructureView data = null;
-	List v = new Vector();
+	List<HydroBase_StructureView> v = new ArrayList<HydroBase_StructureView>();
 	int index = 1;
 	
 	int i;
@@ -35393,13 +35384,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_WellApplicationView objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_WellApplicationView
+@return a list of HydroBase_WellApplicationView
 @throws Exception if an error occurs.
 */
-private List toWellApplicationSPList (ResultSet rs) 
+private List<HydroBase_WellApplicationView> toWellApplicationSPList (ResultSet rs) 
 throws Exception {
 	HydroBase_WellApplicationView data = null;
-	List v = new Vector();
+	List<HydroBase_WellApplicationView> v = new ArrayList<HydroBase_WellApplicationView>();
 	int index = 1;
 	
 	int i;
@@ -36525,10 +36516,10 @@ Translate a ResultSet from a result set to HydroBase_Wells objects.
 @return a Vector of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private List toWellsWellToParcelSPList(ResultSet rs)
+private List<HydroBase_Wells> toWellsWellToParcelSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Wells data = null;
-	List v = new Vector();
+	List<HydroBase_Wells> v = new ArrayList<HydroBase_Wells>();
 	int index = 1;
 
 	int i;
