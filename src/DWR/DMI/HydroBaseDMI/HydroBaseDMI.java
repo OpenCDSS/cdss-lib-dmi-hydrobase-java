@@ -1410,6 +1410,9 @@ private final int __S_WELLS_STRUCTURE = 2180;
 // wells
 private final int __S_WELLS = 2200;
 
+// vw_CDSS_Wells
+private final int __S_WELLS_VIEW = 2201;
+
 // wis_comments
 private final int __D_WIS_COMMENTS_FOR_WIS_NUM = 1999;
 private final int __S_WIS_COMMENTS_FOR_WIS_NUM_SET_DATE = 2001;
@@ -1996,12 +1999,30 @@ Build an SQL string based on a requested SQL statement code.  This defines
 the basic statement and allows overloaded methods to avoid redundant code.
 This method is used to eliminate redundant code where methods use the same
 basic statement but with different where clauses.
+Stored procedures are used if global __useSP=true
 @param statement Statement to set values in.
 @param sqlNumber the number of the SQL statement to build.  Usually defined
 as a private constant as a mnemonic aid.
 @return a string containing the full SQL.
 */
 private void buildSQL (DMIStatement statement, int sqlNumber)
+throws Exception
+{
+	buildSQL(__useSP, statement, sqlNumber);
+}
+
+/** 
+Build an SQL string based on a requested SQL statement code.  This defines 
+the basic statement and allows overloaded methods to avoid redundant code.
+This method is used to eliminate redundant code where methods use the same
+basic statement but with different where clauses.
+@param useSP if true stored procedures re used, otherwise direct SQL is used.
+@param statement Statement to set values in.
+@param sqlNumber the number of the SQL statement to build.  Usually defined
+as a private constant as a mnemonic aid.
+@return a string containing the full SQL.
+*/
+private void buildSQL (boolean useSP, DMIStatement statement, int sqlNumber)
 throws Exception {
 	DMISelectStatement select;
 	DMIWriteStatement write;
@@ -2009,14 +2030,16 @@ throws Exception {
 	String table = null;
 	long version = getDatabaseVersion();
 
-	if (canSetUpStoredProcedure(statement, sqlNumber)) {
-		// where, distinct and order by clauses can be set as usual for other types of queries.
-		return;
-	}
-	else {
-		String routine = "HydroBaseDMI.buildSQL";
-		Message.printWarning(3,routine, "No stored procedure for sqlNumber " +
-			sqlNumber + ".  Old version of HydroBase?  Will try building SQL statement.");
+	if ( useSP ) {
+		if (canSetUpStoredProcedure(statement, sqlNumber)) {
+			// where, distinct and order by clauses can be set as usual for other types of queries.
+			return;
+		}
+		else {
+			String routine = "HydroBaseDMI.buildSQL";
+			Message.printWarning(3,routine, "No stored procedure for sqlNumber " +
+				sqlNumber + ".  Old version of HydroBase?  Will try building SQL statement.");
+		}
 	}
 	
 	switch (sqlNumber) {
@@ -5074,6 +5097,36 @@ throws Exception {
 			select.addField("wells.use3");
 			select.addField("wells.ditches_served");
 			select.addTable("wells");
+			break;
+		case __S_WELLS_VIEW:
+			select = (DMISelectStatement)statement;
+			select.addField("vw_CDSS_Wells.well_id");
+			select.addField("vw_CDSS_Wells.div");
+			select.addField("vw_CDSS_Wells.wd");
+			select.addField("vw_CDSS_Wells.[id]");
+			select.addField("vw_CDSS_Wells.receipt");
+			select.addField("vw_CDSS_Wells.permitno");
+			select.addField("vw_CDSS_Wells.permitsuf");
+			select.addField("vw_CDSS_Wells.permitrpl");
+			select.addField("vw_CDSS_Wells.well_name");
+			select.addField("vw_CDSS_Wells.yield");
+			if ( version >= VERSION_20070525 ) {
+				select.addField("vw_CDSS_Wells.yield_apex");
+			}
+			select.addField("vw_CDSS_Wells.perm_date");
+			select.addField("vw_CDSS_Wells.appr_date");
+			select.addField("vw_CDSS_Wells.tperf");
+			select.addField("vw_CDSS_Wells.bperf");
+			select.addField("vw_CDSS_Wells.depth");
+			select.addField("vw_CDSS_Wells.aquifer1");
+			select.addField("vw_CDSS_Wells.wd_id"); // What version?
+			select.addField("vw_CDSS_Wells.flag");
+			select.addField("vw_CDSS_Wells.use1");
+			select.addField("vw_CDSS_Wells.use2");
+			select.addField("vw_CDSS_Wells.use3");
+			select.addField("vw_CDSS_Wells.ditches_served");
+			//select.addField("vw_CDSS_Wells.wdid");
+			select.addTable("vw_CDSS_Wells");
 			break;
 		case __S_WELLS_LAYER:
 			select = (DMISelectStatement)statement;
@@ -20347,26 +20400,54 @@ This is called by:<ul>
 <p><b>Stored Procedure</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_Wells</li>
-@return a Vector of HydroBase_Wells objects.
+@return a list of HydroBase_Wells objects.
 @throws Exception if an error occurs.
 */
-public List readWellsList() 
+public List<HydroBase_Wells> readWellsList ( String receipt, int wd, int id ) 
 throws Exception {
-	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
-		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber("vw_CDSS_Wells"), 0, null);
+	Message.printStatus(2, "", "Reading Wells for receipt=\"" + receipt + "\" wd=" + wd + " id=" + id);
+	//boolean useSP = __useSP;
+	boolean useSP = false;
+	if (useSP) {
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
+		String[] triplet = null;
+		if ( (receipt != null) && !receipt.isEmpty() ) {
+			triplet = new String[3];
+			triplet[0] = "receipt";
+			triplet[1] = "EQ";
+			triplet[2] = receipt;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		if ( (wd > 0) && (id > 0) ) {
+			triplet = new String[3];
+			triplet[0] = "wd";
+			triplet[1] = "EQ";
+			triplet[2] = "" + wd;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+			triplet = new String[3];
+			triplet[0] = "id";
+			triplet[1] = "EQ";
+			triplet[2] = "" + id;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Wells"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		List v = toWellsSPList(rs);
+		List<HydroBase_Wells> v = toWellsSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
-		buildSQL(q, __S_WELLS);
+		if ( (receipt != null) && !receipt.isEmpty() ) {
+			q.addWhereClause("vw_CDSS_Wells.receipt = '" + receipt + "'");
+		}
+		if ( (wd > 0) && (id > 0) ) {
+			q.addWhereClause("vw_CDSS_Wells.wd = " + wd );
+			q.addWhereClause("vw_CDSS_Wells.id = " + id );
+		}
+		buildSQL(useSP,q, __S_WELLS_VIEW);
 		ResultSet rs = dmiSelect(q);
-		List v = toWellsList(rs, __S_WELLS);
+		List<HydroBase_Wells> v = toWellsList(rs, __S_WELLS_VIEW);
 		closeResultSet(rs);
 		return v;
 	}
@@ -36041,10 +36122,11 @@ Translate a ResultSet to HydroBase_Wells objects.
 private List<HydroBase_Wells> toWellsList (ResultSet rs, int sqlNumber) 
 throws Exception {
 	HydroBase_Wells data = null;
-	List<HydroBase_Wells> v = new Vector();
+	List<HydroBase_Wells> v = new ArrayList<HydroBase_Wells>();
 	int index = 1;
 
-	if ( (sqlNumber != __S_WELLS) && (sqlNumber != __S_WELLS_LAYER) && (sqlNumber != __S_WELLS_PARCEL) &&
+	if ( (sqlNumber != __S_WELLS) && (sqlNumber != __S_WELLS_VIEW) && (sqlNumber != __S_WELLS_LAYER)
+		&& (sqlNumber != __S_WELLS_PARCEL) &&
 		(sqlNumber != __S_WELLS_STRUCTURE) && (sqlNumber != __S_WELLS_PARCEL_STRUCTURE) ) {
 		throw new Exception ("Invalid sqlNumber passed to 'toWellsList': " + sqlNumber);
 	}
@@ -36054,10 +36136,12 @@ throws Exception {
 	double d;
 	float f;
 	Date dt;
+	int [] wdidParts;
 
 	long version = getDatabaseVersion();
 
 	while (rs.next()) {
+		// The following are always included
 		index = 1;
 		data = new HydroBase_Wells();
 		i = rs.getInt(index++);
@@ -36100,6 +36184,12 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setYield(f);
 		}
+		if ( version >= VERSION_20070525 ) {
+			f = rs.getFloat(index++);
+			if (!rs.wasNull()) {
+				data.setYield_apex(f);
+			}
+		}
 		dt = rs.getDate(index++);
 		if (!rs.wasNull()) {
 			data.setPerm_date(dt);
@@ -36123,6 +36213,13 @@ throws Exception {
 		s = rs.getString(index++);
 		if (!rs.wasNull()) {
 			data.setAquifer1(s.trim());
+		}
+		// wd_id - same as wdid at end
+		s = rs.getString(index++);
+		if (!rs.wasNull() && !s.isEmpty() ) {
+			wdidParts = HydroBase_WaterDistrict.parseWDID(s);
+			data.setWD(wdidParts[0]);
+			data.setID(wdidParts[1]);
 		}
 		i = rs.getInt(index++);
 		if (!rs.wasNull()) {
@@ -36253,13 +36350,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_Wells objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_Wells
+@return a list of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private List toWellsSPList(ResultSet rs)
+private List<HydroBase_Wells> toWellsSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Wells data = null;
-	List v = new Vector();
+	List<HydroBase_Wells> v = new ArrayList<HydroBase_Wells>();
 	int index = 1;
 
 	int i;
@@ -36269,7 +36366,7 @@ throws Exception {
 	int[] wdid = null;
 	
 	long version = getDatabaseVersion();
-
+	
 	while (rs.next()) {
 		index = 1;
 		data = new HydroBase_Wells();
@@ -36343,9 +36440,9 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setAquifer1(s.trim());
 		}
-
+		// wd_id - same as wdid at end
 		s = rs.getString(index++);
-		if (!rs.wasNull()) {
+		if (!rs.wasNull() && !s.isEmpty() ) {
 			wdid = HydroBase_WaterDistrict.parseWDID(s);
 			data.setWD(wdid[0]);
 			data.setID(wdid[1]);
@@ -36371,6 +36468,11 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setDitches_served(i);
 		}
+		// TODO SAM 2016-06-11 Need to add WDID, but is already handled with wd_id above
+		//s = rs.getString(index++);
+		//if (!rs.wasNull()) {
+		//	data.setWDID(s.trim());
+		//}
 
 		v.add(data);
 	}
