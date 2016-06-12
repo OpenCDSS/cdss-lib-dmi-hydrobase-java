@@ -12463,7 +12463,7 @@ throws Exception {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
 			
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(structure_num)) {
+		if (!DMIUtil.isMissing(structure_num) && (structure_num > 0)) {
 			triplet = new String[3];
 			triplet[0] = "structure_num";
 			triplet[1] = "EQ";
@@ -12471,7 +12471,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(wd)) {
+		if (!DMIUtil.isMissing(wd) && (wd > 0)) {
 			triplet = new String[3];
 			triplet[0] = "wd";
 			triplet[1] = "EQ";
@@ -12479,7 +12479,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(id)) {
+		if (!DMIUtil.isMissing(id) && (id > 0)) {
 			triplet = new String[3];
 			triplet[0] = "id";
 			triplet[1] = "EQ";
@@ -39854,8 +39854,7 @@ throws Exception {
 
 /**
 @deprecated  use the other version:
-readNetAmtsList(int structure_num, int wd, int id, boolean positiveNetRateAbs, 
-Vector orderBys)
+readNetAmtsList(int structure_num, int wd, int id, boolean positiveNetRateAbs, Vector orderBys)
 */
 public List readNetAmtsList(int wd, int id ) 
 throws Exception {
