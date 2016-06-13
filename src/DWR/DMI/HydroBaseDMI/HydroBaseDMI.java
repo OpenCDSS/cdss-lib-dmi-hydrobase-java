@@ -12443,12 +12443,12 @@ This method is used by:<ul>
 <p><b>Stored Procedures</b><p>
 This method uses the following views:<p>
 <li>vw_CDSS_NetAmts</li></ul>
-@param structure_num if missing, will be ignored.
-@param wd Water district to select.  If missing, will be ignored.
-@param id Identifier to select.  If missing, will be ignored.
-@param positiveNetRateAbs whether to only return net amts with positive net rates.
-@param orderBys a Vector of potential order by clauses to include.  If null, will not be included.  
-@return a Vector of HydroBase_NetAmts objects.
+@param structure_num if missing or negative, will be ignored.
+@param wd Water district to select.  If missing or negative, will be ignored.
+@param id Identifier to select.  If missing or negative, will be ignored.
+@param positiveNetRateAbs whether to only return net amts with positive (> 0) net rates.
+@param orderBys a list of potential order by clauses to include.  If null, will not be included.  
+@return a list of HydroBase_NetAmts objects.
 @throws Exception if an error occurs.
 */
 public List readNetAmtsList(int structure_num, int wd, int id, 
@@ -20405,7 +20405,7 @@ This method uses the following view:<p><ul>
 */
 public List<HydroBase_Wells> readWellsList ( String receipt, int wd, int id ) 
 throws Exception {
-	Message.printStatus(2, "", "Reading Wells for receipt=\"" + receipt + "\" wd=" + wd + " id=" + id);
+	//Message.printStatus(2, "", "Reading Wells for receipt=\"" + receipt + "\" wd=" + wd + " id=" + id);
 	//boolean useSP = __useSP;
 	boolean useSP = false;
 	if (useSP) {
@@ -20768,19 +20768,59 @@ This is called by:<ul>
 <p><b>Stored Procedure</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_WellsWellToParcelWellToStructure</li></ul>
-@return a Vector of HydroBase_Wells objects.
+@param structureNum ditch structure number to query (negative or DMIUtil.MISSING_INT to ignore)
+@param strWd ditch water district to query (negative or DMIUtil.MISSING_INT to ignore)
+@param strId ditch ID to query (negative or DMIUtil.MISSING_INT to ignore)
+@param wd well water district (for WDID) to query (negative or DMIUtil.MISSING_INT to ignore)
+@param id well ID (for WDID) to query (negative or DMIUtil.MISSING_INT to ignore)
+@return a list of HydroBase_Wells objects.
 @throws Exception if an error occurs.
 */
-public List readWellsWellToParcelWellToStructureList() 
+public List<HydroBase_Wells> readWellsWellToParcelWellToStructureList( int structureNum, int strWd, int strId, int wd, int id ) 
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
+		String[] triplet = null;
+		
+		if ( (structureNum >= 0) && !DMIUtil.isMissing(structureNum) ) {
+			triplet = new String[3];
+			triplet[0] = "structure_num";
+			triplet[1] = "EQ";
+			triplet[2] = "" + structureNum;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		if ( (wd >= 0) && !DMIUtil.isMissing(wd) ) {
+			triplet = new String[3];
+			triplet[0] = "wd";
+			triplet[1] = "EQ";
+			triplet[2] = "" + wd;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		if ( (id >= 0) && !DMIUtil.isMissing(id) ) {
+			triplet = new String[3];
+			triplet[0] = "id";
+			triplet[1] = "EQ";
+			triplet[2] = "" + id;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		if ( (strWd >= 0) && !DMIUtil.isMissing(strWd) ) {
+			triplet = new String[3];
+			triplet[0] = "str_wd";
+			triplet[1] = "EQ";
+			triplet[2] = "" + strWd;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		if ( (strId >= 0) && !DMIUtil.isMissing(strId) ) {
+			triplet = new String[3];
+			triplet[0] = "str_id";
+			triplet[1] = "EQ";
+			triplet[2] = "" + strId;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
 		HydroBase_GUI_Util.fillSPParameters(parameters, 
-			getViewNumber(
-			"vw_CDSS_WellsWellToParcelWellToStructure"), 0, null);
+			getViewNumber("vw_CDSS_WellsWellToParcelWellToStructure"), 0, null);
 		ResultSet rs = runSPFlex(parameters);
-		List v = toWellsWellToParcelWellToStructureSPList(rs);
+		List<HydroBase_Wells> v = toWellsWellToParcelWellToStructureSPList(rs);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -36759,13 +36799,13 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_Wells objects.
 @param rs ResultSet to translate.
-@return a Vector of HydroBase_Wells
+@return a list of HydroBase_Wells
 @throws Exception if an error occurs.
 */
-private List toWellsWellToParcelWellToStructureSPList(ResultSet rs)
+private List<HydroBase_Wells> toWellsWellToParcelWellToStructureSPList(ResultSet rs)
 throws Exception {
 	HydroBase_Wells data = null;
-	List v = new Vector();
+	List v = new ArrayList<HydroBase_Wells>();
 	int index = 1;
 
 	int i;
@@ -36849,7 +36889,7 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setAquifer1(s.trim());
 		}
-		index++; 	// skip wd_id
+		index++; // skip wd_id
 		i = rs.getInt(index++);
 		if (!rs.wasNull()) {
 			data.setFlag(i);

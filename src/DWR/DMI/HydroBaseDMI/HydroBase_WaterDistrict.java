@@ -286,7 +286,7 @@ throws Exception
 	int length = wdid.length();
 	for (int i = 0; i < length; i++) {
 		if (!Character.isDigit(wdid.charAt(i))) {
-			message = "WDID \"" + wdid + "\" is not all digits.  Unable to parse.";
+			message = "WDID \"" + wdid + "\" is not all digits.  Unable to parse as a WDID.";
 			Message.printWarning (wl, routine, message );
 			throw new Exception ( message );
 		}
