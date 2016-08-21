@@ -312,6 +312,7 @@ static {
 
 /**
 Adds a triplet to the parameter list in the first "where" triplet position that is available.
+TODO SAM 2016-08-17 Why is the first position in the array, [0], always skipped and therefore -999?
 @param parameter the parameter list that has already been set up.
 @param triplet the triplet to put in the parameter list.
 */
@@ -1127,13 +1128,18 @@ throws Exception {
 			parameters[count++] = value;
 		}
 	}
+	
+	//for ( int i = 0; i < parameters.length; i++ ) {
+	//	Message.printStatus(2,"getSPFlexParameters","Parameter[" + i + "] = \"" + parameters[i] + "\" after adding district where" );
+	//}
 
 	// Loop through all the InputFilters and put their values into 
 	// the array.  getSPFlexParametersTriplet() will build an array 
 	// with the field to query, the SPFlex comparator, and the value to query against.
-	for (int i = 0; i < nfg; i++) {
-		filter = panel.getInputFilter(i);	
-		triplet = getSPFlexParametersTriplet(filter, panel.getOperator(i));
+	for (int ifg = 0; ifg < nfg; ifg++) {
+		filter = panel.getInputFilter(ifg);
+		//Message.printStatus(2,"getSPFlexParameters","filter="+filter.getWhereLabel()+";"+panel.getOperator(ifg)+";"+filter.getInputInternal().trim());
+		triplet = getSPFlexParametersTriplet(filter, panel.getOperator(ifg));
 		if (triplet != null) {
 			// non-null triplets contain values and can be put into the array
 			parameters[count++] = triplet[0];
@@ -1141,9 +1147,14 @@ throws Exception {
 			parameters[count++] = triplet[2];
 		}
 		else {
+			//Message.printStatus(2,"getSPFlexParameters","triplet=null for input filter[" + ifg + "]");
 			// null triplets mean the empty InputFilter was
-			// selected.  "-999" is used as filler in the array.
+			// selected.  "-999" is used as filler in the array
+			// and was initialized above.  Don't add anything new and count is not incremented
 		}
+		//for ( int iParam = 0; iParam < parameters.length; iParam++ ) {
+		//	Message.printStatus(2,"getSPFlexParameters","Parameter[" + iParam + "] = \"" + parameters[iParam] + "\" after processing filter group [" + ifg + "]" );
+		//}
 	}
 
 	return parameters;

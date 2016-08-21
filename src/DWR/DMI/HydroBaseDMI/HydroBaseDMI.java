@@ -15634,6 +15634,9 @@ public List<HydroBase_StructMeasTypeView> readStructureGeolocStructMeasTypeList(
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( panel, null);
+		//for ( int i = 0; i < parameters.length; i++ ) {
+		//	Message.printStatus(2,"XXX","Parameter[" + i + "] = \"" + parameters[i] + "\" for vw_CDSS_StructureStructMeasType spflex query" );
+		//}
 		String[] triplet = null;
 		if (meas_type != null && meas_type.length() > 0) {
 			triplet = new String[3];
@@ -15651,6 +15654,9 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
+		//for ( int i = 0; i < parameters.length; i++ ) {
+		//	Message.printStatus(2,"XXX","Parameter[" + i + "] = \"" + parameters[i] + "\" for vw_CDSS_StructureStructMeasType spflex query" );
+		//}
 		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_StructureStructMeasType"), 74, null);
 		ResultSet rs = runSPFlex(parameters);
 		List<HydroBase_StructMeasTypeView> v = toStructMeasTypeSPList(rs);
