@@ -95,9 +95,10 @@ is currently only used by StateDMI.
 */
 private String _common_id = DMIUtil.MISSING_STRING;
 
-//The following data are not part of the official StateMod specification but are useful
-//to output in order to understand how well rights are determined.
-//The data are specific to the State of Colorado due to its complex data model.
+// TODO SAM 2016-10-03 Evaluate moving to a derived class
+// The following data are not part of the official HydroBase/StateMod specification but are useful
+// to output in order to understand how well rights are determined.
+// The data are specific to the State of Colorado due to its complex data model.
 
 /**
  * Well permit receipt.	

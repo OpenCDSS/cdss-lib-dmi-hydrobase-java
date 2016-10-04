@@ -12893,7 +12893,7 @@ throws Exception {
 
 		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_Parcel_Use_TS"), 18, null);
 		ResultSet rs = runSPFlex(parameters);
-		List v = toParcelUseTSList(rs, false);
+		List<HydroBase_ParcelUseTS> v = toParcelUseTSList(rs, false);
 		closeResultSet(rs, __lastStatement);
 		return v;
 	}
@@ -13000,26 +13000,20 @@ This method is used by StateDMI to aggregate parcels.
 @return a Vector of HydroBase_ParcelUseTS objects.  The objects are sorted by
 div, parcel_id, and cal_year.
 */
-public List readParcelUseTSListForParcelList(int div, int[] parcel_id,
+public List<HydroBase_ParcelUseTS> readParcelUseTSListForParcelList(int div, int[] parcel_id,
 String land_use, String irrig_type, DateTime req_date1, DateTime req_date2 )
 throws Exception {
 	if (__useSP) {
-		int size = 0;
-		List results = new Vector();
-		List v = null;
+		List<HydroBase_ParcelUseTS> results = new ArrayList<HydroBase_ParcelUseTS>();
+		List<HydroBase_ParcelUseTS> v = null;
 
 		if (parcel_id.length == 0) {
-			return readParcelUseTSList(-999, div, -999,
-				land_use, irrig_type, req_date1, req_date2);
+			return readParcelUseTSList(-999, div, -999, land_use, irrig_type, req_date1, req_date2);
 		}
 		else {
 			for (int i = 0; i < parcel_id.length; i++) {
-				v = readParcelUseTSList(-999, div, parcel_id[i],
-					land_use, irrig_type, req_date1, req_date2);
-				size = v.size();
-				for (int j = 0; j < size; j++) {
-					results.add(v.get(j));
-				}
+				v = readParcelUseTSList(-999, div, parcel_id[i], land_use, irrig_type, req_date1, req_date2);
+				results.addAll(v);
 			}
 			return results;
 		}
@@ -13057,7 +13051,7 @@ throws Exception {
 		}
 	
 		ResultSet rs = dmiSelect(q);
-		List v = toParcelUseTSList(rs, false);
+		List<HydroBase_ParcelUseTS> v = toParcelUseTSList(rs, false);
 		closeResultSet(rs);
 		return v;
 	}
@@ -29838,7 +29832,7 @@ Translate a ResultSet to HydroBase_ParcelUseTS objects.
 private List<HydroBase_ParcelUseTS> toParcelUseTSList (ResultSet rs, boolean distinct) 
 throws Exception {
 	HydroBase_ParcelUseTS data = null;
-	List v = new Vector();
+	List<HydroBase_ParcelUseTS> v = new ArrayList<HydroBase_ParcelUseTS>();
 	int index = 1;
 	
 	int i;
@@ -39845,7 +39839,7 @@ throws Exception {
 /**
 @deprecated use the other readParcelUseTSListForParcelList
 */
-public List readParcelUseTSListForParcelList(List where_clauses,
+public List<HydroBase_ParcelUseTS> readParcelUseTSListForParcelList(List where_clauses,
 List orderby_clauses, int div, int [] parcel_id, String land_use,
 String irrig_type, DateTime req_date1, DateTime req_date2)
 throws Exception {
@@ -39893,7 +39887,7 @@ throws Exception {
 	}
 
 	ResultSet rs = dmiSelect(q);
-	List v = toParcelUseTSList(rs, false);
+	List<HydroBase_ParcelUseTS> v = toParcelUseTSList(rs, false);
 	closeResultSet(rs);
 	return v;
 }
@@ -39961,7 +39955,7 @@ throws Exception {
 readParcelUseTSList(int cal_year, int div, int parcel_id,
 String land_use, String irrig_type, DateTime req_date1, DateTime req_date2)
 */
-public List readParcelUseTSList(List where_clauses,
+public List<HydroBase_ParcelUseTS> readParcelUseTSList(List where_clauses,
 List orderby_clauses, int cal_year, int div, int parcel_id, String land_use,
 String irrig_type, DateTime req_date1, DateTime req_date2)
 throws Exception {
@@ -40002,7 +39996,7 @@ throws Exception {
 	}
 
 	ResultSet rs = dmiSelect(q);
-	List v = toParcelUseTSList(rs, false);
+	List<HydroBase_ParcelUseTS> v = toParcelUseTSList(rs, false);
 	closeResultSet(rs);
 	return v;
 }
