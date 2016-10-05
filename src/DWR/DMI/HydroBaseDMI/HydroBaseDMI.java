@@ -20512,7 +20512,7 @@ throws Exception
 {
 	if ( !cacheHydroBase ) {
 		// Pass the call through
-		return readWellsWellToParcelList( parcel_id, cal_year, div, null );
+		return readWellsWellToParcelList( parcel_id, cal_year, div, null, -1, -1 );
 	}
 	else {
 		// Division is required for caching
@@ -20525,7 +20525,7 @@ throws Exception
 		List<HydroBase_Wells> list = readWellsWellToParcelListCacheGetCache(div);
 		if ( list == null ) {
 			// Initialize the cache for the division
-			list = readWellsWellToParcelList( -1, -1, div, null );
+			list = readWellsWellToParcelList( -1, -1, div, null, -1, -1 );
 			readWellsWellToParcelListCacheSetCache ( div, list );
 		}
 		// Now search for the specific criteria.  Use the index based on calendar year to improve performance,
@@ -20657,9 +20657,11 @@ TODO (JTS - 2005-03-04) change the following to use -999 instead of -1
 @param cal_year If >= 0, the cal_year will be used to filter the query.
 @param div If >= 0, the div will be used to filter the query.
 @param receipt if not null or empty, the receipt will be used to filter the query.
+@param wd If >= 0, the wd will be used to filter the query.
+@param id If >= 0, the id will be used to filter the query.
 @throws Exception if an error occurs.
 */
-public List<HydroBase_Wells> readWellsWellToParcelList ( int parcel_id, int cal_year, int div, String receipt ) 
+public List<HydroBase_Wells> readWellsWellToParcelList ( int parcel_id, int cal_year, int div, String receipt, int wd, int id ) 
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
@@ -20695,6 +20697,22 @@ throws Exception {
 			triplet[0] = "receipt";
 			triplet[1] = "MA";
 			triplet[2] = receipt;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		
+		if (wd > 0) {
+			triplet = new String[3];
+			triplet[0] = "wd";
+			triplet[1] = "EQ";
+			triplet[2] = "" + cal_year;
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		
+		if (id > 0) {
+			triplet = new String[3];
+			triplet[0] = "id";
+			triplet[1] = "EQ";
+			triplet[2] = "" + cal_year;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 

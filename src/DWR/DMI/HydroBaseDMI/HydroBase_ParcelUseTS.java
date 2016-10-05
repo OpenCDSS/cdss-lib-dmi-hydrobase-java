@@ -23,7 +23,8 @@ import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 /**
-Class to store data from the HydroBase parcel_use_ts table.
+Class to store data from the HydroBase parcel_use_ts table,
+crop and irrigation method for a parcel, for a data year.
 */
 public class HydroBase_ParcelUseTS extends DMIDataObject {
 
