@@ -395,7 +395,7 @@ be available to the calling code (it will be null if the login failed).
 */
 public SelectHydroBaseJDialog(JFrame parent, HydroBaseDMI hbdmi, PropList props)
 {	
-	super(parent, true);
+	super(parent, true); // Modal - cannot interact with parent until dialog is acknowledged
 
 	JGUIUtil.setWaitCursor(this, true);
 	JGUIUtil.setWaitCursor(parent, true);
@@ -403,15 +403,18 @@ public SelectHydroBaseJDialog(JFrame parent, HydroBaseDMI hbdmi, PropList props)
 
 	__databaseNames = new Hashtable();
 	
-	try {	
+	try {
 		initialize(parent, hbdmi, props);
 	}
 	catch (Exception e) {
 		Message.printWarning(3, "SelectHydroBaseJDialog", e);
 	}
-
-	JGUIUtil.setWaitCursor(this, false);
-	JGUIUtil.setWaitCursor(parent, false);
+	finally {
+		// These don't actually get executed until the dialog is acknowledged by the user.
+		// Therefore also call for the dialog at the bottom of initialize().
+		JGUIUtil.setWaitCursor(this, false);
+		JGUIUtil.setWaitCursor(parent, false);
+	}
 }
 
 /**
@@ -1326,7 +1329,9 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	select(__loginJTextField);
 	select(__passwordJPasswordField);
 	select(__hostnameJComboBox);
-	select(__odbcDSNJComboBox);	
+	select(__odbcDSNJComboBox);
+	// Queries have been completed so set the wait cursor to false (show normal cursor)
+	JGUIUtil.setWaitCursor(this, false);
 	setVisible(true);
 
 	addKeyListener(this);
