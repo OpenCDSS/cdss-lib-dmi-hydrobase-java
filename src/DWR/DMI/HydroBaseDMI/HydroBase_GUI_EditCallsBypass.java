@@ -85,6 +85,7 @@ import RTi.Util.Message.Message;
 
 import RTi.Util.Time.DateTime;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_EditCallsBypass 
 extends JFrame 
 implements ActionListener, MouseListener, ListSelectionListener, WindowListener{
@@ -182,20 +183,20 @@ List of structures.
 private SimpleJList __structureJList;
 
 /**
-Vector of HydroBase_Calls objects.
+List of HydroBase_Calls objects.
 */
-private List __calls;
+private List<HydroBase_NetAmts> __calls;
 
 /**
-Vector of HydroBase_Structure objects, or HydroBase_StructureView objects
+List of HydroBase_Structure objects, or HydroBase_StructureView objects
 if using stored procedures..
 */
-private List __structures;
+private List<HydroBase_StructureView> __structures;
 
 /**
-Vector of JTextFields.
+List of JTextFields.
 */
-private List __textFieldVector;
+private List<JTextField> __textFieldVector;
 
 private JLabel __structureJLabel = null;
 
@@ -221,7 +222,7 @@ the parent when a structure query window is displayed.
 @param textField_Vector a Vector of text field objects.
 */
 public HydroBase_GUI_EditCallsBypass(HydroBaseDMI dmi, 
-JFrame main_parent, HydroBase_GUI_SetCall parent, List textField_Vector) {
+JFrame main_parent, HydroBase_GUI_SetCall parent, List<JTextField> textField_Vector) {
 	__main_parent = main_parent;
 	__parent = parent;
 	__dmi = dmi;
@@ -271,8 +272,7 @@ private void callsJListClicked() {
 	String selectedItem = ((String)__callsJList.getSelectedValue()).trim();
 	__callsJTextField.setText(selectedItem);
 
-	HydroBase_NetAmts netAmt = (HydroBase_NetAmts)
-		__calls.get(__callsJList.getSelectedIndex());
+	HydroBase_NetAmts netAmt = (HydroBase_NetAmts)__calls.get(__callsJList.getSelectedIndex());
 
 	Date curDate = netAmt.getApro_date();
 	if (!DMIUtil.isMissing(curDate)) {
@@ -342,13 +342,13 @@ private void closeClicked() {
 Displays the WIS structures.
 @param results contains results from the net amts query.
 */
-private void displayWaterRightNetResults(List results) {
+private void displayWaterRightNetResults(List<HydroBase_NetAmts> results) {
 	String routine = "HydroBase_GUI_EditCallsBypass.displayWaterRight"
 		+ "NetResults";
 	// initialize variables
 	int size = results.size();
 
-	// get the prioriy preference display from user preferences
+	// get the priority preference display from user preferences
 	String display = __dmi.getPreferenceValue("General.CallingRight");
 
 	String curString = "";
@@ -357,7 +357,7 @@ private void displayWaterRightNetResults(List results) {
 	HydroBase_NetAmts netAmt;
 
 	for (int i = 0; i < size; i++) {
-		netAmt = (HydroBase_NetAmts)results.get(i);
+		netAmt = results.get(i);
 		curString = "";
 		// display based on user preferences
 		if (display.equals(HydroBase_GUI_Options.PRIORITY_NUMBER)) {
@@ -459,13 +459,12 @@ private void displayWISStructures() {
 	String id = "";
 	String wd = "";
 	int curInt;
-	List data = new Vector();
+	List<String> data = new Vector<String>();
 	
 	if (!__structures.isEmpty()) {
 		int size = __structures.size();
 		for (int i = 0; i < size; i++) {
-			view = (HydroBase_StructureView)
-				__structures.get(i);
+			view = __structures.get(i);
 			name = "" + view.getStr_name().trim();
 			curInt = view.getWD();
 			if (DMIUtil.isMissing(curInt)) {
@@ -826,8 +825,8 @@ public void setVisible(boolean state) {
 
 		// display the WIS Structures
 		if (!__parent.haveGeneratedBypassStructures()) {
-			__calls = new Vector();
-			__structures = new Vector();
+			__calls = new Vector<HydroBase_NetAmts>();
+			__structures = new Vector<HydroBase_StructureView>();
 			// REVISIT (JTS - 2005-08-03)
 			// in future this may be changed so that something 
 			// is done similar to the main calls list and other
@@ -897,7 +896,7 @@ private void structureAddition(HydroBase_StructureView newCall) {
 	String name;
 	int comparison;
 	if (__structures == null) {
-		__structures = new Vector(1);
+		__structures = new Vector<HydroBase_StructureView>(1);
 		__structures.add(newCall);
 	}
 	else {
@@ -1005,10 +1004,9 @@ private void structureListClicked() {
 		return;
 	}
 
-	List results = null;
+	List<HydroBase_NetAmts> results = null;
 
-	HydroBase_StructureView view = (HydroBase_StructureView)
-		__structures.get(index);
+	HydroBase_StructureView view = __structures.get(index);
 
 	__structureJLabel.setText("" + __structureJList.getSelectedItem());
 

@@ -31,6 +31,7 @@ Dialog box for users to select the kind of formatting to do on exports and
 prints.  This dialog is modal and not resizable.  
 A FileChooser dialog would not have been appropriate.
 */
+@SuppressWarnings("serial")
 public class SelectFormatTypeJDialog extends JDialog
 implements ActionListener {
 
@@ -44,16 +45,16 @@ private int __selected = HydroBase_GUI_Util.CANCEL;
 The list of possible formats.  Each element in the vector will be placed onto
 a single button.
 */
-private List __formats = null;
+private List<String> __formats = null;
 
 /**
 Constructor.  
 @param parent the JFrame on which this dialog should appear.
-@param formats a Vector of formatting strings, each of which will be placed
+@param formats a list of formatting strings, each of which will be placed
 on a JButton.  If this is null or empty, an exception will be thrown.
 @throws exception if an error occurs.
 */
-public SelectFormatTypeJDialog(JFrame parent, List formats) 
+public SelectFormatTypeJDialog(JFrame parent, List<String> formats) 
 throws Exception {
 	super ( parent, true );
 	if (formats == null || formats.size() == 0) {
@@ -98,10 +99,10 @@ public int getSelected() {
 
 /**
 Initializes and builds the GUI.
-@param formats the Vector of formats, each of which will be placed on a 
+@param formats the list of formats, each of which will be placed on a 
 JButton.
 */
-private void initialize(List formats) {
+private void initialize(List<String> formats) {
 	setTitle("Select format to print");
 	setModal(true);
 		
@@ -110,12 +111,12 @@ private void initialize(List formats) {
 	getContentPane().setLayout(new GridLayout(0, 1, 10, 10));
 
 	for (int i = 0; i < formats.size(); i++) {
-		String formatName = (String)formats.get(i);
+		String formatName = formats.get(i);
 		if (formatName.equals("")) {
 			// skip it, but continue counting
 		}
 		else {
-			JButton j = new JButton(((String)formats.get(i)));
+			JButton j = new JButton(formats.get(i));
 			j.addActionListener(this);
 			getContentPane().add(j);
 		}

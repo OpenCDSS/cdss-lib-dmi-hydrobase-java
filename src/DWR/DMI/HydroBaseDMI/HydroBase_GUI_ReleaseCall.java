@@ -67,6 +67,7 @@ import RTi.Util.Time.DateTimeBuilderJDialog;
 /**
 GUI to assist in releasing a call.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_ReleaseCall 
 extends JFrame 
 implements ActionListener, WindowListener {
@@ -457,7 +458,7 @@ public void setVisible(boolean state) {
 
 		// get the call record which corresponds to
 		// the _call_num
-		List whereClause = new Vector();
+		List<String> whereClause = new Vector<String>();
 		whereClause.add("call_num = " + __callNum);
 		try {
 			__call = __dmi.readCallsForCall_num(__callNum);

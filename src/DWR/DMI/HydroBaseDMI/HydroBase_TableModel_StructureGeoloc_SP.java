@@ -78,7 +78,7 @@ results.
 public HydroBase_TableModel_StructureGeoloc_SP(List results, HydroBaseDMI dmi)
 throws Exception {
 	if (results == null) {
-		throw new Exception ("Invalid results Vector passed to " 
+		throw new Exception ("Invalid results list passed to " 
 			+ "HydroBase_TableModel_StructureGeoloc_SP "
 			+ "constructor.");
 	}

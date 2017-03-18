@@ -397,7 +397,7 @@ private String __waterString;
 /**
 Vector of nodes directly upstream of this node.
 */
-private List __upstream;
+private List<HydroBase_Node> __upstream;
 
 //--------------------------------------------------------------------------
 // Data members used solely with the network drawing code.
@@ -537,7 +537,7 @@ private String __downstreamNodeID = null;
 /**
 The ids of all the nodes immediately upstream of this node.
 */
-private List __upstreamNodeIDs = null;
+private List<String> __upstreamNodeIDs = null;
 //--------------------------------------------------------------------------
 
 /**
@@ -576,8 +576,7 @@ public boolean addDownstreamNode(HydroBase_Node downstream_node) {
 		// find the element to reset...
 		int pos = __downstream.getUpstreamNodePosition(getCommonID());
 		if (pos >= 0) {
-			List downstreamUpstream =
-				__downstream.getUpstreamNodes();
+			List<HydroBase_Node> downstreamUpstream = __downstream.getUpstreamNodes();
 			if (downstreamUpstream != null) {
 				downstreamUpstream.set(pos,downstream_node);
 			}
@@ -656,7 +655,7 @@ public boolean addUpstreamNode(HydroBase_Node upstream_node) {
 	
 	if (__upstream == null) {
 		// Need to allocate space for it...
-		__upstream = new Vector();
+		__upstream = new Vector<HydroBase_Node>();
 	}
 
 	__upstream.add(upstream_node);
@@ -680,14 +679,13 @@ public boolean addUpstreamNode(HydroBase_Node upstream_node) {
 }
 
 /**
-Adds an id to the Vector of upstream node ids.  Used by the network drawing 
-code.
-@param id the id to add to the upstream node vector.  If the Vector is null
+Adds an id to the list of upstream node ids.  Used by the network drawing code.
+@param id the id to add to the upstream node vector.  If the list is null
 it will first be created.
 */
 public void addUpstreamNodeID(String id) {
 	if (__upstreamNodeIDs == null) {
-		__upstreamNodeIDs = new Vector();
+		__upstreamNodeIDs = new Vector<String>();
 	}
 	__upstreamNodeIDs.add(id);
 }
@@ -851,7 +849,7 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 	String label = __label;
 
 	if (__symbol != null) {
-		double width = ICON_DIAM;
+		//double width = ICON_DIAM;
 		double height = ICON_DIAM;
 	
 		if (__label != null) {
@@ -860,7 +858,7 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 			if (limits.getHeight() > height) {
 				height = limits.getHeight();
 			}
-			width += 4 + limits.getWidth();
+			//width += 4 + limits.getWidth();
 		}
 	}
 	
@@ -1946,10 +1944,10 @@ public int getUpstreamNodePosition(String commonID) {
 }
 
 /**
-Returns the Vector of upstream nodes.
-@return the Vector of upstream nodes.
+Returns the list of upstream nodes.
+@return the list of upstream nodes.
 */
-public List getUpstreamNodes() {
+public List<HydroBase_Node> getUpstreamNodes() {
 	return __upstream;
 }
 
@@ -2158,14 +2156,14 @@ public void insertUpstreamNode(HydroBase_Node node, int pos) {
 }
 
 /**
-Inserts multiple nodes into the Vector of upstream nodes.  Used by network
+Inserts multiple nodes into the list of upstream nodes.  Used by network
 diagramming tools.
-@param nodes a non-null Vector of nodes to be inserted upstream of this node.
+@param nodes a non-null list of nodes to be inserted upstream of this node.
 @param pos the position at which to insert the nodes.
 */
-public void insertUpstreamNodes(List nodes, int pos) {
+public void insertUpstreamNodes(List<HydroBase_Node> nodes, int pos) {
 	for (int i = nodes.size() - 1; i >= 0; i--) {
-		__upstream.add(pos,(HydroBase_Node)nodes.get(i));
+		__upstream.add(pos,nodes.get(i));
 	}
 }
 
@@ -2421,9 +2419,9 @@ public boolean parseAreaPrecip(String string0) {
 	}
 	else if (nfields == 2) {
 		// Assume that we have a valid theOperator and do the math...
-		List v = StringUtil.breakStringList(string, " \t", 0);
-		area = (String)v.get(0);
-		precip = (String)v.get(1);
+		List<String> v = StringUtil.breakStringList(string, " \t", 0);
+		area = v.get(0);
+		precip = v.get(1);
 		double a = (new Double(area)).doubleValue();
 		double p = (new Double(precip)).doubleValue();
 		double water = 0;
@@ -3006,12 +3004,12 @@ public void setTypeAbbreviation(String type) {
 }
 
 /**
-Sets the Vector nodes upstream of this node.  Used by the network
+Sets the list nodes upstream of this node.  Used by the network
 diagramming tools.
-@param v the Vector of upstream nodes.  If null, then there are no nodes
+@param v the list of upstream nodes.  If null, then there are no nodes
 upstream of this node.
 */
-public void setUpstreamNodes(List v) {
+public void setUpstreamNodes(List<HydroBase_Node> v) {
 	__upstream = v;
 }
 

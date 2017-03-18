@@ -40,10 +40,10 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
 
@@ -175,12 +175,12 @@ private double __prevCondcfs = DMIUtil.MISSING_DOUBLE;
 /**
 Hashtable to hold sums by station id value.
 */
-private Hashtable __sums = null;
+private Hashtable<String,Double> __sums = null;
 
 /**
 Hashtable to hold AF sums by station id value.
 */
-private Hashtable __sumsAF = null;
+private Hashtable<String,Double> __sumsAF = null;
 
 /**
 Reference to an open DMI to be used for querying HydroBase.
@@ -209,25 +209,25 @@ The name of the stream currently being operated on.
 private String __streamName = DMIUtil.MISSING_STRING;
 
 /**
-This is the Vector that holds all the lines of the report.
+This is the list that holds all the lines of the report.
 */
-private List __reportVector = null;
+private List<String> __reportList = null;
 
 /**
-This is the Vector that holds the results of the query that will be used
+This is the list that holds the results of the query that will be used
 to fill out the reports.
 */
-private List __results = null;
+private List<HydroBase_NetAmts> __results = null;
 
 /**
 List of results from a query of the str_type table.
 */
-private List<HydroBase_DssStructureType> __strtypesVector = null;
+private List<HydroBase_DssStructureType> __strtypesList = null;
 
 /**
 Vector of results from a query of the use table.
 */
-private List __useVector = null;
+private List<HydroBase_Use> __useVector = null;
 
 /**
 Constructor.  The constructor queries the database for the results that will
@@ -276,7 +276,7 @@ Generic method that will create the specified report.  Can be used instead
 of calling the specified createAdminReport, createPriorityReport,
 createTransStreamReport, and createNetTabulationReport methods.
 @param reportType the kind of report to generate
-@throws Exception if an error occurs or if an invlaid report type is passed in.
+@throws Exception if an error occurs or if an invalid report type is passed in.
 */
 public void createReport(int reportType)
 throws Exception {
@@ -372,20 +372,20 @@ throws Exception {
 	// print header if not by stream
 	if (!byStream) {
 		__isNewStreamNode = false;		
-		__reportVector = getNetAdminReportHeader(byStream);
+		__reportList = getNetAdminReportHeader(byStream);
 	}
 	else {
-		__reportVector = new Vector();
+		__reportList = new ArrayList<String>();
 	}
 
 	// get the list of use codes from the database.  This is a small and
-	// fast query, so it can be done everytime a report is generated.
+	// fast query, so it can be done every time a report is generated.
 	__useVector = __dmi.getUseTypes();
 
 	// loop through all the records in the results and print out the
 	// data associated with them
 	for (int i = 0; i < numNodes; i++) {
-		node = (HydroBase_NetAmts)__results.get(i);
+		node = __results.get(i);
 
 		if (byStream) {
 			// if the current record has a different stream name
@@ -393,19 +393,18 @@ throws Exception {
 			// the section header for the new stream name
 			if (!node.getWd_stream_name().equals(lastStreamName)) {
 				if (i>0) {
-					__reportVector.add(new String());
-					__reportVector.add(new String());
+					__reportList.add("");
+					__reportList.add("");
 				}
 
 				// get a new header
 				__streamName = node.getWd_stream_name();
 				__isNewStreamNode = true;
 
-				List v = getNetAdminReportHeader(byStream);
+				List<String> v = getNetAdminReportHeader(byStream);
 				int size = v.size();
 				for (int j = 0; j < size; j++) {
-					__reportVector.add(
-						(String)v.get(j));
+					__reportList.add(v.get(j));
 				}
 			}
 			else {
@@ -417,12 +416,12 @@ throws Exception {
 		// it to the report vector
 		String line = getNetAdminLine(node);
 		if (line.length() > 0) {
-			__reportVector.add(line);
+			__reportList.add(line);
 		}
 	}
 
 	// add footer
-	__reportVector.add(new String("* Alternate Point"));
+	__reportList.add("* Alternate Point");
 }
 
 /**
@@ -466,15 +465,15 @@ throws Exception {
 	// query the use and str_type table for all records.  These are small
 	// and fast queries, so they can be run every time a report is generated.
 	__useVector = __dmi.getUseTypes();
-	__strtypesVector = __dmi.readDssStructureTypeList();
+	__strtypesList = __dmi.readDssStructureTypeList();
 	
 	// get the header for the report
-	__reportVector = getNetTabulationReportHeader();
+	__reportList = getNetTabulationReportHeader();
 
 	// loop through all the records and print their information
 	for (int i = 0; i < size; i++) {
 		node = (HydroBase_NetAmts)__results.get(i);
-		__reportVector.add(getNetTabulationLine(node, (i + 1)));
+		__reportList.add(getNetTabulationLine(node, (i + 1)));
 		// Garbage collect to try to prevent problems...
 		if ((i%500) == 0) {
 			node = null;
@@ -505,7 +504,7 @@ throws Exception {
 	String code = null;
 
 	for (int j = 0; j < nstrType; j++) {
-		code = new String(String.valueOf(strType.charAt(j)));
+		code = String.valueOf(strType.charAt(j));
 		if (code.trim().length() > 0) {
 			newStrType += getStructureTypeReportCode(code);
 		}
@@ -523,7 +522,7 @@ public void createAdminReport(int type)
 throws Exception {
 	// initialize variables
 	initialize();
-	String 	lastStreamName = new String();
+	String lastStreamName = "";
 	boolean	byStream = false;
 	HydroBase_NetAmts node = null;
 
@@ -578,14 +577,14 @@ throws Exception {
 	}
 	
 	if (!byStream) {
-		__reportVector = getTransAdminReportHeader(byStream);
+		__reportList = getTransAdminReportHeader(byStream);
 	} else {
-		__reportVector = new Vector();
+		__reportList = new ArrayList<String>();
 	}
 
 	// loop through each record and print out its information
 	for (int i = 0; i < numNodes; i++) {
-		node = (HydroBase_NetAmts)__results.get(i);
+		node = __results.get(i);
 
 		if (byStream) {
 			// if the current record has a different stream name
@@ -595,16 +594,14 @@ throws Exception {
 				__streamName = node.getWd_stream_name();
 				__isNewStreamNode = true;
 				if (i > 0) {
-					__reportVector.add(new String());
-					__reportVector.add(new String());
+					__reportList.add("");
+					__reportList.add("");
 				}
 
-				List v = 
-				getTransAdminReportHeader(byStream);
+				List<String> v = getTransAdminReportHeader(byStream);
 				int size = v.size();
 				for (int j = 0; j < size; j++) {
-					__reportVector.add(
-						(String)v.get(j));
+					__reportList.add(v.get(j));
 				}
 			}
 			else {
@@ -612,11 +609,11 @@ throws Exception {
 			}
 			lastStreamName = node.getWd_stream_name();
 		}
-		__reportVector.add(getTransAdminLine(node));
+		__reportList.add(getTransAdminLine(node));
 	}
 
 	// add footer
-	__reportVector.add(new String("* Alternate Point"));
+	__reportList.add("* Alternate Point");
 }
 
 /**
@@ -626,7 +623,7 @@ Create stream alphabetical report.
 public void createTransStreamReport()
 throws Exception {
 	initialize();
-	String 	lastStreamName = new String();
+	String lastStreamName = "";
 	HydroBase_NetAmts node = null;
 
 	// check to see if the database needs to be queried
@@ -655,16 +652,12 @@ throws Exception {
 		return;
 	}
 
-	__reportVector = new Vector(numNodes, 100);
+	__reportList = new ArrayList<String>(numNodes);
 	__isNewStreamNode = true;
 
 	// loop through each record and print out its information
 	for (int i = 0; i < numNodes; i++) {
-		node = (HydroBase_NetAmts)__results.get(i);
-
-		if ((i %500) == 0) {
-			System.gc();
-		}
+		node = __results.get(i);
 
 		if (!node.getWd_stream_name().equals(lastStreamName)) {
 			// if the current record has a different stream name
@@ -672,18 +665,17 @@ throws Exception {
 			// the section header for the new stream name		
 			__isNewStreamNode = true;
 			if (i > 0) {
-				__reportVector.add(new String());
-				__reportVector.add(new String());
+				__reportList.add("");
+				__reportList.add("");
 			}
 
 			// get a new header
 			__streamName = node.getWd_stream_name();
 			__isNewStreamNode = true;
-			List v = getTransStreamReportHeader();
+			List<String> v = getTransStreamReportHeader();
 			int size = v.size();
 			for (int j = 0; j < size; j++) {
-				__reportVector.add(
-					(String)v.get(j));
+				__reportList.add(v.get(j));
 			}
 		}
 		else {	
@@ -691,11 +683,11 @@ throws Exception {
 		}
 
 		lastStreamName = node.getWd_stream_name();
-		__reportVector.add(getTransStreamLine(node));
+		__reportList.add(getTransStreamLine(node));
 	}
 
 	// add footer
-	__reportVector.add(new String("* Alternate Point"));
+	__reportList.add(new String("* Alternate Point"));
 }
 
 /**
@@ -709,9 +701,9 @@ throws Throwable {
 	__filterPanel = null;
 	IOUtil.nullArray(__districtWhere);
 	__streamName = null;
-	__reportVector = null;
+	__reportList = null;
 	__results = null;
-	__strtypesVector = null;
+	__strtypesList = null;
 	__useVector = null;
 	super.finalize();
 }
@@ -758,16 +750,16 @@ private String getNetAdminLine(HydroBase_NetAmts n)
 throws Exception {
  	int maxUseLength = 3;
 	double cumulTotal = DMIUtil.MISSING_DOUBLE;
-	List 	v = new Vector(35, 5);
+	List<String> v = new ArrayList<String>(35);
 	double admin_no = n.getAdmin_no();
 
 	// if this has the same admin num as the last record that was
 	// added to the report, add an asterisk after its admin no
 	if (admin_no == __lastAdminNum) {
-		v.add(new String(format(admin_no, "%11.5f")+ "*"));
+		v.add(format(admin_no, "%11.5f")+ "*");
 	}
 	else {
-		v.add(new String(format(admin_no, "%11.5f")));
+		v.add(format(admin_no, "%11.5f"));
 	}
 
 	v.add(format(n.getID()));
@@ -848,9 +840,9 @@ Returns a header for a Priority List or Priority List by Stream report.
 @param byStream whether the report is By Stream (true) or not
 @throws Exception if an error occurs.
 */
-private List getNetAdminReportHeader(boolean byStream)
+private List<String> getNetAdminReportHeader(boolean byStream)
 throws Exception {
-	List report = new Vector(4);
+	List<String> report = new ArrayList<String>(4);
 	String formatHeader = 
 		"%-12.12s %-5.5s %-24.24s %-9.9s %-9.9s " 
 		+ "%-4.4s %-80.80s %-6.6s";
@@ -858,8 +850,8 @@ throws Exception {
 	// set up the hash tables - this should only be done once
 	if (__sums == null) {
 		int numNodes = __results.size();
-		__sums = new Hashtable(numNodes);
-		__sumsAF = new Hashtable(numNodes);
+		__sums = new Hashtable<String,Double>(numNodes);
+		__sumsAF = new Hashtable<String,Double>(numNodes);
 	}
 
 	// get the stream name
@@ -877,8 +869,8 @@ throws Exception {
 	}
 
 	// add column titles
-	report.add(new String());
-	List v = new Vector(20, 5);
+	report.add("");
+	List<String> v = new ArrayList<String>(20);
 	v.add("AdminNumber");
 	v.add(" ID");
 	v.add("STRUCTURE NAME");
@@ -902,12 +894,12 @@ throws Exception {
 Returns a line of data for a Tabulation report.
 @param n The HydroBase_NetAmts object for which to generate the report line.
 @param count the position of the HydroBase_NetAmts object within the __results
-Vector (base-1)
+list (base-1)
 @throws Exception if an error occurs.
 */
 private String getNetTabulationLine(HydroBase_NetAmts n, int count)
 throws Exception {
-	List v = new Vector(35, 5);
+	List<Object> v = new ArrayList<Object>(35);
 	int maxUseLength = 3;
 	double rate_abs;
 	double rate_apex;
@@ -923,7 +915,7 @@ throws Exception {
 	v.add(new Integer(n.getWD()));
 	
 	// create location string
-	List vl = new Vector(7,1);
+	List<Object> vl = new ArrayList<Object>(7);
 	vl.add(n.getQ10());
 	vl.add(n.getQ40());
 	vl.add(n.getQ160());
@@ -1076,18 +1068,17 @@ throws Exception {
 
 	double curAdminNum = n.getAdmin_no();
 	if (curAdminNum == __lastAdminNum) {
-		v.add(new String(format(curAdminNum, "%11.5f")+ "*"));
+		v.add(format(curAdminNum, "%11.5f")+ "*");
 	}
 	else {	
-		v.add(new String(format(curAdminNum, "%11.5f")));
+		v.add(format(curAdminNum, "%11.5f"));
 	}
 
 	v.add(format(n.getID()));
 	v.add(n.getPri_case_no());
 	v.add(format(count));
 
-	// Keep track of the last admin number because it affects the
-	// output...
+	// Keep track of the last admin number because it affects the output...
 	__lastAdminNum = curAdminNum;
 
 	return StringUtil.formatString(v, TABULATION_FORMAT);
@@ -1097,23 +1088,22 @@ throws Exception {
 Returns a header for a tabulation report.
 @throws Exception if an error occurs.
 */
-private List getNetTabulationReportHeader()
+private List<String> getNetTabulationReportHeader()
 throws Exception {
-	List report = new Vector(4);
+	List<String> report = new ArrayList<String>(4);
 	String formatTopHeader = "%-24s%53.53s%-48.48s%-24.24s";
-	List fv = new Vector(4);
+	List<Object> fv = new ArrayList<Object>(4);
 
 	fv.add("");
 	fv.add(" ");
 	fv.add("Tabulation Report");
-	fv.add((new DateTime(new Date())).
-		toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
+	fv.add((new DateTime(new Date())).toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	report.add(StringUtil.formatString(fv,
 	formatTopHeader));
 	report.add("");
 
 	// add column titles, line 1
-	List v = new Vector(17, 1);
+	List<String> v = new ArrayList<String>(17);
 	v.add("Name of Structure");
 	v.add("Typ");
 	v.add("Name of Source");
@@ -1148,14 +1138,14 @@ public String getStructureTypeReportCode ( String structureType )
 throws Exception {
 	HydroBase_DssStructureType hbst;
 
-	if (__strtypesVector == null) {
+	if (__strtypesList == null) {
 		return "";
 	}
 
-	int size = __strtypesVector.size();
+	int size = __strtypesList.size();
 
 	for (int i = 0; i < size; i++) {
-		hbst = (HydroBase_DssStructureType)(__strtypesVector.get(i));
+		hbst = __strtypesList.get(i);
 
 		if (hbst.getStr_type().equalsIgnoreCase(structureType)) {
 			return  hbst.getRpt_code();
@@ -1172,7 +1162,7 @@ by Stream report.
 */
 private String getTransAdminLine(HydroBase_NetAmts n)
 throws Exception {
-	List v = new Vector(35, 5);
+	List<Object> v = new ArrayList<Object>(35);
 	if (__isNewStreamNode) {
 		__abscfs = DMIUtil.MISSING_DOUBLE;
 		__condcfs = DMIUtil.MISSING_DOUBLE;
@@ -1189,10 +1179,10 @@ throws Exception {
 	// if this has the same admin num as the last record that was
 	// added to the report, add an asterisk after its admin no	
 	if (curAdminNum == __lastAdminNum) {
-		v.add(new String(format(curAdminNum, "%11.5f") + "*"));
+		v.add(format(curAdminNum, "%11.5f") + "*");
 	}
 	else {
-		v.add(new String(format(curAdminNum, "%11.5f")));
+		v.add(format(curAdminNum, "%11.5f"));
 	}
 
 	// keep track of the last admin number
@@ -1340,8 +1330,8 @@ Stream report.
 Stream report (true) or for an Administrative Summary report (false).
 @throws Exception if an error occurs.
 */
-private List getTransAdminReportHeader(boolean byStream) {
-	List report = new Vector(4);
+private List<String> getTransAdminReportHeader(boolean byStream) {
+	List<String> report = new ArrayList<String>(4);
 	String formatTopHeader = 
 		"%-11.11s %-2.2s %-9.9s %-5.5s %-24.24s %-2.2s " 
 		+ "%-20.20s %-47.47s";
@@ -1367,9 +1357,8 @@ private List getTransAdminReportHeader(boolean byStream) {
 			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY)));
 	}
 
-
-	report.add(new String());
-	List v = new Vector(20, 5);
+	report.add("");
+	List<Object> v = new ArrayList<Object>(20);
 	v.add("ADMIN");
 	v.add("ORD");
 	v.add("PRIORITY");
@@ -1408,7 +1397,7 @@ Gets a line of data for a Stream Alphabetical report.
 */
 private String getTransStreamLine(HydroBase_NetAmts n)
 throws Exception {
-	List v = new Vector(35, 5);
+	List<Object> v = new ArrayList<Object>(35);
 	double admin_no = n.getAdmin_no();
 
 	// if this has the same admin num as the last record that was
@@ -1453,9 +1442,9 @@ throws Exception {
 Returns a report header for a Stream Alphabetical report.
 @throws Exception if an error occurs.
 */
-private List getTransStreamReportHeader()
+private List<String> getTransStreamReportHeader()
 throws Exception {
-	List report = new Vector(4);
+	List<String> report = new ArrayList<String>(4);
 	String formatTopHeader = 
 		"%-11.11s %-3.3s %-9.9s %-5.5s %-24.24s %-2.2s " 
 		+ "%-22.22s %-80.80s";
@@ -1470,9 +1459,9 @@ throws Exception {
 	}
 
 	report.add(" STREAM ALPHABETICAL LIST - " + stream_name);
-	report.add(new String());
+	report.add("");
 
-	List v = new Vector(20, 5);
+	List<Object> v = new ArrayList<Object>(20);
 
 	v.add("ADMIN");
 	v.add("ORD");
@@ -1509,8 +1498,8 @@ throws Exception {
 Returns the report that was generated.
 @return the report that was generated.
 */
-public List getReport() {
-	return __reportVector;
+public List<String> getReport() {
+	return __reportList;
 }
 
 /**
@@ -1553,7 +1542,7 @@ generated from a single HydroBase_Report_NetAmounts object without having
 to requery the database every time.
 */
 private void initialize() {
-	__reportVector = null;	
+	__reportList = null;	
 	__isNewStreamNode = true;
 	__sums = null;
 	__sumsAF = null;

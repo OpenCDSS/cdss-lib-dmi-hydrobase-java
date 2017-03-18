@@ -99,6 +99,7 @@ import RTi.Util.Time.TimeZoneDefaultType;
 /**
 GUI to assist in setting a call.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_SetCall 
 extends JFrame 
 implements ActionListener, MouseListener, ListSelectionListener, WindowListener{
@@ -285,19 +286,19 @@ private String __bypassStructure = null;
 /**
 The calls for the gui.
 */
-private List __calls = null;
+private List<HydroBase_Calls> __calls = null;
 /**
 The net water rights for the gui.
 */
-private List __netWaterRights = null;
+private List<HydroBase_NetAmts> __netWaterRights = null;
 /**
 The structures for the gui.
 */
-private List __structures = null;
+private List<HydroBase_StructureView> __structures = null;
 /**
 Vector of the gui's textfields.
 */
-private List __textFields_Vector = null;
+private List<JTextField> __textFields_Vector = null;
 
 /**
 Constructor.
@@ -559,7 +560,7 @@ This routine displays the net water rights associated with the selected
 structure.
 @param results contains HydroBase_NetAmts results
 */
-private void displayWaterRightNetResults(List results, boolean includeBypass){
+private void displayWaterRightNetResults(List<HydroBase_NetAmts> results, boolean includeBypass){
 	int size = results.size();
 	String display = __dmi.getPreferenceValue("General.CallingRight");
 
@@ -568,9 +569,9 @@ private void displayWaterRightNetResults(List results, boolean includeBypass){
 	Date curDate;
 	double curDouble;
 	HydroBase_NetAmts netAmt;
-	List v = new Vector();
+	List<String> v = new Vector<String>();
 	for (int i=0; i<size; i++) {
-		netAmt = (HydroBase_NetAmts)results.get(i);
+		netAmt = results.get(i);
 
 		curString = "";
 		// display based on user preferences
@@ -659,9 +660,8 @@ database structure, depending on the User Preference "General.CallStruct")
 private void displayResults() {
 	String routine = "HydroBase_GUI_SetCall.displayResults";
 	__structureList.removeAll();
-	__calls = new Vector();
-	__structures = new Vector();
-	
+	__calls = new Vector<HydroBase_Calls>();
+	__structures = new Vector<HydroBase_StructureView>();
 
 	String callStruct = __dmi.getPreferenceValue("General.CallStruct");
 
@@ -705,10 +705,9 @@ private void displayStructures() {
 	if (!__structures.isEmpty()) {
 		int size = __structures.size();
 
-		List v = new Vector();
+		List<String> v = new Vector<String>();
 		for (int i = 0; i < size; i++) {
-			view = (HydroBase_StructureView)
-				__structures.get(i);
+			view = __structures.get(i);
 			name = "" + view.getStr_name();
 
 			// get water district
@@ -752,9 +751,9 @@ private void displayCalls() {
 	if (!__calls.isEmpty()) {
 		int size = __calls.size();
 
-		List v = new Vector();
+		List<String> v = new Vector<String>();
 		for (int i = 0; i < size; i++) {
-			call = (HydroBase_Calls)__calls.get(i);
+			call = __calls.get(i);
 			name = "" + call.getStr_name();
 
 			// get water district
@@ -847,21 +846,20 @@ private void fillBypassCopyData() {
 		}
 	}
 
-	List results = null;
+	List<HydroBase_NetAmts> results = null;
 	try {
-		results = __dmi.readNetAmtsList(struct_num, -999, -999, false, 
-			"72");	
+		results = __dmi.readNetAmtsList(struct_num, -999, -999, false, "72");	
 	}
 	catch (Exception e) {
 		Message.printWarning(1, "", "Error reading net amts from "
 			+ "database");
 		Message.printWarning(1, "", e);
-		results = new Vector();
+		results = new Vector<HydroBase_NetAmts>();
 	}
 	
 	matchIndex = -1;
 
-	__netWaterRights = new Vector();
+	__netWaterRights = new Vector<HydroBase_NetAmts>();
 
 	double adminno = __call.getAdminno();
 	if (!results.isEmpty()) {
@@ -869,7 +867,7 @@ private void fillBypassCopyData() {
 		HydroBase_NetAmts na = null;
 		int size = results.size();
 		for (int i = 0; i < size; i++) {
-			na = (HydroBase_NetAmts)results.get(i);
+			na = results.get(i);
 			__netWaterRights.add(na);
 			if (na.getAdmin_no() == adminno) {
 				matchIndex = i;
@@ -1088,14 +1086,14 @@ private String getNetNumber() {
 /**
 This routine performs a call chronology query.  Returns the result set vector
 */
-private List getPreviousCalls() {
+private List<HydroBase_Calls> getPreviousCalls() {
 	String routine = "HydroBase_GUI_SetCall.getPreviousCalls";
-	List orderBy = new Vector();
+	List<String> orderBy = new Vector<String>();
 	orderBy.add("wd");
 	orderBy.add("str_name");
 	
 	// add division where clause
-	List divVector = HydroBase_GUI_Util.getDivisions(__dmi);
+	List<String> divVector = HydroBase_GUI_Util.getDivisions(__dmi);
 	try {
 		return __dmi.readCallsListForDiv(divVector, true);
 	}
@@ -1138,10 +1136,10 @@ This routine initializes member variables.
 public void initialize() {
 	// instantiate objects
 	__displayWISCalls = true;
-	__calls = new Vector();
-	__netWaterRights = new Vector();
-	__structures = new Vector();
-	__textFields_Vector = new Vector();
+	__calls = new Vector<HydroBase_Calls>();
+	__netWaterRights = new Vector<HydroBase_NetAmts>();
+	__structures = new Vector<HydroBase_StructureView>();
+	__textFields_Vector = new Vector<JTextField>();
 
 	// allocate elements in the Vector object
 	for (int i = 0; i < 7; i++) {
@@ -1804,7 +1802,7 @@ object.
 private void structureListClicked() {
 	// first retrieve the net amounts information
 	// initialize variables
-	List orderBy = new Vector();
+	List<String> orderBy = new Vector<String>();
 	String routine = "HBEditCalls.structureListClicked()";
 
 	if (__bypassStructure == null) {
@@ -1890,7 +1888,7 @@ private void structureListClicked() {
 		// a decision.
 	}
 
-	List results = null;
+	List<HydroBase_NetAmts> results = null;
 	try {
 		results = __dmi.readNetAmtsList(struct_num, -999, -999, false, 
 			"72");	
@@ -1899,7 +1897,7 @@ private void structureListClicked() {
 		Message.printWarning(1, routine, "Error reading net amts from "
 			+ "database");
 		Message.printWarning(1, routine, e);
-		results = new Vector();
+		results = new Vector<HydroBase_NetAmts>();
 	}
 	
 	if (!results.isEmpty()) {
@@ -1917,17 +1915,18 @@ private void structureListClicked() {
 	__statusJTextField.setText(tempString);
 
 	// add where clauses and order by clauses
+	List<HydroBase_WDWater> resultsWDWater = null;
 	try {
-		results = __dmi.readWDWaterListForWDWater_num(wdWaterNumber);
+		resultsWDWater = __dmi.readWDWaterListForWDWater_num(wdWaterNumber);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, "Error reading wd water data "
 			+ "from database.");
 		Message.printWarning(1, routine, e);
-		results = new Vector();
+		resultsWDWater = new Vector<HydroBase_WDWater>();
 	}
 	
-	if (results.isEmpty()) {
+	if (resultsWDWater.isEmpty()) {
 		Message.printWarning(1, routine,
 			" No record available for wd_water.wdwater_num = "
 			+  wdWaterNumber);
@@ -1940,8 +1939,7 @@ private void structureListClicked() {
 			+  wdWaterNumber + ", using first available.");
 		}
 
-		__waterDistrictWaterData = 
-			(HydroBase_WDWater)results.get(0);
+		__waterDistrictWaterData = resultsWDWater.get(0);
 	}
 
 	tempString = "Finished Retrieving Water District Water Data.";
@@ -1965,7 +1963,7 @@ private int structureAddition(HydroBase_Calls newCall) {
 	String name;
 	int comparison;
 	if (__calls == null) {
-		__calls = new Vector(1);
+		__calls = new Vector<HydroBase_Calls>(1);
 		__calls.add(newCall);
 	}
 	else {
@@ -2050,7 +2048,7 @@ private void structureAddition(HydroBase_StructureView newCall) {
 	String name;
 	int comparison;
 	if (__structures == null) {
-		__structures = new Vector(1);
+		__structures = new Vector<HydroBase_StructureView>(1);
 		__structures.add(newCall);
 	}
 	else {

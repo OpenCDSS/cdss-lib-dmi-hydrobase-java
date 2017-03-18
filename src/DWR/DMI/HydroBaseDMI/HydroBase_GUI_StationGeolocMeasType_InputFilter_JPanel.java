@@ -22,6 +22,7 @@ import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.String.StringUtil;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel
 extends InputFilter_JPanel
 {
@@ -42,7 +43,7 @@ public HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel ( HydroBaseDataSto
 throws Exception
 {	__dataStore = dataStore;
     HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
-    List<String> division_Vector = new Vector ( 7 );
+    List<String> division_Vector = new Vector<String> ( 7 );
 	List<String> division_internal_Vector = new Vector<String> ( 7 );
 	List<HydroBase_WaterDistrict> district_data_Vector = hbdmi.getWaterDistricts();
 	List<String> district_Vector = new Vector<String> ( district_data_Vector.size() );
@@ -80,7 +81,7 @@ throws Exception
 		district_internal_Vector.add ("" + wd.getWD() );
 	}
 
-	List input_filters = new Vector(8);
+	List<InputFilter> input_filters = new Vector<InputFilter>(8);
 	input_filters.add ( new InputFilter (
 		"", "",
 		StringUtil.TYPE_STRING,

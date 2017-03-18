@@ -22,6 +22,7 @@ import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.String.StringUtil;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel extends
 InputFilter_JPanel
 {
@@ -45,7 +46,7 @@ throws Exception
     
     // For now do these queries here with available low-level code...
 
-	List v = hbdmi.readAgriculturalCASSCropStatsList (
+	List<HydroBase_AgriculturalCASSCropStats> v = hbdmi.readAgriculturalCASSCropStatsList (
 		(InputFilter_JPanel)null,	// Where clauses
 					null,	// county
 					null,	// commodity
@@ -57,21 +58,21 @@ throws Exception
 	if ( v != null ) {
 		size = v.size();
 	}
-	List commodity_Vector = new Vector();
-	List practice_Vector = new Vector();
+	List<String> commodity_Vector = new Vector<String>();
+	List<String> practice_Vector = new Vector<String>();
 	String commodity, practice;
 	HydroBase_AgriculturalCASSCropStats agstats = null;
 	int commodity_size = 0, practice_size = 0, j = 0;
 	boolean found = false;
 	for ( int i = 0; i < size; i++ ) {
-		agstats = (HydroBase_AgriculturalCASSCropStats)v.get(i);
+		agstats = v.get(i);
 		commodity = agstats.getCommodity();
 		practice = agstats.getPractice();
 		commodity_size = commodity_Vector.size();
 		practice_size = practice_Vector.size();
 		found = false;
 		for ( j = 0; j < commodity_size; j++ ) {
-			if ( commodity.equalsIgnoreCase((String)commodity_Vector.get(j))){
+			if ( commodity.equalsIgnoreCase(commodity_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -81,7 +82,7 @@ throws Exception
 		}
 		found = false;
 		for ( j = 0; j < practice_size; j++ ) {
-			if ( practice.equalsIgnoreCase( (String)practice_Vector.get(j))){
+			if ( practice.equalsIgnoreCase( practice_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -91,13 +92,13 @@ throws Exception
 		}
 	}
 
-	List county_data_Vector = hbdmi.getCountyRef();
-	List county_Vector = new Vector ( county_data_Vector.size() );
-	List county_internal_Vector = new Vector ( county_data_Vector.size());
+	List<HydroBase_CountyRef> county_data_Vector = hbdmi.getCountyRef();
+	List<String> county_Vector = new Vector<String> ( county_data_Vector.size() );
+	List<String> county_internal_Vector = new Vector<String> ( county_data_Vector.size());
 	size = county_data_Vector.size();
 	HydroBase_CountyRef county;
 	for ( int i = 0; i < size; i++ ) {
-		county = (HydroBase_CountyRef)county_data_Vector.get(i);
+		county = county_data_Vector.get(i);
 		county_Vector.add ( county.getCounty() + ", " + county.getST() );
 		county_internal_Vector.add (county.getCounty() );
 	}
@@ -107,7 +108,7 @@ throws Exception
 	//st_Vector.addElement ( "CO" );
 	//Vector st_internal_Vector = new Vector(1);
 	//st_internal_Vector.addElement ( "CO" );
-	List input_filters = new Vector(8);
+	List<InputFilter> input_filters = new Vector<InputFilter>(8);
 	input_filters.add ( new InputFilter ( "", "",
 			StringUtil.TYPE_STRING,
 			null, null, true ) );	// Blank to disable filter

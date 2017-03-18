@@ -72,7 +72,7 @@ public HydroBase_TableModel_WIS(List data, HydroBase_GUI_WIS wis,
 boolean editable)
 throws Exception {
 	if (data == null) {
-		throw new Exception ("Invalid data Vector passed to HydroBase_TableModel_WIS constructor.");
+		throw new Exception ("Invalid data list passed to HydroBase_TableModel_WIS constructor.");
 	}
 	_rows = data.size();
 	_data = data;

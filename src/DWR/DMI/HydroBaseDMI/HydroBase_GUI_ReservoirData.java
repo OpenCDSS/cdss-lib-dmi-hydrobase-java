@@ -67,6 +67,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is a GUI for displaying additional reservoir data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_ReservoirData 
 extends JFrame 
 implements ActionListener, WindowListener {
@@ -173,7 +174,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -194,7 +195,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -238,8 +239,8 @@ throws Throwable {
 Formats output for printing or exporting.
 @param format the format in which to format the data.
 */
-public List formatOutput(int format) {
-	List v = new Vector();
+public List<String> formatOutput(int format) {
+	List<String> v = new Vector<String>();
 
 	String s0 = null;
 	String s1 = null;
@@ -479,7 +480,7 @@ private void setupGUI() {
 	JScrollWorksheet jsw = null;
 	try {
 		HydroBase_TableModel_ReservoirData tm = new
-			HydroBase_TableModel_ReservoirData(new Vector());
+			HydroBase_TableModel_ReservoirData(new Vector<HydroBase_AreaCap>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		jsw = new JScrollWorksheet(cr, tm, p);
@@ -565,7 +566,7 @@ private void submitAndDisplayAreaCapQuery() {
 		+ ".submitAndDisplayAreaCapQuery";
 	JGUIUtil.setWaitCursor(this, true);
 	
-	List results = null;
+	List<HydroBase_AreaCap> results = null;
 	try {
 		results = __dmi.readAreaCapListForStructure_num(__structureNum);
 	}
@@ -649,7 +650,7 @@ private void submitAndDisplayReservoirQuery() {
 			StringUtil.formatString(curDouble, "%6.1f"));
 	}        
 
-	List results = null;
+	List<HydroBase_StructMeasTypeView> results = null;
 	try {
 		results = __dmi.readStructMeasTypeListForStructure_numMeas_type(
 			__structureNum, "ResEOM");

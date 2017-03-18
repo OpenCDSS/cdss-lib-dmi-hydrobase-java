@@ -66,6 +66,7 @@ import RTi.Util.String.StringUtil;
 This class is a GUI for displaying information about a cell in a WIS sheet,
 such as its formula and format.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_WISCellAttributes 
 extends JFrame 
 implements ActionListener, WindowListener {
@@ -266,7 +267,7 @@ private void getCellFormula() {
 		__formulaJList.add("CELL DOES NOT CONTAIN A FORMULA");
 	}
 	else {
-		List results = HydroBase_WISMath.parseFormula(
+		List<HydroBase_WISMath> results = HydroBase_WISMath.parseFormula(
 			__wisFormula.getFormulastring(), 
 			HydroBase_WISMath.LABEL);
 		formulaString = "";
@@ -293,7 +294,7 @@ private void getCellImport() {
 		return;
 	}
 
-	List importValue = HydroBase_WIS_Util.getWISImportValue(
+	List<Object> importValue = HydroBase_WIS_Util.getWISImportValue(
 		__dmi, __wisImport);
 	if (Integer.parseInt(importValue.get(1).toString()) > 0) {
 		Double myDouble = (Double)importValue.get(0);

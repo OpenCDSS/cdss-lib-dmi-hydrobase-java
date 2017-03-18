@@ -19,6 +19,7 @@ may occur to determine if a time series is defined.  If no data are found, then
 this exception indicates that no data are available and subsequent queries
 cannot be made.
 */
+@SuppressWarnings("serial")
 public class NoDataFoundException extends Exception
 {
 

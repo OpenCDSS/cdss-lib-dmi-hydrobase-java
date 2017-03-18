@@ -28,9 +28,9 @@
 
 package DWR.DMI.HydroBaseDMI;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
 
@@ -151,25 +151,25 @@ getWaterDistrictWhereClause().
 private String[] __districtWhere = null;
 
 /**
-This is the Vector that holds all the lines of the report.
+This is the list that holds all the lines of the report.
 */
-private List __reportVector = null;
+private List<String> __reportList = null;
 
 /**
-This is the Vector that holds the results of the query that will be used
+This is the list that holds the results of the query that will be used
 to fill out the reports.
 */
-private List __results = null;
+private List<HydroBase_Transact> __results = null;
 
 /**
-Vector of results from a query of the str_ype table.
+List of results from a query of the str_ype table.
 */
-private List __strtypesVector = null;
+private List<HydroBase_DssStructureType> __strtypesList = null;
 
 /**
-Vector of results from a query of the use table.
+List of results from a query of the use table.
 */
-private List __useVector = null;
+private List<HydroBase_Use> __useList = null;
 
 /**
 Constructor.  The constructor queries the database for the results that will
@@ -208,11 +208,11 @@ throws Exception {
 	__dmi = dmi;
 	__filterPanel = filterPanel;
 	__districtWhere = districtWhere;	
-	__reportVector = new Vector();
+	__reportList = new ArrayList<String>();
 
 	// query the str_type and use tables for all records.
-	__strtypesVector = __dmi.readDssStructureTypeList();
-	__useVector = __dmi.getUseTypes();
+	__strtypesList = __dmi.readDssStructureTypeList();
+	__useList = __dmi.getUseTypes();
 
 	createReport(reportType);
 }
@@ -227,7 +227,7 @@ adj_type + "," + status_type + "," + transfer_type + "," + assoc_type
 */
 private String createStringAdjType(HydroBase_Transact n)
 throws Exception {
-	String finalAdjType = new String();
+	String finalAdjType = "";
 
 	String adj_type = n.getAdj_type();
 	if (adj_type != null) {
@@ -279,7 +279,7 @@ throws Exception {
 	String code = null;
 
 	for (int j = 0; j < nstrType; j++) {
-		code = new String(String.valueOf(strType.charAt(j)));
+		code = String.valueOf(strType.charAt(j));
 		if (code.trim().length()> 0) {
 			newStrType += getStructureTypeReportCode(code);
 		}
@@ -298,8 +298,7 @@ throws Exception {
 	HydroBase_Transact node = null;
 	// check to see if the database needs requeried
 	if (__results == null) {
-		// if the results are null, the database always needs
-		// requeried
+		// if the results are null, the database always needs requeried
 		__results = __dmi.readTransactList(
 			__filterPanel, __districtWhere, null, reportType);
 	}
@@ -327,22 +326,22 @@ throws Exception {
 	}
 
 	// create the header for the report
-	__reportVector = getTransactionReportHeader(reportType);
+	__reportList = getTransactionReportHeader(reportType);
 	
 	String comment = "";
 
 	// loop through each record and print its information
 	for (int i=0; i<size; i++) {
-		node = (HydroBase_Transact)__results.get(i);
+		node = __results.get(i);
 		// print first line - always
-		__reportVector.add(getTransactionLine(node, reportType));
+		__reportList.add(getTransactionLine(node, reportType));
 	
 		if (reportType >= EXTENDED_1) {		
 			// print the comment(if available)for extended 
 			// reports on the second line
 			comment = node.getAction_comment();
 			if (!DMIUtil.isMissing(comment)) {
-				__reportVector.add(
+				__reportList.add(
 					"                             " 
 					+ comment);
 			}		
@@ -358,10 +357,10 @@ throws Throwable {
 	__dmi = null;
 	__filterPanel = null;
 	IOUtil.nullArray(__districtWhere);
-	__reportVector = null;
+	__reportList = null;
 	__results = null;
-	__strtypesVector = null;
-	__useVector = null;
+	__strtypesList = null;
+	__useList = null;
 	super.finalize();
 }
 
@@ -375,7 +374,7 @@ Gets a data line for a transaction report.
 private String getTransactionLine(HydroBase_Transact n, int reportType)
 throws Exception {
 	int maxUseLength = 10;
-	List v = new Vector(100, 10);
+	List<Object> v = new ArrayList<Object>(100);
 	boolean isExtended = false;
 	if (reportType >= EXTENDED_1) {
 		isExtended = true;
@@ -392,9 +391,9 @@ throws Exception {
 	v.add(n.getWd_stream_name());
 	v.add(format(n.getCty()));
 
-	String q10 = new String(n.getQ10());
-	String q40 = new String(n.getQ40());
-	String q160 = new String(n.getQ160());
+	String q10 = n.getQ10();
+	String q40 = n.getQ40();
+	String q160 = n.getQ160();
 	if (DMIUtil.isMissing(q10)) {
 		q10 = "  ";
 	}
@@ -451,10 +450,10 @@ throws Exception {
 	double admin_no = n.getAdmin_no();
 
 	if (admin_no == __lastAdminNum) {
-		v.add(new String(format(admin_no, "%11.5f")+ "*"));
+		v.add(format(admin_no, "%11.5f")+ "*");
 	}
 	else {
-		v.add(new String(format(admin_no, "%11.5f")));
+		v.add(format(admin_no, "%11.5f"));
 	}
 	// keep track of the last admin number
 	__lastAdminNum = admin_no;
@@ -502,14 +501,14 @@ throws Exception {
 /**
 Returns a header for a transaction report.
 @param reportType the type of report for which to return a header.
-@return a Vector of values that will be assigned to __reportVector to be
+@return a list of values that will be assigned to __reportVector to be
 the first values in the report vector.
 @throws Exception if an error occurs.
 */
-private List getTransactionReportHeader(int reportType)
+private List<String> getTransactionReportHeader(int reportType)
 throws Exception {
-	List v = new Vector(17, 1);
-	List report = new Vector();
+	List<Object> v = new ArrayList<Object>(17);
+	List<String> report = new ArrayList<String>();
 
 	boolean isExtended = false;
 	if (reportType >= EXTENDED_1) {
@@ -557,7 +556,6 @@ throws Exception {
 			"--------- - ------- ----------------------------" +
 			"-------------------------------------";
 	}
-
 
 	// 
 	// explanation of codes header
@@ -762,8 +760,8 @@ throws Exception {
 Returns the report that was generated.
 @return the report that was generated.
 */
-public List getReport() {
-	return __reportVector;
+public List<String> getReport() {
+	return __reportList;
 }
 
 /**
@@ -776,14 +774,14 @@ private String getStructureTypeReportCode(String structureType)
 throws Exception {
 	HydroBase_DssStructureType hbst;
 
-	if (__strtypesVector == null) {
+	if (__strtypesList == null) {
 		return "";
 	}
 
-	int size = __strtypesVector.size();
+	int size = __strtypesList.size();
 
 	for (int i = 0; i < size; i++) {
-		hbst = (HydroBase_DssStructureType)(__strtypesVector.get(i));
+		hbst = __strtypesList.get(i);
 
 		if (hbst.getStr_type().equalsIgnoreCase(structureType)) {
 			return hbst.getRpt_code();
@@ -827,7 +825,7 @@ to requery the database every time, provided the ORDER BY clauses are the same
 for each report.
 */
 private void initialize() {
-	__reportVector = null;	
+	__reportList = null;	
 	__lastAdminNum = DMIUtil.MISSING_DOUBLE;
 }
 
@@ -841,12 +839,12 @@ which the given Use type occurs.
 */
 private int lookupUsingUse(String s)
 throws Exception {
-	if (__useVector == null) {
+	if (__useList == null) {
 		return DMIUtil.MISSING_INT;
 	}
-	int size = __useVector.size();
+	int size = __useList.size();
 	for (int i = 0; i < size; i++) {
-		HydroBase_Use u = (HydroBase_Use)__useVector.get(i);
+		HydroBase_Use u = (HydroBase_Use)__useList.get(i);
 		if (u.getUse().equalsIgnoreCase(s)) {
 			return i;
 		}
@@ -880,7 +878,7 @@ throws Exception {
 		int index = lookupUsingUse(use); 
 		if (index >= 0) {
 			report += ((HydroBase_Use)
-				__useVector.get(index)).getRpt_code();
+				__useList.get(index)).getRpt_code();
 		}
 
 		if (report.length() == (maxLength)) {

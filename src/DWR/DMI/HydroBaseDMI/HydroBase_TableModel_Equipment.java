@@ -22,6 +22,7 @@ import RTi.Util.Time.DateTime;
 /**
 This class is a table model for displaying equipment data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_Equipment 
 extends HydroBase_TableModel {
 
@@ -59,7 +60,7 @@ throws Exception {
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_EQUIP_NUM:		return Integer.class;
 		case COL_STRUCTURE_NUM:		return Integer.class;

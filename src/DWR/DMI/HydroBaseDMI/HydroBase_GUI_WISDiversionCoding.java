@@ -87,6 +87,7 @@ import RTi.Util.Time.DateTime;
 /**
 This class is a gui for displaying diversion coding information.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_WISDiversionCoding 
 extends JFrame
 implements ActionListener, JWorksheet_TableModelListener, WindowListener {
@@ -235,7 +236,7 @@ private String __wisCellContents = "";
 /**
 Previous diversion coding records for the cell being edited.
 */
-private List __previousRecords;
+private List<HydroBase_WISDailyWC> __previousRecords;
 
 /**
 Constructor.
@@ -250,7 +251,7 @@ edited.
 */
 public HydroBase_GUI_WISDiversionCoding(HydroBaseDMI dmi, 
 HydroBase_GUI_WIS wisGUI, HydroBase_WISSheetName wis, DateTime detailDateTime, 
-int wisRow, int wisCol, List previousRecords, boolean editable) {
+int wisRow, int wisCol, List<HydroBase_WISDailyWC> previousRecords, boolean editable) {
 	__dmi = dmi;
 	__wisRow = wisRow;
 	__wisCol = wisCol;
@@ -259,7 +260,7 @@ int wisRow, int wisCol, List previousRecords, boolean editable) {
 	__previousRecords = previousRecords;
 	__editable = editable;
 	if (__previousRecords == null) {
-		__previousRecords = new Vector();
+		__previousRecords = new Vector<HydroBase_WISDailyWC>();
 	}
 	__wisCellContents = __wisGUI.getCellContents(__wisRow, __wisCol - 1);
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
@@ -369,11 +370,12 @@ throws Throwable {
 Return the values in the editor as a Vector of HydroBase_WISDailyWC.
 All values are returned, whether modified or not.  Use isModified() to determine
 whether data have been modified for the cell.
-@return Vector of HydroBase_WISDailyWC or null if no data.
+@return list of HydroBase_WISDailyWC or null if no data.
 */
-public List getDiversionCoding() {
-	List v = __worksheet.getAllData();
-	List v2 = new Vector();
+public List<HydroBase_WISDailyWC> getDiversionCoding() {
+	@SuppressWarnings("unchecked")
+	List<HydroBase_WISDailyWC> v = (List<HydroBase_WISDailyWC>)__worksheet.getAllData();
+	List<HydroBase_WISDailyWC> v2 = new Vector<HydroBase_WISDailyWC>();
 	for (int i = 0; i < (v.size() - 1); i++) {
 		v2.add(v.get(i));
 	}
@@ -669,7 +671,7 @@ private void setupGUI() {
 Sets up the combo boxes for the worksheet columns.
 */
 private void setupWorksheetColumns() {
-	List source = new Vector();
+	List<String> source = new Vector<String>();
 	source.add(_SOURCE_1);
 	source.add(_SOURCE_2);
 	source.add(_SOURCE_3);
@@ -682,7 +684,7 @@ private void setupWorksheetColumns() {
 	source.add(_SOURCE_R);
 	__worksheet.setColumnJComboBoxValues(1, source);
 
-	List use = new Vector();
+	List<String> use = new Vector<String>();
 	use.add(_USE_0);
 	use.add(_USE_1);
 	use.add(_USE_2);
@@ -708,7 +710,7 @@ private void setupWorksheetColumns() {
 	use.add(_USE_W);
 	__worksheet.setColumnJComboBoxValues(3, use);
 
-	List type = new Vector();
+	List<String> type = new Vector<String>();
 	type.add(_TYPE_0);
 	type.add(_TYPE_1);
 	type.add(_TYPE_2);
@@ -723,7 +725,7 @@ private void setupWorksheetColumns() {
 	type.add(_TYPE_S);
 	__worksheet.setColumnJComboBoxValues(4, type);
 		
-	List obs = new Vector();
+	List<String> obs = new Vector<String>();
 	obs.add(_OBS_U);
 	obs.add(_OBS_AST);
 	obs.add(_OBS_CARRY_FORWARD);
@@ -798,7 +800,7 @@ private void viewHistoryClicked() {
 		}
 	}
 
-	List records = null;
+	List<HydroBase_WISDailyWC> records = null;
 	try {
 		records = __dmi.readWISDailyWCList(
 			__wisGUI.getWISNumber(), wis_column, wd, id,
@@ -813,14 +815,13 @@ private void viewHistoryClicked() {
 
 	// Now format the output...
 
-	List report_Vector = new Vector(100);
+	List<String> report_Vector = new Vector<String>(100);
 	report_Vector.add("");
 	report_Vector.add("WIS Diversion Coding History");
 	report_Vector.add("");
 	report_Vector.add("Water District:  " + wd);
 	report_Vector.add("Structure:  " + id + " (" 
 		+ __wisGUI.getRow_label(__wisRow) + ")");
-
 
 	report_Vector.add("");
 	report_Vector.add("Diversion coding currently being edited for "
@@ -883,7 +884,7 @@ private void viewHistoryClicked() {
 	HydroBase_WISDailyWC record = null;
 	boolean date_printed = false;
 	HydroBase_WISComments wis_comment = null;
-	List wis_comments = null;
+	List<HydroBase_WISComments> wis_comments = null;
 	DateTime wis_set_DateTime = null;
 	// First loop through days...
 	for (; d.greaterThanOrEqualTo(start_DateTime); d.addDay(-1)) {
@@ -892,7 +893,7 @@ private void viewHistoryClicked() {
 		// loop through all of them for each day...
 		date_printed = false;
 		for (int i = (size - 1); i >= 0; i--) {
-			record = (HydroBase_WISDailyWC)records.get(i);
+			record = records.get(i);
 			if (	record.getCal_year() != d.getYear()
 				|| record.getCal_mon() != d.getMonth()
 				|| DMIUtil.isMissing(
@@ -919,10 +920,7 @@ private void viewHistoryClicked() {
 						wis_date_string = "          ";
 					}
 					else {	
-						wis_comment = 
-							(HydroBase_WISComments)
-							wis_comments.get(
-							0);
+						wis_comment = wis_comments.get(0);
 						wis_set_DateTime = new DateTime(
 							wis_comment
 							.getSet_date());

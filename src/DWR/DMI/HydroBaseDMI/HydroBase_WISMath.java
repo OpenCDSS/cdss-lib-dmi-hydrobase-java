@@ -237,11 +237,11 @@ Takes a formula String and parses it into a Vector where elements represent
 HydroBase_WISMath objects.
 @param formula a formula String.
 @param flag UNIQUE_ID if parsing unique ids, LABEL if parsing row labels.
-@return a Vector of HydroBase_WISMath objects.
+@return a list of HydroBase_WISMath objects.
 */
-public static List parseFormula(String formula, int flag) {
+public static List<HydroBase_WISMath> parseFormula(String formula, int flag) {
 	// initialize variables
-	List parse = new Vector();
+	List<HydroBase_WISMath> parse = new Vector<HydroBase_WISMath>();
 	int size = formula.length();
 
 	if (flag == LABEL) {
@@ -384,14 +384,14 @@ public static List parseFormula(String formula, int flag) {
 Takes a formula String and parses it into a Vector where objects represent
 HydroBase_WISMath objects.
 @param formula the formula String.
-@return a Vector of HydroBase_WISMath objects.
+@return a list of HydroBase_WISMath objects.
 */
-public static List parseFormulaAsLabel(String formula) {
+public static List<HydroBase_WISMath> parseFormulaAsLabel(String formula) {
 	HydroBase_WISMath wisMath;
 	boolean endOfTerm;
 	String curTerm = null;
 	String curChar = null;
-	List parse = new Vector();
+	List<HydroBase_WISMath> parse = new Vector<HydroBase_WISMath>();
 	int size = formula.length();
 
 	// loop over formula String

@@ -34,6 +34,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is an input filter for querying net amts data from the Water Rights GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_NetAmts_InputFilter_JPanel
 extends InputFilter_JPanel {
 
@@ -68,7 +69,7 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 
 	InputFilter filter = null;
 
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 
 	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME + "." + ld;
 
@@ -97,13 +98,13 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
 	filters.add(filter);
 
-	List counties = dmi.getCountyRef();
+	List<HydroBase_CountyRef> counties = dmi.getCountyRef();
 	HydroBase_CountyRef county = null;
 	int size = counties.size();
-	List v1 = new Vector();
-	List v2 = new Vector();
+	List<String> v1 = new Vector<String>();
+	List<String> v2 = new Vector<String>();
 	for (int i = 0; i < size; i++) {
-		county = (HydroBase_CountyRef)counties.get(i);
+		county = counties.get(i);
 		if (county.getCty() > 0) {
 			v1.add(county.getCounty());
 			v2.add("" + county.getCty());
@@ -172,12 +173,12 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 		tableName + "id" + rd, "id", StringUtil.TYPE_INTEGER,
 		null, null, false));
 
-	List strTypes = dmi.getDssStructureTypeList();
+	List<HydroBase_DssStructureType> strTypes = dmi.getDssStructureTypeList();
 	HydroBase_DssStructureType strType = null;
-	v1 = new Vector();
-	v2 = new Vector();
+	v1 = new Vector<String>();
+	v2 = new Vector<String>();
 	for (int i = 0; i < strTypes.size(); i++) {
-		strType = (HydroBase_DssStructureType)strTypes.get(i);
+		strType = strTypes.get(i);
 		v1.add(strType.getStr_type() + " - " + strType.getStr_type_desc());
 		v2.add(strType.getStr_type());
 	}
@@ -214,7 +215,7 @@ private void setupStructureFilter(HydroBaseDMI dmi) {
 
 	InputFilter filter = null;
 
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 
 	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME + "." + ld;
 

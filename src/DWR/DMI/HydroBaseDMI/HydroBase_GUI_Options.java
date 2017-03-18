@@ -173,6 +173,7 @@ use with StateView and CWRAT.  The options are edited as follows:
 The bottom line is that no preferences get changed until the OK or Apply
 buttons are pressed.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_Options extends JFrame implements 
 ActionListener, WindowListener, KeyListener, 
 ListSelectionListener
@@ -988,7 +989,7 @@ private void generateDistricts() {
 	int size = divisions.length;
 	
 	HydroBase_WaterDistrict data;
-	List v;
+	List<HydroBase_WaterDistrict> v;
 	int vsize;
 	int wd;	
 	String star = "";
@@ -998,7 +999,7 @@ private void generateDistricts() {
 		vsize = v.size();
 		for (int i = 0; i < vsize; i++) {
 			star = " ";
-			data = (HydroBase_WaterDistrict)v.get(i);
+			data = v.get(i);
 			wd = data.getWD();
 			// Place an(*)before available districts found
 			// in the database.
@@ -1060,7 +1061,7 @@ public void getDistricts() {
         String dis = __dmi.getPreferenceValue("WD." 
 		+ HydroBase_GUI_Util.getActiveWaterDivision()
 		+ ".DistrictSelect");
-        List v = StringUtil.breakStringList(dis.trim(), ",", 0);
+        List<String> v = StringUtil.breakStringList(dis.trim(), ",", 0);
         String curItem = "";             
 	int numRows = __districtJList.getItemCount();
 	int size = v.size();
@@ -1105,12 +1106,12 @@ public void getDivisions() {
 		selected = new int[0];
 	}
 	else {
-		List v = StringUtil.breakStringList(div.trim(), ",", 0);
+		List<String> v = StringUtil.breakStringList(div.trim(), ",", 0);
 	
 		int size = v.size();
 		selected = new int[size];
 	        for (int i = 0; i < size; i++) {
-			String s = (String)v.get(i);
+			String s = v.get(i);
 			if (s != null && s != "" && !s.equals(__NONE)) {
 				int n = (Integer.parseInt(s) - 1);
 	        		selected[i] = n;
@@ -1133,8 +1134,8 @@ selected water districts.
 private void generateWIS() 
 throws Exception {
         // initialize variables
-	List whereClause = new Vector(10, 5);
-	List orderBy = new Vector(10, 5);
+	List<String> whereClause = new Vector<String>();
+	List<String> orderBy = new Vector<String>();
        
         // process query
 	JGUIUtil.setWaitCursor(this, true);
@@ -1147,14 +1148,13 @@ throws Exception {
 		whereClause.add(wd);
 	}
 	orderBy.add("sheet_name");
-	List results = __dmi.readWISSheetNameDistinctList(-1);
+	List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameDistinctList(-1);
 
 	__wisJComboBox.add(__NONE);
         if (results.size() > 0 && results != null) {
       	        int size = results.size(); 
                	for (int i = 0; i < size; i++) {
-                       	HydroBase_WISSheetName data = 
-				(HydroBase_WISSheetName)results.get(i);
+                       	HydroBase_WISSheetName data = results.get(i);
                         __wisJComboBox.add(data.getSheet_name());
        	        }
         }
@@ -1168,11 +1168,12 @@ Returns the list of selected water districts in the water districts filter.
 @return the list of selected water districts in the water districts filter.
 */
 public String [] getSelectedDistricts() {
-	List v = __districtJList.getSelectedItems();
+	@SuppressWarnings("unchecked")
+	List<String> v = __districtJList.getSelectedItems();
 	int size = v.size();
 	String arr[] = new String[size];
 	for (int i = 0; i < size; i++) {
-		arr[i] = (String)v.get(i);
+		arr[i] = v.get(i);
 	}
 	return arr;
 }
@@ -1187,16 +1188,16 @@ user preferences.
 private String getWD() {
 	// initialize variables
 	String wdWhere = null;
-	List select = __districtJList.getSelectedItems(); 
+	@SuppressWarnings("unchecked")
+	List<String> select = __districtJList.getSelectedItems(); 
                                
 	//concatenate 'wd = ' for each element in the Vector
 	if (select != null) {
 		int size = select.size();
-		List orClause = new Vector(size, 5);
+		List<String> orClause = new Vector<String>(size, 5);
 		for (int i = 0; i < size; i++) {
         		orClause.add("wd = " 
-				+ ((String)select.get(i)).
-				   substring(5,7).trim());
+				+ select.get(i).substring(5,7).trim());
 		}
 		wdWhere = DMIUtil.getOrClause(orClause);
 	}

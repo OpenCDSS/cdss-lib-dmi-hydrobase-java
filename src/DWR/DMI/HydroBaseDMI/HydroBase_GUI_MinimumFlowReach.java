@@ -62,6 +62,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is a gui for showing additional minimum flow reach data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_MinimumFlowReach 
 extends JFrame
 implements ActionListener, WindowListener {
@@ -159,7 +160,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -180,7 +181,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -219,8 +220,8 @@ throws Throwable {
 Formats output for printing or exporting. 
 @param format the format in which to format the output.
 */
-public List formatOutput(int format) {
-	List v = new Vector(5, 5);
+public List<String> formatOutput(int format) {
+	List<String> v = new Vector<String>();
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		v.add(HydroBase_GUI_Util.formatStructureHeader(
@@ -392,11 +393,10 @@ private void submitAndDisplayMFReachQuery() {
 		+ ".submitAndDisplayStructureQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
-	List results = null;
+	List<HydroBase_StructureMFReach> results = null;
 
 	try {
-		results = __dmi.readStructureMFReachListForStructure_num(
-			__structureNum);
+		results = __dmi.readStructureMFReachListForStructure_num(__structureNum);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, "Error reandig "
@@ -409,13 +409,10 @@ private void submitAndDisplayMFReachQuery() {
 	if (results == null || results.size() == 0) {
 		HydroBase_StructureView view = null;
 		try {
-			view = __dmi.readStructureViewForStructure_num(
-				__structureNum);
+			view = __dmi.readStructureViewForStructure_num(__structureNum);
 		}
 		catch (Exception ex) {
-			Message.printWarning(1, routine, 
-				"Error reading "
-				+ "structure data.");
+			Message.printWarning(1, routine, "Error reading structure data.");
 			Message.printWarning(2, routine, ex);
 			JGUIUtil.setWaitCursor(this, false);
 			return;

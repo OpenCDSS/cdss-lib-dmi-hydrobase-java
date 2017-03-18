@@ -31,7 +31,7 @@ This class is also the base class for HydroBase_AnnualWC.
 */
 public class HydroBase_AnnualAmt 
 extends DMIDataObject 
-implements Comparable {
+implements Comparable<HydroBase_AnnualAmt> {
 
 protected int _meas_num = DMIUtil.MISSING_INT;
 protected int _irr_year = DMIUtil.MISSING_INT;
@@ -76,9 +76,7 @@ public HydroBase_AnnualAmt() {
 Compares against another annual amt object for sorting with 
 java.util.Collections.
 */
-public int compareTo(Object o) {
-	HydroBase_AnnualAmt a = (HydroBase_AnnualAmt)o;
-
+public int compareTo(HydroBase_AnnualAmt a) {
 	if (DMIUtil.isMissing(_irr_year) && DMIUtil.isMissing(a._irr_year)) {
 		return 0;
 	}

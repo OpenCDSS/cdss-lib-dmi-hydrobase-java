@@ -68,6 +68,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is a GUI for displaying all sorts of Dam information.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_Dam extends JFrame
 implements ActionListener, WindowListener {
 
@@ -200,7 +201,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -221,7 +222,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -310,11 +311,11 @@ throws Throwable {
 /**
 Formats output for printing or export.
 @param format the format in which to format the data for output.
-@return a Vector of strings, each of which is a line in the report to be
+@return a list of strings, each of which is a line in the report to be
 exported or printed.
 */
-public List formatOutput(int format) {
-	List v = new Vector();
+public List<String> formatOutput(int format) {
+	List<String> v = new Vector<String>();
 	int spillwaySize = __spillwayWorksheet.getRowCount();
 	int inspectionSize = __inspectionWorksheet.getRowCount();
 	int outletSize = __outletWorksheet.getRowCount();
@@ -1179,8 +1180,7 @@ private void setupGUI() {
 	int[] spillwayWidths = null;
 	JScrollWorksheet spillwayJSW = null;
 	try {
-		HydroBase_TableModel_Dam tm = new
-			HydroBase_TableModel_Dam(new Vector());
+		HydroBase_TableModel_Dam tm = new HydroBase_TableModel_Dam(new Vector<HydroBase_DamSpillway>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		spillwayJSW = new JScrollWorksheet(cr, tm, p);
@@ -1204,8 +1204,7 @@ private void setupGUI() {
 	int[] inspectionWidths = null;
 	JScrollWorksheet inspectionJSW = null;
 	try {
-		HydroBase_TableModel_Dam tm = new
-			HydroBase_TableModel_Dam(new Vector());
+		HydroBase_TableModel_Dam tm = new HydroBase_TableModel_Dam(new Vector<HydroBase_DamInspection>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		inspectionJSW = new JScrollWorksheet(cr, tm, p);
@@ -1233,7 +1232,7 @@ private void setupGUI() {
 	JScrollWorksheet outletJSW = null;
 	try {
 		HydroBase_TableModel_Dam tm = new
-			HydroBase_TableModel_Dam(new Vector());
+			HydroBase_TableModel_Dam(new Vector<HydroBase_DamOutlet>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		outletJSW = new JScrollWorksheet(cr, tm, p);
@@ -1261,7 +1260,7 @@ private void setupGUI() {
 	JScrollWorksheet emergencyJSW = null;
 	try {
 		HydroBase_TableModel_Dam tm = new
-			HydroBase_TableModel_Dam(new Vector());
+			HydroBase_TableModel_Dam(new Vector<HydroBase_EmergencyPlan>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		emergencyJSW = new JScrollWorksheet(cr, tm, p);
@@ -1463,7 +1462,7 @@ private void submitAndDisplayEmergencyPlanQuery() {
 	String routine = "HydroBase_GUI_Dam.submitAndDisplayEmergencyPlanQuery";
 	JGUIUtil.setWaitCursor(this, true);
 	
-	List v = null;
+	List<HydroBase_EmergencyPlan> v = null;
 	try {
 		v = __dmi.readEmergencyPlanListForStructure_num(__structureNum);
 	}
@@ -1474,7 +1473,7 @@ private void submitAndDisplayEmergencyPlanQuery() {
 	}
 
 	if (v == null) {
-		v = new Vector();
+		v = new Vector<HydroBase_EmergencyPlan>();
 	}
 	
 	__emergencyWorksheet.setData(v);
@@ -1489,7 +1488,7 @@ private void submitAndDisplayInspectionQuery() {
 	String routine = "HydroBase_GUI_Dam.submitAndDisplayInspectionQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
-	List v = null;
+	List<HydroBase_DamInspection> v = null;
 	try {
 		v = __dmi.readDamInspectionListForStructure_num(__structureNum);
 	}
@@ -1500,7 +1499,7 @@ private void submitAndDisplayInspectionQuery() {
 	}
 	
 	if (v == null) {
-		v = new Vector();
+		v = new Vector<HydroBase_DamInspection>();
 	}
 
 	__inspectionWorksheet.setData(v);
@@ -1514,7 +1513,7 @@ private void submitAndDisplayOutletQuery() {
 	String routine = "HydroBase_GUI_Dam.submitAndDisplayOutletQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
-	List v = null;
+	List<HydroBase_DamOutlet> v = null;
 	try {
 		v = __dmi.readDamOutletListForStructure_num(__structureNum);
 	}
@@ -1526,7 +1525,7 @@ private void submitAndDisplayOutletQuery() {
 	}
 
 	if (v == null) {
-		v = new Vector();
+		v = new Vector<HydroBase_DamOutlet>();
 	}
 
 	__outletWorksheet.setData(v);
@@ -1540,7 +1539,7 @@ private void submitAndDisplaySpillwayQuery() {
 	String routine = "HydroBase_GUI_Dam.submitAndDisplaySpillwayQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
-	List v = null;
+	List<HydroBase_DamSpillway> v = null;
 	try {
 		v = __dmi.readDamSpillwayListForStructure_num(__structureNum);
 	}
@@ -1551,7 +1550,7 @@ private void submitAndDisplaySpillwayQuery() {
 	}
 
 	if (v == null) {
-		v = new Vector();
+		v = new Vector<HydroBase_DamSpillway>();
 	}
 
 	__spillwayWorksheet.setData(v);

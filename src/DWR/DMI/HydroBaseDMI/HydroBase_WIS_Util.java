@@ -80,11 +80,11 @@ public static double[] computeGainLoss(HydroBase_NodeNetwork network, HydroBase_
 Computes gain/loss at the specified node.  Gains losses are based on stream mile.
 @param network the network the node is in.
 @param curNode the node to check.
-@param wisDataVector vector wis data from the wis
-@param isComputed whether the values in the wis have been computed yet or not
+@param wisDataVector list of WIS data from the WIS
+@param isComputed whether the values in the WIS have been computed yet or not
 */
 public static double[] computeGainLoss(HydroBase_NodeNetwork network, 
-HydroBase_Node curNode, List wisDataVector, boolean isComputed) { 
+HydroBase_Node curNode, List<HydroBase_WISData> wisDataVector, boolean isComputed) { 
 	double[] values = { DMIUtil.MISSING_DOUBLE, DMIUtil.MISSING_DOUBLE };
 	double D1X = DMIUtil.MISSING_DOUBLE;
 	double D12;
@@ -135,10 +135,6 @@ HydroBase_Node curNode, List wisDataVector, boolean isComputed) {
 	// to set data values to 0.0. set gain/gain loss to 0.0 if not 
 	// being computed
 	if (!isComputed) {
-		gainLoss = 0.0;
-	}
-	// set gain/Loss to 0.0 if curNode is null
-	else if (curNode == null) {
 		gainLoss = 0.0;
 	}
 	// Set gain/loss to 0.0 if the upstream and downstream baseflow node is
@@ -335,7 +331,7 @@ Computers gain/loss at the specified node.  Gains/losses are based on weighted c
 @return the gains/losses.
 */
 public static double[] computeWeightedGainLoss(HydroBase_NodeNetwork network,
-HydroBase_Node curNode, List wisDataVector, boolean isComputed) {
+HydroBase_Node curNode, List<HydroBase_WISData> wisDataVector, boolean isComputed) {
 	double[] values = { DMIUtil.MISSING_DOUBLE, DMIUtil.MISSING_DOUBLE };
 	double D1X = DMIUtil.MISSING_DOUBLE;
 	double D12 = DMIUtil.MISSING_DOUBLE;
@@ -387,11 +383,6 @@ HydroBase_Node curNode, List wisDataVector, boolean isComputed) {
 	// to set data values to 0.0.  set gain/gain loss to 0.0 if 
 	// not being computed
 	if (!isComputed) {
-		gainLoss = 0.0;
-	}
-
-	// set gain/Loss to 0.0 if curNode is null
-	else if (curNode == null) {
 		gainLoss = 0.0;
 	}
 	// set gain/loss to 0.0 if the upstream and downstream baseflow node is
@@ -618,12 +609,12 @@ getSpecialProjectValue and wis_import.import_identifier starts with
 starts with "WIS".
 @param dmi the dmi to use for processing.
 @param wis_import the wis import object to process.
-@return the imported data value Vector.
+@return the imported data value list.
 */
-public static List getWISImportValue(HydroBaseDMI dmi, 
+public static List<Object> getWISImportValue(HydroBaseDMI dmi, 
 HydroBase_WISImport wis_import) {
 	String routine = "HydroBase_WIS_Util.getWISImportValue";
-	List v = new Vector();
+	List<Object> v = new Vector<Object>();
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
@@ -653,13 +644,13 @@ Sets values for real-time wis_import. At this time, any real-time data with
 a flag are suspect, so they are not processed.
 @param dmi the dmi to use for processing
 @param wis_import the wis import object to process.
-@return a Vector with a Double in (0) that has the data value to use and an
+@return a list with a Double in (0) that has the data value to use and an
 Integer in (1) that has the number of  data values used to computer (0).  
 */
-private static List getRealTimeValue(HydroBaseDMI dmi, 
+private static List<Object> getRealTimeValue(HydroBaseDMI dmi, 
 HydroBase_WISImport wis_import) {
 	String routine = "HydroBase_WIS_Util.getRealTimeValue";
-	List v = new Vector();
+	List<Object> v = new Vector<Object>();
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
@@ -679,7 +670,7 @@ HydroBase_WISImport wis_import) {
 	// 2)	If end_time and offset are specified, use them as is.
 	// 3)  If the end_time is specified and the offset is not, then
 	//	we assume that the offset is one day before the end-time.
-	List measurements = new Vector();
+	List<HydroBase_RTMeas> measurements = new Vector<HydroBase_RTMeas>();
 	HydroBase_RTMeas measurement;
 	int size = 0;
 	DateTime end = new DateTime(DateTime.DATE_CURRENT 
@@ -691,7 +682,7 @@ HydroBase_WISImport wis_import) {
 	// Change this if we want to query data that has flags...
 	boolean useFlaggedData = false;
 
-	List order = new Vector();
+	List<String> order = new Vector<String>();
 
 	int wis_import_end_time = wis_import.getEnd_time();
 	int wis_import_time_offset = wis_import.getTime_offset();
@@ -712,7 +703,7 @@ HydroBase_WISImport wis_import) {
 
 		order.add("rt_meas.date_time");
 
-		List results = null;
+		List<HydroBase_RTMeas> results = null;
 		try {
 			results = dmi.readRTMeasList(wis_import.getMeas_num(),
 				start, end, useFlaggedData, false);
@@ -742,7 +733,7 @@ HydroBase_WISImport wis_import) {
 		}
 
 		// Get the last record.
-		measurement = (HydroBase_RTMeas)results.get(size - 1);
+		measurement = results.get(size - 1);
 		measurements.add(measurement);
 	}
 
@@ -783,7 +774,7 @@ HydroBase_WISImport wis_import) {
 		}
 		// Process the results to get the final numbers...
 
-		List results = null;
+		List<HydroBase_RTMeas> results = null;
 		try {
 			results = dmi.readRTMeasList(wis_import.getMeas_num(),
 				start, end, useFlaggedData, false);
@@ -877,14 +868,14 @@ HydroBase_WISImport wis_import) {
 Sets values for other wis sheet wis_import.  
 @param dmi the dmi to use for processing
 @param wis_import the wis import object to process
-@return a Vector with a Double in (0) that has the data value to use and an
+@return a list with a Double in (0) that has the data value to use and an
 Integer in (1) that has the number of data values used to computer (0).  In 
 the case of other wis sheets only one value is used, so this is fixed.
 */
-private static List getWISValue(HydroBaseDMI dmi, 
+private static List<Object> getWISValue(HydroBaseDMI dmi, 
 HydroBase_WISImport wis_import) {
 	String routine = "HydroBase_WIS_Util.getWISValue";
-	List v = new Vector();
+	List<Object> v = new Vector<Object>();
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
@@ -923,10 +914,10 @@ HydroBase_WISImport wis_import) {
 
 	// First process the HydroBase_WISFormat data to get the row 
 	// number we are working with.
-	List where = new Vector();
+	List<String> where = new Vector<String>();
 	where.add("wis_format.wis_num = " + import_num);
 	where.add("wis_format.identifier = '" + id + "'");
-	List results = null;
+	List<HydroBase_WISFormat> results = null;
 	try {
 		results = dmi.readWISFormatList(import_num, null, id);
 	}
@@ -960,9 +951,9 @@ HydroBase_WISImport wis_import) {
 		(HydroBase_WISFormat)results.get(size - 1);
 	int row = format.getWis_row() - 1;
 
-	results = null;
+	List<HydroBase_WISData> resultsWISData = null;
 	try {
-		results = dmi.readWISDataList(import_num, start, row);
+		resultsWISData = dmi.readWISDataList(import_num, start, row);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine,"Error reading from database.");
@@ -970,13 +961,13 @@ HydroBase_WISImport wis_import) {
 	}
 
  	// Process the results to get the final number
-	if (results == null) {
+	if (resultsWISData == null) {
 		Message.printWarning(2, routine,
 			"No WIS data available for WIS: " + import_num
 			+ " row: " + row + " and date of " + start_string);
 		return v;
 	}
-	size = results.size();
+	size = resultsWISData.size();
 	if (size == 0) {
 		Message.printWarning(2, routine,
 			"No WIS data available for WIS: " + import_num
@@ -986,7 +977,7 @@ HydroBase_WISImport wis_import) {
 
 	// If we have values than we will assume the last value is the one 
 	// we want.  There should only be one value.
-	HydroBase_WISData data = (HydroBase_WISData)results.get(size - 1);
+	HydroBase_WISData data = resultsWISData.get(size - 1);
 
 	// Get the correct value based on the defined import column which was
 	// requested.

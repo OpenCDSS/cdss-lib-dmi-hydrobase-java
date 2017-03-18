@@ -79,6 +79,7 @@ import RTi.Util.Time.DateTimeBuilderJDialog;
 This class is a GUI for allowing the user to do calculation on administration
 numbers.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_AdminNumCalculator 
 extends JDialog
 implements ActionListener, KeyListener, WindowListener {
@@ -337,8 +338,7 @@ private void graphClicked() {
 		tsview_props.set("PrintFont", "Courier");
 		tsview_props.set("PrintSize", "7");
 		tsview_props.set("PageLength", "100");
-		String title =
-			"Whole Administration Numbers vs. Appropriation Date";
+		String title = "Whole Administration Numbers vs. Appropriation Date";
 		tsview_props.set("TitleString", title);
 		tsview_props.set("TSViewTitleString", title);
 		// Now display the correct initial view...
@@ -348,7 +348,7 @@ private void graphClicked() {
 		tsview_props.set("XAxisJLabelString", "Appropriation Date");
 		tsview_props.set("EnableTable", "false");
 		tsview_props.set("EnableReferenceGraph", "false");
-		List ts_Vector = new Vector(1);
+		List<TS> ts_Vector = new Vector<TS>(1);
 		ts_Vector.add(ts);
 		JGUIUtil.setWaitCursor(this, true);
 		new TSViewJFrame(ts_Vector, tsview_props);

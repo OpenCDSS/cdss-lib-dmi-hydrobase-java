@@ -71,6 +71,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is a gui for displaying historic reservoir measurements.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_ReservoirMeasurement 
 extends JFrame 
 implements ActionListener, WindowListener {
@@ -185,7 +186,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -206,7 +207,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -283,8 +284,8 @@ throws Throwable {
 Formats output for printing or writing to a file.
 @param format the format in which to format the output.
 */
-public List formatOutput(int format) {
-	List v = new Vector();
+public List<String> formatOutput(int format) {
+	List<String> v = new Vector<String>();
 	// First get the multilist back as strings...
 
 	int size = __worksheet.getRowCount();
@@ -453,7 +454,7 @@ private void setupGUI() {
 	JScrollWorksheet jsw = null;
 	try {
 		HydroBase_TableModel_ReservoirMeasurement tm = new
-			HydroBase_TableModel_ReservoirMeasurement(new Vector());
+			HydroBase_TableModel_ReservoirMeasurement(new Vector<HydroBase_ResMeas>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		jsw = new JScrollWorksheet(cr, tm, p);
@@ -551,7 +552,7 @@ private void submitReservoirMeasurementQuery() {
 	
         int numRecords = 0;
 	try {
-		List results = 
+		List<HydroBase_ResMeas> results = 
 			__dmi.readResMeasListForStructure_num(__structureNum);
 	        if (results != null && results.size() > 0) {
 			__worksheet.setData(results);

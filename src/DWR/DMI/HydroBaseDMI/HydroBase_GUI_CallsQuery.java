@@ -137,6 +137,7 @@ import RTi.Util.Time.StopWatch;
 /**
 GUI for doing call chronology work.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_CallsQuery 
 extends JFrame 
 implements ActionListener, DragAndDropListener, MouseListener, WindowListener {
@@ -320,7 +321,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -342,7 +343,7 @@ public void actionPerformed(ActionEvent event) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 			outputStrings.add("");
 			outputStrings.add("PRINTED AT: " 
 				+ (new DateTime(DateTime.DATE_CURRENT))
@@ -449,8 +450,7 @@ tributaries.  Each kind of record goes in a separate Vector and these Vectors
 are used to populate the table model for the appropriate worksheet.
 @param results Vector containing HBCalls results.
 */
-private void displayResults(List results, String divisions, 
-		List divVector) {
+private void displayResults(List<HydroBase_Calls> results, String divisions, List<String> divVector) {
 	String routine = "HydroBase_GUI_CallsQuery.displayResults";
 	if (results == null || results.size() == 0) {		
 		return;
@@ -468,11 +468,11 @@ private void displayResults(List results, String divisions,
 	
 	boolean inDivs = false;
 	int div = 0;
-	List mainItems = new Vector();
-	List tribItems = new Vector();
+	List<HydroBase_Calls> mainItems = new Vector<HydroBase_Calls>();
+	List<HydroBase_Calls> tribItems = new Vector<HydroBase_Calls>();
 	HydroBase_Calls data = null;
         for (int i = 0; i < size; i++) {
-                data = (HydroBase_Calls)results.get(i);
+                data = results.get(i);
 		div = data.getDiv();
 		inDivs = false;
 
@@ -821,10 +821,10 @@ Responsible for formatting output.
 @param format format delimiter flag defined in this class
 @return returns a formatted Vector for exporting, printing, etc..
 */
-public List formatOutput(int format) {
+public List<String> formatOutput(int format) {
 	int size = 0;
 	HydroBase_Calls call = null;
-	List v = new Vector();
+	List<String> v = new Vector<String>();
 
 	
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
@@ -1062,7 +1062,7 @@ and legends for the graph.
 */
 private void graphClicked() {
 	// The sets up a query result set which orders by admin number and date.
-	List results = submitQuery(true);
+	List<HydroBase_Calls> results = submitQuery(true);
 
 	if (results == null) {
 		return;
@@ -1171,7 +1171,7 @@ private void reactivateClicked() {
 		clearComment = false;
 	}
 
-	List whereClause = new Vector();
+	List<String> whereClause = new Vector<String>();
 	// determine if the selected call has a release date
 	whereClause.add("calls.call_num = " + callNum);
 	HydroBase_Calls call = null;
@@ -1591,10 +1591,10 @@ public void setToDate(DateTime to) {
 /**
 This function performs a Call Chronology query. Returns the result set vector.
 */
-public List submitQuery(boolean orderByAdmin) {
+public List<HydroBase_Calls> submitQuery(boolean orderByAdmin) {
         String routine = "HydroBase_GUI_CallsQuery.submitQuery()";
 
-        List orderBy = new Vector();
+        List<String> orderBy = new Vector<String>();
 	// if orderByNet then add an additional element to the orderBy clause
 	// this is required for pulling unique rights
 	if (orderByAdmin == true) {
@@ -1607,7 +1607,7 @@ public List submitQuery(boolean orderByAdmin) {
         __statusJTextField.setText(tempString);
               
         // add division where clause
-        List divVector = HydroBase_GUI_Util.getDivisions(__dmi);
+        List<String> divVector = HydroBase_GUI_Util.getDivisions(__dmi);
         int size = divVector.size();
 	if (size == 1 && divVector.get(0).toString().equals("NONE")) {
 		Message.printStatus(2, routine, 
@@ -1617,13 +1617,12 @@ public List submitQuery(boolean orderByAdmin) {
 	 	return null;
 	}
 
-	List divOrClause_Vector = new Vector(size);
+	List<String> divOrClause_Vector = new Vector<String>(size);
         for (int curElement = 0; curElement < size; curElement++) {
-                divOrClause_Vector.add(new String("calls.div = " 
-			+ divVector.get(curElement).toString()));
+                divOrClause_Vector.add("calls.div = "+ divVector.get(curElement));
         }
         // build where clause for the divisions
-        List whereClause = new Vector();
+        List<String> whereClause = new Vector<String>();
         whereClause.add(DMIUtil.getOrClause(divOrClause_Vector));
 
 	// start and end dates
@@ -1647,7 +1646,7 @@ public List submitQuery(boolean orderByAdmin) {
 	sw.start();
 	
         // results Vector contains the reservoir query results
-	List results = null;
+	List<HydroBase_Calls> results = null;
 	try {
 	        results = __dmi.readCallsListForSetReleaseDates(startDate, 
 			endDate, __guiMode);

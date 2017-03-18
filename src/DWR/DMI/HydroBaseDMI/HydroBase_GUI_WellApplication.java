@@ -57,6 +57,7 @@ import RTi.Util.String.StringUtil;
 /**
 This GUI displays detailed well application information.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_WellApplication 
 extends JFrame
 implements ActionListener {
@@ -183,7 +184,7 @@ public void actionPerformed(ActionEvent event) {
         else if (actionCommand.equals(__BUTTON_EXPORT)) {
 		try {
 	 		// First format the output...
-			List outputStrings = formatOutput(
+			List<String> outputStrings = formatOutput(
 				HydroBase_GUI_Util.SCREEN_VIEW);
  			// Now export, letting the user decide the file...
 			ExportJGUI.export(this, outputStrings);			
@@ -198,7 +199,7 @@ public void actionPerformed(ActionEvent event) {
         else if (actionCommand.equals(__BUTTON_PRINT)) {
 		try {
 	 		// First format the output...
-			List outputStrings = formatOutput(
+			List<String> outputStrings = formatOutput(
 				HydroBase_GUI_Util.SCREEN_VIEW);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
@@ -299,13 +300,13 @@ throws Throwable {
 
 /**
 Formats the data for output.
-@param FORMAT format flag definied in HydroBase_GUI_Util (SCREEN_VIEW, 
+@param FORMAT format flag defined in HydroBase_GUI_Util (SCREEN_VIEW, 
 SUMMARY) or a flag that specifies the delimiter to use.
 @return a formatted Vector for exporting, printing, etc..
 */
-public List formatOutput(int FORMAT) {
-	List v = new Vector();
-	List tmpV = new Vector();
+public List<String> formatOutput(int FORMAT) {
+	List<String> v = new Vector<String>();
+	List<String> tmpV = new Vector<String>();
 
         char delim = HydroBase_GUI_Util.getDelimiterForFormat(FORMAT);
 

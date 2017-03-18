@@ -107,6 +107,7 @@ import RTi.Util.Time.DateTime;
 This class is a GUI for choosing the water information sheet to display on 
 the WIS gui.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_LoadWIS 
 extends JFrame
 implements ActionListener, ItemListener, MouseListener, WindowListener {
@@ -182,11 +183,13 @@ Combo box to hold the sheet names.
 private SimpleJComboBox __sheetNameComboBox;
 
 /**
-Vectors of objects.
+Lists of objects.
 */
-private List          
-	__wisVector,
-	__sheetDatesVector;
+private List<HydroBase_WISSheetName> __wisVector;
+//private List<HydroBase_WISComments> __sheetDatesVector;
+//private List<HydroBase_WISSheetName> __sheetDatesVector;
+//TODO SAM 2017-03-15 Confusing - the following list seems to mix the above two object types
+private List<Object> __sheetDatesVector;
 
 /**
 Constructor.
@@ -322,7 +325,7 @@ private void deleteClicked() {
 	}
 	// Delete the WIS data, comments, and diversion coding.  First
 	// get the sheet number.
-	List v = __dmi.readWISSheetNameList(-999, -999, sheetName, null,true);
+	List<HydroBase_WISSheetName> v = __dmi.readWISSheetNameList(-999, -999, sheetName, null,true);
 
 	// Loop through and find the WIS that has the nearest effective
 	// before the selected date...
@@ -330,7 +333,7 @@ private void deleteClicked() {
        	HydroBase_WISSheetName wis = null;
 	DateTime d;
 	for (int i = (size - 1); i >= 0; i--) {
-       		wis = (HydroBase_WISSheetName)v.get(i);
+       		wis = v.get(i);
 		d = new DateTime(wis.getEffective_date());
 		if (d.lessThanOrEqualTo(sDateTime)) {
 			break;
@@ -382,8 +385,7 @@ private void editClicked() {
 	JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Please Wait...Loading WIS");
  
-      	HydroBase_WISSheetName data = 
-		(HydroBase_WISSheetName)__sheetDatesVector.get(index);
+      	HydroBase_WISSheetName data = (HydroBase_WISSheetName)__sheetDatesVector.get(index);
 
         new HydroBase_GUI_WISBuilder(__parent, __geoview_ui, __dmi, data);
 
@@ -409,7 +411,7 @@ throws Throwable {
 }
 
 /**
-Generates the SimpleJList items for all of the archivd dates for the selected
+Generates the SimpleJList items for all of the archived dates for the selected
 sheetName as determined by the __sheetNameComboBox object.
 */
 private void generateDates() {
@@ -427,8 +429,7 @@ private void generateDates() {
 	if (sheetIndex >= vsize) {
 		return;
 	}
-        HydroBase_WISSheetName data = 
-		(HydroBase_WISSheetName)__wisVector.get(sheetIndex);
+        HydroBase_WISSheetName data = __wisVector.get(sheetIndex);
 	String sheetName = data.getSheet_name();
         String tempString = "Please Wait...Retrieving dates for " + sheetName;
         __statusJTextField.setText(tempString);
@@ -437,20 +438,19 @@ private void generateDates() {
         // the currently selected sheet name
 	JGUIUtil.setWaitCursor(this, true);
 	try {
-		List results = __dmi.readWISSheetNameList(-999, -999, sheetName,null,
+		List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, sheetName,null,
 		true);
 	int size2 = 0;
-	List results2 = null;
+	List<HydroBase_WISComments> results2 = null;
 
         __sheetDatesVector.clear();
         __historyList.removeAll();
 	if (!results.isEmpty()) {
 		if (__dmi.useStoredProcedures()) {
-			List rows = new Vector();
+			List<String> rows = new Vector<String>();
 	                int size = results.size();
 	                for (int curRow = 0; curRow < size; curRow++) {
-	                        data = (HydroBase_WISSheetName)
-					results.get(curRow);
+	                        data = results.get(curRow);
 				results2 = __dmi.readWISCommentsList(
 					data.getWis_num(), null, 42);
 	
@@ -459,10 +459,7 @@ private void generateDates() {
 		                        for (int i = 0; i < size2; 
 						i++) {
 		                                HydroBase_WISComments 
-							commentsData =
-							(HydroBase_WISComments)
-							results2.get(
-							i);
+							commentsData = results2.get(i);
 		                                dt = new DateTime(
 							commentsData
 							.getSet_date());
@@ -477,25 +474,21 @@ private void generateDates() {
 			__historyList.setListData(rows);
 		}
 		else {
-			List rows = new Vector();
+			List<String> rows = new Vector<String>();
 	                int size = results.size(); 
-	                List wis_numVector = new Vector(size);
+	                List<String> wis_numVector = new Vector<String>(size);
 	                for (int curRow = 0; curRow < size; curRow++) {
-	                        data = (HydroBase_WISSheetName)
-					results.get(curRow);
+	                        data = results.get(curRow);
 	                        wis_numVector.add(""+ data.getWis_num());
 	                }
-			results = __dmi.readWISCommentsList(wis_numVector,
-				null);
+			List<HydroBase_WISComments> resultsWISComments = __dmi.readWISCommentsList(wis_numVector, null);
 	
 	                // add the dates for the selected sheet into the 
 			// __historyList object
-			if (!results.isEmpty()) {
+			if (!resultsWISComments.isEmpty()) {
 	                        size = results.size();
 	                        for (int curRow = 0; curRow < size; curRow++) {
-	                                HydroBase_WISComments commentsData =
-						(HydroBase_WISComments)
-						results.get(curRow);
+	                                HydroBase_WISComments commentsData = resultsWISComments.get(curRow);
 	                                dt = new DateTime(
 						commentsData.getSet_date());
 					rows.add(dt.toString(
@@ -560,8 +553,7 @@ private void generateFormatDates() {
 	String routine = "HydroBase_GUI_LoadWIS.generateFormatDates";
 
         int sheetIndex = __sheetNameComboBox.getSelectedIndex();
-        HydroBase_WISSheetName data = 
-		(HydroBase_WISSheetName)__wisVector.get(sheetIndex);
+        HydroBase_WISSheetName data = __wisVector.get(sheetIndex);
         String sheetName = data.getSheet_name();
         __historyList.removeAll();
         __sheetDatesVector.clear();
@@ -576,7 +568,7 @@ private void generateFormatDates() {
 
 	try {
 
-		List results = __dmi.readWISSheetNameList(-999, -999, sheetName,
+		List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, sheetName,
 		null, true);
 	
 	if (!results.isEmpty()) {
@@ -585,7 +577,7 @@ private void generateFormatDates() {
                 // add the dates for the selected sheet into the __historyList
 		// object
                 for (int i = 0; i < size; i++) {
-		        data = (HydroBase_WISSheetName)results.get(i);
+		        data = results.get(i);
                         DateTime date = new DateTime(data.getEffective_date());
                         __historyList.add(date.toString(
 				DateTime.FORMAT_Y2K_SHORT));
@@ -611,12 +603,12 @@ private void generateFormatDates() {
 /**
 This function returns the wd syntax for where clauses according
 to Districts selected in the user preferences.
-@return a Vector of all the districts as strings.
+@return a list of all the districts as strings.
 */
-private List getWD() {
-	List v = HydroBase_GUI_Util.generateWaterDistricts(__dmi, true);
+private List<String> getWD() {
+	List<String> v = HydroBase_GUI_Util.generateWaterDistricts(__dmi, true);
 
-	List results = new Vector();
+	List<String> results = new Vector<String>();
 
 	if (!v.isEmpty()) {
 		int size = v.size();
@@ -641,10 +633,10 @@ private void getWISSheets() {
         __statusJTextField.setText("Please Wait...Retrieving WIS list...");
                               
         // results Vector contains the query results
-        List wds = getWD();
+        List<String> wds = getWD();
 	try {
 	// UNCONVERTED TO STORED PROCEDURES (2005-02-14)
-		List results = __dmi.readWISSheetNameDistinctList(wds);
+		List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameDistinctList(wds);
 	java.util.Collections.sort(results);
 
         // display the results of the query within the appropriate GUI objects
@@ -656,14 +648,14 @@ private void getWISSheets() {
 
 	// this is so that the districts are listed in proper numerical
 	// order (not just blindly in alphabetical order)
-	List outOfOrder = new Vector();
-	List newResults = new Vector();
+	List<HydroBase_WISSheetName> outOfOrder = new Vector<HydroBase_WISSheetName>();
+	List<HydroBase_WISSheetName> newResults = new Vector<HydroBase_WISSheetName>();
 
 	if (!results.isEmpty()) {
                 int size = results.size(); 
 		int len = 0;
                 for (int i = 0; i < size; i++) {
-                        data = (HydroBase_WISSheetName)results.get(i);
+                        data = results.get(i);
 
 			name = data.getSheet_name().trim();
 
@@ -689,7 +681,7 @@ private void getWISSheets() {
 	if (!outOfOrder.isEmpty()) {
 		int entryPoint = 0;
 		for (int i = 0; i < newResults.size(); i++) {
-			data = (HydroBase_WISSheetName)newResults.get(i);
+			data = newResults.get(i);
 			name = data.getSheet_name().trim();
 			if (name.startsWith("District ")) {
 				entryPoint = i;
@@ -706,11 +698,11 @@ private void getWISSheets() {
 		int vsize = 0;
 		int wis_num = 0;	
 		HydroBase_WISSheetName sheetName = null;
-		List sheets = null;
-		List wis_comments = null;
-		List v = null;
+		List<HydroBase_WISSheetName> sheets = null;
+		List<HydroBase_WISComments> wis_comments = null;
+		List<HydroBase_WISComments> v = null;
                 for (int i = 0; i < size; i++) {
-                        data = (HydroBase_WISSheetName)newResults.get(i);
+                        data = newResults.get(i);
 
 			name = data.getSheet_name();
 			// First get the wis_num using the sheet_name as
@@ -721,23 +713,20 @@ private void getWISSheets() {
 
 			nsheets = sheets.size();
 			if (nsheets > 0) {
-				wis_comments = new Vector();
+				wis_comments = new Vector<HydroBase_WISComments>();
 				for (int j = 0; j < nsheets; j++) {
-					sheetName = (HydroBase_WISSheetName)
-						sheets.get(j);
+					sheetName = sheets.get(j);
 					wis_num = sheetName.getWis_num();
 
 					if (DMIUtil.isMissing(wis_num)) {
 						continue;
 					}
 			
-					v = __dmi.readWISCommentsList(
-						wis_num, null);
+					v = __dmi.readWISCommentsList(wis_num, null);
 					vsize = v.size();
 
 					for (int k = 0; k < vsize; k++) {
-						wis_comments.add(
-							v.get(k));
+						wis_comments.add(v.get(k));
 					}
 
 				}
@@ -747,14 +736,10 @@ private void getWISSheets() {
 				nsheets = wis_comments.size();
 				if (nsheets > 0) {
 					last = new DateTime(
-						((HydroBase_WISComments)
 						wis_comments.get(
-						nsheets - 1)).getSet_date(),
+						nsheets - 1).getSet_date(),
 						DateTime.PRECISION_DAY);
-					first = new DateTime(
-						((HydroBase_WISComments)
-						wis_comments.get(0
-						)).getSet_date(),
+					first = new DateTime(wis_comments.get(0).getSet_date(),
 						DateTime.PRECISION_DAY);
 					__sheetNameComboBox.add(
 						name + " - " + nsheets 
@@ -920,11 +905,11 @@ private void okClicked(boolean editable) {
                 // most recent is determined via the effective date in
 		// Sheet_Name table.
 
-        	List results = __dmi.readWISSheetNameList(-999, -999, 
+        	List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, 
 			sheetName, null, true);
 
                 // element 0 is the most recent date since the order of the
-		// results is decending by effective date. get the effective
+		// results is descending by effective date. get the effective
 		// date.
                 sheetData = (HydroBase_WISSheetName)results.get(0);
                 recentFormat = sheetData.getEffective_date();
@@ -976,9 +961,9 @@ private void okClicked(boolean editable) {
 		// check for most recent format           
                 recentWIS = data.getArchive_date();
 
-                List results = __dmi.readWISSheetNameList(-999, -999, 
+                List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, 
 			sheetName, null, true);
-                sheetData = (HydroBase_WISSheetName)results.get(0);
+                sheetData = results.get(0);
                 recentFormat = sheetData.getEffective_date();
                	if (recentWIS.before(recentFormat)) {
 	                setDate = data.getSet_date();
@@ -1175,8 +1160,8 @@ This function shows/hides GUI
 public void setVisible(boolean state) {
 	if (state) {
                 // reset member variables
-                __wisVector = new Vector();
-                __sheetDatesVector = new Vector();
+                __wisVector = new Vector<HydroBase_WISSheetName>();
+                __sheetDatesVector = new Vector<Object>();
 
                 // generate a list of WIS sheets and show dates for the 
                 // top most sheet in the list.

@@ -19,6 +19,7 @@ import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.String.StringUtil;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_CUPopulation_InputFilter_JPanel
 extends InputFilter_JPanel
 {
@@ -38,7 +39,7 @@ public HydroBase_GUI_CUPopulation_InputFilter_JPanel ( HydroBaseDataStore dataSt
 throws Exception
 {	__dataStore = dataStore;
     HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
-    List v = hbdmi.readCUPopulationList (
+    List<HydroBase_CUPopulation> v = hbdmi.readCUPopulationList (
 		(InputFilter_JPanel)null,	// Where clauses
 					null,	// area_type
 					null,	// area_name
@@ -50,15 +51,15 @@ throws Exception
 	if ( v != null ) {
 		size = v.size();
 	}
-	List area_type_Vector = new Vector();
-	List area_name_Vector = new Vector();
-	List pop_type_Vector = new Vector();
+	List<String> area_type_Vector = new Vector<String>();
+	List<String> area_name_Vector = new Vector<String>();
+	List<String> pop_type_Vector = new Vector<String>();
 	String area_type, area_name, pop_type;
 	HydroBase_CUPopulation cupop = null;
 	int area_type_size = 0, area_name_size = 0, pop_type_size = 0, j = 0;
 	boolean found = false;
 	for ( int i = 0; i < size; i++ ) {
-		cupop = (HydroBase_CUPopulation)v.get(i);
+		cupop = v.get(i);
 		area_type = cupop.getArea_type();
 		area_name = cupop.getArea_name();
 		pop_type = cupop.getPop_type();
@@ -67,7 +68,7 @@ throws Exception
 		pop_type_size = pop_type_Vector.size();
 		found = false;
 		for ( j = 0; j < area_type_size; j++ ) {
-			if ( area_type.equalsIgnoreCase((String)area_type_Vector.get(j))){
+			if ( area_type.equalsIgnoreCase(area_type_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -77,7 +78,7 @@ throws Exception
 		}
 		found = false;
 		for ( j = 0; j < area_name_size; j++ ) {
-			if ( area_name.equalsIgnoreCase((String)area_name_Vector.get(j))){
+			if ( area_name.equalsIgnoreCase(area_name_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -87,7 +88,7 @@ throws Exception
 		}
 		found = false;
 		for ( j = 0; j < pop_type_size; j++ ) {
-			if ( pop_type.equalsIgnoreCase( (String)pop_type_Vector.get(j))){
+			if ( pop_type.equalsIgnoreCase(pop_type_Vector.get(j))){
 				found = true;
 				break;
 			}
@@ -97,7 +98,7 @@ throws Exception
 		}
 	}
 
-	List input_filters = new Vector(3);
+	List<InputFilter> input_filters = new Vector<InputFilter>(3);
 	input_filters.add ( new InputFilter ( "", "",
 			StringUtil.TYPE_STRING,
 			null, null, true ) );	// Blank to disable filter

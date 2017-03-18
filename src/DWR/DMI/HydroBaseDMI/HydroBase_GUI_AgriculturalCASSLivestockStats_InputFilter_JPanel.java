@@ -19,6 +19,7 @@ import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.String.StringUtil;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_AgriculturalCASSLivestockStats_InputFilter_JPanel
 extends InputFilter_JPanel
 {
@@ -42,7 +43,7 @@ throws Exception
     HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
     // For now do these queries here with available low-level code...
 
-	List v = hbdmi.readAgriculturalCASSLivestockStatsList (
+	List<HydroBase_AgriculturalCASSLivestockStats> v = hbdmi.readAgriculturalCASSLivestockStatsList (
 		(InputFilter_JPanel)null,	// Where clauses
 					null,	// county
 					null,	// commodity
@@ -54,14 +55,14 @@ throws Exception
 	if ( v != null ) {
 		size = v.size();
 	}
-	List commodity_Vector = new Vector();
-	List type_Vector = new Vector();
+	List<String> commodity_Vector = new Vector<String>();
+	List<String> type_Vector = new Vector<String>();
 	String commodity, type;
 	HydroBase_AgriculturalCASSLivestockStats agstats = null;
 	int commodity_size = 0, type_size = 0, j = 0;
 	boolean found = false;
 	for ( int i = 0; i < size; i++ ) {
-		agstats = (HydroBase_AgriculturalCASSLivestockStats)v.get(i);
+		agstats = v.get(i);
 		commodity = agstats.getCommodity();
 		type = agstats.getType();
 		commodity_size = commodity_Vector.size();
@@ -88,13 +89,13 @@ throws Exception
 		}
 	}
 
-	List county_data_Vector = hbdmi.getCountyRef();
-	List county_Vector = new Vector ( county_data_Vector.size() );
-	List county_internal_Vector = new Vector ( county_data_Vector.size());
+	List<HydroBase_CountyRef> county_data_Vector = hbdmi.getCountyRef();
+	List<String> county_Vector = new Vector<String> ( county_data_Vector.size() );
+	List<String> county_internal_Vector = new Vector<String> ( county_data_Vector.size());
 	size = county_data_Vector.size();
 	HydroBase_CountyRef county;
 	for ( int i = 0; i < size; i++ ) {
-		county = (HydroBase_CountyRef)county_data_Vector.get(i);
+		county = county_data_Vector.get(i);
 		county_Vector.add ( county.getCounty() + ", " + county.getST() );
 		county_internal_Vector.add (county.getCounty() );
 	}
@@ -104,7 +105,7 @@ throws Exception
 	//st_Vector.addElement ( "CO" );
 	//Vector st_internal_Vector = new Vector(1);
 	//st_internal_Vector.addElement ( "CO" );
-	List input_filters = new Vector(8);
+	List<InputFilter> input_filters = new Vector<InputFilter>(8);
 	input_filters.add ( new InputFilter ( "", "",
 			StringUtil.TYPE_STRING,
 			null, null, true ) );	// Blank to disable filter

@@ -27,7 +27,7 @@ HydroBase_WISSheetNameSpecialData
 */
 public class HydroBase_WISSheetName 
 extends DMIDataObject 
-implements Comparable {
+implements Comparable<HydroBase_WISSheetName> {
 
 protected int _wis_num = 		DMIUtil.MISSING_INT;
 protected String _sheet_name = 		DMIUtil.MISSING_STRING;
@@ -47,9 +47,7 @@ public HydroBase_WISSheetName() {
 /**
 Compares HydroBase_WISSheetName objects based on sheet name.
 */
-public int compareTo(Object o) {
-	HydroBase_WISSheetName w = (HydroBase_WISSheetName)o;
-
+public int compareTo(HydroBase_WISSheetName w) {
 	if (_sheet_name == null && w._sheet_name == null) {
 		return 0;
 	}

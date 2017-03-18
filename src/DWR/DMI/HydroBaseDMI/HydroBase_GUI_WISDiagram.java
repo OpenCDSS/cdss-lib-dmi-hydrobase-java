@@ -34,9 +34,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -61,6 +60,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is a GUI for graphically displaying a node diagram.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_WISDiagram 
 extends JFrame 
 implements ActionListener, WindowListener {
@@ -157,9 +157,9 @@ Status field.
 private JTextField __statusField;
 
 /**
-Vector of the records read from the database.
+List of the records read from the database.
 */
-private List __records;
+private List<HydroBase_WISDiagramData> __records;
 
 /**
 Constructor; private so that it can't be used.
@@ -404,7 +404,7 @@ private void buildDiagram() {
 	int wis_num;
 	int size = __records.size();
 	for (int i = 0; i < size; i++) {
-		data = (HydroBase_WISDiagramData)__records.get(i);
+		data = __records.get(i);
 		wis_num = data.getWis_num();
 		type = data.getType();
 		if (wis_num == __wisNum 
@@ -456,7 +456,7 @@ private void buildDiagram() {
 		String plural = "s";
 		String s = null;
 		String temp = "";
-		List v = null;
+		List<String> v = null;
 
 		// query the user for the bounds of the display.  The bounds
 		// will be constrained to be non-negative, and lx < rx and
@@ -760,7 +760,7 @@ Builds the node diagram from the wis format vector in the WIS that instantiated
 this GUI.
 */
 private void buildDiagramFromWISFormat() {
-	List v = null;
+	List<HydroBase_WISFormat> v = null;
 	if (__mode == __NETWORK_BUILD) {
 		v = __wisBuilder.getWisFormatVector();
 	}
@@ -891,14 +891,13 @@ public int getWis_num() {
 }
 
 /**
-Looks up the label for the node with the specified identitifier so that it
+Looks up the label for the node with the specified identifier so that it
 can be stored in the node.
-@param identifier the identifier of the wis row for which to return the 
-label.
+@param identifier the identifier of the wis row for which to return the label.
 @return the row label.
 */
 private String lookupLabel(String identifier) {
-	List v = null;
+	List<HydroBase_WISFormat> v = null;
 	if (__mode == __NETWORK_BUILD) {
 		v = __wisBuilder.getWisFormatVector();
 	}
@@ -1002,7 +1001,7 @@ private void readDatabaseRecords() {
 	}
 
 	if (__records == null) {
-		__records = new Vector();
+		__records = new ArrayList<HydroBase_WISDiagramData>();
 	}
 }
 
@@ -1016,7 +1015,7 @@ private HydroBase_Node[] recordsToNodes() {
 	int rows = __records.size();
 	int wis_num = 0;
 	String type = null;
-	List v = new Vector();
+	List<HydroBase_Node> v = new ArrayList<HydroBase_Node>();
 
 	for (int i = 0; i < rows; i++) {
 		data = (HydroBase_WISDiagramData)__records.get(i);
@@ -1041,11 +1040,11 @@ private HydroBase_Node[] recordsToNodes() {
 	}			
 
 	// annotations
-	List annotations = new Vector();
+	List<HydroBase_Node> annotations = new ArrayList<HydroBase_Node>();
 	PropList p = null;
 	String props = null;
 	for (int i = 0; i < rows; i++) {
-		data = (HydroBase_WISDiagramData)__records.get(i);
+		data = __records.get(i);
 		wis_num = data.getWis_num();
 		type = data.getType();
 		p = null;
@@ -1131,7 +1130,7 @@ private void saveClicked() {
 	HydroBase_Node[] nodes = __device.getNodes();
 	HydroBase_Node node = null;
 	int size = 0;
-	List annotations = __device.getAnnotations();
+	List<HydroBase_Node> annotations = __device.getAnnotations();
 	HydroBase_WISDiagramData wnd = null;
 	String props = null;
 	String stemp = null;

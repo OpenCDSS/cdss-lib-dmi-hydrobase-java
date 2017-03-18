@@ -31,6 +31,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is an input filter for querying well data on the Well GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_Well_InputFilter_JPanel
 extends InputFilter_JPanel {
 
@@ -45,7 +46,7 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	String ld = dmi.getFieldLeftEscape();
 
 	InputFilter filter = null;
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 
 	String wellTableName = HydroBase_GUI_Util._WELL_APPLICATION_TABLE_NAME + "." + ld;
 	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." + ld;

@@ -118,6 +118,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 import RTi.Util.GUI.DragAndDropJWorksheet;
@@ -150,6 +151,7 @@ import RTi.TS.TSIdent;
 import RTi.GRTS.TSProduct;
 import RTi.GRTS.TSViewJFrame;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_GroundWaterQuery 
 extends JFrame 
 implements ActionListener, DragAndDropListener, ItemListener, KeyListener, 
@@ -303,7 +305,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -322,7 +324,7 @@ public void actionPerformed(ActionEvent evt) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -388,11 +390,13 @@ private void dataTypeJComboBoxClicked() {
 		__tableLabelString = "Driller's K Sum Data:";
 		__tableJLabel.setText(__tableLabelString);
 		__viewButton.setEnabled(false);
+		displayResults(new Vector<HydroBase_GroundWaterWellsDrillersKSum>());
 	}
 	else if (dtype.equals(__DTYP_GEOPHLOGS)) {
 		__tableLabelString = "Geophysical Logs Data:";
 		__tableJLabel.setText(__tableLabelString);
 		__viewButton.setEnabled(true);
+		displayResults(new Vector<HydroBase_GroundWaterWellsGeophlogs>());
 	}
 	else if (dtype.equals(__DTYP_PUMPINGTS)) {
 		// pumping time series
@@ -408,18 +412,20 @@ private void dataTypeJComboBoxClicked() {
 		__tableLabelString = "Well Level Measurements Data: ";
 		__tableJLabel.setText(__tableLabelString);
 		__viewButton.setEnabled(true);
+		displayResults(new Vector<HydroBase_WellMeas>());
 	}
 	else if (dtype.equals(__DTYP_PUMPTESTS)) {	
 		__tableLabelString = "Pumping Tests Data: ";
 		__tableJLabel.setText(__tableLabelString);
 		__viewButton.setEnabled(true);
+		displayResults(new Vector<HydroBase_GroundWaterWellsPumpingTest>());
 	}
 	else if (dtype.equals(__DTYP_VOLCANICS)) {
 		__tableLabelString = "Volcanics Data: ";
 		__tableJLabel.setText(__tableLabelString);
 		__viewButton.setEnabled(false);
+		displayResults(new Vector<HydroBase_GroundWaterWellsVolcanics>());
 	}
-	displayResults(new Vector());
 }
 
 /**
@@ -428,7 +434,7 @@ display the results in by seeing what data type is selected from the
 data type combo box.
 @param results vector data from a query
 */
-private void displayResults(List results) {
+private void displayResults(List<? extends DMIDataObject> results) {
 	String routine = "displayResults";
         String dtype  = __dataTypeJComboBox.getSelected().trim();
 
@@ -623,12 +629,12 @@ throws Throwable {
 /**
 Responsible for formatting output.
 @param format format delimiter flag defined in this class
-@return formatted Vector for exporting, printing, etc..
+@return formatted list for exporting, printing, etc..
 */
-private List formatOutput(int format) {
+private List<String> formatOutput(int format) {
         int size = __worksheet.getRowCount();
         if (size == 0) {
-                return new Vector();
+                return new Vector<String>();
         }
 
         char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);
@@ -637,7 +643,7 @@ private List formatOutput(int format) {
 	int colCount = __worksheet.getColumnCount();
 	String s = "";			
 
-	List v = new Vector();
+	List<String> v = new Vector<String>();
 	for (int j = 0; j < colCount; j++) {
 		s += __worksheet.getColumnName(j, true) + delim;
 	}
@@ -685,7 +691,7 @@ private void generateGeophlogsReport() {
 	
 	int well_num = wellView.getWell_num();
 
-	List v = null;
+	List<HydroBase_GroundWaterWellsGeophlogs> v = null;
 
 	try {
 		v = __dmi.readGeophlogsListForWell_num(well_num);
@@ -695,7 +701,7 @@ private void generateGeophlogsReport() {
 		Message.printWarning(2, routine, e);
 	}	
 
-	List report = new Vector();
+	List<String> report = new Vector<String>();
 
         PropList reportProps = new PropList("ReportJFrame.props");
         reportProps.set("TotalWidth=750");
@@ -1131,7 +1137,6 @@ private void submitQuery() {
         String dtype = __dataTypeJComboBox.getSelected().trim();
 	__worksheet.clear();
 	
-	List results = new Vector();
 	StopWatch sw = new StopWatch();
 
 	if (!__selectedFilterJPanel.checkInput(true)) {
@@ -1141,7 +1146,7 @@ private void submitQuery() {
 	
 	// Define the query and also the different help string which is the key
 	// used in the report properties
-	
+	int resultsSize = 0;
 	if (dtype.equals(__DTYP_DRILLERS)) {
 		try {
 		        String status = "Please Wait... Retrieving Data";
@@ -1150,13 +1155,15 @@ private void submitQuery() {
 			sw = new StopWatch();
 			sw.start();		
 
+			List<HydroBase_GroundWaterWellsDrillersKSum>
 			results = __dmi.readGroundWaterWellsDrillersKSumList(
 				__selectedFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, null,
 					true, true));
 			displayResults(results);
-			sw.stop();			
+			sw.stop();
+			resultsSize = results.size();
 		}
 		catch (Exception e) {
 			Message.printWarning (2, routine, e);
@@ -1170,13 +1177,15 @@ private void submitQuery() {
 			sw = new StopWatch();
 			sw.start();		
 
+			List<HydroBase_GroundWaterWellsGeophlogs>
 			results = __dmi.readGroundWaterWellsGeophlogsList(
 				__selectedFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, null,
 					true, true));
 			displayResults(results);
-			sw.stop();			
+			sw.stop();
+			resultsSize = results.size();
 		}
 		catch (Exception e) {
 			Message.printWarning (2, routine, e);
@@ -1205,7 +1214,8 @@ private void submitQuery() {
 		        __statusJTextField.setText(status);
 		
 			sw = new StopWatch();
-			sw.start();		
+			sw.start();
+			List<HydroBase_GroundWaterWellsPumpingTest>
 			results = __dmi.readGroundWaterWellsPumpingTestList(
 				__selectedFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
@@ -1214,7 +1224,8 @@ private void submitQuery() {
 						._STRUCTURE_TABLE_NAME,
 					true, true));
 			displayResults(results);
-			sw.stop();			
+			sw.stop();
+			resultsSize = results.size();
 		}
 		catch (Exception e) {
 			Message.printWarning (2, routine, e);
@@ -1245,6 +1256,7 @@ private void submitQuery() {
 			sw = new StopWatch();
 			sw.start();		
 
+			List<HydroBase_GroundWaterWellsView>
 			results = __dmi.readGroundWaterWellsMeasTypeList(
 				__selectedFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
@@ -1253,7 +1265,8 @@ private void submitQuery() {
 						._STRUCTURE_TABLE_NAME,
 					true, true));
 			displayResults(results);
-			sw.stop();			
+			sw.stop();
+			resultsSize = results.size();
 		}
 		catch (Exception e) {
 			Message.printWarning (2, routine, e);
@@ -1277,13 +1290,15 @@ private void submitQuery() {
 			sw = new StopWatch();
 			sw.start();		
 
+			List<HydroBase_GroundWaterWellsVolcanics>
 			results = __dmi.readGroundWaterWellsVolcanicsList(
 				__selectedFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, null,
 					true, true));
 			displayResults(results);
-			sw.stop();			
+			sw.stop();
+			resultsSize = results.size();
 		}
 		catch (Exception e) {
 			Message.printWarning (2, routine, e);
@@ -1297,7 +1312,7 @@ private void submitQuery() {
 	}
 
        	JGUIUtil.setWaitCursor(this, false);
-        String status = "" + results.size() + " record" + plural 
+        String status = "" + resultsSize + " record" + plural 
 		+ " returned in " + sw.getSeconds() + " seconds.";
 	__tableJLabel.setText(__tableLabelString + status);
 
@@ -1350,7 +1365,7 @@ private void viewClicked() {
 			return;
 		}
 
-		List tslist = new Vector(num_selected);
+		List<TS> tslist = new Vector<TS>(num_selected);
 		String wdid = null;
 		String tsid = null;
 		JGUIUtil.setWaitCursor(this, true);

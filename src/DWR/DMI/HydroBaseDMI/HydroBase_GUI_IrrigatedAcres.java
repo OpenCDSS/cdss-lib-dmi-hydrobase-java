@@ -88,6 +88,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is a GUI for displaying information about a structure's irrigated acres.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_IrrigatedAcres 
 extends JFrame
 implements ActionListener, WindowListener
@@ -173,7 +174,7 @@ int structureNum) {
 	}				
 
 	try {
-		List v = __dmi.readParcelUseTSStructureToParcelListForStructure_num(
+		List<HydroBase_ParcelUseTSStructureToParcel> v = __dmi.readParcelUseTSStructureToParcelListForStructure_num(
 			__structureNum);
 		__worksheet.setData(v);
 	}
@@ -208,7 +209,7 @@ public void actionPerformed(ActionEvent e) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -226,7 +227,7 @@ public void actionPerformed(ActionEvent e) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -271,8 +272,8 @@ throws Throwable {
 Formats the data on the form for output to a file or the printer.
 @param format the format delimiter flag to use for delimiting fields.
 */
-public List formatOutput(int format) {
-	List v = new Vector();
+public List<String> formatOutput(int format) {
+	List<String> v = new Vector<String>();
 	int size = __worksheet.getRowCount();
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
@@ -499,7 +500,7 @@ private void setupGUI() {
 	JScrollWorksheet jsw = null;
 	try {
 		HydroBase_TableModel_IrrigatedAcres tm = new
-			HydroBase_TableModel_IrrigatedAcres(new Vector());
+			HydroBase_TableModel_IrrigatedAcres(new Vector<HydroBase_ParcelUseTSStructureToParcel>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		jsw = new JScrollWorksheet(cr, tm, p);
@@ -576,7 +577,7 @@ private void submitAndDisplayIrrigSummaryStructureQuery() {
 	String routine = "HydroBase_GUI_IrrigatedAcres"
 		+ ".submitAndDisplayIrrigSummaryStructureQuery";
 
-	List results = null;
+	List<HydroBase_StructureView> results = null;
 	try {
 		results = __dmi.readStructureIrrigSummaryListForStructure_num(__structureNum);
 	}

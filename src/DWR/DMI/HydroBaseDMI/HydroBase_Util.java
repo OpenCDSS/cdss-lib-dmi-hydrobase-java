@@ -80,7 +80,7 @@
 package DWR.DMI.HydroBaseDMI;
 
 import java.io.File;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -163,7 +163,7 @@ data object to query the unpermitted_wells table and then set the common_id in
 the objects to the USGS or USBR identifier from unpermitted_wells.  This is a
 work-around until HydroBase is redesigned to better handle well data.
 */
-public final static void addAlternateWellIdentifiers ( HydroBaseDMI dmi, List list )
+public final static void addAlternateWellIdentifiers ( HydroBaseDMI dmi, List<HydroBase_StructureGeolocStructMeasType> list )
 {	HydroBase_StructureGeolocStructMeasType data;
 	int size = 0;
 	if ( list != null ) {
@@ -172,7 +172,7 @@ public final static void addAlternateWellIdentifiers ( HydroBaseDMI dmi, List li
 	
 	HydroBase_GroundWaterWellsView uws;
 	for ( int i = 0; i < size; i++ ) {
-		data = (HydroBase_StructureGeolocStructMeasType)list.get(i);
+		data = list.get(i);
 		try {	
 			uws = dmi.readGroundWaterWellsMeasType(data.getStructure_num());
 			if ( uws == null ) {
@@ -908,7 +908,7 @@ throws Exception
 		FillStart_DateTime.addYear ( -1 );
 	}
 
-	List<String> messages = new Vector();
+	List<String> messages = new ArrayList<String>();
 	DateTime date = new DateTime ( FillStart_DateTime );
 	DateTime yearstart_DateTime = null;	// Fill dates for one year
 	DateTime yearend_DateTime = null;
@@ -1293,7 +1293,7 @@ Transforms the location elements into a standard legal location string and retur
 */
 public static String formatLegalLocation(String pm, int ts, String tdir, 
 int rng, String rdir, int sec, String seca,String q160, String q40, String q10){
-	List v = new Vector (10);
+	List<Object> v = new ArrayList<Object>(10);
 	v.add(pm);
 	v.add("" + ts);
 	v.add(tdir);
@@ -1367,7 +1367,7 @@ For example, all data related to reservoirs will be prefixed with
 "Reservoir - ".  This is useful for providing a better presentation to users in interfaces.
 */
 public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int include_types, boolean add_group )
-{	List<String> types = new Vector();
+{	List<String> types = new ArrayList<String>();
 	// Add these types exactly as they are listed in HydroBase.  If someone
 	// has a problem, HydroBase should be adjusted.  Notes are shown below
 	// where there may be an issue.  In all cases, documentation needs to
@@ -1856,7 +1856,7 @@ public static List<String> getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String d
 	String Day = "Day";
 	String Year = "Year";
 	String Irregular = "Irregular";
-	List<String> v = new Vector();
+	List<String> v = new ArrayList<String>();
 	// Alphabetize by data type, as much as possible...
 	if ( data_type.equalsIgnoreCase("AdminFlow") ) {
 		v.add ( Day );
@@ -2135,11 +2135,11 @@ public static boolean isStationTimeSeriesDataType (	HydroBaseDMI hbdmi, String d
 {	if ( data_type.indexOf("-") >= 0) {
 		data_type = StringUtil.getToken(data_type,"-",0,0) ;
 	}
-	List global_mt = hbdmi.getMeasType();
+	List<HydroBase_MeasType> global_mt = hbdmi.getMeasType();
 	int size = global_mt.size();
 	HydroBase_MeasType mt;
 	for ( int i = 0; i < size; i++ ) {
-		mt = (HydroBase_MeasType)global_mt.get(i);
+		mt = global_mt.get(i);
 		if ( data_type.equalsIgnoreCase(mt.getMeas_type()) ) {
 			return true;
 		}
@@ -2387,7 +2387,7 @@ throws Exception {
 		// Full-style SFUT string like:  S:1 F:xxx U:xxx T:xxx G:xxx
 		// Do not check for G: above because it is being phased in.  First break by spaces..
 		String sfut0 = sfut_string + " ";
-		List sfut = StringUtil.breakStringList ( sfut0, " ", StringUtil.DELIM_SKIP_BLANKS );
+		List<String> sfut = StringUtil.breakStringList ( sfut0, " ", StringUtil.DELIM_SKIP_BLANKS );
 		int sfut_size = sfut.size();
 		if ( sfut_size < 4 ) {
 			Message.printWarning ( 2, routine, "SFUT must have at least 4 parts" );
@@ -2468,6 +2468,7 @@ throws Exception
 {	return readTimeSeriesHeaderObjects ( hbdmi, data_type, time_step, ifp, null );
 }
 
+// TODO sam 2017-03-14 this is messy because a variety of class types are returned - need to make cleaner
 /**
 Read a list of objects that contain time series header information.  This is used, for example, to populate the
 time series list area of TSTool and to get a list of time series for the TSTool ReadHydroBase(Where...) command.
@@ -2485,7 +2486,7 @@ public static List readTimeSeriesHeaderObjects ( HydroBaseDMI hbdmi, String data
 	InputFilter_JPanel ifp, GRLimits grlimits )
 throws Exception
 {	String routine = "HydroBase_Util.readTimeSeriesHeaderObjects", message;
-	List tslist = null;
+	List tslist = null; // This can contain different classes
 	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType ( data_type, time_step );
 	String meas_type = hb_mt[0];
 	String vax_field = hb_mt[1];
@@ -2576,7 +2577,7 @@ throws Exception
 				null,	// start
 				null,	// end
 				true);	// distinct
-			List v = new Vector();
+			List v = new ArrayList();
 			int size2 = tslist.size();
 			HydroBase_StructureView view = null;
 			for (int i = 0; i < size2; i++) {
@@ -2628,7 +2629,7 @@ throws Exception
 			String data_units = HydroBase_Util.getTimeSeriesDataUnits ( hbdmi, data_type, time_step );
 //			if (hbdmi.useStoredProcedures()) {
 			List v = tslist;
-			tslist = new Vector();
+			tslist = new ArrayList();
 			for ( int i = 0; i < size; i++ ) {
 				view = (HydroBase_StationView)v.get(i);
 				// Set to the value used in TSTool...

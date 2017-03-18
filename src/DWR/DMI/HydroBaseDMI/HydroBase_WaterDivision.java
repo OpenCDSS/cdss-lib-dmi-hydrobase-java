@@ -70,7 +70,7 @@ protected final static String[] divisions = {
 /**
 Static hashtable mapping division numbers as Integer to divisions string.
 */
-protected final static Hashtable divisionTable = new Hashtable();
+protected final static Hashtable<Integer,String> divisionTable = new Hashtable<Integer,String>();
 
 // map a name to a number for storage
 static {
@@ -116,7 +116,7 @@ Returns a division name for a given integer key.
 @return a division name for a given integer key.
 */
 public static String getDivisionName( int key ) {
-	return (String)divisionTable.get(new Integer(key));
+	return divisionTable.get(new Integer(key));
 }
 
 /**

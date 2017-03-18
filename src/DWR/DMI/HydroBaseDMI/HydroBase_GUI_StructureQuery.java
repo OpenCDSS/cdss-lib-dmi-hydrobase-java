@@ -223,6 +223,7 @@ import RTi.Util.Time.StopWatch;
 /**
 This GUI displays the main structure query interface.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_StructureQuery 
 extends JFrame
 implements ActionListener, GeoViewListener, KeyListener, MouseListener, 
@@ -374,7 +375,7 @@ private String	__lastSelectedView = SUMMARY;
 /**
 The results returned from the query.
 */
-private List __results = null;
+private List<HydroBase_StructureView> __results = null;
 
 /**
 Constructor. 
@@ -456,11 +457,10 @@ public void actionPerformed(ActionEvent event) {
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
-				List outputStrings = formatOutput(format);
+				List<String> outputStrings = formatOutput(format);
 	 			// Now export, letting the user decide the 
 				// file...
-				HydroBase_GUI_Util.export(this, eff[0], 
-					outputStrings);
+				HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 			}
 			else {
                 		char delim = HydroBase_GUI_Util
@@ -493,7 +493,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -544,7 +544,7 @@ private void closeClicked() {
 Display the results of the query in the spreadsheet.  
 @param results the results to display in the spreadsheet.
 */
-private void displayResults(List results) 
+private void displayResults(List<HydroBase_StructureView> results) 
 throws Exception {
 
 	HydroBase_TableModel_StructureGeoloc_SP tm = 
@@ -609,13 +609,13 @@ Format output of the worksheet for export.
 SUMMARY) or a flag that specifies the delimiter to use.
 @return a formatted Vector for exporting, printing, etc..
 */
-private List formatOutput(int format) {
+private List<String> formatOutput(int format) {
 	int size = __worksheet.getRowCount();
 	if (size == 0) {
-        	return new Vector();
+        	return new Vector<String>();
 	}
 
-	List v = new Vector(size, 100);
+	List<String> v = new Vector<String>(size, 100);
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
         	// Just export in a reasonable format...
@@ -796,7 +796,7 @@ HydroBase_StructureView data) {
         if (view.equals(SUMMARY)) {
 		HydroBase_Report_StructureSummary structureSummary = 
 			new HydroBase_Report_StructureSummary(__dmi, strucNum);
-		List reportVector = structureSummary.getReport();
+		List<String> reportVector = structureSummary.getReport();
 		PropList props = new PropList("QInfoReport");
 		props.set("HelpKey", "true");
 
@@ -919,10 +919,9 @@ private void getViewList() {
 		return;
 	}
 
-	List items = null;
+	List<String> items = null;
 
-	HydroBase_StructureView data = 
-		(HydroBase_StructureView)__worksheet.getRowData(row);
+	HydroBase_StructureView data = (HydroBase_StructureView)__worksheet.getRowData(row);
 
 	if (data == null) {
 		ready();
@@ -958,13 +957,12 @@ private void getViewList() {
 }
 
 /**
-This function generates a Vector containing views relevent to the structure
-type.
+This function generates a list containing views relevant to the structure type.
 @param type the selected structure type.
-@return a Vector of structure views.
+@return a list of structure views.
 */
-public List getStructureViews(String type) {
-	List	items = new Vector(10, 5);	// Relevent Structure displays
+public List<String> getStructureViews(String type) {
+	List<String>items = new Vector<String>(10, 5);	// Relevant Structure displays
 	boolean	isHeadgate = 	false;
 	boolean isJD = 		false;
 	boolean	isNJD = 	false;
@@ -1034,31 +1032,31 @@ public List getStructureViews(String type) {
 }
 
 /**
-This function generates a Vector containing views relevant to the structure
+This function generates a list containing views relevant to the structure
 type.
 @param data selected view type.
-@return a Vector of structure views.
+@return a list of structure views.
 */
-public List getStructureViews(HydroBase_StructureView data) {
+public List<String> getStructureViews(HydroBase_StructureView data) {
 	String type = __dmi.getStructureTypeDescription(data.getStr_type());
         return getStructureViews(type);
 }
 
 /**
 Get the list of AppLayerType that correspond to the GUI in its current state.
-@return Vector of String for AppLayerType that should be considered.
+@return list of String for AppLayerType that should be considered.
 */
-private List getVisibleAppLayerType() {
+private List<String> getVisibleAppLayerType() {
 	int[] rows = __worksheet.getSelectedRows();
 	if (rows == null || rows.length == 0) {
-		return new Vector();
+		return new Vector<String>();
 	}
 	
 	HydroBase_StructureView sv = null;
 	int size = rows.length; 
 	Object o = null;
 	String type = null;
-	List appLayerTypes = new Vector();
+	List<String> appLayerTypes = new Vector<String>();
 
 	boolean reservoir = false;
 	boolean diversion = false;
@@ -1125,10 +1123,9 @@ public void geoViewMouseMotion(GRPoint devPoint, GRPoint dataPoint) {}
 Does nothing.  
 @param devLimits Limits of select in device coordinates (pixels).
 @param dataLimits Limits of select in data coordinates.
-@param selected Vector of selected GeoRecord.  
+@param selected list of selected GeoRecord.  
 */
-public void geoViewInfo(GRShape devLimits, GRShape dataLimits,
-		List selected) {}
+public void geoViewInfo(GRShape devLimits, GRShape dataLimits, List<GeoRecord> selected) {}
 
 /**
 Does nothing.  
@@ -1136,17 +1133,15 @@ Does nothing.
 @param dataLimits Limits of select in data coordinates.
 @param selected Vector of selected GeoRecord.  
 */
-public void geoViewInfo(GRPoint devLimits, GRPoint dataLimits, 
-		List selected) {}
+public void geoViewInfo(GRPoint devLimits, GRPoint dataLimits, List<GeoRecord> selected) {}
 
 /**
 Does nothing.  
 @param devLimits Limits of select in device coordinates (pixels).
 @param dataLimits Limits of select in data coordinates.
-@param selected Vector of selected GeoRecord.  
+@param selected list of selected GeoRecord.  
 */
-public void geoViewInfo(GRLimits devLimits, GRLimits dataLimits,
-		List selected) {}
+public void geoViewInfo(GRLimits devLimits, GRLimits dataLimits, List<GeoRecord> selected) {}
 
 /**
 If a selection is made from the map, query the database for region that was
@@ -1157,12 +1152,10 @@ listener from the GeoView.
 @param dataLimits Limits of select in data coordinates.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
-public void geoViewSelect(GRShape devLimits, GRShape dataLimits,
-		List selected, boolean append) {
+public void geoViewSelect(GRShape devLimits, GRShape dataLimits, List<GeoRecord> selected, boolean append) {
 	// Figure out which app layer types are selected.  If one that is
 	// applicable to this GUI, execute a query...
-	List appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree()
-		.getSelectedAppLayerTypes(true);
+	List<String> appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree().getSelectedAppLayerTypes(true);
 	int size = appLayerTypes.size();
 	String appLayerType;
 	boolean viewNeeded = false;
@@ -1227,9 +1220,8 @@ listener from the GeoView.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRPoint devLimits, GRPoint dataLimits, 
-		List selected, boolean append) {
-	geoViewSelect((GRShape)devLimits, (GRShape)dataLimits, selected, 
-		append);
+		List<GeoRecord> selected, boolean append) {
+	geoViewSelect((GRShape)devLimits, (GRShape)dataLimits, selected, append);
 }
 
 /**
@@ -1242,7 +1234,7 @@ listener from the GeoView.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRLimits devLimits, GRLimits dataLimits,
-		List selected, boolean append) {
+		List<GeoRecord> selected, boolean append) {
 	geoViewSelect((GRShape)devLimits, (GRShape)dataLimits, selected, 
 		append);
 }
@@ -1475,12 +1467,12 @@ private	void ready() {
 
 /**
 Select the items in the list on the map.  This is done by putting together a
-Vector of String, each of which has "wd,id".  These field names are set in the
+list of String, each of which has "wd,id".  These field names are set in the
 GeoView Project as AppJoinField="wd,id".
 */
 private void selectOnMap() {
 	int size = __worksheet.getRowCount();
-	List idlist = new Vector(size);
+	List<String> idlist = new Vector<String>(size);
         __statusJTextField.setText("Selecting and zooming to structures on "
 		+ "map.  Please wait...");
 	JGUIUtil.setWaitCursor(this, true);
@@ -1501,7 +1493,7 @@ private void selectOnMap() {
 	}
 
 	// Base layers are always visible...
-	List enabledAppLayerTypes = getVisibleAppLayerType();
+	List<String> enabledAppLayerTypes = getVisibleAppLayerType();
 	enabledAppLayerTypes.add("BaseLayer");
 	__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(enabledAppLayerTypes, 
 		false);
@@ -1510,8 +1502,8 @@ private void selectOnMap() {
 	
 	// Select the features, searching only selected structure types, and
 	// zoom to the selected shapes...
-	List appLayerTypes = getVisibleAppLayerType();
-	List matchingFeatures =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
+	List<String> appLayerTypes = getVisibleAppLayerType();
+	List<GeoRecord> matchingFeatures =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 		appLayerTypes, idlist, true, .05, .05);
 	int matches = 0;
 	if (matchingFeatures != null) {
@@ -1717,7 +1709,7 @@ private void setupGUI(boolean isVisible) {
         JGUIUtil.addComponent(bottomSouthJPanel, __statusJTextField, 0, 1, 
 		10, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
         
-	__results = new Vector();
+	__results = new Vector<HydroBase_StructureView>();
 	
         // JFrame settings
 	if (	(JGUIUtil.getAppNameForWindows() == null) ||
@@ -1832,7 +1824,7 @@ throws Exception {
         __statusJTextField.setText(status);
 
 	HydroBase_TableModel_StructureGeoloc_SP tm = 
-		new HydroBase_TableModel_StructureGeoloc_SP(new Vector(), 
+		new HydroBase_TableModel_StructureGeoloc_SP(new Vector<HydroBase_StructureView>(), 
 		__dmi);
 	HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	__worksheet.setCellRenderer(cr);

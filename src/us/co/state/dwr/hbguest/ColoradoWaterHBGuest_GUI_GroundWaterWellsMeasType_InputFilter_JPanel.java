@@ -15,6 +15,7 @@ import RTi.Util.GUI.InputFilter_JPanel;
 
 import RTi.Util.String.StringUtil;
 
+@SuppressWarnings("serial")
 public class ColoradoWaterHBGuest_GUI_GroundWaterWellsMeasType_InputFilter_JPanel
 extends InputFilter_JPanel
 implements MouseListener
@@ -71,8 +72,8 @@ throws Exception
 	// Fill in the water district data for input filters...
 
 	List<HydroBase_WaterDistrict> district_data_Vector = service.getWaterDistrictList();
-	List district_Vector = new Vector ( district_data_Vector.size() );
-	List district_internal_Vector = new Vector(district_data_Vector.size());
+	List<String> district_Vector = new Vector<String> ( district_data_Vector.size() );
+	List<String> district_internal_Vector = new Vector<String>(district_data_Vector.size());
 	for ( HydroBase_WaterDistrict wd : district_data_Vector ) {
 		district_Vector.add (wd.getWD() + " - " + wd.getWd_name());
 		district_internal_Vector.add ("" + wd.getWD() );
@@ -81,8 +82,8 @@ throws Exception
 	// Fill in the division data for input filters...
 
 	List<HydroBase_WaterDivision> division_data_Vector = service.getWaterDivisionList();
-	List<String> division_Vector = new Vector ( 7 );
-	List<String> division_internal_Vector = new Vector ( 7 );
+	List<String> division_Vector = new Vector<String> ( 7 );
+	List<String> division_internal_Vector = new Vector<String>( 7 );
 	for ( HydroBase_WaterDivision div: division_data_Vector ) {
 		division_Vector.add (div.getDiv() + " - " + div.getDiv_name());
 		division_internal_Vector.add ("" + div.getDiv() );
@@ -90,7 +91,7 @@ throws Exception
 	
 	// Now define the input filters
 
-	List<InputFilter> input_filters = new Vector(8);
+	List<InputFilter> input_filters = new Vector<InputFilter>(8);
 	input_filters.add ( new InputFilter ("", "",
 	    StringUtil.TYPE_STRING, null, null, true ) ); // Blank to disable filter
 

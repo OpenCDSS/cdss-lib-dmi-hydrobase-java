@@ -22,6 +22,7 @@ import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.String.StringUtil;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel
 extends InputFilter_JPanel
 {
@@ -44,44 +45,44 @@ throws Exception
     HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
     // Fill in the district data for input filters...
 
-	List district_data_Vector = hbdmi.getWaterDistricts();
-	List district_Vector = new Vector ( district_data_Vector.size() );
-	List district_internal_Vector=new Vector(district_data_Vector.size());
+	List<HydroBase_WaterDistrict> district_data_Vector = hbdmi.getWaterDistricts();
+	List<String> district_Vector = new Vector<String> ( district_data_Vector.size() );
+	List<String> district_internal_Vector=new Vector<String>(district_data_Vector.size());
 	HydroBase_WaterDistrict wd;
 	int size = district_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		wd = (HydroBase_WaterDistrict)district_data_Vector.get(i);
+		wd = district_data_Vector.get(i);
 		district_Vector.add (wd.getWD() + " - "+wd.getWd_name());
 		district_internal_Vector.add ("" + wd.getWD() );
 	}
 
 	// Fill in the division data for input filters...
 
-	List division_data_Vector = hbdmi.getWaterDivisions();
-	List division_Vector = new Vector ( 7 );
-	List division_internal_Vector = new Vector ( 7 );
+	List<HydroBase_WaterDivision> division_data_Vector = hbdmi.getWaterDivisions();
+	List<String> division_Vector = new Vector<String> ( 7 );
+	List<String> division_internal_Vector = new Vector<String> ( 7 );
 	HydroBase_WaterDivision div;
 	size = division_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		div =(HydroBase_WaterDivision)division_data_Vector.get(i);
+		div = division_data_Vector.get(i);
 		division_Vector.add (div.getDiv() + " - " + div.getDiv_name());
 		division_internal_Vector.add ("" + div.getDiv() );
 	}
 
 	// Get crop data for filter use...
 
-	List crop_data_Vector = hbdmi.getCropRef();
-	List crop_Vector = new Vector ( 30 );
-	List crop_internal_Vector = new Vector ( 30 );
+	List<HydroBase_CropRef> crop_data_Vector = hbdmi.getCropRef();
+	List<String> crop_Vector = new Vector<String> ( 30 );
+	List<String> crop_internal_Vector = new Vector<String> ( 30 );
 	HydroBase_CropRef crop;
 	size = crop_data_Vector.size();
 	for ( int i = 0; i < size; i++ ) {
-		crop = (HydroBase_CropRef)crop_data_Vector.get(i);
+		crop = crop_data_Vector.get(i);
 		crop_Vector.add ( crop.getCrop_desc() );
 		crop_internal_Vector.add ( crop.getCrop_desc() );
 	}
 
-	List input_filters = new Vector(6);
+	List<InputFilter> input_filters = new Vector<InputFilter>(6);
 	input_filters.add ( new InputFilter (
 		"", "",
 		StringUtil.TYPE_STRING,
