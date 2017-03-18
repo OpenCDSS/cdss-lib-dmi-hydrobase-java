@@ -724,12 +724,12 @@ Given a day, find the day that is nearest in the past that has data.  Data is
 any day that has a non-null observation flag.  It is assumed that the record
 has the correct month and year of interest.  All records in the Vector are
 checked. 
-@param records Vector of HydroBase_DailyAmt to check.
+@param records list of HydroBase_DailyAmt to check.
 @param day Day to find data nearest to.  If data are available on the day, the
 day is returned.
 @return -1 if no day with data is found.
 */
-public static int findNearestDataDay (List records, int day) {
+public static int findNearestDataDay (List<HydroBase_DailyAmt> records, int day) {
 	if ((records == null) || (records.size() == 0)) {
 		return -1;
 	}
@@ -738,7 +738,7 @@ public static int findNearestDataDay (List records, int day) {
 	int day2 = 0;
 	HydroBase_DailyAmt record = null;
 	for (int i = 0; i < size; i++ ) {
-		record = (HydroBase_DailyAmt)records.get(i);
+		record = records.get(i);
 		day2 = record.findNearestDataDay(0, 0, day);
 		if (day2 < daymin) {
 			daymin = day2;

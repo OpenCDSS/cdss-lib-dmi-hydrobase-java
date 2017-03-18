@@ -148,8 +148,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
 
@@ -182,6 +182,7 @@ This class displays the Water Rights query form and also formats user input
 into workable SQL that the database processes so that the data can be shown 
 on the form.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_WaterRightsQuery 
 extends JFrame
 implements ActionListener, GeoViewListener, ItemListener, KeyListener, 
@@ -363,9 +364,14 @@ The table which has its data displayed in the table view.
 private String __currTable = "";
 
 /**
-Contains the results of the latest query.
+Contains the results of the latest transact query.
 */
-private List __results = null;
+private List<HydroBase_Transact> __resultsTransact = null;
+
+/**
+Contains the results of the latest net amounts query.
+*/
+private List<HydroBase_NetAmts> __resultsNetAmts = null;
 
 /**
 Constructor.  This is set up to read the GLOBAL_FAST data from the database
@@ -415,7 +421,7 @@ throws Exception {
 	String find = "  " + wd + " -";
 	__waterDistrictJComboBox.setSelectedPrefixItem(find);
 	
-	List whereClause = new Vector();
+	List<String> whereClause = new ArrayList<String>();
 	whereClause.add("structure_num = " + structureNum);
 
 	int numFilters = __transactFilterJPanel.getNumFilterGroups();
@@ -486,11 +492,10 @@ public void actionPerformed(ActionEvent event) {
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
-				List outputStrings = formatOutput(format);
+				List<String> outputStrings = formatOutput(format);
 	 			// Now export, letting the user decide the 
 				// file...
-				HydroBase_GUI_Util.export(this, eff[0], 
-					outputStrings);
+				HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 			}
 			else {
                 		char delim = HydroBase_GUI_Util
@@ -514,7 +519,7 @@ public void actionPerformed(ActionEvent event) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -648,7 +653,7 @@ headings and widths.
 @param redisplay if true, the columns are being redisplayed according to
 another template.  If false, using the same template.
 */
-private void displayNetResults(List results)
+private void displayNetResults(List<HydroBase_NetAmts> results)
 throws Exception {
 	String temp = __outputTemplateJComboBox.getSelected();
 	int type = -1;
@@ -664,7 +669,7 @@ throws Exception {
 			+ "Template JComboBox");
 	}
 	HydroBase_TableModel_NetAmts tm = new HydroBase_TableModel_NetAmts(
-		__results, __dmi, type);
+		__resultsNetAmts, __dmi, type);
 	HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	__worksheet.setCellRenderer(cr);
 	__worksheet.setModel(tm);
@@ -676,9 +681,9 @@ throws Exception {
 Displays the requested query results by calling the appropriate member 
 functions of the HydroBase_Transact class.  In addition, sets the column
 headings and widths.
-@param results Vector of HydroBase_Transact objects.
+@param results list of HydroBase_Transact objects.
 */
-private void displayTransactionResults(List results)
+private void displayTransactionResults(List<HydroBase_Transact> results)
 throws Exception {
 	String temp = __outputTemplateJComboBox.getSelected();
 	int type = -1;
@@ -699,11 +704,10 @@ throws Exception {
 	}
 	else {
 		// this should never happen
-		throw new Exception ("Unknown value in "
-			+ "Template JComboBox");
+		throw new Exception ("Unknown value in Template JComboBox");
 	}
 	HydroBase_TableModel_Transact tm = new HydroBase_TableModel_Transact(
-		__results, __dmi, type);
+		__resultsTransact, __dmi, type);
 	HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	__worksheet.setCellRenderer(cr);
 	__worksheet.setModel(tm);	
@@ -734,18 +738,16 @@ private void enableMapLayers() {
 		+ "right layers.");
 	Message.printStatus(1, "", "Turning on water right GIS layer types.");
 
-	List enabledAppLayerTypes = new Vector(1);
+	List<String> enabledAppLayerTypes = new ArrayList<String>(2);
 	enabledAppLayerTypes.add("WaterRight");
 	enabledAppLayerTypes.add("BaseLayer");
-	__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(enabledAppLayerTypes, 
-		false);
+	__geoview_ui.getGeoViewJPanel().enableAppLayerTypes(enabledAppLayerTypes,false);
 	enabledAppLayerTypes = null;
 
 	// We want this GUI to listen to the map...
 	__geoview_ui.getGeoViewJPanel().getGeoView().addGeoViewListener(this);
 	JGUIUtil.setWaitCursor(this, false);
-	__statusJTextField.setText("Map shows base layers and water "
-		+ "right layers.  Ready.");
+	__statusJTextField.setText("Map shows base layers and water right layers.  Ready.");
 }
 
 /**
@@ -772,7 +774,8 @@ throws Throwable {
 	__viewJComboBox = null;
 	__waterDistrictJComboBox = null;
 	__currTable = null;
-	__results = null;
+	__resultsNetAmts = null;
+	__resultsTransact = null;
 	super.finalize();
 }
 
@@ -780,7 +783,7 @@ throws Throwable {
 Responsible for formatting output.
 @param format the format in which the output should be exported.
 */
-public List formatOutput(int format) 
+public List<String> formatOutput(int format) 
 throws Exception {
         if (__currTable.equalsIgnoreCase(HydroBase_GUI_Util._TRANS)) {
 		return formatOutputForTransactions(format);
@@ -789,51 +792,48 @@ throws Exception {
 		return formatOutputForNetAmounts(format);
 	}
 	else {
-		return new Vector();
+		return new ArrayList<String>();
 	}
 }
 
 /**
 Formats the net amounts data for output.
 @param format the format in which the data should be output.
-@return a Vector, each element of which contains a line of data for the report.
+@return a list, each element of which contains a line of data for the report.
 */
-public List formatOutputForNetAmounts(int format) 
+public List<String> formatOutputForNetAmounts(int format) 
 throws Exception {
 
         int size = __worksheet.getRowCount();
 
-        List v = new Vector(size, 10);
+        List<String> v = new ArrayList<String>(size);
 
         // Get the list contents...
 
         // First format the header...
         char delim = '|';
         if (!__isQueryByExample && format == HydroBase_GUI_Util.SCREEN_VIEW) {
-                // We neeed to make sure that regardless of how the screen is
+                // We need to make sure that regardless of how the screen is
                 // organized, we output as follows...
-                // Get the informtion given the known structure number...
+                // Get the information given the known structure number...
 // REVISIT (JTS - 2005-01-10)
 // need another way of getting the structure num
 		int structure_num = 0;
 //              int structure_num = (new Integer(
 //			__searchForJTextField.getText())).intValue();
 
-		Object o = __dmi.readStructureGeolocForStructure_num(
-			structure_num);
-		HydroBase_StructureView hbsv 
-			= (HydroBase_StructureView)o;
+		HydroBase_StructureGeoloc hbsg = __dmi.readStructureGeolocForStructure_num(structure_num);
                 v.add(HydroBase_GUI_Util.formatStructureHeader(
-                        hbsv.getStr_name(),
-                        StringUtil.formatString(hbsv.getDiv(),"%d"),
-                        StringUtil.formatString(hbsv.getWD(),"%d"),
-                        StringUtil.formatString(hbsv.getID(),"%d"),
+                        hbsg.getStr_name(),
+                        StringUtil.formatString(hbsg.getDiv(),"%d"),
+                        StringUtil.formatString(hbsg.getWD(),"%d"),
+                        StringUtil.formatString(hbsg.getID(),"%d"),
                         format));			
 		
                 v.add("");
                 v.add(
 			"                                               "
-			+ "WATER RIGHTS NET AMOUNTS INformatION");
+			+ "WATER RIGHTS NET AMOUNTS INFORMATION");
 		v.add(
 			"ADMIN. NO   ADJ DATE   APPRO DATE  DECREED   DECREED"
 			+ "   DECREED   DECREED   DECREED   DECREED   USES");
@@ -849,9 +849,9 @@ throws Exception {
         else if (__isQueryByExample &&
 	       format == HydroBase_GUI_Util.SCREEN_VIEW) {
                 // The legacy tabulation report...
-                List header = formatWRTabulationHeader(__TABULATION_RIGHTS);
+                List<String> header = formatWRTabulationHeader(__TABULATION_RIGHTS);
                 for (int i = 0; i < header.size(); i++) {
-                        v.add((String)header.get(i));
+                        v.add(header.get(i));
                 }
         }
         else {  
@@ -865,8 +865,7 @@ throws Exception {
 	boolean isSelected = false;
 	boolean printedHeader = false;
         for (int i = 0; i < size; i++) {
-		HydroBase_NetAmts data = 
-			(HydroBase_NetAmts)__worksheet.getRowData(i);	
+		HydroBase_NetAmts data = (HydroBase_NetAmts)__worksheet.getRowData(i);	
 
                 if (   !__isQueryByExample &&
                        format == HydroBase_GUI_Util.SCREEN_VIEW) {
@@ -1061,12 +1060,12 @@ throws Exception {
 /**
 Formats the net amounts data for output.
 @param format the format in which the data should be output.
-@return a Vector, each element of which contains a line of data for the report.
+@return a list, each element of which contains a line of data for the report.
 */
-public Vector formatOutputForTransactions(int format) {
+public List<String> formatOutputForTransactions(int format) {
 	int size = __worksheet.getRowCount();
 
-        Vector v = new Vector(size, 10);
+        List<String> v = new ArrayList<String>(size);
 
         if (!__outputTemplateJComboBox.getSelectedItem().equals("Summary") &&
 	    !__outputTemplateJComboBox.getSelectedItem().equals("Legal") &&
@@ -1077,13 +1076,12 @@ public Vector formatOutputForTransactions(int format) {
 	    !__outputTemplateJComboBox.getSelectedItem().equals(
 	    	"Transfer Rights")) {
 		// this really should never happen
-		return new Vector();
+		return new ArrayList<String>();
         }
 	
         // First format the header...
         char delim = '|';
-        if (   !__isQueryByExample &&
-	        format == HydroBase_GUI_Util.SCREEN_VIEW) {
+        if ( !__isQueryByExample && format == HydroBase_GUI_Util.SCREEN_VIEW) {
                 // We need to make sure that regardless of how the screen is
                 // organized, we output as follows...
                 v.add(
@@ -1115,8 +1113,7 @@ public Vector formatOutputForTransactions(int format) {
 	boolean isSelected = false;
 	boolean printedHeader = false;	
         for (int i = 0; i < size; i++) {
-		HydroBase_Transact data = 
-			(HydroBase_Transact)__worksheet.getRowData(i);	
+		HydroBase_Transact data = (HydroBase_Transact)__worksheet.getRowData(i);	
 	
                 if (!__isQueryByExample 
 		    && format == HydroBase_GUI_Util.SCREEN_VIEW) {
@@ -1179,8 +1176,8 @@ Formats the header for the water right tabulation.
 @param flag flag that says what kind of header to build.
 @return a Vector of Strings, each of which is a line of text in the header.
 */
-public static List formatWRTabulationHeader(int flag) {
-	List v = new Vector(2, 1);
+public static List<String> formatWRTabulationHeader(int flag) {
+	List<String> v = new ArrayList<String>(2);
 
 	DateTime t = new DateTime(DateTime.DATE_CURRENT);
 	String now = t.toString(DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS);
@@ -1262,26 +1259,25 @@ Do nothing.  Should this do the same as a select?
 Currently this does nothing.
 @param devlimits Limits of select in device coordinates(pixels).
 @param datalimits Limits of select in data coordinates.
-@param selected Vector of selected GeoRecord.  Currently ignored.
+@param selected list of selected GeoRecord.  Currently ignored.
 */
-public void geoViewInfo(GRShape devlimits, GRShape datalimits,
-		List selected) {}
+public void geoViewInfo(GRShape devlimits, GRShape datalimits, List<GeoRecord> selected) {}
 
 /**
 Do nothing.  Should this do the same as a select?
 @param grp first point
 @param grp2 second point
-@param selected selected Vector.
+@param selected selected list.
 */
-public void geoViewInfo(GRPoint grp, GRPoint grp2, List selected) {}
+public void geoViewInfo(GRPoint grp, GRPoint grp2, List<GeoRecord> selected) {}
 
 /**
 Do nothing.  Should this do the same as a select?
 @param grl first limits
 @param grl2 second limits
-@param selected selected Vector.
+@param selected selected list.
 */
-public void geoViewInfo(GRLimits grl, GRLimits grl2, List selected) {}
+public void geoViewInfo(GRLimits grl, GRLimits grl2, List<GeoRecord> selected) {}
 
 /**
 Handle the label redraw event from another GeoView(likely a ReferenceGeoView).
@@ -1308,10 +1304,10 @@ database for region that was selected.
 Currently this does nothing.
 @param devlimits Limits of select in device coordinates(pixels).
 @param datalimits Limits of select in data coordinates.
-@param selected Vector of selected GeoRecord.  Currently ignored.
+@param selected list of selected GeoRecord.  Currently ignored.
 */
 public void geoViewSelect(GRShape devlimits, GRShape datalimits,
-		List selected, boolean append) {
+		List<GeoRecord> selected, boolean append) {
 	String routine = "geoViewSelect";
 	if (isVisible()) {
 		Message.printWarning(1, routine,
@@ -1346,13 +1342,12 @@ database for region that was selected.
 Currently does nothing.
 @param devlimits first point
 @param datalimits second point
-@param selected Vector of selected areas
+@param selected list of selected areas
 @param append whether to append.
 */
 public void geoViewSelect(GRPoint devlimits, GRPoint datalimits, 
-		List selected, boolean append) {
-	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, 
-		append);
+		List<GeoRecord> selected, boolean append) {
+	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected,append);
 }
 
 /**
@@ -1361,11 +1356,11 @@ database for region that was selected.
 Currently does nothing.
 @param devlimits first limits
 @param datalimits second limits
-@param selected Vector of selected areas
+@param selected list of selected areas
 @param append whether to append.
 */
 public void geoViewSelect(GRLimits devlimits, GRLimits datalimits,
-		List selected, boolean append) {
+		List<GeoRecord> selected, boolean append) {
 	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, 
 		append);
 }
@@ -1401,10 +1396,10 @@ throws Exception {
 	JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Retrieving Data...");
 
-        // get the where and return if an error occured
+        // get the where and return if an error occurred
 	int reportType = DMIUtil.MISSING_INT;
         String table = __tableJComboBox.getSelected();
-        List reportVector = null;
+        List<String> reportList = null;
         if (table.equalsIgnoreCase(HydroBase_GUI_Util._NET_AMOUNTS)) {
                 if (view.equals(__PRIORITY_SUMMARY)) {
 			reportType = 
@@ -1447,7 +1442,7 @@ throws Exception {
 			__netAmountsReport.createReport(reportType);
 		}
 
-		reportVector = __netAmountsReport.getReport();
+		reportList = __netAmountsReport.getReport();
         }
 
         else if (table.equalsIgnoreCase(HydroBase_GUI_Util._TRANS)) {
@@ -1516,7 +1511,7 @@ throws Exception {
 			__transactReport.createReport(reportType);
 		}
 
-		reportVector = __transactReport.getReport();
+		reportList = __transactReport.getReport();
         }
 
         __statusJTextField.setText("Ready.");
@@ -1524,7 +1519,7 @@ throws Exception {
 	PropList pl = new PropList("Report Props");
 	pl.set("Title", view);
 	pl.set("DisplayTextComponent", "JTextArea");
-	new ReportJFrame(reportVector, pl);
+	new ReportJFrame(reportList, pl);
 	JGUIUtil.setWaitCursor(this, false);
 }
 
@@ -1532,10 +1527,10 @@ throws Exception {
 Get the list of AppLayerType that correspond to the GUI in its current state.
 Currently this only adds "WaterRight".  It may be necessary to distinguish
 between net and transactional rights.
-@return Vector of String for AppLayerType that should be considered.
+@return list of String for AppLayerType that should be considered.
 */
-private List getVisibleAppLayerType() {
-	List appLayerTypes = new Vector();
+private List<String> getVisibleAppLayerType() {
+	List<String> appLayerTypes = new ArrayList<String>();
 	appLayerTypes.add("WaterRight");
 	return appLayerTypes;
 }
@@ -1709,7 +1704,7 @@ GeoView Project as AppJoinField="wd,id".
 */
 private void selectOnMap() {
 	String table = __tableJComboBox.getSelected();
-	List idlist = new Vector();
+	List<String> idlist = new ArrayList<String>();
         __statusJTextField.setText(
 		"Selecting and zooming to water rights on map.  "
 		+ "Please wait...");
@@ -1770,7 +1765,7 @@ private void selectOnMap() {
 
 	// Select the features, searching only selected structure types, and
 	// zoom to the selected shapes...
-	List matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
+	List<GeoRecord> matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 		getVisibleAppLayerType(), idlist, true, .05, .05);
 	int matches = 0;
 	if (matching_features != null) {
@@ -1861,7 +1856,8 @@ public void setVisible(boolean state) {
 		}
 		enableMapLayers();
                 __statusJTextField.setText("");
-                __results = new Vector(10, 5);
+                __resultsTransact = new ArrayList<HydroBase_Transact>();
+                __resultsNetAmts = new ArrayList<HydroBase_NetAmts>();
                 __currTable = __tableJComboBox.getSelected();
                 generateReportViews();		
 		__worksheet.clear();
@@ -1919,9 +1915,9 @@ throws Exception {
                 0, 2, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
         __tableJComboBox = new SimpleJComboBox();
-        List tables = HydroBase_GUI_Util.getTableStrings(this);
+        List<String> tables = HydroBase_GUI_Util.getTableStrings(this);
 	for (int i = 0; i < tables.size(); i++) {
-	        __tableJComboBox.add((String)tables.get(i));
+	        __tableJComboBox.add(tables.get(i));
 	}
         if (!__isQueryByExample) {
                 __tableJComboBox.setEnabled(false);
@@ -2123,20 +2119,21 @@ throws Exception {
                 Message.printStatus(10, routine, "Transaction Table Selected");
 		try {
 			sw.start();
-			List v = __dmi.readTransactList(
+			List<HydroBase_Transact> v = __dmi.readTransactList(
 				__transactFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, 
 					HydroBase_GUI_Util._TRANS_TABLE_NAME, 
 					true, true),
 				__mapQueryLimits);
-			__results = v;
-			displayTransactionResults(__results);
-			sw.stop();			
+			__resultsTransact = v;
+			displayTransactionResults(__resultsTransact);
+			sw.stop();	
+	        status = "" + __resultsTransact.size() + " records returned in " 
+	        		+ sw.getSeconds() + " seconds";
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, "Error reading "
-				+ "transact data.");
+			Message.printWarning(1, routine, "Error reading transact data.");
 			Message.printWarning (2, routine, e);
 		}
         }                
@@ -2149,18 +2146,19 @@ throws Exception {
                 Message.printStatus(10, routine, "Net Amounts Table Selected");
 		try {
 			sw.start();
-			List v = __dmi.readNetAmtsList(
+			List<HydroBase_NetAmts> v = __dmi.readNetAmtsList(
 				__netAmtsFilterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, 
-					HydroBase_GUI_Util
-						._NET_AMOUNTS_TABLE_NAME, true,
+					HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME, true,
 					true),
 				__mapQueryLimits, -1);
 			
-			__results = v;
-			displayNetResults(__results);
+			__resultsNetAmts = v;
+			displayNetResults(__resultsNetAmts);
 			sw.stop();
+	        status = "" + __resultsNetAmts.size() + " records returned in " 
+	        		+ sw.getSeconds() + " seconds";
 		}
 		catch (Exception e) {	
 			Message.printWarning(1, routine, "Error reading "
@@ -2186,14 +2184,6 @@ throws Exception {
 		__exportJButton.setEnabled(false);
 	}
 	
-        int displayed = __worksheet.getRowCount();
-	String plural = "";
-	if (displayed != 1) {
-		plural = "s";
-	}
-
-        status = "" + __results.size() + " record" + plural + " returned in " 
-		+ sw.getSeconds() + " seconds";
 	__tableJLabel.setText("Water Rights Records: " + status);
 	if (__geoViewSelectQuery) {
 		status += ", queried using map coordinates.";
@@ -2231,11 +2221,11 @@ throws Exception {
 
         // display for transaction table
         if (__currTable.equalsIgnoreCase(HydroBase_GUI_Util._TRANS)) {
-                displayTransactionResults(__results);
+                displayTransactionResults(__resultsTransact);
         }                
         // display for net amounts table
         else if (__currTable.equalsIgnoreCase(HydroBase_GUI_Util._NET_AMOUNTS)){
-                displayNetResults(__results);
+                displayNetResults(__resultsNetAmts);
         }
         ready();
 }

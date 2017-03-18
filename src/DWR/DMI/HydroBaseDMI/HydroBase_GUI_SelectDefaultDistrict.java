@@ -59,6 +59,7 @@ import RTi.Util.GUI.SimpleJList;
 /**
 GUI to select a default district for menus, etc.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_SelectDefaultDistrict 
 extends JDialog
 implements ActionListener, KeyListener, ItemListener, WindowListener,

@@ -38,6 +38,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is an input filter for querying structure data from the Structure GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_Structure_InputFilter_JPanel
 extends InputFilter_JPanel {
 
@@ -68,20 +69,20 @@ MouseListener listener) {
 	String rd = dmi.getFieldRightEscape();
 	String ld = dmi.getFieldLeftEscape();
 
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 
-	List v1 = null;
-	List v2 = null;
+	List<String> v1 = null;
+	List<String> v2 = null;
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
-	v1 = new Vector();
-	v2 = new Vector();
-	List cius = dmi.getCIUVector();
+	v1 = new Vector<String>();
+	v2 = new Vector<String>();
+	List<HydroBase_RefCIU> cius = dmi.getCIUVector();
 	int size = cius.size();
 	HydroBase_RefCIU ciu = null;
 	for (int i = 0; i < size; i++) {
-		ciu = (HydroBase_RefCIU)cius.get(i);
+		ciu = cius.get(i);
 		v1.add(ciu.getCode() + " - " + ciu.getDescription());
 		v2.add(ciu.getCode());
 	}
@@ -165,14 +166,14 @@ MouseListener listener) {
 		structureTableName + "str_name" + rd, "str_name", 
 		StringUtil.TYPE_STRING, null, null, false));
 	
-	List structureTypes = dmi.getDssStructureTypeList();
+	List<HydroBase_DssStructureType> structureTypes = dmi.getDssStructureTypeList();
 	HydroBase_DssStructureType type = null;
 	size = structureTypes.size();
-	v1 = new Vector();
-	v2 = new Vector();
+	v1 = new Vector<String>();
+	v2 = new Vector<String>();
 
 	for (int i = 0; i < size; i++) {
-		type = (HydroBase_DssStructureType)structureTypes.get(i);
+		type = structureTypes.get(i);
 		if (DMIUtil.isMissing(type.getRpt_code())) {
 			v1.add(type.getStr_type_desc());
 			v2.add(type.getStr_type());
@@ -185,7 +186,7 @@ MouseListener listener) {
 	filter.setNumberInputJComboBoxRows(InputFilter.JCOMBOBOX_ROWS_DISPLAY_ALL);
 	filters.add(filter);
 
-	v1 = new Vector();
+	v1 = new Vector<String>();
 	v1.add("1");
 
 	filters.add(new InputFilter("Transbasin",
@@ -219,23 +220,23 @@ MouseListener listener) {
 	String rd = dmi.getFieldRightEscape();
 	String ld = dmi.getFieldLeftEscape();
 
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 
-	List v1 = null;
-	List v2 = null;
+	List<String> v1 = null;
+	List<String> v2 = null;
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
 	String structureTableName = HydroBase_GUI_Util._STRUCTURE_TABLE_NAME + "." + ld;
 	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." + ld;
 
-	v1 = new Vector();
-	v2 = new Vector();
-	List cius = dmi.getCIUVector();
+	v1 = new Vector<String>();
+	v2 = new Vector<String>();
+	List<HydroBase_RefCIU> cius = dmi.getCIUVector();
 	int size = cius.size();
 	HydroBase_RefCIU ciu = null;
 	for (int i = 0; i < size; i++) {
-		ciu = (HydroBase_RefCIU)cius.get(i);
+		ciu = cius.get(i);
 		v1.add(ciu.getCode() + " - " + ciu.getShort_desc());
 		v2.add(ciu.getCode());
 	}
@@ -331,14 +332,14 @@ MouseListener listener) {
 		structureTableName + "str_name" + rd, "str_name", 
 		StringUtil.TYPE_STRING, null, null, false));
 	
-	List structureTypes = dmi.getDssStructureTypeList();
+	List<HydroBase_DssStructureType> structureTypes = dmi.getDssStructureTypeList();
 	HydroBase_DssStructureType type = null;
 	size = structureTypes.size();
-	v1 = new Vector();
-	v2 = new Vector();
+	v1 = new Vector<String>();
+	v2 = new Vector<String>();
 
 	for (int i = 0; i < size; i++) {
-		type = (HydroBase_DssStructureType)structureTypes.get(i);
+		type = structureTypes.get(i);
 		if (DMIUtil.isMissing(type.getRpt_code())) {
 			v1.add(type.getStr_type_desc());
 			v2.add(type.getStr_type());
@@ -351,7 +352,7 @@ MouseListener listener) {
 	filter.setNumberInputJComboBoxRows(InputFilter.JCOMBOBOX_ROWS_DISPLAY_ALL);
 	filters.add(filter);
 
-	v1 = new Vector();
+	v1 = new Vector<String>();
 	v1.add("1");
 
 	filters.add(new InputFilter("Transbasin",

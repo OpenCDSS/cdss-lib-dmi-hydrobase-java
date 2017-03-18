@@ -120,9 +120,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -171,6 +170,7 @@ import RTi.Util.Time.YearType;
 /**
 Display a list of diversion time series for the structure.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_StructureDetail 
 extends JFrame 
 implements ActionListener, DragAndDropListener, ListSelectionListener,
@@ -279,9 +279,9 @@ private SimpleJButton
 	__tableJButton = null;
 
 /**
-Vectors to hold internal data.
+Lists to hold internal data.
 */
-private List 
+private List<HydroBase_StructMeasTypeView> 
 	__allMeasTypes,
 	__measType;
 
@@ -307,21 +307,19 @@ public void actionPerformed(ActionEvent evt) {
 	String command = evt.getActionCommand().trim();
         
 	if (command.equals(__BUTTON_DIVERSION_REPORT)) {
-		List tsVector = getTSVector(__BUTTON_DIVERSION_REPORT);
-		if (tsVector == null) {
+		List<TS> tsList = getTSVector(__BUTTON_DIVERSION_REPORT);
+		if (tsList == null) {
 			return;
 		}
 		
-		int size = tsVector.size();
-		List results = new Vector();
+		int size = tsList.size();
+		List<List<String>> results = new ArrayList<List<String>>();
 		for (int i = 0; i < size; i++) {
 			try {
-				results.add(createDiversionReport(
-					(DayTS)tsVector.get(i)));
+				results.add(createDiversionReport((DayTS)tsList.get(i)));
 			}
 			catch (Exception e) {
-				Message.printWarning(2, "", 
-					"Could not create diversion report.");
+				Message.printWarning(2, "", "Could not create diversion report.");
 				Message.printWarning(2, "", e);
 			}
 		}
@@ -329,10 +327,10 @@ public void actionPerformed(ActionEvent evt) {
 		size = results.size();
 
 		int size2 = 0;
-		List report = new Vector();
-		List v = null;
-		for (int i = 0; i < size; i++) {
-			v = (List)results.get(i);
+		List<String> report = new ArrayList<String>();
+		List<String> v = null;
+		for (int i = 0; i < size; i++) { // For each time series
+			v = results.get(i);
 			size2 = v.size();
 			for (int j = 0; j < size2; j++) {
 				report.add(v.get(j));
@@ -434,13 +432,11 @@ private void closeClicked() {
 
 /**
 Creates an annual water diversion report for the given time series.
-@param ts the daily time series for which to create the diversion report.  Can
-not be null.
-@return a Vector of strings, each of which is a line in a report for the given
-TS.
+@param ts the daily time series for which to create the diversion report.  Cannot be null.
+@return a list of strings, each of which is a line in a report for the given TS.
 @throws Exception if there is an error creating the report.
 */
-private List createDiversionReport(DayTS ts) 
+private List<String> createDiversionReport(DayTS ts) 
 throws Exception {
 	// The default output.  In this case, we produce a matrix like
 	// the one produced by the legacy TSPrintSummaryMatrix.
@@ -465,8 +461,7 @@ throws Exception {
 	if (!ts.getIdentifier().toString().equals("")) {
 		// Have SFUT to process.
 		sfut = HydroBase_Util.parseSFUT(ts.getIdentifier().toString());
-		sourceString 
-				= HydroBase_Util.lookupDiversionCodingSource( sfut[0]);
+		sourceString = HydroBase_Util.lookupDiversionCodingSource( sfut[0]);
 			
 		useString = __dmi.lookupUseDefinitionForXUse(sfut[2]);
 		typeString = HydroBase_Util.lookupDiversionCodingType( sfut[3]);
@@ -475,11 +470,10 @@ throws Exception {
 		// queried...
 		fromStructure = sfut[1];
 		if (fromStructure != "") {	
-			Object o = null;
+			HydroBase_StructureView o = null;
 			if ( fromStructure.length() < 7 ) {
 				// Assume old database where F does not contain the WD...
-				o = __dmi.readStructureViewForWDID(wd,
-				StringUtil.atoi(fromStructure));
+				o = __dmi.readStructureViewForWDID(wd,StringUtil.atoi(fromStructure));
 			}
 			else { // Assume new database where F does contain the WD...
 				int [] wdid_parts = HydroBase_WaterDistrict.parseWDID(fromStructure);
@@ -487,8 +481,7 @@ throws Exception {
 			}
 			if (o == null) {}
 			else {
-				HydroBase_StructureView structure 
-					= (HydroBase_StructureView)o;
+				HydroBase_StructureView structure = o;
 				fromStructure = structure.getStr_name();
 			}
 		}
@@ -509,18 +502,16 @@ throws Exception {
 	String structureName = "";
 	int streamNum = 0;
 	String streamString = "";
-	Object o = __dmi.readStructureViewForWDID(wd, wdid[1]);
+	HydroBase_StructureView o = __dmi.readStructureViewForWDID(wd, wdid[1]);
 	if (o == null) {}
 	else {
-		HydroBase_StructureView structure
-			= (HydroBase_StructureView)o;
+		HydroBase_StructureView structure = o;
 		structureName = structure.getStr_name();
 		int wdWaterNum = structure.getWdwater_num();
 		
-		List v = __dmi.readWDWaterListForWDWater_num(wdWaterNum);
+		List<HydroBase_WDWater> v = __dmi.readWDWaterListForWDWater_num(wdWaterNum);
 		if (v != null && v.size() > 0) {
-			HydroBase_WDWater wdwater 
-				= (HydroBase_WDWater)v.get(0);
+			HydroBase_WDWater wdwater = v.get(0);
 			streamNum = wdwater.getStrno();
 			streamString = wdwater.getStrname();
 		}	
@@ -537,7 +528,7 @@ throws Exception {
 	// Need to check the data type to determine if it is an average
 	// or a total.  For now, make some guesses based on the units...
 
-	List strings = new Vector();
+	List<String> strings = new ArrayList<String>();
 	strings.add("");
 
 	// Now transfer the daily data into a summary matrix, which
@@ -972,13 +963,13 @@ public boolean dragAboutToStart() {
 		listType = __DAY_LIST;
 	}
 
-	List selected = getSelectedStructMeasType(listType);
+	List<HydroBase_StructMeasTypeView> selected = getSelectedStructMeasType(listType);
 
 	String id = null;
 	String meas_type = null;
 	TS ts = null;
 	TS measTypeTS = null;
-	List errorVector = new Vector();
+	List<String> errorList = new ArrayList<String>();
 
 	if (selected.size() == 0) {
 		// this shouldn't happen, most likely.
@@ -1017,7 +1008,7 @@ public boolean dragAboutToStart() {
 	}
 
 	if (ts == null) {
-		errorVector.add(id);
+		errorList.add(id);
 	}	
 
 	// Set the extended legend for the time series, if a water
@@ -1032,13 +1023,13 @@ public boolean dragAboutToStart() {
 
         // this clause prints warnings for all data_sources which
         // did not return any records.
-        int size = errorVector.size();
+        int size = errorList.size();
         if (size > 0) {
                 String errorString = "The following data type(s)"
                         + " returned zero records:";
                 for (int i = 0; i < size; i++) {
                         errorString += "\n" 
-                                + (String)errorVector.get(i);
+                                + (String)errorList.get(i);
                 }
                 Message.printWarning(1, routine, errorString);
 		return false;
@@ -1116,7 +1107,7 @@ statistics from.
 @param dataFormat the StringUtil.formatString() format in which to format the
 data.
 */
-private List formatOutputStats(DayTS ts, double[][] data, String label, 
+private List<String> formatOutputStats(DayTS ts, double[][] data, String label, 
 String dataFormat) {
 	double[] array = new double[31];
 	double stat = 0.0;
@@ -1205,7 +1196,7 @@ String dataFormat) {
 		}
 	}
 
-	List strings = new Vector();
+	List<String> strings = new ArrayList<String>();
 	strings.add(buffer.toString());
 	return strings;
 }
@@ -1217,13 +1208,12 @@ __allMeasTypes.
 private void getAllMeasurementTypes() {
 	String routine = CLASS + ".getAllMeasurementTypes";
 	try { 
-		__allMeasTypes 
-			= __dmi.readStructMeasTypeListForStructure_num(
+		__allMeasTypes = __dmi.readStructMeasTypeListForStructure_num(
 			__structureView.getStructure_num(), false);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, e);
-		__allMeasTypes = new Vector();
+		__allMeasTypes = new ArrayList<HydroBase_StructMeasTypeView>();
 	}
 }
 
@@ -1236,12 +1226,12 @@ private void getData(String flag) {
         String routine = CLASS + ".getData()";
 
 	JGUIUtil.setWaitCursor(this, true);
-	List tsVector = getTSVector(flag);
+	List<TS> tsList = getTSVector(flag);
 
         int size = 0;
 	
-	if (tsVector != null) {
-		size = tsVector.size();
+	if (tsList != null) {
+		size = tsList.size();
 	}
 
         if (size == 0) {
@@ -1271,7 +1261,7 @@ private void getData(String flag) {
 		// Now display the correct initial view...
 		if (flag.equals(__BUTTON_GRAPH)) {
 			tsviewProps.set("InitialView", "Graph");
-			new TSViewJFrame(tsVector, tsviewProps);
+			new TSViewJFrame(tsList, tsviewProps);
 		}
 		else if (flag.equals(__BUTTON_TABLE)) {
 			// If daily data and more than one time series
@@ -1293,7 +1283,7 @@ private void getData(String flag) {
 				*/
 			}
 			if ((JGUIUtil.selectedSize(__dayJList) == 1)) {
-				TS ts0 = (TS)tsVector.get(0);
+				TS ts0 = (TS)tsList.get(0);
 				if (ts0 == null) {
 					ready();
 					return;
@@ -1318,12 +1308,12 @@ private void getData(String flag) {
 			}
 			if (doit) {
 				tsviewProps.set("InitialView", "Table");
-				new TSViewJFrame(tsVector, tsviewProps);
+				new TSViewJFrame(tsList, tsviewProps);
 			}
 		}
        		else if (flag.equals(__BUTTON_SUMMARY)) {
 			tsviewProps.set("InitialView", "Summary");
-			new TSViewJFrame(tsVector, tsviewProps);
+			new TSViewJFrame(tsList, tsviewProps);
 		}
 	}
 	catch (Exception e) {
@@ -1351,7 +1341,7 @@ HydroBase_StructMeasType objects which reflect this selection.
 @return the selected types as a Vector of HydroBase_StructMeasType objects, 
 null if none are selected.
 */
-private List getSelectedStructMeasType() {
+private List<HydroBase_StructMeasTypeView> getSelectedStructMeasType() {
 	return getSelectedStructMeasType(__BOTH_LISTS);
 }
 	
@@ -1363,13 +1353,13 @@ __MONTH_LIST or __DAY_LIST.
 @return the selected types as a Vector of HydroBase_StructMeasType objects, 
 null if none are selected.
 */
-private List getSelectedStructMeasType(int list) {
+private List<HydroBase_StructMeasTypeView> getSelectedStructMeasType(int list) {
 	HydroBase_StructMeasTypeView data;
         if (__measType.size() == 0) {
                 return null;
         }
         
-        List selected = new Vector();
+        List<HydroBase_StructMeasTypeView> selected = new ArrayList<HydroBase_StructMeasTypeView>();
 	// For each selected item, get the index and use to select the
 	// data object...
 	int[] selectedIndices = null;
@@ -1379,8 +1369,7 @@ private List getSelectedStructMeasType(int list) {
 		selectedIndices = __monthJList.getSelectedIndices();
 		selectedSize = selectedIndices.length;
 		for (int i = 0; i < selectedSize; i++) {
-	               	data = (HydroBase_StructMeasTypeView)
-				__measType.get(
+	               	data = __measType.get(
 				selectedIndices[i]);
 	                       selected.add(data);
 		}
@@ -1401,13 +1390,13 @@ private List getSelectedStructMeasType(int list) {
 }
 
 /**
-Return a Vector of HydroBase_StructMeasType objects for the current structure 
+Return a list of HydroBase_StructMeasTypeView objects for the current structure 
 limited by the flag.
 @param flag flag for returning a specific type of record(s).
 @param dataType used for Total. Can be either "DivTotal" or "RelTotal".
-@return a Vector of HydroBase_StructMeasType objects according to the flag.
+@return a list of HydroBase_StructMeasTypeView objects according to the flag.
 */
-private List getStructureMeasType(int flag, String dataType) {
+private List<HydroBase_StructMeasTypeView> getStructureMeasType(int flag, String dataType) {
 	String routine = CLASS + ".getStructureMeasType";
         
         // if query returned no records, return null
@@ -1419,16 +1408,14 @@ private List getStructureMeasType(int flag, String dataType) {
         }
 
 	HydroBase_StructMeasTypeView data = null;
-	List v = new Vector();
+	List<HydroBase_StructMeasTypeView> v = new ArrayList<HydroBase_StructMeasTypeView>();
         int size = __allMeasTypes.size();
 	int i = 0;
 
 	if (Message.isDebugOn) {
-		Message.printDebug(10, routine, "Checking " + size 
-			+ " nodes.");
+		Message.printDebug(10, routine, "Checking " + size + " nodes.");
                 for (i = 0; i < size; i++) {
-                        data = (HydroBase_StructMeasTypeView)
-				__allMeasTypes.get(i);
+                        data = __allMeasTypes.get(i);
 			Message.printDebug(10, routine, "Available:  \""
 				+ data.getMeas_type() + "\", \""
 				+ data.getTime_step() + "\"");
@@ -1437,60 +1424,44 @@ private List getStructureMeasType(int flag, String dataType) {
 		
         if (flag == __MONTHLY_WC) {
                 for (i = 0; i < size; i++) {
-                        data = (HydroBase_StructMeasTypeView)
-				__allMeasTypes.get(i);
-                        if (data.getMeas_type().equalsIgnoreCase(
-				"DivClass")
-				&&
-                                data.getTime_step().equalsIgnoreCase(
-					__ANNUAL)){
+                        data = __allMeasTypes.get(i);
+                        if (data.getMeas_type().equalsIgnoreCase("DivClass")
+				&& data.getTime_step().equalsIgnoreCase(__ANNUAL)){
                                         v.add(data);
                         }
-                        else if (data.getMeas_type().equalsIgnoreCase(
-				"RelClass")
+                        else if (data.getMeas_type().equalsIgnoreCase("RelClass")
 				&&
-                               data.getTime_step().equalsIgnoreCase(
-					__ANNUAL)){
+                               data.getTime_step().equalsIgnoreCase(__ANNUAL)){
                                         v.add(data);
                         }
                 }
         }
         else if (flag == __DAILY_WC) {
                 for (i = 0; i < size; i++) {
-                        data = (HydroBase_StructMeasTypeView)
-				__allMeasTypes.get(i);
-                        if (data.getMeas_type().equalsIgnoreCase(
-				"DivClass")
+                        data = __allMeasTypes.get(i);
+                        if (data.getMeas_type().equalsIgnoreCase("DivClass")
                                 && 
-				data.getTime_step().equalsIgnoreCase(
-				__DAILY)) {
+				data.getTime_step().equalsIgnoreCase(__DAILY)) {
                                 v.add(data);
                         }
-                        if (data.getMeas_type().equalsIgnoreCase(
-				"RelClass")
+                        if (data.getMeas_type().equalsIgnoreCase("RelClass")
                                 && 
-				data.getTime_step().equalsIgnoreCase(
-				__DAILY)) {
+				data.getTime_step().equalsIgnoreCase(__DAILY)) {
                                 v.add(data);
                         }
                 }
         }
         else if (flag == __TOTAL__MONTHLY) {
                 for (i = 0; i < size; i++) {
-                        data = (HydroBase_StructMeasTypeView)
-				__allMeasTypes.get(i);
-                        if (data.getMeas_type().equalsIgnoreCase(
-				dataType)
+                        data = __allMeasTypes.get(i);
+                        if (data.getMeas_type().equalsIgnoreCase(dataType)
 				&&
-				data.getTime_step().equalsIgnoreCase(
-				__ANNUAL)){
+				data.getTime_step().equalsIgnoreCase(__ANNUAL)){
                                 v.add(data);
                         }
-                        else if (data.getMeas_type().equalsIgnoreCase(
-				dataType)
+                        else if (data.getMeas_type().equalsIgnoreCase(dataType)
 				&&
-				data.getTime_step().equalsIgnoreCase(
-				__MONTHLY))
+				data.getTime_step().equalsIgnoreCase(__MONTHLY))
 				{
                                 v.add(data);
                         }
@@ -1498,13 +1469,10 @@ private List getStructureMeasType(int flag, String dataType) {
         }
         else if (flag == __TOTAL_DAILY) {
                 for (i = 0; i < size; i++) {
-                        data = (HydroBase_StructMeasTypeView)
-				__allMeasTypes.get(i);
-                        if (data.getMeas_type().equalsIgnoreCase(
-				dataType)
+                        data = __allMeasTypes.get(i);
+                        if (data.getMeas_type().equalsIgnoreCase(dataType)
                                 && 
-				data.getTime_step().equalsIgnoreCase(
-				__DAILY)) {
+				data.getTime_step().equalsIgnoreCase(__DAILY)) {
                                 v.add(data);
                         }
                 }
@@ -1518,12 +1486,9 @@ private List getStructureMeasType(int flag, String dataType) {
 }
 
 /**
-Returns the total possible number of records that could occur during a given
-period.
-@param data the HydroBase_StructMeasTypeView record for which to return the 
-total count.
-@return the total possible number of records that could occur during a given
-period.
+Returns the total possible number of records that could occur during a given period.
+@param data the HydroBase_StructMeasTypeView record for which to return the total count.
+@return the total possible number of records that could occur during a given period.
 */
 private int getTotalCount(HydroBase_StructMeasTypeView data) {
         int total = DMIUtil.MISSING_INT;
@@ -1594,32 +1559,30 @@ private String getTSIdentifier(HydroBase_StructMeasTypeView data) {
 }
 
 /**
-Returns the selected Vector of time series.  These time series are the ones
+Returns the list of selected time series.  These time series are the ones
 selected on the GUI.
 @param flag the button that was pushed which caused the event for which the
-Vector of time series should be returned.
-@return a Vector of time series, or null if there was a problem getting the
+list of time series should be returned.
+@return a list of time series, or null if there was a problem getting the
 time series.
 */
-private List getTSVector(String flag) {
+private List<TS> getTSVector(String flag) {
 	String routine = "HydroBase_GUI_StructureDetail.getTSVector";
 
         HydroBase_StructMeasTypeView view = null;
-        List tsVector = new Vector(10, 5);
-        List errorVector = new Vector(10, 5);
+        List<TS> tsVector = new ArrayList<TS>(10);
+        List<String> errorList = new ArrayList<String>(10);
 
         // from and to dates must exist. 
         String from = __fromJTextField.getText();
         String to = __toJTextField.getText();
         if (from == null || to == null) {
-		Message.printWarning(1, routine,	
-			"No output period was specified.");
+		Message.printWarning(1, routine,"No output period was specified.");
 		JGUIUtil.setWaitCursor(this, false);
                 return null;
         }
         else if (from.equals("")|| to.equals("")) {
-		Message.printWarning(1, routine,	
-			"No output period was specified.");
+		Message.printWarning(1, routine,"No output period was specified.");
 		JGUIUtil.setWaitCursor(this, false);
                 return null;
         }
@@ -1637,7 +1600,7 @@ private List getTSVector(String flag) {
 	} 
 	catch (Exception e) {}
 
-	List selected = getSelectedStructMeasType();
+	List<HydroBase_StructMeasTypeView> selected = getSelectedStructMeasType();
         
         if (selected == null) {
                 new ResponseJDialog(this, "Error", 
@@ -1651,10 +1614,9 @@ private List getTSVector(String flag) {
         else if ( !flag.equals(__BUTTON_SUMMARY) &&
 		!flag.equals(__BUTTON_DIVERSION_REPORT) ) {
                 int size = selected.size();
-                List v = new Vector(10, 5);
+                List<TS> v = new ArrayList<TS>(10);
                 for (int i = 0; i < size; i++) {      
-                        view = (HydroBase_StructMeasTypeView)
-				selected.get(i);
+                        view = selected.get(i);
                         v.add(view.getTimeSeries());  
                 }		
 	}
@@ -1668,8 +1630,7 @@ private List getTSVector(String flag) {
 	String temp = null;
 	String temp2 = null;
         for (int i = 0; i < size; i++) {      
-                view = (HydroBase_StructMeasTypeView)
-			selected.get(i);
+                view = selected.get(i);
        	        id = view.getTSIdentifier();
 		index = id.indexOf("DivClass");
 		if (index == -1) {
@@ -1721,7 +1682,7 @@ private List getTSVector(String flag) {
                         tsVector.add(ts);
                 }
                 else {	
-			errorVector.add(id);
+			errorList.add(id);
                 }
 
 		// Set the extended legend for the time series, if a water
@@ -1740,13 +1701,13 @@ private List getTSVector(String flag) {
 
         // this clause prints warnings for all data_sources which
         // did not return any records.
-        size = errorVector.size();
+        size = errorList.size();
         if (size > 0) {
                 String errorString = "The following data type(s)"
                         + " returned zero records:";
                 for (int i = 0; i < size; i++) {
                         errorString += "\n" 
-                                + (String)errorVector.get(i);
+                                + (String)errorList.get(i);
                 }
                 Message.printWarning(1, routine, errorString, this);
         }
@@ -1771,7 +1732,7 @@ private void initialize() {
 	__prop.set("TSPerPlot=10");
         __prop.set("XAxisJLabelString=Date");
 
-        __measType = new Vector(10, 5);
+        __measType = new ArrayList<HydroBase_StructMeasTypeView>(10);
 
 	// set date properties
 	__dateProps = new PropList("Calls DateTimeBuilderJDialog properties");
@@ -1845,7 +1806,7 @@ is first initialized and also when the list of selected time series changes.
 protected void setOriginalPeriodText()
 {	// Get the list of selected HydroBase_StructMeasType...
 
-	List selected = getSelectedStructMeasType();
+	List<HydroBase_StructMeasTypeView> selected = getSelectedStructMeasType();
 
 	String to = "";
 	String from = "";
@@ -1869,22 +1830,19 @@ protected void setOriginalPeriodText()
 		__summaryJButton.setEnabled(true);
 		__graphJButton.setEnabled(true);
                                 
-		List tsVector = new Vector(10, 5);
+		List<TS> tsList = new ArrayList<TS>(10);
                 for (int i = 0; i < size; i++) {
 			// Get the time series (headers only) for the
 			// HydroBase_StructMeasType that are selected...
-                        tsVector.add((
-				(HydroBase_StructMeasTypeView)
-       	                        selected.get(i)).getTimeSeries());
+                        tsList.add(selected.get(i).getTimeSeries());
                 }
 
                 try {	// Get the limits from the time series (headers only).
 			// The dates from HydroBase will be irrigation year only
 			// (no months)...
-			TSLimits limits = TSUtil.getPeriodFromTS(
-                                tsVector, TSUtil.MAX_POR);
-                        int start = ((DateTime)limits.getDate1()).getYear();
-                        int end = ((DateTime)limits.getDate2()).getYear();
+			TSLimits limits = TSUtil.getPeriodFromTS(tsList, TSUtil.MAX_POR);
+                        int start = limits.getDate1().getYear();
+                        int end = limits.getDate2().getYear();
 			// Adjust the period so that calendar years are used and
 			// month and day are used for the period.  This requires
 			// converting from the irrigation year...
@@ -1892,7 +1850,7 @@ protected void setOriginalPeriodText()
                         to = end + "-10-31";
                 }
                 catch (Exception e) {;}
-		// REVISIT SAM 2004-12-01 why is nothing done in the catch?
+		// TODO SAM 2004-12-01 why is nothing done in the catch?
         }
 
         __fromJTextField.setText(from);
@@ -1924,7 +1882,6 @@ private void setPeriod_clicked() {
 
 	__originalJButton.setEnabled(true);
 }
-
 
 /**
 Sets up the GUI.
@@ -2021,18 +1978,17 @@ private void setupGUI() {
 		DragAndDropUtil.ACTION_COPY, DragAndDropUtil.ACTION_NONE);
 
         // MONTHLY TIME SERIES
-        int y = 3;
-        List v = getStructureMeasType(__TOTAL__MONTHLY, "DivTotal");
+        List<HydroBase_StructMeasTypeView> v = getStructureMeasType(__TOTAL__MONTHLY, "DivTotal");
 
 	HydroBase_StructMeasTypeView o;
         if (v != null) {
-                o = (HydroBase_StructMeasTypeView)v.get(0);
+                o = v.get(0);
 		addListItem(o, "DivTotal", __monthJList);
         }
 
         v = getStructureMeasType(__TOTAL__MONTHLY, "RelTotal");
         if (v != null) {
-                o = (HydroBase_StructMeasTypeView)v.get(0);
+                o = v.get(0);
 		addListItem(o, "RelTotal", __monthJList);
         }
 
@@ -2042,12 +1998,10 @@ private void setupGUI() {
 		// sam was going to look at the following -- does it 
 		// ever show up?  Postponed in favor of getting the 
 		// above two cases working.
-                o = (HydroBase_StructMeasTypeView)v.get(0);
+                o = v.get(0);
 		addListItem(o, "Reservoir End of Month", __monthJList);
         }	
 
-        y++;
-        
         // get the annual water color and add the list items
         // and periods of record accordingly
         v = getStructureMeasType(__MONTHLY_WC, null);
@@ -2075,16 +2029,15 @@ private void setupGUI() {
         //
         // DAILY TIME SERIES
         // 
-        y = 3;
         v = getStructureMeasType(__TOTAL_DAILY, "DivTotal");
         if (v != null) {
-                o = (HydroBase_StructMeasTypeView)v.get(0);
+                o = v.get(0);
 		addListItem(o, "DivTotal", __dayJList);
         }
 
         v = getStructureMeasType(__TOTAL_DAILY, "RelTotal");
         if (v != null) {
-                o = (HydroBase_StructMeasTypeView)v.get(0);
+                o = v.get(0);
 		addListItem(o, "RelTotal", __dayJList);
         }
 
@@ -2204,23 +2157,21 @@ Sorts TS data and adds it to the given list by meas_type.
 @param list the list to which data will be added.
 @param data the Vector of data to go through.
 */
-private void sortAndAddVectorData(DragAndDropSimpleJList list, List data) {
+private void sortAndAddVectorData(DragAndDropSimpleJList list, List<HydroBase_StructMeasTypeView> data) {
 	HydroBase_StructMeasTypeView o = null;
 	int size = data.size();
-	List v = new Vector();
+	List<String> v = new ArrayList<String>();
 	
 	for (int i = 0; i < size; i++) {
-		o = (HydroBase_StructMeasTypeView)data.get(i);
+		o = data.get(i);
 		v.add(o.getMeas_type());
 	}
 
 	int[] order = new int[size];
-	StringUtil.sortStringList(v, StringUtil.SORT_ASCENDING, order,
-		true, true);
+	StringUtil.sortStringList(v, StringUtil.SORT_ASCENDING, order, true, true);
 		
 	for (int i = 0; i < size; i++) {
-		o = (HydroBase_StructMeasTypeView)
-			data.get(order[i]);
+		o = data.get(order[i]);
 		addListItem(o, null, list);
 	}	
 }

@@ -106,6 +106,7 @@ import RTi.Util.Time.DateTime;
 /**
 GUI to display more info about a Structure.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_StructureMoreInfo 
 extends JFrame 
 implements ActionListener, WindowListener {
@@ -242,7 +243,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -264,7 +265,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -315,8 +316,8 @@ throws Throwable {
 Formats output according to the desired format.
 @param format the desired format.
 */
-private List formatOutput(int format) {
-	List v = new Vector();
+private List<String> formatOutput(int format) {
+	List<String> v = new Vector<String>();
 	int size = __equipmentWorksheet.getRowCount();
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
@@ -641,7 +642,7 @@ private void setupGUI() {
 	JScrollWorksheet jsw = null;
 	try {
 		HydroBase_TableModel_Equipment tm = new
-			HydroBase_TableModel_Equipment(new Vector());
+			HydroBase_TableModel_Equipment(new Vector<HydroBase_Equipment>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		jsw = new JScrollWorksheet(cr, tm, p);
@@ -679,7 +680,7 @@ private void setupGUI() {
         bottomJPanel.add("North", bottomNorthJPanel);
 
 	int[] mapFileWidths = null;
-	List mapFileVector = submitMapfileQuery();
+	List<GenericWorksheetData> mapFileVector = submitMapfileQuery();
 	JScrollWorksheet mapFileJSW = null;
 	try {
 		Generic_TableModel model = null;
@@ -717,7 +718,7 @@ private void setupGUI() {
 	__mapFileWorksheet.setHourglassJFrame(this);
 
 	int[] courtCaseWidths = null;
-	List courtCaseVector = submitCourtCaseQuery();
+	List<GenericWorksheetData> courtCaseVector = submitCourtCaseQuery();
 	JScrollWorksheet courtCaseJSW = null;
 	try {
 		Generic_TableModel model = null;
@@ -844,12 +845,12 @@ private void setupGUI() {
 /**
 Submits a court case query and displays the results in the gui.
 */
-private List submitCourtCaseQuery() {
+private List<GenericWorksheetData> submitCourtCaseQuery() {
 	JGUIUtil.setWaitCursor(this, true);
 	String routine = "HydroBase_GUI_StructureMoreInfo"
 		+ ".submitAndDisplayCourtCaseQuery";
 
-	List results = null;
+	List<HydroBase_CourtCase> results = null;
 	try {
 		results=__dmi.readCourtCaseListForStructure_num(__structureNum);
 	}
@@ -864,11 +865,10 @@ private List submitCourtCaseQuery() {
 		return null;
 	}	
 
-	List v = new Vector();
+	List<GenericWorksheetData> v = new Vector<GenericWorksheetData>();
 
 	for (int i = 0; i < results.size(); i++) {
-		HydroBase_CourtCase data = 
-			(HydroBase_CourtCase)results.get(i);
+		HydroBase_CourtCase data = results.get(i);
 		GenericWorksheetData d = new GenericWorksheetData(5);
 		
 		d.setValueAt(0, data.getCase_no());
@@ -907,7 +907,7 @@ private void submitAndDisplayEquipmentQuery() {
 		return;
 	}
 
-	List results = new Vector();
+	List<HydroBase_Equipment> results = new Vector<HydroBase_Equipment>();
 	results.add(equipment);
 
 	__equipmentWorksheet.setData(results);
@@ -921,7 +921,7 @@ private void submitAndDisplayGeneralCommentQuery() {
 	String routine = "HydroBase_GUI_StructureMoreInfo"
 		+ ".submitAndDisplayGeneralCommentQuery";
 
-	List results = null;
+	List<HydroBase_GeneralComment> results = null;
 
 	try {
 		results = __dmi.readGeneralCommentListForStructure_num(
@@ -982,12 +982,12 @@ private void submitAndDisplayGeneralCommentQuery() {
 /**
 Submits a map file query and displays the results in the gui.
 */
-private List submitMapfileQuery() {
+private List<GenericWorksheetData> submitMapfileQuery() {
 	JGUIUtil.setWaitCursor(this, true);
 	String routine = "HydroBase_GUI_StructureMoreInfo."
 		+ "submitMapfileQuery";
 		
-	List results = null;	
+	List<HydroBase_Mapfile> results = null;	
 	try {
 		results = __dmi.readMapfileListForStructure_num(__structureNum);
 	}
@@ -1002,10 +1002,10 @@ private List submitMapfileQuery() {
 		return null;
 	}
 
-	List v = new Vector();
+	List<GenericWorksheetData> v = new Vector<GenericWorksheetData>();
 	for (int i = 0; i < results.size(); i++) {
 		GenericWorksheetData d = new GenericWorksheetData(5);
-		HydroBase_Mapfile data =(HydroBase_Mapfile)results.get(i);
+		HydroBase_Mapfile data = results.get(i);
 		
 		// store date as a string
 		if (data.getMap_file_date() == null) {
@@ -1038,7 +1038,7 @@ private void submitAndDisplayStructureAKAQuery() {
 		+ "submitAndDisplayStructureAKAQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
-	List v = null;
+	List<HydroBase_StructureAKA> v = null;
 	try {
 		v = __dmi.readStructureAKAListForStructure_num(__structureNum);
 	}
@@ -1056,7 +1056,7 @@ private void submitAndDisplayStructureAKAQuery() {
         int size = v.size();
 	HydroBase_StructureAKA data = null;
         for (int i = 0; i < size; i++) {
-                data = (HydroBase_StructureAKA)v.get(i);
+                data = v.get(i);
                 __structureAKAJList.add("" + data.getStructure_aka_name());
         }     
 

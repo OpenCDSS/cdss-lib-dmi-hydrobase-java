@@ -72,6 +72,7 @@ import RTi.Util.String.StringUtil;
 This class displays record information about a single record from either the
 NetAmts or Transact table.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_WaterRight 
 extends JFrame 
 implements ActionListener {
@@ -366,7 +367,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 
 	 		// First format the output...
-			List outputStrings = formatOutput();
+			List<String> outputStrings = formatOutput();
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -378,7 +379,7 @@ public void actionPerformed(ActionEvent event) {
         }
         else if ("Print".equals(actionCommand)) {
 		try {
-			List outputStrings = formatOutput();
+			List<String> outputStrings = formatOutput();
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -571,11 +572,11 @@ throws Throwable {
 
 /**
 Formats the data for output as export or print.
-@return a Vector of strings, each of which is a line in the GUI.
+@return a list of strings, each of which is a line in the GUI.
 */
-public List formatOutput() {
-	List v = new Vector(30, 5);
-	List tmpV = new Vector(10,5);
+public List<String> formatOutput() {
+	List<String> v = new Vector<String>(30, 5);
+	List<String> tmpV = new Vector<String>(10,5);
 
 	if (__table == NET_AMOUNTS) {
 		v.add("Water Right - Net Amounts");

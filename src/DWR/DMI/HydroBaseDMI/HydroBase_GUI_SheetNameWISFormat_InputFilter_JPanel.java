@@ -27,6 +27,7 @@ import RTi.Util.GUI.InputFilter;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.String.StringUtil;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel
 extends InputFilter_JPanel
 {
@@ -47,17 +48,17 @@ public HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel ( HydroBaseDataStore 
 throws Exception
 {	__dataStore = dataStore;
     HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
-    List sheet_name_Vector = new Vector();	
-	List sheet_names = hbdmi.readWISSheetNameList(-999, -999, null, null);
+    List<String> sheet_name_Vector = new Vector<String>();	
+	List<HydroBase_WISSheetName> sheet_names = hbdmi.readWISSheetNameList(-999, -999, null, null);
 	int size = 0;
 	if ( sheet_names != null ) {
 		size = sheet_names.size();
 	}
 	for ( int i = 0; i < size; i++ ) {
-		sheet_name_Vector.add ( ((HydroBase_WISSheetName)sheet_names.get(i)).getSheet_name() );
+		sheet_name_Vector.add ( sheet_names.get(i).getSheet_name() );
 	}
 
-	List input_filters = new Vector(8);
+	List<InputFilter> input_filters = new Vector<InputFilter>(8);
 	input_filters.add ( new InputFilter (
 		"", "",
 		StringUtil.TYPE_STRING,

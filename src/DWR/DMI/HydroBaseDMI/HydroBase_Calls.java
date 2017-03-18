@@ -28,7 +28,7 @@ Class to store data from the HydroBase calls table.
 */
 public class HydroBase_Calls 
 extends DMIDataObject
-implements Comparable {
+implements Comparable<HydroBase_Calls> {
 
 protected int _call_num = 		DMIUtil.MISSING_INT;
 protected int _structure_num = 		DMIUtil.MISSING_INT;
@@ -92,9 +92,7 @@ Compares this object with the specified object for order.
 @return -1 if this object sorts less than the specified object.  0 if the
 two sort the same.  1 if this object sorts greater than the specified object.
 */
-public int compareTo(Object o) {
-	HydroBase_Calls c = (HydroBase_Calls)o;
-
+public int compareTo(HydroBase_Calls c) {
 	if (_wd < c._wd) {
 		return -1;
 	}

@@ -79,7 +79,7 @@ Form a countyID from its parts.
 public static String formCountyID(int cty, int id) {
 	Integer icty = new Integer(cty);
 	Integer iid = new Integer(id);
-	List v = new Vector(2, 1);
+	List<Object> v = new Vector<Object>(2, 1);
 	v.add(icty);
 	v.add(iid);
 	return StringUtil.formatString(v, "%02d%05d");
@@ -92,7 +92,7 @@ Form a countyID from its parts.
 @return a countyid
 */
 public static String formCountyID(String cty, String id) {
-	List v = new Vector(2, 1);
+	List<Object> v = new Vector<Object>(2, 1);
 	v.add(cty);
 	v.add(id);
 	return StringUtil.formatString(v, "%02d%05d");
@@ -150,10 +150,10 @@ public String getST() {
 Parse a county id into its parts.  Until told otherwise, a CTYID consists of
 a two-digit cty and a five-digit ID part.
 @param ctyid the ctyid to parse
-@return a Vector with the cty in the first element and the id in the second
+@return a list with the cty in the first element and the id in the second
 */
-public static List parseCTYID(String ctyid) {
-	List v = new Vector(2, 1);
+public static List<String> parseCTYID(String ctyid) {
+	List<String> v = new Vector<String>(2, 1);
 	if (ctyid == null) {
 		return null;
 	}

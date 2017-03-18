@@ -82,7 +82,7 @@ throws Throwable {
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_WD:		return Integer.class;
 		case COL_ID:		return Integer.class;

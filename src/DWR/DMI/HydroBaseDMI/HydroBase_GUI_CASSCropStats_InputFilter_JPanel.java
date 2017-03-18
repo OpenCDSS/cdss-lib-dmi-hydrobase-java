@@ -28,6 +28,7 @@ import RTi.Util.String.StringUtil;
 This class is an input filter panel for CASS Crop Statistics.  See also the
 similar filter for Livestock statistics.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_CASSCropStats_InputFilter_JPanel
 extends InputFilter_JPanel {
 
@@ -39,18 +40,18 @@ public HydroBase_GUI_CASSCropStats_InputFilter_JPanel(HydroBaseDMI dmi) {
 	String rd = dmi.getFieldRightEscape();
 	String ld = dmi.getFieldLeftEscape();
 
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 	
 	String tableName = HydroBase_GUI_Util._CASS_TABLE_NAME + "." + ld;
 	
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 
-	List counties = dmi.getCountyRef();
+	List<HydroBase_CountyRef> counties = dmi.getCountyRef();
 	HydroBase_CountyRef county = null;
 	int size = counties.size();
-	List v1 = new Vector();
+	List<String> v1 = new Vector<String>();
 	for (int i = 0; i < size; i++) {
-		county = (HydroBase_CountyRef)counties.get(i);
+		county = counties.get(i);
 		if (county.getCty() > 0) {
 			v1.add(county.getCounty());
 		}

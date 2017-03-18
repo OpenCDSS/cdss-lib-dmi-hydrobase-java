@@ -10,7 +10,7 @@ structure decree summary, geoloc and structure tables.
 */
 public class HydroBase_StructureView
 extends HydroBase_StructureGeoloc 
-implements Comparable {
+implements Comparable<HydroBase_StructureView> {
 
 // new fields in the Structure view
 protected String _str_type = 		DMIUtil.MISSING_STRING;
@@ -91,9 +91,7 @@ public HydroBase_StructureView() {
 	super();
 }
 
-public int compareTo(Object o) {
-	HydroBase_StructureView s = (HydroBase_StructureView)o;
-
+public int compareTo(HydroBase_StructureView s) {
 	if (_wd < s._wd) {
 		return -1;
 	}

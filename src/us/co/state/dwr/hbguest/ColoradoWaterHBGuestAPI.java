@@ -63,8 +63,8 @@ public static List<String> readDistinctStationDataTypeList ( ColoradoWaterHBGues
             return dataTypesCached;
         }
     }
-    List<HydroBase_StationGeolocMeasType> measTypesCached = new Vector();
-    List<HydroBase_StationGeolocMeasType> measTypes = new Vector();
+    List<HydroBase_StationGeolocMeasType> measTypesCached = new Vector<HydroBase_StationGeolocMeasType>();
+    List<HydroBase_StationGeolocMeasType> measTypes = new Vector<HydroBase_StationGeolocMeasType>();
     if ( useCache ) {
         measTypesCached = service.getStationMeasTypeListCache();
         measTypes = measTypesCached;
@@ -137,7 +137,7 @@ public static List<String> readDistinctStationDataTypeList ( ColoradoWaterHBGues
         service.setStationMeasTypeListCache(measTypes);
     }
     // Now get the data types from the meastypes...
-    List<String> dataTypes = new Vector();
+    List<String> dataTypes = new Vector<String>();
     if ( (measTypes != null) && (measTypes.size() > 0) ) {
         // Loop through the measTypes and get the unique list of data types
         String dt;
@@ -421,10 +421,8 @@ Read a list of structure meas type objects corresponding to the query criteria.
 public static List<HydroBase_StructMeasTypeView> readStructureGeolocStructMeasTypeList( ColoradoWaterHBGuest service,
     InputFilter_JPanel ifp, String measType, String timeStep )
 {   // Call the web service to get the list of meastype for the location.
-    List<HydroBase_StructMeasTypeView> measTypeList = new Vector();
+    List<HydroBase_StructMeasTypeView> measTypeList = new Vector<HydroBase_StructMeasTypeView>();
     return measTypeList;
 }
-
-
 
 }

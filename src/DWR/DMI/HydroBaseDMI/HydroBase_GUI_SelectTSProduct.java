@@ -86,6 +86,7 @@ import RTi.Util.String.StringUtil;
 This class allows a TSProduct to be read from the database and worked with, or
 to create a new TSProduct to work with.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_SelectTSProduct 
 extends JFrame 
 implements ActionListener, ListSelectionListener, MouseListener, 
@@ -423,7 +424,7 @@ private void newClicked() {
 	TSProduct product = null;
 	try {
 		product = new TSProduct(props, null);
-		product.setTSList(new Vector());
+		product.setTSList(new Vector<TS>());
 		TSViewJFrame view = new TSViewJFrame(product);
 		if (__saveToDB) {
 			view.addTSProductDMI(__dmi);
@@ -502,10 +503,10 @@ private void openClicked() {
 		return;
 	}
 	
-	List v = product.getAllProps();
+	List<Prop> v = product.getAllProps();
 	int size = v.size();
 	Prop p = null;
-	List tsids = new Vector();
+	List<String> tsids = new Vector<String>();
 	for (int i = 0; i < size; i++) {
 		p = (Prop)v.get(i);
 		if (StringUtil.endsWithIgnoreCase(p.getKey(), "TSID")) {
@@ -516,12 +517,11 @@ private void openClicked() {
 	size = tsids.size();
 	String s = null;
 	TS ts = null;
-	List tsList = new Vector();
+	List<TS> tsList = new Vector<TS>();
 	try {
 		for (int i = 0; i < size; i++) {
-			s = (String)tsids.get(i);
-			ts = __dmi.readTimeSeries(s, null, null, null, 
-				true, null);
+			s = tsids.get(i);
+			ts = __dmi.readTimeSeries(s, null, null, null, true, null);
 			tsList.add(ts);
 		}
 	}
@@ -555,7 +555,7 @@ database.
 private void openTSProduct(String identifier) {
 	String routine = "HydroBase_GUI_SelectTSProduct.openTSProduct";
 
-	List dbProps = null;
+	List<HydroBase_TSProductProps> dbProps = null;
 	HydroBase_TSProduct tsp = null;
 	Message.printStatus(1, "", "Open product: " + identifier + " / "
 		+ __dmi.getUserNum());
@@ -577,7 +577,7 @@ private void openTSProduct(String identifier) {
 	PropList props = new PropList("TSProduct");
 	props.setHowSet(Prop.SET_FROM_PERSISTENT);
 	int size = dbProps.size();
-	List tsids = new Vector();
+	List<String> tsids = new Vector<String>();
 	HydroBase_TSProductProps tspp = null;
 
 	// Loops through all the properties and adds them to an actual proplist.
@@ -605,13 +605,12 @@ private void openTSProduct(String identifier) {
 		props.set("ProductIDOriginal", identifier);
 		product = new TSProduct(props, null);
 		TS ts = null;
-		List tsList = new Vector();
+		List<TS> tsList = new Vector<TS>();
 		String s = null;
 		size = tsids.size();
 		for (int i = 0; i < size; i++) {
 			s = (String)tsids.get(i);
-			ts = __dmi.readTimeSeries(s, null, null, null, 
-				true, null);
+			ts = __dmi.readTimeSeries(s, null, null, null, true, null);
 			tsList.add(ts);
 		}
 		product.setTSList(tsList);
@@ -630,9 +629,9 @@ private void openTSProduct(String identifier) {
 /**
 Reads TSProducts from the database and updates the list in the GUI.
 */
-private List readTSProducts() {
+private List<String> readTSProducts() {
 	String routine = getClass() + ".readTSProducts";
-	List v = null;
+	List<HydroBase_TSProduct> v = null;
 	
 	try {
 		v = 
@@ -647,11 +646,11 @@ private List readTSProducts() {
 	}
 
 	if (v == null) {
-		v = new Vector();
+		v = new Vector<HydroBase_TSProduct>();
 	}
 
 	int size = v.size();
-	List strings = new Vector();
+	List<String> strings = new Vector<String>();
 	HydroBase_TSProduct tsp = null;
 	String s = null;
 	for (int i = 0; i < size; i++) {

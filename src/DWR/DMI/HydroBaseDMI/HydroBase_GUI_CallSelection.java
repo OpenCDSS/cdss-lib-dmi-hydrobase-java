@@ -99,7 +99,7 @@ import RTi.DMI.DMIUtil;
 import RTi.GRTS.TSViewJFrame;
 
 import RTi.TS.DayTS;
-
+import RTi.TS.TS;
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleJList;
 import RTi.Util.GUI.SimpleJButton;
@@ -120,6 +120,7 @@ call chronology records for graphing.  Available records are defined
 according to the time interval which is displayed here, but defined
 in the HBCallChronologyGUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_CallSelection 
 extends JDialog
 implements ActionListener, KeyListener, WindowListener {
@@ -166,15 +167,15 @@ Label for the help button.
 private final String __BUTTON_HELP = 		"Help";
 
 /**
-Vector that holds the results that are displayed.
+List that holds the results that are displayed.
 */
-private List __results = null;
+private List<HydroBase_Calls> __results = null;
 
 /**
 HydroBase_GUI_CallSelection constructor
 */
 public HydroBase_GUI_CallSelection(HydroBaseDMI dmi, 
-HydroBase_GUI_CallsQuery parent, List results) {
+HydroBase_GUI_CallsQuery parent, List<HydroBase_Calls> results) {
 	// don't want a modal dialog
 	super (parent, false);
 
@@ -438,10 +439,10 @@ private void graphClicked() {
         __statusJTextField.setText("Please Wait... Displaying View");
 
 	// add the TS objects to a vector for displaying and update
-    List tsVector = new Vector(size);
+    List<TS> tsVector = new Vector<TS>(size);
 
 	int value = 1;
-	List tokens = null;
+	List<String> tokens = null;
 	int[] wdid_tokens = null;
 	double adminNum;
 
@@ -454,9 +455,9 @@ private void graphClicked() {
 		// series...
 		tokens = StringUtil.breakStringList(strings[i], ",", 0);
 		wdid_tokens = HydroBase_WaterDistrict.parseWDID(
-			(String)tokens.get(0));
+			tokens.get(0));
 		adminNum = StringUtil.atod(
-			((String)tokens.get(tokens.size()- 1)).trim());
+			(tokens.get(tokens.size()- 1)).trim());
 		// With the RTi graphing, it automatically puts the time series
 		// in the right order for a period graph so use "1" as the data
 		// value, indicating the call is on.

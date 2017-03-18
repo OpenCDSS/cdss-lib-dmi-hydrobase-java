@@ -222,6 +222,7 @@ import RTi.Util.Time.DateTime;
 import RTi.Util.Time.StopWatch;
 import RTi.Util.Time.YearType;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_StationQuery 
 extends JFrame 
 implements ActionListener, GeoViewListener, ItemListener, KeyListener,
@@ -338,9 +339,9 @@ String for holding the selected time step.
 private String __timestepJComboBoxString;
 
 /**
-Vector of results from the queries that are executed.
+List of results from the queries that are executed.
 */
-private List __results = null;
+private List<HydroBase_StationView> __results = null;
 
 /**
 Create the interface and make visible.
@@ -603,7 +604,7 @@ private void enableMapLayers() {
 		__statusJTextField.setText("Updating map to show only station layers.");
 		Message.printStatus(1, "","Turning on station GIS layer types.");
 			
-		List enabledAppLayerTypes = new Vector();
+		List<String> enabledAppLayerTypes = new Vector<String>();
 		enabledAppLayerTypes.add("Climate");
 		enabledAppLayerTypes.add("Streamflow");
 		enabledAppLayerTypes.add("Temperature");
@@ -656,7 +657,7 @@ Responsible for formatting output.
 @return formatted list for exporting, printing, etc..
 */
 private List<String> formatOutput(int format) {
-	List<String> v = new Vector(50, 50);
+	List<String> v = new Vector<String>();
     int numCols = __worksheet.getColumnCount();
     int numRows = __worksheet.getRowCount();
     String rowString;
@@ -714,11 +715,11 @@ Do nothing.  REVISIT - Should this do the same as a select?
 @param datalimits Limits of select in data coordinates.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
-public void geoViewInfo(GRShape devlimits, GRShape datalimits, List selected) {}
+public void geoViewInfo(GRShape devlimits, GRShape datalimits, List<GeoRecord> selected) {}
 
-public void geoViewInfo(GRPoint devlimits, GRPoint datalimits, List selected) {}
+public void geoViewInfo(GRPoint devlimits, GRPoint datalimits, List<GeoRecord> selected) {}
 
-public void geoViewInfo(GRLimits devlimits, GRLimits datalimits, List selected) {}
+public void geoViewInfo(GRLimits devlimits, GRLimits datalimits, List<GeoRecord> selected) {}
 
 /**
 If a selection is made from the map, query the database for region that was
@@ -729,13 +730,13 @@ listener from the GeoView.
 @param datalimits Limits of select in data coordinates.
 @param selected Vector of selected GeoRecord.  Currently ignored.
 */
-public void geoViewSelect(GRShape devlimits, GRShape datalimits, List selected, boolean append) {
+public void geoViewSelect(GRShape devlimits, GRShape datalimits, List<GeoRecord> selected, boolean append) {
 	String routine = "geoViewSelect";
 
 	// Figure out which app layer types are selected.  If one that is
 	// applicable to this GUI, execute a query...
 
-	List appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree().getSelectedAppLayerTypes(true);
+	List<String> appLayerTypes = __geoview_ui.getGeoViewJPanel().getLegendJTree().getSelectedAppLayerTypes(true);
 	int size = appLayerTypes.size();
 	String app_layer_type;
 	boolean view_needed = false;
@@ -824,11 +825,11 @@ public void geoViewSelect(GRShape devlimits, GRShape datalimits, List selected, 
 	}
 }
 
-public void geoViewSelect(GRPoint devlimits, GRPoint datalimits, List selected, boolean append) {
+public void geoViewSelect(GRPoint devlimits, GRPoint datalimits, List<GeoRecord> selected, boolean append) {
 	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, append);
 }
 
-public void geoViewSelect(GRLimits devlimits, GRLimits datalimits, List selected, boolean append) {
+public void geoViewSelect(GRLimits devlimits, GRLimits datalimits, List<GeoRecord> selected, boolean append) {
 	geoViewSelect((GRShape)devlimits, (GRShape)datalimits, selected, append);
 }
 
@@ -844,11 +845,11 @@ public void geoViewZoom(GRShape devlimits, GRShape datalimits) {}
 public void geoViewZoom (GRLimits devlim, GRLimits datalim ) {}
 
 /**
-Returns a Vector with the visible App Layer Type.
-@return a Vector with the visible App Layer Type.
+Returns a list with the visible App Layer Type.
+@return a list with the visible App Layer Type.
 */
-private List getVisibleAppLayerType() {
-	List appLayerTypes = new Vector(2);
+private List<String> getVisibleAppLayerType() {
+	List<String> appLayerTypes = new Vector<String>(2);
 	if ( parseDataType(__dataTypeJComboBox.getSelected()).equals(__DTYP_STREAM) ||
 		parseDataType(__dataTypeJComboBox.getSelected()).equals(__DTYP_NATFLOW)) {
 		appLayerTypes.add("Streamflow");
@@ -1343,7 +1344,7 @@ GeoView Project as AppJoinField="wd,id".
 */
 private void selectOnMap() {
 	int size = __worksheet.getRowCount();
-	List<String> idlist = new Vector(size);
+	List<String> idlist = new Vector<String>(size);
     __statusJTextField.setText("Selecting and zooming to stations on map.  Please wait...");
 	JGUIUtil.setWaitCursor(this, true);
 	int rows[] = __worksheet.getSelectedRows();
@@ -1372,7 +1373,7 @@ private void selectOnMap() {
 	}
 	// Select the features, specifying the AppLayerType corresponding to the
 	// currently selected data type, and zoom to the selected shapes...
-	List matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
+	List<GeoRecord> matching_features =__geoview_ui.getGeoViewJPanel().selectAppFeatures(
 			getVisibleAppLayerType(), idlist, true, .05, .05);
 	int matches = 0;
 	if (matching_features != null) {
@@ -1453,7 +1454,7 @@ throws Exception {
         	String time_step = hbMt[2];
 
 		sw.start();
-		List v = __dmi.readStationGeolocMeasTypeList( __filterJPanel, 
+		List<HydroBase_StationView> v = __dmi.readStationGeolocMeasTypeList( __filterJPanel, 
 				__dmi.getWaterDistrictWhereClause(
 					__waterDistrictJComboBox, 
 					HydroBase_GUI_Util._GEOLOC_TABLE_NAME,
@@ -1538,7 +1539,7 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 	String routine = "HydroBase_GUI_StationQuery.displayInfo()";
  
     String display  = viewJComboBox;
-    List selectedResults = new Vector(10, 10);
+    List<HydroBase_StationView> selectedResults = new Vector<HydroBase_StationView>(10, 10);
     int[] rows = __worksheet.getSelectedRows();
  
  	JGUIUtil.setWaitCursor(this, true);
@@ -1555,7 +1556,7 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 	// collect all selected rows into a new vector, selectedResults
 
 	for (int i = 0; i < rows.length; i++) {
-		selectedResults.add(__worksheet.getRowData(rows[i]));
+		selectedResults.add((HydroBase_StationView)__worksheet.getRowData(rows[i]));
 	}
 	// Retrieve user specified start/end dates for display
 
@@ -1579,7 +1580,7 @@ private void viewJComboBoxClicked(String viewJComboBox) {
 			periodProps.set("DatePrecision", "Year");
 		}
 		periodProps.set("DateFormat", "Y2K");
-		List<TS> tsV = new Vector(selectedResults.size(), 1);
+		List<TS> tsV = new Vector<TS>(selectedResults.size(), 1);
 		String alias;
 		String location;
 		for (int i = 0; i < selectedResults.size(); i++) {

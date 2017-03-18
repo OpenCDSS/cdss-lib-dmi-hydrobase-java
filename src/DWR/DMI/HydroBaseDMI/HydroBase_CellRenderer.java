@@ -30,6 +30,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is the class from which other cell renderers for HydroBase should be built.
 */
+@SuppressWarnings("serial")
 public class HydroBase_CellRenderer
 extends JWorksheet_AbstractExcelCellRenderer {
 

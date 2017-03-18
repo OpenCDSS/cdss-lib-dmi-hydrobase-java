@@ -38,6 +38,7 @@ import RTi.Util.Message.Message;
 This class is a modal dialog from which Calls comments can be changed and 
 the changes written to a database.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_CallsComments 
 extends JDialog
 implements ActionListener {

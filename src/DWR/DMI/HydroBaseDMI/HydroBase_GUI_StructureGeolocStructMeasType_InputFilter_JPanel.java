@@ -18,6 +18,7 @@ import RTi.Util.String.StringUtil;
 /**
 Filter for HydroBase_StructureGeolocStructMeasType object queries.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel
 extends InputFilter_JPanel
 implements MouseListener

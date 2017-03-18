@@ -57,6 +57,7 @@ import RTi.Util.Time.DateTime;
 /**
 This class is a GUI for displaying additional exempt dam data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_ExemptDam 
 extends JFrame
 implements ActionListener, WindowListener {
@@ -162,7 +163,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -183,7 +184,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -232,8 +233,8 @@ throws Throwable {
 Formats output for printing or export.
 @param format the format in which to format the output.
 */
-private List formatOutput(int format) {
-	List v = new Vector();
+private List<String> formatOutput(int format) {
+	List<String> v = new Vector<String>();
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		v.add(HydroBase_GUI_Util.formatStructureHeader(

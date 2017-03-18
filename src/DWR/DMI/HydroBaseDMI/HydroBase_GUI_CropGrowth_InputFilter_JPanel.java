@@ -25,18 +25,18 @@ import RTi.Util.String.StringUtil;
 /**
 This class is an input filter for querying crop growth data from the Other Data GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_CropGrowth_InputFilter_JPanel
 extends InputFilter_JPanel {
 
 /**
 Constructor.
 @param dmi the dmi to use to connect to the database.  Cannot be null.
-@param methods a Vector of methods to use for querying consumptive use types.  Cannot be null.
+@param methods a list of methods to use for querying consumptive use types.  Cannot be null.
 */
-public HydroBase_GUI_CropGrowth_InputFilter_JPanel(HydroBaseDMI dmi,
-List methods) {
+public HydroBase_GUI_CropGrowth_InputFilter_JPanel(HydroBaseDMI dmi, List<String> methods) {
 
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 

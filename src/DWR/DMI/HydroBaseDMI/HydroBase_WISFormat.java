@@ -49,19 +49,19 @@ protected double _gain_factor = DMIUtil.MISSING_DOUBLE;
 protected static int	__COLS = 11;	// number of columns in WIS
 // the following member variables are not saved to the database, but assist in
 // building WIS
-protected List _wisFormula,		// Cell formulas for a row. Elements
+protected List<HydroBase_WISFormula> _wisFormula;		// Cell formulas for a row. Elements
 					// represent Point Flow, Natural Flow
 					// Delivery Flow, and Gain/Loss, etc...
 					// columns respectively. Each element
 					// represents an HydroBase_WISFormula 
 					// object.
-		_wisImport,		// Cell imports for a row. Elements
+List<HydroBase_WISImport> _wisImport;		// Cell imports for a row. Elements
 					// represent Point Flow, Natural Flow
 					// Delivery Flow, and Gain/Loss, etc...
 					// columns respectively. Each element
 					// represents an HydroBase_WISImport 
 					// object.
-		_isEntryCell;		// contains a boolean value for each
+List<Boolean> _isEntryCell;		// contains a boolean value for each
 					// column in the row. true denotes
 					// a cell whose value is user specified,
 					// while false represents a cell
@@ -72,9 +72,9 @@ Constructor.
 */
 public HydroBase_WISFormat() {
 	super();
-	_wisFormula =  new Vector();
-	_wisImport =  new Vector();
-	_isEntryCell =  new Vector();
+	_wisFormula =  new Vector<HydroBase_WISFormula>();
+	_wisImport =  new Vector<HydroBase_WISImport>();
+	_isEntryCell =  new Vector<Boolean>();
 	for (int curCol = 0; curCol < __COLS + 1; curCol++) {
 		_wisFormula.add(new HydroBase_WISFormula());
 		_wisImport.add(new HydroBase_WISImport());

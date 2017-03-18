@@ -101,6 +101,7 @@ maximum, and user-defined periods to be entered.
 	DateFormat = Y2K, US
 	DatePrecision = Year, Month, Day, Hour, Minute
 */
+@SuppressWarnings("serial")
 public class DateTimeSelectPeriodJDialog 
 extends JDialog
 implements ActionListener, ItemListener, WindowListener {
@@ -134,7 +135,7 @@ private PropList __prop;
 private String __buttonChoice;
 private String __preferredState;
 
-private List __ts;
+private List<TS> __ts;
 
 private final int _NUM_COLS = 5;
 private final int _NUM_ROWS = 5;
@@ -145,7 +146,7 @@ DateTimeSelectPeriodJDialog constructor
 @param ts contains time series objects
 @param prop PropList object
 */
-public DateTimeSelectPeriodJDialog(JFrame frame, List ts, PropList prop) {
+public DateTimeSelectPeriodJDialog(JFrame frame, List<TS> ts, PropList prop) {
 	super(frame, true);
 	
 	__frame = frame;
@@ -416,7 +417,7 @@ This function determines the period(max or min)for the selected time series.
 TSUtil.MAX_POR, or TSUtil.MIN_POR
 */
 private void setPeriodOfRecord(int flag) {
-	List ts_Vector = new Vector();
+	List<TS> ts_Vector = new Vector<TS>();
 	String function = "DateTimeSelectPeriodJDialog.setPeriodOfRecord()";
 
 	if (__userJRadioButton.isSelected()) {

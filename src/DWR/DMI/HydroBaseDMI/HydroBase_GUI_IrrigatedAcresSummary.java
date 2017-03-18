@@ -55,6 +55,7 @@ import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_IrrigatedAcresSummary 
 extends JFrame
 implements ActionListener, WindowListener {
@@ -157,7 +158,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -178,7 +179,7 @@ public void actionPerformed(ActionEvent event) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -199,20 +200,19 @@ private void closeClicked() {
 /**
 This function displays the requested irrigated acres summary query in the
 components on the gui.
-@param results Vector containing the results from the query
+@param results list containing the results from the query
 */
-private void displayResults(List results) {
+private void displayResults(List<HydroBase_StructureView> results) {
 	String routine = CLASS + ".displayResults";
-	Object o = null;
+	HydroBase_StructureView structure = null;
 	try {
-		o = __dmi.readStructureViewForStructure_num(__structureNum);
+		structure = __dmi.readStructureViewForStructure_num(__structureNum);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine,"Error reading from database.");
 		Message.printWarning(2, routine, e);
 	}
 
-	HydroBase_StructureView structure = (HydroBase_StructureView)o;
 	String curString = structure.getStr_name();
 	if (curString.length() > 0) {
 		__structureNameJTextField.setText(curString);
@@ -235,8 +235,7 @@ private void displayResults(List results) {
                 // data contains the query results. Since only 
                 // one record is returned, request the first element
                 // in the results Vector.        
-                HydroBase_StructureView data =
-			(HydroBase_StructureView)results.get(0);
+                HydroBase_StructureView data = results.get(0);
     
                 double curDouble = data.getTia_gis();
                 if (!DMIUtil.isMissing(curDouble)) {
@@ -297,8 +296,8 @@ Formats output.
 @param format format delimiter flag defined in this class
 @return returns a formatted Vector for exporting, printing, etc..
 */
-public List formatOutput(int format) {
-	List v = new Vector(5, 5);
+public List<String> formatOutput(int format) {
+	List<String> v = new Vector<String>();
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		// The output is pretty simple since the GUI is so simple...
@@ -493,7 +492,7 @@ This function performs a query.
 */
 private void submitQuery() {
 	String routine = CLASS + ".submitQuery";
-	List results = null;
+	List<HydroBase_StructureView> results = null;
         // perform Irrigated Acres query
         JGUIUtil.setWaitCursor(this, true);
               

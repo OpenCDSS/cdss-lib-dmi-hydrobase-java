@@ -24,7 +24,7 @@ Class to store data from the HydroBase wis_comments table.
 */
 public class HydroBase_WISComments 
 extends DMIDataObject 
-implements Comparable {
+implements Comparable<HydroBase_WISComments> {
 
 protected int _wis_num = 	DMIUtil.MISSING_INT;
 protected Date _set_date = 	DMIUtil.MISSING_DATE;
@@ -38,9 +38,7 @@ public HydroBase_WISComments() {
 	super();
 }
 
-public int compareTo(Object o) {
-	HydroBase_WISComments wc = (HydroBase_WISComments)o;
-
+public int compareTo(HydroBase_WISComments wc) {
 	if (DMIUtil.isMissing(_wis_num) && DMIUtil.isMissing(wc._wis_num)) {
 		// placeholder
 	}

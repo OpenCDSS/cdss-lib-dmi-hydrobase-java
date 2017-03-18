@@ -115,7 +115,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import RTi.DMI.DMIUtil;
 import RTi.DMI.GenericDMI;
@@ -145,6 +144,7 @@ Water Division:     Optional water division used to control map and
                     interface - default is "DEFAULT" (used with StateView).
 </pre>
 */
+@SuppressWarnings("serial")
 public class SelectHydroBaseJDialog extends JDialog
 implements ActionListener, KeyListener, ItemListener, WindowListener {
 
@@ -247,7 +247,7 @@ Whether the user name / password combo should be entered and validated.
 private boolean __validateLogin = false;
 
 /**
-A hashtable for typing server names to Vectors of the databases available in the server.
+A hashtable for associating server names to lists of the databases available in the server.
 */
 private Hashtable<String,List<String>> __databaseNames = null;
 
@@ -401,7 +401,7 @@ public SelectHydroBaseJDialog(JFrame parent, HydroBaseDMI hbdmi, PropList props)
 	JGUIUtil.setWaitCursor(parent, true);
 	readConfigurationFile();
 
-	__databaseNames = new Hashtable();
+	__databaseNames = new Hashtable<String,List<String>>();
 	
 	try {
 		initialize(parent, hbdmi, props);
@@ -445,7 +445,7 @@ public void actionPerformed(ActionEvent event) {
 		// rebuild the hashtable because there is a chance that hashed
 		// database names for a server are no longer valid when 
 		// the stored procedure option is turned off and back on.
-		__databaseNames = new Hashtable();
+		__databaseNames = new Hashtable<String,List<String>>();
 		findDatabaseNames();
 	}
 }      
@@ -611,7 +611,7 @@ private void checkServerForDatabaseNames(String server)
 		Message.printWarning(3, routine, "Error getting database names (" + e + ").");
 		Message.printWarning(3,routine,e);
 		__databaseNamesJComboBox.removeAllItems();
-		List<String> v = new Vector();
+		List<String> v = new ArrayList<String>();
 		v.add(__NO_DATABASES);
 		__databaseNamesJComboBox.add(__NO_DATABASES);
 		ok(false);
@@ -1088,10 +1088,10 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
     // - calls shellcon.exe which is no longer distributed
     // - moving to datastores where ODBC name is configured in datastore configuration file.
     //List<String> available_OdbcDsn = DMIUtil.getDefinedOdbcDsn(true);
-    List<String> available_OdbcDsn = new Vector<String>();
+    List<String> available_OdbcDsn = new ArrayList<String>();
 	int size = available_OdbcDsn.size();
 	String s = null;
-	__available_OdbcDsn = new Vector();
+	__available_OdbcDsn = new ArrayList<String>();
 
 	// Only add DSNs that have "HydroBase" in the name.
 	for (int i = 0; i < size; i++) {
@@ -1578,7 +1578,7 @@ private void readConfigurationFile() {
 
 	String serverNames = __configurationProps.getValue( "HydroBase.ServerNames");
 	if (serverNames == null) {
-		__serverNames = new Vector();
+		__serverNames = new ArrayList<String>();
 		if (IOUtil.testing()) {
 			__serverNames.add("hbserver");
 		}

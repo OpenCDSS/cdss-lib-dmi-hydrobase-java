@@ -42,9 +42,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
@@ -79,6 +78,7 @@ import RTi.Util.Time.DateTime;
 This class extends GRJComponentDevice to be the device that manages the 
 WIS diagram drawing area.
 */
+@SuppressWarnings("serial")
 public class HydroBase_Device_WISDiagram 
 extends GRJComponentDevice
 implements ActionListener, MouseListener, MouseMotionListener, Printable, 
@@ -349,9 +349,9 @@ The date of the WIS, which will be placed into the legend.
 private String __dateString = "";
 
 /**
-Vector of annotations to be drawn on screen.
+List of annotations to be drawn on screen.
 */
-private List __annotations = new Vector();
+private List<HydroBase_Node> __annotations = new ArrayList<HydroBase_Node>();
 
 /**
 Constructor.
@@ -482,8 +482,7 @@ public void actionPerformed(ActionEvent event) {
 	else if (action.equals(__MENU_PROPERTIES)) {
 		HydroBase_Node node = null;
 		if (__isAnnotation) {
-			node = (HydroBase_Node)__annotations.get(
-				__popUpNode);
+			node = __annotations.get(__popUpNode);
 		}
 		else {
 			node = __nodes[__popUpNode];
@@ -1092,10 +1091,10 @@ public void forceRepaint() {
 }
 
 /**
-Returns the Vector of annotations.
-@return the Vector of annotations.
+Returns the list of annotations.
+@return the list of annotations.
 */
-public List getAnnotations() {
+public List<HydroBase_Node> getAnnotations() {
 	return __annotations;
 }
 
@@ -1125,14 +1124,13 @@ public double getDrawingWidth() {
 
 /**
 Returns the specified node.
-@param nodeNum the number of the node in the node array or the annotation 
-Vector.
+@param nodeNum the number of the node in the node array or the annotation list.
 @param isAnnotation whether to return an annotation node (false) or not (true).
 @return the specified node.
 */
 public HydroBase_Node getNode(int nodeNum, boolean isAnnotation) {
 	if (__isAnnotation) {
-		return (HydroBase_Node)__annotations.get(nodeNum);
+		return __annotations.get(nodeNum);
 	}
 	else {
 		return __nodes[nodeNum];
@@ -1215,7 +1213,7 @@ private String getUniquePropListName(int num) {
 	while (true) {
 		match = false;
 		for (int i = 0; i < size; i++) {
-			node = (HydroBase_Node)__annotations.get(i);
+			node = __annotations.get(i);
 			p = (PropList)node.getAssociatedObject();
 			if (p.getValue("Number").equals("" + num)) {
 				match = true;
@@ -1256,7 +1254,7 @@ public void setDirty(boolean dirty) {
 	__initialSize = __annotations.size();
 	HydroBase_Node node = null;
 	for (int i = 0; i < __initialSize; i++) {
-		node = (HydroBase_Node)__annotations.get(i);
+		node = __annotations.get(i);
 		node.setDirty(false);
 	}
 }
@@ -1280,7 +1278,7 @@ public boolean isDirty() {
 	}
 	HydroBase_Node node = null;
 	for (int i = 0; i < size; i++) {
-		node = (HydroBase_Node)__annotations.get(i);
+		node = __annotations.get(i);
 		if (node.isDirty()) {
 			return true;
 		}
@@ -1345,9 +1343,7 @@ public void mousePressed(MouseEvent event) {
 			__x = x;
 			__y = y;
 			if (__isAnnotation) {
-				HydroBase_Node node = (HydroBase_Node)
-					__annotations.get(
-					__leftClickNode);
+				HydroBase_Node node = __annotations.get(__leftClickNode);
 				__nodeLimits = new GRLimits(node.getX(), 
 					node.getY(), 
 					node.getX() + node.getWidth(),
@@ -1355,8 +1351,7 @@ public void mousePressed(MouseEvent event) {
 				node.setVisible(false);
 			}
 			else {
-				__nodeLimits = __nodes[__leftClickNode]
-					.getLimits();
+				__nodeLimits = __nodes[__leftClickNode].getLimits();
 				__nodes[__leftClickNode].setVisible(false);
 			}
 
@@ -1406,8 +1401,7 @@ public void mouseReleased(MouseEvent event) {
 		if (__leftClickNode > -1) {
 			if (__isAnnotation) {
 			
-			HydroBase_Node node = (HydroBase_Node)	
-				__annotations.get(__leftClickNode);
+			HydroBase_Node node = __annotations.get(__leftClickNode);
 			node.setVisible(true);
 			__x = x - __xAdjust;
 			__y = y - __yAdjust;
@@ -1610,7 +1604,7 @@ public void paint(Graphics g) {
 				// drag
 				continue;
 			}
-			node = (HydroBase_Node)__annotations.get(i);
+			node = __annotations.get(i);
 
 			GRDrawingAreaUtil.drawAnnotation(__drawingArea, 
 				(PropList)node.getAssociatedObject());
@@ -1821,8 +1815,7 @@ private String queryCall(HydroBase_Node node) {
 		int[] wdid = HydroBase_WaterDistrict.parseWDID(id);
 		DateTime date = __parent.getWIS().getAdminDateTime();
 
-		List v = __dmi.readCallsListForWISDiagram(wdid[0], wdid[1],
-			date);
+		List<HydroBase_Calls> v = __dmi.readCallsListForWISDiagram(wdid[0], wdid[1],date);
 	
 		if (v == null || v.size() == 0) {
 			return DMIUtil.MISSING_STRING;
@@ -1868,13 +1861,13 @@ private String queryRight(HydroBase_Node node) {
 	
 	try {
 		int[] wdid = HydroBase_WaterDistrict.parseWDID(id);
-		List where = new Vector();
+		List<String> where = new ArrayList<String>();
 
 		where.add("net_rate_abs > 0");
 		where.add("wd = " + wdid[0]);
 		where.add("id = " + wdid[1]);
 
-		List v = __dmi.readNetAmtsList(DMIUtil.MISSING_INT, 
+		List<HydroBase_NetAmts> v = __dmi.readNetAmtsList(DMIUtil.MISSING_INT, 
 			wdid[0], wdid[1], true, "72");
 	
 		int size = v.size();
@@ -1907,10 +1900,10 @@ private String queryRight(HydroBase_Node node) {
 }
 
 /**
-Sets the Vector of annotations.
-@param annotations the annotations Vector to use.
+Sets the list of annotations.
+@param annotations the annotations list to use.
 */
-public void setAnnotations(List annotations) {
+public void setAnnotations(List<HydroBase_Node> annotations) {
 	__annotations = annotations;
 }
 
@@ -1939,7 +1932,7 @@ public void setNetwork(HydroBase_NodeNetwork network) {
 	__network.setInWIS(true);
 	__ready = true;
 	boolean done = false;
-	List nodes = new Vector();
+	List<HydroBase_Node> nodes = new ArrayList<HydroBase_Node>();
 
 	HydroBase_Node node = null;
 	HydroBase_Node holdNode = null;

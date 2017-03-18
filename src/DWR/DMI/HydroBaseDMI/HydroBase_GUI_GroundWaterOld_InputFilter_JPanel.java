@@ -28,6 +28,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is an input filter for querying ground water data in the Ground Water GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_GroundWaterOld_InputFilter_JPanel
 extends InputFilter_JPanel {
 
@@ -43,7 +44,7 @@ public HydroBase_GUI_GroundWaterOld_InputFilter_JPanel(HydroBaseDMI dmi, MouseLi
 
 	InputFilter filter = null;
 
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 
 	filters.add(new InputFilter("", "", StringUtil.TYPE_STRING, null, null, false));
 

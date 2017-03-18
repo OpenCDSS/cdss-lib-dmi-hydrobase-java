@@ -107,6 +107,7 @@ import RTi.Util.String.StringUtil;
 
 import RTi.Util.Time.StopWatch;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_OtherQuery 
 extends JFrame 
 implements ActionListener, ItemListener, KeyListener, WindowListener {
@@ -191,10 +192,10 @@ The label string displayed above the worksheet.
 private String __tableLabelString = null;
 
 /**
-Vector to hold two-element arrays of strings.  [0] contains the actual method
+List to hold two-element arrays of strings.  [0] contains the actual method
 name, capitalized etc.  [1] contains the pretty-looking method name.
 */
-private List __methods = null;
+private List<String> __methods = null;
 
 /**
 Constructor.
@@ -206,13 +207,13 @@ public HydroBase_GUI_OtherQuery(HydroBaseDMI dmi) {
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
 
 	try {
-		__methods = new Vector();
-		List v = __dmi.readCUMethodList(true);
+		__methods = new Vector<String>();
+		List<HydroBase_CUMethod> v = __dmi.readCUMethodList(true);
 		int size = v.size();
 		HydroBase_CUMethod m = null;
 		String[] record = null;
 		for (int i = 0; i < size; i++) {
-			m = (HydroBase_CUMethod)v.get(i);
+			m = v.get(i);
 			record = new String[2];
 			record[0] = m.getMethod_desc();
 			record[1] = m.getMethod_desc().trim();
@@ -224,7 +225,7 @@ public HydroBase_GUI_OtherQuery(HydroBaseDMI dmi) {
 		Message.printWarning(1, routine, "Error reading from "
 			+ "database");
 		Message.printWarning(2, routine, e);
-		__methods = new Vector();
+		__methods = new Vector<String>();
 	}		
 
 	setupGUI();
@@ -260,7 +261,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -279,7 +280,7 @@ public void actionPerformed(ActionEvent evt) {
 			}			
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings, 8);
 		}
@@ -345,14 +346,16 @@ private void dataTypeJComboBoxClicked() {
 Displays results from queries in the table.
 @param results the results to display in the table.
 */
-private void displayResults(List results) {
+private void displayResults(List<HydroBase_AgriculturalCASSCropStats> resultsCASS,
+	List<HydroBase_AgriculturalNASSCropStats>resultsNASS, List<HydroBase_Cropchar>resultsCropchar,
+	List<HydroBase_CUCoeff>resultsCUCoeff) {
 	String routine = "displayResults";
         String dtype = __dataTypeJComboBox.getSelected().trim();
 	try {
 	if (dtype.equals(__DTYPE_CASS)) {
 		HydroBase_TableModel_AgriculturalCASSCropStats tm = 
 			new HydroBase_TableModel_AgriculturalCASSCropStats(
-			results);
+					resultsCASS);
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		__worksheet.setCellRenderer(cr);
 		__worksheet.setModel(tm);
@@ -361,7 +364,7 @@ private void displayResults(List results) {
 	else if (dtype.equals(__DTYPE_NASS)) {
 		HydroBase_TableModel_AgriculturalNASSCropStats tm = 
 			new HydroBase_TableModel_AgriculturalNASSCropStats(
-			results);
+			resultsNASS);
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		__worksheet.setCellRenderer(cr);
 		__worksheet.setModel(tm);
@@ -369,7 +372,7 @@ private void displayResults(List results) {
 	}		
 	else if ( dtype.equals(__DTYPE_CROPC)) {
 		HydroBase_TableModel_Cropchar tm = 
-			new HydroBase_TableModel_Cropchar(results);
+			new HydroBase_TableModel_Cropchar(resultsCropchar);
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		__worksheet.setCellRenderer(cr);
 		__worksheet.setModel(tm);
@@ -380,7 +383,7 @@ private void displayResults(List results) {
 	}
 	else if ( dtype.equals(__DTYPE_HUM)) {
 		HydroBase_TableModel_CUCoeff tm = 
-			new HydroBase_TableModel_CUCoeff(results);
+			new HydroBase_TableModel_CUCoeff(resultsCUCoeff);
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		__worksheet.setCellRenderer(cr);
 		__worksheet.setModel(tm);
@@ -415,11 +418,10 @@ throws Throwable {
 
 /**
 Formats crop growth data for display in a report.
-@param vectors An array of 3 vectors.  [0] contains the vector of records
+@param vectors An array of 3 lists.  [0] contains the list of records
 read from CUBlaneyCriddle, [1] contains the vector of records read from
-CUModHargreaves, [2] contains the Vector of records read from CUPenmanMonteith.
-@return the number of records read in by the database in total of all three
-Vectors.
+CUModHargreaves, [2] contains the list of records read from CUPenmanMonteith.
+@return the number of records read in by the database in total of all three lists.
 */
 private int formatCropGrowthReport(List[] vectors) {
 	if (vectors == null) {
@@ -444,17 +446,18 @@ private int formatCropGrowthReport(List[] vectors) {
 
 	int recordCount = 0;
 	
-	List strings = new Vector();
+	List<String> strings = new Vector<String>();
 	strings.add("Crop Growth Characteristics by Consumptive Use (CU) "
 		+ "Method");
-	List blaney = vectors[0];
+	@SuppressWarnings("unchecked")
+	List<HydroBase_CUBlaneyCriddle> blaney = (List<HydroBase_CUBlaneyCriddle>)vectors[0];
 	String current = "";
 	if (blaney != null && blaney.size() > 0) {
 		int size = blaney.size();
 		recordCount += size;
 		HydroBase_CUBlaneyCriddle bc = null;
 		for (int i = 0; i < size; i++) {
-			bc = (HydroBase_CUBlaneyCriddle)blaney.get(i);
+			bc = blaney.get(i);
 			if (!current.equals(bc.getMethod_desc())) {
 				strings.add("");
 				current = bc.getMethod_desc();
@@ -473,7 +476,8 @@ private int formatCropGrowthReport(List[] vectors) {
 		}
 	}
 
-	List hargreaves = vectors[1];
+	@SuppressWarnings("unchecked")
+	List<HydroBase_CUModHargreaves> hargreaves = (List<HydroBase_CUModHargreaves>)vectors[1];
 	if (hargreaves != null && hargreaves.size() > 0) {
 		int size = hargreaves.size();
 		recordCount += size;
@@ -492,13 +496,14 @@ private int formatCropGrowthReport(List[] vectors) {
 			+ "----------" );
 		
 		for (int i = 0; i < size; i++) {
-			mh = (HydroBase_CUModHargreaves)hargreaves.get(i);
+			mh = hargreaves.get(i);
 			strings.add(formatCUModHargreaves(mh));
 		}		
 	}
 
 	current = "";
-	List penman = vectors[2];
+	@SuppressWarnings("unchecked")
+	List<HydroBase_CUPenmanMonteith> penman = (List<HydroBase_CUPenmanMonteith>)vectors[2];
 	if (penman != null && penman.size() > 0) {
 		int size = penman.size();
 		recordCount += size;
@@ -515,7 +520,7 @@ private int formatCropGrowthReport(List[] vectors) {
 		
 		
 		for (int i = 0; i < size; i++) {
-			pm = (HydroBase_CUPenmanMonteith)penman.get(i);
+			pm = penman.get(i);
 			strings.add(formatCUPenmanMonteith(pm));
 		}		
 	}
@@ -712,12 +717,12 @@ private String formatCUPenmanMonteith(HydroBase_CUPenmanMonteith pm) {
 /**
 Responsible for formatting output.
 @param format format delimiter flag defined in this class
-@return formatted Vector for exporting, printing, etc..
+@return formatted list for exporting, printing, etc..
 */
-private List formatOutput(int format) {
+private List<String> formatOutput(int format) {
         int size = __worksheet.getRowCount();
         if (size == 0) {
-                return new Vector();
+                return new Vector<String>();
         }
 
         char delim = HydroBase_GUI_Util.getDelimiterForFormat(format);
@@ -726,7 +731,7 @@ private List formatOutput(int format) {
 	int colCount = __worksheet.getColumnCount();
 	String s = "";			
 
-	List v = new Vector();
+	List<String> v = new Vector<String>();
 	for (int j = 0; j < colCount; j++) {
 		s += __worksheet.getColumnName(j, true) + delim;
 	}
@@ -998,34 +1003,37 @@ private void submitQuery() {
         __statusJTextField.setText("Retrieving data...");
 
 	StopWatch sw = new StopWatch();
-	sw.start();
-	List results = null;
-        __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);	
+	sw.start();	
 	int records = 0;
+	List<HydroBase_AgriculturalCASSCropStats> resultsCASS = null;
+	List<HydroBase_AgriculturalNASSCropStats> resultsNASS = null;
+	List<HydroBase_Cropchar> resultsCropchar = null;
+	List<HydroBase_CUCoeff>	resultsCUCoeff = null;
 	try {
 	if (dtype.equals(__DTYPE_CASS)) {
 		if (!__cassFilterJPanel.checkInput(true)) {
 			ready();
 			return;
-		}		
-		results = __dmi.readAgriculturalCASSCropStatsList(
+		}
+        __tableJLabel.setText(HydroBase_GUI_Util.LIST_LABEL);
+		resultsCASS = __dmi.readAgriculturalCASSCropStatsList(
 			__cassFilterJPanel, null, null,
 			null, null, null, false);
-		records = results.size();
+		records = resultsCASS.size();
 	}
 	else if (dtype.equals(__DTYPE_NASS)) {
 		if (!__nassFilterJPanel.checkInput(true)) {
 			ready();
 			return;
-		}		
-		results = __dmi.readAgriculturalNASSCropStatsList(
+		}
+		resultsNASS = __dmi.readAgriculturalNASSCropStatsList(
 			__nassFilterJPanel, null, null,
 			null, null, false);
-		records = results.size();
+		records = resultsNASS.size();
 	}	
 	else if ( dtype.equals(__DTYPE_CROPC)) {
-		results = __dmi.readCropcharList();
-		records = results.size();
+		resultsCropchar = __dmi.readCropcharList();
+		records = resultsCropchar.size();
 	}
 	else if ( dtype.equals(__DTYPE_CROPG)) {
 		if (!__cropGrowthFilterJPanel.checkInput(true)) {
@@ -1058,11 +1066,11 @@ private void submitQuery() {
 		return;
 	}
 	else if ( dtype.equals(__DTYPE_HUM)) {
-		results = __dmi.readCUCoeffList();
-		records = results.size();
+		resultsCUCoeff = __dmi.readCUCoeffList();
+		records = resultsCUCoeff.size();
 	}
 
-	displayResults(results);
+	displayResults(resultsCASS, resultsNASS, resultsCropchar, resultsCUCoeff);
 
         int displayed = __worksheet.getRowCount();
 	String plural = "";
@@ -1071,7 +1079,7 @@ private void submitQuery() {
 	}
 	
 	sw.stop();
-        String status = "" + results.size() + " record" + plural 
+        String status = "" + records + " record" + plural 
 		+ " returned in " + sw.getSeconds() + " seconds.";
         __statusJTextField.setText(status);
 	__tableJLabel.setText("Other Data Records: " + status);

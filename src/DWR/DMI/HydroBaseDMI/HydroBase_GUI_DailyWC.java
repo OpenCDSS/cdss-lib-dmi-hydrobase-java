@@ -70,6 +70,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is a GUI for displaying DailyWC information for a structure.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_DailyWC 
 extends JFrame 
 implements ActionListener, WindowListener {
@@ -182,7 +183,7 @@ public void actionPerformed(ActionEvent event) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -203,7 +204,7 @@ public void actionPerformed(ActionEvent event) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -215,11 +216,11 @@ public void actionPerformed(ActionEvent event) {
 
 /**
 Builds a table model capable of displaying data for the GenericWorksheetData
-in the Vector.
-@param v a non-null, non-empty Vector of GenericWorksheetData objects.
+in the list.
+@param v a non-null, non-empty list of GenericWorksheetData objects.
 @return a Generic_TableModel for displaying the given data.
 */
-private Generic_TableModel buildTableModel(List v) {
+private Generic_TableModel buildTableModel(List<GenericWorksheetData> v) {
 	try {
 		Generic_TableModel model = new Generic_TableModel(v);
 
@@ -254,10 +255,10 @@ private void closeClicked() {
 
 /**
 This function displays the query results within the appropriate GUI objects.
-@param results Vector containing the results from the query
+@param results list containing the results from the query
 */
-private void displayResults(List results) {
-	List v = resultsToGenericData(results);
+private void displayResults(List<HydroBase_DailyWC> results) {
+	List<GenericWorksheetData> v = resultsToGenericData(results);
 
 	Generic_TableModel model = buildTableModel(v);
 
@@ -310,9 +311,9 @@ Formats output for printing or export.
 @param format format delimiter flag defined in this class
 @return returns a formatted Vector for exporting, printing, etc..
 */
-public List formatOutput(int format) {
+public List<String> formatOutput(int format) {
 	String routine = CLASS + ".formatOutput";
-	List v = new Vector();
+	List<String> v = new Vector<String>();
 
 	// First get the multilist back as strings...
 	int size = __worksheet.getRowCount();
@@ -440,16 +441,16 @@ GenericWorksheetData objects.
 @param results the non-null, non-empty Vector of HydroBase_DailyWC objects.
 @return a Vector of GenericWorksheetData objects.
 */
-private List resultsToGenericData(List results) {
+private List<GenericWorksheetData> resultsToGenericData(List<HydroBase_DailyWC> results) {
 	if (__dmi.useStoredProcedures()) {
-		List v = new Vector();
+		List<GenericWorksheetData> v = new Vector<GenericWorksheetData>();
 		int size = results.size();
-		HydroBase_WISDailyWC result = null;
+		HydroBase_DailyWC result = null;
 		GenericWorksheetData data = null;
 		double d;
 		String s;
 	        for (int i = 0; i < size; i++) {
-	                result = (HydroBase_WISDailyWC)results.get(i);
+	                result = results.get(i);
 			data = new GenericWorksheetData(39);
 			data.setValueAt(0, "" + result.getIrr_year());
 			data.setValueAt(1, "" + result.getIrr_mon());
@@ -479,7 +480,7 @@ private List resultsToGenericData(List results) {
 		return v;	
 	}
 	else {
-		List v = new Vector();
+		List<GenericWorksheetData> v = new Vector<GenericWorksheetData>();
 		int size = results.size();
 		HydroBase_DailyWC result = null;
 		GenericWorksheetData data = null;
@@ -690,7 +691,7 @@ private void submitQuery() {
 		__idJTextField.setText("" + curInt);
 	}        
 
-	List results = null;
+	List<HydroBase_DailyWC> results = null;
 	try {
 		results = 
 		 	__dmi.readDailyWCListForStructure_numRecordType(

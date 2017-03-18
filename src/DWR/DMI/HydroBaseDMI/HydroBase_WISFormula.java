@@ -37,14 +37,14 @@ protected String _column = 		DMIUtil.MISSING_STRING;
 protected String _formula = 		DMIUtil.MISSING_STRING;
 protected String _formulastring = 	DMIUtil.MISSING_STRING;
 protected boolean _isFormulaEvaluated = 	false;
-protected List _wisMath;
+protected List<HydroBase_WISMath> _wisMath;
 
 /**
 Constructor.
 */
 public HydroBase_WISFormula() {
 	super();
-	_wisMath = new Vector();
+	_wisMath = new Vector<HydroBase_WISMath>();
 }
 
 /**
@@ -115,7 +115,7 @@ public HydroBase_WISMath getTerm(int i) {
 Returns the terms of the formula.
 @return the terms of the formula.
 */
-public List getTerms() {	
+public List<HydroBase_WISMath> getTerms() {	
 	return _wisMath;
 }
 

@@ -54,6 +54,7 @@ import RTi.Util.IO.PrintJGUI;
 
 import RTi.Util.Message.Message;	
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_Headgate 
 extends JFrame
 implements ActionListener, WindowListener {
@@ -199,7 +200,7 @@ public void actionPerformed(ActionEvent evt) {
 
 			int format = new Integer(eff[1]).intValue();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
 			HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 		} 
@@ -220,7 +221,7 @@ public void actionPerformed(ActionEvent evt) {
 			}
 			d.dispose();
 	 		// First format the output...
-			List outputStrings = formatOutput(format);
+			List<String> outputStrings = formatOutput(format);
 	 		// Now print...
 			PrintJGUI.print(this, outputStrings);
 		}
@@ -250,8 +251,8 @@ Responsible for formatting output.
 @param FORMAT format delimiter flag defined in this class
 @return returns a formatted Vector for exporting, printing, etc..
 */
-public List formatOutput(int FORMAT) {
-	List v = new Vector();
+public List<String> formatOutput(int FORMAT) {
+	List<String> v = new Vector<String>();
 
 	if (FORMAT == HydroBase_GUI_Util.SCREEN_VIEW) {
 		// The output is pretty simple since the GUI is so simple...

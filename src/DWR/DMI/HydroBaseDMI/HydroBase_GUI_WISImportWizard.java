@@ -75,6 +75,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is a wizard for choosing what import data to use in a WIS.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_WISImportWizard 
 extends JWizard 
 implements ItemListener, ListSelectionListener, MouseListener {
@@ -178,11 +179,10 @@ private SimpleJComboBox
 	__wisNameSimpleJComboBox;
 
 /**
-Vectors to hold data objects.
+List to hold data objects.
 */
-private	List
-	__infoVector,
-	__wisVector;
+private	List<String> __infoVector;
+private List<HydroBase_WISSheetName> __wisVector;
 
 /**
 Static initialization of the military times values.
@@ -213,7 +213,7 @@ HydroBase_WISImport wisImport) {
 	__parentGUI = parent_gui;
 	__row = row;
 	__col = col;
-	__infoVector = new Vector();
+	__infoVector = new Vector<String>();
 	JGUIUtil.setIcon(this, JGUIUtil.getIconImage());
 	setupGUI();
 }
@@ -378,9 +378,9 @@ private void generateWISSheets() {
 	__wisNameSimpleJComboBox.removeAll();
 
 	// get the water districts as selected from user preferences
-	List wd = HydroBase_GUI_Util.generateWaterDistricts(__dmi);
+	List<String> wd = HydroBase_GUI_Util.generateWaterDistricts(__dmi);
 
-	List wds = new Vector();
+	List<String> wds = new Vector<String>();
 	// initialize variables
 	if (wd != null && wd.size() > 0) {
 		int size = wd.size();
@@ -389,7 +389,7 @@ private void generateWISSheets() {
 		}
 	}
 	
-	List results = null;
+	List<HydroBase_WISSheetName> results = null;
 	try {
 		results = __dmi.readWISSheetNameList(wds, true);
 	}
@@ -414,7 +414,7 @@ private void generateWISSheets() {
 	String recentSheet = null;
 	String curSheet = null;
 	for (int count = 0; count < size; count++) {
-		wis = (HydroBase_WISSheetName)results.get(count);
+		wis = results.get(count);
 
 		curSheet = wis.getSheet_name();
 		
@@ -455,7 +455,7 @@ private String getInfoString() {
 Initializes data members.
 */
 private void initialize() {	   
-	__wisVector = new Vector();
+	__wisVector = new Vector<HydroBase_WISSheetName>();
 	__retrievedWIS = false;
 
 	initializeGUI();
@@ -821,7 +821,7 @@ private void setupGUI() {
 	JScrollWorksheet rtJSW = null;
 	try {
 		HydroBase_TableModel_WISImportWizard tm = 
-			new HydroBase_TableModel_WISImportWizard(new Vector(), 
+				new HydroBase_TableModel_WISImportWizard(new Vector<HydroBase_WISImport>(), 
 			HydroBase_TableModel_WISImportWizard
 			.STATION_GEOLOC_MEAS_TYPE);
 		rtWidths = tm.getColumnWidths();
@@ -892,7 +892,7 @@ private void setupGUI() {
 	JScrollWorksheet wisJSW = null;
 	try {
 		HydroBase_TableModel_WISImportWizard tm = 
-			new HydroBase_TableModel_WISImportWizard(new Vector(),
+			new HydroBase_TableModel_WISImportWizard(new Vector<HydroBase_WISImport>(),
 			HydroBase_TableModel_WISImportWizard.WIS_FORMAT);
 		wisWidths = tm.getColumnWidths();
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
@@ -1001,7 +1001,7 @@ private void submitRTQuery() {
 		return;
 	}
 
-	List results = null;
+	List<HydroBase_StationView> results = null;
 	try {
 		results = __dmi.readStationGeolocMeasTypeList(null,
 			district, null, "%RT_rate%", null, null, null, "1",
@@ -1040,7 +1040,7 @@ private void submitWISQuery() {
 	int wisNum = ((HydroBase_WISSheetName)__wisVector.get(
 		__wisNameSimpleJComboBox.getSelectedIndex())).getWis_num();
 
-	List results = null;
+	List<HydroBase_WISFormat> results = null;
 	try {
 		results = __dmi.readWISFormatList(wisNum, 
 			HydroBase_GUI_WIS.STRING, null);

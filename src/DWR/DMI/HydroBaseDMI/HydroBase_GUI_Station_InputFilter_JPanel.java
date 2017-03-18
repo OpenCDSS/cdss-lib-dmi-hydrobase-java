@@ -24,6 +24,7 @@ import RTi.Util.String.StringUtil;
 /**
 This class is an input filter for querying station data from the Station GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_Station_InputFilter_JPanel
 extends InputFilter_JPanel {
 
@@ -35,7 +36,7 @@ public HydroBase_GUI_Station_InputFilter_JPanel(HydroBaseDMI dmi) {
 	String rd = dmi.getFieldRightEscape();
 	String ld = dmi.getFieldLeftEscape();
 
-	List filters = new Vector();
+	List<InputFilter> filters = new Vector<InputFilter>();
 
 	String stationTableName = HydroBase_GUI_Util._STATION_TABLE_NAME + "." + ld;
 	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." + ld;
@@ -50,13 +51,13 @@ public HydroBase_GUI_Station_InputFilter_JPanel(HydroBaseDMI dmi) {
 		stationTableName + "contr_area" + rd, "contr_area",
 		StringUtil.TYPE_DOUBLE, null, null, false));		
 
-	List counties = dmi.getCountyRef();
+	List<HydroBase_CountyRef> counties = dmi.getCountyRef();
 	HydroBase_CountyRef county = null;
 	int size = counties.size();
-	List v1 = new Vector();
-	List v2 = new Vector();
+	List<String> v1 = new Vector<String>();
+	List<String> v2 = new Vector<String>();
 	for (int i = 0; i < size; i++) {
-		county = (HydroBase_CountyRef)counties.get(i);
+		county = counties.get(i);
 		if (county.getCty() > 0) {
 			v1.add(county.getCounty());
 			v2.add("" + county.getCty());

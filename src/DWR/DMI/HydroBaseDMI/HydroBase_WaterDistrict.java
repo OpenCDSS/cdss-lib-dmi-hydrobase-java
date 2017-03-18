@@ -29,8 +29,8 @@ package DWR.DMI.HydroBaseDMI;
 import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
@@ -100,9 +100,9 @@ public static String formWDID ( int length, int wd, int id ) {
 
 	iwd = new Integer (wd);
 	iid = new Integer (id);
-	Vector v = new Vector (2,1);
-	v.addElement(iwd);
-	v.addElement(iid);
+	List<Object> v = new ArrayList<Object>(2);
+	v.add(iwd);
+	v.add(iid);
 	if ((length <= 2) || (length >= 12)) {
 		return StringUtil.formatString (v, "%02d%05d");
 	}
@@ -118,9 +118,9 @@ Form a WDID string from its parts.  The default is a 7-character id.
 @return the formatted WDID string
 */
 public static String formWDID ( String wd, String id )
-{	Vector v = new Vector (2,1);
-	v.addElement(wd);
-	v.addElement(id);
+{	List<Object> v = new ArrayList<Object>(2);
+	v.add(wd);
+	v.add(id);
 	String wdid = StringUtil.formatString (v, "%02d%05d");
 	return wdid;
 }
@@ -133,9 +133,9 @@ Form a WDID string from its parts.
 @return the formatted WDID string
 */
 public static String formWDID (int length, String wd, String id)
-{	Vector v = new Vector (2, 1);
-	v.addElement(wd);
-	v.addElement(id);
+{	List<Object> v = new ArrayList<Object>(2);
+	v.add(wd);
+	v.add(id);
 	int idSize = length - 2;
 	String wdid = StringUtil.formatString(v, "%02d%0" + idSize + "d");
 	return wdid;
@@ -197,7 +197,7 @@ Lookup the water districts for a division.
 public static List<HydroBase_WaterDistrict> lookupWaterDistrictsForDivision (
     List<HydroBase_WaterDistrict> districts, int div )
 {
-    List<HydroBase_WaterDistrict> wdList = new Vector();
+    List<HydroBase_WaterDistrict> wdList = new ArrayList<HydroBase_WaterDistrict>();
     for ( HydroBase_WaterDistrict wd : districts ) {
         if ( wd.getDiv() == div ) {
             wdList.add(wd);

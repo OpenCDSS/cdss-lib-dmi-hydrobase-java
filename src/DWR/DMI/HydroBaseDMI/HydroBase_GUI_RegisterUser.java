@@ -58,6 +58,7 @@ import RTi.Util.GUI.SimpleJButton;
 
 import RTi.Util.Message.Message;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_RegisterUser 
 extends JFrame 
 implements ActionListener, KeyListener, WindowListener {
@@ -444,7 +445,7 @@ private void registerClicked() {
 			}
 
 			int guestUserNum = userSecurity.getUser_num();
-			List results = null;
+			List<HydroBase_UserPreferences> results = null;
 			try {
 			results = 
 			__dmi.readUserPreferencesListForUser_num(

@@ -59,7 +59,7 @@ throws Exception {
 From AbstractTableModel.  Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_YEAR: return Integer.class;
 		case COL_DIV: return Integer.class;

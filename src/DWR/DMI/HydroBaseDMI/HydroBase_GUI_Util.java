@@ -127,12 +127,11 @@ package DWR.DMI.HydroBaseDMI;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -385,9 +384,9 @@ public static void buildLocation(JFrame frame, JTextField textField) {
 Exports a Vector of strings to a file.
 @param parent the JFrame on which hourglass information should be displayed.
 @param filename the name of the file to which to write.
-@param strings a non-null Vector of Strings, each element of which will be another line in the file.
+@param strings a non-null list of Strings, each element of which will be another line in the file.
 */
-public static void export(JFrame parent, String filename, List strings)
+public static void export(JFrame parent, String filename, List<String> strings)
 throws Exception {
 	String routine = "HydroBase_GUI_Util.export";
 	// First see if we can write the file given the security settings...
@@ -399,22 +398,24 @@ throws Exception {
 	JGUIUtil.setWaitCursor(parent, true);
 
 	// Create a new FileOutputStream wrapped with a DataOutputStream for writing to a file.
+	PrintWriter oStream = null;
 	try {
-		PrintWriter oStream = new PrintWriter( new FileWriter(filename));
+		oStream = new PrintWriter( new FileWriter(filename));
 
 		// Write each element of the strings list to a file.
-		// For some reason, when just using println in an
-		// applet, the cr-nl pair is not output like it should be on Windows95.  Java Bug???
 		String linesep = System.getProperty("line.separator");
 		for (int i = 0; i < strings.size(); i++) {
-			oStream.print( strings.get(i).toString() + linesep);
+			oStream.print( strings.get(i) + linesep);
 		}
-		oStream.flush(); 
-		oStream.close(); 
 	}
 	catch (Exception IOError) {
 		JGUIUtil.setWaitCursor(parent, false);
 		throw new Exception ( "Trouble opening or writing to file \"" + filename + "\"." );
+	}
+	finally {
+		if ( oStream != null ) {
+			oStream.close();
+		}
 	}
 
 	JGUIUtil.setWaitCursor(parent, false);
@@ -518,7 +519,7 @@ Generates the Divisions as specified in the display preferences and returns them
 @param dmi the dmi to use for talking to the database.
 @return a list with the divisions in it.
 */
-public static List generateDivisions(HydroBaseDMI dmi) {
+public static List<String> generateDivisions(HydroBaseDMI dmi) {
         // retrieve divisions
         String divisions = dmi.getPreferenceValue("WD." + getActiveWaterDivision() + ".DivisionSelect");
 	if (divisions == null) {
@@ -526,7 +527,7 @@ public static List generateDivisions(HydroBaseDMI dmi) {
         divisions = dmi.getPreferenceValue("WD.DivisionSelect");
 	}
 
-	List v = new Vector();
+	List<String> v = new ArrayList<String>();
 
     StringTokenizer st = new StringTokenizer(divisions.trim(),",");
     // add divisions to the Choice component
@@ -544,7 +545,7 @@ This function generates the water Districts as specified in the user
 preferences WD.ActiveDivision.DistrictSelect property.
 @return a list of water districts according to user preferences.
 */
-public static List generateWaterDistricts(HydroBaseDMI dmi) {
+public static List<String> generateWaterDistricts(HydroBaseDMI dmi) {
 	return generateWaterDistricts(dmi, false);
 }
 
@@ -598,10 +599,10 @@ public static String getActiveWaterDivision() {
 
 /**
 Given a list of aquifers, returns a String that is suitable for display as a Tooltip.
-@param aquifiers a Vector of HydroBase_Aquifer.  Can be null.
+@param aquifiers a list of HydroBase_Aquifer.  Can be null.
 @return a String that can be used as a tool tip.  Will never be null.
 */
-protected static String getAquiferListForToolTip(List aquifers) {
+protected static String getAquiferListForToolTip(List<HydroBase_Aquifer> aquifers) {
 	if (aquifers == null || aquifers.size() == 0) {
 		return "";
 	}
@@ -610,7 +611,7 @@ protected static String getAquiferListForToolTip(List aquifers) {
 	int size = aquifers.size();
 	StringBuffer buffer = new StringBuffer();
 	for (int i = 0; i < size; i++) {
-		a = (HydroBase_Aquifer)aquifers.get(i);
+		a = aquifers.get(i);
 		buffer.append("  " + a.getAquifer_code());
 		buffer.append(" - ");
 		buffer.append(a.getAquifer_name());
@@ -648,7 +649,7 @@ Returns a list of all the names of the delimited formats.
 @return a list of all the names of the delimited formats.
 */
 public static List<String> getDelimitedFormats() {
-	List<String> v = new Vector();
+	List<String> v = new ArrayList<String>();
 	v.add("Tab-Delimited");
 	v.add("Comma-Delimited");
 	v.add("Semicolon-Delimited");
@@ -662,8 +663,8 @@ of the list is a list of 2-element String arrays.  The first element is the
 English description of the delimited format and the second element is the filename extension.
 @return a list of all the delimited formats and their extensions.
 */
-public static List getDelimitedFormatsAndExtensions() {
-	List v = new Vector();
+public static List<String []> getDelimitedFormatsAndExtensions() {
+	List<String []> v = new ArrayList<String []>();
 	String[] s = new String[2];
 	s[0] = "Tab-Delimited";
 	s[1] = "txt";
@@ -712,7 +713,7 @@ Returns the filename and format that a used selects from a File chooser dialog t
 @return a String array where the first element is the selected filename and the
 second element is the type of file selected.
 */
-public static String[] getExportFilenameAndFormat(JFrame parent,List formats){
+public static String[] getExportFilenameAndFormat(JFrame parent,List<String []> formats){
 	return getFilenameAndFormat(parent, "Export", formats);
 }
 
@@ -722,11 +723,11 @@ Also sets the last selected file dialog directory to whatever directory the
 file is located in, if the file selection was approved (i.e., Cancel was not pressed).
 @param parent the JFrame on which the file chooser appears.
 @param title the title of the file chooser.
-@param formats a Vector of the valid formats for the file chooser.
+@param formats a list of the valid formats for the file chooser.
 @return a two-element String array where the first element is the name of the
 file and the second element is the type of format selected (in String format, though it's actually an integer).
 */
-private static String[] getFilenameAndFormat(JFrame parent, String title, List formats) {	
+private static String[] getFilenameAndFormat(JFrame parent, String title, List<String []> formats) {	
 	JGUIUtil.setWaitCursor(parent, true);
 	String dir = JGUIUtil.getLastFileDialogDirectory();
 	JFileChooser fc = null;
@@ -742,7 +743,7 @@ private static String[] getFilenameAndFormat(JFrame parent, String title, List f
 	SimpleFileFilter first = null;
 	int count = 0;
 	for (int i = 0; i < formats.size(); i++) {
-		s = (String[])formats.get(i);
+		s = formats.get(i);
 		if (!s[1].equals("") && !s[0].equals("")) {
 			sff = new SimpleFileFilter(s[1], s[0]);
 			fc.addChoosableFileFilter(sff);
@@ -766,14 +767,14 @@ private static String[] getFilenameAndFormat(JFrame parent, String title, List f
 		sff = (SimpleFileFilter)fc.getFileFilter();
 
 		// this will always return a one-element vector
-		List extensionV = sff.getFilters();
+		List<String> extensionV = sff.getFilters();
 
-		String extension = (String)extensionV.get(0);
+		String extension = extensionV.get(0);
 		
 		String desc = sff.getShortDescription();
 		int type = -1;
 		for (int i = 0; i < formats.size(); i++) {
-			s = (String[])formats.get(i);
+			s = formats.get(i);
 			if (desc.equals(s[0])) {
 				type = i;
 				i = formats.size() + 1;
@@ -798,7 +799,7 @@ Tab-delimited must be at the 0th position because it has a defined value of 0 in
 @return the list of export formats in a Vector.
 */
 public static List<String> getFormats() {
-	List<String> v = new Vector();
+	List<String> v = new ArrayList<String>();
 	v.add("Tab-Delimited");
 	v.add("Comma-Delimited");
 	v.add("Semicolon-Delimited");
@@ -810,12 +811,12 @@ public static List<String> getFormats() {
 
 /**
 Returns a list of all the output formats and their extensions.  The format of 
-the list is a Vector of 2-element String arrays.  The first element is the 
+the list is a list of 2-element String arrays.  The first element is the 
 English description of the format, and the second element is the filename extension.
 @return a list of all the output formats and their extensions.
 */
-public static List getFormatsAndExtensions() {
-	List v = new Vector();
+public static List<String []> getFormatsAndExtensions() {
+	List<String []> v = new ArrayList<String []>();
 	String[] s = new String[2];
 	s[0] = "Tab-Delimited";
 	s[1] = "txt";
@@ -980,13 +981,13 @@ Builds order by clauses from the fields selected in an InputFilter_JPanel.
 @param spflex if true then the order by is being built for an SPFlex method.
 If false the order by is being built for an SQL query.
 */
-public static List getOrderBysFromInputFilter_JPanel( InputFilter_JPanel panel, boolean spflex) {
+public static List<String> getOrderBysFromInputFilter_JPanel( InputFilter_JPanel panel, boolean spflex) {
 	InputFilter filter = null;
 	int nfg = 0;
 	if (panel != null) {
 		nfg = panel.getNumFilterGroups();
 	}
-	List orderBys = new Vector();
+	List<String> orderBys = new ArrayList<String>();
 
 	for (int i = 0; i < nfg; i++) {
 		filter = panel.getInputFilter(i);	
@@ -1013,7 +1014,7 @@ Returns a list of all the names of the screen formats.
 @return a list of all the names of the screen formats.
 */
 public static List<String> getScreenFormats() {
-	List<String> v = new Vector();
+	List<String> v = new ArrayList<String>();
 	v.add("");
 	v.add("");
 	v.add("");
@@ -1025,12 +1026,12 @@ public static List<String> getScreenFormats() {
 
 /**
 Returns a list of all the screen formats and their extensions.  The format of
-the list is a Vector of String arrays.  The first element of the array is the
+the list is a list of String arrays.  The first element of the array is the
 English description of the format and the second element is the filename extension.
 @return a list of all the screen formats and their extensions.
 */
-public static List getScreenFormatsAndExtensions() {
-	List v = new Vector();
+public static List<String []> getScreenFormatsAndExtensions() {
+	List<String []> v = new ArrayList<String []>();
 	String[] s = new String[2];
 	s[0] = "";
 	s[1] = "";
@@ -1062,7 +1063,7 @@ Returns the filename and format that a used selects from a File chooser dialog t
 @return a String array where the first element is the selected filename and the
 second element is the type of file selected.
 */
-public static String[] getSaveFilenameAndFormat(JFrame parent, List formats) {
+public static String[] getSaveFilenameAndFormat(JFrame parent, List<String []> formats) {
 	return getFilenameAndFormat(parent, "Save As", formats);
 }
 
@@ -1249,11 +1250,11 @@ throws Exception {
 Returns the list of tables that a GUI can use to populate its list of possible tables to query.
 @param gui the GUI for which to return the table SimpleJComboBox contents.
 i.e., call this method with a gui parameter of 'this'
-@return a Vector of Strings, each of which is a table name.  This method is
-guaranteed to return a non-null Vector.
+@return a list of Strings, each of which is a table name.  This method is
+guaranteed to return a non-null list.
 */
 public static List<String> getTableStrings(Object gui) {
-	List<String> v = new Vector();
+	List<String> v = new ArrayList<String>();
 	if (gui instanceof HydroBase_GUI_WaterRightsQuery) {
 		v.add(_NET_AMOUNTS);
 		v.add(_TRANS);
@@ -1314,7 +1315,7 @@ public static String getUserDate(String date)  {
 		// parse String according to '/', ' ', and ':'
 		catch (Exception e2) {
 			try {
-				List v = StringUtil.breakStringList(date, "/ :", 0);
+				List<String> v = StringUtil.breakStringList(date, "/ :", 0);
 				y2k_date = StringUtil.formatString((String)v.get(2), "%04d")
 					+ "-"
 					+ StringUtil.formatString((String)v.get(0), "%02d")
@@ -1342,7 +1343,7 @@ the database table and field names in the internal (non-label) data.
 @param dmi The DMI instance being used, which may be checked for specific formatting.
 @param panel The InputFilter_JPanel instance to be converted.  If null, an empty list will be returned.
 */
-public static List getWhereClausesFromInputFilter (HydroBaseDMI dmi, InputFilter_JPanel panel) 
+public static List<String> getWhereClausesFromInputFilter (HydroBaseDMI dmi, InputFilter_JPanel panel) 
 throws Exception {
 	return getWhereClausesFromInputFilter(dmi, panel, null, 0);
 }
@@ -1358,18 +1359,18 @@ the database table and field names in the internal (non-label) data.
 query information.  For Water Rights queries.
 @param form the form for which to generate a where clause.  For Water Rights queries.
 */
-public static List getWhereClausesFromInputFilter (HydroBaseDMI dmi,
+public static List<String> getWhereClausesFromInputFilter (HydroBaseDMI dmi,
 InputFilter_JPanel panel, String tableName, int form) 
 throws Exception {
 	// Loop through each filter group.  There will be one where clause per filter group.
 
 	if (panel == null) {
-		return new Vector();
+		return new ArrayList<String>();
 	}
 
 	int nfg = panel.getNumFilterGroups ();
 	InputFilter filter;
-	List where_clauses = new Vector();
+	List<String> where_clauses = new ArrayList<String>();
 	String where_clause="";	// A where clause that is being formed.
 	for ( int ifg = 0; ifg < nfg; ifg++ ) {
 		filter = panel.getInputFilter ( ifg );	
@@ -1535,15 +1536,15 @@ throws Exception {
     }
 
     // retrieve water districts
-    List divisions = getDivisions(dmi);
-    List districts = generateWaterDistricts(dmi);
+    List<String> divisions = getDivisions(dmi);
+    List<String> districts = generateWaterDistricts(dmi);
 
 	if (divisions == null) {
-		divisions = new Vector();
+		divisions = new ArrayList<String>();
 	}
 
 	if (districts == null) {
-		districts = new Vector();
+		districts = new ArrayList<String>();
 	}
 
 	// If specified, make sure that the requested district is in the list (no leading 0)...
@@ -1559,7 +1560,7 @@ throws Exception {
 
 		boolean found = false;
 		for (int i = 0; i < size; i++) {
-			if (wdString.equals((String)districts.get(i))) {
+			if (wdString.equals(districts.get(i))) {
 				found = true;
 				break;
 			}
@@ -1576,7 +1577,7 @@ throws Exception {
 
 		found = false;
 		for (int i = 0; i < size; i++) {
-			if (divString.equals((String)divisions.get(i))) {
+			if (divString.equals(divisions.get(i))) {
 				found = true;
 				break;
 			}
@@ -1605,7 +1606,7 @@ throws Exception {
 	int j = -1;
 	int k = -1;
 	int prefWD = -1;
-	List waterDivisionDistricts = null;
+	List<HydroBase_WaterDistrict> waterDivisionDistricts = null;
 	
 	// Ensure that the divisions are in order.
 	Collections.sort(divisions);
@@ -1614,7 +1615,7 @@ throws Exception {
 	
 	for (int i = 0; i < divSize; i++) {
 		// add the name of the division to the combo box
-		div = StringUtil.atoi((String)divisions.get(i));
+		div = StringUtil.atoi(divisions.get(i));
 		comboBox.add(HydroBase_WaterDivision.getDivisionName(div));
 
 		// get the list of water districts in the given division.

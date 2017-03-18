@@ -52,6 +52,7 @@ import RTi.Util.String.StringUtil;
 GUI for displaying, editing, and validating node properties for normal nodes
 and annotations.
 */
+@SuppressWarnings("serial")
 public class HydroBase_GUI_WISDiagramNodeProperties 
 extends JFrame 
 implements ActionListener, KeyListener, WindowListener {
@@ -458,7 +459,7 @@ private void setupGUI() {
 		for (int i = 0; i < positions.length; i++) {
 			__textPositionComboBox.addItem(positions[i]);
 		}		
-		// offset by 1 for some backwards-compatability issues
+		// offset by 1 for some backwards-compatibility issues
 		int textDir = __node.getLabelDirection() - 1;
 		__textPositionComboBox.select(textDir);
 		__textPositionComboBox.addActionListener(this);

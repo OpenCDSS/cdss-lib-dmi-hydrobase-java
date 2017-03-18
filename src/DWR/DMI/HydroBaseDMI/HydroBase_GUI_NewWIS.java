@@ -63,6 +63,7 @@ import RTi.Util.String.StringUtil;
 import RTi.Util.Time.DateTime;
 import RTi.Util.Time.TimeZoneDefaultType;
 
+@SuppressWarnings("serial")
 public class HydroBase_GUI_NewWIS 
 extends JFrame 
 implements ActionListener, ItemListener, KeyListener, WindowListener {
@@ -121,9 +122,9 @@ private SimpleJComboBox
 	__streamJComboBox;
 
 /**
-Vector of HydroBase_Stream objects.
+List of HydroBase_Stream objects.
 */
-private List __streamVector;
+private List<HydroBase_Stream> __streamVector;
 
 
 /**
@@ -192,7 +193,7 @@ private void generateStreamList() {
 	String routine = CLASS + ".generateStreamList";
 
 	// initialize variables
-	__streamVector = new Vector();
+	__streamVector = new Vector<HydroBase_Stream>();
 	__streamJComboBox.removeAll();
 
 	if (__associatedJComboBox.getItemCount() == 0) {
@@ -206,7 +207,7 @@ private void generateStreamList() {
 		__associatedJComboBox.getSelected());
 	int wd = (new Integer(swd)).intValue();
 
-	List results = null;
+	List<HydroBase_Stream> results = null;
 	try {
 		results = __dmi.readStreamListForWDStr_trib_to(wd, 
 			DMIUtil.MISSING_INT);
@@ -223,7 +224,7 @@ private void generateStreamList() {
 	if (results != null && size > 0) {
 		HydroBase_Stream data = null;
 		for (int i = 0; i < size; i++) {
-			data = (HydroBase_Stream)results.get(i);
+			data = results.get(i);
 			__streamJComboBox.add(data.getStream_name().trim());
 			__streamVector.add(data);
 		}
@@ -321,7 +322,7 @@ private void okClicked() {
 
 	// perform query to check sheetName against a sheet which
 	// may have been archived on the same date as the current day
-    List results = null;
+    List<HydroBase_WISSheetName> results = null;
 	try {
 	        results = __dmi.readWISSheetNameList(DMIUtil.MISSING_INT, 
 			DMIUtil.MISSING_INT, sheetName, null, true);
@@ -340,7 +341,7 @@ private void okClicked() {
 	if (results != null && results.size() > 0) {
 		// compare effective date for element 0 against the current 
 		// day, since effectiveDate was ordered via DESC		
-		data = (HydroBase_WISSheetName)results.get(0);
+		data = results.get(0);
 		DateTime recentDate = new DateTime(data.getEffective_date());
 
 		int wis_num = data.getWis_num();
@@ -663,9 +664,9 @@ public void setVisible(boolean state) {
 		String name = null;
 		int w = -1;
 		String s = null;
-		List v = HydroBase_GUI_Util.generateWaterDistricts(__dmi);
+		List<String> v = HydroBase_GUI_Util.generateWaterDistricts(__dmi);
 		for (int i = 0; i < v.size(); i++) {	
-			s = (String)v.get(i);	
+			s = v.get(i);	
 			w = (Integer.decode(s)).intValue();
 			try {
 				wd = __dmi.lookupWaterDistrictForWD(w);
