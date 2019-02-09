@@ -1,3 +1,5 @@
+// HydroBase_GUI_Util - GUI utilities class that is used by all the GUI applications
+
 //------------------------------------------------------------------------------
 // HydroBase_GUI_Util - Main class that is used by all the GUI applications.
 //	It controls user preferences and general methods that can be called

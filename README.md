@@ -1,21 +1,27 @@
 # cdss-lib-dmi-hydrobase-java #
 
-This repository contains Colorado's Decision Support Systems (CDSS) Java library for
-the State of Colorado's HydroBase database.
+This repository contains
+[Colorado's Decision Support Systems (CDSS)](https://www.colorado.gov/cdss)
+Java library for the State of Colorado's HydroBase database using JDBC/ODBC
+direct connection.
+
+The `src/us` folder contains code for SOAP HBGuest web services that
+are being phased out because REST web services are
+(this code will removed in the future).
 
 Eclipse is used for development and repositories currently contain Eclipse project files to facilitate
 setting up the Eclipse development environment.
 Development on library code usually occurs while developing an application such as TSTool,
 rather than the library alone, because software requirements come from application development.
 
-This software is being migrated to an open source software project as part of the OpenCDSS project.
 See the following online resources:
 
-* [CDSS](http://cdss.state.co.us)
-* [OpenCDSS](http://learn.openwaterfoundation.org/cdss-website-opencdss/)
+* [Colorado's Decision Support Systems](https://www.colorado.gov/cdss)
+* [OpenCDSS](http://learn.openwaterfoundation.org/cdss-website-opencdss/) - currently
+hosted on the Open Water Foundation website while OpenCDSS server is being configured
 * [TSTool Developer Documentation](http://learn.openwaterfoundation.org/cdss-app-tstool-doc-dev/) - example of application that uses this library
 
-The developer documentation and guidelines will be updated as the development environment is used in development.  See the following sections in this page:
+See the following sections in this page:
 
 * [Repository Folder Structure](#repository-folder-structure)
 * [Repository Dependencies](#repository-dependencies)
@@ -45,7 +51,7 @@ cdss-lib-dmi-hydrobase-java/  Source code and development working files.
   dist/                       Folder used to build distributable installer (ignored from repo).
   doc/                        Working folder for Javadoc creation.
   lib/                        Third-party libraries.
-  LICENSE.txt                 Library license file.
+  LICENSE.md                  Library license file.
   nbproject/                  NetBeans project (legacy, may be removed).
   README.md                   This file.
   src/                        Source code.
@@ -65,7 +71,7 @@ with minimal additional configuration (for example see TSTool Developer document
 
 |**Repository**|**Description**|
 |----------------------------------------------------------------------------------------|----------------------------------------------------|
-|[`cdss-lib-common-java`](https://github.com/OpenWaterFoundation/cdss-lib-common-java)   |Library of core utility code used by multiple repos.|
+|[`cdss-lib-common-java`](https://github.com/OpenCDSS/cdss-lib-common-java)   |Library of core utility code used by multiple repos.|
 
 ### Repositories that Depend on this Repository ###
 
@@ -73,11 +79,11 @@ The following repositories are known to depend on this repository:
 
 |**Repository**|**Description**|
 |----------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
-|[`cdss-app-statedmi-main`](https://github.com/OpenWaterFoundation/cdss-app-statedmi-main)                       |Main StateDMI application code.|
-|[`cdss-app-tstool-main`](https://github.com/OpenWaterFoundation/cdss-app-tstool-main)                           |Main TSTool application code.|
-|[`cdss-lib-processor-ts-java`](https://github.com/OpenWaterFoundation/cdss-lib-processor-ts-java)               |Library of processing code used by TSTool.|
-|[`cdss-lib-dmi-hydrobase-rest-java`](https://github.com/OpenWaterFoundation/cdss-lib-dmi-hydrobase-rest-java)   |Colorado HydroBase REST web services Library.|
-|[`cdss-lib-dmi-satmonsys-java`](https://github.com/OpenWaterFoundation/cdss-lib-dmi-satmonsys-java)             |Colorado Satellite Monitoring System Library.|
+|[`cdss-app-statedmi-main`](https://github.com/OpenCDSS/cdss-app-statedmi-main)                       |Main StateDMI application code.|
+|[`cdss-app-tstool-main`](https://github.com/OpenCDSS/cdss-app-tstool-main)                           |Main TSTool application code.|
+|[`cdss-lib-processor-ts-java`](https://github.com/OpenCDSS/cdss-lib-processor-ts-java)               |Library of processing code used by TSTool.|
+|[`cdss-lib-dmi-hydrobase-rest-java`](https://github.com/OpenCDSS/cdss-lib-dmi-hydrobase-rest-java)   |Colorado HydroBase REST web services Library.|
+|[`cdss-lib-dmi-satmonsys-java`](https://github.com/OpenCDSS/cdss-lib-dmi-satmonsys-java)             |Colorado Satellite Monitoring System Library (being phased out).|
 |StateView - need to finalize repository                                                                         |HydroBase viewing tool                       |
 
 ## Development Environment Folder Structure ##
@@ -118,8 +124,7 @@ Contributions to this project can be submitted using the following options:
 1. Software developers with commit privileges can write to this repository
 as per normal OpenCDSS development protocols.
 2. Post an issue on GitHub with suggested change.  Provide information using the issue template.
-3. Email a development contact.
-4. Fork the repository, make changes, and do a pull request.
+3. Fork the repository, make changes, and do a pull request.
 Contents of the current master branch should be merged with the fork to minimize
 code review before committing the pull request.
 
@@ -127,8 +132,9 @@ See also the [OpenCDSS / protocols](http://learn.openwaterfoundation.org/cdss-we
 
 ## License ##
 
-A license for the software is being determined as part of the OpenCDSS project.
-GPL 3.0 has been recommended.
+Copyright Colorado Department of Natural Resources.
+
+The software is licensed under GPL v3+. See the [LICENSE.md](LICENSE.md) file.
 
 ## Contact ##
 

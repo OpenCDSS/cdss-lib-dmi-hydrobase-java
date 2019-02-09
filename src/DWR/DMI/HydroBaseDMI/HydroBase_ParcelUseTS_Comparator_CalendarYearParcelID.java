@@ -1,3 +1,5 @@
+// HydroBase_ParcelUseTS_Comparator_CalendarYearParcelID - compare two ParcelUseTS objects
+
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.Comparator;
