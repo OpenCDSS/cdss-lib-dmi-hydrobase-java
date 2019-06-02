@@ -55,8 +55,9 @@ import java.util.List;
 /**
 This class is a table model for displaying ground water data in the HydroBase_GUI_GroundWater GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_WellMeas 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_StructureGeolocStructMeasTypeView> {
 
 /**
 Number of columns in the table model.
@@ -82,7 +83,7 @@ Constructor.  This builds the Model for displaying the given ground water result
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_WellMeas(List results)
+public HydroBase_TableModel_WellMeas(List<HydroBase_StructureGeolocStructMeasTypeView> results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -91,14 +92,6 @@ throws Exception {
 	
 	_rows = results.size();
 	_data = results;
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	super.finalize();
 }
 
 /**
@@ -189,8 +182,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_StructureGeolocStructMeasTypeView g = (HydroBase_StructureGeolocStructMeasTypeView)
-	_data.get(row);
+	HydroBase_StructureGeolocStructMeasTypeView g = _data.get(row);
 	switch (col) {
 		case COL_WD:		
 			return new Integer(g.getWD());

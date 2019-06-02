@@ -239,10 +239,12 @@ private HydroBaseDMI __dmi = null;
 Apply button
 */
 private JButton __applyJButton = null;
+
 /**
 Cancel button
 */
 private JButton __cancelJButton = null;
+
 /**
 Change button
 */
@@ -252,14 +254,17 @@ private JButton __changeJButton = null;
 OK Button
 */
 private JButton __okJButton = null;
+
 /**
 Set interval button 
 */
 private JButton __setIntervalJButton = null;
+
 /**
 wd button
 */
 private JButton __wdJButton = null;
+
 /**
 WIS button
 */
@@ -269,10 +274,12 @@ private JButton __wisJButton = null;
 Confirm password field
 */
 private JPasswordField __confirmPWJPasswordField = null;
+
 /**
 New password field.
 */
 private JPasswordField __newPWJPasswordField = null;
+
 /**
 Old password field
 */
@@ -282,6 +289,7 @@ private JPasswordField __oldPWJPasswordField = null;
 past hour radio button -- in the same group as time interval
 */
 private JRadioButton __pastHoursJRadioButton = null;
+
 /**
 Time interval radio button -- in the same group as past hours
 */
@@ -291,6 +299,7 @@ private JRadioButton __timeIntervalJRadioButton = null;
 Bypass off radio button -- paired with bypass on
 */
 private JRadioButton __bypassOffJRadioButton = null;
+
 /**
 Bypass on radio button -- paired with bypass off
 */
@@ -300,6 +309,7 @@ private JRadioButton __bypassOnJRadioButton = null;
 Call list using wis radio button -- paired with call list any struct
 */
 private JRadioButton __callListUsingWISJRadioButton = null;
+
 /**
 Call list any struct radio button -- paired with call list using wis
 */
@@ -319,6 +329,7 @@ Manual check box -- paired with auto
 Div coding no check box -- paired with div coding yes
 */
 private JRadioButton __divCodingNoJRadioButton = null;
+
 /**
 Div coding yes check box -- paired with div coding no
 */
@@ -328,22 +339,27 @@ private JRadioButton __divCodingYesJRadioButton = null;
 Default district jtext field
 */
 private JTextField __defaultDistrictJTextField = null;
+
 /**
 Default GVP text field
 */
 private JTextField __defaultGVPJTextField = null;
+
 /**
 End time text field
 */
 private JTextField __endTimeJTextField = null;
+
 /**
 Past hours text field
 */
 private JTextField __pastHoursJTextField = null;
+
 /**
 start time text field
 */
 private JTextField __startTimeJTextField = null;
+
 /**
 Status text field
 */
@@ -352,11 +368,12 @@ private JTextField __statusJTextField = null;
 /**
 Division list.
 */
-private SimpleJList __divisionJList = null;
+private SimpleJList<String> __divisionJList = null;
+
 /**
 District list.
 */
-private SimpleJList __districtJList = null;
+private SimpleJList<String> __districtJList = null;
 
 /**
 Date properties.
@@ -372,10 +389,12 @@ private SimpleJButton	__defaultDistrictJButton = null;
 Priority combo box.
 */
 private SimpleJComboBox __priorityJComboBox = null;
+
 /**
 User level combo box.
 */
 private SimpleJComboBox __userLevelJComboBox = null;
+
 /**
 Wis combo box.
 */
@@ -953,46 +972,6 @@ public void closeClicked() {
 }
 
 /**
-Clean up for garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__dmi = null;
-	__applyJButton = null;
-	__cancelJButton = null;
-	__changeJButton = null;
-	__okJButton = null;
-	__setIntervalJButton = null;
-	__wdJButton = null;
-	__wisJButton = null;
-	__confirmPWJPasswordField = null;
-	__newPWJPasswordField = null;
-	__oldPWJPasswordField = null;
-	__pastHoursJRadioButton = null;
-	__timeIntervalJRadioButton = null;
-	__bypassOffJRadioButton = null;
-	__bypassOnJRadioButton = null;
-	__callListUsingWISJRadioButton = null;
-	__callListAnyStructJRadioButton = null;
-	__divCodingNoJRadioButton = null;
-	__divCodingYesJRadioButton = null;
-	__defaultDistrictJTextField = null;
-	__defaultGVPJTextField = null;
-	__endTimeJTextField = null;
-	__pastHoursJTextField = null;
-	__startTimeJTextField = null;
-	__statusJTextField = null;
-	__divisionJList = null;
-	__districtJList = null;
-	__dateProps = null;
-	__defaultDistrictJButton = null;
-	__priorityJComboBox = null;
-	__userLevelJComboBox = null;
-	__wisJComboBox = null;
-	super.finalize();
-}
-
-/**
 Adds the water districts to the __districtJList object depending on the 
 selected division in the __divisionJList object.
 */
@@ -1001,7 +980,7 @@ private void generateDistricts() {
 	String routine = "HydroBase_GUI_Options.generateDistricts";
         // Clear all the water districts after determining which ones
 	// are currently selected.
-	Object districts[] = __districtJList.getSelectedValues();
+	List<String> districts = __districtJList.getSelectedValuesList();
         __districtJList.removeAll();
                 
         // get the selected rows in the division list. The division number is 
@@ -1043,10 +1022,10 @@ private void generateDistricts() {
 	__districtJList.update();
 
 	// re-select previously selected water districts
-	size = districts.length;
+	size = districts.size();
 	int index;
 	for (int count = 0; count < size; count++) {
-		index = __districtJList.indexOf(districts[count]);
+		index = __districtJList.indexOf(districts.get(count));
 		if (index > -1) {
 			__districtJList.select(index);
 		}
@@ -1054,8 +1033,7 @@ private void generateDistricts() {
 
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error in looking up " 
-			+ "water districts");
+		Message.printWarning(1, routine, "Error in looking up water districts");
 		Message.printWarning(1, routine, e);
 	}
 	__generatingDistricts = false;
@@ -1191,7 +1169,6 @@ Returns the list of selected water districts in the water districts filter.
 @return the list of selected water districts in the water districts filter.
 */
 public String [] getSelectedDistricts() {
-	@SuppressWarnings("unchecked")
 	List<String> v = __districtJList.getSelectedItems();
 	int size = v.size();
 	String arr[] = new String[size];
@@ -1211,7 +1188,6 @@ user preferences.
 private String getWD() {
 	// initialize variables
 	String wdWhere = null;
-	@SuppressWarnings("unchecked")
 	List<String> select = __districtJList.getSelectedItems(); 
                                
 	//concatenate 'wd = ' for each element in the Vector
@@ -1448,7 +1424,7 @@ user preference String.
 @return a String that is in the format usable for comparing to or using as
 a user preference.
 */
-private String listToString(SimpleJList list) {
+private String listToString(SimpleJList<String> list) {
 	String routine = "HydroBase_GUI_Options.listToString";
 	// initialize variables
 	String selected = "";
@@ -1462,25 +1438,19 @@ private String listToString(SimpleJList list) {
             	if (list.isSelectedIndex(curRow)) {
 			if (list == __divisionJList) {
 				try {
-				curItem = (String)list.getItem(curRow);
-				int num = 
-				      HydroBase_WaterDivision.getDivisionNumber(
-					curItem);
+				curItem = list.getModel().getElementAt(curRow);
+				int num = HydroBase_WaterDivision.getDivisionNumber( curItem);
 				if (num != DMIUtil.MISSING_INT) {
 					selected += num + ",";
 				}
 				}
 				catch (Exception e) {
-					Message.printWarning(1, routine, 
-						"Error getting division "
-						+ "number");
+					Message.printWarning(1, routine, "Error getting division number");
 					Message.printWarning(1, routine, e);
 				}
 			}
 			else if (list == __districtJList) {
-                		curItem =
-				((String)list.getItem(curRow))
-					.substring(5,7).trim()+",";
+                		curItem = list.getModel().getElementAt(curRow).substring(5,7).trim()+",";
                 		selected += curItem;
 			}
 				           
@@ -1513,7 +1483,7 @@ public void ready() {
 This function sets the selected list item user preferences changes made 
 in either the __divisionJList or __districtJList objects.
 */
-private void saveListSelections(SimpleJList list, String keyword) {
+private void saveListSelections(SimpleJList<String> list, String keyword) {
         __dmi.setPreferenceValue(keyword, listToString(list));
 }
 
@@ -1729,7 +1699,7 @@ private void setupGUI(boolean visible) {
 		1, 0, 1, 1, 1, 0, TLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
 	String[] names = HydroBase_WaterDivision.getDivisionNames();
-        __divisionJList = new SimpleJList(names);
+        __divisionJList = new SimpleJList<String>(names);
 	__divisionJList.setInverseListSelection(true);
 	__divisionJList.setPrototypeCellValue(
 		"Division 7: San Juan/Dolores River   ");
@@ -1741,7 +1711,7 @@ private void setupGUI(boolean visible) {
         JGUIUtil.addComponent(wdCJPanel, new JScrollPane(__divisionJList), 
 		0, 1, 1, 1, 1, 1, NLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
-        __districtJList = new SimpleJList();
+    __districtJList = new SimpleJList<String>();
 	__districtJList.setInverseListSelection(true);
 	__districtJList.clearSelection();
 	__districtJList.setPrototypeCellValue(

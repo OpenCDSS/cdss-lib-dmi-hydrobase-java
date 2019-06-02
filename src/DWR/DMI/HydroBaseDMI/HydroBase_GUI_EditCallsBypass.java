@@ -85,7 +85,6 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -198,12 +197,12 @@ private JTextField __statusJTextField;
 /**
 List of calls.
 */
-private SimpleJList __callsJList;
+private SimpleJList<String> __callsJList;
 
 /**
 List of structures.
 */
-private SimpleJList __structureJList;
+private SimpleJList<String> __structureJList;
 
 /**
 List of HydroBase_Calls objects.
@@ -271,8 +270,7 @@ public void actionPerformed(ActionEvent evt) {
 		structureQueryClicked();
 	}	
     	else if (command.equals(__MENU_FIND_STRUCTURE)) {
-		new FindInJListJDialog(this, (JList)__structureJList, 
-			"Find Structure");
+		new FindInJListJDialog(this, __structureJList, "Find Structure");
 	}	
 }
 
@@ -699,7 +697,7 @@ public void setupGUI() {
 
 	y++;
 
-	__structureJList = new SimpleJList();
+	__structureJList = new SimpleJList<String>();
 	__structureJList.addListSelectionListener(this);
 	__structureJList.addMouseListener(this);
 	__structureJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -713,7 +711,7 @@ public void setupGUI() {
 
 	y++;
 
-	__callsJList = new SimpleJList();
+	__callsJList = new SimpleJList<String>();
 	__callsJList.addListSelectionListener(this);
 	__callsJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     	JGUIUtil.addComponent(topWJPanel, new JScrollPane(__callsJList), 

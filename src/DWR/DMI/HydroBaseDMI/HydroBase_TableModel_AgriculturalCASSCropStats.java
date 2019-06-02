@@ -41,8 +41,9 @@ import java.util.List;
 /**
 This class is a table model for displaying Colorado agstats data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_AgriculturalCASSCropStats 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_AgriculturalCASSCropStats> {
 
 /**
 Number of columns in the table model.
@@ -72,7 +73,7 @@ Constructor.  This builds the Model for displaying the given agstats results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_AgriculturalCASSCropStats(List results)
+public HydroBase_TableModel_AgriculturalCASSCropStats(List<HydroBase_AgriculturalCASSCropStats> results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -84,18 +85,10 @@ throws Exception {
 }
 
 /**
-Cleans up data members.
-*/
-public void finalize()
-throws Throwable {
-	super.finalize();
-}
-
-/**
 From AbstractTableModel.  Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_ST:			return String.class;
 		case COL_COUNTY:		return String.class;

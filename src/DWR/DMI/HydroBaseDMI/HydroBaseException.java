@@ -40,6 +40,7 @@ A HydroBaseException should be thrown when a HydroBase interaction fails.  For
 example, catch a low-level SQLException and then throw a HydroBaseException with
 a more user-friendly message.
 */
+@SuppressWarnings("serial")
 public class HydroBaseException extends Exception
 {
 

@@ -457,25 +457,27 @@ display the results in by seeing what data type is selected from the
 data type combo box.
 @param results vector data from a query
 */
-private void displayResults(List<? extends DMIDataObject> results) {
+private <T extends DMIDataObject> void displayResults(List<T> results) {
 	String routine = "displayResults";
         String dtype  = __dataTypeJComboBox.getSelected().trim();
 
 	try {
 	
 	if (dtype.equals(__DTYP_DRILLERS)) {
+		@SuppressWarnings("unchecked")
 		HydroBase_TableModel_GroundWaterWellsDrillersKSum tm = 
 			new HydroBase_TableModel_GroundWaterWellsDrillersKSum(
-			results, __dmi.getAquiferRef());
+				(List<HydroBase_GroundWaterWellsDrillersKSum>)results,__dmi.getAquiferRef());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		__worksheet.setCellRenderer(cr);
 		__worksheet.setModel(tm);
 		__worksheet.setColumnWidths(tm.getColumnWidths());
 	}
 	else if (dtype.equals(__DTYP_GEOPHLOGS)) {
+		@SuppressWarnings("unchecked")
 		HydroBase_TableModel_GroundWaterWellsGeophlogs tm = 
 			new HydroBase_TableModel_GroundWaterWellsGeophlogs(
-			results, __dmi.getAquiferRef());
+				(List<HydroBase_GroundWaterWellsGeophlogs>)results, __dmi.getAquiferRef());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		__worksheet.setCellRenderer(cr);
 		__worksheet.setModel(tm);
@@ -483,21 +485,20 @@ private void displayResults(List<? extends DMIDataObject> results) {
 	}
 	else if (dtype.equals(__DTYP_PUMPTESTS)) {
 		if (!__newWellFormat) {
+			@SuppressWarnings("unchecked")
 			HydroBase_TableModel_PumpTest tm = 
-				new HydroBase_TableModel_PumpTest(results);
-			HydroBase_CellRenderer cr = new HydroBase_CellRenderer(
-				tm);
+				new HydroBase_TableModel_PumpTest((List<HydroBase_GroundWaterWellsPumpingTest>)results);
+			HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 			__worksheet.setCellRenderer(cr);
 			__worksheet.setModel(tm);
 			__worksheet.setColumnWidths(tm.getColumnWidths());
 		}
 		else {
+			@SuppressWarnings("unchecked")
 			HydroBase_TableModel_GroundWaterWellsPumpingTest tm = 
-			       new 
-			       HydroBase_TableModel_GroundWaterWellsPumpingTest(
-			       results, __dmi.getAquiferRef());
-			HydroBase_CellRenderer cr = new HydroBase_CellRenderer(
-				tm);
+			    new HydroBase_TableModel_GroundWaterWellsPumpingTest(
+			       (List<HydroBase_GroundWaterWellsPumpingTest>)results, __dmi.getAquiferRef());
+			HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 			__worksheet.setCellRenderer(cr);
 			__worksheet.setModel(tm);
 			__worksheet.setColumnWidths(tm.getColumnWidths());
@@ -505,31 +506,31 @@ private void displayResults(List<? extends DMIDataObject> results) {
 	}
 	else if (dtype.equals(__DTYP_WELLMEAS)) {
 		if (!__newWellFormat) {
+			@SuppressWarnings("unchecked")
 			HydroBase_TableModel_WellMeas tm = 
-				new HydroBase_TableModel_WellMeas(results);
-			HydroBase_CellRenderer cr = new HydroBase_CellRenderer(
-				tm);
+				new HydroBase_TableModel_WellMeas((List<HydroBase_StructureGeolocStructMeasTypeView>)results);
+			HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 			__worksheet.setCellRenderer(cr);
 			__worksheet.setModel(tm);
 			__worksheet.setColumnWidths(tm.getColumnWidths());
 		}
 		else {
+			@SuppressWarnings("unchecked")
 			HydroBase_TableModel_GroundWaterWellsWellMeas tm = 
-			      new HydroBase_TableModel_GroundWaterWellsWellMeas(
-			      results, __dmi.getAquiferRef());
-			HydroBase_CellRenderer cr = new HydroBase_CellRenderer(
-				tm);
+		      new HydroBase_TableModel_GroundWaterWellsWellMeas(
+			      (List<HydroBase_GroundWaterWellsView>)results, __dmi.getAquiferRef());
+			HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 			__worksheet.setCellRenderer(cr);
 			__worksheet.setModel(tm);
 			__worksheet.setColumnWidths(tm.getColumnWidths());
 		}
 	}
 	else if (dtype.equals(__DTYP_VOLCANICS)) {
+		@SuppressWarnings("unchecked")
 		HydroBase_TableModel_GroundWaterWellsVolcanics tm = 
 			new HydroBase_TableModel_GroundWaterWellsVolcanics(
-			results, __dmi.getAquiferRef());
-		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(
-			tm);
+			(List<HydroBase_GroundWaterWellsVolcanics>)results, __dmi.getAquiferRef());
+		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		__worksheet.setCellRenderer(cr);
 		__worksheet.setModel(tm);
 		__worksheet.setColumnWidths(tm.getColumnWidths());		
@@ -537,8 +538,7 @@ private void displayResults(List<? extends DMIDataObject> results) {
 	
 	}
 	catch (Exception e) {
-		Message.printWarning(2, routine, "Unable to change the table "
-			+ " type.");
+		Message.printWarning(2, routine, "Unable to change the table type.");
 		Message.printWarning(2, routine, e);
 	}	
 }

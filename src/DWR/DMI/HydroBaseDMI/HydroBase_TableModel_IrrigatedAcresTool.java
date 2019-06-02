@@ -29,7 +29,8 @@ import java.util.List;
 /**
 This class is a table model for displaying net amounts data in the HydroBase_GUI_OtherQuery GUI.
 */
-public class HydroBase_TableModel_IrrigatedAcresTool extends HydroBase_TableModel
+@SuppressWarnings("serial")
+public class HydroBase_TableModel_IrrigatedAcresTool extends HydroBase_TableModel<HydroBase_ParcelUseTSStructureToParcel>
 {
 
 /**
@@ -59,7 +60,7 @@ Constructor.  This  shows the expanded structure information needed by the State
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results were was passed in.
 */
-public HydroBase_TableModel_IrrigatedAcresTool(List results )
+public HydroBase_TableModel_IrrigatedAcresTool(List<HydroBase_ParcelUseTSStructureToParcel> results )
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results list passed to HydroBase_TableModel_IrrigatedAcresTool constructor.");
@@ -72,6 +73,7 @@ throws Exception {
 From AbstractTableModel.  Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public Class getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_YEAR: return Integer.class;
@@ -213,7 +215,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_ParcelUseTSStructureToParcel pts = (HydroBase_ParcelUseTSStructureToParcel)_data.get(row);
+	HydroBase_ParcelUseTSStructureToParcel pts = _data.get(row);
 	switch (col) {
 		case COL_YEAR: return new Integer(pts.getCal_year());
 		case COL_DIV: return new Integer(pts.getDiv());
@@ -234,7 +236,7 @@ public Object getValueAt(int row, int col) {
 			HydroBase_ParcelUseTSStructureToParcel pts2 = null;
 			double area, sum = 0.0;
 			for ( int i = 0; i < _rows; i++ ) {
-				pts2 = (HydroBase_ParcelUseTSStructureToParcel)_data.get(i);
+				pts2 = _data.get(i);
 				if ( pts2.getCal_year() != year ) {
 					continue;
 				}

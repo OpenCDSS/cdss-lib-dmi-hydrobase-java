@@ -54,8 +54,8 @@ import RTi.Util.Time.DateTime;
 This class is a table model for displaying calls data in the 
 HydroBase_GUI_Calls GUI.
 */
-public class HydroBase_TableModel_Calls 
-extends HydroBase_TableModel {
+@SuppressWarnings("serial")
+public class HydroBase_TableModel_Calls extends HydroBase_TableModel<HydroBase_Calls> {
 
 /**
 References to the columns.
@@ -83,10 +83,10 @@ Constructor.  This builds the Model for displaying the given calls.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Calls(List results) 
+public HydroBase_TableModel_Calls(List<HydroBase_Calls> results) 
 throws Exception {
 	if (results == null) {
-		throw new Exception ("Invalid results Vector passed to " 
+		throw new Exception ("Invalid results list passed to " 
 			+ "HydroBase_TableModel_Calls constructor.");
 	}
 	_rows = results.size();
@@ -94,18 +94,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_START:		return String.class;
 		case COL_END:		return String.class;
@@ -151,7 +143,6 @@ public String getColumnName(int columnIndex) {
 	}	
 }
 
-
 /**
 Returns the format that the specified column should be displayed in when
 the table is being displayed in the given table format. 
@@ -196,7 +187,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_Calls c = (HydroBase_Calls)_data.get(row);
+	HydroBase_Calls c = _data.get(row);
 	Date d;
 	switch (col) {
 		case COL_START:		
@@ -205,9 +196,7 @@ public Object getValueAt(int row, int col) {
 				return "";
 			}
 			else {
-				return (new DateTime(d))
-					.toString(
-					DateTime.FORMAT_YYYY_MM_DD_HH_mm);
+				return (new DateTime(d)).toString(DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 			}
 		case COL_END:		
 			d = c.getDate_time_released();
@@ -215,9 +204,7 @@ public Object getValueAt(int row, int col) {
 				return "ACTIVE";
 			}
 			else {
-				return (new DateTime(d))
-					.toString(
-					DateTime.FORMAT_YYYY_MM_DD_HH_mm);
+				return (new DateTime(d)).toString( DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 			}
 		case COL_SOURCE:	return c.getStrname();
 		case COL_WDID:	

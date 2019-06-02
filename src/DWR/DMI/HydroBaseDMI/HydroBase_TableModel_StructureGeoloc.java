@@ -50,8 +50,9 @@ import java.util.List;
 This class is a table model for displaying sttructure geoloc data in the 
 HydroBase_GUI_Structure GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_StructureGeoloc 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_StructureGeoloc> {
 
 /**
 Number of columns in the table model.
@@ -80,8 +81,7 @@ public final static int
 	COL_LATITUDE = 		15;
 
 /**
-A reference to an open dmi object (for use in pulling out some lookup table
-information).
+A reference to an open dmi object (for use in pulling out some lookup table information).
 */
 private HydroBaseDMI __dmi = null;
 
@@ -91,7 +91,7 @@ Constructor.  This builds the Model for displaying the given structure geoloc re
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_StructureGeoloc(List results, HydroBaseDMI dmi) 
+public HydroBase_TableModel_StructureGeoloc(List<HydroBase_StructureGeoloc> results, HydroBaseDMI dmi) 
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -107,19 +107,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_WD:		return Integer.class;
 		case COL_ID:		return Integer.class;
@@ -301,7 +292,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_StructureGeoloc r = (HydroBase_StructureGeoloc)_data.get(row);
+	HydroBase_StructureGeoloc r = _data.get(row);
 	switch (col) {
 		case COL_WD:		return new Integer(r.getWD());
 		case COL_ID:		return new Integer(r.getID());

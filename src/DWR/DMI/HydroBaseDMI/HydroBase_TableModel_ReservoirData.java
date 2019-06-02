@@ -41,8 +41,9 @@ import java.util.List;
 This class is a table model for displaying reservoir data in the 
 HydroBase_GUI_ReservoirData GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_ReservoirData 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_AreaCap> {
 
 /**
 Number of columns in the table model.
@@ -63,7 +64,7 @@ Constructor.  This builds the Model for displaying the given reservoir data resu
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_ReservoirData(List results)
+public HydroBase_TableModel_ReservoirData(List<HydroBase_AreaCap> results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -78,7 +79,7 @@ From AbstractTableModel.  Returns the class of the data stored in a given
 column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_ELEVATION:		return Double.class;
 		case COL_GAGE_HEIGHT:		return Double.class;
@@ -146,7 +147,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_AreaCap a = (HydroBase_AreaCap)_data.get(row);
+	HydroBase_AreaCap a = _data.get(row);
 	switch (col) {
 		case COL_ELEVATION:	return new Double(a.getElevation());
  		case COL_GAGE_HEIGHT:	return new Double(a.getGage_height());

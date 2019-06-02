@@ -154,7 +154,7 @@ private JButton __renameButton = null;
 /**
 The list in which the product descriptions are stored.
 */
-private SimpleJList __list = null;
+private SimpleJList<String> __list = null;
 
 /**
 Private to avoid use.
@@ -677,7 +677,7 @@ private List<String> readTSProducts() {
 	HydroBase_TSProduct tsp = null;
 	String s = null;
 	for (int i = 0; i < size; i++) {
-		tsp = (HydroBase_TSProduct)v.get(i);
+		tsp = v.get(i);
 		s = "" + tsp.getIdentifier() + " - " + tsp.getName();
 		strings.add(s);
 	}
@@ -800,7 +800,7 @@ private void setupGUI() {
 	centerJPanel.setLayout(new GridBagLayout());
 	getContentPane().add("Center", centerJPanel);
 
-	__list = new SimpleJList(readTSProducts());
+	__list = new SimpleJList<String>(readTSProducts());
 	__list.addMouseListener(this);
 	JGUIUtil.addComponent(centerJPanel, new JScrollPane(__list),
 		0, 0, 1, 1, 1, 1,

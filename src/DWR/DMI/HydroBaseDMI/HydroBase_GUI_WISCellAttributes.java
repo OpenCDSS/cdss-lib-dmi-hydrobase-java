@@ -154,7 +154,7 @@ private JTextField
 /**
 GUI lists.
 */
-private SimpleJList
+private SimpleJList<String>
 	__formulaJList,
 	__importJList;
 
@@ -617,13 +617,13 @@ HydroBase_Node downstreamNode) {
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Import:"), 
 		0, ++y, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.NORTHEAST);
-	__importJList = new SimpleJList();
+	__importJList = new SimpleJList<String>();
         JGUIUtil.addComponent(northWJPanel, new JScrollPane(__importJList), 
 		1, y, 4, 1, 1, 1, insetsTNNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
         JGUIUtil.addComponent(northWJPanel, new JLabel("Formula:"), 
 		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.NORTHEAST);
-	__formulaJList = new SimpleJList();
+	__formulaJList = new SimpleJList<String>();
         JGUIUtil.addComponent(northWJPanel, new JScrollPane(__formulaJList), 
 		1, y, 4, 1, 1, 1, insetsNNNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 

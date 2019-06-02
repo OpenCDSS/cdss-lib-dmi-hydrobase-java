@@ -42,8 +42,9 @@ import java.util.List;
 /**
 This class is a table model for displaying cu coeff data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_CUCoeff 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_CUCoeff> {
 
 /**
 Number of columns in the table model.
@@ -63,7 +64,7 @@ Constructor.  This builds the Model for displaying the given Net Amounts results
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_CUCoeff(List results)
+public HydroBase_TableModel_CUCoeff(List<HydroBase_CUCoeff> results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -74,18 +75,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_NAME:		return String.class;
 		case COL_USE:		return Double.class;
@@ -151,7 +144,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_CUCoeff c = (HydroBase_CUCoeff)_data.get(row);
+	HydroBase_CUCoeff c = _data.get(row);
 	switch (col) {
 		case COL_NAME:		return c.getConsname();
 		case COL_USE:		return new Double(c.getConsuse());

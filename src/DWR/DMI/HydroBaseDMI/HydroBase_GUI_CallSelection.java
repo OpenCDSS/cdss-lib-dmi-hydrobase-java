@@ -174,7 +174,7 @@ private JTextField __toJTextField;
 /**
 The list in which data is displayed.
 */
-private SimpleJList __list;
+private SimpleJList<String> __list;
 
 /**
 Label for the cancel button.
@@ -445,6 +445,7 @@ This function generates the graph.
 private void graphClicked() {
 	String	function = "HydroBase_GUI_CallSelection.graphClicked";
 
+	@SuppressWarnings("deprecation")
 	Object[] objects = __list.getSelectedValues();
 	int size = objects.length;
 	String[] strings = new String[size];
@@ -633,7 +634,7 @@ private void setupGUI() {
         JGUIUtil.addComponent(centerJPanel, __listJLabel, 
 		1, ++y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
-        __list = new SimpleJList();
+        __list = new SimpleJList<String>();
 	__list.setFont(new Font("Courier", Font.PLAIN, 11));
 	__list.addKeyListener(this);
 

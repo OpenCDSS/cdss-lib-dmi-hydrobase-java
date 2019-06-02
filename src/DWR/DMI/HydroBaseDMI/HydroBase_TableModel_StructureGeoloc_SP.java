@@ -48,8 +48,9 @@ import java.util.List;
 This class is a table model for displaying structure geoloc data in the 
 HydroBase_GUI_Structure GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_StructureGeoloc_SP 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_StructureView> {
 
 /**
 Number of columns in the table model.
@@ -93,13 +94,12 @@ information).
 private HydroBaseDMI __dmi = null;
 
 /**
-Constructor.  This builds the Model for displaying the given structure geoloc 
-results.
+Constructor.  This builds the Model for displaying the given structure geoloc results.
 @param results the results that will be displayed in the table.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_StructureGeoloc_SP(List results, HydroBaseDMI dmi)
+public HydroBase_TableModel_StructureGeoloc_SP(List<HydroBase_StructureView> results, HydroBaseDMI dmi)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results list passed to " 
@@ -117,19 +117,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_DIV:			return Integer.class;
 		case COL_WD:			return Integer.class;
@@ -378,7 +369,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_StructureView sv = (HydroBase_StructureView)_data.get(row);
+	HydroBase_StructureView sv = _data.get(row);
 	switch (col) {
 		case COL_DIV:
 			return new Integer(sv.getDiv());

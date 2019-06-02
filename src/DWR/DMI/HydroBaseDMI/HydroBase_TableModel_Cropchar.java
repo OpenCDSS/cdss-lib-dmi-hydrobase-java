@@ -44,8 +44,9 @@ import java.util.List;
 /**
 This class is a table model for displaying crop char data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_Cropchar 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_Cropchar> {
 
 /**
 Number of columns in the table model.
@@ -76,7 +77,7 @@ Constructor.  This builds the Model for displaying the given crop char results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Cropchar(List results)
+public HydroBase_TableModel_Cropchar(List<HydroBase_Cropchar> results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -87,18 +88,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_CROP_NAME:		return String.class;
 		case COL_METHOD:		return String.class;
@@ -265,7 +258,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_Cropchar c = (HydroBase_Cropchar)_data.get(row);
+	HydroBase_Cropchar c = _data.get(row);
 	switch (col) {
 		case COL_CROP_NAME:		
 			return c.getCropname();

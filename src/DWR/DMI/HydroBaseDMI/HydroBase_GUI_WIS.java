@@ -5782,7 +5782,7 @@ public void showCellProperties(int row, int col) {
 	HydroBase_WISFormula wisFormula = getCellFormula(row, col);
 	HydroBase_WISImport wisImport = getCellImport(row, col);
 	String contents = "";
-	Class c = __worksheet.getColumnClass(col -1);
+	Class<?> c = __worksheet.getColumnClass(col -1);
 	if (c == Double.class) {
 		Double D = (Double)(__worksheet.getValueAt(row, col - 1));
 		if (!DMIUtil.isMissing(D)) {

@@ -32,7 +32,8 @@ import RTi.Util.Time.DateTime;
 /**
 This class is a table model for displaying net amounts data in the HydroBase_GUI_OtherQuery GUI.
 */
-public class HydroBase_TableModel_Wells extends HydroBase_TableModel
+@SuppressWarnings("serial")
+public class HydroBase_TableModel_Wells extends HydroBase_TableModel<HydroBase_Wells>
 {
 
 /**
@@ -69,7 +70,7 @@ Constructor.  This  shows the expanded structure information needed by the State
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results were was passed in.
 */
-public HydroBase_TableModel_Wells(List results )
+public HydroBase_TableModel_Wells(List<HydroBase_Wells> results )
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results list passed to HydroBase_TableModel_Wells constructor.");
@@ -247,7 +248,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_Wells well = (HydroBase_Wells)_data.get(row);
+	HydroBase_Wells well = _data.get(row);
 	Date date = null;
 	switch (col) {
 		case COL_YEAR: return new Integer(well.getCal_year());

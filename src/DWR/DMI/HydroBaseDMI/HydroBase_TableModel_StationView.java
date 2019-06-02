@@ -41,8 +41,9 @@ import java.util.List;
 This class is a table model for displaying station data in the 
 HydroBase_GUI_Station GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_StationView 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_StationView> {
 
 /**
 Number of columns in the table model.
@@ -96,7 +97,7 @@ Constructor.  This builds the Model for displaying the given station results.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_StationView(List results, HydroBaseDMI dmi)
+public HydroBase_TableModel_StationView(List<HydroBase_StationView> results, HydroBaseDMI dmi)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results list passed to " 
@@ -112,21 +113,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {	
-	__dmi = null;
-	__dataType = null;
-	__timeStep = null;
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_DIV:		return Integer.class;
 		case COL_WD:		return Integer.class;
@@ -311,7 +301,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_StationView s = (HydroBase_StationView)_data.get(row);
+	HydroBase_StationView s = _data.get(row);
 	switch (col) {
 		case COL_DIV:		return new Integer(s.getDiv());
 		case COL_WD:		return new Integer(s.getWD());

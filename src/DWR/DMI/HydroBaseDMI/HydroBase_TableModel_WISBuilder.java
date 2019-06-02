@@ -39,8 +39,9 @@ import java.util.List;
 /**
 This class is a table model for displaying wis data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_WISBuilder 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_WISData> {
 
 /**
 Number of columns in the table model.
@@ -52,7 +53,7 @@ Constructor.
 @param data the data for the worksheet.
 @param wisBuilder the GUI in which this worksheet appears.
 */
-public HydroBase_TableModel_WISBuilder(List data, 
+public HydroBase_TableModel_WISBuilder(List<HydroBase_WISData> data, 
 HydroBase_GUI_WISBuilder wisBuilder)
 throws Exception {
 	if (data == null) {
@@ -64,18 +65,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case  0:	
 			return Integer.class;
@@ -212,7 +205,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_WISData w = (HydroBase_WISData)_data.get(row);
+	HydroBase_WISData w = _data.get(row);
 	switch (col) {
 		case HydroBase_GUI_WIS.ROW_LABEL_COL:	
 			return w.getRow_label() + w.getEtc();

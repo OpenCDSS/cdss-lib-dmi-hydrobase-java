@@ -189,7 +189,7 @@ private JWorksheet
 /**
 Data source list.
 */
-private SimpleJList __sourceList;
+private SimpleJList<String> __sourceList;
 
 /**
 GUI combo boxes.
@@ -731,7 +731,7 @@ private void setupGUI() {
 		new JLabel("Available Import Sources:"), 
 		0, 0, 1, 1, 0, 0, NLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
 
-	__sourceList = new SimpleJList();
+	__sourceList = new SimpleJList<String>();
 	__sourceList.addMouseListener(this);
 	__sourceList.add(RT);
 	__sourceList.add(WIS);
@@ -843,10 +843,8 @@ private void setupGUI() {
 	int[] rtWidths = null;
 	JScrollWorksheet rtJSW = null;
 	try {
-		HydroBase_TableModel_WISImportWizard tm = 
-				new HydroBase_TableModel_WISImportWizard(new Vector<HydroBase_WISImport>(), 
-			HydroBase_TableModel_WISImportWizard
-			.STATION_GEOLOC_MEAS_TYPE);
+		HydroBase_TableModel_StationView_WISImportWizard tm = 
+				new HydroBase_TableModel_StationView_WISImportWizard(new Vector<HydroBase_StationView>() ); 
 		rtWidths = tm.getColumnWidths();
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		
@@ -914,9 +912,7 @@ private void setupGUI() {
 	int[] wisWidths = null;
 	JScrollWorksheet wisJSW = null;
 	try {
-		HydroBase_TableModel_WISImportWizard tm = 
-			new HydroBase_TableModel_WISImportWizard(new Vector<HydroBase_WISImport>(),
-			HydroBase_TableModel_WISImportWizard.WIS_FORMAT);
+		HydroBase_TableModel_WISFormat_WISImportWizard tm = new HydroBase_TableModel_WISFormat_WISImportWizard(new Vector<HydroBase_WISFormat>());
 		wisWidths = tm.getColumnWidths();
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 		
