@@ -96,7 +96,6 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -278,12 +277,12 @@ private JTextField
 /**
 Calls list.
 */
-private SimpleJList __callList = null;
+private SimpleJList<String> __callList = null;
 
 /**
 Structure list.
 */
-private SimpleJList __structureList = null;
+private SimpleJList<String> __structureList = null;
 
 /**
 Popup menu on the structure list.
@@ -414,8 +413,7 @@ public void actionPerformed(ActionEvent event) {
     	else if (s.equals(__BUTTON_HELP)) {
 	}
     	else if (s.equals(__MENU_FIND_STRUCTURE)) {
-		new FindInJListJDialog(this, (JList)__structureList, 
-			"Find Structure");
+		new FindInJListJDialog(this, __structureList, "Find Structure");
 	}
 	else if (s.equals(__SET_DATE)) {
 		setDateClicked();
@@ -444,7 +442,7 @@ private void callsClicked() {
 	}	
 
 	// get the selected item from the __callList object
-	String selectedItem = ((String)__callList.getSelectedItem()).trim();
+	String selectedItem = __callList.getSelectedValue().trim();
 	__callsJTextField.setText(selectedItem);
 	
 	// check if BYPASS Structure is selected
@@ -1516,7 +1514,7 @@ private void setCallJLabel() {
 		__callJLabel2.setText(findStructureName(__bypassStructure));
 	}
 	else {
-		String sel = (String)__structureList.getSelectedValue();
+		String sel = __structureList.getSelectedValue();
 
 		if (sel == null) {
 			sel = "[No Structure currently selected]";
@@ -1601,7 +1599,7 @@ private void setupGUI() {
 
 	y++;
 
-	__structureList = new SimpleJList();
+	__structureList = new SimpleJList<String>();
 	__structureList.addMouseListener(this);
 	__structureList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	__structureList.addListSelectionListener(this);
@@ -1622,7 +1620,7 @@ private void setupGUI() {
 
 	y++;
 
-	__callList = new SimpleJList();
+	__callList = new SimpleJList<String>();
 	__callList.addListSelectionListener(this);
 	__callList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     	JGUIUtil.addComponent(centerWJPanel, new JScrollPane(__callList), 
@@ -1879,7 +1877,7 @@ private void structureListClicked() {
 		wdWaterNumber = call.getWdwater_num();
 	}
 
-	String sel = (String)__structureList.getSelectedValue();
+	String sel = __structureList.getSelectedValue();
 
 	if (sel == null) {
 		sel = "[No Structure currently selected]";

@@ -21,23 +21,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
 
 NoticeEnd */
 
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_WISImportWizard - Table Model for the tables in the
-//	WIS import wizard.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-11-30	J. Thomas Sapienza, RTi	Initial version.
-// 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// 2005-05-03	JTS, RTi		Handles view objects now.
-// 2005-05-09	JTS, RTi		Only HydroBase_StationView objects are
-//					returned from station queries now.
-// 2005-06-28	JTS, RTi		Removed unused DMI parameter.
-// 2005-11-15	JTS, RTi		Added div column.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.List;
@@ -45,26 +28,14 @@ import java.util.List;
 /**
 This class is a table model for displaying data for the tables in the wis import wizard.
 */
-public class HydroBase_TableModel_WISImportWizard 
-extends HydroBase_TableModel {
-
-/**
-Used to refer to the kind of table model this is.
-*/
-public final static int
-	SPECIAL_DATA = 0,
-	STATION_GEOLOC_MEAS_TYPE = 1,
-	WIS_FORMAT = 2;
+@SuppressWarnings("serial")
+public class HydroBase_TableModel_SpecialData_WISImportWizard
+extends HydroBase_TableModel<HydroBase_SpecialData> {
 
 /**
 Number of columns in the table model.
 */
 private final static int __COLUMNS = 10;
-
-/**
-The type of table model this is.
-*/
-private int __type = -1;
 
 /**
 References to columns.
@@ -86,7 +57,7 @@ Constructor.  This builds the Model for displaying the given data.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results were passed in
 */
-public HydroBase_TableModel_WISImportWizard(List results, int type) 
+public HydroBase_TableModel_SpecialData_WISImportWizard(List<HydroBase_SpecialData> results) 
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -94,14 +65,13 @@ throws Exception {
 	}
 	_rows = results.size();
 	_data = results;
-	__type = type;
 }
 
 /**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case  COL_SD_WIS_NUM:		return Integer.class;
 		case  COL_SD_ID:		return String.class;
@@ -188,41 +158,16 @@ public Object getValueAt(int row, int col) {
 	if (_sortOrder != null) {
 		row = _sortOrder[row];
 	}
-	if (__type == SPECIAL_DATA) {
-		HydroBase_SpecialData sp = (HydroBase_SpecialData)_data.get(row);
-		switch (col) {		
-			case COL_SD_WIS_NUM:	
-				return new Integer(sp.getWis_num());
-			case COL_SD_ID:	
-				return sp.getIdentifier();
-			case COL_SD_UNITS:	
-				return sp.getUnits();
-			case COL_SD_DESC:	
-				return sp.getMeas_desc();
-		}
-	}
-	else if (__type == STATION_GEOLOC_MEAS_TYPE) {
-		HydroBase_StationView view = (HydroBase_StationView)_data.get(row);
-		switch (col) {
-			case COL_SGMT_NAME:		
-				return view.getStation_name();
-			case COL_SGMT_VAX_FIELD:	
-				return view.getVax_field();
-		}
-	}
-	else if (__type == WIS_FORMAT) {
-		HydroBase_WISFormat wf = (HydroBase_WISFormat)_data.get(row);
-		switch (col) {
-			case COL_WF_ROW_LABEL:
-				return wf.getRow_label();
-			case COL_WF_IDENTIFIER:
-				return wf.getIdentifier();
-			case COL_WF_WIS_NUM:
-				return new Integer(wf.getWis_num());
-			case COL_WF_ROW_NUM:
-				return new Integer(wf.getWis_row());
-		}
-
+	HydroBase_SpecialData sp = _data.get(row);
+	switch (col) {		
+		case COL_SD_WIS_NUM:	
+			return new Integer(sp.getWis_num());
+		case COL_SD_ID:	
+			return sp.getIdentifier();
+		case COL_SD_UNITS:	
+			return sp.getUnits();
+		case COL_SD_DESC:	
+			return sp.getMeas_desc();
 	}
 	return null;
 }

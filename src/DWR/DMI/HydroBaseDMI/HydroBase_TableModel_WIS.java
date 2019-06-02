@@ -50,8 +50,9 @@ import RTi.Util.GUI.JWorksheet_CellAttributes;
 /**
 This class is a table model for displaying wis data.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_WIS 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_WISData> {
 
 /**
 Number of columns in the table model.
@@ -91,7 +92,7 @@ Constructor.  This builds the Model for displaying the wis data.
 @param editable whether the data can be edited or not.
 @throws Exception if invalid data were passed in.
 */
-public HydroBase_TableModel_WIS(List data, HydroBase_GUI_WIS wis,
+public HydroBase_TableModel_WIS(List<HydroBase_WISData> data, HydroBase_GUI_WIS wis,
 boolean editable)
 throws Exception {
 	if (data == null) {
@@ -106,26 +107,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__parentWIS = null;
-	__worksheet = null;
-	__labelAttr = null;
-	__commentAttr = null;
-	__knownPointAttr = null;
-	__formulaAttr = null;
-	__computedAttr = null;
-	__stationImportAttr = null;
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case  0:	
 			return Integer.class;
@@ -367,7 +352,7 @@ public boolean isCellEditable(int rowIndex, int columnIndex) {
 
 public void setValueAt(Object o, int row, int col) {
 	// o will always be passed in as a String -- convert accordingly
-	HydroBase_WISData w = (HydroBase_WISData)_data.get(row);
+	HydroBase_WISData w = _data.get(row);
 	boolean valueSet = false;
 	boolean commentSet = false;
 	switch (col) {

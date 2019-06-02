@@ -52,8 +52,9 @@ import RTi.Util.Time.DateTime;
 /**
 This class is a table model for displaying pumping test data in the HydroBase_GUI_GroundWater GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_GroundWaterWellsPumpingTest 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_GroundWaterWellsPumpingTest> {
 
 /**
 Reference to the columns.
@@ -101,7 +102,7 @@ private final static int __COLUMNS = 33;
 /**
 List of aquifers to display in the tooltips.
 */
-private List __aquifers = null;
+private List<HydroBase_Aquifer> __aquifers = null;
 
 /**
 Constructor.  This builds the Model for displaying the given pump test results.
@@ -109,7 +110,7 @@ Constructor.  This builds the Model for displaying the given pump test results.
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_GroundWaterWellsPumpingTest(List results, List aquifers)
+public HydroBase_TableModel_GroundWaterWellsPumpingTest(List<HydroBase_GroundWaterWellsPumpingTest> results, List<HydroBase_Aquifer> aquifers)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -122,18 +123,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_DIV:		return Integer.class;
 		case COL_WD:		return Integer.class;
@@ -433,7 +426,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_GroundWaterWellsPumpingTest p = (HydroBase_GroundWaterWellsPumpingTest)_data.get(row);
+	HydroBase_GroundWaterWellsPumpingTest p = _data.get(row);
 	switch (col) {
 		case COL_DIV:
 			return new Integer(p.getDiv());

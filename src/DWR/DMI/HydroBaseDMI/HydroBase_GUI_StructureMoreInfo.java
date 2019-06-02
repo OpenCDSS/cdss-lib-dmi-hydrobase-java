@@ -188,7 +188,7 @@ private JWorksheet __mapFileWorksheet;
 /**
 Mutable JLists.
 */
-private SimpleJList 
+private SimpleJList<String>
 	__notesJList,
 	__structureAKAJList;
 
@@ -642,7 +642,7 @@ private void setupGUI() {
         JGUIUtil.addComponent(centerSJPanel, new JLabel("Equipment:"),
 		2, 1, 1, 1, 0, 0, insetsTLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
-        __structureAKAJList = new SimpleJList();
+        __structureAKAJList = new SimpleJList<String>();
 
 	PropList p = new PropList("HydroBase_GUI_StructureMoreInfo"
 		+ ".JWorksheet");
@@ -793,7 +793,7 @@ private void setupGUI() {
         JGUIUtil.addComponent(bottomNorthJPanel, new JLabel("Notes:"),
 		0, 0, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.NORTHEAST);
 
-	__notesJList = new SimpleJList();
+	__notesJList = new SimpleJList<String>();
         JGUIUtil.addComponent(bottomNorthJPanel, new JScrollPane(__notesJList),
 		1, 0, 4, 1, 0, 0, insetsTLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 

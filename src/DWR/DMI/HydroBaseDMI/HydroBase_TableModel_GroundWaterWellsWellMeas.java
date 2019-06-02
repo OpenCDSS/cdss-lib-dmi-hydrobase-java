@@ -47,8 +47,9 @@ import RTi.DMI.DMIUtil;
 /**
 This class is a table model for displaying ground water data in the HydroBase_GUI_GroundWater GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_GroundWaterWellsWellMeas 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_GroundWaterWellsView> {
 
 /**
 Number of columns in the table model.
@@ -82,7 +83,7 @@ public final static int
 /**
 List of aquifers to display in the tooltips.
 */
-private List __aquifers = null;
+private List<HydroBase_Aquifer> __aquifers = null;
 
 /**
 Constructor.  This builds the Model for displaying the given ground water results.
@@ -90,7 +91,7 @@ Constructor.  This builds the Model for displaying the given ground water result
 @param dmi a reference to the dmi object used to query for the results.  Cannot be null.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_GroundWaterWellsWellMeas(List results,List aquifers)
+public HydroBase_TableModel_GroundWaterWellsWellMeas(List<HydroBase_GroundWaterWellsView> results, List<HydroBase_Aquifer> aquifers)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -103,18 +104,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_DIV:		return Integer.class;
 		case COL_WD:		return Integer.class;
@@ -318,7 +311,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_GroundWaterWellsView g = (HydroBase_GroundWaterWellsView)_data.get(row);
+	HydroBase_GroundWaterWellsView g = _data.get(row);
 	switch (col) {
 		case COL_DIV:	
 			return new Integer(g.getDiv());

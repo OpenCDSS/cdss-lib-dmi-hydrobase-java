@@ -60,8 +60,9 @@ import RTi.Util.Time.DateTime;
 This class is a table model for displaying net amounts data in the 
 HydroBase_GUI_WaterRights GUI.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_NetAmts 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_NetAmts> {
 
 /**
 Used to refer to the Legal table display format.
@@ -88,7 +89,7 @@ Constructor.  This builds the Model for displaying the given Net Amounts results
 @param dmi a reference to the dmi object used to query for the results.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_NetAmts(List results, HydroBaseDMI dmi, int type)
+public HydroBase_TableModel_NetAmts(List<HydroBase_NetAmts> results, HydroBaseDMI dmi, int type)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -105,19 +106,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (_type) {
 	case LEGAL:
 		switch (columnIndex) {
@@ -532,7 +524,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_NetAmts r = (HydroBase_NetAmts)_data.get(row);
+	HydroBase_NetAmts r = _data.get(row);
 	switch (_type) {
 	case LEGAL:
 	switch (col) {

@@ -48,8 +48,9 @@ import RTi.Util.GUI.JWorksheet;
 /**
 This class is a table model for displaying diversion coding.
 */
+@SuppressWarnings("serial")
 public class HydroBase_TableModel_WISDiversionCoding 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_WISDailyWC> {
 
 /**
 Number of columns in the table model.
@@ -86,7 +87,7 @@ Constructor.  This builds the Model for displaying the given diversion coding da
 @param day day number for which the coding is being edited.
 @throws Exception if invalid results were passed in.
 */
-public HydroBase_TableModel_WISDiversionCoding(List results, int day)
+public HydroBase_TableModel_WISDiversionCoding(List<HydroBase_WISDailyWC> results, int day)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -99,19 +100,10 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__worksheet = null;
-	super.finalize();
-}
-
-/**
 Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
-public Class getColumnClass (int columnIndex) {
+public Class<?> getColumnClass (int columnIndex) {
 	switch (columnIndex) {
 		case COL_ID:		return String.class;
 		case COL_S:		return String.class;
@@ -285,7 +277,7 @@ Sets the value at the specified position to the specified value.
 @param col the col of the cell for which to set the value.
 */
 public void setValueAt(Object value, int row, int col) {
-	HydroBase_WISDailyWC wc = (HydroBase_WISDailyWC)_data.get(row);
+	HydroBase_WISDailyWC wc = _data.get(row);
 	switch (col) {
 		case COL_S:	
 		case COL_U:

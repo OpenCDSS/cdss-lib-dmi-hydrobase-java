@@ -198,7 +198,7 @@ private JTextField __statusJTextField;
 /**
 The list for displaying the sheet name dates.
 */
-private SimpleJList __historyList;
+private SimpleJList<String> __historyList;
 
 /**
 Combo box to hold the sheet names.
@@ -1092,7 +1092,7 @@ private void setupGUI() {
         JGUIUtil.addComponent(centerJPanel, new JLabel("Date:"), 
 		0, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
                 
-        __historyList = new SimpleJList();
+        __historyList = new SimpleJList<String>();
 	__historyList.addMouseListener(this);
         JGUIUtil.addComponent(centerJPanel, new JScrollPane(__historyList),
 		0, 2, 2, 1, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);

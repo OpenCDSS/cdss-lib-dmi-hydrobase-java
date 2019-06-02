@@ -561,7 +561,7 @@ private JWorksheet __worksheet;
 /**
 The list in which formulas are built and displayed.
 */
-private SimpleJList __formulaList;
+private SimpleJList<String> __formulaList;
 
 /**
 GUI combo boxes.
@@ -5159,7 +5159,7 @@ private void setupGUI() {
 	JGUIUtil.addComponent(__formulaJPanel, __formulaJLabel, 
 		0, 0, 10, 1, 1, 0, insetsTLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
-	__formulaList = new SimpleJList();
+	__formulaList = new SimpleJList<String>();
 	JGUIUtil.addComponent(__formulaJPanel, new JScrollPane(__formulaList), 
 		0, 1, 10, 10, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 

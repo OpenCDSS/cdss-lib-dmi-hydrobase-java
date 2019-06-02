@@ -101,7 +101,7 @@ private HydroBase_GUI_Options __parent = null;
 /**
 District list.
 */
-private	SimpleJList __districtJList = null;
+private	SimpleJList<String> __districtJList = null;
 
 /**
 OK JButton
@@ -308,7 +308,7 @@ private void setupGUI() {
 	__okJButton = new JButton(__BUTTON_OK);
 	__okJButton.setToolTipText("Accept selection.");
 
-	__districtJList = new SimpleJList();
+	__districtJList = new SimpleJList<String>();
 	__districtJList.setSelectionMode(
 		ListSelectionModel.SINGLE_SELECTION);
 	__districtJList.addListSelectionListener(this);

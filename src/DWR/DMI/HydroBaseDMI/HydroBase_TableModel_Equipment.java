@@ -47,7 +47,7 @@ This class is a table model for displaying equipment data.
 */
 @SuppressWarnings("serial")
 public class HydroBase_TableModel_Equipment 
-extends HydroBase_TableModel {
+extends HydroBase_TableModel<HydroBase_Equipment> {
 
 /**
 Number of columns in the table model.
@@ -69,7 +69,7 @@ Constructor.  This builds the Model for displaying the given equipment results.
 @param results the results that will be displayed in the table.
 @throws Exception if an invalid results or dmi was passed in.
 */
-public HydroBase_TableModel_Equipment(List results)
+public HydroBase_TableModel_Equipment(List<HydroBase_Equipment> results)
 throws Exception {
 	if (results == null) {
 		throw new Exception ("Invalid results Vector passed to " 
@@ -156,7 +156,7 @@ public Object getValueAt(int row, int col) {
 		row = _sortOrder[row];
 	}
 
-	HydroBase_Equipment e = (HydroBase_Equipment)_data.get(row);
+	HydroBase_Equipment e = _data.get(row);
 	switch (col) {
 		case COL_EQUIP_NUM:		
 			return new Integer(e.getEquip_num());	
