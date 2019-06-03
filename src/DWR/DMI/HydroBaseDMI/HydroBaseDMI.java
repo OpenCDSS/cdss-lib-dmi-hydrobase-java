@@ -15659,6 +15659,56 @@ throws Exception {
 }
 
 /**
+Read the struct_meas_type table for all data and join with data in geoloc and structure.<p>
+This method is used by:<ul>
+<li>TSTool</li>
+@param panel the panel of InputFilters that hold the query constraints.
+@param meas_type the meas_num for which to return the record (specify null to read all).
+@param time_step the time_step for which to return the record (specify null to read all).
+@return a list of HydroBase_StructureGeolocStructMeasType objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocStructMeasTypeCatalogList(
+    InputFilter_JPanel panel, String data_type, String time_step) throws Exception {
+	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType ( data_type, time_step );
+	String meas_type = hb_mt[0];
+	String hbtime_step = hb_mt[2];
+    // Note multiple SFUT and data sources can be returned below...
+	List<HydroBase_StructMeasTypeView> tslist0 = readStructureGeolocStructMeasTypeList(panel, meas_type, hbtime_step);
+	// Convert HydroBase data to make it more consistent with how TSTool handles time series...
+	int size = 0;
+	if ( tslist0 != null ) {
+		size = tslist0.size();
+	}
+	HydroBase_StructMeasTypeView view;
+	String data_units = HydroBase_Util.getTimeSeriesDataUnits (this, data_type, time_step );
+	List<HydroBase_StructureGeolocStructMeasType> tslist = new Vector<HydroBase_StructureGeolocStructMeasType>();			
+	for ( int i = 0; i < size; i++ ) {
+		view = tslist0.get(i);
+		// Set to the value used in TSTool...
+		if ( view.getIdentifier().length() > 0){
+			// Merged SFUT...
+			view.setMeas_type(data_type + "-" + view.getIdentifier());
+		}
+		else {
+		    view.setMeas_type( data_type);
+		}
+		view.setTime_step(time_step);
+		view.setData_units ( data_units );
+		// TODO smalers 2019-06-02 what is the meaning of the following?
+		// TODO (JTS - 2005-04-06) THIS SHOULDn"T BE DONE ONCE WE CAN RECOMPILE TSTOOL!!!
+		tslist.add(new HydroBase_StructureGeolocStructMeasType(view));
+	}
+	if ( (data_type.equals("WellLevel") || data_type.equals("WellLevelDepth") || data_type.equals("WellLevelElev")) &&
+	    time_step.equalsIgnoreCase("Day")){
+			// Add the common identifiers to the normal data.  This is a work-around until HydroBase is redesigned.
+			// TODO SAM 2004-01-13
+			HydroBase_Util.addAlternateWellIdentifiers ( this, tslist );
+	}
+	return tslist;
+}
+
+/**
 @deprecated use readStructureViewListForWDStream_numStr_type instead.
 */
 public List<HydroBase_StructureView> readStructureGeolocListForWDStream_numStr_type(int wd, 
