@@ -88,18 +88,6 @@ public HydroBase_StructureIrrigSummaryTS(HydroBase_StructureView view) {
 }
 
 /**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-*/
-protected void finalize()
-throws Throwable {
-	_land_use = null;
-	_structure_id = null;
-	
-	super.finalize();
-}
-
-/**
 Returns _acres_by_drip
 @return _acres_by_drip
 */

@@ -2474,6 +2474,127 @@ throws Exception {
 }
 
 /**
+Reads the database for the data necessary to fill groundwater well and
+groundwater meas type information.
+This method is called by TSTool to provide a catalog of well time series.
+@param panel the panel of InputFilters that hold the query constraints.
+@param districtWhere the value returned by getWaterDistrictWhereClause().
+@return a list of HydroBase_StructureGeolocStructMeasTypeView objects.
+@throws Exception if there is an error running the query.
+*/
+public static List<HydroBase_GroundWaterWellsView> readGroundWaterWellsViewTSCatalogList(
+	HydroBaseDMI hbdmi, InputFilter_JPanel panel, String dataType, String timeStep)
+throws Exception {
+	List<HydroBase_GroundWaterWellsView> tslist = hbdmi.readGroundWaterWellsMeasTypeList(panel, null);
+	// Convert HydroBase data to make it more consistent with how TSTool handles time series...
+	int size = 0;
+	if ( tslist != null ) {
+		size = tslist.size();
+	}
+	HydroBase_GroundWaterWellsView view;
+	String data_units = getTimeSeriesDataUnits ( hbdmi, dataType, timeStep );
+
+	for ( int i = 0; i < size; i++ ) {
+		view = tslist.get(i);
+		// Set to the value used in TSTool...
+	    view.setMeas_type( dataType);
+		view.setTime_step(timeStep);
+		view.setData_units ( data_units );
+		tslist.add(view);
+	}
+	return tslist;
+}
+
+/**
+Read the station, geoloc and meas_type tables for a record that has the given meas_type.<p>
+This is used by TSTool to provide a catalog of time series.
+@param panel an InputFilter_JPanel containing what to limit the query by.  
+Specify null if no panel contains query limits.
+@param districtWhere the value returned by getWaterDistrictWhereClause().
+@param mapQueryLimits the GRLimits defining the geographical area for which to query.
+@param meas_type the meas_type for which to return the record (specify null to read all).
+@param time_step the time_step for which to return the record (specify null to read all).
+@param vax_field the vax_field for which to return the record (specify null to read all).
+@param data_source the data_source for which to return the record (specify null to read all).
+@param transmit the transmit value to read for (specify null to read all).
+@return a list of HydroBase_StationGeolocMeasType or HydroBase_StationView objects.
+@throws Exception if an error occurs.
+*/
+public static List<HydroBase_StationGeolocMeasType> readStationGeolocMeasTypeCatalogList(
+	HydroBaseDMI hbdmi, InputFilter_JPanel panel, 
+	String data_type, String time_step, GRLimits grlimits )
+throws Exception {
+	String routine = "HydroBase_Util.readStationGeolocMeasTypeCatalogList";
+	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType ( data_type, time_step );
+	String meas_type = hb_mt[0];
+	String vax_field = hb_mt[1];
+	String hbtime_step = hb_mt[2];
+	String dataSource = null;
+    // Note multiple vax_field and data sources can be returned below.  Only specify the
+	// vax_field when it is necessary to do so to get the proper list back...
+	List<HydroBase_StationView> tslist0 = hbdmi.readStationGeolocMeasTypeList(panel, null, grlimits, meas_type, hbtime_step,
+		vax_field, dataSource, null, false);
+	// Convert HydroBase data to make it more consistent with how TSTool handles time series...
+	int size = 0;
+	if ( tslist0 != null ) {
+		size = tslist0.size();
+	}
+	if ( size == 0 ) {
+		Message.printWarning ( 3, routine, "Found 0 time series for meas_type=\""+ meas_type +
+			"\" time_step=\""+ hbtime_step + "\" vax_field=\""+ vax_field + "\" data_source=\""+ dataSource +"\"");
+	}
+	HydroBase_StationView view = null;
+	String data_units = getTimeSeriesDataUnits ( hbdmi, data_type, time_step );
+	List<HydroBase_StationGeolocMeasType> tslist = new ArrayList<HydroBase_StationGeolocMeasType>();
+	for ( int i = 0; i < size; i++ ) {
+		view = tslist0.get(i);
+		// Set to the value used in TSTool...
+		if ( view.getVax_field().length() > 0 ){
+			view.setMeas_type( data_type + "-" + view.getVax_field() );
+		}
+		else {
+		    view.setMeas_type ( data_type);
+		}
+		view.setTime_step ( time_step );
+		view.setData_units ( data_units );
+		tslist.add(new HydroBase_StationGeolocMeasType(view));
+	}
+	return tslist;
+}
+
+/**
+Read the structure and irrig_summary_ts tables for all data with the matching criteria.<p>
+This is called by:<ul>
+<li>TSTool</li>
+</ul>
+This code was pulled from HydroBase_Util.readTimeSeriesHeaderObjects in order
+to implement code that properly uses generics.
+*/
+public static List<HydroBase_StructureIrrigSummaryTS> readStructureIrrigSummaryTSCatalogList(
+	HydroBaseDMI hbdmi, InputFilter_JPanel panel, List<String> orderby_clauses,
+	int structure_num, int wd, int id, String str_name,
+	String land_use, DateTime req_date1, DateTime req_date2, boolean distinct ) 
+throws Exception {
+	// Structure GIS crop areas...
+	List<HydroBase_StructureView> tslist0 = hbdmi.readStructureIrrigSummaryTSList (
+		panel,
+		null,	// orderby
+		-999,	// structure_num
+		-999,	// wd
+		-999,	// id
+		null,	// str_name
+		null,	// landuse
+		null,	// start
+		null,	// end
+		true);	// distinct
+	List<HydroBase_StructureIrrigSummaryTS> tslist = new ArrayList<HydroBase_StructureIrrigSummaryTS>();
+	for ( HydroBase_StructureView view : tslist0 ) {
+		tslist.add(new HydroBase_StructureIrrigSummaryTS(view));
+	}
+	return tslist;
+}
+
+/**
 Read a list of objects that contain time series header information.  This is used, for example, to populate the
 time series list area of TSTool and to get a list of time series for the TSTool readHydroBase(Where...) command.
 @param hbdmi The HydroBaseDMI instance to use for queries.
@@ -2491,7 +2612,8 @@ throws Exception
 {	return readTimeSeriesHeaderObjects ( hbdmi, data_type, time_step, ifp, null );
 }
 
-// TODO sam 2017-03-14 this is messy because a variety of class types are returned - need to make cleaner
+// TODO sam 2017-03-14 this is messy because a variety of class types are returned.
+// The code has now been split but leave for now until the ReadHydroBase command can be updated.
 /**
 Read a list of objects that contain time series header information.  This is used, for example, to populate the
 time series list area of TSTool and to get a list of time series for the TSTool ReadHydroBase(Where...) command.
@@ -2502,267 +2624,54 @@ data type choice for HydroBase, or a simple string.
 time step choice, or a simple string "Day", "Month", etc.
 @param ifp An InputFilter_JPanel instance to retrieve where clause information from.
 @param grlimits GRLimits indicating the extent of the map to query.  Specify as null to query all data.
+@deprecated call the individual methods to read time series so that generics can be implemented
 @return a list of objects for the data type.
 @exception if there is an error reading the data.
 */
 public static List readTimeSeriesHeaderObjects ( HydroBaseDMI hbdmi, String data_type, String time_step,
 	InputFilter_JPanel ifp, GRLimits grlimits )
 throws Exception
-{	String routine = "HydroBase_Util.readTimeSeriesHeaderObjects", message;
+{	String routine = "HydroBase_Util.readTimeSeriesHeaderObjects";
 	List tslist = null; // This can contain different classes
 	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType ( data_type, time_step );
 	String meas_type = hb_mt[0];
-	String vax_field = hb_mt[1];
+	//String vax_field = hb_mt[1];
 	String hbtime_step = hb_mt[2];
-	String dataSource = null;
-	int size = 0;
+	//String dataSource = null;
+	//int size = 0;
 	
 	Message.printStatus(2, routine, "Reading HydroBase time series header objects for HydroBase meas_type=\"" +
 	       meas_type + "\", HydroBase timeStep=\"" + hbtime_step + "\".");
 
-	// Get the specific where clauses from the input filter...
-	if ( (ifp instanceof HydroBase_GUI_StationGeolocMeasType_InputFilter_JPanel) ||
-		(ifp instanceof HydroBase_GUI_StructureGeolocStructMeasType_InputFilter_JPanel) ||
-		(ifp instanceof HydroBase_GUI_AgriculturalCASSCropStats_InputFilter_JPanel) ||
-		(ifp instanceof HydroBase_GUI_AgriculturalCASSLivestockStats_InputFilter_JPanel) ||
-		(ifp instanceof HydroBase_GUI_AgriculturalNASSCropStats_InputFilter_JPanel) ||
-		(ifp instanceof HydroBase_GUI_CUPopulation_InputFilter_JPanel) ||
-		(ifp instanceof HydroBase_GUI_StructureIrrigSummaryTS_InputFilter_JPanel) ||
-		(ifp instanceof HydroBase_GUI_SheetNameWISFormat_InputFilter_JPanel) ) {
-	    // TODO SAM 2012-10-01 How is this code used?
-	}
 	// Special cases first and then general lists...
 	if ( HydroBase_Util.isAgriculturalCASSCropStatsTimeSeriesDataType ( hbdmi, data_type ) ) {
-		try {
-		    tslist = hbdmi.readAgriculturalCASSCropStatsList (
-				ifp,	// From input filter
-				null,		// county
-				null,		// commodity
-				null,		// practice
-				null,		// date1
-				null,		// date2,
-				true );		// Distinct
-		}
-		catch ( Exception e ) {
-			message = "Error getting CASS agricultural crop time series list from HydroBase (" + e + ").";
-			Message.printWarning ( 3, routine, message );
-			Message.printWarning ( 3, routine, e );
-			throw new Exception ( message );
-		}
+		throw new Exception("Need to update code to call readAgriculturalCASSCropStatsList");
 	}
 	else if(HydroBase_Util.isAgriculturalCASSLivestockStatsTimeSeriesDataType ( hbdmi,data_type ) ) {
-		try {
-		    tslist = hbdmi.readAgriculturalCASSLivestockStatsList (
-				ifp,	// From input filter
-				null,		// county
-				null,		// commodity
-				null,		// type
-				null,		// date1
-				null,		// date2,
-				true );		// Distinct
-		}
-		catch ( Exception e ) {
-			message = "Error getting CASS agricultural livestock time series list from HydroBase (" + e + ").";
-			Message.printWarning ( 3, routine, message );
-			Message.printWarning ( 3, routine, e );
-			throw new Exception ( message );
-		}
-	}
-	else if(HydroBase_Util.isCUPopulationTimeSeriesDataType ( hbdmi,data_type ) ) {
-		try {
-		    tslist = hbdmi.readCUPopulationList (
-				ifp,	// From input filter
-				null,		// county
-				null,		// commodity
-				null,		// type
-				null,		// date1
-				null,		// date2,
-				true );		// Distinct
-		}
-		catch ( Exception e ) {
-			message = "Error getting CU Population time series list from HydroBase (" + e + ").";
-			Message.printWarning ( 3, routine, message );
-			Message.printWarning ( 3, routine, e );
-			throw new Exception ( message );
-		}
-	}
-	else if(HydroBase_Util.isIrrigSummaryTimeSeriesDataType ( hbdmi, data_type ) ) {
-		try {
-		    // Structure GIS crop areas...
-			tslist = hbdmi.readStructureIrrigSummaryTSList (
-				ifp,
-				null,	// orderby
-				-999,	// structure_num
-				-999,	// wd
-				-999,	// id
-				null,	// str_name
-				null,	// landuse
-				null,	// start
-				null,	// end
-				true);	// distinct
-			List v = new ArrayList();
-			int size2 = tslist.size();
-			HydroBase_StructureView view = null;
-			for (int i = 0; i < size2; i++) {
-				view = (HydroBase_StructureView)tslist.get(i);
-				v.add(new HydroBase_StructureIrrigSummaryTS(view));
-			}
-			tslist = v;
-		}
-		catch ( Exception e ) {
-			message = "Error getting irrigation summary crop area list from HydroBase (" + e + ").";
-			Message.printWarning ( 3, routine, message );
-			Message.printWarning ( 3, routine, e );
-			throw new Exception ( message );
-		}
+		throw new Exception("Need to update code to call readAgriculturalCASSLivestockStatsList");
 	}
 	else if ( HydroBase_Util.isAgriculturalNASSCropStatsTimeSeriesDataType ( hbdmi, data_type ) ) {
-		try {
-		    // NASS crop statistics...
-			tslist = hbdmi.readAgriculturalNASSCropStatsList (
-				ifp,	// From input filter
-				null,		// county
-				null,		// commodity
-				null,		// date1
-				null,		// date2,
-				true );		// Distinct
-		}
-		catch ( Exception e ) {
-			message = "Error getting NASS crop area list from HydroBase (" + e + ").";
-			Message.printWarning ( 3, routine, message );
-			Message.printWarning ( 3, routine, e );
-			throw new Exception ( message );
-		}
+		throw new Exception("Need to update code to call readAgriculturalNASSCropStatsList");
+	}
+	else if(HydroBase_Util.isCUPopulationTimeSeriesDataType ( hbdmi,data_type ) ) {
+		throw new Exception("Need to update code to call readCUPopulationList");
+	}
+	else if(HydroBase_Util.isIrrigSummaryTimeSeriesDataType ( hbdmi, data_type ) ) {
+		throw new Exception("Need to update code to call readStructureIrrigSummaryTSCatalogList");
 	}
 	else if(HydroBase_Util.isStationTimeSeriesDataType(hbdmi, meas_type)){
-		try {
-		    // Note multiple vax_field and data sources can be returned below.  Only specify the
-			// vax_field when it is necessary to do so to get the proper list back...
-			tslist = hbdmi.readStationGeolocMeasTypeList(ifp, null, grlimits, meas_type, hbtime_step,
-				vax_field, dataSource, null, false);
-			// Convert HydroBase data to make it more consistent with how TSTool handles time series...
-			if ( tslist != null ) {
-				size = tslist.size();
-			}
-			if ( size == 0 ) {
-				Message.printWarning ( 3, routine, "Found 0 time series for meas_type=\""+ meas_type +
-				"\" time_step=\""+ hbtime_step + "\" vax_field=\""+ vax_field + "\" data_source=\""+ dataSource +"\"");
-			}
-			HydroBase_StationView view = null;
-			String data_units = HydroBase_Util.getTimeSeriesDataUnits ( hbdmi, data_type, time_step );
-//			if (hbdmi.useStoredProcedures()) {
-			List v = tslist;
-			tslist = new ArrayList();
-			for ( int i = 0; i < size; i++ ) {
-				view = (HydroBase_StationView)v.get(i);
-				// Set to the value used in TSTool...
-				if ( view.getVax_field().length() > 0 ){
-					view.setMeas_type( data_type + "-" + view.getVax_field() );
-				}
-				else {
-				    view.setMeas_type ( data_type);
-				}
-				view.setTime_step ( time_step );
-				view.setData_units ( data_units );
-				// TODO (JTS - 2005-04-06) THIS SHOULDn"T BE DONE ONCE WE CAN RECOMPILE TSTOOL!!!				
-				tslist.add(new HydroBase_StationGeolocMeasType(view));
-			}
-		}
-		catch ( Exception e ) {
-			message = "Error getting station time series list from HydroBase (" + e + ").";
-			Message.printWarning ( 3, routine, message );
-			Message.printWarning ( 3, routine, e );
-			throw new Exception ( message );
-		}
+		throw new Exception("Need to update code to call readStationGeolocMeasTypeTSCatalogList");
 	}
 	else if(HydroBase_Util.isStructureTimeSeriesDataType(hbdmi, meas_type)){
-		try {
-		    // Note multiple SFUT and data sources can be returned below...
-			tslist = hbdmi.readStructureGeolocStructMeasTypeList(ifp, meas_type, hbtime_step);
-			// Convert HydroBase data to make it more consistent with how TSTool handles time series...
-			if ( tslist != null ) {
-				size = tslist.size();
-			}
-			HydroBase_StructMeasTypeView view;
-			String data_units = HydroBase_Util.getTimeSeriesDataUnits (hbdmi, data_type, time_step );
-			List v = tslist;
-			tslist = new Vector();			
-			for ( int i = 0; i < size; i++ ) {
-				view = (HydroBase_StructMeasTypeView)v.get(i);
-				// Set to the value used in TSTool...
-				if ( view.getIdentifier().length() > 0){
-					// Merged SFUT...
-					view.setMeas_type(data_type + "-" + view.getIdentifier());
-				}
-				else {
-				    view.setMeas_type( data_type);
-				}
-				view.setTime_step(time_step);
-				view.setData_units ( data_units );
-				// TODO (JTS - 2005-04-06) THIS SHOULDn"T BE DONE ONCE WE CAN RECOMPILE TSTOOL!!!
-				tslist.add(new HydroBase_StructureGeolocStructMeasType(view));
-			}
-			if ( (data_type.equals("WellLevel") || data_type.equals("WellLevelDepth") || data_type.equals("WellLevelElev")) &&
-			    time_step.equalsIgnoreCase("Day")){
-				// Add the common identifiers to the normal data.  This is a work-around until HydroBase is redesigned.
-				// TODO SAM 2004-01-13
-				HydroBase_Util.addAlternateWellIdentifiers ( hbdmi, tslist );
-			}
-		}
-		catch ( Exception e ) {
-			message = "Error getting structure time series list from HydroBase (" + e + ").";
-			Message.printWarning ( 3, routine, message );
-			Message.printWarning ( 3, routine, e );
-			throw new Exception ( message );
-		}
+		throw new Exception("readStructureGeolocStructMeasTypeCatalogList");
 	}
 	else if (meas_type.equalsIgnoreCase("WellLevel")|| data_type.equals("WellLevelDepth") ||
 	    data_type.equals("WellLevelElev")) {
-		try {
-			tslist = hbdmi.readGroundWaterWellsMeasTypeList(ifp, null);
-			// Convert HydroBase data to make it more consistent with how TSTool handles time series...
-			if ( tslist != null ) {
-				size = tslist.size();
-			}
-			HydroBase_GroundWaterWellsView view;
-			String data_units = HydroBase_Util.getTimeSeriesDataUnits ( hbdmi, data_type, time_step );
-
-			List<HydroBase_GroundWaterWellsView> v = tslist;
-			tslist = new Vector();			
-			for ( int i = 0; i < size; i++ ) {
-				view = v.get(i);
-				// Set to the value used in TSTool...
-			    view.setMeas_type( data_type);
-				view.setTime_step(time_step);
-				view.setData_units ( data_units );
-				tslist.add(view);
-			}
-		}
-		catch ( Exception e ) {
-			message = "Error getting well level time series list from HydroBase (" + e + ").";
-			Message.printWarning ( 3, routine, message );
-			Message.printWarning ( 3, routine, e );
-			throw new Exception ( message );
-		}
+		throw new Exception("Need to update code to call readGroundWaterWellsViewTSCatalogList");
 	}
-	// XJTSX
 	else if ( HydroBase_Util.isWISTimeSeriesDataType ( hbdmi, data_type) ) {
-		try {
-		    // Use the selected sheet name from the input filter, if present...
-			tslist = hbdmi.readWISSheetNameWISFormatListDistinct(ifp);
-			int listSize = tslist.size();
-			List v = new Vector();
-			for (int i = 0; i < listSize; i++) {
-				v.add(tslist.get(i));
-			}
-			tslist = v;
-		}
-		catch ( Exception e ) {
-			message = "Error getting WIS time series list from HydroBase.";
-			Message.printWarning ( 2, routine, message );
-			Message.printWarning ( 2, routine, e );
-			throw new Exception ( message );
-		}
+		// TODO smalers 2019-06-02 WIS are obsolete but keep around for now in case they are resurrected in some form
+		throw new Exception("Need to update code to call readStructureIrrigSummaryTSCatalogList");
 	}
 	return tslist;
 }
