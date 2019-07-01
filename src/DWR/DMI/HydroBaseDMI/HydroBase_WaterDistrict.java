@@ -149,6 +149,25 @@ public static String formWDID ( String wd, String id )
 }
 
 /**
+Form a WDID string given a length and original string.
+This is needed to ensure a certain length such as for web services,
+which is not as forgiving as other code.
+@param length the length to which the WDID should be built.
+@param wdid Water district identifier.
+@return the WDID string formatted to the requested length.
+*/
+public static String formWDID (int length, String wdid)
+throws Exception
+{	// First parse the string into its parts
+	int [] parts = parseWDID(wdid);
+	// ID part is the remainder after allowing two digits for WD
+	int idLength = length - 2;
+	String format = "%02d%0" + idLength + "d";
+	String wdid2 = String.format(format, parts[0], parts[1]);
+	return wdid2;
+}
+
+/**
 Form a WDID string from its parts.
 @param length the length to which the WDID should be built.
 @param wd Water district

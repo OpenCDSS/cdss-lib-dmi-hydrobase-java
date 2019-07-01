@@ -12473,7 +12473,33 @@ throws Exception {
 	return readNetAmtsList(structure_num, wd, id, positiveNetRateAbs, null);
 }
 
+/**
+Read HydroBase Net Amount rights.
+@param structure_num if missing or negative, will be ignored.
+@param wd Water district to select.  If missing or negative, will be ignored.
+@param id Identifier to select.  If missing or negative, will be ignored.
+@param positiveNetRateAbs whether to only return net amts with positive (> 0) net rates.
+@param orderCode orderBy code for stored procedure, if null use default (used by StateDMI)
+@throws Exception
+*/
 public List<HydroBase_NetAmts> readNetAmtsList(int structure_num, int wd, int id, boolean positiveNetRateAbs, String orderCode)
+throws Exception {
+	// Use values that match historical behavior
+	return readNetAmtsList(structure_num, wd, id, positiveNetRateAbs, false, orderCode);
+}
+
+/**
+Read HydroBase Net Amount rights.
+@param structure_num if missing or negative, will be ignored.
+@param wd Water district to select.  If missing or negative, will be ignored.
+@param id Identifier to select.  If missing or negative, will be ignored.
+@param positiveNetRateAbs whether to only return net abs (flow, for diversions) amts with positive (> 0) net rates.
+@param positiveNetVolAbs whether to only return net vol (volume, for reservoirs) amts with positive (> 0) net rates.
+@param orderCode orderBy code for stored procedure, if null use default (used by StateDMI)
+@throws Exception
+*/
+public List<HydroBase_NetAmts> readNetAmtsList(int structure_num, int wd, int id,
+	boolean positiveNetRateAbs, boolean positiveNetVolAbs, String orderCode)
 throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
@@ -12506,6 +12532,14 @@ throws Exception {
 		if (positiveNetRateAbs) {
 			triplet = new String[3];
 			triplet[0] = "net_rate_abs";
+			triplet[1] = "GT";
+			triplet[2] = "0";
+			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+
+		if (positiveNetVolAbs) {
+			triplet = new String[3];
+			triplet[0] = "net_vol_abs";
 			triplet[1] = "GT";
 			triplet[2] = "0";
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
