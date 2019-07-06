@@ -108,8 +108,9 @@ protected int _structure_num = DMIUtil.MISSING_INT;
  * Collection part ID type, only used with StateDMI.
  * This is either WDID or Receipt and allows water rights created from well permits to be clearly indicated.
  * This is necessary because a lookup the other direction might have duplicates and have ambiguous lookup.
+ * Default to WDID.
  */
-protected String _collectionPartIdType = "WDID";
+protected HydroBase_NetAmts_CollectionPartIdType _collectionPartIdType = HydroBase_NetAmts_CollectionPartIdType.WDID;
 
 /**
 The common identifier is used to store a formatted WDID or concatenated well
@@ -278,7 +279,7 @@ public Date getApro_date() {
 Returns the collection part ID type ("WDID" or "Receipt")
 @return the collection part ID type ("WDID" or "Receipt")
 */
-public String getCollectionPartIdType() {
+public HydroBase_NetAmts_CollectionPartIdType getCollectionPartIdType() {
 	return _collectionPartIdType;
 }
 
@@ -758,7 +759,7 @@ public void setApro_date(Date apro_date) {
 Sets the collection part ID type (should be "WDID" or "Receipt").
 @param common_id Common identifier for the well right.
 */
-public void setCollectionIdPartType (String collectionPartIdType) {
+public void setCollectionIdPartType (HydroBase_NetAmts_CollectionPartIdType collectionPartIdType) {
 	_collectionPartIdType = collectionPartIdType;
 }
 
