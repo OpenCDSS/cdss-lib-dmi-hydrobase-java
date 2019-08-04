@@ -55,6 +55,8 @@ public DataStore create ( PropList props )
     String connectionProperties = IOUtil.expandPropertyForEnvironment("ConnectionProperties",props.getValue("ConnectionProperties"));
     // Create an initial datastore instance here with null DMI placeholder - it will be recreated below with DMI
     HydroBaseDataStore ds = new HydroBaseDataStore ( name, description, null );
+    // Set the properties before there is a chance to throw an exception
+    ds.setProperties(props);
     try {
         if ( (odbcName != null) && !odbcName.equals("") ) {
         	/*
@@ -70,9 +72,9 @@ public DataStore create ( PropList props )
         	boolean useStoredProcedures = true; // Newer databases should have stored procedures
             HydroBaseDMI hdmi = new HydroBaseDMI(databaseEngine, odbcName, systemLogin, systemPassword, useStoredProcedures );
             hdmi.setAdditionalConnectionProperties(connectionProperties);
+            // The following will thrown an exception
             hdmi.open();
             ds = new HydroBaseDataStore( name, description, hdmi );
-            ds.setProperties(props);
             return ds;
         }
         else {
