@@ -16049,7 +16049,7 @@ whether diversion records have comments applied to set more zero data).
 </tr>
 
 <tr>
-<td><b>FillDailyDiv</b></td>
+<td><b>FillDivRecordsCarryForward</b></td>
 <td><b>Indicates whether daily diversion time series (DivTotal and DivClass)
 should be filled by carrying forward using the State's standard algorithm, with
 the result being less missing data.  HydroBase (as of the 2005 version) only
@@ -16061,11 +16061,11 @@ This property will only be applied to the DivTotal and DivClass data types.
 <td>True</td>
 </tr>
 
-<td><b>FillDailyDivFlag</b></td>
+<td><b>FillDivRecordsCarryForwardFlag</b></td>
 <td><b>A single-character that will be used as a flag for values that are
 filled with daily carry forward method.
 </b>
-<td>If FillDailyDiv=True but a flag is not specified, then "c" is used.  Otherwise, no flag will be set.
+<td>If FillDivRecordsCarryForward=True but a flag is not specified, then "c" is used.  Otherwise, no flag will be set.
 Do not use "C" because that is used when filling with diversion comments.</td>
 </tr>
 
@@ -16116,8 +16116,8 @@ throws Exception, NoDataFoundException
 	// also occur in higher level code (e.g., for DMI commands)...
 
 	List<String> valid_props = new ArrayList<String>();
-	valid_props.add ( "FillDailyDiv" );
-	valid_props.add ( "FillDailyDivFlag" );
+	valid_props.add ( "FillDivRecordsCarryForward" );
+	valid_props.add ( "FillDivRecordsCarryForwardFlag" );
 	valid_props.add ( "FillUsingDivComments" );
 	valid_props.add ( "FillUsingDivCommentsFlag" );
 	valid_props.add ( "SetPropertiesFromMetadata" );
@@ -19215,27 +19215,29 @@ throws Exception, NoDataFoundException
 	// included in original data limits.
 
 	// Fill daily diversion data by carrying forward within irrigation years...
+	// - default is true consistent with legacy code but may change
 
 	if ( (interval_base == TimeInterval.DAY) &&
 		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("DivClass") ||
 		data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("RelClass"))) {
-		String FillDailyDiv = props.getValue ( "FillDailyDiv" );
-		if ( (FillDailyDiv == null) || FillDailyDiv.equals("") ) {
-			FillDailyDiv = "true"; // Default is to fill.
+		String FillDivRecordsCarryForward = props.getValue ( "FillDivRecordsCarryForward" );
+		if ( (FillDivRecordsCarryForward == null) || FillDivRecordsCarryForward.equals("") ) {
+			FillDivRecordsCarryForward = "true"; // Default is to fill, consistent with CDSS approach.
 		}
-		if ( FillDailyDiv.equalsIgnoreCase("true") ) {
-			String FillDailyDivFlag = props.getValue ( "FillDailyDivFlag" );
-			if ( (FillDailyDivFlag == null) || FillDailyDivFlag.equals("") ) {
+		if ( FillDivRecordsCarryForward.equalsIgnoreCase("true") ) {
+			String FillDivRecordsCarryForwardFlag = props.getValue ( "FillDivRecordsCarryForwardFlag" );
+			if ( (FillDivRecordsCarryForwardFlag == null) || FillDivRecordsCarryForwardFlag.equals("") ) {
 			    // Default is "c"
-			    FillDailyDivFlag = "c";
+			    FillDivRecordsCarryForwardFlag = "c";
 			}
 			// TODO SAM 2006-04-25 This throws an Exception.  Leave it for now but need
 			// to evaluate how to handle errors..
-			HydroBase_Util.fillTSIrrigationYearCarryForward ( (DayTS)ts, FillDailyDivFlag );
+			HydroBase_Util.fillTSIrrigationYearCarryForward ( (DayTS)ts, FillDivRecordsCarryForwardFlag );
 		}
 	}
 
 	// Fill with diversion comments (after observations)...
+	// - default is false, consistent with CDSS approach
 
 	if ( ((interval_base == TimeInterval.DAY) ||
 		(interval_base == TimeInterval.MONTH) ||
