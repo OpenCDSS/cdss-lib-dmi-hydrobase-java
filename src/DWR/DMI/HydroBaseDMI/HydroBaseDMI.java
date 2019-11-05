@@ -20741,7 +20741,7 @@ throws Exception {
 			triplet = new String[3];
 			triplet[0] = "wd";
 			triplet[1] = "EQ";
-			triplet[2] = "" + cal_year;
+			triplet[2] = "" + wd;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 		
@@ -20749,7 +20749,7 @@ throws Exception {
 			triplet = new String[3];
 			triplet[0] = "id";
 			triplet[1] = "EQ";
-			triplet[2] = "" + cal_year;
+			triplet[2] = "" + id;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
