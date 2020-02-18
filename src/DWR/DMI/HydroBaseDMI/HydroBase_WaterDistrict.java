@@ -90,19 +90,6 @@ public HydroBase_WaterDistrict( int div, int wd, String name ) {
 }
 
 /**
-Cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_wd_name = null;
-	_tab_trib = null;
-	
-	super.finalize();
-}
-
-/**
 Form a WDID string from its parts.  The default is a 7-character id.
 @param wd Water district.
 @param id Identifier.
@@ -123,10 +110,11 @@ public static String formWDID ( int length, int wd, int id ) {
 
 	iwd = new Integer (wd);
 	iid = new Integer (id);
-	List<Object> v = new ArrayList<Object>(2);
+	List<Object> v = new ArrayList<>(2);
 	v.add(iwd);
 	v.add(iid);
 	if ((length <= 2) || (length >= 12)) {
+		// Requested length is out of range - use default of 7 characters
 		return StringUtil.formatString (v, "%02d%05d");
 	}
 	else {
@@ -141,7 +129,7 @@ Form a WDID string from its parts.  The default is a 7-character id.
 @return the formatted WDID string
 */
 public static String formWDID ( String wd, String id )
-{	List<Object> v = new ArrayList<Object>(2);
+{	List<Object> v = new ArrayList<>(2);
 	v.add(wd);
 	v.add(id);
 	String wdid = StringUtil.formatString (v, "%02d%05d");
@@ -175,7 +163,7 @@ Form a WDID string from its parts.
 @return the formatted WDID string
 */
 public static String formWDID (int length, String wd, String id)
-{	List<Object> v = new ArrayList<Object>(2);
+{	List<Object> v = new ArrayList<>(2);
 	v.add(wd);
 	v.add(id);
 	int idSize = length - 2;
@@ -231,15 +219,29 @@ public static boolean isWDID ( String wdid )
 }
 
 /**
+Lookup the water district from a list of water districts.
+@param districts list of water districts to search.
+@param wd water district to search for.
+@return the single water district object or null if not found.
+*/
+public static HydroBase_WaterDistrict lookupWaterDistrict ( List<HydroBase_WaterDistrict> districts, int wd ) {
+    for ( HydroBase_WaterDistrict wd2 : districts ) {
+        if ( wd2.getWD() == wd ) {
+            return wd2;
+        }
+    }
+    return null;
+}
+
+/**
 Lookup the water districts for a division.
 @param districts list of water districts to search.
 @param div water division to search for
 @return the list of water districts for the division (guaranteed to be non-null). 
 */
 public static List<HydroBase_WaterDistrict> lookupWaterDistrictsForDivision (
-    List<HydroBase_WaterDistrict> districts, int div )
-{
-    List<HydroBase_WaterDistrict> wdList = new ArrayList<HydroBase_WaterDistrict>();
+    List<HydroBase_WaterDistrict> districts, int div ) {
+    List<HydroBase_WaterDistrict> wdList = new ArrayList<>();
     for ( HydroBase_WaterDistrict wd : districts ) {
         if ( wd.getDiv() == div ) {
             wdList.add(wd);
