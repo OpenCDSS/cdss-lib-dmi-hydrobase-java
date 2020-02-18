@@ -13202,6 +13202,31 @@ throws Exception {
 }
 
 /**
+Reads all records from the parcel use ts structure join table that have the
+specified structure WDID, for the given calendar year.
+The structure is first queried to get the structure number and then the overloaded method is called.
+This method is used by:<ul>
+<li>StateDMI for processing well data.</li>
+</ul>
+<p><b>Stored Procedure</b><p>
+The stored procedure that corresponds to this query is:<ul>
+<li>usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear</li>
+</ul>
+@param wd the structure water district (first part of WDID).
+@param id the structure identifier (second part of WDID).
+@param cal_year Calendar year for which to query the database.
+@return a list of HydroBase_ParcelUseTSStructureToParcel objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForStructureWdidCalYear(
+	int wd, int id, int cal_year ) 
+throws Exception {
+	HydroBase_StructureView hbsv = this.readStructureViewForWDID(wd, id);
+
+	return readParcelUseTSStructureToParcelListForStructure_numCal_year( hbsv.getStructure_num(), cal_year );
+}
+
+/**
 Read the person_details table for all data and join with data in the structure table.<p>
 This method is used by:<ul>
 <li>HydroBase_GUI_OwnerContact.submitAndDisplayPersonDetailsQuery</li>

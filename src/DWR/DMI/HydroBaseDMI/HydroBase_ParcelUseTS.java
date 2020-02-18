@@ -68,17 +68,6 @@ public HydroBase_ParcelUseTS() {
 }
 
 /**
-Cleans up variables when the class is disposed of.  Sets all the member variables (that aren't primitives) to null
-*/
-protected void finalize()
-throws Throwable {
-	_land_use = null;
-	_irrig_type = null;
-	
-	super.finalize();
-}
-
-/**
 Returns _area
 @return _area
 */

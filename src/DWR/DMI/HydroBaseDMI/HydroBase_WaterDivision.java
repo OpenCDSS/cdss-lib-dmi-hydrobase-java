@@ -106,18 +106,6 @@ static {
 }
 
 /**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_div_name = null;
-	
-	super.finalize();
-}
-
-/**
 Returns _div
 @return _div
 */
