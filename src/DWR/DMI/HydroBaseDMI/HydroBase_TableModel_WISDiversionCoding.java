@@ -179,9 +179,9 @@ public double getTotalAmount() {
 	HydroBase_WISDailyWC wc = null;
 	double d = 0;
 	for (int i = 0; i < (_data.size() - 1); i++) {
-		wc = (HydroBase_WISDailyWC)_data.get(i);
+		wc = _data.get(i);
 		d = wc.getAmountForDay(__day);
-		if (!DMIUtil.isMissing(d)) {
+		if (!DMIUtil.isMissing(d) && !HydroBase_Util.isMissing(d)) {
 			total += d;
 		}
 	}
@@ -314,7 +314,7 @@ public void setValueAt(Object value, int row, int col) {
 			valueChanged(row, col, value);
 			break;
 		case COL_AMT:
-			if (value == null || DMIUtil.isMissing((Double)value)) {
+			if (value == null || DMIUtil.isMissing((Double)value) || HydroBase_Util.isMissing((Double)value)) {
 				wc.setAmountForDay(__day, 0);
 			}
 			else {

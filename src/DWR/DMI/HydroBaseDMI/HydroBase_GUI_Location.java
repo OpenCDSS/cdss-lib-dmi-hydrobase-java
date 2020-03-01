@@ -272,14 +272,14 @@ private void displayStationLocation(HydroBase_StationGeoloc station) {
 	__statusJTextField.setText("Retrieving Data...");
 
         int curInt = station.getWD();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __wdJTextField.setText("" + curInt);
         }
   
         __idJTextField.setText(station.getStation_id());            
 
         curInt = station.getDiv();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __divJTextField.setText("" + curInt);                        
         }
 
@@ -287,30 +287,25 @@ private void displayStationLocation(HydroBase_StationGeoloc station) {
 	//__streamNameJTextField.setText(station.getStreamName());
 
         double curDouble = station.getStr_mile();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __streamMileJTextField.setText("" + 
-                        StringUtil.formatString(curDouble, "%7.2f").trim()); 
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __streamMileJTextField.setText("" + StringUtil.formatString(curDouble, "%7.2f").trim()); 
         }
 
 	if (__dmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990305)) {
 		// Need to handle separate fields...
 		int ew = station.getCoordsew();
-		if (DMIUtil.isMissing(ew)) {
+		if (DMIUtil.isMissing(ew) || HydroBase_Util.isMissing(ew)) {
         		__ewCoordJTextField.setText("");
 		}
 		else {	
-			__ewCoordJTextField.setText(""
-				+ station.getCoordsew() 
-				+ station.getCoordsew_dir());
+			__ewCoordJTextField.setText("" + station.getCoordsew() + station.getCoordsew_dir());
 		}
 		int ns = station.getCoordsns();
-		if (DMIUtil.isMissing(ns)) {
+		if (DMIUtil.isMissing(ns) || HydroBase_Util.isMissing(curInt)) {
         		__nsCoordJTextField.setText("");
 		}
 		else {	
-			__nsCoordJTextField.setText("" 
-				+ station.getCoordsns() 
-				+ station.getCoordsns_dir());
+			__nsCoordJTextField.setText("" + station.getCoordsns() + station.getCoordsns_dir());
 		}
 	}
 	else {	
@@ -322,24 +317,20 @@ private void displayStationLocation(HydroBase_StationGeoloc station) {
         __hydroCodeJTextField.setText("" + station.getHUC());
 
         curDouble = station.getLatdecdeg();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __latitudeJTextField.setText(StringUtil.formatString(
-			curDouble, "%10.6f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __latitudeJTextField.setText(StringUtil.formatString( curDouble, "%10.6f").trim());
         }
  
         curDouble = station.getLongdecdeg();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __longitudeJTextField.setText(StringUtil.formatString(
-			curDouble, "%10.6f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __longitudeJTextField.setText(StringUtil.formatString( curDouble, "%10.6f").trim());
         }
 
-	if (!DMIUtil.isMissing(station.getUtm_x())) {
-		__utmXJTextField.setText(StringUtil.formatString(
-			station.getUtm_x(), "%10.6f").trim());
+	if (!DMIUtil.isMissing(station.getUtm_x()) && !HydroBase_Util.isMissing(station.getUtm_x())) {
+		__utmXJTextField.setText(StringUtil.formatString( station.getUtm_x(), "%10.6f").trim());
 	}
-	if (!DMIUtil.isMissing(station.getUtm_y())) {
-		__utmYJTextField.setText(StringUtil.formatString(
-			station.getUtm_y(), "%10.6f").trim());
+	if (!DMIUtil.isMissing(station.getUtm_y()) && !HydroBase_Util.isMissing(station.getUtm_y())) {
+		__utmYJTextField.setText(StringUtil.formatString( station.getUtm_y(), "%10.6f").trim());
 	}
 
         __structureTypeJTextField.setText(__dmi.getLocationTypeDescription(
@@ -350,13 +341,13 @@ private void displayStationLocation(HydroBase_StationGeoloc station) {
         __q10JTextField.setText("" + station.getQ10());
 
         curInt = station.getRng();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __rngJTextField.setText("" + curInt);
         }
 	__ewCoordJTextField.setText(station.getRdir());
 
         curInt = station.getSec();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __sec1JTextField.setText("" + curInt);
         }
         __sec2JTextField.setText("" + station.getSeca());
@@ -365,7 +356,7 @@ private void displayStationLocation(HydroBase_StationGeoloc station) {
         __topoMapJTextField.setText("" + station.getTopomap());
 
         curInt = station.getTS();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __twnJTextField.setText("" + curInt);
         }
 	__nsCoordJTextField.setText(station.getTdir());
@@ -383,47 +374,42 @@ private void displayStructureLocation(HydroBase_StructureView structureView) {
 	__statusJTextField.setText("Retrieving Data...");
 
         int curInt = structureView.getWD();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __wdJTextField.setText("" + curInt);
         }
  
         curInt = structureView.getID();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __idJTextField.setText("" + curInt);            
         }
 
         curInt = structureView.getDiv();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __divJTextField.setText("" + curInt);                        
         }
 
 	__streamNameJTextField.setText(structureView.getStrname());
 
         double curDouble = structureView.getStr_mile();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __streamMileJTextField.setText("" + 
-                        StringUtil.formatString(curDouble, "%7.2f").trim()); 
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __streamMileJTextField.setText("" + StringUtil.formatString(curDouble, "%7.2f").trim()); 
         }
 
 	if (__dmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990305)) {
 		// Need to handle separate fields...
 		int ew = structureView.getCoordsew();
-		if (DMIUtil.isMissing(ew)) {
+		if (DMIUtil.isMissing(ew) || HydroBase_Util.isMissing(ew)) {
         		__ewCoordJTextField.setText("");
 		}
 		else {	
-			__ewCoordJTextField.setText(""
-				+ structureView.getCoordsew() 
-				+ structureView.getCoordsew_dir());
+			__ewCoordJTextField.setText("" + structureView.getCoordsew() + structureView.getCoordsew_dir());
 		}
 		int ns = structureView.getCoordsns();
-		if (DMIUtil.isMissing(ns)) {
+		if (DMIUtil.isMissing(ns) || HydroBase_Util.isMissing(ns)) {
         		__nsCoordJTextField.setText("");
 		}
 		else {	
-			__nsCoordJTextField.setText(""
-				+ structureView.getCoordsns() 
-				+ structureView.getCoordsns_dir());
+			__nsCoordJTextField.setText("" + structureView.getCoordsns() + structureView.getCoordsns_dir());
 		}
 	}
 
@@ -435,24 +421,20 @@ private void displayStructureLocation(HydroBase_StructureView structureView) {
         __hydroCodeJTextField.setText("" + structureView.getHUC());
 
         curDouble = structureView.getLatdecdeg();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __latitudeJTextField.setText(StringUtil.formatString(curDouble,
-			"%10.6f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __latitudeJTextField.setText(StringUtil.formatString(curDouble, "%10.6f").trim());
         }
  
         curDouble = structureView.getLongdecdeg();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __longitudeJTextField.setText(StringUtil.formatString(curDouble,
-			"%10.6f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __longitudeJTextField.setText(StringUtil.formatString(curDouble, "%10.6f").trim());
         }
 
-	if (!DMIUtil.isMissing(structureView.getUtm_x())) {
-		__utmXJTextField.setText(StringUtil.formatString(
-			structureView.getUtm_x(), "%10.6f").trim());
+	if (!DMIUtil.isMissing(structureView.getUtm_x()) && !HydroBase_Util.isMissing(structureView.getUtm_x())) {
+		__utmXJTextField.setText(StringUtil.formatString( structureView.getUtm_x(), "%10.6f").trim());
 	}
-	if (!DMIUtil.isMissing(structureView.getUtm_y())) {
-		__utmYJTextField.setText(StringUtil.formatString(
-			structureView.getUtm_y(), "%10.6f").trim());
+	if (!DMIUtil.isMissing(structureView.getUtm_y()) && !HydroBase_Util.isMissing(structureView.getUtm_y())) {
+		__utmYJTextField.setText(StringUtil.formatString( structureView.getUtm_y(), "%10.6f").trim());
 	}
 
         __structureTypeJTextField.setText(
@@ -463,13 +445,13 @@ private void displayStructureLocation(HydroBase_StructureView structureView) {
         __q10JTextField.setText("" + structureView.getQ10());
 
         curInt = structureView.getRng();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __rngJTextField.setText("" + curInt);
         }
 	__ewCoordJTextField.setText(structureView.getRdir());
 
         curInt = structureView.getSec();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __sec1JTextField.setText("" + curInt);
         }
         __sec2JTextField.setText("" + structureView.getSeca());
@@ -478,53 +460,13 @@ private void displayStructureLocation(HydroBase_StructureView structureView) {
         __topoMapJTextField.setText("" + structureView.getTopomap());
 
         curInt = structureView.getTS();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __twnJTextField.setText("" + curInt);
         }
 	__nsCoordJTextField.setText(structureView.getTdir());
 
 	JGUIUtil.setWaitCursor(this, false);
 	__statusJTextField.setText("Ready");
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__dmi = null;
-	__station = null;
-	__structureView = null;
-	__closeJButton = null;
-	__exportJButton = null;
-	__printJButton = null;
-	__countyJTextField = null;
-	__divJTextField = null;
-	__ewCoordJTextField = null;
-	__hydroCodeJTextField = null;
-	__idJTextField = null;
-	__latitudeJTextField = null;
-	__longitudeJTextField = null;
-	__nsCoordJTextField = null;
-	__pmJTextField = null;
-	__q10JTextField = null;
-	__q40JTextField = null;
-	__q160JTextField = null;
-	__rngJTextField = null;
-	__sec1JTextField = null;
-	__sec2JTextField = null;
-	__stateJTextField = null;
-	__statusJTextField = null;
-	__streamMileJTextField = null;
-	__streamNameJTextField = null;
-	__structureTypeJTextField = null;
-	__structureNameJTextField = null;
-	__topoMapJTextField = null;
-	__twnJTextField = null;
-	__utmXJTextField = null;
-	__utmYJTextField = null;
-	__wdJTextField = null;
-	super.finalize();
 }
 
 /**

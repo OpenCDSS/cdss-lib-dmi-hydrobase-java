@@ -358,7 +358,7 @@ private void setupViewGUI() {
 
 	String s = "";
 	int i = __hydroBasePumpTestView.getPermitno();
-	if (!DMIUtil.isMissing(i)) {
+	if (!DMIUtil.isMissing(i) && !HydroBase_Util.isMissing(i)) {
 		s += i;
 	}
 
@@ -527,7 +527,7 @@ private void setupViewGUI() {
 		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __testtimeJTextField = new JTextField();
-	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTesttime())) {
+	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTesttime()) && !HydroBase_Util.isMissing(__hydroBasePumpTestView.getTesttime())) {
 	        __testtimeJTextField.setText(StringUtil.formatString(
 			__hydroBasePumpTestView.getTesttime(), "%8.2f").trim());
 	}
@@ -555,7 +555,7 @@ private void setupViewGUI() {
 
 	x=0;
         __tswlJTextField = new JTextField();
-	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTswl())) {
+	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTswl()) && !HydroBase_Util.isMissing(__hydroBasePumpTestView.getTswl())) {
 	        __tswlJTextField.setText(StringUtil.formatString(
 			__hydroBasePumpTestView.getTswl(), "%8.2f").trim());
 	}
@@ -564,7 +564,7 @@ private void setupViewGUI() {
 		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __tfwlJTextField = new JTextField();
-	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTfwl())) {
+	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTfwl()) && !HydroBase_Util.isMissing(__hydroBasePumpTestView.getTfwl())) {
 	        __tfwlJTextField.setText(StringUtil.formatString(
 			__hydroBasePumpTestView.getTfwl(), "%8.2f").trim());
 	}
@@ -573,7 +573,7 @@ private void setupViewGUI() {
 		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __drawdownJTextField = new JTextField();
-	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getDrawdown())) {
+	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getDrawdown()) && !HydroBase_Util.isMissing(__hydroBasePumpTestView.getDrawdown())) {
 	        __drawdownJTextField.setText(StringUtil.formatString(
 			__hydroBasePumpTestView.getDrawdown(), "%8.2f").trim());
 	}
@@ -582,7 +582,7 @@ private void setupViewGUI() {
 		x++, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __testqJTextField = new JTextField();
-	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTestq())) {
+	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTestq()) && !HydroBase_Util.isMissing(__hydroBasePumpTestView.getTestq())) {
 	        __testqJTextField.setText(StringUtil.formatString(
 			__hydroBasePumpTestView.getTestq(), "%8.1f").trim());
 	}
@@ -601,7 +601,7 @@ private void setupViewGUI() {
 
 	x=0;
         __toptestintJTextField = new JTextField();
-	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getToptestint())) {
+	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getToptestint()) && !HydroBase_Util.isMissing(__hydroBasePumpTestView.getToptestint())) {
 	        __toptestintJTextField.setText("" 
 			+ __hydroBasePumpTestView.getToptestint());
 	}
@@ -611,7 +611,7 @@ private void setupViewGUI() {
 	x++;
         __basetestintJTextField = new JTextField();
 
-	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getBasetestint())) {
+	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getBasetestint()) && !HydroBase_Util.isMissing(__hydroBasePumpTestView.getBasetestint())) {
 	        __basetestintJTextField.setText("" 
 			+ __hydroBasePumpTestView.getBasetestint());
 	}
@@ -642,9 +642,8 @@ private void setupViewGUI() {
 
 	x=0;
         __transJTextField = new JTextField();
-	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTrans())) {
-	        __transJTextField.setText(StringUtil.formatString(
-			__hydroBasePumpTestView.getTrans(), "%8.0f").trim());
+	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getTrans()) && !HydroBase_Util.isMissing(__hydroBasePumpTestView.getTrans())) {
+	        __transJTextField.setText(StringUtil.formatString(__hydroBasePumpTestView.getTrans(), "%8.0f").trim());
 	}
         __transJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_2, __transJTextField, 
@@ -652,8 +651,7 @@ private void setupViewGUI() {
 
         __kJTextField = new JTextField();
 	if (!DMIUtil.isMissing(__hydroBasePumpTestView.getK())) {
-	        __kJTextField.setText(StringUtil.formatString(
-			__hydroBasePumpTestView.getK(), "%8.3f").trim());
+	        __kJTextField.setText(StringUtil.formatString(__hydroBasePumpTestView.getK(), "%8.3f").trim());
 	}
         __kJTextField.setEditable(false);
         JGUIUtil.addComponent(panel_2, __kJTextField, 

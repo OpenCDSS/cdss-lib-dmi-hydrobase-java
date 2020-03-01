@@ -331,7 +331,7 @@ public Object getValueAt(int row, int col) {
 		case COL_PERMIT_INFO:
 			String s = "";
 			int i = g.getPermitno();
-			if (!DMIUtil.isMissing(i)) {
+			if (!DMIUtil.isMissing(i) && !HydroBase_Util.isMissing(i)) {
 				s += i;
 			}
 
@@ -345,7 +345,7 @@ public Object getValueAt(int row, int col) {
 			s += "-";
 
 			temp = g.getPermitrpl();
-			if (!DMIUtil.isMissing(temp)) {
+			if (!DMIUtil.isMissing(temp) ) {
 				s += temp;
 			}
 			return s;

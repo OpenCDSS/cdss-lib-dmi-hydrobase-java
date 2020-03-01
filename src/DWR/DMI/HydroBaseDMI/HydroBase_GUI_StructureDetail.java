@@ -1922,21 +1922,21 @@ private void setupGUI() {
 	int curInt = __structureView.getDiv();
 	
 	String div = "";
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 div = "" + curInt;
         }
         
 	curInt = __structureView.getWD();
 	
 	String wd = "";
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 wd = "" + curInt;
         }
         
         curInt = __structureView.getID();
 
 	String id = "";
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 id = "" + curInt;
         }
         

@@ -297,18 +297,16 @@ private void callsJListClicked() {
 
 	Date curDate = netAmt.getApro_date();
 	if (!DMIUtil.isMissing(curDate)) {
-		__aproDateJTextField.setText((new DateTime(curDate)).toString(
-			DateTime.FORMAT_YYYY_MM_DD));
+		__aproDateJTextField.setText((new DateTime(curDate)).toString( DateTime.FORMAT_YYYY_MM_DD));
 	}
         
 	double curDouble = netAmt.getAdmin_no();
-	if (!DMIUtil.isMissing(curDouble)) {
-		__adminJTextField.setText(
-			StringUtil.formatString(curDouble, "%11.5f"));
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+		__adminJTextField.setText( StringUtil.formatString(curDouble, "%11.5f"));
 	}
         
 	curDouble = netAmt.getNet_abs();
-	if (!DMIUtil.isMissing(curDouble)) {
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 		String unit = netAmt.getUnit();
 		if (unit.equalsIgnoreCase("C")) {
 			unit = HydroBase_GUI_SetCall.CFS;
@@ -327,8 +325,7 @@ private void callsJListClicked() {
 
 	curDate = netAmt.getAdj_date();
 	if (!DMIUtil.isMissing(curDate)) {
-		__adjDateJTextField.setText((new DateTime(curDate)).toString(
-			DateTime.FORMAT_YYYY_MM_DD));	
+		__adjDateJTextField.setText((new DateTime(curDate)).toString(DateTime.FORMAT_YYYY_MM_DD));	
 	}
 		
 	__priorNumJTextField.setText(netAmt.getPri_case_no());
@@ -391,12 +388,10 @@ private void displayWaterRightNetResults(List<HydroBase_NetAmts> results) {
 			}
 			else {
 				try {
-	                    		curString = DMIUtil.formatDateTime(
-						__dmi, new DateTime(curDate));
+	                    curString = DMIUtil.formatDateTime(__dmi, new DateTime(curDate));
 				}
 				catch (Exception e) {
-					Message.printWarning(1, routine, 
-						"Error while formatting date.");
+					Message.printWarning(1, routine, "Error while formatting date.");
 					Message.printWarning(1, routine, e);
 					curString = "";
 				}					
@@ -409,8 +404,7 @@ private void displayWaterRightNetResults(List<HydroBase_NetAmts> results) {
 			}
 			else {
 				try {
-					curString =DMIUtil.formatDateTime(__dmi,
-						new DateTime(curDate));
+					curString =DMIUtil.formatDateTime(__dmi, new DateTime(curDate));
 				}
 				catch (Exception e) {
 					Message.printWarning(1, routine, 
@@ -422,7 +416,7 @@ private void displayWaterRightNetResults(List<HydroBase_NetAmts> results) {
                 }
                 else if (display.equals(HydroBase_GUI_Options.ADMIN_NO)) {
 			curDouble = netAmt.getAdmin_no();
-			if (DMIUtil.isMissing(curDouble)) {
+			if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
 	                    	curString = "";       
 			}
 			else {
@@ -432,12 +426,11 @@ private void displayWaterRightNetResults(List<HydroBase_NetAmts> results) {
                 }	
                 else if (display.equals(HydroBase_GUI_Options.DECREED_AMT)) {
 			curDouble = netAmt.getNet_rate_abs();
-			if (DMIUtil.isMissing(curDouble)) {
+			if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
 	                    	curString = "";
 			}
 			else {
-				curString = StringUtil.formatString(
-					curDouble, "%11.5f");
+				curString = StringUtil.formatString(curDouble, "%11.5f");
 			}                
 		}	
 
@@ -488,7 +481,7 @@ private void displayWISStructures() {
 			view = __structures.get(i);
 			name = "" + view.getStr_name().trim();
 			curInt = view.getWD();
-			if (DMIUtil.isMissing(curInt)) {
+			if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 				wd = "";
 			}
 			else {
@@ -496,7 +489,7 @@ private void displayWISStructures() {
 			}
 
 			curInt = view.getID();
-			if (DMIUtil.isMissing(curInt)) {
+			if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 				id = "";
 			}
 			else {
@@ -516,32 +509,6 @@ private void displayWISStructures() {
 	__parent.setHaveGeneratedBYPASSStructures(true);
 	JGUIUtil.setWaitCursor(this, false);
 	__statusJTextField.setText("Ready");
-}
-
-/**
-Cleans up.
-*/
-public void finalize()
-throws Throwable {
-	__parent = null;
-	__dmi = null;
-	__cancelJButton = null;
-	__okJButton = null;
-	__callJLabel = null;
-	__adjDateJTextField = null;
-	__adminJTextField = null;
-	__aproDateJTextField = null;
-	__callsJTextField = null;
-	__decreedJTextField = null;
-	__priorNumJTextField = null;
-	__statusJTextField = null;
-	__callsJList = null;
-	__structureJList = null;
-	__calls = null;
-	__structures = null;
-	__textFieldVector = null;
-	__structureJPopupMenu = null;
-	super.finalize();
 }
 
 /**
@@ -961,7 +928,7 @@ private void structureAddition(HydroBase_StructureView newCall) {
 
 	// get water district
 	int curInt = newCall.getWD();
-	if (DMIUtil.isMissing(curInt)) {
+	if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 		wd = "";
 	}
 	else {
@@ -970,7 +937,7 @@ private void structureAddition(HydroBase_StructureView newCall) {
 
 	// structure id
         curInt = newCall.getID();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
         	id = "";
        	}
        	else {

@@ -313,7 +313,10 @@ static {
 
 /**
 Adds a triplet to the parameter list in the first "where" triplet position that is available.
-TODO SAM 2016-08-17 Why is the first position in the array, [0], always skipped and therefore -999?
+The first argument to usp_Flex is the number corresponding to the view.
+Therefore, parameter triplets start in position 1, 4, etc.
+If the first part of a triplet is -999 then the usp_Flex procedure will skip.
+Therefore to add a new triplet, look for the first -999 to find an unallocated parameter.
 @param parameter the parameter list that has already been set up.
 @param triplet the triplet to put in the parameter list.
 */
@@ -1460,7 +1463,7 @@ so as to avoid X-hundred if statements.
 */
 public static void setText(JTextField t, double d, String format) {
 	String s = "";
-	if (!DMIUtil.isMissing(d)) {
+	if (!DMIUtil.isMissing(d) && !HydroBase_Util.isMissing(d)) {
 		s = StringUtil.formatString(d, format);
 	}
 	s = s.trim();
@@ -1477,7 +1480,7 @@ so as to avoid X-hundred if statements.
 */
 public static void setText(JTextField t, int i) {
 	String s = "";
-	if (!DMIUtil.isMissing(i)) {
+	if (!DMIUtil.isMissing(i) && !HydroBase_Util.isMissing(i)) {
 		s = "" + i;
 	}
 	setText(t, s);

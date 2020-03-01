@@ -223,23 +223,6 @@ private void closeClicked() {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__divJTextField = null;
-	__idJTextField = null;
-	__minFlowJTextField = null;
-	__minVolJTextField = null;
-	__statusJTextField = null;
-	__structureJTextField = null;
-	__wdJTextField = null;
-	__structureName = null;
-	super.finalize();
-}
-
-/**
 Formats output for printing or exporting. 
 @param format the format in which to format the output.
 */
@@ -412,8 +395,7 @@ private void setupGUI() {
 Submits a query on the MFReach table and displays the results in the GUI.
 */
 private void submitAndDisplayMFReachQuery() {
-	String routine = "HydroBase_GUI_MinimumFlowReach"
-		+ ".submitAndDisplayStructureQuery";
+	String routine = "HydroBase_GUI_MinimumFlowReach.submitAndDisplayStructureQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
 	List<HydroBase_StructureMFReach> results = null;
@@ -422,8 +404,7 @@ private void submitAndDisplayMFReachQuery() {
 		results = __dmi.readStructureMFReachListForStructure_num(__structureNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reandig "
-			+ "MFReachStructure data.");
+		Message.printWarning(1, routine, "Error reanding MFReachStructure data.");
 		Message.printWarning(2, routine, e);
 		JGUIUtil.setWaitCursor(this, false);
 		return;
@@ -449,17 +430,17 @@ private void submitAndDisplayMFReachQuery() {
 		__wdJTextField.setText(view.getStr_name());
 
 		int curInt = view.getWD();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 			__wdJTextField.setText("" + curInt);
 		}
 
 		curInt = view.getID();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 			__idJTextField.setText("" + curInt);        
 		}
 
 		curInt = view.getDiv();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 			__divJTextField.setText("" + curInt); 
 		}
 	}
@@ -467,30 +448,28 @@ private void submitAndDisplayMFReachQuery() {
 		HydroBase_StructureMFReach data = (HydroBase_StructureMFReach)
 			results.get(0);
         	int curInt = data.getWD();
-        	if (!DMIUtil.isMissing(curInt)) {
+        	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 	__wdJTextField.setText("" + curInt);
         	}
 
         	curInt = data.getID();
-        	if (!DMIUtil.isMissing(curInt)) {
+        	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 	__idJTextField.setText("" + curInt);        
         	}
 
         	curInt = data.getDiv();
-        	if (!DMIUtil.isMissing(curInt)) {
+        	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 	__divJTextField.setText("" + curInt); 
         	}
 
         	double curDouble = data.getMfr_rate();
-        	if (!DMIUtil.isMissing(curDouble)) {
-                	__minFlowJTextField.setText(StringUtil.formatString(
-				curDouble, "%6.1")); 
+        	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                	__minFlowJTextField.setText(StringUtil.formatString( curDouble, "%6.1")); 
         	}
 
         	curDouble = data.getMfr_vol();
-        	if (!DMIUtil.isMissing(curDouble)) {
-                	__minVolJTextField.setText(StringUtil.formatString(
-				curDouble, "%6.1")); 
+        	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                	__minVolJTextField.setText(StringUtil.formatString( curDouble, "%6.1")); 
         	}
 	}
 	JGUIUtil.setWaitCursor(this, false);

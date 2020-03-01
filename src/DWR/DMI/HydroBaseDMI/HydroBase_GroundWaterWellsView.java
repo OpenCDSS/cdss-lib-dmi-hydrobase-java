@@ -206,7 +206,7 @@ public String formatLatLongID ()
 {
     double lat = getLatdecdeg();
     double lon = getLongdecdeg();
-    if ( DMIUtil.isMissing(lat) || DMIUtil.isMissing(lon)) {
+    if ( DMIUtil.isMissing(lat) || HydroBase_Util.isMissing(lon)) {
         return "";
     }
     if ( lon < 0.0 ) {

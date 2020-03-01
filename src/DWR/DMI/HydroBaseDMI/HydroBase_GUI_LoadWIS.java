@@ -741,7 +741,7 @@ private void getWISSheets() {
 					sheetName = sheets.get(j);
 					wis_num = sheetName.getWis_num();
 
-					if (DMIUtil.isMissing(wis_num)) {
+					if (DMIUtil.isMissing(wis_num) || HydroBase_Util.isMissing(wis_num)) {
 						continue;
 					}
 			
@@ -923,7 +923,7 @@ private void okClicked(boolean editable) {
 	// the __sheetDatesVector.
 	HydroBase_WISSheetName sheetData = null;
 //System.out.println("Archive date: " + data.getArchive_date());	
-        if (DMIUtil.isMissing(data.getArchive_date())) {
+        if (DMIUtil.isMissing(data.getArchive_date()) ) {
                 // get the most recent wis_num for the selected sheet name.
                 // most recent is determined via the effective date in
 		// Sheet_Name table.

@@ -62,13 +62,13 @@ public HydroBase_WISComments() {
 }
 
 public int compareTo(HydroBase_WISComments wc) {
-	if (DMIUtil.isMissing(_wis_num) && DMIUtil.isMissing(wc._wis_num)) {
+	if (DMIUtil.isMissing(_wis_num) && HydroBase_Util.isMissing(_wis_num) && DMIUtil.isMissing(wc._wis_num) && HydroBase_Util.isMissing(wc._wis_num)) {
 		// placeholder
 	}
-	else if (DMIUtil.isMissing(_wis_num)) {
+	else if (DMIUtil.isMissing(_wis_num) && HydroBase_Util.isMissing(_wis_num)) {
 		return -1;
 	}
-	else if (DMIUtil.isMissing(wc._wis_num)) {
+	else if (DMIUtil.isMissing(wc._wis_num) && HydroBase_Util.isMissing(wc._wis_num)) {
 		return 1;
 	}
 	else if (_wis_num < wc._wis_num) {

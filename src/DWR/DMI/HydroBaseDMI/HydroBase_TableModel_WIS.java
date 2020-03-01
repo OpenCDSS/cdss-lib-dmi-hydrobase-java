@@ -489,31 +489,26 @@ boolean isImportCell, boolean isFirstCalc) {
 	}
 	// always display imports regardless of value
 	else if (isImportCell) {
-		if (!isFirstCalc || DMIUtil.isMissing(contents)) {
+		if (!isFirstCalc || DMIUtil.isMissing(contents) || HydroBase_Util.isMissing(contents)) {
 			setCellContents(contents, row, col, __knownPointAttr);
 		}
 		else {	
-	        	setCellContents(contents, format, row, col, 
-				__stationImportAttr);
+	        	setCellContents(contents, format, row, col, __stationImportAttr);
 		}
 	}
 	// do not display values for Stream and String row types
 	// unless the cell is a formula
-	else if (rowType.equals(HydroBase_GUI_WIS.STREAM)
-		|| rowType.equals(HydroBase_GUI_WIS.STRING)) {
-		setCellContents(DMIUtil.MISSING_DOUBLE, format, row, col, 
-			__computedAttr);
+	else if (rowType.equals(HydroBase_GUI_WIS.STREAM) || rowType.equals(HydroBase_GUI_WIS.STRING)) {
+		setCellContents(DMIUtil.MISSING_DOUBLE, format, row, col, __computedAttr);
 	}	
 	else if (isEntryCell) {
 		// always display formulas regardless of value
 		if (isFormulaCell) {
-		       	setCellContents(contents, format, row, col, 
-				__formulaAttr);
+		       	setCellContents(contents, format, row, col, __formulaAttr);
 		}
 		// display contents of user entered cells
 		// only if 0.0 was not entered
-		else if (contents != 0.0 
-			&& col != HydroBase_GUI_WIS.POINT_FLOW_COL) {
+		else if (contents != 0.0 && col != HydroBase_GUI_WIS.POINT_FLOW_COL) {
 			setCellContents(contents, row, col, __knownPointAttr);
 		}
 		else if (col == HydroBase_GUI_WIS.POINT_FLOW_COL) {
@@ -523,8 +518,7 @@ boolean isImportCell, boolean isFirstCalc) {
 	else if (!isEntryCell) {
 		// always display formulas regardless of value
 		if (isFormulaCell) {
-		       	setCellContents(contents, format, row, col, 
-				__formulaAttr);
+		       	setCellContents(contents, format, row, col, __formulaAttr);
 		}
 		// display contents regardless of value in these columns
 		else if (col == HydroBase_GUI_WIS.POINT_FLOW_COL
@@ -537,15 +531,13 @@ boolean isImportCell, boolean isFirstCalc) {
 		// for the remaining columns, display only if the 
 		// contents of cell are not 0.0
 		else if (contents != 0.0) {
-		       	setCellContents(contents, format, row, col, 
-				__computedAttr);
+		       	setCellContents(contents, format, row, col, __computedAttr);
 		}
 		// for contents = 0.0, used the missing data value
 		// to force the cell to be formatted, but have
 		// no value displayed.
 		else if (contents == 0.0) {
-		       	setCellContents(DMIUtil.MISSING_DOUBLE, format, row, 
-				col, __computedAttr);
+		       	setCellContents(DMIUtil.MISSING_DOUBLE, format, row, col, __computedAttr);
 		}
 	}
 }
@@ -572,8 +564,7 @@ public void setCellContents(String contents, int row, int col, String rowType) {
 	else if (col == HydroBase_GUI_WIS.COMMENTS_COL) {
 		ca = __commentAttr;
 	}
-	else if (!rowType.equals(HydroBase_GUI_WIS.STRING) && 
-		!rowType.equals(HydroBase_GUI_WIS.STREAM)) {
+	else if (!rowType.equals(HydroBase_GUI_WIS.STRING) && !rowType.equals(HydroBase_GUI_WIS.STREAM)) {
 		if (col < HydroBase_GUI_WIS.TRIB_NATURAL_COL) {
 			ca = __computedAttr;
 		}
@@ -640,8 +631,7 @@ int col, JWorksheet_CellAttributes ca) {
 /**
 Returns the cell style based on the row type and column.
 @param rowType row type as defined in HydroBase_GUI_WIS
-@param isEntryCell true if the cell is a user entry cell, 
-false otherwise
+@param isEntryCell true if the cell is a user entry cell, false otherwise
 @param isFormula true if the cell is a formula cell, false othewise.
 @param col column number
 @return JWorksheet_CellAttributes object

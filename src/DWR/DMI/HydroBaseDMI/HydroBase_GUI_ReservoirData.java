@@ -613,14 +613,12 @@ private void submitAndDisplayAreaCapQuery() {
 Submits a reservoir structure query and displays the results in the GUI.
 */
 private void submitAndDisplayReservoirQuery() {
-	String routine = "HydroBase_GUI_ReservoirData"
-		+ ".submitAndDisplayReservoirQuery";
+	String routine = "HydroBase_GUI_ReservoirData.submitAndDisplayReservoirQuery";
 	JGUIUtil.setWaitCursor(this, true);
 	
 	HydroBase_StructureReservoir data = null;
 	try {
-		data = __dmi.readStructureReservoirForStructure_num(
-			__structureNum);
+		data = __dmi.readStructureReservoirForStructure_num( __structureNum);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, e);
@@ -635,48 +633,43 @@ private void submitAndDisplayReservoirQuery() {
 
 	// Place data into the appropriate instantiated component object
 	int curInt = data.getDiv();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__divJTextField.setText("" + curInt);
 	}
 
 	curInt = data.getWD();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__wdJTextField.setText("" + curInt);
 	}
 
 	curInt = data.getID();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__idJTextField.setText("" + curInt);
 	}
 
 	double curDouble = data.getNormal_storage();
-	if (!DMIUtil.isMissing(curDouble)) {
-		__normalJTextField.setText(
-			StringUtil.formatString(curDouble, "%6.1f"));
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+		__normalJTextField.setText( StringUtil.formatString(curDouble, "%6.1f"));
 	}
 
 	curDouble = data.getMax_storage();
-	if (!DMIUtil.isMissing(curDouble)) {
-		__maxJTextField.setText(
-			StringUtil.formatString(curDouble, "%6.1f"));
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+		__maxJTextField.setText( StringUtil.formatString(curDouble, "%6.1f"));
 	}
 
 	curDouble = data.getSurface_area();
-	if (!DMIUtil.isMissing(curDouble)) {
-		__surfaceAreaJTextField.setText(
-			StringUtil.formatString(curDouble, "%6.1f"));
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+		__surfaceAreaJTextField.setText( StringUtil.formatString(curDouble, "%6.1f"));
 	}
 
 	curDouble = data.getDrain_area();
-	if (!DMIUtil.isMissing(curDouble)) {
-		__drainageAreaJTextField.setText(
-			StringUtil.formatString(curDouble, "%6.1f"));
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+		__drainageAreaJTextField.setText( StringUtil.formatString(curDouble, "%6.1f"));
 	}        
 
 	List<HydroBase_StructMeasTypeView> results = null;
 	try {
-		results = __dmi.readStructMeasTypeListForStructure_numMeas_type(
-			__structureNum, "ResEOM");
+		results = __dmi.readStructMeasTypeListForStructure_numMeas_type( __structureNum, "ResEOM");
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, e);
@@ -690,16 +683,15 @@ private void submitAndDisplayReservoirQuery() {
 	}
 
 	Object o = results.get(0);
-	HydroBase_StructMeasTypeView smt 
-		= (HydroBase_StructMeasTypeView)o;
+	HydroBase_StructMeasTypeView smt = (HydroBase_StructMeasTypeView)o;
 
 	curInt = smt.getStart_year();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__fromJTextField.setText("" + curInt);
 	}
 
 	curInt = smt.getEnd_year();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__toJTextField.setText("" + curInt);
 	}
 

@@ -168,18 +168,18 @@ int structureNum) {
 
 	if (data != null) {
 		curInt = data.getDiv();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		        __divJTextField.setText("" + curInt);
 		}
 
 		curInt = data.getWD();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 	       		__wdJTextField.setText("" + curInt);
 		}
 
 
 		curInt = data.getID();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
         		__idJTextField.setText("" + curInt);
 		}		
 	}

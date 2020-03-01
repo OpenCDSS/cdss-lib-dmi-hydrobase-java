@@ -764,23 +764,23 @@ private void submitAndDisplayPersonDetailsQuery() {
 	}
 
 	String curString = data.getType();
-	if (!DMIUtil.isMissing(curString)) {
+	if (!DMIUtil.isMissing(curString) ) {
 		__typeJTextField.setText(curString);
 	}
 
         // Place data into the appropriate instantiated component object
 	int curInt = data.getWD();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__wdJTextField.setText("" + curInt);
 	}
 
 	curInt = data.getID();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__idJTextField.setText("" + curInt);           
 	}
  
 	curInt = data.getDiv();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__divJTextField.setText("" + curInt);            
 	}
 
@@ -798,14 +798,12 @@ private void submitAndDisplayPersonDetailsQuery() {
 Submits a query for rolodex data and shows the data in the GUI.
 */
 private void submitAndDisplayRolodexQuery() {
-	String routine = "HydroBase_GUI_OwnerContact"
-		+ ".submitAndDisplayRolodexQuery";
+	String routine = "HydroBase_GUI_OwnerContact.submitAndDisplayRolodexQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
 	HydroBase_Rolodex data = null;
 	try {
-		data = __dmi.readRolodexForRolodex_numStructure_num(
-			__rolodexNum, __structureNum);
+		data = __dmi.readRolodexForRolodex_numStructure_num( __rolodexNum, __structureNum);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, e);

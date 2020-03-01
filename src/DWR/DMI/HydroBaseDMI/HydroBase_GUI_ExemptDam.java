@@ -565,12 +565,10 @@ private void submitAndDisplayDamQuery() {
 
 	HydroBase_StructureSmallDam data = null;
 	try {
-		data = __dmi.readStructureSmallDamForStructure_num(
-			__structureNum);
+		data = __dmi.readStructureSmallDamForStructure_num( __structureNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reaidng small dam "
-			+ "structure data.");
+		Message.printWarning(1, routine, "Error reaidng small dam structure data.");
 		Message.printWarning(2, routine, e);
 		JGUIUtil.setWaitCursor(this, false);
 		return;
@@ -582,56 +580,50 @@ private void submitAndDisplayDamQuery() {
 	}
 	
         int curInt = data.getWD();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __wdJTextField.setText("" + curInt);
         }
 
         curInt = data.getID();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __idJTextField.setText("" + curInt);
         }     
  
         curInt = data.getDiv();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __divJTextField.setText("" + curInt);
         }     
 
         double curDouble = data.getDrain_area();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __drainageJTextField.setText(StringUtil.formatString(curDouble, 
-			"%6.1f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __drainageJTextField.setText(StringUtil.formatString(curDouble, "%6.1f").trim());
         }
 
         __damTypeJTextField.setText("" + data.getSmall_dam_type());
 
         curDouble = data.getHeight();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __damHeightJTextField.setText(StringUtil.formatString(curDouble,
-			"%7.2f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __damHeightJTextField.setText(StringUtil.formatString(curDouble, "%7.2f").trim());
         }
 
         curDouble = data.getSpillway_height();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __spillHeightJTextField.setText(StringUtil.formatString(
-			curDouble, "%7.2f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __spillHeightJTextField.setText(StringUtil.formatString( curDouble, "%7.2f").trim());
         }
 
         curDouble = data.getSpillway_width();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __spillWidthJTextField.setText(StringUtil.formatString(
-			curDouble, "%7.2f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __spillWidthJTextField.setText(StringUtil.formatString( curDouble, "%7.2f").trim());
         }
 
         curDouble = data.getTank_capy();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __capacityJTextField.setText(StringUtil.formatString(curDouble, 
-			"%6.1f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __capacityJTextField.setText(StringUtil.formatString(curDouble, "%6.1f").trim());
         }
 
         curDouble = data.getOutlet_size();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __sizeOutJTextField.setText(StringUtil.formatString(curDouble, 
-			"%7.2f").trim());
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                __sizeOutJTextField.setText(StringUtil.formatString(curDouble, "%7.2f").trim());
         }
 
         __typeOutJTextField.setText("" + data.getOutlet_type());
@@ -649,7 +641,7 @@ private void submitAndDisplayDamQuery() {
         }
 
         curInt = data.getReceipt();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 __receiptJTextField.setText("" + curInt);
         }
 

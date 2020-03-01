@@ -351,14 +351,12 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 		// Now fill in the active records for the calls data.  To
 		// increase performance, only process dates that are within
 		// the graph period.
-    		if (DMIUtil.isMissing(call.getDate_time_set())) {
+    		if (DMIUtil.isMissing(call.getDate_time_set()) ) {
 			// Problem here. We need to set some warning.
-			Message.printWarning(1, routine,
-				"Error.  Null set date for call.  Skipping.");
+			Message.printWarning(1, routine, "Error.  Null set date for call.  Skipping.");
 			continue; 
        		}
-		startDate = new DateTime(call.getDate_time_set(),
-			DateTime.PRECISION_DAY);
+		startDate = new DateTime(call.getDate_time_set(), DateTime.PRECISION_DAY);
 		if (startDate.greaterThan(to)) {
 			// Past end of period so no need to process...
 			continue;
@@ -372,13 +370,12 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 		// is in the future, the end date is "to".  If the end date
 		// is before "from" no need to process.  Otherwise the end
 		// date is OK.
-	        if (DMIUtil.isMissing(call.getDate_time_released())) {
+	        if (DMIUtil.isMissing(call.getDate_time_released()) ) {
 			// Assume that we are still active for this call
                 	endDate = new DateTime(to);
        		}
 		else {	
-			endDate = new DateTime(call.getDate_time_released(),
-				DateTime.PRECISION_DAY);
+			endDate = new DateTime(call.getDate_time_released(), DateTime.PRECISION_DAY);
 			if (endDate.lessThan(from)) {
 				continue;
 			}
@@ -417,13 +414,13 @@ private String getJListString(HydroBase_Calls call, int count) {
  
  	String wds = "";
         int wdi = call.getWD();
-        if (!DMIUtil.isMissing(wdi)) {
+        if (!DMIUtil.isMissing(wdi) && !HydroBase_Util.isMissing(wdi)) {
 		wds = "" + wdi;
         }
 
 	String ids = "";
         int idi = call.getID();
-        if (!DMIUtil.isMissing(idi)) {
+        if (!DMIUtil.isMissing(idi) && !HydroBase_Util.isMissing(idi)) {
 		ids = "" + idi;
         }
 

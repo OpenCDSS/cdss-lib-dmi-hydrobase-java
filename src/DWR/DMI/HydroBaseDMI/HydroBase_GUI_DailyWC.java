@@ -484,7 +484,7 @@ private List<GenericWorksheetData> resultsToGenericData(List<HydroBase_DailyWC> 
 	
 			for (int j = 1; j < 32; j++) {
 				d = result.getAmountForDay(j);
-				if (DMIUtil.isMissing(d)) {
+				if (DMIUtil.isMissing(d) || HydroBase_Util.isMissing(d)) {
 					s = "";
 				}
 				else {
@@ -521,7 +521,7 @@ private List<GenericWorksheetData> resultsToGenericData(List<HydroBase_DailyWC> 
 	
 			for (int j = 1; j < 32; j++) {
 				d = result.getAmountForDay(j);
-				if (DMIUtil.isMissing(d)) {
+				if (DMIUtil.isMissing(d) || HydroBase_Util.isMissing(d)) {
 					s = "";
 				}
 				else {
@@ -700,17 +700,17 @@ private void submitQuery() {
 	}
 
 	int curInt = structure.getDiv();
-	if (DMIUtil.isMissing(curInt)) {
+	if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 		__divJTextField.setText("" + curInt);
 	}
 
 	curInt = structure.getWD();
-	if (DMIUtil.isMissing(curInt)) {
+	if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 		__wdJTextField.setText("" + curInt);
 	}
 
 	curInt = structure.getID();
-	if (DMIUtil.isMissing(curInt)) {
+	if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 		__idJTextField.setText("" + curInt);
 	}        
 
@@ -721,8 +721,7 @@ private void submitQuery() {
 			__structureNum, __recordType);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine,
-			"Error reading from database.");
+		Message.printWarning(1, routine, "Error reading from database.");
 		Message.printWarning(2, routine, e);
 		return;
 	}
@@ -739,8 +738,7 @@ private void submitQuery() {
 	if (numRecords == 1) {
 		plural = "";
 	}
-	__worksheetJLabel.setText("" + numRecords + " record" + plural 
-		+ " returned.");
+	__worksheetJLabel.setText("" + numRecords + " record" + plural + " returned.");
         __statusJTextField.setText("Ready");
 }    
 

@@ -691,73 +691,54 @@ private List<String> formatOutput(int format) {
                 	// Break into parts...
                 	id = "";
 			wd = "";
-			wd = StringUtil.formatString(
-				data.getWD(), "%2d");
-                       	id = StringUtil.formatString(
-				data.getID(), "%8d");
-			if (DMIUtil.isMissing(data.getTS())) {
+			wd = StringUtil.formatString( data.getWD(), "%2d");
+            id = StringUtil.formatString( data.getID(), "%8d");
+			if (DMIUtil.isMissing(data.getTS()) || HydroBase_Util.isMissing(data.getTS())) {
 				ts = "    ";
 			}
 			else {
-				ts = StringUtil.formatString(data.getTS(), 
-					"%-4.4s");
+				ts = StringUtil.formatString(data.getTS(), "%-4.4s");
 			}
-			if (DMIUtil.isMissing(data.getRng())) {
+			if (DMIUtil.isMissing(data.getRng()) || HydroBase_Util.isMissing(data.getRng())) {
 				rng = "    ";
 			}
 			else {
-				rng = StringUtil.formatString(data.getRng(), 
-					"%-4.4s");
+				rng = StringUtil.formatString(data.getRng(), "%-4.4s");
 			}
-			if (DMIUtil.isMissing(data.getSec())) {
+			if (DMIUtil.isMissing(data.getSec()) || HydroBase_Util.isMissing(data.getSec())) {
 				sec = "  ";
 			}
 			else {
-				sec = StringUtil.formatString(data.getSec(),
-					"%-2.2s");
+				sec = StringUtil.formatString(data.getSec(), "%-2.2s");
 			}
-			if (DMIUtil.isMissing(data.getDcr_capacity())) {
+			if (DMIUtil.isMissing(data.getDcr_capacity()) || HydroBase_Util.isMissing(data.getDcr_capacity())) {
 				dcr = "            ";
 			}
 			else {
-				dcr = StringUtil.formatString(
-					data.getDcr_capacity(), "%12.12s");
+				dcr = StringUtil.formatString( data.getDcr_capacity(), "%12.12s");
 			}
-			if (DMIUtil.isMissing(data.getTransbsn())) {
+			if (DMIUtil.isMissing(data.getTransbsn()) || HydroBase_Util.isMissing(data.getTransbsn())) {
 				transbsn = " ";
 			}
 			else {
-				transbsn = StringUtil.formatString(
-					data.getTransbsn(), "%8d").trim();
+				transbsn = StringUtil.formatString( data.getTransbsn(), "%8d").trim();
 			}
 			
                 	v.add(
                         	  wd + " "
                         	+ id + " "
-                        	+ StringUtil.formatString(
-					data.getStr_name(),"%-40.40s") + " "
-                        	+ StringUtil.formatString(
-                        		data.getPM(), "%-2.2s") + " "
+                        	+ StringUtil.formatString( data.getStr_name(),"%-40.40s") + " "
+                        	+ StringUtil.formatString( data.getPM(), "%-2.2s") + " "
 				+ ts + " "
 				+ rng + " "
 				+ sec + " "
-				+ StringUtil.formatString(
-					data.getSeca(), "%-1.1s") + " "
-				+ StringUtil.formatString(
-					data.getQ160(), "%-2.2s") + "   "
-				+ StringUtil.formatString(
-					data.getQ40(), "%-2.2s") + "  "
-				+ StringUtil.formatString(
-					data.getQ10(), "%-2.2s") + "  "
-                        	+ StringUtil.formatString(
-					data.getStrname(), "%-40.40s") + " "
-				+ StringUtil.formatString(
-					__dmi.getStructureTypeDescription(
-					data.getStr_type()), "%-12.12s") + " "
-				+ StringUtil.formatString(
-					data.getCiu(), "%-1.1s") + " "
-				+ transbsn + " "
-				+ dcr);
+				+ StringUtil.formatString( data.getSeca(), "%-1.1s") + " "
+				+ StringUtil.formatString( data.getQ160(), "%-2.2s") + "   "
+				+ StringUtil.formatString( data.getQ40(), "%-2.2s") + "  "
+				+ StringUtil.formatString( data.getQ10(), "%-2.2s") + "  "
+               	+ StringUtil.formatString( data.getStrname(), "%-40.40s") + " "
+				+ StringUtil.formatString( __dmi.getStructureTypeDescription( data.getStr_type()), "%-12.12s") + " "
+				+ StringUtil.formatString( data.getCiu(), "%-1.1s") + " " + transbsn + " " + dcr);
         	}
 	}
 	else {  

@@ -517,8 +517,7 @@ private String createStructureType(String strType)
 throws Exception {
 	String newStrType = "";
 
-	if (	strType == null ||
-		DMIUtil.isMissing(strType)) {
+	if ( strType == null || DMIUtil.isMissing(strType) ) {
 		return newStrType;
 	}
 
@@ -740,7 +739,7 @@ Format a double with the specified number of decimal places.
 */
 private String format(double d, String format) 
 throws Exception {
-	if (DMIUtil.isMissing(d)) {
+	if (DMIUtil.isMissing(d) || HydroBase_Util.isMissing(d)) {
 		return "";
 	}
 	else {	
@@ -756,7 +755,7 @@ Formats an int type.
 */
 private String format(int i)
 throws Exception {
-	if (DMIUtil.isMissing(i)) {
+	if (DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 		return "";
 	}
 	else {
@@ -794,7 +793,7 @@ throws Exception {
 
 	if (unit.startsWith("C")) {
 		double nra = n.getNet_rate_abs();	
-		if (   (DMIUtil.isMissing(nra)) ||
+		if ( (DMIUtil.isMissing(nra)) || HydroBase_Util.isMissing(nra) ||
 			 ( (nra == 0) && 
 			  (!n.getApex().equalsIgnoreCase("Y")))){
 			// this station gets skipped
@@ -809,7 +808,7 @@ throws Exception {
 	}
 	else {
 		double nva = n.getNet_vol_abs();
-		if (	DMIUtil.isMissing(nva)||
+		if ( DMIUtil.isMissing(nva) || HydroBase_Util.isMissing(nva) ||
 			(nva == 0 &&
 			!n.getApex().equalsIgnoreCase("Y"))) {
 // REVIIST
@@ -830,7 +829,7 @@ throws Exception {
 	//
 	// now calculate the cumulative total for that id
 	//
-	if (DMIUtil.isMissing(cumulTotal)) {
+	if (DMIUtil.isMissing(cumulTotal) || HydroBase_Util.isMissing(cumulTotal)) {
 		cumulTotal = 0;
 	}
 	String ID = "" + n.getID();
@@ -968,7 +967,7 @@ throws Exception {
 		*/
 
 		// Only print if non-missing...
-		if (!DMIUtil.isMissing(vol_abs)) {
+		if (!DMIUtil.isMissing(vol_abs) && !HydroBase_Util.isMissing(vol_abs)) {
 			if (vol_abs == 0) {
 				v.add("");		
 			}
@@ -980,7 +979,7 @@ throws Exception {
 			v.add("");
 		}
 		
-		if (!DMIUtil.isMissing(vol_cond)) {
+		if (!DMIUtil.isMissing(vol_cond) && !HydroBase_Util.isMissing(vol_cond)) {
 			if (vol_cond == 0) {
 				v.add("");
 			}
@@ -992,7 +991,7 @@ throws Exception {
 			v.add("");
 		}
 		
-		if (!DMIUtil.isMissing(vol_apex)) {
+		if (!DMIUtil.isMissing(vol_apex) && !HydroBase_Util.isMissing(vol_apex)) {
 			if (vol_apex == 0) {
 				v.add("");
 			}
@@ -1018,7 +1017,7 @@ throws Exception {
 		}
 		*/
 
-		if (!DMIUtil.isMissing(rate_abs)) {
+		if (!DMIUtil.isMissing(rate_abs) && !HydroBase_Util.isMissing(rate_abs)) {
 			if (rate_abs == 0) {
 				v.add("");
 			}
@@ -1030,7 +1029,7 @@ throws Exception {
 			v.add("");
 		}
 		
-		if (!DMIUtil.isMissing(rate_cond)) {
+		if (!DMIUtil.isMissing(rate_cond) && !HydroBase_Util.isMissing(rate_cond)) {
 			if (rate_cond == 0) {
 				v.add("");
 			}
@@ -1042,7 +1041,7 @@ throws Exception {
 			v.add("");
 		}
 			
-		if (!DMIUtil.isMissing(rate_apex)) {
+		if (!DMIUtil.isMissing(rate_apex) && !HydroBase_Util.isMissing(rate_apex)) {
 			if (rate_apex == 0) {
 				v.add("");
 			}
@@ -1058,24 +1057,21 @@ throws Exception {
 	v.add(unit); 
 
 	if (!DMIUtil.isMissing(n.getAdj_date())) {
-		v.add((new DateTime(n.getAdj_date())).
-			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
+		v.add((new DateTime(n.getAdj_date())).toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {	
 		v.add("");
 	}
 
 	if (!DMIUtil.isMissing(n.getPadj_date())) {
-		v.add((new DateTime(n.getAdj_date())).
-			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
+		v.add((new DateTime(n.getAdj_date())).toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {	
 		v.add("");
 	}
 
 	if (!DMIUtil.isMissing(n.getApro_date())) {
-		v.add((new DateTime(n.getApro_date())).
-			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
+		v.add((new DateTime(n.getApro_date())).toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {	
 		v.add("");
@@ -1225,12 +1221,12 @@ throws Exception {
 	String unit = n.getUnit();
 	if (unit.equalsIgnoreCase("C"))
 	{
-		if (DMIUtil.isMissing(n.getNet_rate_abs())) {
+		if (DMIUtil.isMissing(n.getNet_rate_abs()) || HydroBase_Util.isMissing(n.getNet_rate_abs())) {
 			v.add("");
 		}
 		else {
 			v.add(format(n.getNet_rate_abs(), "%10.3f"));
-			if (DMIUtil.isMissing(__abscfs)) {
+			if (DMIUtil.isMissing(__abscfs) || HydroBase_Util.isMissing(__abscfs)) {
 				__abscfs = n.getNet_rate_abs();
 			}
 			else {
@@ -1239,12 +1235,12 @@ throws Exception {
 		}
 	}
 	else {
-		if (DMIUtil.isMissing(n.getNet_vol_abs())) {
+		if (DMIUtil.isMissing(n.getNet_vol_abs()) || HydroBase_Util.isMissing(n.getNet_vol_abs())) {
 			v.add("");
 		}
 		else {
 			v.add(format(n.getNet_vol_abs(), "%10.3f"));
-			if (DMIUtil.isMissing(__absaf)) {
+			if (DMIUtil.isMissing(__absaf) || HydroBase_Util.isMissing(__absaf)) {
 				__absaf = n.getNet_vol_abs();
 			}
 			else {
@@ -1254,12 +1250,12 @@ throws Exception {
 	}
 	
 	if (unit.equalsIgnoreCase("C")) {
-		if (DMIUtil.isMissing(n.getNet_rate_cond())) {
+		if (DMIUtil.isMissing(n.getNet_rate_cond()) || HydroBase_Util.isMissing(n.getNet_rate_cond())) {
 			v.add("");
 		}
 		else {
 			v.add(format(n.getNet_rate_cond(), "%10.3f"));
-			if (DMIUtil.isMissing(__condcfs)) {
+			if (DMIUtil.isMissing(__condcfs) || HydroBase_Util.isMissing(__condcfs)) {
 				__condcfs = n.getNet_rate_cond();
 			}
 			else {
@@ -1268,12 +1264,12 @@ throws Exception {
 		}
 	}
 	else {	// units = AF
-		if (DMIUtil.isMissing(n.getNet_vol_cond())) {
+		if (DMIUtil.isMissing(n.getNet_vol_cond()) || HydroBase_Util.isMissing(n.getNet_vol_cond())) {
 			v.add("");
 		}
 		else {
 			v.add(format(n.getNet_vol_cond(),"%10.3f"));
-			if (DMIUtil.isMissing(__condaf)) {
+			if (DMIUtil.isMissing(__condaf) || HydroBase_Util.isMissing(__condaf)) {
 				__condaf = n.getNet_vol_cond();
 			}
 			else {
@@ -1285,7 +1281,7 @@ throws Exception {
 	//
 	// ABS/CFS
 	//
-	if (DMIUtil.isMissing(__abscfs)) {
+	if (DMIUtil.isMissing(__abscfs) || HydroBase_Util.isMissing(__abscfs)) {
 		v.add("");
 	}
 	else {
@@ -1300,7 +1296,7 @@ throws Exception {
 	//
 	// COND/CFS
 	//
-	if (DMIUtil.isMissing(__condcfs)) {
+	if (DMIUtil.isMissing(__condcfs) || HydroBase_Util.isMissing(__condcfs)) {
 		v.add("");
 	}
 	else {
@@ -1315,7 +1311,7 @@ throws Exception {
 	//
 	// ABS/AF
 	//
-	if (DMIUtil.isMissing(__absaf)) {
+	if (DMIUtil.isMissing(__absaf) || HydroBase_Util.isMissing(__absaf)) {
 		v.add("");
 	}
 	else {
@@ -1330,7 +1326,7 @@ throws Exception {
 	//
 	// COND/AF
 	//
-	if (DMIUtil.isMissing(__condaf)) {
+	if (DMIUtil.isMissing(__condaf) || HydroBase_Util.isMissing(__condaf)) {
 		v.add("");
 	}
 	else {
@@ -1363,7 +1359,7 @@ private List<String> getTransAdminReportHeader(boolean byStream) {
 		+ "%-11.11s %-11.11s %-11.11s %-11.11s %-11.11s";
 
 	String stream_name = "";
-	if (!DMIUtil.isMissing(__streamName)) {
+	if (!DMIUtil.isMissing(__streamName) ) {
 		stream_name = __streamName;
 	}
 
@@ -1477,7 +1473,7 @@ throws Exception {
 
 	// get the stream name
 	String stream_name = "";
-	if (!DMIUtil.isMissing(__streamName)) {
+	if (!DMIUtil.isMissing(__streamName) ) {
 		stream_name = __streamName;
 	}
 
@@ -1633,9 +1629,8 @@ throws Exception {
 		use = newUse.substring(start, end);
 
 		int index = lookupUsingUse(use);
-		if (!DMIUtil.isMissing(index)) {
-			old += ((HydroBase_Use)
-				__useVector.get(index)).getXuse();
+		if (!DMIUtil.isMissing(index) && !HydroBase_Util.isMissing(index)) {
+			old += __useVector.get(index).getXuse();
 		}
 
 		if (old.length() == (maxLength)) {

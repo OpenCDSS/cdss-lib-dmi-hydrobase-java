@@ -487,15 +487,14 @@ HydroBase_Node downstreamNode) {
         JGUIUtil.addComponent(northWJPanel, new JLabel("Stream Mile:"), 
 		0, ++y, 1, 1, 0, 0, insetsNLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 	JTextField mileJTextField = new JTextField();
-	if ( !DMIUtil.isMissing(__wisFormat.getStr_mile()) ) {
+	if ( !DMIUtil.isMissing(__wisFormat.getStr_mile()) && !HydroBase_Util.isMissing(__wisFormat.getStr_mile())) {
 		mileJTextField.setText("" + __wisFormat.getStr_mile());
 	}
 	mileJTextField.setEditable(false);
 	JGUIUtil.addComponent(northWJPanel, mileJTextField, 
 		1, y, 1, 1, 1, 0, insetsNNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
-	if (__wisFormat.getRow_type().equalsIgnoreCase(
-		HydroBase_GUI_WIS.CONFLUENCE)) {
+	if (__wisFormat.getRow_type().equalsIgnoreCase( HydroBase_GUI_WIS.CONFLUENCE)) {
 		// The wdwater is the current stream number and the wdwater_link
 		// is the stream number for the stream that is coming in at the
 		// confluence...
@@ -508,18 +507,14 @@ HydroBase_Node downstreamNode) {
 				__wisFormat.getWdwater_link());
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, "Error reading stream "
-				+ "data.");
+			Message.printWarning(1, routine, "Error reading stream data.");
 			Message.printWarning(2, routine, e);
 		}
 		if (stream != null) {
-			trib_streamJTextField.setText(stream.getStream_name()
-				+ " (" + __wisFormat.getWdwater_link() + ")");
+			trib_streamJTextField.setText(stream.getStream_name() + " (" + __wisFormat.getWdwater_link() + ")");
 		}
 		else {	
-			trib_streamJTextField.setText(
-				" Unknown (" + __wisFormat.getWdwater_link() 
-				+ ")");
+			trib_streamJTextField.setText( " Unknown (" + __wisFormat.getWdwater_link() + ")");
 		}
 		trib_streamJTextField.setEditable(false);
 		JGUIUtil.addComponent(northWJPanel, trib_streamJTextField, 
@@ -538,18 +533,14 @@ HydroBase_Node downstreamNode) {
 				__wisFormat.getWdwater_link());
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, "Error reading stream "
-				+ "data.");
+			Message.printWarning(1, routine, "Error reading stream data.");
 			Message.printWarning(2, routine, e);
 		}
 		if (stream != null) {
-			trib_streamJTextField.setText(stream.getStream_name()
-				+ " (" + __wisFormat.getWdwater_link() + ")");
+			trib_streamJTextField.setText(stream.getStream_name() + " (" + __wisFormat.getWdwater_link() + ")");
 		}
 		else {	
-			trib_streamJTextField.setText(
-				" Unknown (" + __wisFormat.getWdwater_link() 
-				+ ")");
+			trib_streamJTextField.setText( " Unknown (" + __wisFormat.getWdwater_link() + ")");
 		}
 		trib_streamJTextField.setEditable(false);
 		JGUIUtil.addComponent(northWJPanel, trib_streamJTextField, 

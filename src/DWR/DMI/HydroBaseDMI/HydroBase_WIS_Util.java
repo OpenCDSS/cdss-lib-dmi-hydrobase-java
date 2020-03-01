@@ -711,7 +711,7 @@ HydroBase_WISImport wis_import) {
 	int wis_import_time_offset = wis_import.getTime_offset();
 
 	// no end time specified assume that we need find the most recent record
-	if (DMIUtil.isMissing(wis_import_end_time)) {
+	if (DMIUtil.isMissing(wis_import_end_time) || HydroBase_Util.isMissing(wis_import_end_time)) {
 		start = new DateTime(end);
 
 		// set to start of the day
@@ -771,7 +771,7 @@ HydroBase_WISImport wis_import) {
 
 		start = new DateTime(end);
 		start.setPrecision(DateTime.PRECISION_MINUTE);
-		if (DMIUtil.isMissing(wis_import_time_offset)) {
+		if (DMIUtil.isMissing(wis_import_time_offset) || HydroBase_Util.isMissing(wis_import_time_offset)) {
 			// The offset is not specified, use 24 hours...
 			start.addHour(-24);
 		}
@@ -1005,7 +1005,7 @@ HydroBase_WISImport wis_import) {
 	// Get the correct value based on the defined import column which was
 	// requested.
 	double value = getWISColumnValue(data, wis_import.getImport_column());
-	if ( !DMIUtil.isMissing(value) ) {
+	if ( !DMIUtil.isMissing(value) || HydroBase_Util.isMissing(value) ) {
 		// If we get here than set the value
 		v.set(0,new Double(value));
 		v.set(1,new Integer(1));
@@ -1096,7 +1096,7 @@ public static double getWISColumnValue(HydroBase_WISData data, String s) {
 		value = data.getDelivery_divr();
 	}
 	// New missing is NaN but -999 was used before
-	if (DMIUtil.isMissing(value) || (value == LEGACY_MISSING_DOUBLE) ) {
+	if (DMIUtil.isMissing(value) || (value == LEGACY_MISSING_DOUBLE) || HydroBase_Util.isMissing(value) ) {
 		return 0;
 	}
 
@@ -1143,7 +1143,7 @@ public static double getWISDataValue(HydroBase_WISData data, int col) {
 			break;		
 	}
 
-	if (DMIUtil.isMissing(value) || (value == LEGACY_MISSING_DOUBLE) ) {
+	if (DMIUtil.isMissing(value) || (value == LEGACY_MISSING_DOUBLE) || HydroBase_Util.isMissing(value) ) {
 		return 0;
 	}
 	

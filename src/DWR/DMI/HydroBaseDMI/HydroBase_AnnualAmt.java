@@ -100,13 +100,13 @@ Compares against another annual amt object for sorting with
 java.util.Collections.
 */
 public int compareTo(HydroBase_AnnualAmt a) {
-	if (DMIUtil.isMissing(_irr_year) && DMIUtil.isMissing(a._irr_year)) {
+	if ( DMIUtil.isMissing(_irr_year) && HydroBase_Util.isMissing(_irr_year) && DMIUtil.isMissing(a._irr_year) && HydroBase_Util.isMissing(a._irr_year) ) {
 		return 0;
 	}
-	else if (DMIUtil.isMissing(_irr_year)) {
+	else if (DMIUtil.isMissing(_irr_year) && HydroBase_Util.isMissing(_irr_year)) {
 		return -1;
 	}
-	else if (DMIUtil.isMissing(a._irr_year)) {
+	else if (DMIUtil.isMissing(a._irr_year) && HydroBase_Util.isMissing(a._irr_year)) {
 		return 1;
 	}
 

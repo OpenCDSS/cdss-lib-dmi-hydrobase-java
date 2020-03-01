@@ -733,14 +733,14 @@ private String formatLine(HydroBase_Calls call, char delim, boolean fullPad) {
 	String wds = null;
 	String ids = null;
 	int wd = call.getWD();
-	if (DMIUtil.isMissing(wd)) {
+	if (DMIUtil.isMissing(wd) || HydroBase_Util.isMissing(wd)) {
 		wds = "";
 	}
 	else {
 		wds = "" + wd;
 	}			
 	int id = call.getID();
-	if (DMIUtil.isMissing(id)) {
+	if (DMIUtil.isMissing(id) || HydroBase_Util.isMissing(id)) {
 		ids = "";
 	}
 	else {
@@ -1208,7 +1208,7 @@ private void reactivateClicked() {
 		return;
 	}
 
-	if (DMIUtil.isMissing(call.getDate_time_released())) {
+	if (DMIUtil.isMissing(call.getDate_time_released()) ) {
 		Message.printWarning(1, routine, 
 			"Cannot reactivate a call for which "
 			+ "the release date has not been set.");
@@ -1241,7 +1241,7 @@ private void releaseCallClicked() {
 	String	routine = "HydroBase_GUI_CallsQuery.releaseCallClicked";
 
 	int callNum = getSelectedCall();
-	if (!DMIUtil.isMissing(callNum)) {
+	if (!DMIUtil.isMissing(callNum) && !HydroBase_Util.isMissing(callNum)) {
 		// ensure that the release date is null
 		HydroBase_Calls call = null;
 		try {
@@ -1277,17 +1277,15 @@ private void removeClicked() {
 
 	DateTime archiveDate = null;
 	try {
-		archiveDate = new DateTime(DateTime.DATE_CURRENT 
-			| DateTime.PRECISION_MINUTE);
+		archiveDate = new DateTime(DateTime.DATE_CURRENT | DateTime.PRECISION_MINUTE);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error creating DateTime "
-			+ "object; routine aborted.");
+		Message.printWarning(1, routine, "Error creating DateTime object; routine aborted.");
 		Message.printWarning(2, routine, e);
 		return;
 	}
 	
-	if (!DMIUtil.isMissing(callNum)) {
+	if (!DMIUtil.isMissing(callNum) && !HydroBase_Util.isMissing(callNum)) {
 		int response=new ResponseJDialog(this,
 			"Remove Call",
 			"This will mark the call "

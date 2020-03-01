@@ -435,84 +435,54 @@ public List<String> formatOutput(int format) {
 				+ "_________________________________________");
 			// Now do the list...
 			for (int i = 0; i < spillwaySize; i++) {
-				s0 = (String)__spillwayWorksheet.getValueAt(
-					i, 0);
+				s0 = (String)__spillwayWorksheet.getValueAt( i, 0);
 				if (DMIUtil.isMissing(s0)) {
 					s0 = "";
 				}
-				i1 = (Integer)__spillwayWorksheet.getValueAt(
-					i, 1);
-				if (DMIUtil.isMissing(i1)) {
-					s1 = StringUtil.formatString("", 
-						"%17.17s");
+				i1 = (Integer)__spillwayWorksheet.getValueAt( i, 1);
+				if (DMIUtil.isMissing(i1) || HydroBase_Util.isMissing(i1)) {
+					s1 = StringUtil.formatString("", "%17.17s");
 				}
 				else {
-					s1 = StringUtil.formatString(
-						i1.toString(), "%17d");
+					s1 = StringUtil.formatString( i1.toString(), "%17d");
 				}
-				d2 = (Double)__spillwayWorksheet.getValueAt(
-					i, 2);
-				if (DMIUtil.isMissing(d2)) {
-					s2 = StringUtil.formatString("", 
-						"%12.12s");
+				d2 = (Double)__spillwayWorksheet.getValueAt( i, 2);
+				if (DMIUtil.isMissing(d2) || HydroBase_Util.isMissing(d2)) {
+					s2 = StringUtil.formatString("", "%12.12s");
 				}
 				else {
-					s2 = StringUtil.formatString(
-						d2.toString(),"%12.1f");
+					s2 = StringUtil.formatString( d2.toString(),"%12.1f");
 				}
-				s3 = (String)__spillwayWorksheet.getValueAt(
-					i, 3);
+				s3 = (String)__spillwayWorksheet.getValueAt( i, 3);
 				if (DMIUtil.isMissing(s3)) {
 					s3 = "";
 				}
-				s4 = (String)__spillwayWorksheet.getValueAt(
-					i, 4);
+				s4 = (String)__spillwayWorksheet.getValueAt( i, 4);
 				if (DMIUtil.isMissing(s4)) {
 					s4 = "";
 				}
-				d5 = (Double)__spillwayWorksheet.getValueAt(
-					i, 5);
-				if (DMIUtil.isMissing(d5)) {
-					s5 = StringUtil.formatString("",
-						"%8.8s");
+				d5 = (Double)__spillwayWorksheet.getValueAt( i, 5);
+				if (DMIUtil.isMissing(d5) || HydroBase_Util.isMissing(d5)) {
+					s5 = StringUtil.formatString("", "%8.8s");
 				}
 				else {
-					s5 = StringUtil.formatString(
-						d5.toString(), "%8.1f");
+					s5 = StringUtil.formatString( d5.toString(), "%8.1f");
 				}				
-				d6 = (Double)__spillwayWorksheet.getValueAt(
-					i, 6);
-				if (DMIUtil.isMissing(d6)) {
-					s6 = StringUtil.formatString(
-						"", "%16.16s");
+				d6 = (Double)__spillwayWorksheet.getValueAt( i, 6);
+				if (DMIUtil.isMissing(d6) || HydroBase_Util.isMissing(d6)) {
+					s6 = StringUtil.formatString( "", "%16.16s");
 				}
 				else {
-					s6 = StringUtil.formatString(
-						d6.toString(), "%16.1f");
+					s6 = StringUtil.formatString( d6.toString(), "%16.1f");
 				}
 				v.add(
-					StringUtil.formatString(
-					s0.trim(),
-					"%-20.20s")
-					+ StringUtil.formatString(
-					s1.trim(),
-					"%-17.17s")
-					+ StringUtil.formatString(
-					s2.trim(),
-					"%-12.12s")
-					+ "           "
-					+ StringUtil.formatString(
-					s3.trim(),
-					"%-5.5s") + "             "
-					+ StringUtil.formatString(
-					s4.trim(),
-					"%-5.5s")
-					+ StringUtil.formatString(
-					s5.trim(),
-					"%-8.8s")
-					+ StringUtil.formatString(
-					s6.trim(),
-					"%-16.16s"));
+					StringUtil.formatString( s0.trim(), "%-20.20s")
+					+ StringUtil.formatString( s1.trim(), "%-17.17s")
+					+ StringUtil.formatString( s2.trim(), "%-12.12s") + "           "
+					+ StringUtil.formatString( s3.trim(), "%-5.5s") + "             "
+					+ StringUtil.formatString( s4.trim(), "%-5.5s")
+					+ StringUtil.formatString( s5.trim(), "%-8.8s")
+					+ StringUtil.formatString( s6.trim(), "%-16.16s"));
 			}
 		}
 
@@ -528,67 +498,44 @@ public List<String> formatOutput(int format) {
 				+ "_________________________________________");
 
 			for (int i = 0; i < outletSize; i++) {
-				s10 = (String)__outletWorksheet.getValueAt(
-					i, 0);
-				if (DMIUtil.isMissing(s10)) {
-					s10 = "";
+				s10 = (String)__outletWorksheet.getValueAt( i, 0);
+				if (DMIUtil.isMissing(s10)) { s10 = "";
 				}
-				d11 = (Double)__outletWorksheet.getValueAt(
-					i, 1);
-				if (DMIUtil.isMissing(d11)) {
-					s11 = StringUtil.formatString("",
-						"%8.8s");
+				d11 = (Double)__outletWorksheet.getValueAt( i, 1);
+				if (DMIUtil.isMissing(d11) || HydroBase_Util.isMissing(d11)) {
+					s11 = StringUtil.formatString("", "%8.8s");
 				}
 				else {
-					s11 = StringUtil.formatString(
-						d11.toString(), "%8.3f");
+					s11 = StringUtil.formatString( d11.toString(), "%8.3f");
 				}
-				d12 = (Double)__outletWorksheet.getValueAt(
-					i, 2);
-				if (DMIUtil.isMissing(d12)) {
-					s12 = StringUtil.formatString("",
-						"%14.14s");
+				d12 = (Double)__outletWorksheet.getValueAt( i, 2);
+				if (DMIUtil.isMissing(d12) || HydroBase_Util.isMissing(d12)) {
+					s12 = StringUtil.formatString("", "%14.14s");
 				}
 				else {
-					s12 = StringUtil.formatString(
-						d12.toString(), "%14.3f");
+					s12 = StringUtil.formatString( d12.toString(), "%14.3f");
 				}
-				d13 = (Double)__outletWorksheet.getValueAt(
-					i, 3);
-				if (DMIUtil.isMissing(d13)) {
-					s13 = StringUtil.formatString("",
-						"%15.15s");
+				d13 = (Double)__outletWorksheet.getValueAt( i, 3);
+				if (DMIUtil.isMissing(d13) || HydroBase_Util.isMissing(d13)) {
+					s13 = StringUtil.formatString("", "%15.15s");
 				}
 				else {
-					s13 = StringUtil.formatString(
-						d13.toString(), "%15.3f");
+					s13 = StringUtil.formatString( d13.toString(), "%15.3f");
 				}		
-				s14 = (String)__outletWorksheet.getValueAt(
-					i, 4);
+				s14 = (String)__outletWorksheet.getValueAt( i, 4);
 				if (DMIUtil.isMissing(s14)) {
 					s14 = "";
 				}
-				s15 = (String)__outletWorksheet.getValueAt(
-					i, 5);
+				s15 = (String)__outletWorksheet.getValueAt( i, 5);
 				if (DMIUtil.isMissing(s15)) {
 					s15 = "";
 				}
 				v.add(
-					StringUtil.formatString(s10.trim(),
-					"%-30.30s")
-					+ StringUtil.formatString(
-					s11.trim(),
-					"%-8.8s") + "      "
-					+ StringUtil.formatString(
-					s12.trim(),
-					"%-14.14s")
-					+ "  "
-					+ StringUtil.formatString(
-					s13.trim(),
-					"%-15.15s")
-					+ StringUtil.formatString(
-					s14.trim(),"%-2.2s") + "     "
-					+ s15.trim());
+					StringUtil.formatString(s10.trim(), "%-30.30s")
+					+ StringUtil.formatString( s11.trim(), "%-8.8s") + "      "
+					+ StringUtil.formatString( s12.trim(), "%-14.14s") + "  "
+					+ StringUtil.formatString( s13.trim(), "%-15.15s")
+					+ StringUtil.formatString( s14.trim(),"%-2.2s") + "     " + s15.trim());
 			}
 		}
 
@@ -609,23 +556,18 @@ public List<String> formatOutput(int format) {
 				}
 				else {
 				}
-				s8 = (String)__inspectionWorksheet.getValueAt(
-					i, 1);
+				s8 = (String)__inspectionWorksheet.getValueAt( i, 1);
 				if (DMIUtil.isMissing(s8)) {
 					s8 = "";
 				}
-				s9 = (String)__inspectionWorksheet.getValueAt(
-					i, 2);
+				s9 = (String)__inspectionWorksheet.getValueAt( i, 2);
 				if (DMIUtil.isMissing(s9)) {
 					s9 = "";
 				}
 				v.add(
-					StringUtil.formatString(s7.trim(),
-					"%-10.10s") + "     "
-					+ StringUtil.formatString(s8.trim(),
-					"%-3.3s") + "            "
-					+ StringUtil.formatString(s9.trim(),
-					"%-1.1s") + "       ");
+					StringUtil.formatString(s7.trim(), "%-10.10s") + "     "
+					+ StringUtil.formatString(s8.trim(), "%-3.3s") + "            "
+					+ StringUtil.formatString(s9.trim(), "%-1.1s") + "       ");
 			}
 		}
 		
@@ -639,20 +581,15 @@ public List<String> formatOutput(int format) {
 				+ "_________________________________________");
 
 			for (int i = 0; i < emergencySize; i++) {
-				s16 = (String)__emergencyWorksheet.getValueAt(
-					i, 0);
+				s16 = (String)__emergencyWorksheet.getValueAt( i, 0);
 				if (DMIUtil.isMissing(s16)) {
 					s16 = "";
 				}
-				s17 = (String)__emergencyWorksheet.getValueAt(
-					i, 1);
+				s17 = (String)__emergencyWorksheet.getValueAt( i, 1);
 				if (DMIUtil.isMissing(s17)) {
 					s17 = "";
 				}
-				v.add(
-					StringUtil.formatString(s16.trim(),
-					"%-10.10s") + "     "
-					+ s17.trim());
+				v.add( StringUtil.formatString(s16.trim(), "%-10.10s") + "     " + s17.trim());
 			}
 		}
 	}
@@ -734,60 +671,45 @@ public List<String> formatOutput(int format) {
 				+ "WIDTH" + delim);
 
 			for (int i = 0; i < spillwaySize; i++) {
-				s0 = (String)__spillwayWorksheet.getValueAt(
-					i, 0);
+				s0 = (String)__spillwayWorksheet.getValueAt( i, 0);
 				if (DMIUtil.isMissing(s0)) {
 					s0 = "";
 				}
-				i1 = (Integer)__spillwayWorksheet.getValueAt(
-					i, 1);
-				if (DMIUtil.isMissing(i1)) {
-					s1 = StringUtil.formatString("", 
-						"%17.17s");
+				i1 = (Integer)__spillwayWorksheet.getValueAt( i, 1);
+				if (DMIUtil.isMissing(i1) || HydroBase_Util.isMissing(i1)) {
+					s1 = StringUtil.formatString("", "%17.17s");
 				}
 				else {
-					s1 = StringUtil.formatString(
-						i1.toString(), "%17d");
+					s1 = StringUtil.formatString( i1.toString(), "%17d");
 				}
-				d2 = (Double)__spillwayWorksheet.getValueAt(
-					i, 2);
-				if (DMIUtil.isMissing(d2)) {
-					s2 = StringUtil.formatString("", 
-						"%12.12s");
+				d2 = (Double)__spillwayWorksheet.getValueAt( i, 2);
+				if (DMIUtil.isMissing(d2) || HydroBase_Util.isMissing(d2)) {
+					s2 = StringUtil.formatString("", "%12.12s");
 				}
 				else {
-					s2 = StringUtil.formatString(
-						d2.toString(),"%12.1f");
+					s2 = StringUtil.formatString( d2.toString(),"%12.1f");
 				}
-				s3 = (String)__spillwayWorksheet.getValueAt(
-					i, 3);
+				s3 = (String)__spillwayWorksheet.getValueAt( i, 3);
 				if (DMIUtil.isMissing(s3)) {
 					s3 = "";
 				}
-				s4 = (String)__spillwayWorksheet.getValueAt(
-					i, 4);
+				s4 = (String)__spillwayWorksheet.getValueAt( i, 4);
 				if (DMIUtil.isMissing(s4)) {
 					s4 = "";
 				}
-				d5 = (Double)__spillwayWorksheet.getValueAt(
-					i, 5);
-				if (DMIUtil.isMissing(d5)) {
-					s5 = StringUtil.formatString("",
-						"%8.8s");
+				d5 = (Double)__spillwayWorksheet.getValueAt( i, 5);
+				if (DMIUtil.isMissing(d5) || HydroBase_Util.isMissing(d5)) {
+					s5 = StringUtil.formatString("", "%8.8s");
 				}
 				else {
-					s5 = StringUtil.formatString(
-						d5.toString(), "%8.1f");
+					s5 = StringUtil.formatString( d5.toString(), "%8.1f");
 				}				
-				d6 = (Double)__spillwayWorksheet.getValueAt(
-					i, 6);
-				if (DMIUtil.isMissing(d6)) {
-					s6 = StringUtil.formatString(
-						"", "%16.16s");
+				d6 = (Double)__spillwayWorksheet.getValueAt( i, 6);
+				if (DMIUtil.isMissing(d6) || HydroBase_Util.isMissing(d6)) {
+					s6 = StringUtil.formatString( "", "%16.16s");
 				}
 				else {
-					s6 = StringUtil.formatString(
-						d6.toString(), "%16.1f");
+					s6 = StringUtil.formatString( d6.toString(), "%16.1f");
 				}
 				v.add(s0.trim() + delim + s1.trim()
 					+ delim + s2.trim() + delim 
@@ -803,48 +725,36 @@ public List<String> formatOutput(int format) {
 				+ "DIAMETER" + delim + "LENGTH" + delim 
 				+ "TYPE" + delim + "OUTLET DESCRIPTION" +delim);
 			for (int i = 0; i < outletSize; i++) {
-				s10 = (String)__outletWorksheet.getValueAt(
-					i, 0);
+				s10 = (String)__outletWorksheet.getValueAt( i, 0);
 				if (DMIUtil.isMissing(s10)) {
 					s10 = "";
 				}
-				d11 = (Double)__outletWorksheet.getValueAt(
-					i, 1);
-				if (DMIUtil.isMissing(d11)) {
-					s11 = StringUtil.formatString("",
-						"%8.8s");
+				d11 = (Double)__outletWorksheet.getValueAt( i, 1);
+				if (DMIUtil.isMissing(d11) || HydroBase_Util.isMissing(d11)) {
+					s11 = StringUtil.formatString("", "%8.8s");
 				}
 				else {
-					s11 = StringUtil.formatString(
-						d11.toString(), "%8.3f");
+					s11 = StringUtil.formatString( d11.toString(), "%8.3f");
 				}
-				d12 = (Double)__outletWorksheet.getValueAt(
-					i, 2);
-				if (DMIUtil.isMissing(d12)) {
-					s12 = StringUtil.formatString("",
-						"%14.14s");
+				d12 = (Double)__outletWorksheet.getValueAt( i, 2);
+				if (DMIUtil.isMissing(d12) || HydroBase_Util.isMissing(d12)) {
+					s12 = StringUtil.formatString("", "%14.14s");
 				}
 				else {
-					s12 = StringUtil.formatString(
-						d12.toString(), "%14.3f");
+					s12 = StringUtil.formatString( d12.toString(), "%14.3f");
 				}
-				d13 = (Double)__outletWorksheet.getValueAt(
-					i, 3);
-				if (DMIUtil.isMissing(d13)) {
-					s13 = StringUtil.formatString("",
-						"%15.15s");
+				d13 = (Double)__outletWorksheet.getValueAt( i, 3);
+				if (DMIUtil.isMissing(d13) || HydroBase_Util.isMissing(d13)) {
+					s13 = StringUtil.formatString("", "%15.15s");
 				}
 				else {
-					s13 = StringUtil.formatString(
-						d13.toString(), "%15.3f");
+					s13 = StringUtil.formatString( d13.toString(), "%15.3f");
 				}		
-				s14 = (String)__outletWorksheet.getValueAt(
-					i, 4);
+				s14 = (String)__outletWorksheet.getValueAt( i, 4);
 				if (DMIUtil.isMissing(s14)) {
 					s14 = "";
 				}
-				s15 = (String)__outletWorksheet.getValueAt(
-					i, 5);
+				s15 = (String)__outletWorksheet.getValueAt( i, 5);
 				if (DMIUtil.isMissing(s15)) {
 					s15 = "";
 				}
@@ -867,13 +777,11 @@ public List<String> formatOutput(int format) {
 				}
 				else {
 				}
-				s8 = (String)__inspectionWorksheet.getValueAt(
-					i, 1);
+				s8 = (String)__inspectionWorksheet.getValueAt( i, 1);
 				if (DMIUtil.isMissing(s8)) {
 					s8 = "";
 				}
-				s9 = (String)__inspectionWorksheet.getValueAt(
-					i, 2);
+				s9 = (String)__inspectionWorksheet.getValueAt( i, 2);
 				if (DMIUtil.isMissing(s9)) {
 					s9 = "";
 				}
@@ -886,19 +794,16 @@ public List<String> formatOutput(int format) {
 			v.add("");
 			v.add("DATE" + delim + "REQUIRED" + delim);
 			for (int i = 0; i < emergencySize; i++) {
-				s16 = (String)__emergencyWorksheet.getValueAt(
-					i, 0);
+				s16 = (String)__emergencyWorksheet.getValueAt( i, 0);
 				if (DMIUtil.isMissing(s16)) {
 					s16 = "";
 				}
-				s17 = (String)__emergencyWorksheet.getValueAt(
-					i, 1);
+				s17 = (String)__emergencyWorksheet.getValueAt( i, 1);
 				if (DMIUtil.isMissing(s17)) {
 					s17 = "";
 				}
 					
-				v.add(s16.trim() + delim + s17.trim()
-					+ delim);
+				v.add(s16.trim() + delim + s17.trim() + delim);
 			}
 		}
 	}	
@@ -1254,8 +1159,7 @@ private void setupGUI() {
 	int[] outletWidths = null;
 	JScrollWorksheet outletJSW = null;
 	try {
-		HydroBase_TableModel_Dam tm = new
-			HydroBase_TableModel_Dam(new Vector<HydroBase_DamOutlet>());
+		HydroBase_TableModel_Dam tm = new HydroBase_TableModel_Dam(new Vector<HydroBase_DamOutlet>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		outletJSW = new JScrollWorksheet(cr, tm, p);
@@ -1282,8 +1186,7 @@ private void setupGUI() {
 	int[] emergencyWidths = null;
 	JScrollWorksheet emergencyJSW = null;
 	try {
-		HydroBase_TableModel_Dam tm = new
-			HydroBase_TableModel_Dam(new Vector<HydroBase_EmergencyPlan>());
+		HydroBase_TableModel_Dam tm = new HydroBase_TableModel_Dam(new Vector<HydroBase_EmergencyPlan>());
 		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(tm);
 	
 		emergencyJSW = new JScrollWorksheet(cr, tm, p);
@@ -1388,37 +1291,37 @@ private void submitAndDisplayDamQuery() {
 	}
 
         int curInt = data.getWD();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 __wdJTextField.setText("" + curInt);
         }
 
         curInt = data.getID();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 __idJTextField.setText("" + curInt);
         }
  
         curInt = data.getDiv();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 __divJTextField.setText("" + curInt);
         }
 
         curInt = data.getCompl_year();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 __yearJTextField.setText("" + curInt);
         }
 
         double curDouble = data.getCrest_elev();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __elevationJTextField.setText("" + curDouble);
         }
 
         curDouble = data.getCrest_width();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __widthJTextField.setText("" + curDouble);
         }
 
         curInt = data.getDamid();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 __stateDamIDJTextField.setText("" + curInt); 
         }
 
@@ -1426,7 +1329,7 @@ private void submitAndDisplayDamQuery() {
         __nameJTextField.setText("" + data.getDown_town());
 
         curDouble = data.getDown_town_dist();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __distanceJTextField.setText("" + curDouble);
         }
 
@@ -1436,24 +1339,24 @@ private void submitAndDisplayDamQuery() {
         __hazardClassJTextField.setText("" + data.getHazard_class());
 
         curDouble = data.getHeight();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __jurisdictionalJTextField.setText("" + curDouble);
         } 
 
         curDouble = data.getHyd_height();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __hydraulicJTextField.setText("" + curDouble);
         }
 
         curDouble = data.getLength();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __lengthJTextField.setText("" + curDouble);
         }
 
         __nationalIDJTextField.setText("" + data.getNatid());
 
         curDouble = data.getOutlet_capacity();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __outletJTextField.setText("" + curDouble);
         }
 
@@ -1463,14 +1366,14 @@ private void submitAndDisplayDamQuery() {
         __remarksJTextField.setText(data.getRemarks());
 
         curDouble = data.getSpillway_capacity();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __spillwayJTextField.setText("" + curDouble);
         }
 
          __streamCodeJTextField.setText("" + data.getStrm_code());
 
         curDouble = data.getStr_height();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(curDouble)) {
                 __structuralJTextField.setText("" + curDouble);
         }
 
@@ -1490,8 +1393,7 @@ private void submitAndDisplayEmergencyPlanQuery() {
 		v = __dmi.readEmergencyPlanListForStructure_num(__structureNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading emergency plan "
-			+ "data.");
+		Message.printWarning(1, routine, "Error reading emergency plan data.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -1516,8 +1418,7 @@ private void submitAndDisplayInspectionQuery() {
 		v = __dmi.readDamInspectionListForStructure_num(__structureNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading dam inspection "
-			+ "data.");
+		Message.printWarning(1, routine, "Error reading dam inspection data.");
 		Message.printWarning(2, routine, e);
 	}
 	
@@ -1541,8 +1442,7 @@ private void submitAndDisplayOutletQuery() {
 		v = __dmi.readDamOutletListForStructure_num(__structureNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading dam outlet "
-			+ "data.");
+		Message.printWarning(1, routine, "Error reading dam outlet data.");
 		Message.printWarning(2, routine, e);
 		
 	}
@@ -1567,8 +1467,7 @@ private void submitAndDisplaySpillwayQuery() {
 		v = __dmi.readDamSpillwayListForStructure_num(__structureNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading dam spillway "
-			+ " data.");
+		Message.printWarning(1, routine, "Error reading dam spillway data.");
 		Message.printWarning(2, routine, e);
 	}
 

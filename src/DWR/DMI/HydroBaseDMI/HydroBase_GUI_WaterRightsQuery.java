@@ -929,7 +929,8 @@ throws Exception {
                         double rateabs = data.getNet_rate_abs();
                         double ratecond = data.getNet_rate_cond();
 			
-                        if ( !DMIUtil.isMissing(rateabs) ||!DMIUtil.isMissing(ratecond) ) {
+                        // TODO smalers 2020-02-29 may need to use HydroBase_Util.isMissing()
+                        if ( !DMIUtil.isMissing(rateabs) || !DMIUtil.isMissing(ratecond) ) {
                                 // Do flows...
                                 abs = rateabs;
                                 con = ratecond;
@@ -939,6 +940,7 @@ throws Exception {
 				// Check volumes...
 				double volabs = data.getNet_vol_abs();
 				double volcond = data.getNet_vol_cond();
+                // TODO smalers 2020-02-29 may need to use HydroBase_Util.isMissing()
                 if ( !DMIUtil.isMissing(volabs) || !DMIUtil.isMissing(volcond) ) {
                                         // Do volumes...
                                         abs = volabs;
@@ -952,14 +954,14 @@ throws Exception {
                         double rateApex = data.getNet_rate_apex();
                         double volApex = data.getNet_vol_apex();
 
-                        if ( !DMIUtil.isMissing(rateApex) ) {
+                        if ( !DMIUtil.isMissing(rateApex) && !HydroBase_Util.isMissing(rateApex)) {
                                 // Do flow...
                                 apex = rateApex;
                                 if (units.length() == 0) {
                                         units = "C";
                                 }
                         }
-                        else if ( !DMIUtil.isMissing(volApex) ) {
+                        else if ( !DMIUtil.isMissing(volApex) && !HydroBase_Util.isMissing(volApex)) {
                                 // Do volume...
                                 apex = volApex;
                                 if (units.length()== 0) {
@@ -967,70 +969,29 @@ throws Exception {
                                 }
                         }
                         v.add(
-                                StringUtil.formatString(
-					data.getWr_name(), "%-24.24s")
-                               	+ " ?   " +
-                                StringUtil.formatString("??", "%-20.20s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getWD(), "%2d")
-                                + " " +
-                                StringUtil.formatString(
-					data.getTS(), "%4.4s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getRng(), "%4.4s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getSec(), "%4.4s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getSeca(), "%2.2s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getQ160(), "%4.4s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getQ40(), "%3.3s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getQ10(), "%3.3s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getPM(), "%2.2s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getUse(), "%-9.9s")
-                                + " " +
-                                StringUtil.formatString(abs,"%9.3f")
-                                + " " +
-                                StringUtil.formatString(con,"%9.3f")
-                                + " " +
-                                StringUtil.formatString(apex,"%9.3f")
-                                + " " +
-                                StringUtil.formatString(units,"%1.1s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getAdj_date(), "%10.10s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getPadj_date(), "%10.10s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getApro_date(), "%10.10s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getOrder_no(), "%1.1s")
-                                + " " +
-                                StringUtil.formatString(
-					data.getAdmin_no(), "%11.5f")
-                                + " " +
-                                StringUtil.formatString(
-					data.getID(), "%5d")
-                                + " " +
-                                StringUtil.formatString(
-					data.getPri_case_no(), "%5d")
-                                + " ");
+                                StringUtil.formatString( data.getWr_name(), "%-24.24s") + " ?   " +
+                                StringUtil.formatString("??", "%-20.20s") + " " +
+                                StringUtil.formatString( data.getWD(), "%2d") + " " +
+                                StringUtil.formatString( data.getTS(), "%4.4s") + " " +
+                                StringUtil.formatString( data.getRng(), "%4.4s") + " " +
+                                StringUtil.formatString( data.getSec(), "%4.4s") + " " +
+                                StringUtil.formatString( data.getSeca(), "%2.2s") + " " +
+                                StringUtil.formatString( data.getQ160(), "%4.4s") + " " +
+                                StringUtil.formatString( data.getQ40(), "%3.3s") + " " +
+                                StringUtil.formatString( data.getQ10(), "%3.3s") + " " +
+                                StringUtil.formatString( data.getPM(), "%2.2s") + " " +
+                                StringUtil.formatString( data.getUse(), "%-9.9s") + " " +
+                                StringUtil.formatString(abs,"%9.3f") + " " +
+                                StringUtil.formatString(con,"%9.3f") + " " +
+                                StringUtil.formatString(apex,"%9.3f") + " " +
+                                StringUtil.formatString(units,"%1.1s") + " " +
+                                StringUtil.formatString( data.getAdj_date(), "%10.10s") + " " +
+                                StringUtil.formatString( data.getPadj_date(), "%10.10s") + " " +
+                                StringUtil.formatString( data.getApro_date(), "%10.10s") + " " +
+                                StringUtil.formatString( data.getOrder_no(), "%1.1s") + " " +
+                                StringUtil.formatString( data.getAdmin_no(), "%11.5f") + " " +
+                                StringUtil.formatString( data.getID(), "%5d") + " " +
+                                StringUtil.formatString( data.getPri_case_no(), "%5d") + " ");
                 }
                 else {
 			boolean useComma = false;

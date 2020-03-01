@@ -256,7 +256,7 @@ private void displayStructureResults(HydroBase_StructureView structure) {
 	int curInt = 0;
 
         curInt = structure.getDiv();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 curString = "";
         }
         else {
@@ -265,7 +265,7 @@ private void displayStructureResults(HydroBase_StructureView structure) {
         __divJTextField.setText(curString);
 
         curInt = structure.getWD();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 curString = "";
         }
         else {
@@ -274,7 +274,7 @@ private void displayStructureResults(HydroBase_StructureView structure) {
         __wdJTextField.setText(curString);
 
         curInt = structure.getID();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 curString = "";
         }
         else {

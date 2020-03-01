@@ -723,8 +723,7 @@ private void setupGUI() {
 		model.setColumnInformation(1, "FILING\nNUMBER 1", "%8d", 7);
 		model.setColumnInformation(2, "FILING\nNUMBER 2", "%8s", 7);
 		model.setColumnInformation(3, "\nTITLE", "%20s", 10);
-		model.setColumnInformation(4, "SUPPLEMENTAL\nSTATEMENT", "%20s",
-			20);
+		model.setColumnInformation(4, "SUPPLEMENTAL\nSTATEMENT", "%20s", 20);
 
 		Generic_CellRenderer renderer = new Generic_CellRenderer(model);
 		mapFileJSW = new JScrollWorksheet(renderer, model, p);
@@ -732,12 +731,10 @@ private void setupGUI() {
 		mapFileWidths = renderer.getColumnWidths();
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error setting up generic "
-			+ "table information.");
+		Message.printWarning(1, routine, "Error setting up generic table information.");
 		Message.printWarning(2, routine, e);
 	}
-	__mapFileWorksheet.setPreferredScrollableViewportSize(
-		new Dimension(100, 60));
+	__mapFileWorksheet.setPreferredScrollableViewportSize( new Dimension(100, 60));
 	__mapFileWorksheet.setHourglassJFrame(this);
 
 	int[] courtCaseWidths = null;
@@ -769,8 +766,7 @@ private void setupGUI() {
 		courtCaseWidths = renderer.getColumnWidths();
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error setting up generic "
-			+ "table information.");
+		Message.printWarning(1, routine, "Error setting up generic table information.");
 		Message.printWarning(2, routine, e);	
 	}
 	__courtCaseWorksheet.setPreferredScrollableViewportSize(
@@ -870,8 +866,7 @@ Submits a court case query and displays the results in the gui.
 */
 private List<GenericWorksheetData> submitCourtCaseQuery() {
 	JGUIUtil.setWaitCursor(this, true);
-	String routine = "HydroBase_GUI_StructureMoreInfo"
-		+ ".submitAndDisplayCourtCaseQuery";
+	String routine = "HydroBase_GUI_StructureMoreInfo.submitAndDisplayCourtCaseQuery";
 
 	List<HydroBase_CourtCase> results = null;
 	try {
@@ -912,8 +907,7 @@ Submits an equipment query and displays the results in the gui.
 */
 private void submitAndDisplayEquipmentQuery() {
 	JGUIUtil.setWaitCursor(this, true);
-	String routine = "HydroBase_GUI_StructureMoreInfo"
-		+ ".submitAndDisplayEquipmentQuery";
+	String routine = "HydroBase_GUI_StructureMoreInfo.submitAndDisplayEquipmentQuery";
 	
 	HydroBase_Equipment equipment = null;
 	try {
@@ -941,14 +935,12 @@ Submits a general comment query and displays the results in the gui.
 */
 private void submitAndDisplayGeneralCommentQuery() {
 	JGUIUtil.setWaitCursor(this, true);
-	String routine = "HydroBase_GUI_StructureMoreInfo"
-		+ ".submitAndDisplayGeneralCommentQuery";
+	String routine = "HydroBase_GUI_StructureMoreInfo.submitAndDisplayGeneralCommentQuery";
 
 	List<HydroBase_GeneralComment> results = null;
 
 	try {
-		results = __dmi.readGeneralCommentListForStructure_num(
-			__structureNum);
+		results = __dmi.readGeneralCommentListForStructure_num( __structureNum);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, e);
@@ -977,8 +969,7 @@ private void submitAndDisplayGeneralCommentQuery() {
 			dt.setPrecision(DateTime.PRECISION_DAY);
 			
 			try {
-				listLine = DMIUtil.formatDateTime(__dmi, dt) 
-					+ ": " + data.getComment();
+				listLine = DMIUtil.formatDateTime(__dmi, dt) + ": " + data.getComment();
 			}
 			catch (Exception e) {
 				Message.printWarning(2, routine, e);
@@ -988,12 +979,12 @@ private void submitAndDisplayGeneralCommentQuery() {
 		}
 		else {
 			curString = data.getGenl_comment();
-			if (!DMIUtil.isMissing(curString)) {
+			if (!DMIUtil.isMissing(curString) ) {
 				__notesJList.add(curString);
 			}
 
 			curString = data.getNotes();
-			if (!DMIUtil.isMissing(curString)) {
+			if (!DMIUtil.isMissing(curString) ) {
 				__notesJList.add(curString);
 			}
 		}
@@ -1007,8 +998,7 @@ Submits a map file query and displays the results in the gui.
 */
 private List<GenericWorksheetData> submitMapfileQuery() {
 	JGUIUtil.setWaitCursor(this, true);
-	String routine = "HydroBase_GUI_StructureMoreInfo."
-		+ "submitMapfileQuery";
+	String routine = "HydroBase_GUI_StructureMoreInfo.submitMapfileQuery";
 		
 	List<HydroBase_Mapfile> results = null;	
 	try {
@@ -1057,8 +1047,7 @@ private List<GenericWorksheetData> submitMapfileQuery() {
 Submits a structure aka query and displays the results in the gui.
 */
 private void submitAndDisplayStructureAKAQuery() {
-	String routine = "HydroBase_GUI_StructureMoreInfo."
-		+ "submitAndDisplayStructureAKAQuery";
+	String routine = "HydroBase_GUI_StructureMoreInfo.submitAndDisplayStructureAKAQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
 	List<HydroBase_StructureAKA> v = null;
@@ -1097,14 +1086,12 @@ private void submitAndDisplayStructureGeolocQuery() {
 Submits and structure view query and displays the results in the gui.
 */
 private void submitAndDisplaySPStructureViewQuery() {
-	String routine = "HydroBase_GUI_StructureMoreInfo"
-		+ ".submitAndDisplaySPStructureViewQuery";
+	String routine = "HydroBase_GUI_StructureMoreInfo.submitAndDisplaySPStructureViewQuery";
 	JGUIUtil.setWaitCursor(this, true);
 
 	HydroBase_StructureView data = null;
 	try {
-		data = __dmi.readStructureViewForStructure_num(
-			__structureNum);
+		data = __dmi.readStructureViewForStructure_num( __structureNum);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, e);
@@ -1117,42 +1104,35 @@ private void submitAndDisplaySPStructureViewQuery() {
 		return;
 	}
 
-        __structureTypeJTextField.setText(
-		__dmi.getStructureTypeDescription(
-		data.getStr_type()));        
+        __structureTypeJTextField.setText( __dmi.getStructureTypeDescription( data.getStr_type()));        
         __structureNameJTextField.setText("" + data.getStr_name());
  
         int curInt = data.getDiv();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) || !HydroBase_Util.isMissing(curInt)) {
                 __divJTextField.setText("" + curInt);
         }
 
         curInt = data.getWD();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) || !HydroBase_Util.isMissing(curInt)) {
                 __wdJTextField.setText("" + curInt);
         }
 
         curInt = data.getID();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) || !HydroBase_Util.isMissing(curInt)) {
                 __idJTextField.setText("" + curInt); 
         }
 
         __ciuCodeJTextField.setText("" + data.getCiu());
 
         double curDouble = data.getEst_capacity();
-        if (!DMIUtil.isMissing(curDouble)) {
-                __estimatedCapacityJTextField.setText(
-			StringUtil.formatString(
-			curDouble, "%7.2f").trim()
-			+ " " + data.getEst_unit());
+        if (!DMIUtil.isMissing(curDouble) || !HydroBase_Util.isMissing(curDouble)) {
+                __estimatedCapacityJTextField.setText( StringUtil.formatString( curDouble, "%7.2f").trim() + " " + data.getEst_unit());
         }
 
         curDouble = data.getDcr_capacity();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) || !HydroBase_Util.isMissing(curDouble)) {
                 __decreedCapacityJTextField.setText(
-			StringUtil.formatString(
-			curDouble, "%7.2f").trim() + " " 
-			+ data.getDcr_unit());
+			StringUtil.formatString( curDouble, "%7.2f").trim() + " " + data.getDcr_unit());
         }
 	JGUIUtil.setWaitCursor(this, false);
 }
