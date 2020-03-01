@@ -2536,12 +2536,12 @@ GRLimits limits) {
 	double[] loc = null;
 	while (!done) {
 		loc = lookupStateModNodeLocation(dmi, node.getCommonID());
-		if (DMIUtil.isMissing(node.getX())) {
+		if (DMIUtil.isMissing(node.getX()) ) { // || HydroBase_Util.isMissing(node.getX())) {
 			node.setX(loc[0]);
 			node.setDBX(loc[0]);
 		}
 		
-		if (DMIUtil.isMissing(node.getY())) {
+		if (DMIUtil.isMissing(node.getY()) ) { // || HydroBase_Util.isMissing(node.getY())) {
 			node.setY(loc[1]);
 			node.setDBY(loc[1]);
 		}	
@@ -7198,25 +7198,18 @@ public boolean readWISFormatNetwork(List<HydroBase_WISFormat> wisRows, int rowOf
 		// in the data.
 		// Just in case...
 		if (node.getCommonID().length() == 0) {
-			if (!DMIUtil.isMissing(
-				currentRow.getStructure_num())) {
-					node.setCommonID("strnum:"
-					+ StringUtil.formatString(
-					currentRow.getStructure_num(), "%d"));
+			if (!DMIUtil.isMissing(currentRow.getStructure_num()) ) { // && !HydroBase_Util.isMissing(currentRow.getStructure_num())) {
+					node.setCommonID("strnum:" + StringUtil.formatString(currentRow.getStructure_num(), "%d"));
 			}
-			else if (!DMIUtil.isMissing(
-				currentRow.getStation_num())) {
-				node.setCommonID("stanum:"
-					+ StringUtil.formatString(
-					currentRow.getStation_num(), "%d"));
+			else if (!DMIUtil.isMissing( currentRow.getStation_num()) ) { // && !HydroBase_Util.isMissing(currentRow.getStation_num())) {
+				node.setCommonID("stanum:" + StringUtil.formatString( currentRow.getStation_num(), "%d"));
 			}
 			else if (node.getDescription().length() > 0) {
 				node.setCommonID(node.getDescription());
 			}
 			else {	
 				// Use the row type...
-				node.setCommonID(currentRow.getRow_type()
-					+":row" + currentRow.getWis_row());
+				node.setCommonID(currentRow.getRow_type() +":row" + currentRow.getWis_row());
 			}
 		}
 

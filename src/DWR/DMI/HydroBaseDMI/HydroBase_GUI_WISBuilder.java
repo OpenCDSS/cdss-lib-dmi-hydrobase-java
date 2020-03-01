@@ -674,9 +674,7 @@ public void actionPerformed(ActionEvent event) {
 		addImportClicked();
 	}
 	else if (command.equals(__BUTTON_ADD_ROW)) {
-		HydroBase_WISFormat rowFormat = 
-			(HydroBase_WISFormat)__wisFormatList.get(
-			__curCellRow + 1);
+		HydroBase_WISFormat rowFormat = __wisFormatList.get( __curCellRow + 1);
 		String rowType = rowFormat.getRow_type();
 		String label = rowFormat.getRow_label();
 
@@ -687,9 +685,7 @@ public void actionPerformed(ActionEvent event) {
 			// nothing needs checked
 		}
 		else if (rowType.equals(HydroBase_GUI_WIS.DIVERSION)) {
-			if (__diversionNameSimpleJComboBox.getSelected()
-				.startsWith(__SELECT_DIVERSION)
-				|| label.equals(DMIUtil.MISSING_STRING)) {
+			if (__diversionNameSimpleJComboBox.getSelected().startsWith(__SELECT_DIVERSION) || label.equals(DMIUtil.MISSING_STRING)) {
 				// No diversion was selected
 				new ResponseJDialog(this,
 					"Select a Diversion",
@@ -700,9 +696,7 @@ public void actionPerformed(ActionEvent event) {
 			}				
 		}	
 		else if (rowType.equals(HydroBase_GUI_WIS.MIN_FLOW_REACH)) {
-			if (__mfrWeightNameSimpleJComboBox.getSelected()
-				.startsWith(__SELECT_MFR) 
-				|| label.equals(DMIUtil.MISSING_STRING)) {
+			if (__mfrWeightNameSimpleJComboBox.getSelected().startsWith(__SELECT_MFR) || label.equals(DMIUtil.MISSING_STRING)) {
 				// No min. flow reach was selected...
 				new ResponseJDialog(this,
 					"Select a Minimum Flow Reach",
@@ -716,9 +710,7 @@ public void actionPerformed(ActionEvent event) {
 			// nothing needs checked
 		}
 		else if (rowType.equals(HydroBase_GUI_WIS.RESERVOIR)) {
-			if (__reservoirNameSimpleJComboBox.getSelected()
-				.startsWith(__SELECT_RESERVOIR) 
-				|| label.equals(DMIUtil.MISSING_STRING)) {
+			if (__reservoirNameSimpleJComboBox.getSelected().startsWith(__SELECT_RESERVOIR) || label.equals(DMIUtil.MISSING_STRING)) {
 				// No reservoir was selected...
 				new ResponseJDialog(this,
 					"Select a Reservoir",
@@ -732,9 +724,7 @@ public void actionPerformed(ActionEvent event) {
 			// nothing needs checked
 		}
 		else if (rowType.equals(HydroBase_GUI_WIS.STREAM)) {
-			if(__streamNameSimpleJComboBox.getSelected().startsWith(
-				__SELECT_STREAM)
-				|| label.equals(DMIUtil.MISSING_STRING)) {
+			if(__streamNameSimpleJComboBox.getSelected().startsWith( __SELECT_STREAM) || label.equals(DMIUtil.MISSING_STRING)) {
 				// No stream was selected so prompt the user...
 				new ResponseJDialog(this, 
 					"Select a Stream",
@@ -845,8 +835,7 @@ private void addConstantClicked() {
 	}
 
 	// get the recently added operator
-	String theOperator = ((String)__formulaList.getSelectedItem())
-		.substring(0, 1);
+	String theOperator = ((String)__formulaList.getSelectedItem()).substring(0, 1);
 	wisMath.setRange(false);
 	wisMath.setOperator(theOperator);
 	wisMath.setIsConstant(true);
@@ -887,8 +876,7 @@ private void addFormulaClicked() {
 	setButtonState(__IMPORT, false);
 
 	setFormulaLabel(__curCellRow, __curCellCol);
-	setCellColor(__curCellRow, __curCellCol, __curCellCol, 
-		Color.red, Color.red);
+	setCellColor(__curCellRow, __curCellCol, __curCellCol, Color.red, Color.red);
 
 	__rowTypeCard.show(__rowTypeJPanel, "formula");
 	addOperator("=");
@@ -897,17 +885,13 @@ private void addFormulaClicked() {
 }
 
 /**
-Called when the Add Import button is pressed.  Begins the process of adding
-import data.
+Called when the Add Import button is pressed.  Begins the process of adding import data.
 */
 private void addImportClicked() {
 	updateRowFormat(__curCellRow);
 
-	HydroBase_WISFormat wisFormat = 
-		(HydroBase_WISFormat)__wisFormatList.get(
-		__curCellRow + 1);
-	HydroBase_WISImport wisImport = wisFormat.getWISImport(
-		__worksheet.getVisibleColumn(__curCellCol));
+	HydroBase_WISFormat wisFormat = __wisFormatList.get( __curCellRow + 1);
+	HydroBase_WISImport wisImport = wisFormat.getWISImport( __worksheet.getVisibleColumn(__curCellCol));
 
 	int station_num = DMIUtil.MISSING_INT;
 
@@ -929,8 +913,7 @@ private void addImportClicked() {
 			wisImport);
 	}
 	else {	
-		__importWizardGUI.setVisible(station_num, __curCellRow, 
-			__curCellCol, wisImport);
+		__importWizardGUI.setVisible(station_num, __curCellRow, __curCellCol, wisImport);
 	}
 
 	setDirty(true);
@@ -944,7 +927,7 @@ terms are always appended to the end of the formula editor list.
 @param symbol(e.g., "+", "-", "*", "/", "+").
 */
 private void addOperator(String symbol) {
-	// update current row before building an expresssion
+	// update current row before building an expression
 	if (!updateRowFormat(__curCellRow)) {
 		return;
 	}
@@ -1100,8 +1083,7 @@ private boolean archiveData() {
 
 	DateTime effective_date = null;
 	try {
-		effective_date = new DateTime(DateTime.DATE_CURRENT 
-			| DateTime.PRECISION_DAY);
+		effective_date = new DateTime(DateTime.DATE_CURRENT | DateTime.PRECISION_DAY);
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, "Error formatting current "
@@ -1129,8 +1111,7 @@ private boolean archiveData() {
 		__dmi.deleteWISFormatForWis_num(__wisNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error deleting records from "
-			+ "wis_format table.");
+		Message.printWarning(1, routine, "Error deleting records from wis_format table.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -1138,8 +1119,7 @@ private boolean archiveData() {
 		__dmi.deleteWISImportForWis_num(__wisNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error deleting records from "
-			+ "wis_import table.");
+		Message.printWarning(1, routine, "Error deleting records from wis_import table.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -1147,8 +1127,7 @@ private boolean archiveData() {
 		__dmi.deleteWISFormulaForWis_num(__wisNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error deleting records from "
-			+ "wis_formula table.");
+		Message.printWarning(1, routine, "Error deleting records from wis_formula table.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -1165,12 +1144,10 @@ private boolean archiveData() {
 	}
 
 	try {
-		__dmi.updateSheet_nameGain_methodEffective_dateForWis_num(
-			gain_method, effective_date, __wisNum);
+		__dmi.updateSheet_nameGain_methodEffective_dateForWis_num( gain_method, effective_date, __wisNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error updating sheet_name "
-			+ "records.");
+		Message.printWarning(1, routine, "Error updating sheet_name records.");
 		Message.printWarning(2, routine, e);
 	}
 	
@@ -1207,17 +1184,14 @@ private boolean archiveData() {
 			__dmi.writeWISFormat(wisFormat);
 		}
 		catch (Exception e) {	
-			Message.printWarning(1, routine, "Error writing to"
-				+ "wis_format table.");
+			Message.printWarning(1, routine, "Error writing to wis_format table.");
 			Message.printWarning(2, routine, e);
 		}
 
 		// construct the dmiString for HydroBase_WISFormula
 		for (int curCol = 1; curCol < HydroBase_GUI_WIS.NUM_COLUMNS; 
 			curCol++) {
-			wisFormula = ((HydroBase_WISFormat)
-				__wisFormatList.get(curRow))
-				.getWISFormula(curCol);
+			wisFormula = __wisFormatList.get(curRow).getWISFormula(curCol);
 			String formula=wisFormula.getFormula().trim();
 
 			if (!formula.equals("")) {
@@ -1229,9 +1203,7 @@ private boolean archiveData() {
 					__dmi.writeWISFormula(wisFormula);
 				}
 				catch (Exception e) {
-					Message.printWarning(1, routine, 
-						"Error writing to wis_formula "
-						+ "table.");
+					Message.printWarning(1, routine, "Error writing to wis_formula table.");
 					Message.printWarning(2, routine, e);
 				}
 			}
@@ -1240,15 +1212,10 @@ private boolean archiveData() {
 		// construct the dmiString for HydroBase_WISImport
 		for (int curCol = 1; curCol < HydroBase_GUI_WIS.NUM_COLUMNS; 
 			curCol++) {
-			wisImport = ((HydroBase_WISFormat)
-				__wisFormatList.get(curRow))
-				.getWISImport(__worksheet.getVisibleColumn(
-				curCol));
-			String import_method = wisImport.getImport_method()
-				.trim();
+			wisImport = __wisFormatList.get(curRow).getWISImport(__worksheet.getVisibleColumn( curCol));
+			String import_method = wisImport.getImport_method().trim();
 
-			// archive only for columns in which an import method
-			// exist
+			// archive only for columns in which an import method exist
 			if (!import_method.equals("")) {
 				wisImport.setWis_num(__wisNum);
 				wisImport.setWis_row(curRow);
@@ -1256,9 +1223,7 @@ private boolean archiveData() {
 					__dmi.writeWISImport(wisImport);
 				}
 				catch (Exception e) {
-					Message.printWarning(1, routine, 
-						"Error writing to wis_import "
-						+ "table.");
+					Message.printWarning(1, routine, "Error writing to wis_import table.");
 					Message.printWarning(2, routine, e);
 				}
 			}
@@ -1279,8 +1244,7 @@ private void baseflowClicked(JCheckBox radioButton) {
 		setCellColor(__curCellRow, 2, 2, Color.white, Color.white);
 	}
 	else {	
-		setCellColor(__curCellRow, 2, 2, Color.lightGray, 
-			Color.lightGray);
+		setCellColor(__curCellRow, 2, 2, Color.lightGray, Color.lightGray);
 	}
 	updateRowFormat(__curCellRow);
 	isValidFormulaCell();
@@ -1289,8 +1253,7 @@ private void baseflowClicked(JCheckBox radioButton) {
 }
 
 /**
-Build the syntax for the expression and update the cell formula for the current
-cell.
+Build the syntax for the expression and update the cell formula for the current cell.
 */
 private void buildExpression(int row, int col) {
 	HydroBase_WISMath wisMath = new HydroBase_WISMath();     
@@ -1317,8 +1280,7 @@ private void buildExpression(int row, int col) {
 		new ResponseJDialog(this, "Error", noValues,ResponseJDialog.OK);
 		return;
 	}
-	HydroBase_WISFormat wisFormat = 
-		(HydroBase_WISFormat)__wisFormatList.get(row + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(row + 1);
 	wisMath = new HydroBase_WISMath(); 
 	wisMath.setRange(false);
 	wisMath.setOperator(theOperator);
@@ -1328,8 +1290,7 @@ private void buildExpression(int row, int col) {
 	String expression = wisMath.getLabel();
 
 	// List object operations: show the built expression in the list object
-	// at the appropriate location while deselecting the recently added
-	// expression.	
+	// at the appropriate location while deselecting the recently added expression.	
 	expression = theOperator + " " + expression;
 	__formulaList.set(listIndex, expression);
 //	__formulaList.deselect(listIndex);
@@ -1351,8 +1312,7 @@ private void buildDiagramClicked() {
 		__diagramGUI = new HydroBase_GUI_WISDiagram(this, __dmi);
 	}
 	else {
-		__diagramGUI.setExtendedState(__diagramGUI.getExtendedState() 
-			& ~ICONIFIED);
+		__diagramGUI.setExtendedState(__diagramGUI.getExtendedState() & ~ICONIFIED);
 		__diagramGUI.toFront();
 	}
 }
@@ -1374,9 +1334,7 @@ private boolean checkFormulaLength() {
 		}
 
 		if (s.length() > __MAX_FORMULA_LENGTH) {
-			Message.printWarning(1, routine, "Max formula length"
-				+ " is " + __MAX_FORMULA_LENGTH 
-				+ " characters.");
+			Message.printWarning(1, routine, "Max formula length" + " is " + __MAX_FORMULA_LENGTH + " characters.");
 			return false;
 		}
 	}
@@ -1436,8 +1394,7 @@ private void close() {
 				}
 			}
 			else if (r == ResponseJDialog.CANCEL) {
-				setDefaultCloseOperation(
-					WindowConstants.DO_NOTHING_ON_CLOSE);
+				setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE);
 				return;
 			}
 		}
@@ -1459,17 +1416,14 @@ private void deleteFormulaClicked() {
 	
 	// clear out the exiting formula via instantiating
 	// a new HydroBase_WISFormula object at the appropriate location
-	HydroBase_WISFormat wisFormat = 
-		(HydroBase_WISFormat)__wisFormatList.get(
-		__curCellRow + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get( __curCellRow + 1);
 	wisFormat.setWISFormula(new HydroBase_WISFormula(), __curCellCol);
 	__wisFormatList.set(__curCellRow + 1,wisFormat );
 
 	// enable import buttons if applicable
 	isValidImportCell();
 
-	setCellColor(__curCellRow, __curCellCol, __curCellCol, Color.white, 
-		Color.white);
+	setCellColor(__curCellRow, __curCellCol, __curCellCol, Color.white, Color.white);
 	selectCell(__curCellRow, __curCellCol);
 	setDirty(true);
 }
@@ -1502,14 +1456,10 @@ private void deleteFormula() {
 	// elementAt(0)with an operator.
 	else if (index == 0 && !__formulaVector.isEmpty()) {
 		// update the __formulaVector and list object
-		HydroBase_WISMath wisMath = 
-			(HydroBase_WISMath)__formulaVector.get(0);
+		HydroBase_WISMath wisMath = __formulaVector.get(0);
 		wisMath.setOperator("=");
 		__formulaVector.set(0,wisMath);
-		__formulaList.set(0,
-			HydroBase_WISMath.getTerm(
-			(HydroBase_WISMath)__formulaVector.get(0),
-			HydroBase_WISMath.LABEL));
+		__formulaList.set(0, HydroBase_WISMath.getTerm( __formulaVector.get(0), HydroBase_WISMath.LABEL));
 	}
 	updateCellFormula(__curCellRow, __curCellCol);
 }
@@ -1523,9 +1473,7 @@ private void deleteImportClicked() {
 	
 	// clear out the exiting formula via instantiating
 	// a new HydroBase_WISImport object at the appropriate location
-	HydroBase_WISFormat wisFormat = 
-		(HydroBase_WISFormat)__wisFormatList.get(
-		__curCellRow + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get( __curCellRow + 1);
 	wisFormat.setWISImport(new HydroBase_WISImport(), __curCellCol);
 	__wisFormatList.set(__curCellRow + 1,wisFormat);
 
@@ -1546,8 +1494,7 @@ private void deleteRowClicked() {
 	int row = __curCellRow;
 	int numRows = __worksheet.getRowCount();
 
-	HydroBase_WISFormat rowFormat = 
-		(HydroBase_WISFormat)__wisFormatList.get(row + 1);
+	HydroBase_WISFormat rowFormat = __wisFormatList.get(row + 1);
 	String rowType = rowFormat.getRow_type();
 
 	// return if a valid row is not selected
@@ -1568,10 +1515,8 @@ private void deleteRowClicked() {
 		// ensure that rows exist below the selected row before 
 		// checking for structures/stations.
 		if (numRows > row + 1) {
-			HydroBase_WISFormat belowFormat = (HydroBase_WISFormat)
-				__wisFormatList.get(row + 2);
-			if (belowFormat.getWdwater_num()
-				== rowFormat.getWdwater_num()) {
+			HydroBase_WISFormat belowFormat = __wisFormatList.get(row + 2);
+			if (belowFormat.getWdwater_num() == rowFormat.getWdwater_num()) {
 				new ResponseJDialog(this,
 					"Invalid Deletion",
 					"Cannot remove stream row."
@@ -1633,8 +1578,7 @@ private void deleteRowClicked() {
 
 /**
 Generate and display a list of confluence streams for the currently-selected
-water district or water district and stream.  Selection is determined by the 
-input flag.
+water district or water district and stream.  Selection is determined by the input flag.
 @param flag Specify the confluence streams to return. __ALL is used to retrieve
 all the confluences for the selected water district, while __STREAM is used to
 retrieve confluences according to selected stream and water district.
@@ -1647,8 +1591,7 @@ private void displayConfluenceList(int flag) {
 	// If the flag is __STREAM, then the key is the water district and
 	// stream number, separated by _.
 	int stream_num = getTribStreamNum(getSelectedRow());
-	String current_wd = HydroBase_WaterDistrict.parseWD(
-		__waterDistrictSimpleJComboBox.getSelected().trim());
+	String current_wd = HydroBase_WaterDistrict.parseWD( __waterDistrictSimpleJComboBox.getSelected().trim());
 	String hashkey = "";
 
 	if (flag == __ALL) {
@@ -1659,15 +1602,14 @@ private void displayConfluenceList(int flag) {
 	}
 
 	if (hashkey.equals(__curConfluenceHashkey)) {
-		// No need to update the list because the combination has not
-		// changed.
+		// No need to update the list because the combination has not changed.
 //		Message.printStatus(1, routine,
 //			"Confluence display has not changed.  Not updating.");
 		return;
 	}
 
 	// Try to look up the confluence list in the hashtable...
-	__confluenceVector = (List<HydroBase_Stream>)__confluencesHashtable.get(hashkey);
+	__confluenceVector = __confluencesHashtable.get(hashkey);
 	if (__confluenceVector == null) {	
 		int tempStream_num = DMIUtil.MISSING_INT;
 		if (flag == __STREAM) {
@@ -1679,20 +1621,15 @@ private void displayConfluenceList(int flag) {
 
 		int wd = (new Integer(current_wd)).intValue();
 		try {
-			__confluenceVector = 
-				__dmi.readStreamListForWDStr_trib_to(
-				wd, tempStream_num);
+			__confluenceVector = __dmi.readStreamListForWDStr_trib_to( wd, tempStream_num);
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, "Error reading "
-				+ "from stream_list table.");
+			Message.printWarning(1, routine, "Error reading from stream_list table.");
 			Message.printWarning(2, routine, e);
 		}
 
-		if (__confluenceVector != null 
-			&& !(__confluenceVector.isEmpty())) {
-			// Add one item at the start to
-			// agree with the SimpleJComboBox.
+		if (__confluenceVector != null && !(__confluenceVector.isEmpty())) {
+			// Add one item at the start to agree with the SimpleJComboBox.
 			__confluenceVector.add(0,null);
         	}
 		else {	
@@ -1700,8 +1637,7 @@ private void displayConfluenceList(int flag) {
 			__confluenceVector = new Vector<HydroBase_Stream>(1);
 			__confluenceVector.add(null);
 		}
-		// Save the list in the hashtable so it can be
-		// retrieved later.
+		// Save the list in the hashtable so it can be retrieved later.
 		__confluencesHashtable.put(hashkey, __confluenceVector);
 	}
 
@@ -1717,23 +1653,19 @@ private void displayConfluenceList(int flag) {
 	// HydroBase_Stream in the __confluenceVector)...
 	__confluenceNameSimpleJComboBox.add(__SELECT_STREAM);
 
-	// Now add all the items in __confluenceVector (ignoring the first null
-	// object)...
+	// Now add all the items in __confluenceVector (ignoring the first null object)...
 	int size = 0;
 	if (__confluenceVector != null) {
 		size = __confluenceVector.size();
 	}
 	HydroBase_Stream data = null;
 	for (int i = 1; i < size; i++) {
-		data = (HydroBase_Stream)__confluenceVector.get(i);
+		data = __confluenceVector.get(i);
 		// Show the name and stream number (which is
 		// from the Stream table).  This is OK
 		// because all selections from the list use the
-		// index, which is cross-referenced to the
-		// vector.
-		__confluenceNameSimpleJComboBox.add(
-			data.getStream_name().trim() + " ("
-			+ data.getStream_num() + ")");
+		// index, which is cross-referenced to the vector.
+		__confluenceNameSimpleJComboBox.add( data.getStream_name().trim() + " (" + data.getStream_num() + ")");
 	}
 
 	// Save so that we don't do the same query the next time...
@@ -1774,8 +1706,7 @@ private void displayGains(boolean isDisplay) {
 	// Clear the display if we need.
 	if ((isDisplay == false) || (gain.equals(HydroBase_GUI_WIS.NONE))) {
 		for (int i = 1; i < numRows; i++) { 
-			setCellContents(display, i,
-				HydroBase_GUI_WIS.GAIN_LOSS_COL);
+			setCellContents(display, i, HydroBase_GUI_WIS.GAIN_LOSS_COL);
 		}
 
 		ready();
@@ -1805,34 +1736,26 @@ private void displayGains(boolean isDisplay) {
 			wisFormat = node.getWISFormat();
 			node_row_num = wisFormat.getWis_row();
 			if (node_row_num > numRows) {
-				Message.printWarning(1, routine,
-					"Problem calculating the"
-					+ " the gains/loss information.");
+				Message.printWarning(1, routine, "Problem calculating the the gains/loss information.");
 				break;
 			}
 
-			if (DMIUtil.isMissing(node_row_num)) {
-				Message.printWarning(1, routine,
-					"Problem calculating the"
-					+ " the gains/loss information.");
+			if (DMIUtil.isMissing(node_row_num) || HydroBase_Util.isMissing(node_row_num)) {
+				Message.printWarning(1, routine, "Problem calculating the the gains/loss information.");
 				break;
 			}
 
-			values = HydroBase_WIS_Util.computeGainLoss(network, 
-				node);
+			values = HydroBase_WIS_Util.computeGainLoss(network, node);
 
 			// make sure we have a valid computation.
-			if (DMIUtil.isMissing(values[0])) {
+			if (DMIUtil.isMissing(values[0]) || HydroBase_Util.isMissing(values[0])) {
 				display = DMIUtil.MISSING_STRING;
 			}
 			else {
-				display += HydroBase_WIS_Util.formatGainLoss(
-					values);
+				display += HydroBase_WIS_Util.formatGainLoss( values);
 			}
-			setCellContents(display, node_row_num - 1,
-				HydroBase_GUI_WIS.GAIN_LOSS_COL);
-			node = HydroBase_NodeNetwork.getDownstreamNode(node,
-				HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
+			setCellContents(display, node_row_num - 1, HydroBase_GUI_WIS.GAIN_LOSS_COL);
+			node = HydroBase_NodeNetwork.getDownstreamNode(node, HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 		}
 	}
 	else if (gain.equals(HydroBase_GUI_WIS.WEIGHTS)) {
@@ -1847,36 +1770,27 @@ private void displayGains(boolean isDisplay) {
 			wisFormat = node.getWISFormat();
 			node_row_num = wisFormat.getWis_row();
 			if (node_row_num > numRows) {
-				Message.printWarning(1, routine,
-					"Problem calculating the"
-					+ " the gains/loss information.");
+				Message.printWarning(1, routine, "Problem calculating the the gains/loss information.");
 				break;
 			}
 
-			if (DMIUtil.isMissing(node_row_num)) {
-				Message.printWarning(1, routine,
-					"Problem calculating the"
-					+ " the gains/loss information.");
+			if (DMIUtil.isMissing(node_row_num) || HydroBase_Util.isMissing(node_row_num)) {
+				Message.printWarning(1, routine, "Problem calculating the the gains/loss information.");
 				break;
 			}
 
-			values = HydroBase_WIS_Util.computeWeightedGainLoss(
-				network, node);
+			values = HydroBase_WIS_Util.computeWeightedGainLoss( network, node);
 
 			// make sure we have a valid computation.
-			if (DMIUtil.isMissing(values[0])) {
+			if (DMIUtil.isMissing(values[0]) || HydroBase_Util.isMissing(values[0])) {
 				display = DMIUtil.MISSING_STRING;
 			}
 			else {	
-				display += 
-				      HydroBase_WIS_Util.formatWeightedGainLoss(
-					values);
+				display += HydroBase_WIS_Util.formatWeightedGainLoss( values);
 			}
 
-			setCellContents(display, node_row_num - 1,
-				HydroBase_GUI_WIS.GAIN_LOSS_COL);
-			node = HydroBase_NodeNetwork.getDownstreamNode(node,
-				HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
+			setCellContents(display, node_row_num - 1, HydroBase_GUI_WIS.GAIN_LOSS_COL);
+			node = HydroBase_NodeNetwork.getDownstreamNode(node, HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 		}
 	}
 
@@ -1919,10 +1833,9 @@ private void displayRow(int rowNum) {
 	clearFields();
 
 	// Load the row formats into the appropriate components
-	HydroBase_WISFormat rowFormat = 
-		(HydroBase_WISFormat)__wisFormatList.get(rowNum + 1);
+	HydroBase_WISFormat rowFormat = __wisFormatList.get(rowNum + 1);
 	String rowType = rowFormat.getRow_type().trim();
-	String knownPoint =  rowFormat.getKnown_point().trim();
+	String knownPoint = rowFormat.getKnown_point().trim();
 	String rowLabel = rowFormat.getRow_label().trim();
 	double streamMile = rowFormat.getStr_mile();
 	String weight_String = "";
@@ -1934,10 +1847,8 @@ private void displayRow(int rowNum) {
 	__uniqueJTextField.setText(identifier);
 	setRowLabel(rowNum, formatRowLabel(rowNum, rowLabel));
 
-	// Display the stream for the current row.  Do so by getting the
-	// trib...
-	HydroBase_WISFormat stream_format = 
-		getTribStreamFormat(getSelectedRow());
+	// Display the stream for the current row.  Do so by getting the trib...
+	HydroBase_WISFormat stream_format = getTribStreamFormat(getSelectedRow());
 		
 	if (stream_format == null) {
 		__currentStreamJTextField.setText("Unknown");
@@ -1950,7 +1861,7 @@ private void displayRow(int rowNum) {
 
 	// stream mile
 	String streamMile_String = null;
-	if (DMIUtil.isMissing(streamMile)) {
+	if (DMIUtil.isMissing(streamMile) || HydroBase_Util.isMissing(streamMile)) {
 		streamMile_String = "";
 	}
 	else {	
@@ -1958,7 +1869,7 @@ private void displayRow(int rowNum) {
 	}
 
 	// weight
-	if (DMIUtil.isMissing(weight)) {
+	if (DMIUtil.isMissing(weight) || HydroBase_Util.isMissing(weight)) {
 		weight_String = "";
 	}
 	else {	
@@ -1984,10 +1895,8 @@ private void displayRow(int rowNum) {
 		int size = __confluenceVector.size();
 		HydroBase_Stream data = null;
 		for (int i = 1; i < size; i++) {
-			data =(HydroBase_Stream)__confluenceVector.get(i);
-			if (identifier.equalsIgnoreCase(__CONF
-				+ data.getStr_trib_to() 
-				+ data.getStream_num())) {
+			data = __confluenceVector.get(i);
+			if (identifier.equalsIgnoreCase(__CONF + data.getStr_trib_to() + data.getStream_num())) {
 				choice_pos = i;
 				break;
 			}
@@ -2016,11 +1925,8 @@ private void displayRow(int rowNum) {
 		int size = __diversionVector.size();
 		HydroBase_StructureView view = null;
 		for (int i = 1; i < size; i++) {
-			view = (HydroBase_StructureView)
-				__diversionVector.get(i);
-			if (identifier.equalsIgnoreCase(__WDID
-			    + HydroBase_WaterDistrict.formWDID(
-			    view.getWD(), view.getID()))) {
+			view = __diversionVector.get(i);
+			if (identifier.equalsIgnoreCase(__WDID + HydroBase_WaterDistrict.formWDID( view.getWD(), view.getID()))) {
 				choice_pos = i;
 				break;
 			}
@@ -2048,11 +1954,8 @@ private void displayRow(int rowNum) {
 		int size = __mfrWeightVector.size();
 		HydroBase_StructureView view = null;
 		for (int i = 1; i < size; i++) {
-			view = (HydroBase_StructureView)
-				__mfrWeightVector.get(i);
-			if (identifier.equalsIgnoreCase(__WDID 
-			    + HydroBase_WaterDistrict.formWDID(
-			    view.getWD(), view.getID()))) {
+			view = __mfrWeightVector.get(i);
+			if (identifier.equalsIgnoreCase(__WDID + HydroBase_WaterDistrict.formWDID( view.getWD(), view.getID()))) {
 				choice_pos = i;
 				break;
 			}			
@@ -2093,11 +1996,8 @@ private void displayRow(int rowNum) {
 		int size = __reservoirVector.size();
 		HydroBase_StructureView view = null;
 		for (int i = 1; i < size; i++) {
-			view = (HydroBase_StructureView)
-				__reservoirVector.get(i);
-			if (identifier.equalsIgnoreCase(__WDID 
-			    + HydroBase_WaterDistrict.formWDID(
-			    view.getWD(), view.getID()))) {
+			view = __reservoirVector.get(i);
+			if (identifier.equalsIgnoreCase(__WDID + HydroBase_WaterDistrict.formWDID( view.getWD(), view.getID()))) {
 				choice_pos = i;
 				break;
 			}
@@ -2120,10 +2020,8 @@ private void displayRow(int rowNum) {
 		int size = __stationVector.size();
 		HydroBase_StationView data = null;
 		for (int i = 1; i < size; i++) {
-			data = (HydroBase_StationView)
-				__stationVector.get(i);
-			if (identifier.equalsIgnoreCase(__STAT 
-				+ data.getStation_id())) {
+			data = __stationVector.get(i);
+			if (identifier.equalsIgnoreCase(__STAT + data.getStation_id())) {
 				choice_pos = i;
 				break;
 			}
@@ -2149,21 +2047,18 @@ private void displayRow(int rowNum) {
 		int size = __streamVector.size();
 		HydroBase_Stream data = null;
 		for (int i = 1; i < size; i++) {
-			data = (HydroBase_Stream)__streamVector.get(i);
+			data = __streamVector.get(i);
 			// Some streams are mainstem and don't have the
 			// downstream...
-			if (DMIUtil.isMissing(data.getStr_trib_to())) {
-				if (identifier.equalsIgnoreCase(__STRM 
-					+ data.getStream_num())) {
+			if (DMIUtil.isMissing(data.getStr_trib_to()) || HydroBase_Util.isMissing(data.getStr_trib_to())) {
+				if (identifier.equalsIgnoreCase(__STRM + data.getStream_num())) {
 					choice_pos = i;
 					break;
 				}
 			}
 			// Also try the full id in case -999 is used for the
 			// downstream...
-			if (identifier.equalsIgnoreCase(__STRM 
-				+ data.getStream_num()
-				+ data.getStr_trib_to())) {
+			if (identifier.equalsIgnoreCase(__STRM + data.getStream_num() + data.getStr_trib_to())) {
 				choice_pos = i;
 				break;
 			}
@@ -2200,8 +2095,7 @@ private void displayStationList() {
 	String routine = CLASS + ".displayStationList";
 
 	// Return if the same __curStationWD is selected
-	String current_wd = HydroBase_WaterDistrict.parseWD(
-		__waterDistrictSimpleJComboBox.getSelected()).trim();
+	String current_wd = HydroBase_WaterDistrict.parseWD( __waterDistrictSimpleJComboBox.getSelected()).trim();
 	if (__curStationWD.equals(current_wd)) {
 		return;
 	}
@@ -2219,19 +2113,16 @@ private void displayStationList() {
 				StringUtil.atoi(current_wd), null, 
 				null, null, null, true);
 			*/
-			__stationVector = __dmi.readStationViewListForWD(
-				StringUtil.atoi(current_wd));
+			__stationVector = __dmi.readStationViewListForWD( StringUtil.atoi(current_wd));
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, "Error reading from "
-				+ "station_geoloc_meas_type table.");
+			Message.printWarning(1, routine, "Error reading from station_geoloc_meas_type table.");
 			Message.printWarning(2, routine, e);
 		}
 
 		if (__stationVector != null && !(__stationVector.isEmpty())) {
 			// Loop through and remove duplicates - there may be
-			// some because we allow some variation on the data
-			// types...
+			// some because we allow some variation on the data types...
 
 			int size = __stationVector.size();
 			String prev_id = "";
@@ -2241,8 +2132,7 @@ private void displayStationList() {
                			data = __stationVector.get(i);
 				id = data.getStation_id();
 				if (id.equals(prev_id)) {
-					__stationVector.remove(
-						i);
+					__stationVector.remove( i);
 					--size;
 					--i;	
 					// Will be incremented in loop
@@ -2258,13 +2148,11 @@ private void displayStationList() {
 			__stationVector = new Vector<HydroBase_StationView>(1);
 			__stationVector.add(null);
 		}
-		// Save the Vector in the hashtable so it can be
-		// retrieved later.
+		// Save the Vector in the hashtable so it can be retrieved later.
 		__stationsHashtable.put(current_wd, __stationVector);
 	}
 
-       	Message.printStatus(1, routine, "Found "
-		+ (__stationVector.size()- 1)+ " stations in WD " + current_wd);
+       	Message.printStatus(1, routine, "Found " + (__stationVector.size()- 1)+ " stations in WD " + current_wd);
 
 	// Update the SimpleJComboBox...
 	__ignoreStateChange = true;
@@ -2281,11 +2169,8 @@ private void displayStationList() {
 
 	HydroBase_StationView data = null;
        	for (int i = 1; i < size; i++) {
-               	data = (HydroBase_StationView)
-			__stationVector.get(i);
-               	__stationNameSimpleJComboBox.add(
-			data.getStation_name().trim() + " ("
-			+ data.getStation_id() + ")");
+               	data = __stationVector.get(i);
+               	__stationNameSimpleJComboBox.add( data.getStation_name().trim() + " (" + data.getStation_id() + ")");
         }	
 
 	// Save so don't do the same query again...
@@ -2307,11 +2192,9 @@ private boolean displayStreamInfo() {
 	int index = __streamNameSimpleJComboBox.getSelectedIndex();
 
 	// Look up the stream data for the selected item...
-	HydroBase_Stream streamData = 
-		(HydroBase_Stream)__streamVector.get(index);
+	HydroBase_Stream streamData = __streamVector.get(index);
 
-	if (__streamNameSimpleJComboBox.getSelected().startsWith(
-		__SELECT_STREAM)) {
+	if (__streamNameSimpleJComboBox.getSelected().startsWith( __SELECT_STREAM)) {
 		// No stream was selected so prompt the user...
 		new ResponseJDialog(this, 
 			"Select a Stream",
@@ -2353,26 +2236,21 @@ private void displayStreamList() {
 	if (__streamVector == null) {
 		// Need to generate a new list of streams...
 		JGUIUtil.setWaitCursor(this, true);
-        	String tempString =
-			"Retrieving Stream list for water district " 
-			+ current_wd;
+        	String tempString = "Retrieving Stream list for water district " + current_wd;
         	__statusJTextField.setText(tempString);
         	Message.printStatus(1, routine, tempString);
 
 		int wd = (new Integer(current_wd)).intValue();
 		try {
-			__streamVector = __dmi.readStreamListForWDStr_trib_to(
-				wd, DMIUtil.MISSING_INT);
+			__streamVector = __dmi.readStreamListForWDStr_trib_to( wd, DMIUtil.MISSING_INT);
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, "Error reading from "
-				+ "stream_list table.");
+			Message.printWarning(1, routine, "Error reading from " + "stream_list table.");
 			Message.printWarning(2, routine, e);
 		}
                                 
 		if (__streamVector != null && !(__streamVector.isEmpty())) {
-			// Add one item at the start to
-			// agree with the SimpleJComboBox.
+			// Add one item at the start to agree with the SimpleJComboBox.
 			__streamVector.add(0,null);
         	}
 		else {	
@@ -2385,8 +2263,7 @@ private void displayStreamList() {
 		__streamsHashtable.put(current_wd, __streamVector);
 	}
 
-       	Message.printStatus(1, routine, "Found "
-		+ (__streamVector.size()- 1) + " streams in WD " + current_wd);
+       	Message.printStatus(1, routine, "Found " + (__streamVector.size()- 1) + " streams in WD " + current_wd);
 
 	// Now update the SimpleJComboBox...
 	__ignoreStateChange = true;
@@ -2405,9 +2282,7 @@ private void displayStreamList() {
 	HydroBase_Stream data = null;
 	for (int i = 1; i < size; i++) {
 		data = __streamVector.get(i);
-               	__streamNameSimpleJComboBox.add(
-			data.getStream_name().trim() + " ("
-			+ data.getStream_num() + ")");
+               	__streamNameSimpleJComboBox.add( data.getStream_name().trim() + " (" + data.getStream_num() + ")");
 	}
 
 	__streamNameSimpleJComboBox.select(0);
@@ -2437,8 +2312,7 @@ private void displayStructureList(int flag) {
 	// district and stream number, separated by _.
 
 	long stream_num = getTribStreamNum(getSelectedRow());
-	String current_wd = HydroBase_WaterDistrict.parseWD(
-		__waterDistrictSimpleJComboBox.getSelected()).trim();
+	String current_wd = HydroBase_WaterDistrict.parseWD( __waterDistrictSimpleJComboBox.getSelected()).trim();
 	String hashkey = "";
 	if (flag == __ALL) {
 		hashkey = current_wd;
@@ -2480,8 +2354,7 @@ private void displayStructureList(int flag) {
 	__ignoreStateChange = false;
 
 	if (hashkey.equals(global_hashkey)) {
-		// No need to update the list because the combination has not
-		// changed.
+		// No need to update the list because the combination has not changed.
 		return;
 	}
 
@@ -2514,8 +2387,7 @@ private void displayStructureList(int flag) {
 		long tempStream_num = DMIUtil.MISSING_LONG;	
 		if (flag == __STREAM) {
 			// Add a where clause for the stream...
-			Message.printStatus(1, routine,
-				"Generating structure list for stream.");
+			Message.printStatus(1, routine, "Generating structure list for stream.");
 			tempStream_num = stream_num;
 		}
 
@@ -2527,16 +2399,12 @@ private void displayStructureList(int flag) {
 				structureVector = new Vector<HydroBase_StructureView>();
 			}
 			else {
-				structureVector 
-				 = __dmi
-				.readStructureViewListForWDStream_numStr_type(
-					StringUtil.atoi(current_wd), 
-					tempStream_num, type);
+				structureVector = __dmi.readStructureViewListForWDStream_numStr_type(
+					StringUtil.atoi(current_wd), tempStream_num, type);
 			}
 		}
 		catch (Exception e) {	
-			Message.printWarning(1, routine, "Error reading from "
-				+ "structure_geoloc table.");
+			Message.printWarning(1, routine, "Error reading from structure_geoloc table.");
 			Message.printWarning(2, routine, e);
 		}
 
@@ -2609,17 +2477,16 @@ private void displayStructureList(int flag) {
 	String name;
 	__ignoreStateChange = true;
        	for (int i = 1; i < size; i++) {
-		view = (HydroBase_StructureView)
-			structureVector.get(i);
+		view = structureVector.get(i);
 		name = view.getStr_name().trim();
 		if (str_type == 'D') {
-                	__diversionNameSimpleJComboBox.add(name
+               	__diversionNameSimpleJComboBox.add(name
 				+ " (" 
 				+ HydroBase_WaterDistrict.formWDID(
 				view.getWD(), view.getID()) + ")");
 		}
 		else if (str_type == 'R') {
-                	__reservoirNameSimpleJComboBox.add(name
+               	__reservoirNameSimpleJComboBox.add(name
 				+ " (" 
 				+ HydroBase_WaterDistrict.formWDID(
 				view.getWD(), view.getID()) + ")");
@@ -2638,8 +2505,7 @@ private void displayStructureList(int flag) {
 
 /**
 Display all the structures for a given water district.
-@param flag __STREAM if displaying by stream, __ALL if displaying by water
-district.
+@param flag __STREAM if displaying by stream, __ALL if displaying by water district.
 */
 private void displayStructuresClicked(int flag) {
 	if (flag == __STREAM) {
@@ -2655,125 +2521,6 @@ private void displayStructuresClicked(int flag) {
 	displayStructureList(flag);	
 	// Display the row to reselect the choice...
 	displayRow(__curCellRow);
-}
-
-/**
-Clean up memory before garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__rowTypeCard = null;
-	__constantCard = null;
-	__parent = null;
-	__confluencesHashtable = null;
-	__diversionHashtable = null;
-	__mfrWeightHashtable = null;
-	__reservoirHashtable = null;
-	__stationsHashtable = null;
-	__streamsHashtable = null;
-	__dmi = null;
-	__network = null;
-	__wis = null;
-	__stream = null;
-	__tableModel = null;
-	__importWizardGUI = null;
-	__diagramGUI = null;
-	__widths = null;
-	__addFormulaJButton = null;
-	__addImportJButton = null;
-	__addRowJButton = null;
-	__saveJButton = null;
-	__buildDiagramJButton = null;
-	__closeJButton = null;
-	__deleteFormulaJButton = null;
-	__deleteImportJButton = null;
-	__deleteJButton = null;
-	__deleteRowJButton = null;
-	__displayGainsJButton = null;
-	__divideJButton = null;
-	__minusJButton = null;
-	__multiplyJButton = null;
-	__plusJButton = null;
-	__showNetworkJButton = null;
-	__divKnownPointJCheckBox = null;
-	__mfrWeightKnownPointJCheckBox = null;
-	__otherKnownPointJCheckBox = null;
-	__resKnownPointJCheckBox = null;
-	__staKnownPointJCheckBox = null;
-	__formulaJLabel = null;
-	__confluenceJPanel = null;
-	__constantJPanel = null;
-	__diversionJPanel = null;
-	__formulaJPanel = null;
-	__minFlowReachJPanel = null;
-	__otherJPanel = null;
-	__reservoirJPanel = null;
-	__rowTypeJPanel = null;
-	__stationJPanel = null;
-	__streamJPanel = null;
-	__stringJPanel = null;
-	__cellJPopupMenu = null;
-	__conStreamJRadioButton = null;
-	__conWDJRadioButton = null;
-	__mfrWeightStreamJRadioButton = null;
-	__mfrWeightWDJRadioButton = null;
-	__resStreamJRadioButton = null;
-	__resWDJRadioButton = null;
-	__structStreamJRadioButton = null;
-	__structWDJRadioButton = null;
-	__cflWeightJTextField = null;
-	__confluenceRowLabelJTextField = null;
-	__confluenceStreamMileJTextField = null;
-	__constantJTextField = null;
-	__currentStreamJTextField = null;
-	__dateJTextField = null;
-	__diversionRowLabelJTextField = null;
-	__divStreamMileJTextField = null;
-	__divWeightJTextField = null;
-	__mfrWeightRowLabelJTextField = null;
-	__mfrWeightStreamMileJTextField = null;
-	__mfrWeightJTextField = null;
-	__otherRowLabelJTextField = null;
-	__otherStreamMileJTextField = null;
-	__otherWeightJTextField = null;
-	__reservoirRowLabelJTextField = null;
-	__resStreamMileJTextField = null;
-	__resWeightJTextField = null;
-	__sheetNameJTextField = null;
-	__staStreamMileJTextField = null;
-	__stationRowLabelJTextField = null;
-	__statusJTextField = null;
-	__staWeightJTextField = null;
-	__streamRowLabelJTextField = null;
-	__stringRowLabelJTextField = null;
-	__uniqueJTextField = null;
-	__worksheet = null;
-	__formulaList = null;
-	__confluenceNameSimpleJComboBox = null;
-	__diversionNameSimpleJComboBox = null;
-	__gainSimpleJComboBox = null;
-	__mfrWeightNameSimpleJComboBox = null;
-	__reservoirNameSimpleJComboBox = null;
-	__rowTypeSimpleJComboBox = null;
-	__stationNameSimpleJComboBox = null;
-	__streamNameSimpleJComboBox = null;
-	__waterDistrictSimpleJComboBox = null;
-	__sheetName = null;
-	__curConfluenceHashkey = null;
-	__curDiversionHashkey = null;
-	__curMinflowHashkey = null;
-	__curReservoirHashkey = null;
-	__curStationWD = null;
-	__curStreamWD = null;
-	__diversionVector = null;
-	__reservoirVector = null;
-	__mfrWeightVector = null;
-	__stationVector = null;
-	__streamVector = null;
-	__confluenceVector = null;
-	__formulaVector = null;
-	__wisFormatList = null;
-	super.finalize();
 }
 
 /**
@@ -2832,8 +2579,7 @@ private Color getCurrentCellColor() {
 	int row = getSelectedRow();
 	int col = getSelectedColumn();
 	if (row >= 0 && col >= 0) {
-		JWorksheet_CellAttributes ca = __worksheet.getCellAttributes(
-			row, col);
+		JWorksheet_CellAttributes ca = __worksheet.getCellAttributes( row, col);
 		if (ca != null) {
 			return ca.backgroundColor;
 		}
@@ -2842,8 +2588,7 @@ private Color getCurrentCellColor() {
 }
 
 /**
-Return the HydroBase_WISFormula object corresponding to the specified cell 
-address.
+Return the HydroBase_WISFormula object corresponding to the specified cell address.
 @param row row number.
 @param col column number.
 @return the HydroBase_WISFormula for the specified cell address if one exists, 
@@ -2863,8 +2608,7 @@ int row, int col) {
 	int size = wisFormulaVector.size();
 	for (int i = 0; i < size; i++) {
 		wisFormula = wisFormulaVector.get(i);
-		curCol = HydroBase_GUI_WIS.getColumnNumber(
-			wisFormula.getColumn());
+		curCol = HydroBase_GUI_WIS.getColumnNumber( wisFormula.getColumn());
 		curRow = wisFormula.getWis_row();
 		if (curCol==col && curRow== (row + 1)) {
 			return wisFormula;
@@ -2917,8 +2661,7 @@ private int getRecentFormatWISNum() {
 	String routine = CLASS + ".getRecentFormatWISNum";
 
 	// get the current system day
-	DateTime TSCurrent = new DateTime(
-		DateTime.DATE_CURRENT | DateTime.PRECISION_DAY);
+	DateTime TSCurrent = new DateTime( DateTime.DATE_CURRENT | DateTime.PRECISION_DAY);
 	TSCurrent.shiftTimeZone(TSCurrent.getTimeZoneAbbreviation());
 	String currentDay = TSCurrent.toString(DateTime.FORMAT_Y2K_SHORT);
 
@@ -2929,12 +2672,10 @@ private int getRecentFormatWISNum() {
 	// has been archived for the current day
 	List<HydroBase_WISSheetName> results = null;
 	try {
-		results = __dmi.readWISSheetNameList(-999, -999, __sheetName, 
-			null, true);
+		results = __dmi.readWISSheetNameList(-999, -999, __sheetName, null, true);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading from sheet_name"
-			+ " table.");
+		Message.printWarning(1, routine, "Error reading from sheet_name table.");
 		Message.printWarning(2, routine, e);
 	}
 		
@@ -2977,16 +2718,13 @@ private int getRecentFormatWISNum() {
 			// sheet_name query in order to determine 
 			// the max wis_num.
 			if (__dmi.getDatabaseEngine().equals("Access")) {
-				int wis_num = DMIUtil.getMaxRecord(__dmi, 
-					"sheet_name", "wis_num");
+				int wis_num = DMIUtil.getMaxRecord(__dmi, "sheet_name", "wis_num");
 				sn.setWis_num(wis_num);
 				try {
 					__dmi.writeWISSheetName(sn);
 				}
 				catch (Exception e) {
-					Message.printWarning(1, routine, 
-						"Error writing to sheet_name "
-						+ "table.");
+					Message.printWarning(1, routine, "Error writing to sheet_name table.");
 					Message.printWarning(2, routine, e);
 				}
 			}
@@ -2995,9 +2733,7 @@ private int getRecentFormatWISNum() {
 					__dmi.writeWISSheetName(sn);
 				}
 				catch (Exception e) {
-					Message.printWarning(1, routine, 
-						"Error writing to sheet_name "
-						+ "table.");
+					Message.printWarning(1, routine, "Error writing to sheet_name table.");
 					Message.printWarning(2, routine, e);
 				}
 		       	}
@@ -3005,12 +2741,10 @@ private int getRecentFormatWISNum() {
 			// get the wis_num of the newly archived sheet using
 			// sheet_name and effective date
 			try {
-				results = __dmi.readWISSheetNameList(
-					-999, -999, __sheetName, TSCurrent);
+				results = __dmi.readWISSheetNameList( -999, -999, __sheetName, TSCurrent);
 			}
 			catch (Exception e) {
-				Message.printWarning(1, routine, "Error reading"
-					+ " from sheet_name table.");
+				Message.printWarning(1, routine, "Error reading from sheet_name table.");
 				Message.printWarning(2, routine, e);
 			}
 			data = results.get(0);
@@ -3026,8 +2760,7 @@ private int getRecentFormatWISNum() {
 			null);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading from sheet_name"
-			+ " table.");
+		Message.printWarning(1, routine, "Error reading from sheet_name table.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -3049,12 +2782,10 @@ private int getRecentFormatWISNum() {
 	List<HydroBase_WISComments> resultsWISComments = null;
 	if (!wisNumVector.isEmpty()) {
 		try {
-			resultsWISComments = __dmi.readWISCommentsList(wisNumVector,
-				TSCurrent);
+			resultsWISComments = __dmi.readWISCommentsList(wisNumVector, TSCurrent);
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, "Error reading from "
-				+ "wis_comments table.");
+			Message.printWarning(1, routine, "Error reading from wis_comments table.");
 			Message.printWarning(2, routine, e);
 		}
 		if (resultsWISComments != null && !resultsWISComments.isEmpty()) {
@@ -3069,12 +2800,10 @@ private int getRecentFormatWISNum() {
 			HydroBase_WISComments wisComments = resultsWISComments.get(0);
 
 			try {
-				__dmi.deleteWISForWis_numSet_date(
-					wisComments.getWis_num(), TSCurrent);
+				__dmi.deleteWISForWis_numSet_date( wisComments.getWis_num(), TSCurrent);
 			}
 			catch (Exception e) {
-				Message.printWarning(1, routine, 
-					"Error deleting wis data");
+				Message.printWarning(1, routine, "Error deleting wis data");
 				Message.printWarning(2, routine, e);
 			}
 		}
@@ -3090,8 +2819,7 @@ private void getConfluenceInfo() {
 	int index = __confluenceNameSimpleJComboBox.getSelectedIndex();
 
 	// no confluence was selected
-	if (__confluenceNameSimpleJComboBox.getSelected().startsWith(
-		__SELECT_STREAM)) {
+	if (__confluenceNameSimpleJComboBox.getSelected().startsWith( __SELECT_STREAM)) {
 		new ResponseJDialog(this, 
 			"Select a Stream",
 			"You must select a stream.",
@@ -3099,21 +2827,18 @@ private void getConfluenceInfo() {
 		return;
 	}
 
-	HydroBase_Stream streamData = 
-		(HydroBase_Stream)__confluenceVector.get(index);
+	HydroBase_Stream streamData = __confluenceVector.get(index);
 	__confluenceRowLabelJTextField.setText(streamData.getStream_name());
 	double curDouble = streamData.getStr_mile();
-	if (!DMIUtil.isMissing(curDouble)) {
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 		__confluenceStreamMileJTextField.setText("" + curDouble);
 	}
 	__structureWasSelected = true;
 }
 
 /**
-Determine the maximum number used in the unique id fields for Other and String
-row types.
-@return the maximum number used in the unique id fields for Other and String
-row types.
+Determine the maximum number used in the unique id fields for Other and String row types.
+@return the maximum number used in the unique id fields for Other and String row types.
 */
 private long getMax() {
 	long max = 0;
@@ -3123,8 +2848,7 @@ private long getMax() {
 	String id = null;
 
 	for (int count = 1; count < size; count++) {
-		id = ((HydroBase_WISFormat)
-			__wisFormatList.get(count)).getIdentifier();
+		id = __wisFormatList.get(count).getIdentifier();
 
 		if (id.startsWith(__OTHR)) {
 			curNum = StringUtil.atol(id.substring(len));
@@ -3171,11 +2895,8 @@ private void getStationInfo() {
 		return;
 	}
 
-	HydroBase_StationView stationData = 
-		(HydroBase_StationView)
-		__stationVector.get(index);
-	__stationRowLabelJTextField.setText(
-		stationData.getStation_name());	
+	HydroBase_StationView stationData = __stationVector.get(index);
+	__stationRowLabelJTextField.setText( stationData.getStation_name());	
 }
 
 /**
@@ -3183,8 +2904,7 @@ Return the name of the stream to which the current row belongs.
 @param row row number.
 @return the name of the stream with the same stream_num as the requested row.
 If the stream_num of the requested row is DMIUtil.MISSING_INT then the first
-occurance of stream is used.  If the name cannot be located, an empty String is
-returned.
+occurrence of stream is used.  If the name cannot be located, an empty String is returned.
 */
 /* TODO SAM Evaluate whether needed
 private String getStream_name(int row) {
@@ -3201,7 +2921,7 @@ private String getStream_name(int row) {
 	// locate the first occurance of a stream row above the existing row.
 	// this is provides a stream name for a row in which a structure has not
 	// yet been selected.
-	if (DMIUtil.isMissing(stream_num)) {
+	if (DMIUtil.isMissing(stream_num) || HydroBase_Util.isMissing(stream_num)) {
 		for (int curRow = row; curRow >= 1; curRow--) {
 			wisFormat = (HydroBase_WISFormat)
 				__wisFormatVector.elementAt(curRow);
@@ -3261,7 +2981,7 @@ private void getStructureInfo() {
 		structureName = structureView.getStr_name();
 		structureName = structureName.trim();
 		mile = structureView.getStr_mile();
-		if (DMIUtil.isMissing(mile)) {
+		if (DMIUtil.isMissing(mile) || HydroBase_Util.isMissing(mile)) {
 			str_mile = "";
 		}
 		else {	
@@ -3272,14 +2992,13 @@ private void getStructureInfo() {
 	}
 	else if (rowType.equals(HydroBase_GUI_WIS.RESERVOIR)) {
 		index = __reservoirNameSimpleJComboBox.getSelectedIndex();
-		structureView = (HydroBase_StructureView)
-			__reservoirVector.get(index);
+		structureView = __reservoirVector.get(index);
 		if (structureView == null) {
 			return;
 		}
 		structureName = structureView.getStr_name().trim();
 		mile = structureView.getStr_mile();
-		if (DMIUtil.isMissing(mile)) {
+		if (DMIUtil.isMissing(mile) || HydroBase_Util.isMissing(mile)) {
 			str_mile = "";
 		}
 		else {	
@@ -3290,14 +3009,13 @@ private void getStructureInfo() {
 	}
 	else if (rowType.equals(HydroBase_GUI_WIS.MIN_FLOW_REACH)) {
 		index = __mfrWeightNameSimpleJComboBox.getSelectedIndex();
-	        structureView = (HydroBase_StructureView)
-			__mfrWeightVector.get(index);
+	        structureView = __mfrWeightVector.get(index);
 		if (structureView == null) {
 			return;
 		}
 		structureName = structureView.getStr_name().trim();
 		mile = structureView.getStr_mile();
-		if (DMIUtil.isMissing(mile)) {
+		if (DMIUtil.isMissing(mile) || HydroBase_Util.isMissing(mile)) {
 			str_mile = "";
 		}
 		else {	
@@ -3311,7 +3029,7 @@ private void getStructureInfo() {
 }
 
 /**
-Searche the __wisFormat for the unique id which matches the unique id for the
+Search the __wisFormat for the unique id which matches the unique id for the
 wisMath object. the cell row /number is then set.
 @param wisMath HydroBase_WISMath object.
 @return the row number which the term refers to.
@@ -3341,8 +3059,7 @@ private HydroBase_WISFormat getTribStreamFormat(int row) {
 	String rowType = null;
 	
 	for (int curRow = row; curRow >= 0; curRow--) {
-		wisFormat = (HydroBase_WISFormat)
-			__wisFormatList.get(curRow + 1);
+		wisFormat = __wisFormatList.get(curRow + 1);
 		rowType = wisFormat.getRow_type().trim();
 		if (rowType.equals(HydroBase_GUI_WIS.STREAM)) {
 			return wisFormat;
@@ -3363,8 +3080,7 @@ private int getTribStreamNum(int row) {
 	String rowType = null;
 	
 	for (int curRow = row; curRow >= 0; curRow--) {
-		wisFormat = (HydroBase_WISFormat)
-			__wisFormatList.get(curRow + 1);
+		wisFormat = __wisFormatList.get(curRow + 1);
 		rowType = wisFormat.getRow_type().trim();
 		if (rowType.equals(HydroBase_GUI_WIS.STREAM)) {
 			return wisFormat.getWdwater_num();
@@ -3394,8 +3110,7 @@ Check the __wisFormat object to ensure that a duplicate identifier is not
 present elsewhere in the stream network.
 @param row row number.
 @param identifier unique row identifier(e.g., wdid:510501).
-@return - true if a duplicate row identifier is located or one is not specified,
-false otherwise.
+@return - true if a duplicate row identifier is located or one is not specified, false otherwise.
 */
 private boolean isDuplicate(int row, String identifier) {
 	// ensure that a unique id exist for the row
@@ -3414,8 +3129,7 @@ private boolean isDuplicate(int row, String identifier) {
 		HydroBase_WISFormat wisFormat = null;
 		for (int curRow = 1; curRow < size; curRow++) {
 			if (curRow != (row + 1)) {
-				wisFormat = (HydroBase_WISFormat)
-					__wisFormatList.get(curRow);
+				wisFormat = __wisFormatList.get(curRow);
 				if (wisFormat.getIdentifier().trim().equals(
 					identifier)) {
 					isDuplicate = true;
@@ -3423,8 +3137,7 @@ private boolean isDuplicate(int row, String identifier) {
 				}
 			}
 			else {
-				wisFormat = (HydroBase_WISFormat)
-					__wisFormatList.get(curRow);
+				wisFormat = __wisFormatList.get(curRow);
 			}			
 		}
 	}
@@ -3438,8 +3151,7 @@ Determine whether the current cell is a formula cell.
 @return true if the current Cell contains a formula, false otherwise.
 */
 private boolean isFormulaCell(int row, int col) {
-	HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-		__wisFormatList.get(row + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(row + 1);
 	HydroBase_WISFormula wisFormula = wisFormat.getWISFormula(col);
 
 	// a formula is present if getFormulastring()does not
@@ -3457,8 +3169,7 @@ Determines whether the current cell is an import cell.
 @return true if the current cell contains an import, false otherwise.
 */
 private boolean isImportCell(int row, int col) {
-	HydroBase_WISImport wisImport = ((HydroBase_WISFormat)
-		__wisFormatList.get(row + 1)).getWISImport(col);
+	HydroBase_WISImport wisImport = __wisFormatList.get(row + 1).getWISImport(col);
 	String import_method = wisImport.getImport_method().trim();
 
 	// a non-specified import method indicates that the 
@@ -3537,12 +3248,9 @@ Determines if the formula term is valid.  Invalid terms are as follows:
 */
 private boolean isValidFormulaTerm(int termRow, int termCol, int editRow, 
 int editCol) {
-	HydroBase_WISFormat termFormat = (HydroBase_WISFormat)
-		__wisFormatList.get(termRow + 1);
-	HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-		__wisFormatList.get(editRow + 1);
-	boolean isKnownPoint = HydroBase_WISFormat.isKnownPoint(
-		wisFormat.getKnown_point().trim());
+	HydroBase_WISFormat termFormat = __wisFormatList.get(termRow + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(editRow + 1);
+	boolean isKnownPoint = HydroBase_WISFormat.isKnownPoint( wisFormat.getKnown_point().trim());
 	String editRowType = wisFormat.getRow_type().trim();
 
 	// cannot reference another formula
@@ -3560,8 +3268,7 @@ int editCol) {
 			termFormat.getKnown_point().trim());
 	
 		// known point formulas must reference other known point cells
-		if (termCol != HydroBase_GUI_WIS.POINT_FLOW_COL 
-			|| !termKnownPoint) {
+		if (termCol != HydroBase_GUI_WIS.POINT_FLOW_COL || !termKnownPoint) {
 			new ResponseJDialog(this, 
 				"Invalid Formula",
 				"Point flow terms must "
@@ -3784,17 +3491,14 @@ public void itemStateChanged(ItemEvent event) {
 		
 		getConfluenceInfo();
 		setUniqueID();
-		setRowLabel(__curCellRow, 
-			formatRowLabel(__curCellRow,((SimpleJComboBox)o)
-			.getSelected()));
+		setRowLabel(__curCellRow, formatRowLabel(__curCellRow,((SimpleJComboBox)o).getSelected()));
 		refreshNetwork();
 		notifyDiagramGUI();
 	}
 
 	else if (__gainSimpleJComboBox == o) {
 		String gain = ((SimpleJComboBox)o).getSelected().trim();
-		if (gain.equals(HydroBase_GUI_WIS.STREAM_MILE)
-			|| gain.equals(HydroBase_GUI_WIS.WEIGHTS)) {
+		if (gain.equals(HydroBase_GUI_WIS.STREAM_MILE) || gain.equals(HydroBase_GUI_WIS.WEIGHTS)) {
 			displayGains(true);
 			__displayGainsJButton.setEnabled(true);
 		}
@@ -3842,8 +3546,7 @@ public void keyPressed(KeyEvent event) {
 				__keyCell[0] = __curCellRow - 1;
 				__keyCell[1] = __curCellCol - 1;
 			}
-			else if (code == KeyEvent.VK_KP_LEFT 
-			    || code == KeyEvent.VK_LEFT) {
+			else if (code == KeyEvent.VK_KP_LEFT || code == KeyEvent.VK_LEFT) {
 			    	if (__curCellCol == 1) {
 					__keyCell = null;
 					return;
@@ -3851,10 +3554,8 @@ public void keyPressed(KeyEvent event) {
 				__keyCell[0] = __curCellRow;
 				__keyCell[1] = __curCellCol - 2;
 			}
-			else if (code == KeyEvent.VK_KP_RIGHT 
-			    || code == KeyEvent.VK_RIGHT) {
-			    	if (__curCellCol 
-				    == __worksheet.getColumnCount() + 1) {
+			else if (code == KeyEvent.VK_KP_RIGHT || code == KeyEvent.VK_RIGHT) {
+			    	if (__curCellCol == __worksheet.getColumnCount() + 1) {
 				    	__keyCell = null;
 					return;
 				}
@@ -3906,13 +3607,11 @@ private void loadCellFormula(int row, int col) {
 	setFormulaLabel(row, col);
 	__addFormulaJButton.setText(__BUTTON_EDIT_FORMULA);
 	
-	Message.printStatus(2, routine, "Loading formula for row " 
-		+ row + " col " + col);
+	Message.printStatus(2, routine, "Loading formula for row " + row + " col " + col);
 	
 	// get the formula for the selected row and column and populate
 	// Vectors with both types of formula formats.
-	HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-		__wisFormatList.get(row + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(row + 1);
 	HydroBase_WISFormula wisFormula = wisFormat.getWISFormula(col);
 	
         String formula = wisFormula.getFormulastring().trim();
@@ -3930,10 +3629,8 @@ private void loadCellFormula(int row, int col) {
         int size = formulaAsJLabel.size();
 	
         for (int i = 0; i < size; i++) {
-		wisMathAsJLabel = (HydroBase_WISMath)
-			formulaAsJLabel.get(i);
-		wisMathAsUnique = (HydroBase_WISMath)
-			formulaAsUnique.get(i);
+		wisMathAsJLabel = formulaAsJLabel.get(i);
+		wisMathAsUnique = formulaAsUnique.get(i);
 		wisMathAsJLabel.setUniqueID(wisMathAsUnique.getUniqueID());
 		wisMathAsJLabel.setIsConstant(wisMathAsUnique.isConstantTerm());
 		wisMathAsJLabel.setColumnType(wisMathAsUnique.getColumnType());
@@ -3941,16 +3638,13 @@ private void loadCellFormula(int row, int col) {
 		isConstant = wisMathAsUnique.isConstantTerm();
 		wisMathAsJLabel.setIsConstant(isConstant);
 		if (isConstant) {
-			wisMathAsJLabel.setConstant(
-				wisMathAsUnique.getConstant());
-                	__formulaList.add(HydroBase_WISMath.getTerm(
-				wisMathAsJLabel,
+			wisMathAsJLabel.setConstant( wisMathAsUnique.getConstant());
+                	__formulaList.add(HydroBase_WISMath.getTerm( wisMathAsJLabel,
 			HydroBase_WISMath.CONSTANT));
 		}
 		else {	
 			wisMathAsJLabel.setLabel(wisMathAsJLabel.getLabel());
-                	__formulaList.add(HydroBase_WISMath.getTerm(
-				wisMathAsJLabel, HydroBase_WISMath.LABEL));
+                	__formulaList.add(HydroBase_WISMath.getTerm( wisMathAsJLabel, HydroBase_WISMath.LABEL));
 		}
 
 		// update the __formulaVector
@@ -4006,8 +3700,7 @@ public void mouseExited(MouseEvent event) {
 		|| o == __resWeightJTextField
 		|| o == __staWeightJTextField) {
 			String gain = __gainSimpleJComboBox.getSelected();
-			if (gain.equals(HydroBase_GUI_WIS.STREAM_MILE)
-				|| gain.equals(HydroBase_GUI_WIS.WEIGHTS)) {
+			if (gain.equals(HydroBase_GUI_WIS.STREAM_MILE) || gain.equals(HydroBase_GUI_WIS.WEIGHTS)) {
 				displayGains(true);
 			}
 			else if (gain.equals(HydroBase_GUI_WIS.NONE)) {
@@ -4033,8 +3726,7 @@ public void mousePressed(MouseEvent event) {
 	else if (c.equals(__worksheet)) {
 		if (__isBuildingFormula) {
 			int[] cell = __worksheet.getCellAtClick(event);
-			buildExpression(cell[0], 
-				__worksheet.getAbsoluteColumn(cell[1]));
+			buildExpression(cell[0], __worksheet.getAbsoluteColumn(cell[1]));
 			selectCell(__curCellRow, __curCellCol);
 		}
 		else {
@@ -4095,12 +3787,10 @@ private void querySheetName() {
 
         List<HydroBase_WISSheetName> results = null;
 	try {
-		results = __dmi.readWISSheetNameList(-999, __wisNum, null,null,
-			true);
+		results = __dmi.readWISSheetNameList(-999, __wisNum, null,null, true);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading from sheet_name"
-			+ " table.");
+		Message.printWarning(1, routine, "Error reading from sheet_name table.");
 		Message.printWarning(2, routine, e);
 	}
 	
@@ -4115,8 +3805,7 @@ private void querySheetName() {
 			__displayGainsJButton.setEnabled(false);
 		}
 		else if (gain.equals("S")) {
-			__gainSimpleJComboBox.select(
-				HydroBase_GUI_WIS.STREAM_MILE);
+			__gainSimpleJComboBox.select( HydroBase_GUI_WIS.STREAM_MILE);
 			__displayGainsJButton.setEnabled(true);
 		}
 		else if (gain.equals("W")) {
@@ -4153,8 +3842,7 @@ private void queryWISFormat() {
 		results = __dmi.readWISFormatList(__wisNum, null, null);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading from wis_format"
-			+ " table.");
+		Message.printWarning(1, routine, "Error reading from wis_format table.");
 		Message.printWarning(2, routine, e);
 	}
 	
@@ -4180,8 +3868,7 @@ private void queryWISFormat() {
 			// Append additional row label information so it is
 			// easier to edit the sheet.  This information is used
 			// only in the display an will not be saved back to the
-			// database.  Always want the row type and internal
-			// identifier...
+			// database.  Always want the row type and internal identifier...
 			rowLabel += " ("  + (i + 1) + ", " + rowType;
 			// Now do additional information...?
 			//STRING		= "String",
@@ -4202,19 +3889,14 @@ private void queryWISFormat() {
 			data.setRow_label(rowLabel);
 			row = __worksheet.getRowCount();
 			__worksheet.addRow(data);
-			if (formatData.getRow_type().equals(
-				HydroBase_GUI_WIS.STRING)) {
-				setCellColor(row, 2, 
-					HydroBase_GUI_WIS.NUM_COLUMNS, 
-					Color.white, Color.white);
+			if (formatData.getRow_type().equals( HydroBase_GUI_WIS.STRING)) {
+				setCellColor(row, 2, HydroBase_GUI_WIS.NUM_COLUMNS, Color.white, Color.white);
 			}
 			else {	
-				setCellColor(row, 2, 5,
-					Color.lightGray, Color.black);
+				setCellColor(row, 2, 5, Color.lightGray, Color.black);
 			}
 			if (formatData.getKnown_point().equals("Y")) {
-				setCellColor(row, 2, 2, 
-					Color.white, Color.white);
+				setCellColor(row, 2, 2, Color.white, Color.white);
 			}
 			__isNewSheet = false;
 		}
@@ -4243,8 +3925,7 @@ private void queryWISFormula() {
 		results = __dmi.readWISFormulaListForWis_num(__wisNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading from "	
-			+ "wis_formula table.");
+		Message.printWarning(1, routine, "Error reading from wis_formula table.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -4259,10 +3940,8 @@ private void queryWISFormula() {
                 	formulaData = results.get(i);
 			row = formulaData.getWis_row();
 			columnType = formulaData.getColumn().trim();
-			columnNum = HydroBase_GUI_WIS.getColumnNumber(
-				columnType);
-			setCellColor(row - 1, columnNum, columnNum, 
-				Color.red, Color.red);
+			columnNum = HydroBase_GUI_WIS.getColumnNumber( columnType);
+			setCellColor(row - 1, columnNum, columnNum, Color.red, Color.red);
 
 			// set the formula on the __wisFormat object
 			wisFormat= __wisFormatList.get(row);
@@ -4288,8 +3967,7 @@ private void queryWISImport() {
 		results = __dmi.readWISImportListForWis_num(__wisNum);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading from wis_import"
-			+ " table.");
+		Message.printWarning(1, routine, "Error reading from wis_import table.");
 		Message.printWarning(2, routine, e);
 	}
 
@@ -4304,10 +3982,8 @@ private void queryWISImport() {
                 	wisImport = results.get(i);
 			row = wisImport.getWis_row();
 			columnType = wisImport.getColumn().trim();
-			columnNum = HydroBase_GUI_WIS.getColumnNumber(
-				columnType);
-			setCellColor(row - 1, columnNum, columnNum, 
-				Color.blue, Color.blue);
+			columnNum = HydroBase_GUI_WIS.getColumnNumber( columnType);
+			setCellColor(row - 1, columnNum, columnNum, Color.blue, Color.blue);
 
 			// set the wis import on the __wisFormat object
 			wisFormat = __wisFormatList.get(row);
@@ -4355,8 +4031,7 @@ refresh is selected again.
 */
 private void refreshWorksheet() {
 	__worksheet.refresh();
-	if ((__curCellRow > (__worksheet.getRowCount() - 1)) 
-		|| __curCellCol < 0) {
+	if ((__curCellRow > (__worksheet.getRowCount() - 1)) || __curCellCol < 0) {
 		return;
 	}
 
@@ -4370,14 +4045,12 @@ private void refreshWorksheet() {
 		// and so the selectCell() is ignored.
 	}
 	else {
-		__worksheet.selectCell(__curCellRow, 
-			__worksheet.getVisibleColumn(__curCellCol));
+		__worksheet.selectCell(__curCellRow, __worksheet.getVisibleColumn(__curCellCol));
 	}
 }
 
 /**
-Resets all the GUI's JComboBoxes so that the very first item in them is
-selected.
+Resets all the GUI's JComboBoxes so that the very first item in them is selected.
 */
 private void resetComboBoxes() {
 	__diversionNameSimpleJComboBox.select(null);
@@ -4418,8 +4091,7 @@ private void rowTypeSimpleJComboBoxClicked() {
 				"First Row Must Be Stream",
 				"The first row must be a stream"
 				+ " row type.", ResponseJDialog.OK).response();
-			__rowTypeSimpleJComboBox.select(
-				HydroBase_GUI_WIS.STREAM);
+			__rowTypeSimpleJComboBox.select( HydroBase_GUI_WIS.STREAM);
 			return;
 		}
 	}
@@ -4432,8 +4104,7 @@ private void rowTypeSimpleJComboBoxClicked() {
 				"Warning!",
 				"Changing the"
 				+ " row type will delete formulas. Continue?", 
-				ResponseJDialog.YES | ResponseJDialog.NO)
-				.response();
+				ResponseJDialog.YES | ResponseJDialog.NO).response();
 			if (r == ResponseJDialog.YES) {
 				break;
 			}
@@ -4447,8 +4118,7 @@ private void rowTypeSimpleJComboBoxClicked() {
 	
 	// clear out the existing formula via instantiating
 	// a new HydroBase_WISFormula object at the appropriate location
-	HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-		__wisFormatList.get(row + 1);	
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(row + 1);	
 	for (int col = 1; col < HydroBase_GUI_WIS.NUM_COLUMNS; col++) {
 		wisFormat.setWISFormula(new HydroBase_WISFormula(), col);
 	}
@@ -4458,18 +4128,15 @@ private void rowTypeSimpleJComboBoxClicked() {
 	// set the cell colors accordingly and show the requested panel
 	setCellColor(row, 2, 5, Color.lightGray, Color.black);
 	if (type.equals(HydroBase_GUI_WIS.STRING)) {
-		setCellColor(row, 2, HydroBase_GUI_WIS.NUM_COLUMNS, 
-			Color.white, Color.white);
+		setCellColor(row, 2, HydroBase_GUI_WIS.NUM_COLUMNS, Color.white, Color.white);
 	}
 	else {	
 		setCellColor(row, 2, 5, Color.lightGray, Color.black);
-		setCellColor(row, 6, HydroBase_GUI_WIS.NUM_COLUMNS, 
-			Color.white, Color.white);
+		setCellColor(row, 6, HydroBase_GUI_WIS.NUM_COLUMNS, Color.white, Color.white);
 	}
 
 	// generate the unique id for the following row types.
-	if (type.equals(HydroBase_GUI_WIS.STRING)
-		|| type.equals(HydroBase_GUI_WIS.OTHER)) {
+	if (type.equals(HydroBase_GUI_WIS.STRING) || type.equals(HydroBase_GUI_WIS.OTHER)) {
 		setUniqueID();
 	}
 
@@ -4505,8 +4172,7 @@ refreshes the worksheet.
 private void selectCell(int row, int absoluteCol) {
 	__curCellRow = row;
 	__curCellCol = absoluteCol;
-	__worksheet.selectCell(row, 
-		__worksheet.getVisibleColumn(absoluteCol));
+	__worksheet.selectCell(row, __worksheet.getVisibleColumn(absoluteCol));
 }
 
 /**
@@ -4524,7 +4190,7 @@ private void selectMainStem(HydroBase_Stream stream) {
 	if (__streamVector != null && !(__streamVector.isEmpty())) {
 		int size = __streamVector.size();
 		for (int i = 1; i < size; i++) {
-			data = (HydroBase_Stream)__streamVector.get(i);
+			data = __streamVector.get(i);
 			if (data.getStream_num() == stream_num) {
 				String name = data.getStream_name();
 				__streamNameSimpleJComboBox.select(null);
@@ -4545,8 +4211,7 @@ private void selectMainStem(HydroBase_Stream stream) {
 
 /**
 Enables/disables the requested buttons.
-@param flag __FORMULA if disabling formula related, __IMPORT if disabling import
-buttons.
+@param flag __FORMULA if disabling formula related, __IMPORT if disabling import buttons.
 @param state true if enabling the button, false otherwise.
 */
 private void setButtonState(int flag, boolean state) {
@@ -4576,8 +4241,7 @@ private void setButtonsState(boolean state) {
 }
 
 /**
-Sets the cell background and foreground colors for a range of columns in 
-a row.
+Sets the cell background and foreground colors for a range of columns in a row.
 @param row the row for which to set cell colors.
 @param fromAbsCol the absolute column at which to begin setting cell colors.
 @param toAbsCol the last absolute column for which to set cell colors.
@@ -4609,8 +4273,7 @@ Sets the contents of the cell at the specified row and column.
 @param absoluteColumn the absolute column at which to set the cell contents.
 */
 private void setCellContents(String value, int row, int absoluteColumn) {
-	__worksheet.setValueAt(value, row, 
-		__worksheet.getVisibleColumn(absoluteColumn));
+	__worksheet.setValueAt(value, row, __worksheet.getVisibleColumn(absoluteColumn));
 }
 
 /**
@@ -4648,12 +4311,10 @@ Set the text for the __formulaJLabel object given the cell address.
 @param col column number.
 */
 private void setFormulaLabel(int row, int col) {
-	HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-		__wisFormatList.get(row + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(row + 1);
 	String rowLabel = wisFormat.getRow_label();
 	String columnJLabel = getColumnType(col);
-	__formulaJLabel.setText(__FORMULA_LABEL + "Formula for " + rowLabel 
-		+ "." + columnJLabel);
+	__formulaJLabel.setText(__FORMULA_LABEL + "Formula for " + rowLabel + "." + columnJLabel);
 }
 
 /**
@@ -4718,8 +4379,7 @@ private void setGUIDefaults() {
 	String wisWD = "" + __wis.getWD();
 	size = __waterDistrictSimpleJComboBox.getItemCount();
 	for (int counter = 0; counter < size; counter++) {
-		curWD = HydroBase_WaterDistrict.parseWD(
-			__waterDistrictSimpleJComboBox.getItem(counter));
+		curWD = HydroBase_WaterDistrict.parseWD( __waterDistrictSimpleJComboBox.getItem(counter));
 		if (curWD.equals(wisWD)) {
 			__ignoreStateChange = true;
 			__waterDistrictSimpleJComboBox.select(counter);
@@ -4735,8 +4395,7 @@ private void setGUIDefaults() {
 	}
 	// Select the topmost row and set the defaults according to this row...
 	else {	
-		HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-			__wisFormatList.get(__curCellRow + 1);
+		HydroBase_WISFormat wisFormat = __wisFormatList.get(__curCellRow + 1);
 		__ignoreStateChange = true;
 		__rowTypeSimpleJComboBox.select(wisFormat.getRow_type());
 		__ignoreStateChange = false;
@@ -4752,8 +4411,7 @@ Sets the ID for the current row.
 @param id the ID to set for the current row.
 */
 private void setRowID(String id) {
-	HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-		__wisFormatList.get(__curCellRow + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(__curCellRow + 1);
 	wisFormat.setIdentifier(id);
 	__wisFormatList.set(__curCellRow + 1,wisFormat );
 }
@@ -4821,60 +4479,50 @@ private void setUniqueID() {
 
 	if (type.equals(HydroBase_GUI_WIS.CONFLUENCE)) {
 		index = __confluenceNameSimpleJComboBox.getSelectedIndex();
-		streamData = (HydroBase_Stream)
-			__confluenceVector.get(index);
+		streamData = __confluenceVector.get(index);
 		if (streamData == null) {
 			ready();
 			// user needs to save a confluence type
 			return;
 		}
-		id = __CONF + streamData.getStr_trib_to()
-			+ streamData.getStream_num();
+		id = __CONF + streamData.getStr_trib_to() + streamData.getStream_num();
 	}
 	else if (type.equals(HydroBase_GUI_WIS.DIVERSION)) {
 		index = __diversionNameSimpleJComboBox.getSelectedIndex();
-		structView = (HydroBase_StructureView)
-			__diversionVector.get(index);
+		structView = __diversionVector.get(index);
 		if (structView == null) {
 			ready();
 			// user needs to save a diversion type
 			return;
 		}
-		id = __WDID + HydroBase_WaterDistrict.formWDID(
-			structView.getWD(), structView.getID());
+		id = __WDID + HydroBase_WaterDistrict.formWDID( structView.getWD(), structView.getID());
 	}
 	else if (type.equals(HydroBase_GUI_WIS.MIN_FLOW_REACH)) {
 		index = __mfrWeightNameSimpleJComboBox.getSelectedIndex();
-		structView = (HydroBase_StructureView)
-			__mfrWeightVector.get(index);
+		structView = __mfrWeightVector.get(index);
 		if (structView == null) { 
 			ready();
 			// user needs to save a min flow type
 			return;
 		}
-		id = __WDID + HydroBase_WaterDistrict.formWDID(
-			structView.getWD(), structView.getID());
+		id = __WDID + HydroBase_WaterDistrict.formWDID( structView.getWD(), structView.getID());
 	}
 	else if (type.equals(HydroBase_GUI_WIS.OTHER)) {
 		id = __OTHR + (getMax() + 1);
 	}
 	else if (type.equals(HydroBase_GUI_WIS.RESERVOIR)) {
 		index = __reservoirNameSimpleJComboBox.getSelectedIndex();
-		structView = (HydroBase_StructureView)
-			__reservoirVector.get(index);
+		structView = __reservoirVector.get(index);
 		if (structView == null) {
 			ready();
 			// user needs to save a reservoir type
 			return;
 		}
-		id = __WDID + HydroBase_WaterDistrict.formWDID(
-			structView.getWD(), structView.getID());
+		id = __WDID + HydroBase_WaterDistrict.formWDID( structView.getWD(), structView.getID());
 	}
 	else if (type.equals(HydroBase_GUI_WIS.STATION)) {
 		index = __stationNameSimpleJComboBox.getSelectedIndex();
-		HydroBase_StationView stationData = 
-			(HydroBase_StationView)__stationVector
-			.get(index);
+		HydroBase_StationView stationData = __stationVector.get(index);
 		if (stationData == null) {
 			ready();
 			// user needs to save a station type
@@ -4884,24 +4532,22 @@ private void setUniqueID() {
 	}
 	else if (type.equals(HydroBase_GUI_WIS.STREAM)) {
 		index = __streamNameSimpleJComboBox.getSelectedIndex();
-		streamData = (HydroBase_Stream)__streamVector.get(index);
+		streamData = __streamVector.get(index);
 		if (streamData == null) {
 			ready();
 			// user needs to save a stream type
 			return;
 		}
-		if (DMIUtil.isMissing(streamData.getStr_trib_to())) {
+		if (DMIUtil.isMissing(streamData.getStr_trib_to()) || HydroBase_Util.isMissing(streamData.getStr_trib_to())) {
 			// Only use one...
 			id = __STRM + streamData.getStream_num();
 		}
-		else if (streamData.getStream_num() 
-			== streamData.getStr_trib_to()) {
+		else if (streamData.getStream_num() == streamData.getStr_trib_to()) {
 			// Only use one...
 			id = __STRM + streamData.getStream_num();
 		}
 		else {	
-			id = __STRM + streamData.getStream_num()
-				+ streamData.getStr_trib_to();
+			id = __STRM + streamData.getStream_num() + streamData.getStr_trib_to();
 		}
 	}
 	else if (type.equals(HydroBase_GUI_WIS.STRING)) {
@@ -5003,10 +4649,8 @@ private void setupGUI() {
 	p.add("JWorksheet.SelectionMode=SingleCellSelection");
 
 	try {
-		__tableModel = new HydroBase_TableModel_WISBuilder(new Vector<HydroBase_WISData>(),
-			this);
-		HydroBase_CellRenderer cr = new HydroBase_CellRenderer(
-			__tableModel);
+		__tableModel = new HydroBase_TableModel_WISBuilder(new Vector<HydroBase_WISData>(), this);
+		HydroBase_CellRenderer cr = new HydroBase_CellRenderer( __tableModel);
 	
 		__worksheet = new JWorksheet(cr, __tableModel, p);
 		__widths = __tableModel.getColumnWidths();
@@ -5041,16 +4685,14 @@ private void setupGUI() {
 	centerSouthJPanel.add(__deleteRowJButton);
 
 	__addFormulaJButton = new JButton(__BUTTON_ADD_FORMULA);
-	__addFormulaJButton.setToolTipText("Add a formula to the current "
-		+ "cell.");
+	__addFormulaJButton.setToolTipText("Add a formula to the current cell.");
 	__addFormulaJButton.addActionListener(this);
 	centerSouthJPanel.add(__addFormulaJButton);
 
 	__deleteFormulaJButton = new JButton(__BUTTON_DELETE_FORMULA);
 	// REVISIT (JTS - 2004-06-04)
 	// should not be enabled all the time
-	__deleteFormulaJButton.setToolTipText("Delete the formula from the "
-		+ "current cell.");
+	__deleteFormulaJButton.setToolTipText("Delete the formula from the current cell.");
 	__deleteFormulaJButton.addActionListener(this);
 	centerSouthJPanel.add(__deleteFormulaJButton);
 
@@ -5060,8 +4702,7 @@ private void setupGUI() {
 	centerSouthJPanel.add(__addImportJButton);
 
 	__deleteImportJButton = new JButton(__BUTTON_DELETE_IMPORT);
-	__deleteImportJButton.setToolTipText("Delete the import from the "
-		+ "current cell.");
+	__deleteImportJButton.setToolTipText("Delete the import from the current cell.");
 	__deleteImportJButton.addActionListener(this);
 	centerSouthJPanel.add(__deleteImportJButton);
 
@@ -5879,14 +5520,12 @@ private void showCellProperties(int row, int col) {
 	__statusJTextField.setText("Displaying cell properties.");
 
 	// initialize variables
-	HydroBase_WISFormat wisFormat = (HydroBase_WISFormat)
-		__wisFormatList.get(row + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(row + 1);
 	String rowType = wisFormat.getRow_type();
 
 	// locate the formula and import for the current cell
 	HydroBase_WISFormula wisFormula = wisFormat.getWISFormula(col);
-	HydroBase_WISImport wisImport = wisFormat.getWISImport(
-		__worksheet.getVisibleColumn(col + 1));
+	HydroBase_WISImport wisImport = wisFormat.getWISImport( __worksheet.getVisibleColumn(col + 1));
 	String contents = "" + __worksheet.getValueAt(row, col - 1);
 	String mileString = "";
 	String weightString = "";
@@ -5902,31 +5541,24 @@ private void showCellProperties(int row, int col) {
 	else {	
 		HydroBase_Node node = __network.getMostUpstreamNode();
 		while (node != null) {
-			node = HydroBase_NodeNetwork.getDownstreamNode(node,
-				HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
+			node = HydroBase_NodeNetwork.getDownstreamNode(node, HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 			// find the node matching the wisFormat key...
 			if (node.getWISFormat() == wisFormat) {
 				// first get the gains using stream mile.
-				double[] mile_values =
-					HydroBase_WIS_Util.computeGainLoss(
-					__network, node);
-				mileString = HydroBase_WIS_Util.formatGainLoss(
-						mile_values);
+				double[] mile_values = HydroBase_WIS_Util.computeGainLoss( __network, node);
+				mileString = HydroBase_WIS_Util.formatGainLoss( mile_values);
 
 				// now get the gains using weights
-				double[] weight_values = HydroBase_WIS_Util
-					.computeWeightedGainLoss(
-					__network, node);
-				weightString = HydroBase_WIS_Util
-					.formatGainLoss(weight_values);
+				double[] weight_values = HydroBase_WIS_Util.computeWeightedGainLoss( __network, node);
+				weightString = HydroBase_WIS_Util.formatGainLoss(weight_values);
 
 				// make sure we have a valid computation.
-				if (DMIUtil.isMissing(mile_values[0])) {
+				if (DMIUtil.isMissing(mile_values[0]) || HydroBase_Util.isMissing(mile_values[0])) {
 					mileString = NA;
 				}
 
 				// make sure we have a valid computation.
-				if (DMIUtil.isMissing(weight_values[0])) {
+				if (DMIUtil.isMissing(weight_values[0]) || HydroBase_Util.isMissing(weight_values[0])) {
 					weightString = NA;
 				}
 
@@ -5990,8 +5622,7 @@ private void showJPanel() {
 		else {	
 			displayConfluenceList(__ALL);
 		}
-		__rowTypeCard.show(__rowTypeJPanel, 
-			HydroBase_GUI_WIS.CONFLUENCE);
+		__rowTypeCard.show(__rowTypeJPanel, HydroBase_GUI_WIS.CONFLUENCE);
 	}
 	else if (rowType.equals(HydroBase_GUI_WIS.DIVERSION)) {
 		if (__structStreamJRadioButton.isSelected()) {		
@@ -6000,8 +5631,7 @@ private void showJPanel() {
 		else {	
 			displayStructureList(__ALL);
 		}
-        	__rowTypeCard.show(__rowTypeJPanel, 
-			HydroBase_GUI_WIS.DIVERSION);
+        	__rowTypeCard.show(__rowTypeJPanel, HydroBase_GUI_WIS.DIVERSION);
 	}
 	else if (rowType.equals(HydroBase_GUI_WIS.MIN_FLOW_REACH)) {
 		if (__mfrWeightStreamJRadioButton.isSelected()) {
@@ -6010,8 +5640,7 @@ private void showJPanel() {
 		else {	
 			displayStructureList(__ALL);
 		}
-        	__rowTypeCard.show(__rowTypeJPanel, 
-			HydroBase_GUI_WIS.MIN_FLOW_REACH);
+        	__rowTypeCard.show(__rowTypeJPanel, HydroBase_GUI_WIS.MIN_FLOW_REACH);
 	}
 	else if (rowType.equals(HydroBase_GUI_WIS.OTHER)) {
         	__rowTypeCard.show(__rowTypeJPanel, HydroBase_GUI_WIS.OTHER);
@@ -6023,8 +5652,7 @@ private void showJPanel() {
 		else {	
 			displayStructureList(__ALL);
 		}
-		__rowTypeCard.show(__rowTypeJPanel, 
-			HydroBase_GUI_WIS.RESERVOIR);
+		__rowTypeCard.show(__rowTypeJPanel, HydroBase_GUI_WIS.RESERVOIR);
 	}
 	else if (rowType.equals(HydroBase_GUI_WIS.STATION)) {
        		__rowTypeCard.show(__rowTypeJPanel, HydroBase_GUI_WIS.STATION);
@@ -6036,8 +5664,7 @@ private void showJPanel() {
 		__rowTypeCard.show(__rowTypeJPanel, HydroBase_GUI_WIS.STRING);
 	}
 	else {
-		Message.printStatus(1, "", "  Unknown rowtype: '" + rowType 
-			+ "'");
+		Message.printStatus(1, "", "  Unknown rowtype: '" + rowType + "'");
 	}
 	refreshWorksheet();
 }
@@ -6060,8 +5687,7 @@ private double stringToDouble(String s) {
 		return D.doubleValue();
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error converting string ("
-			+ "'" + s + "') to a number.");
+		Message.printWarning(1, routine, "Error converting string ('" + s + "') to a number.");
 		Message.printWarning(2, routine, e);
 	}
 	return DMIUtil.MISSING_DOUBLE;	
@@ -6084,25 +5710,22 @@ private void updateCellFormula(int row, int col) {
 	String labelFormula = "";
 	String uniqueFormula = "";
 
-	// rebuild the expessions	
+	// rebuild the expressions	
 	int size = __formulaVector.size();
 	for (int i = 0; i < size; i++) {
-		wisMath = (HydroBase_WISMath)__formulaVector.get(i);
+		wisMath = __formulaVector.get(i);
 
 		// range type expressions
 		if (wisMath.getRange()) {}
 		else if (wisMath.isConstantTerm()) {
-			labelFormula += wisMath.getOperator() + " "
-				+ wisMath.getConstant() + " ";
-			uniqueFormula +=  wisMath.getOperator() + " "
-				+ wisMath.getConstant() + " ";
+			labelFormula += wisMath.getOperator() + " " + wisMath.getConstant() + " ";
+			uniqueFormula +=  wisMath.getOperator() + " " + wisMath.getConstant() + " ";
 		}
 		// all other expressions
 		else  { 
 			int refRow = getTermReference(wisMath);
-			if (!DMIUtil.isMissing(refRow)) {
-				wisFormat = (HydroBase_WISFormat)
-					__wisFormatList.get(refRow);
+			if (!DMIUtil.isMissing(refRow) && !HydroBase_Util.isMissing(refRow)) {
+				wisFormat = __wisFormatList.get(refRow);
 				labelFormula += wisMath.getOperator()
 					+ " " + wisFormat.getRow_label()
 					+ "." + wisMath.getColumnType() + " ";
@@ -6120,7 +5743,7 @@ private void updateCellFormula(int row, int col) {
 	wisFormula.setFormula(uniqueFormula);
 
 	// update the __wisFormat object for the current row
-	wisFormat = (HydroBase_WISFormat)__wisFormatList.get(row + 1);
+	wisFormat = __wisFormatList.get(row + 1);
 	wisFormat.setWISFormula(wisFormula, col);
 	__wisFormatList.set(row+1,wisFormat);
 
@@ -6135,8 +5758,7 @@ Update the import information for the specified row.
 @param wisImport HydroBase_WISImport object.
 */
 public void updateCellImport(int row, int col, HydroBase_WISImport wisImport) {
-	HydroBase_WISFormat wisFormat = 
-		(HydroBase_WISFormat)__wisFormatList.get(row + 1);
+	HydroBase_WISFormat wisFormat = __wisFormatList.get(row + 1);
 	wisFormat.setWISImport(wisImport, col);
 	__wisFormatList.set(row+1,wisFormat);
 
@@ -6159,8 +5781,7 @@ private void updateRowNumbers() {
 	if (__wisFormatList != null && !(__wisFormatList.isEmpty())) {
 		int size = __wisFormatList.size();
 		for (int curRow = 1; curRow < size; curRow++) {
-			wisFormat = (HydroBase_WISFormat)
-				__wisFormatList.get(curRow);
+			wisFormat = __wisFormatList.get(curRow);
 			wisFormat.setWis_row(curRow);
 		}
 	}
@@ -6168,23 +5789,19 @@ private void updateRowNumbers() {
 
 /**
 Update the row characteristics for the currently selected row.  The text fields
-and other components in the detail are used to retrieve information (not the
-grid contents).
+and other components in the detail are used to retrieve information (not the grid contents).
 @param rowNum row number to update.
 @return true if row is successfully updated, false otherwise.
 */
 private boolean updateRowFormat(int rowNum) {
 	// The following checks must be performed first.  Can't update row if a
-	// valid row is not selected or row is not added to the __wisFormat
-	// object
+	// valid row is not selected or row is not added to the __wisFormat object
 	if ((rowNum < 0) || (rowNum >= __wisFormatList.size() - 1)) {
-		Message.printStatus(1, "", "updateRowFormat: rowNum < 0 || "
-			+ "rowNum >= __wisFormatVector.size() - 1");
+		Message.printStatus(1, "", "updateRowFormat: rowNum < 0 || rowNum >= __wisFormatVector.size() - 1");
 		return false;
 	}
 	// initialize variables
-        HydroBase_WISFormat row = (HydroBase_WISFormat)
-		__wisFormatList.get(rowNum + 1);
+        HydroBase_WISFormat row = __wisFormatList.get(rowNum + 1);
 
 	double streamMile = row.getStr_mile();
 	double weight = row.getGain_factor();
@@ -6206,13 +5823,11 @@ private boolean updateRowFormat(int rowNum) {
 		// update structure info only if a new structure was selected
 		if (__structureWasSelected) {
 			index=__diversionNameSimpleJComboBox.getSelectedIndex();
-			structureView = (HydroBase_StructureView)
-				__diversionVector.get(index);
+			structureView = __diversionVector.get(index);
 			structureNum = structureView.getStructure_num();
 		}
 		stream_num = getTribStreamNum(rowNum);
-		streamMile = stringToDouble(
-			__divStreamMileJTextField.getText());
+		streamMile = stringToDouble( __divStreamMileJTextField.getText());
 		weight = stringToDouble(__divWeightJTextField.getText());
 		rowLabel = __diversionRowLabelJTextField.getText().trim();
 		knownPoint = isKnownPoint(__divKnownPointJCheckBox);
@@ -6221,13 +5836,11 @@ private boolean updateRowFormat(int rowNum) {
 		// update structure info only if a new structure was selected
 		if (__structureWasSelected) {
 			index=__reservoirNameSimpleJComboBox.getSelectedIndex();
-			structureView = (HydroBase_StructureView)
-				__reservoirVector.get(index);
+			structureView = __reservoirVector.get(index);
 			structureNum = structureView.getStructure_num();
 		}
 		stream_num = getTribStreamNum(rowNum);
-		streamMile = stringToDouble(
-			__resStreamMileJTextField.getText());
+		streamMile = stringToDouble( __resStreamMileJTextField.getText());
 		weight = stringToDouble(__resWeightJTextField.getText());
 		rowLabel = __reservoirRowLabelJTextField.getText().trim();
 		knownPoint = isKnownPoint(__resKnownPointJCheckBox);
@@ -6235,20 +5848,17 @@ private boolean updateRowFormat(int rowNum) {
 	else if (rowType.equals(HydroBase_GUI_WIS.MIN_FLOW_REACH)) {
 		if (__structureWasSelected) {
 			index=__mfrWeightNameSimpleJComboBox.getSelectedIndex();
-			structureView = (HydroBase_StructureView)
-				__mfrWeightVector.get(index);
+			structureView = __mfrWeightVector.get(index);
 			structureNum = structureView.getStructure_num();
 		}
 		stream_num = getTribStreamNum(rowNum);
-		streamMile = stringToDouble(
-			__mfrWeightStreamMileJTextField.getText());
+		streamMile = stringToDouble( __mfrWeightStreamMileJTextField.getText());
 		weight = stringToDouble( __mfrWeightJTextField.getText());
 		rowLabel = __mfrWeightRowLabelJTextField.getText().trim();
 		knownPoint = isKnownPoint(__mfrWeightKnownPointJCheckBox);
 	}
 	else if (rowType.equals(HydroBase_GUI_WIS.OTHER)) {
-		streamMile = stringToDouble(
-			__otherStreamMileJTextField.getText());
+		streamMile = stringToDouble( __otherStreamMileJTextField.getText());
 		weight = stringToDouble(__otherWeightJTextField.getText());
 		rowLabel = __otherRowLabelJTextField.getText().trim();
 		knownPoint = isKnownPoint(__otherKnownPointJCheckBox);
@@ -6257,29 +5867,24 @@ private boolean updateRowFormat(int rowNum) {
 	else if (rowType.equals(HydroBase_GUI_WIS.CONFLUENCE)) {
 		rowLabel = __confluenceRowLabelJTextField.getText().trim();
 		stream_num = getTribStreamNum(rowNum);
-		streamMile = stringToDouble(
-				__confluenceStreamMileJTextField.getText());
+		streamMile = stringToDouble( __confluenceStreamMileJTextField.getText());
 		weight = stringToDouble(__cflWeightJTextField.getText());
 
 		if (__structureWasSelected) {
-			index = __confluenceNameSimpleJComboBox
-				.getSelectedIndex();
-			streamData = (HydroBase_Stream)
-				__confluenceVector.get(index);
+			index = __confluenceNameSimpleJComboBox.getSelectedIndex();
+			streamData = __confluenceVector.get(index);
 			// Link is the WDWater number of the tributary stream...
 			wdWaterLink = streamData.getStream_num();
 		}
 	}
 	else if (rowType.equals(HydroBase_GUI_WIS.STREAM)) {
 		rowLabel = __streamRowLabelJTextField.getText().trim();
-		streamMile =stringToDouble(__staStreamMileJTextField.getText());
+		streamMile = stringToDouble(__staStreamMileJTextField.getText());
 		if (__structureWasSelected) {
 			index = __streamNameSimpleJComboBox.getSelectedIndex();
-			streamData = (HydroBase_Stream)__streamVector.get(
-				index);
+			streamData = __streamVector.get( index);
 			stream_num = streamData.getStream_num();
-			// Link is the WDWater number of the downstream
-			// stream...
+			// Link is the WDWater number of the downstream stream...
 			wdWaterLink = streamData.getStr_trib_to();
 		}
 	}
@@ -6292,8 +5897,7 @@ private boolean updateRowFormat(int rowNum) {
 
 		if (__structureWasSelected) {
 			index = __stationNameSimpleJComboBox.getSelectedIndex();
-			stationView = (HydroBase_StationView)
-				__stationVector.get(index);
+			stationView = __stationVector.get(index);
 			if (stationView == null) {
 				return false;
 			}
@@ -6339,8 +5943,7 @@ private void updateRowLabels(int starting_row) {
 	int size = __worksheet.getRowCount();
 	HydroBase_WISFormat wisformat = null;
 	for (int i = starting_row; i < size; i++) {
-        	wisformat = (HydroBase_WISFormat)__wisFormatList.get(
-			i + 1);
+        	wisformat = __wisFormatList.get( i + 1);
 		setRowLabel(i, formatRowLabel(i, wisformat.getRow_label()));
 	}
 }

@@ -400,7 +400,7 @@ throws Exception {
 		sum = 0;
 
 		curInt = data.getCal_year();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 			v.add(StringUtil.formatString(curInt, "%4d"));
 		}
 		else {
@@ -416,7 +416,7 @@ throws Exception {
 		}
 
 		curDouble = data.getAcres_by_flood();
-		if (!DMIUtil.isMissing(curDouble)) {
+		if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 			sum += curDouble;
 			v.add(StringUtil.formatString(curDouble, "%10.3f"));
 		}
@@ -425,7 +425,7 @@ throws Exception {
 		}
 	
 		curDouble = data.getAcres_by_furrow();
-		if (!DMIUtil.isMissing(curDouble)) {
+		if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 			sum += curDouble;
 			v.add(StringUtil.formatString(curDouble, "%10.3f"));
 		}
@@ -434,7 +434,7 @@ throws Exception {
 		}
 
 		curDouble = data.getAcres_by_sprinkler();
-		if (!DMIUtil.isMissing(curDouble)) {
+		if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 			sum += curDouble;
 			v.add(StringUtil.formatString(curDouble, "%10.3f"));
 		}
@@ -443,7 +443,7 @@ throws Exception {
 		}
 
 		curDouble = data.getAcres_by_drip();
-		if (!DMIUtil.isMissing(curDouble)) {
+		if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 			sum += curDouble;
 			v.add(StringUtil.formatString(curDouble, "%10.3f"));
 		}
@@ -453,7 +453,7 @@ throws Exception {
 
 		curDouble = data.getAcres_total();
 		
-		if (!DMIUtil.isMissing(curDouble)) {
+		if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 			diff = curDouble - sum;
 
 			// cover up any rounding errors caused by lack of 
@@ -508,7 +508,7 @@ throws Exception {
 
 		v1.add("GIS Total (Acres):");
 		curDouble = view.getTia_gis();
-		if (!DMIUtil.isMissing(curDouble)) {
+		if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 			v1.add(StringUtil.formatString(curDouble,"%10.1f"));
 		}
 		else {	
@@ -517,7 +517,7 @@ throws Exception {
 
 		v1.add("Reported: ");
 		curInt = view.getTia_gis_calyear();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 			v1.add(StringUtil.formatString(curInt, "%4d"));
 		}
 		else { 
@@ -527,7 +527,7 @@ throws Exception {
 
 		v2.add("Diversion Comments Total (Acres):");
 		curDouble = view.getTia_div();
-		if (!DMIUtil.isMissing(curDouble)) {
+		if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 			v2.add(StringUtil.formatString(curDouble,"%10.1f"));
 		}
 		else {	
@@ -536,7 +536,7 @@ throws Exception {
 		
 		v2.add("Reported: ");
 		curInt = view.getTia_div_calyear();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 			v2.add(StringUtil.formatString(curInt, "%4d"));
 		}
 		else {	
@@ -546,7 +546,7 @@ throws Exception {
 
 		v3.add("Structure Total (Acres):");
 		curDouble = view.getTia_struct();
-		if (!DMIUtil.isMissing(curDouble)) {
+		if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 			v3.add(StringUtil.formatString(curDouble,"%10.1f"));
 		}
 		else {	
@@ -555,7 +555,7 @@ throws Exception {
 
 		v3.add("Reported: ");
 		curInt = view.getTia_struct_calyear();
-		if (!DMIUtil.isMissing(curInt)) {
+		if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 			v3.add(StringUtil.formatString(curInt, "%4d"));
 		}
 		else {	
@@ -629,14 +629,14 @@ throws Exception {
 
         qInfoString += "WATER DISTRICT: ";
         curInt = data.getWD();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		qInfoString += + curInt;
         }
 	__reportList.add(qInfoString);
 
         qInfoString = "ID NUMBER: ";
         curInt = data.getID();
-        if (!DMIUtil.isMissing(curInt)) {
+        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		qInfoString += curInt;
         }
 	__reportList.add(qInfoString);
@@ -644,7 +644,7 @@ throws Exception {
         qInfoString = "WATER SOURCE: " + data.getStrname(); 
         qInfoString += " AT STREAM MILE: ";
         curDouble = data.getStr_mile();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
         	qInfoString += StringUtil.formatString(curDouble,"%.2f");
         }
 	__reportList.add(qInfoString);
@@ -652,21 +652,21 @@ throws Exception {
         qInfoString = "LOCATION: ";
 
         curInt = data.getTS();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                         ts = "";
 	}
 	else {	
 		ts = "" + curInt;
         }
         curInt = data.getRng();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 rng = "";
         }
 	else {	
 		rng = "" + curInt;
         }
         curInt = data.getSec();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                 sec = "";
         }
 	else {	
@@ -687,7 +687,7 @@ throws Exception {
 		// Older database has total in the structure table...
 		curDouble = DMIUtil.MISSING_DOUBLE;
 //        	curDouble = data.getXtia();
-        	if (!DMIUtil.isMissing(curDouble)) {
+        	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                 	qInfoString += curDouble;
         	}
 	}
@@ -725,7 +725,7 @@ throws Exception {
  
         qInfoString = "ESTIMATED CAPACITY: ";
         curDouble = data.getEst_capacity();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                 qInfoString += StringUtil.formatString(curDouble, "%10.4f")
 			+ " " + data.getEst_unit();
         }
@@ -733,7 +733,7 @@ throws Exception {
 
         qInfoString = "DECREED CAPACITY (SUM OF ABSOLUTE NET AMOUNT RIGHTS): ";
         curDouble = data.getDcr_capacity();
-        if (!DMIUtil.isMissing(curDouble)) {
+        if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                 qInfoString += StringUtil.formatString(curDouble, "%10.4f")
 			+ " " + data.getDcr_unit();
         } 
@@ -742,7 +742,7 @@ throws Exception {
 	// Need for later queries...
  
         curLong = data.getRolodex_num();
-        if (DMIUtil.isMissing(curLong)) {
+        if (DMIUtil.isMissing(curLong) && !HydroBase_Util.isMissing(curLong)) {
                 __rolodexNum = "NONE";
         }
 	else {	
@@ -820,7 +820,7 @@ throws Exception {
                 netFields.clear();
          
                 curDouble = data.getAdmin_no();      
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = ""; }
                 else {	
 			curString = StringUtil.formatString(curDouble,"%11.5f");
@@ -855,7 +855,7 @@ throws Exception {
                 netFields.add(curString);
 
 		curInt = data.getOrder_no();
-		if (DMIUtil.isMissing(curInt)) {
+		if (DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 			curString = "";
 		}
 		else {
@@ -868,7 +868,7 @@ throws Exception {
 		netFields.add(data.getAdj_type());
 
                 curDouble = data.getNet_rate_abs();
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = "";
                 }
 		else {	
@@ -877,7 +877,7 @@ throws Exception {
 		netFields.add(curString);
 
                 curDouble = data.getNet_vol_abs();
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = "";
                 }
 		else {	
@@ -886,7 +886,7 @@ throws Exception {
 		netFields.add(curString);
 
                 curDouble = data.getNet_rate_cond();
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = "";
                 }
 		else {	
@@ -895,7 +895,7 @@ throws Exception {
 		netFields.add(curString);
 
                 curDouble = data.getNet_vol_cond();
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = "";
                 }
 		else {	
@@ -904,7 +904,7 @@ throws Exception {
 		netFields.add(curString);
 
                 curDouble = data.getNet_rate_apex();
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = "";
                 }
 		else {	
@@ -913,7 +913,7 @@ throws Exception {
 		netFields.add(curString);
 
                 curDouble = data.getNet_vol_apex();
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = "";
                 }
 		else {	
@@ -986,7 +986,7 @@ throws Exception {
                 transFields.clear();
          
                 curDouble = data.getAdmin_no();      
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = ""; }
                 else {	
 			curString = StringUtil.formatString(curDouble,"%11.5f");
@@ -1014,7 +1014,7 @@ throws Exception {
                 transFields.add(data.getCase_no());
          
                 curDouble = data.getRate_amt();
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = "";
                 }
 		else {	
@@ -1023,7 +1023,7 @@ throws Exception {
                 transFields.add(curString);
 
                 curDouble = data.getVol_amt();
-                if (DMIUtil.isMissing(curDouble)) {
+                if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
                         curString = "";
                 }
 		else {	
@@ -1097,10 +1097,10 @@ HydroBase for the structure for which to summarize based on those variables.
 */
 private void createSummaryForWDID(int wd, int id)
 throws Exception {
-	if (DMIUtil.isMissing(wd)) {
+	if (DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
 		throw new Exception("Invalid wd value (" + wd + ")");
 	}
-	if (DMIUtil.isMissing(id)) {
+	if (DMIUtil.isMissing(id) && !HydroBase_Util.isMissing(id)) {
 		throw new Exception("Invalid wd value (" + id + ")");
 	}
 
@@ -1514,21 +1514,14 @@ throws Exception {
 		if (comment_string.length() > 0) {
 			// i.e., NOT NULL,  Have a specific comment.
 			s.add("" + iyear);
-			if (!DMIUtil.isMissing(acres_irrig)
-			    && !DMIUtil.isMissing(not_used)) {
-				comment_string += " (ACRES IRRIG = "
-					+ StringUtil.formatString(
-					acres_irrig, "%10.3f").trim()
-					+ ", NOT USED = " + not_used + ")";
+			if (!DMIUtil.isMissing(acres_irrig) && !HydroBase_Util.isMissing(acres_irrig) && !DMIUtil.isMissing(not_used) ) {
+				comment_string += " (ACRES IRRIG = " + StringUtil.formatString( acres_irrig, "%10.3f").trim() + ", NOT USED = " + not_used + ")";
 			}
-			else if (!DMIUtil.isMissing(acres_irrig)) {
-			    	comment_string += " (ACRES IRRIG = "
-					+ StringUtil.formatString(acres_irrig, 
-					"%10.3f") .trim() + ")";
+			else if (!DMIUtil.isMissing(acres_irrig) && !HydroBase_Util.isMissing(acres_irrig)) {
+			    	comment_string += " (ACRES IRRIG = " + StringUtil.formatString(acres_irrig, "%10.3f") .trim() + ")";
 			}
-			else if (!DMIUtil.isMissing(not_used)) {
-				comment_string += " (NOT USED = " + not_used 
-					+ ")";
+			else if (!DMIUtil.isMissing(not_used) ) {
+				comment_string += " (NOT USED = " + not_used + ")";
 			}
 			s.add("  " + comment_string);
 			continue;
@@ -1742,7 +1735,7 @@ throws Exception {
 		// Now start adding the records fields.  Start with the irr year ...
 
 		// Old, got the year here...
-		if (DMIUtil.isMissing(iyear)) {
+		if (DMIUtil.isMissing(iyear) && !HydroBase_Util.isMissing(iyear)) {
 			// Do not even process row...
 			continue;
 		}
@@ -1750,8 +1743,7 @@ throws Exception {
 			c.add(new Integer(iyear));
 		}
 
-		if (!DMIUtil.isMissing(r.getQuality()) 
-		    && r.getQuality().equalsIgnoreCase("I")) {
+		if (!DMIUtil.isMissing(r.getQuality()) && r.getQuality().equalsIgnoreCase("I")) {
 		    	infreq = "*";
 			yearExists = findMatchingNonInfreqYear(v, iyear);
 		}
@@ -1821,7 +1813,7 @@ throws Exception {
 
 		i = r.getDwc();
 		dwc_string = "   ";
-		if (!DMIUtil.isMissing(i)) {
+		if (!DMIUtil.isMissing(i) && !HydroBase_Util.isMissing(i)) {
 			dwc_string = StringUtil.formatString(i, "%3d");
 			if (!yearExists) {
 				dwc_total += i;
@@ -1834,22 +1826,19 @@ throws Exception {
 
 		d = r.getMaxq();
 		maxq_string = "     ";
-		if (!DMIUtil.isMissing(d)) {
+		if (!DMIUtil.isMissing(d) && !HydroBase_Util.isMissing(d)) {
 			if (!yearExists) {
 				maxq_total += d;
 				++maxq_count;
 			}
 			if (d < 10.0) {
-				maxq_string = StringUtil.formatString(
-						d, "%5.2f");
+				maxq_string = StringUtil.formatString(d, "%5.2f");
 			}
 			else if (d < 100.0) {
-				maxq_string = StringUtil.formatString(
-						d, "%5.1f");
+				maxq_string = StringUtil.formatString(d, "%5.1f");
 			}
 			else {	
-				maxq_string = StringUtil.formatString(
-						d, "%5.0f");
+				maxq_string = StringUtil.formatString(d, "%5.0f");
 			}
 		}
 		c.add(maxq_string);
@@ -1861,11 +1850,9 @@ throws Exception {
 			dt = r.getMaxq_date();
 			maxqdate_string = "     ";
 			if (!DMIUtil.isMissing(dt)) {
-				maxqdate_string =
-					TimeUtil.formatTimeString(dt,"%m/%d");
+				maxqdate_string = TimeUtil.formatTimeString(dt,"%m/%d");
 				if (!yearExists) {
-					maxq_date_total += TimeUtil.dayOfYear(
-						dt);	
+					maxq_date_total += TimeUtil.dayOfYear(dt);	
 				}
 			}
 			c.add(maxqdate_string);
@@ -1883,53 +1870,37 @@ throws Exception {
 				val_string[j] = "       ";
 			}
 
-			if (!DMIUtil.isMissing(d)) {
+			if (!DMIUtil.isMissing(d) && !HydroBase_Util.isMissing(d)) {
 				if (!yearExists) {
 					dataTotals[j] += d;
 					non_dupes[j]++;
 				}
 				if (j < 12) {
 					if (d == 0.0) {
-						val_string[j] = 
-							StringUtil.formatString(
-							d, "%6.0f");
+						val_string[j] = StringUtil.formatString( d, "%6.0f");
 					}
 					else if (d < 10.0) {
-						val_string[j] = 
-							StringUtil.formatString(
-							d, "%6.2f");
+						val_string[j] = StringUtil.formatString( d, "%6.2f");
 					}
 					else if (d < 100.0) {
-						val_string[j] = 
-							StringUtil.formatString(
-							d, "%6.1f");
+						val_string[j] = StringUtil.formatString( d, "%6.1f");
 					}
 					else {	
-						val_string[j] = 
-							StringUtil.formatString(
-							d, "%6.0f");
+						val_string[j] = StringUtil.formatString( d, "%6.0f");
 					}
 				}
 				else {
 					if (d == 0.0) {
-						val_string[j] = 
-							StringUtil.formatString(
-							d, "%7.0f");
+						val_string[j] = StringUtil.formatString( d, "%7.0f");
 					}
 					else if (d < 10.0) {
-						val_string[j] = 
-							StringUtil.formatString(
-							d, "%7.2f");
+						val_string[j] = StringUtil.formatString( d, "%7.2f");
 					}
 					else if (d < 100.0) {
-						val_string[j] = 
-							StringUtil.formatString(
-							d, "%7.1f");
+						val_string[j] = StringUtil.formatString( d, "%7.1f");
 					}
 					else {	
-						val_string[j] = 
-							StringUtil.formatString(
-							d, "%7.0f");
+						val_string[j] = StringUtil.formatString( d, "%7.0f");
 					}
 				}
 			}
@@ -2010,8 +1981,8 @@ throws Exception {
 	
 	dwc_string = "   ";
 	int dwcAve = 0;
-	if (!DMIUtil.isMissing(dwc_total) && (dwc_total > 0) 
-	    && (dwc_count > 0)){
+	if ((!DMIUtil.isMissing(dwc_total) && !HydroBase_Util.isMissing(dwc_total)) && (dwc_total > 0) 
+	    && (dwc_count > 0)) {
 		dwcAve = dwc_total / dwc_count;
 		dwc_string = StringUtil.formatString(dwcAve, "%3d");
 	}
@@ -2059,40 +2030,27 @@ throws Exception {
 	}
 	
 	for (j = 0; j < 13; j++) {
-		if (	!DMIUtil.isMissing(dataTotals[j]) &&
-			(dataTotals[j] > 0.0)) {
+		if ( (!DMIUtil.isMissing(dataTotals[j]) && !HydroBase_Util.isMissing(dataTotals[j])) && (dataTotals[j] > 0.0)) {
 			if (j < 12) {	// monthly values columns
 				if (dataTotals[j] < 10.0) {
-					val_string[j] = StringUtil.formatString(
-							dataTotals[j],
-							"%6.2f");
+					val_string[j] = StringUtil.formatString( dataTotals[j], "%6.2f");
 				}
 				else if (dataTotals[j] < 100.0) {
-					val_string[j] = StringUtil.formatString(
-							dataTotals[j],
-							"%6.1f");
+					val_string[j] = StringUtil.formatString( dataTotals[j], "%6.1f");
 				}
 				else {	
-					val_string[j] = StringUtil.formatString(
-							dataTotals[j],
-							"%6.0f");
+					val_string[j] = StringUtil.formatString( dataTotals[j], "%6.0f");
 				}
 			}
 			else {	// total column
 				if (dataTotals[j] < 10.0) {
-					val_string[j] = StringUtil.formatString(
-							dataTotals[j],
-							"%7.2f");
+					val_string[j] = StringUtil.formatString( dataTotals[j], "%7.2f");
 				}
 				else if (dataTotals[j] < 100.0) {
-					val_string[j] = StringUtil.formatString(
-							dataTotals[j],
-							"%7.1f");
+					val_string[j] = StringUtil.formatString( dataTotals[j], "%7.1f");
 				}
 				else {	
-					val_string[j] = StringUtil.formatString(
-							dataTotals[j],
-							"%7.0f");
+					val_string[j] = StringUtil.formatString( dataTotals[j], "%7.0f");
 				}
 			}
 		}

@@ -917,10 +917,8 @@ private void viewHistoryClicked() {
 		date_printed = false;
 		for (int i = (size - 1); i >= 0; i--) {
 			record = records.get(i);
-			if (	record.getCal_year() != d.getYear()
-				|| record.getCal_mon() != d.getMonth()
-				|| DMIUtil.isMissing(
-				record.getAmountForDay(d.getDay()))) {
+			if ( record.getCal_year() != d.getYear() || record.getCal_mon() != d.getMonth()
+				|| DMIUtil.isMissing( record.getAmountForDay(d.getDay())) || HydroBase_Util.isMissing(record.getAmountForDay(d.getDay()))) {
 				continue;
 			}
 
@@ -929,29 +927,19 @@ private void viewHistoryClicked() {
 				wis_date_string = "          ";
 			}
 			else {	
-				date_string =
-					d.toString(DateTime.FORMAT_YYYY_MM_DD);
+				date_string = d.toString(DateTime.FORMAT_YYYY_MM_DD);
 				date_printed = true;
 				// Get the WIS save date...
 				try {	
-					wis_comments = 
-				    __dmi.readWISCommentsList(
-						__wisGUI.getWISNumber(), d);
+					wis_comments = __dmi.readWISCommentsList( __wisGUI.getWISNumber(), d);
 
-					if (	(wis_comments == null)
-						|| (wis_comments.size()== 0)) {
+					if ( (wis_comments == null) || (wis_comments.size()== 0)) {
 						wis_date_string = "          ";
 					}
 					else {	
 						wis_comment = wis_comments.get(0);
-						wis_set_DateTime = new DateTime(
-							wis_comment
-							.getSet_date());
-						wis_date_string =
-							wis_set_DateTime
-							.toString(
-							DateTime
-							.FORMAT_YYYY_MM_DD);
+						wis_set_DateTime = new DateTime( wis_comment.getSet_date());
+						wis_date_string = wis_set_DateTime.toString( DateTime.FORMAT_YYYY_MM_DD);
 					}
 				}
 				catch (Exception e) {
@@ -961,25 +949,12 @@ private void viewHistoryClicked() {
 			report_Vector.add(
 				date_string + "  "
 				+ wis_date_string + "  "
-				+ StringUtil.formatString(
-				record.getS(),"%6.6s")
-				+ "  "
-				+ StringUtil.formatString(
-				record.getF(),"%8.8s")
-				+ "  "
-				+ StringUtil.formatString(
-				record.getU(),"%6.6s")
-				+ "  "
-				+ StringUtil.formatString(
-				record.getT(),"%6.6s")
-				+ "  "
-				+ StringUtil.formatString(
-				record.getObservationForDay(
-				d.getDay()),"%6.6s")
-				+ "  " + StringUtil.formatString(
-				record.getAmountForDay(
-				d.getDay()), "%6.6s")
-				+ " " + record.getUnit());
+				+ StringUtil.formatString( record.getS(),"%6.6s") + "  "
+				+ StringUtil.formatString( record.getF(),"%8.8s") + "  "
+				+ StringUtil.formatString( record.getU(),"%6.6s") + "  "
+				+ StringUtil.formatString( record.getT(),"%6.6s") + "  "
+				+ StringUtil.formatString( record.getObservationForDay( d.getDay()),"%6.6s") + "  "
+				+ StringUtil.formatString( record.getAmountForDay( d.getDay()), "%6.6s") + " " + record.getUnit());
 		}
 	}
 

@@ -830,7 +830,7 @@ private boolean checkForNegatives() {
 			if (s != null && c!= COMMENTS_COL && c!= GAIN_LOSS_COL){
 				d = StringUtil.atod(s);
 
-				if (!DMIUtil.isMissing(d) && (d < 0.0)) {
+				if (!DMIUtil.isMissing(d) && (d < 0.0) && !HydroBase_Util.isMissing(d)) {
 					int response = new ResponseJDialog(this,
 						"Save with Negative Values?",
 						"Attempting to save WIS with"
@@ -1286,28 +1286,27 @@ private void computePointFlow(HydroBase_Node curNode) {
 		double release = wisData.getRelease();
 		double priority_div = wisData.getPriority_divr();
 		double delivery_div = wisData.getDelivery_divr();
-		if (DMIUtil.isMissing(gain)) {
+		if (DMIUtil.isMissing(gain) || HydroBase_Util.isMissing(gain)) {
 			gain = 0;
 		}
-		if (DMIUtil.isMissing(trib_nat)) {
+		if (DMIUtil.isMissing(trib_nat) || HydroBase_Util.isMissing(trib_nat)) {
 			trib_nat = 0;
 		}
-		if (DMIUtil.isMissing(trib_del)) {
+		if (DMIUtil.isMissing(trib_del) || HydroBase_Util.isMissing(trib_del)) {
 			trib_del = 0;
 		}
-		if (DMIUtil.isMissing(release)) {
+		if (DMIUtil.isMissing(release) || HydroBase_Util.isMissing(release)) {
 			release = 0;
 		}
-		if (DMIUtil.isMissing(priority_div)) {
+		if (DMIUtil.isMissing(priority_div) || HydroBase_Util.isMissing(priority_div)) {
 			priority_div = 0;
 		}
-		if (DMIUtil.isMissing(delivery_div)) {
+		if (DMIUtil.isMissing(delivery_div) || HydroBase_Util.isMissing(delivery_div)) {
 			delivery_div = 0;
 		}
 
 		double pointFlow = + getWISDataValue(upRow, POINT_FLOW_COL)
-			+ gain + trib_nat + trib_del + release - priority_div
-			- delivery_div;
+			+ gain + trib_nat + trib_del + release - priority_div - delivery_div;
 /*
 		double pointFlow = + getWISDataValue(upRow, POINT_FLOW_COL)
 			+ wisData.getGain()
@@ -1346,10 +1345,10 @@ private void computePointFlowGivenNaturalFlow(HydroBase_Node curNode) {
 		
 	double nat_flow = wisData.getNat_flow();
 	double del_flow = wisData.getDelivery_flow();
-	if (DMIUtil.isMissing(nat_flow)) {
+	if (DMIUtil.isMissing(nat_flow) || HydroBase_Util.isMissing(nat_flow)) {
 		nat_flow = 0;
 	}
-	if (DMIUtil.isMissing(del_flow)) {
+	if (DMIUtil.isMissing(del_flow) || HydroBase_Util.isMissing(del_flow)) {
 		del_flow = 0;
 	}
 	double pointFlow = nat_flow + del_flow;
@@ -1367,12 +1366,10 @@ private void computeNaturalFlow(HydroBase_Node curNode) {
 	String routine = CLASS + ".computeNaturalFlow()";
 	HydroBase_WISFormat wisFormat = curNode.getWISFormat();
 	int row = wisFormat.getWis_row() - 1;
-	HydroBase_WISData wisData = 
-		(HydroBase_WISData)__worksheet.getRowData(row);
+	HydroBase_WISData wisData = (HydroBase_WISData)__worksheet.getRowData(row);
 	String rowType = wisFormat.getRow_type();
 	if (Message.isDebugOn) {
-		Message.printDebug(10, routine, "Computing Natural Flow "
-			+ "for row: " + row);
+		Message.printDebug(10, routine, "Computing Natural Flow for row: " + row);
 	}
 
 	// do not perform calculation for the following row types
@@ -1382,10 +1379,10 @@ private void computeNaturalFlow(HydroBase_Node curNode) {
 	
 	double point_flow = wisData.getPoint_flow();
 	double del_flow = wisData.getDelivery_flow();
-	if (DMIUtil.isMissing(point_flow)) {
+	if (DMIUtil.isMissing(point_flow) || HydroBase_Util.isMissing(point_flow)) {
 		point_flow = 0;
 	}
-	if (DMIUtil.isMissing(del_flow)) {
+	if (DMIUtil.isMissing(del_flow) || HydroBase_Util.isMissing(del_flow)) {
 		del_flow = 0;
 	}
 
@@ -1480,17 +1477,16 @@ private void computeDeliveryFlow(HydroBase_Node curNode) {
 		double trib_del = wisData.getTrib_delivery();
 		double release = wisData.getRelease();
 		double del_div = wisData.getDelivery_divr();
-		if (DMIUtil.isMissing(trib_del)) {
+		if (DMIUtil.isMissing(trib_del) || HydroBase_Util.isMissing(trib_del)) {
 			trib_del = 0;
 		}
-		if (DMIUtil.isMissing(release)) {
+		if (DMIUtil.isMissing(release) || HydroBase_Util.isMissing(release)) {
 			release = 0;
 		}
-		if (DMIUtil.isMissing(del_div)) {
+		if (DMIUtil.isMissing(del_div) || HydroBase_Util.isMissing(del_div)) {
 			del_div = 0;
 		}
-		deliveryFlow = getWISDataValue(upRow, DELIVERY_FLOW_COL)
-			+ trib_del + release - del_div;
+		deliveryFlow = getWISDataValue(upRow, DELIVERY_FLOW_COL) + trib_del + release - del_div;
 
 		/*
 		deliveryFlow = getWISDataValue(upRow, DELIVERY_FLOW_COL)
@@ -2020,52 +2016,39 @@ private void formatHTMLOutput(String filename) {
 					s = __worksheet.getCellAlternateText(
 						curRow, POINT_FLOW_COL);
 					if (s == null) {
-						if (DMIUtil.isMissing(cellD)) {
-							s = StringUtil
-								.formatString(
-								" ", "%10.10s");
+						if (DMIUtil.isMissing(cellD) || HydroBase_Util.isMissing(cellD)) {
+							s = StringUtil.formatString( " ", "%10.10s");
 						}
 						else {
-							s = StringUtil
-								.formatString(
-								cellD,"%10.1f");
+							s = StringUtil.formatString( cellD,"%10.1f");
 						}
 					}				
 					else {
-						s = StringUtil.formatString(
-							s, "%10.10s");
+						s = StringUtil.formatString( s, "%10.10s");
 					}
 				}
 				else {
-					if (DMIUtil.isMissing(cellD)) {
-						s = StringUtil.formatString(
-							" ", "%10.10s");
+					if (DMIUtil.isMissing(cellD) || HydroBase_Util.isMissing(cellD)) {
+						s = StringUtil.formatString( " ", "%10.10s");
 					}
 					else {
-						s = StringUtil.formatString(
-							cellD, "%10.1f");
+						s = StringUtil.formatString( cellD, "%10.1f");
 					}
 				}
 				if (bg != null) {
 					html.tableCellStart("bgcolor=#"
-						+ MathUtil.decimalToHex(
-							bg.getRed()) + ""
-						+ MathUtil.decimalToHex(
-							bg.getGreen()) + ""
-						+ MathUtil.decimalToHex(
-							bg.getBlue()));
+						+ MathUtil.decimalToHex( bg.getRed()) + ""
+						+ MathUtil.decimalToHex( bg.getGreen()) + ""
+						+ MathUtil.decimalToHex( bg.getBlue()));
 				}
 				else {
 					html.tableCellStart();
 				}
 				if (fg != null) {
 					html.fontStart("color=#"
-						+ MathUtil.decimalToHex(
-							fg.getRed()) + ""
-						+ MathUtil.decimalToHex(
-							fg.getGreen()) + ""
-						+ MathUtil.decimalToHex(
-							fg.getBlue()));
+						+ MathUtil.decimalToHex( fg.getRed()) + ""
+						+ MathUtil.decimalToHex( fg.getGreen()) + ""
+						+ MathUtil.decimalToHex( fg.getBlue()));
 				}
 				html.addText(s);
 				if (fg != null) {
@@ -2172,39 +2155,30 @@ private List<String> formatTextOutput() {
 				s = __worksheet.getCellAlternateText(curRow,
 					POINT_FLOW_COL);
 				if (s == null) {
-					if (DMIUtil.isMissing(cellD)) {
-						rowString += 
-							StringUtil.formatString(
-							" ", "%10.10s") +DELIM;
+					if (DMIUtil.isMissing(cellD) || HydroBase_Util.isMissing(cellD)) {
+						rowString += StringUtil.formatString( " ", "%10.10s") +DELIM;
 					}
 					else {
-						rowString += 
-							StringUtil.formatString(
-							cellD, "%10.1f") +DELIM;
+						rowString += StringUtil.formatString( cellD, "%10.1f") +DELIM;
 					}
 				}				
 				else {
-					rowString += StringUtil.formatString(
-						s, "%10.10s") + DELIM;
+					rowString += StringUtil.formatString( s, "%10.10s") + DELIM;
 				}
 			}
 			else {
-				if (DMIUtil.isMissing(cellD)) {
-					rowString += StringUtil.formatString(
-						" ", "%10.10s") + DELIM;
+				if (DMIUtil.isMissing(cellD) || HydroBase_Util.isMissing(cellD)) {
+					rowString += StringUtil.formatString( " ", "%10.10s") + DELIM;
 				}
 				else {
-					rowString += StringUtil.formatString(
-						cellD, "%10.1f") + DELIM;
+					rowString += StringUtil.formatString( cellD, "%10.1f") + DELIM;
 				}
 			}
 		}
  
 		// comments
-		cellString = (String)(__worksheet.getValueAt(curRow, 
-			(COMMENTS_COL - 1)));
-		rowString += StringUtil.formatString(cellString.trim(), "%s") 
-			+ DELIM;
+		cellString = (String)(__worksheet.getValueAt(curRow, (COMMENTS_COL - 1)));
+		rowString += StringUtil.formatString(cellString.trim(), "%s") + DELIM;
 
 		v.add(rowString);
 	}
@@ -2564,7 +2538,7 @@ private HydroBase_WISData getRowValues(int row) {
 		curDouble = ((Double)__worksheet.getValueAt(row, 
 			POINT_FLOW_COL - 1)).doubleValue();
 		rowData.setDry_river(0);
-		if (DMIUtil.isMissing(curDouble) ) {
+		if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 			curDouble = 0.0;
 		}
 	}
@@ -2572,56 +2546,56 @@ private HydroBase_WISData getRowValues(int row) {
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		NATURAL_FLOW_COL - 1)).doubleValue();
-	if (DMIUtil.isMissing(curDouble) ) {
+	if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 		curDouble = 0.0;
 	}
 	rowData.setNat_flow(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		DELIVERY_FLOW_COL - 1)).doubleValue();
-	if (DMIUtil.isMissing(curDouble) ) {
+	if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 		curDouble = 0.0;
 	}
 	rowData.setDelivery_flow(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		GAIN_LOSS_COL - 1)).doubleValue();
-	if (DMIUtil.isMissing(curDouble) ) {
+	if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 		curDouble = 0.0;
 	}
 	rowData.setGain(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		TRIB_NATURAL_COL - 1)).doubleValue();
-	if (DMIUtil.isMissing(curDouble) ) {
+	if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 		curDouble = 0.0;
 	}
 	rowData.setTrib_natural(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		TRIB_DELIVERY_COL - 1)).doubleValue();
-	if (DMIUtil.isMissing(curDouble) ) {
+	if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 		curDouble = 0.0;
 	}
 	rowData.setTrib_delivery(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		PRIORITY_DIV_COL - 1)).doubleValue();
-	if (DMIUtil.isMissing(curDouble) ) {
+	if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 		curDouble = 0.0;
 	}
 	rowData.setPriority_divr(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		DELIVERY_DIV_COL - 1)).doubleValue();
-	if (DMIUtil.isMissing(curDouble) ) {
+	if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 		curDouble = 0.0;
 	}
 	rowData.setDelivery_divr(curDouble);
 
 	curDouble = ((Double)__worksheet.getValueAt(row, 
 		RELEASES_COL - 1)).doubleValue();
-	if (DMIUtil.isMissing(curDouble) ) {
+	if (DMIUtil.isMissing(curDouble) || HydroBase_Util.isMissing(xxx) ) {
 		curDouble = 0.0;
 	}
 	rowData.setRelease(curDouble);
@@ -2737,7 +2711,7 @@ private double getWISDataValue(int row, int col) {
 			value = data.getDelivery_divr();
 			break;		
 	}
-	if (DMIUtil.isMissing(value)) {
+	if (DMIUtil.isMissing(value) || HydroBase_Util.isMissing(value)) {
 		return 0;
 	}
 	return value;
@@ -2769,7 +2743,7 @@ private double getWISFormatValue(int row, int flag) {
 			value = data.getGain_factor();
 			break;
 	}
-	if (DMIUtil.isMissing(value)) {
+	if (DMIUtil.isMissing(value) || HydroBase_Util.isMissing(xxx)) {
 		return 0;
 	}
 	return value;
@@ -3632,7 +3606,7 @@ private void loadWISData() {
 	// if the old format wis num is not missing, then these wis data were
 	// originally saved with an older wis format and must be converted to
 	// use the new format.
-	if (!DMIUtil.isMissing(__oldFormatWISNum)) {
+	if (!DMIUtil.isMissing(__oldFormatWISNum) && !HydroBase_Util.isMissing(__oldFormatWISNum)) {
 		loadAndConvertOldFormatWISData();
 		return;
 	}
@@ -4904,12 +4878,9 @@ private boolean saveDiversionCoding() {
 					&& wis__col_String.equalsIgnoreCase(
 					record2.getWis_column())) {
 					// Same structure and column so total...
-					if (!DMIUtil.isMissing(
-						record2.getAmountForDay(
-						__adminDateTime.getDay()))) {
-						total +=record2.getAmountForDay(
-							__adminDateTime
-							.getDay());
+					if (!DMIUtil.isMissing(record2.getAmountForDay(__adminDateTime.getDay())) &&
+						!HydroBase_Util.isMissing(record2.getAmountForDay(__adminDateTime.getDay())) ) {
+						total +=record2.getAmountForDay(__adminDateTime.getDay());
 					}
 					++div_coding_record_count;
 				}
@@ -5129,7 +5100,7 @@ private boolean saveDiversionCoding() {
 			// to keep things in order...
 			int wis_dailywc_num = DMIUtil.getMaxRecord(__dmi,
 				"wis_daily_wc", "wis_dailywc_num");
-			if (DMIUtil.isMissing(wis_dailywc_num)) {
+			if (DMIUtil.isMissing(wis_dailywc_num) || HydroBase_Util.isMissing(wis_dailywc_num)) {
 				wis_dailywc_num = 0;
 			}
 			wis_dailywc_num++;
@@ -5239,7 +5210,7 @@ private boolean saveDiversionCoding() {
 					+ "', ";
 			}
 			// originally record.getFrom().equals("")
-			if (DMIUtil.isMissing(record.getF())) {
+			if (DMIUtil.isMissing(record.getF()) || HydroBase_Util.isMissing(record.getF())) {
 				from_String0 = "";
 				from_String1 = "";
 				from_String2 = " AND F is null";
@@ -5785,7 +5756,7 @@ public void showCellProperties(int row, int col) {
 	Class<?> c = __worksheet.getColumnClass(col -1);
 	if (c == Double.class) {
 		Double D = (Double)(__worksheet.getValueAt(row, col - 1));
-		if (!DMIUtil.isMissing(D)) {
+		if (!DMIUtil.isMissing(D) && !HydroBase_Util.isMissing(D)) {
 			contents = D.toString();
 		}
 	}
@@ -5797,40 +5768,31 @@ public void showCellProperties(int row, int col) {
 	String NA = "Does not apply.";
 	HydroBase_Node downstream_node = null;
 	// get the gain Loss information
-	if (rowType.equals(HydroBase_GUI_WIS.STRING) 
-		|| rowType.equals(HydroBase_GUI_WIS.STREAM)) {
+	if (rowType.equals(HydroBase_GUI_WIS.STRING) || rowType.equals(HydroBase_GUI_WIS.STREAM)) {
 		mileString = NA;
 		weightString = NA;
 	}
 	else {	
 		HydroBase_Node node = __network.getMostUpstreamNode();
 		while (node != null) {
-			node = HydroBase_NodeNetwork.getDownstreamNode(node,
-				HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
+			node = HydroBase_NodeNetwork.getDownstreamNode(node, HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);
 			// find the node
 			if (node.getWISFormat() == wisFormat) {
 				// first get the gains using stream mile.
-				double[] mile_values =
-				HydroBase_WIS_Util.computeGainLoss(__network, 
-					node);
-				mileString = HydroBase_WIS_Util.formatGainLoss(
-					mile_values);
+				double[] mile_values = HydroBase_WIS_Util.computeGainLoss(__network, node);
+				mileString = HydroBase_WIS_Util.formatGainLoss( mile_values);
 
 				// now get the gains using weights
-				double[] weight_values = HydroBase_WIS_Util
-					.computeWeightedGainLoss(
-					__network, node);
-				weightString = 
-					HydroBase_WIS_Util.formatGainLoss(
-					weight_values);
+				double[] weight_values = HydroBase_WIS_Util.computeWeightedGainLoss( __network, node);
+				weightString = HydroBase_WIS_Util.formatGainLoss( weight_values);
 
 				// make sure we have a valid computation.
-				if (DMIUtil.isMissing(mile_values[0])) {
+				if (DMIUtil.isMissing(mile_values[0]) || HydroBase_Util.isMissing(mile_values[0])) {
 					mileString = NA;
 				}
 
 				// make sure we have a valid computation.
-				if (DMIUtil.isMissing(weight_values[0])){
+				if (DMIUtil.isMissing(weight_values[0]) || HydroBase_Util.isMissing(weight_values[0])){
 					weightString = NA;
 				}
 
@@ -5883,12 +5845,10 @@ private void summaryClicked() {
 			}
 			outputStrings.add(getRow_label(i));
 			try {
-				wdidParts=HydroBase_WaterDistrict.parseWDID(
-					identifier);
+				wdidParts=HydroBase_WaterDistrict.parseWDID( identifier);
 			}
 			catch (Exception e) {
-				Message.printWarning(1, routine, "Error parsing"
-					+ " WDID.");
+				Message.printWarning(1, routine, "Error parsing WDID.");
 				Message.printWarning(2, routine, e);
 			}
 			identifier = null;
@@ -5901,39 +5861,21 @@ private void summaryClicked() {
 			// Just do a brute-force search...
 			foundCount = 0;
 			for (j = 0; j < dsize; j++) {
-				record = (HydroBase_WISDailyWC)
-					__wisDiversionCodingVector.get(j);
-				if ((wd == record.getWD()) 
-					&& (id == record.getID())) {
+				record = __wisDiversionCodingVector.get(j);
+				if ((wd == record.getWD()) && (id == record.getID())) {
 					++foundCount;
 					outputStrings.add("      "
-						+ record.getWis_column() 
-						+ "   S:"
-						+ StringUtil.formatString(
-						record.getS(), "%-1.1s") 
-						+ "  F:"
-						+ StringUtil.formatString(
-						record.getF(), "%-7.7s") 
-						+ "  U:"
-						+ StringUtil.formatString(
-						record.getU(), "%1.1s") 
-						+ "  T:"
-						+ StringUtil.formatString(
-						record.getT(), "%1.1s") 
-						+ "  "
-						+ StringUtil.formatString(
-						record.getAmountForDay(
-						__adminDateTime.getDay()), 
-						"%10.2f") + " CFS "
-						+ StringUtil.formatString(
-						record.getObservationForDay(
-						__adminDateTime.getDay()),
-						"%1.1s"));
+						+ record.getWis_column() + "   S:"
+						+ StringUtil.formatString( record.getS(), "%-1.1s") + "  F:"
+						+ StringUtil.formatString( record.getF(), "%-7.7s") + "  U:"
+						+ StringUtil.formatString( record.getU(), "%1.1s") + "  T:"
+						+ StringUtil.formatString( record.getT(), "%1.1s") + "  "
+						+ StringUtil.formatString( record.getAmountForDay( __adminDateTime.getDay()), "%10.2f") + " CFS "
+						+ StringUtil.formatString( record.getObservationForDay( __adminDateTime.getDay()), "%1.1s"));
 				}
 			}
 			if (foundCount == 0) {
-				outputStrings.add(
-					"      No Diversion Coding");
+				outputStrings.add( "      No Diversion Coding");
 			}
 		}
 		}
@@ -5949,13 +5891,10 @@ private void summaryClicked() {
 	reportProp.set("PrintFont", "Courier");
 	reportProp.set("PrintSize", "7");
 	if (__diversionCodingEnabled) {
-		reportProp.set("Title",
-			"WIS Summary (Diversion Coding at Bottom) - "
-			+ __adminDateTime.toString(DateTime.FORMAT_YYYY_MM_DD));
+		reportProp.set("Title", "WIS Summary (Diversion Coding at Bottom) - " + __adminDateTime.toString(DateTime.FORMAT_YYYY_MM_DD));
 	}
 	else {	
-		reportProp.set("Title", "WIS Summary - "
-			+ __adminDateTime.toString(DateTime.FORMAT_YYYY_MM_DD));
+		reportProp.set("Title", "WIS Summary - " + __adminDateTime.toString(DateTime.FORMAT_YYYY_MM_DD));
 	}
 	new ReportJFrame(outputStrings, reportProp);
 	reportProp = null;
@@ -5963,8 +5902,7 @@ private void summaryClicked() {
 }
 
 /**
-Updates a point flow value in the diagram when the point flow at a certain row
-changes.
+Updates a point flow value in the diagram when the point flow at a certain row changes.
 @param row the row for which point flow values changed.
 @param pf the new point flow value.
 */
@@ -5973,8 +5911,7 @@ protected void updateDiagramPointFlow(int row, double pf) {
 		return;
 	}
 
-	HydroBase_WISFormat format = 
-		(HydroBase_WISFormat)__wisFormatVector.get(row);
+	HydroBase_WISFormat format = __wisFormatVector.get(row);
 	String id = format.getIdentifier();
 	__diagramGUI.updatePointFlow(id, pf);
 }
@@ -5987,8 +5924,7 @@ protected void valueSet(int row, int col) {
 	if (__initialized) {
 		if (col == 7 || col == 6) {
 			// diversion coding record possibly changed.  Check
-			// to see if there is a diversion coding record for
-			// this cell
+			// to see if there is a diversion coding record for this cell
 
 			String identifier = getIdentifier(row);
 			if (!identifier.regionMatches(true, 0, "wdid:", 0, 5)) {
@@ -5999,14 +5935,11 @@ protected void valueSet(int row, int col) {
 			}
 			int[] wdidParts = null;
 			try {
-				wdidParts = HydroBase_WaterDistrict.parseWDID(
-					identifier);
+				wdidParts = HydroBase_WaterDistrict.parseWDID( identifier);
 			}
 			catch (Exception e) {
-				String routine = "HydroBase_GUI_WIS."
-					+ "valueSet";
-				Message.printWarning(1, routine, 
-					"Error parsing WDID.");
+				String routine = "HydroBase_GUI_WIS.valueSet";
+				Message.printWarning(1, routine, "Error parsing WDID.");
 				Message.printWarning(2, routine, e);
 				return;
 			}
@@ -6035,12 +5968,8 @@ protected void valueSet(int row, int col) {
 			int count = 0;
 			int size = __wisDiversionCodingVector.size();
 			for (int i = 0; i < size; i++) {
-				record = (HydroBase_WISDailyWC)
-					__wisDiversionCodingVector.get(i);
-				if ((wd == record.getWD()) 
-					&& (id == record.getID()) 
-					&& wis_column.equals(
-					record.getWis_column())) {
+				record = __wisDiversionCodingVector.get(i);
+				if ((wd == record.getWD()) && (id == record.getID()) && wis_column.equals( record.getWis_column())) {
 					count++;
 				}
 			}
@@ -6056,17 +5985,10 @@ protected void valueSet(int row, int col) {
 			double d = D.doubleValue();
 
 			for (int i = 0; i < size; i++) {
-				record = (HydroBase_WISDailyWC)
-					__wisDiversionCodingVector.get(i);
-				if ((wd == record.getWD()) 
-					&& (id == record.getID()) 
-					&& wis_column.equals(
-					record.getWis_column())) {
-					record.setObservationForDay(
-						__adminDateTime.getDay(),
-						"*");
-					record.setAmountForDay(
-						__adminDateTime.getDay(), d);
+				record = __wisDiversionCodingVector.get(i);
+				if ((wd == record.getWD()) && (id == record.getID()) && wis_column.equals( record.getWis_column())) {
+					record.setObservationForDay( __adminDateTime.getDay(), "*");
+					record.setAmountForDay( __adminDateTime.getDay(), d);
 					if (__autoCalc) {
 						computeWIS();
 					}

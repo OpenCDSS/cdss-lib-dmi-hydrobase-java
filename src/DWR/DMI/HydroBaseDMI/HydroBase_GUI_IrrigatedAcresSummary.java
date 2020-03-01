@@ -241,15 +241,15 @@ private void displayResults(List<HydroBase_StructureView> results) {
 		__structureNameJTextField.setText(curString);
 	}
 	int curInt = structure.getDiv();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__structureDivJTextField.setText("" + curInt);
 	}
 	curInt = structure.getWD();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__structureWDJTextField.setText("" + curInt);
 	}
 	curInt = structure.getID();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__structureIDJTextField.setText("" + curInt);
 	}
 
@@ -261,35 +261,32 @@ private void displayResults(List<HydroBase_StructureView> results) {
                 HydroBase_StructureView data = results.get(0);
     
                 double curDouble = data.getTia_gis();
-                if (!DMIUtil.isMissing(curDouble)) {
-                        __gisTotJTextField.setText(
-			StringUtil.formatString(curDouble, "%6.1f").trim());
+                if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                        __gisTotJTextField.setText(StringUtil.formatString(curDouble, "%6.1f").trim());
                 }
 
                 curInt = data.getTia_gis_calyear();
-                if (!DMIUtil.isMissing(curInt)) {
+                if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                         __gisTotDateJTextField.setText("" + curInt);
                 }
 
                 curDouble = data.getTia_div();
-                if (!DMIUtil.isMissing(curDouble)) {
-                        __divTotJTextField.setText(
-			StringUtil.formatString(curDouble, "%6.1f").trim());
+                if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                        __divTotJTextField.setText(StringUtil.formatString(curDouble, "%6.1f").trim());
                 }
 
                 curInt = data.getTia_div_calyear();
-                if (!DMIUtil.isMissing(curInt)) {
+                if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                         __divTotDateJTextField.setText("" + curInt);
                 }        
 
                 curDouble = data.getTia_struct();
-                if (!DMIUtil.isMissing(curDouble)) {
-                        __structTotJTextField.setText(
-			StringUtil.formatString(curDouble, "%6.1f").trim());
+                if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+                        __structTotJTextField.setText(StringUtil.formatString(curDouble, "%6.1f").trim());
                 }        
 
                 curInt = data.getTia_struct_calyear();
-                if (!DMIUtil.isMissing(curInt)) {
+                if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                         __structTotDateJTextField.setText("" + curInt);
                 }        
         }

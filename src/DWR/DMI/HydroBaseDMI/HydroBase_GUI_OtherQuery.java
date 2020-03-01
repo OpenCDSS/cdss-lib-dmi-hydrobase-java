@@ -569,28 +569,25 @@ private String formatCUBlaneyCriddle(HydroBase_CUBlaneyCriddle bc) {
 	type = StringUtil.formatString(type, "%-8.8s");
 
 	String valueS = null;
-	if (DMIUtil.isMissing(value)) {
+	if (DMIUtil.isMissing(value) || HydroBase_Util.isMissing(value)) {
 		valueS = "        ";
 	}
 	else {
-		valueS = StringUtil.formatString(
-			StringUtil.formatString(value, "%8d"), "%8.8s");
+		valueS = StringUtil.formatString( StringUtil.formatString(value, "%8d"), "%8.8s");
 	}
 	String coeffS = null;
-	if (DMIUtil.isMissing(coeff)) {
+	if (DMIUtil.isMissing(coeff) || HydroBase_Util.isMissing(coeff)) {
 		coeffS = "        ";
 	}
 	else {
-		coeffS = StringUtil.formatString(
-			StringUtil.formatString(coeff, "%6.2f"), "%8.8s");
+		coeffS = StringUtil.formatString( StringUtil.formatString(coeff, "%6.2f"), "%8.8s");
 	}
 
 	return name + " " + type + " " + valueS + " " + coeffS;
 }
 
 /**
-Formats a HydroBase_CUModHargreaves record for output into the crop growth
-report.
+Formats a HydroBase_CUModHargreaves record for output into the crop growth report.
 @param bc the HydroBase_CUModHargreaves record to format the data of
 @return a String representing the HydroBase_CUModHargreaves object's data.
 */
@@ -609,84 +606,75 @@ private String formatCUModHargreaves(HydroBase_CUModHargreaves mh) {
 	name = StringUtil.formatString(name, "%-21.21s");
 
 	String cover10S = null;
-	if (DMIUtil.isMissing(cover10)) {
+	if (DMIUtil.isMissing(cover10) || HydroBase_Util.isMissing(cover10)) {
 		cover10S = "          ";
 	}
 	else {
-		cover10S = StringUtil.formatString(
-			StringUtil.formatString(cover10, "%10d"), "%10.10s");
+		cover10S = StringUtil.formatString( StringUtil.formatString(cover10, "%10d"), "%10.10s");
 	}
 
 	String cover80S = null;
-	if (DMIUtil.isMissing(cover80)) {
+	if (DMIUtil.isMissing(cover80) || HydroBase_Util.isMissing(cover80)) {
 		cover80S = "          ";
 	}
 	else {
-		cover80S = StringUtil.formatString(
-			StringUtil.formatString(cover80, "%10d"), "%10.10s");
+		cover80S = StringUtil.formatString( StringUtil.formatString(cover80, "%10d"), "%10.10s");
 	}
 
 	String firstcutS = null;
-	if (DMIUtil.isMissing(firstcut)) {
+	if (DMIUtil.isMissing(firstcut) || HydroBase_Util.isMissing(firstcut)) {
 		firstcutS = "        ";
 	}
 	else {
-		firstcutS = StringUtil.formatString(
-			StringUtil.formatString(firstcut, "%8d"), "%8.8s");
+		firstcutS = StringUtil.formatString( StringUtil.formatString(firstcut, "%8d"), "%8.8s");
 	}
 
 	String secondcutS = null;
-	if (DMIUtil.isMissing(secondcut)) {
+	if (DMIUtil.isMissing(secondcut) || HydroBase_Util.isMissing(secondcut)) {
 		secondcutS = "        ";
 	}
 	else {
-		secondcutS = StringUtil.formatString(
-			StringUtil.formatString(secondcut, "%8d"), "%8.8s");
+		secondcutS = StringUtil.formatString( StringUtil.formatString(secondcut, "%8d"), "%8.8s");
 	}
 
 	String maturityS = null;
-	if (DMIUtil.isMissing(maturity)) {
+	if (DMIUtil.isMissing(maturity) || HydroBase_Util.isMissing(maturity)) {
 		maturityS = "        ";
 	}
 	else {
-		maturityS = StringUtil.formatString(
-			StringUtil.formatString(maturity, "%8d"), "%8.8s");
+		maturityS = StringUtil.formatString( StringUtil.formatString(maturity, "%8d"), "%8.8s");
 	}
 
 	String harvestS = null;
-	if (DMIUtil.isMissing(harvest)) {
+	if (DMIUtil.isMissing(harvest) || HydroBase_Util.isMissing(harvest)) {
 		harvestS = "        ";
 	}
 	else {
-		harvestS = StringUtil.formatString(
-			StringUtil.formatString(harvest, "%8d"), "%8.8s");
+		harvestS = StringUtil.formatString( StringUtil.formatString(harvest, "%8d"), "%8.8s");
 	}
 
 	String k1S = null;
-	if (DMIUtil.isMissing(k1)) {
+	if (DMIUtil.isMissing(k1) || HydroBase_Util.isMissing(k1)) {
 		k1S = "        ";
 	}
 	else {
-		k1S = StringUtil.formatString(
-			StringUtil.formatString(k1, "%8.3f"), "%8.8s");
+		k1S = StringUtil.formatString( StringUtil.formatString(k1, "%8.3f"), "%8.8s");
 	}
 
 	String k2S = null;
-	if (DMIUtil.isMissing(k2)) {
+	if (DMIUtil.isMissing(k2) || HydroBase_Util.isMissing(k2)) {
 		k2S = "        ";
 	}
 	else {
-		k2S = StringUtil.formatString(
-			StringUtil.formatString(k2, "%8.3f"), "%8.8s");
+		k2S = StringUtil.formatString( StringUtil.formatString(k2, "%8.3f"), "%8.8s");
 	}
 
 	String k3S = null;
-	if (DMIUtil.isMissing(k3)) {
+	if (DMIUtil.isMissing(k3) || HydroBase_Util.isMissing(k3)) {
 		k3S = "        ";
 	}
 	else {
-		k3S = StringUtil.formatString(
-			StringUtil.formatString(k3, "%8.3f"), "%8.8s");
+		k3S = StringUtil.formatString( StringUtil.formatString(k3, "%8.3f"), "%8.8s");
 	}
 
 	return name + " " + cover10S + " " + cover80S + " " + firstcutS + " "
@@ -695,8 +683,7 @@ private String formatCUModHargreaves(HydroBase_CUModHargreaves mh) {
 }
 
 /**
-Formats a HydroBase_CUPenmanMonteith record for output into the crop growth
-report.
+Formats a HydroBase_CUPenmanMonteith record for output into the crop growth report.
 @param bc the HydroBase_CUPenmanMonteith record to format the data of
 @return a String representing the HydroBase_CUPenmanMonteith object's data.
 */
@@ -709,29 +696,26 @@ private String formatCUPenmanMonteith(HydroBase_CUPenmanMonteith pm) {
 	name = StringUtil.formatString(name, "%-21.21s");
 
 	String stageS = null;
-	if (DMIUtil.isMissing(stage)) {
+	if (DMIUtil.isMissing(stage) || HydroBase_Util.isMissing(stage)) {
 		stageS = "        ";
 	}
 	else {
-		stageS = StringUtil.formatString(
-			StringUtil.formatString(stage, "%8d"), "%8.8s");
+		stageS = StringUtil.formatString( StringUtil.formatString(stage, "%8d"), "%8.8s");
 	}
 	
 	String valueS = null;
-	if (DMIUtil.isMissing(value)) {
+	if (DMIUtil.isMissing(value) || HydroBase_Util.isMissing(value)) {
 		valueS = "        ";
 	}
 	else {
-		valueS = StringUtil.formatString(
-			StringUtil.formatString(value, "%8d"), "%8.8s");
+		valueS = StringUtil.formatString( StringUtil.formatString(value, "%8d"), "%8.8s");
 	}
 	String coeffS = null;
-	if (DMIUtil.isMissing(coeff)) {
+	if (DMIUtil.isMissing(coeff) || HydroBase_Util.isMissing(coeff)) {
 		coeffS = "        ";
 	}
 	else {
-		coeffS = StringUtil.formatString(
-			StringUtil.formatString(coeff, "%6.2f"), "%8.8s");
+		coeffS = StringUtil.formatString( StringUtil.formatString(coeff, "%6.2f"), "%8.8s");
 	}
 
 	return name + " " + stageS + " " + valueS + " " + coeffS;

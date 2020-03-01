@@ -913,6 +913,21 @@ version in which it was added) to the toString()</li>
 <li>add the field, and the appropriate version-checking code, to the writeXXXX() method</li>
 <li>update determineDatabaseVersion()</li>
 </ul>
+
+Missing data
+------------
+
+Methods that pass non-valid values use a "missing" indicator value.
+The missing value was traditionally -999 but this is not unique enough and the missing value was changed
+to DMIUtil.MISSING_INT = Integer.MIN_VALUE.
+Therefore, missing is checked with logic like the following:
+
+if (!DMIUtil.isMissing(div) && !HydroBase_Util.isMissing(div)) {
+	// Not missing so do something
+}
+
+The above evaluates to false true "div" is negative (e.g., traditional -999) or matches the Integer.MIN_VALUE (newer logic).
+Unfortunately, floating point values that are exactly -999.0 will be interpreted as missing, but this should be very few values.
 */
 public class HydroBaseDMI 
 extends DMI 
@@ -9176,8 +9191,7 @@ throws Exception {
 		else {
 		    // For time series, order by distinct fields + year...
 			// This is the default inside the HydroBase view.
-			HydroBase_GUI_Util.fillSPParameters(parameters, 
-				getViewNumber("vw_CDSS_AgriculturalCASSLivestockStats"), -999, null);
+			HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_AgriculturalCASSLivestockStats"), -999, null);
 			ResultSet rs = runSPFlex(parameters);
 			List<HydroBase_AgriculturalCASSLivestockStats> v = toAgriculturalCASSLivestockStatsSPList(rs,false);
 			closeResultSet(rs, __lastStatement);
@@ -9705,11 +9719,10 @@ This uses the following view:<p><ul>
 public List<HydroBase_Calls> readCallsListForDiv(int div, boolean distinct)
 throws Exception {
 	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(
-			null, null);
+		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			
 		String[] triplet = new String[3];
-		if (!DMIUtil.isMissing(div)) {
+		if (!DMIUtil.isMissing(div) && !HydroBase_Util.isMissing(div)) {
 			triplet[0] = "div";
 			triplet[1] = "EQ";
 			triplet[2] = "" + div;
@@ -11885,7 +11898,7 @@ throws Exception {
 		null, null);
 		
 	String[] triplet = null;
-	if (!DMIUtil.isMissing(well_num)) {
+	if (!DMIUtil.isMissing(well_num) && !HydroBase_Util.isMissing(well_num)) {
 		triplet = new String[3];
 		triplet[1] = "well_num";
 		triplet[1] = "EQ";
@@ -12167,7 +12180,7 @@ throws Exception {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(station_num)) {
+		if (!DMIUtil.isMissing(station_num) && !HydroBase_Util.isMissing(station_num)) {
 			triplet = new String[3];
 			triplet[0] = "station_num";
 			triplet[1] = "EQ";
@@ -12216,7 +12229,7 @@ throws Exception {
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_STATION_MEAS_TYPE_VIEW);
-		if (!DMIUtil.isMissing(station_num)) {
+		if (!DMIUtil.isMissing(station_num) && !HydroBase_Util.isMissing(station_num) ) {
 			q.addWhereClause("meas_type.station_num = " 
 				+ station_num);
 		}
@@ -12351,7 +12364,7 @@ throws Exception {
 		}
 
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(meas_num)) {
+		if (!DMIUtil.isMissing(meas_num) && !HydroBase_Util.isMissing(meas_num)) {
 			triplet = new String[3];
 			triplet[0] = "meas_num";
 			triplet[1] = "EQ";
@@ -12415,7 +12428,7 @@ throws Exception {
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, sqlNumber);
-		if (!DMIUtil.isMissing(meas_num)) {
+		if (!DMIUtil.isMissing(meas_num) && !HydroBase_Util.isMissing(meas_num)) {
 			q.addWhereClause("meas_num=" + meas_num);
 		}
 		if (req_date1 != null) {
@@ -12505,7 +12518,7 @@ throws Exception {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
 			
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(structure_num) && (structure_num > 0)) {
+		if (!DMIUtil.isMissing(structure_num) && !HydroBase_Util.isMissing(structure_num)) {
 			triplet = new String[3];
 			triplet[0] = "structure_num";
 			triplet[1] = "EQ";
@@ -12513,7 +12526,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(wd) && (wd > 0)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
 			triplet = new String[3];
 			triplet[0] = "wd";
 			triplet[1] = "EQ";
@@ -12521,7 +12534,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(id) && (id > 0)) {
+		if (!DMIUtil.isMissing(id) && !HydroBase_Util.isMissing(id)) {
 			triplet = new String[3];
 			triplet[0] = "id";
 			triplet[1] = "EQ";
@@ -12567,13 +12580,13 @@ throws Exception {
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_NET_AMTS_FOR_WD_ID);
-		if (!DMIUtil.isMissing(structure_num)) {
+		if (!DMIUtil.isMissing(structure_num) && !HydroBase_Util.isMissing(structure_num)) {
 			q.addWhereClause("net_amts.structure_num = " + structure_num);
 		}
-		if (!DMIUtil.isMissing(wd)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
 			q.addWhereClause("net_amts.wd = " + wd);
 		}
-		if (!DMIUtil.isMissing(id)) {
+		if (!DMIUtil.isMissing(id)  && !HydroBase_Util.isMissing(id)) {
 			q.addWhereClause("net_amts.id = " + id);
 		}
 		if (positiveNetRateAbs) {
@@ -12877,7 +12890,7 @@ throws Exception {
 
 		String[] triplet = null;
 		
-		if (!DMIUtil.isMissing(cal_year) && (cal_year > 0) ) {
+		if (!DMIUtil.isMissing(cal_year) && !HydroBase_Util.isMissing(cal_year) ) {
 			triplet = new String[3];
 			triplet[0] = "cal_year";
 			triplet[1] = "EQ";
@@ -12885,7 +12898,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(div) && (div > 0) ) {
+		if (!DMIUtil.isMissing(div) && !HydroBase_Util.isMissing(div) ) {
 			triplet = new String[3];
 			triplet[0] = "div";
 			triplet[1] = "EQ";
@@ -12893,7 +12906,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}			
 
-		if (!DMIUtil.isMissing(parcel_id) && (parcel_id >= 0) ) {
+		if (!DMIUtil.isMissing(parcel_id) && !HydroBase_Util.isMissing(parcel_id) ) {
 			triplet = new String[3];
 			triplet[0] = "parcel_id";
 			triplet[1] = "EQ";
@@ -12947,13 +12960,13 @@ throws Exception {
 		q.addOrderByClause("parcel_use_ts.parcel_id");
 		q.addOrderByClause("parcel_use_ts.cal_year");
 
-		if (!DMIUtil.isMissing(div)&& (div > 0)) {
+		if (!DMIUtil.isMissing(div) && !HydroBase_Util.isMissing(div)) {
 			q.addWhereClause("parcel_use_ts.div = " + div);
 		}
-		if (!DMIUtil.isMissing(cal_year) && (cal_year > 0)) {
+		if (!DMIUtil.isMissing(cal_year) && !HydroBase_Util.isMissing(cal_year)) {
 			q.addWhereClause("parcel_use_ts.cal_year = "+ cal_year);
 		}
-		if (!DMIUtil.isMissing(parcel_id) && (parcel_id >= 0)) {
+		if (!DMIUtil.isMissing(parcel_id) && !HydroBase_Util.isMissing(parcel_id)) {
 			q.addWhereClause("parcel_use_ts.parcel_id = " + parcel_id);
 		}
 		if ((land_use != null) && (land_use.length() > 0)) {
@@ -12999,7 +13012,7 @@ throws Exception {
 		q.addWhereClause("parcel_use_ts.div = " + div);
 	}
 	else {
-		if (!DMIUtil.isMissing(div)) {
+		if (!DMIUtil.isMissing(div) && !HydroBase_Util.isMissing(div)) {
 			q.addWhereClause("parcel_use_ts.div = " + div);
 		}
 	}
@@ -14373,13 +14386,13 @@ The stored procedures that correspond to these query are:<ul>
 </ul>
 @param wd the wd to match
 @param str_trib_to the str_trib_to to match.  If missing, will be ignored.
-@return an HydroBase_Stream objects or null if none couldbe found.
+@return an HydroBase_Stream objects or null if none could be found.
 @throws Exception if an error occurs.
 */
 public List<HydroBase_Stream> readStreamListForWDStr_trib_to(int wd, int str_trib_to) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
-	if (!DMIUtil.isMissing(str_trib_to)) {
+	if (!DMIUtil.isMissing(str_trib_to) && !HydroBase_Util.isMissing(str_trib_to) ) {
 		buildSQL(q, __S_STREAM_FOR_WD_STR_TRIB_TO);
 		q.addWhereClause("stream.str_trib_to = " + str_trib_to);
 	}
@@ -14988,7 +15001,7 @@ throws Exception {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(panel, null);
 		String[] triplet = null;
 
-		if (!DMIUtil.isMissing(structure_num)) {
+		if (!DMIUtil.isMissing(structure_num) && !HydroBase_Util.isMissing(structure_num)) {
 			triplet = new String[3];
 			triplet[0] = "structure_num";
 			triplet[1] = "EQ";
@@ -14996,7 +15009,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(wd)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
 			triplet = new String[3];
 			triplet[0] = "wd";
 			triplet[1] = "EQ";
@@ -15004,7 +15017,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 		
-		if (!DMIUtil.isMissing(id)) {
+		if (!DMIUtil.isMissing(id) && !HydroBase_Util.isMissing(id)) {
 			triplet = new String[3];
 			triplet[0] = "id";
 			triplet[1] = "EQ";
@@ -15053,6 +15066,7 @@ throws Exception {
 			
 		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber(viewName), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
+		DMIUtil.dumpResultSetTypes(rs);
 		List<HydroBase_StructureView> v = toStructureIrrigSummaryTSSPList(rs, distinct);
 		closeResultSet(rs, __lastStatement);
 		return v;
@@ -15087,13 +15101,13 @@ throws Exception {
 				q.addOrderByClause("irrig_summary_ts.cal_year");
 			}
 //		}
-		if (!DMIUtil.isMissing(structure_num)) {
+		if (!DMIUtil.isMissing(structure_num) && !HydroBase_Util.isMissing(structure_num)) {
 			q.addWhereClause("structure.structure_num = " + structure_num);
 		}
-		if (!DMIUtil.isMissing(wd)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
 			q.addWhereClause("structure.wd = " + wd);
 		}
-		if (!DMIUtil.isMissing(id)) {
+		if (!DMIUtil.isMissing(id) && !HydroBase_Util.isMissing(id)) {
 			q.addWhereClause("structure.id = " + id);
 		}
 		if ((str_name != null) && (str_name.length() > 0)) {
@@ -15811,7 +15825,7 @@ throws Exception {
 		triplet[2] = str_type;
 		HydroBase_GUI_Util.addTriplet(parameters, triplet);
 
-		if (!DMIUtil.isMissing(stream_num) && stream_num != -1) {
+		if (!DMIUtil.isMissing(stream_num) && !HydroBase_Util.isMissing(stream_num)) {
 			triplet = new String[3];
 			triplet[0] = "stream_num";
 			triplet[1] = "EQ";
@@ -15840,7 +15854,7 @@ throws Exception {
 		q.addWhereClause("structure.wd = " + wd);
 		q.addWhereClause("structure.str_type = '" + str_type + "'");
 
-		if (!DMIUtil.isMissing(stream_num) && stream_num != -1) {
+		if (!DMIUtil.isMissing(stream_num) && !HydroBase_Util.isMissing(stream_num) ) {
 			q.addWhereClause("geoloc.stream_num = " + stream_num);
 		}
 		else if (stream_num == -1) {
@@ -17807,7 +17821,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_q_af();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -17825,7 +17839,7 @@ throws Exception, NoDataFoundException
 				date.setDay ( iday);
 				value = data.getDay ( iday);
 				//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -17839,7 +17853,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getMax_q_cfs();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -17852,7 +17866,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getMin_q_cfs();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -17868,7 +17882,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			value = data.getAg_amt();
 			flag = data.getFlag();
-			if ( (flag.length() == 0) || flag.equals("0") && !DMIUtil.isMissing(value)) {
+			if ( ((flag.length() == 0) || flag.equals("0")) && !DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -17880,7 +17894,7 @@ throws Exception, NoDataFoundException
 			data = (HydroBase_AgriculturalCASSCropStats)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = data.getHarvested();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -17892,7 +17906,7 @@ throws Exception, NoDataFoundException
 			data = (HydroBase_AgriculturalCASSCropStats)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = data.getPlanted();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -17905,7 +17919,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_total();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -17917,7 +17931,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_total();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -17931,7 +17945,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_drip();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -17943,7 +17957,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_drip();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -17957,7 +17971,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_flood();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -17969,7 +17983,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_flood();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -17983,7 +17997,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_furrow();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -17995,7 +18009,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_furrow();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18009,7 +18023,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureIrrigSummaryTS)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_sprinkler();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18021,7 +18035,7 @@ throws Exception, NoDataFoundException
 				data = (HydroBase_StructureView)v.get(i);
 				date.setYear ( data.getCal_year());
 				value = data.getAcres_by_sprinkler();
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18039,62 +18053,62 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getIrr_year() -1);
 			date.setMonth ( 11);
 			value = data.getAmt_nov();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_dec();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_jan();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_feb();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_mar();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_apr();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_may();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_jun();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_jul();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_aug();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_sep();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_oct();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18118,7 +18132,7 @@ throws Exception, NoDataFoundException
 					obs = "";
 				}
 				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value, obs, 1);
 				}
 			}
@@ -18138,7 +18152,7 @@ throws Exception, NoDataFoundException
 			if (quality == null) {
 				quality = "";
 			}
-			if ( !DMIUtil.isMissing(value) || (quality.length() > 0)) {
+			if ( (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) || (quality.length() > 0)) {
 				ts.setDataValue ( date, value, quality, 1);
 			}
 		}
@@ -18159,11 +18173,11 @@ throws Exception, NoDataFoundException
 				not_used = "";
 			}
 			// Only set if the data value or flag is not missing...
-			if ( !DMIUtil.isMissing(value) || (not_used.length() > 0)) {
+			if ( (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) || (not_used.length() > 0)) {
 				ts.setDataValue ( dt, value, not_used, 1);
 			}
 			// Always add to the time series comments...
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.addToComments ( "" + dt.getYear() + " Not used=" + not_used + ", acres_irrig=" +
 				StringUtil.formatString(value,"%.2f") + ", comment=\"" + data.getDiver_comment() +"\"");
 			}
@@ -18183,62 +18197,62 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getIrr_year() -1);
 			date.setMonth ( 11);
 			value = data.getAmt_nov();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_dec();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_jan();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_feb();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_mar();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_apr();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_may();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_jun();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_jul();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_aug();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_sep();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			date.addMonth(1);
 			value = data.getAmt_oct();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18262,7 +18276,7 @@ throws Exception, NoDataFoundException
 					obs = "";
 				}
 				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value, obs, 1);
 				}
 			}
@@ -18282,7 +18296,7 @@ throws Exception, NoDataFoundException
 			if (quality == null) {
 				quality = "";
 			}
-			if ( !DMIUtil.isMissing(value) || (quality.length() > 0)) {
+			if ( (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) || (quality.length() > 0)) {
 				ts.setDataValue ( date, value, quality, 1);
 			}
 		}
@@ -18295,7 +18309,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_evap();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18313,7 +18327,7 @@ throws Exception, NoDataFoundException
 				date.setDay ( iday);
 				value = data.getDay ( iday);
 				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18378,7 +18392,7 @@ throws Exception, NoDataFoundException
 			data = (HydroBase_CUPopulation)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = (double)data.getPopulation();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18390,7 +18404,7 @@ throws Exception, NoDataFoundException
 			data = (HydroBase_AgriculturalCASSLivestockStats)v.get(i);
 			date.setYear ( data.getCal_year());
 			value = (double)data.getHead();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18403,7 +18417,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_q_af();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18417,7 +18431,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_pcpn();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			if ( !units_set ) {
@@ -18446,7 +18460,7 @@ throws Exception, NoDataFoundException
 					flag = "";
 				}
 				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value, flag, 1);
 				}
 				if ( !units_set ) {
@@ -18465,7 +18479,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_af();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18477,7 +18491,7 @@ throws Exception, NoDataFoundException
 			data = (HydroBase_AnnualRes)v.get(i);
 			date.setYear ( data.getIrr_year());
 			value = data.getAnn_amt();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18491,7 +18505,7 @@ throws Exception, NoDataFoundException
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getGage_height ();
 			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18505,7 +18519,7 @@ throws Exception, NoDataFoundException
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getEvap_loss_amt ();
 			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18519,7 +18533,7 @@ throws Exception, NoDataFoundException
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getFill_amt ();
 			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18533,7 +18547,7 @@ throws Exception, NoDataFoundException
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getRelease_amt ();
 			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18547,7 +18561,7 @@ throws Exception, NoDataFoundException
 			date.setPrecision ( DateTime.PRECISION_DAY);
 			value = data.getStorage_amt ();
 			//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18560,7 +18574,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_snow();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18578,7 +18592,7 @@ throws Exception, NoDataFoundException
 				date.setDay ( iday);
 				value = data.getDay ( iday);
 				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18602,7 +18616,7 @@ throws Exception, NoDataFoundException
 			date.setDay ( StringUtil.atoi(day));
 			value = data.getDepth ();
 			//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18623,7 +18637,7 @@ throws Exception, NoDataFoundException
 			date.setDay ( StringUtil.atoi(day));
 			value = data.getSwe ();
 			//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18642,7 +18656,7 @@ throws Exception, NoDataFoundException
 				date.setDay ( iday);
 				value = data.getDay ( iday);
 				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18656,7 +18670,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getTotal_q_af();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18674,7 +18688,7 @@ throws Exception, NoDataFoundException
 				date.setDay ( iday);
 				value = data.getDay ( iday);
 				//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18688,7 +18702,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getMax_q_cfs();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18701,7 +18715,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getMin_q_cfs();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -18715,7 +18729,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getMean_t();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			if ( !units_set ) {
@@ -18734,7 +18748,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getAvg_max_t();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			if ( !units_set ) {
@@ -18753,7 +18767,7 @@ throws Exception, NoDataFoundException
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
 			value = data.getAvg_min_t();
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 			if ( !units_set ) {
@@ -18778,7 +18792,7 @@ throws Exception, NoDataFoundException
 				date.setDay ( iday);
 				value = data.getDay ( iday);
 				//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 				if ( !units_set ) {
@@ -18802,7 +18816,7 @@ throws Exception, NoDataFoundException
 				date.setDay ( iday);
 				value = data.getDay ( iday);
 				//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18824,7 +18838,7 @@ throws Exception, NoDataFoundException
 		else {
 			elevDatum = strView.getElevation();
 		}
-		if (DMIUtil.isMissing(elevDatum)) {
+		if (DMIUtil.isMissing(elevDatum) && !HydroBase_Util.isMissing(value)) {
 			ts.setDescription ( ts.getDescription() + " (no elevation datum)");
 			elevDatum = 0.0;
 		}
@@ -18855,7 +18869,7 @@ throws Exception, NoDataFoundException
     			    // Get the water level directly.
     				value = data.getWat_level();
     			}
-    			if (!DMIUtil.isMissing(value)) {
+    			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
     				ts.setDataValue ( date, value );
     			}
 			}
@@ -18867,11 +18881,11 @@ throws Exception, NoDataFoundException
                 else {
                     // Back-calculate depth from the elevation.
                     value = data.getWat_level();
-                    if ( !DMIUtil.isMissing(value) ) {
+                    if ( !DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value) ) {
                         value = elevDatum - value;
                     }
                 }
-                if (!DMIUtil.isMissing(value)) {
+                if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
                     ts.setDataValue ( date, value );
                 }
 			}
@@ -18890,7 +18904,7 @@ throws Exception, NoDataFoundException
 				date.setDay ( iday);
 				value = data.getDay ( iday);
 				//Message.printStatus ( 2, routine,"Date:  " + date + " value: " + value);
-				if (!DMIUtil.isMissing(value)) {
+				if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 					ts.setDataValue ( date, value);
 				}
 			}
@@ -18960,7 +18974,7 @@ throws Exception, NoDataFoundException
 				value = data.getTrib_delivery ();
 			}
 			//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
-			if (!DMIUtil.isMissing(value)) {
+			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
 		}
@@ -19057,7 +19071,7 @@ throws Exception, NoDataFoundException
 		if (abbrev.length() > 0) {
 			ts.addToComments ( "State of CO abbreviation       = " + abbrev);
 		}
-		if (!DMIUtil.isMissing(wd) && !DMIUtil.isMissing(div)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd) && !DMIUtil.isMissing(div) && !HydroBase_Util.isMissing(div)) {
 			ts.addToComments ( "Located in water div, district = " + div + ", " + wd);
 		}
 		else {
@@ -19075,7 +19089,7 @@ throws Exception, NoDataFoundException
 		else {
 			ts.addToComments ( "Located in HUC                 = ");
 		}
-		if ( !DMIUtil.isMissing(latitude) && !DMIUtil.isMissing(longitude)) {
+		if ( !DMIUtil.isMissing(latitude) && !HydroBase_Util.isMissing(latitude) && !DMIUtil.isMissing(longitude) && !HydroBase_Util.isMissing(longitude) ) {
 			ts.addToComments ( "Latitude, longitude            = " +
 			StringUtil.formatString(latitude,"%11.6f") + ", " +
 			StringUtil.formatString(longitude,"%11.6f"));
@@ -19083,21 +19097,21 @@ throws Exception, NoDataFoundException
 		else {
 			ts.addToComments ( "Latitude, longitude            = NA");
 		}
-		if (!DMIUtil.isMissing(drainage)) {
+		if (!DMIUtil.isMissing(drainage) && !HydroBase_Util.isMissing(drainage)) {
 			ts.addToComments ( "Drainage area                  = " +
 			StringUtil.formatString(drainage,"%.2f") + " SQ MI");
 		}
 		else {
 			ts.addToComments ( "Drainage area                  = NA");
 		}
-		if (!DMIUtil.isMissing(contrib)) {
+		if (!DMIUtil.isMissing(contrib) && !HydroBase_Util.isMissing(contrib)) {
 			ts.addToComments ( "Non-natural contributing area  = " +
 			StringUtil.formatString(contrib,"%.2f") + " SQ MI");
 		}
 		else {
 			ts.addToComments ( "Non-natural contributing area  = NA");
 		}
-		if (!DMIUtil.isMissing(elevation)) {
+		if (!DMIUtil.isMissing(elevation) && !HydroBase_Util.isMissing(elevation)) {
 			ts.addToComments ( "Elevation                      = " +
 			StringUtil.formatString(elevation,"%.2f") + " FT");
 		}
@@ -19146,7 +19160,7 @@ throws Exception, NoDataFoundException
 		ts.setComments ( header);
 		int wd = strView.getWD();
 		int div = strView.getDiv();
-		if (!DMIUtil.isMissing(wd) && !DMIUtil.isMissing(div)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd) && !DMIUtil.isMissing(div) && !HydroBase_Util.isMissing(div)) {
 			ts.addToComments ( "Located in water div, district = " + div + ", " + wd);
 		}
 		else {
@@ -19156,7 +19170,7 @@ throws Exception, NoDataFoundException
 		ts.addToComments ( "Located in HUC                 = " + strView.getHUC());
 		double latitude = strView.getLatdecdeg();
 		double longitude = strView.getLongdecdeg();
-		if ( !DMIUtil.isMissing(latitude) && !DMIUtil.isMissing(longitude)) {
+		if ( !DMIUtil.isMissing(latitude) && !HydroBase_Util.isMissing(latitude) && !DMIUtil.isMissing(longitude) && !HydroBase_Util.isMissing(longitude) ) {
 			ts.addToComments ( "Latitude, longitude            = " +
 			StringUtil.formatString(latitude,"%11.6f") + ", " + StringUtil.formatString(longitude,"%11.6f"));
 		}
@@ -19205,7 +19219,7 @@ throws Exception, NoDataFoundException
 		ts.setComments ( header);
 		int wd = well.getWD();
 		int div = well.getDiv();
-		if (!DMIUtil.isMissing(wd) && !DMIUtil.isMissing(div)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd) && !DMIUtil.isMissing(div) && !HydroBase_Util.isMissing(div)) {
 			ts.addToComments ( "Located in water div, district = " + div + ", " + wd);
 		}
 		else {
@@ -19216,7 +19230,7 @@ throws Exception, NoDataFoundException
 		ts.addToComments ( "Located in HUC                 = " + well.getHUC());
 		double latitude = well.getLatdecdeg();
 		double longitude = well.getLongdecdeg();
-		if ( !DMIUtil.isMissing(latitude) && !DMIUtil.isMissing(longitude)) {
+		if ( !DMIUtil.isMissing(latitude) && !HydroBase_Util.isMissing(latitude) && !DMIUtil.isMissing(longitude) && !HydroBase_Util.isMissing(longitude) ) {
 			ts.addToComments ( "Latitude, longitude            = " +
 			StringUtil.formatString(latitude,"%11.6f") + ", " + StringUtil.formatString(longitude,"%11.6f"));
 		}
@@ -19581,21 +19595,20 @@ throws Exception {
 	if (__useSP) {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 
-		if (!DMIUtil.isMissing(tsproduct_num)
-		    && !DMIUtil.isMissing(productgroup_num)) {
+		if (!DMIUtil.isMissing(tsproduct_num) && !HydroBase_Util.isMissing(tsproduct_num) && !DMIUtil.isMissing(productgroup_num) && !HydroBase_Util.isMissing(productgroup_num) ) {
 		    	throw new Exception(
 				"One and only one value can be non-missing."
 				+ "  TSProduct_num: " + tsproduct_num 
 				+ "  ProductGroup_num: " + productgroup_num);
 		}
-		else if (!DMIUtil.isMissing(tsproduct_num)) {
+		else if (!DMIUtil.isMissing(tsproduct_num) && !HydroBase_Util.isMissing(tsproduct_num) ) {
 			String[] triplet = new String[3];
 			triplet[0] = "tsproduct_num";
 			triplet[1] = "EQ";
 			triplet[2] = "" + tsproduct_num;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
-		else if (!DMIUtil.isMissing(productgroup_num)) {
+		else if (!DMIUtil.isMissing(productgroup_num) && !HydroBase_Util.isMissing(productgroup_num) ) {
 			String[] triplet = new String[3];
 			triplet[0] = "productgroup_num";
 			triplet[1] = "EQ";
@@ -19620,18 +19633,18 @@ throws Exception {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_TSPRODUCT);
 
-		if (!DMIUtil.isMissing(tsproduct_num)
-		    && !DMIUtil.isMissing(productgroup_num)) {
+		if (!DMIUtil.isMissing(tsproduct_num) && !HydroBase_Util.isMissing(tsproduct_num) &&
+				!DMIUtil.isMissing(productgroup_num) && !HydroBase_Util.isMissing(productgroup_num) ) {
 		    	throw new Exception(
 				"One and only one value can be non-missing."
 				+ "  TSProduct_num: " + tsproduct_num 
 				+ "  ProductGroup_num: " + productgroup_num);
 		}
-		if (DMIUtil.isMissing(tsproduct_num)
-		    && DMIUtil.isMissing(productgroup_num)) {
+		if (DMIUtil.isMissing(tsproduct_num) && !HydroBase_Util.isMissing(tsproduct_num) &&
+			DMIUtil.isMissing(productgroup_num) && !HydroBase_Util.isMissing(productgroup_num) ) {
 			// query for all
 		}
-		else if (!DMIUtil.isMissing(tsproduct_num)) {
+		else if (!DMIUtil.isMissing(tsproduct_num) && !HydroBase_Util.isMissing(tsproduct_num)) {
 			q.addWhereClause("TSProduct.tsproduct_num = " 
 				+ tsproduct_num);
 		}
@@ -19713,7 +19726,7 @@ throws Exception {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 			
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(structure_num)) {
+		if (!DMIUtil.isMissing(structure_num) && !HydroBase_Util.isMissing(structure_num)) {
 			triplet = new String[3];
 			if (getDatabaseVersion() < VERSION_20050701) {
 				triplet[0] = "structure_num";
@@ -19764,17 +19777,14 @@ throws Exception {
 		/*
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_UNPERMITTED_WELLS);
-		if (!DMIUtil.isMissing(structure_num)) {
-			q.addWhereClause("unpermitted_wells.structure_num = " 
-				+ structure_num);
+		if (!DMIUtil.isMissing(structure_num) && !HydroBase_Util.isMissing(structure_num)) {
+			q.addWhereClause("unpermitted_wells.structure_num = " + structure_num);
 		}
 		if ((usgs_id != null) && (usgs_id.length() > 0)) {
-			q.addWhereClause("unpermitted_wells.usgs_id = '" 
-				+ usgs_id + "'");
+			q.addWhereClause("unpermitted_wells.usgs_id = '" + usgs_id + "'");
 		}
 		if ((usbr_id != null) && (usbr_id.length() > 0)) {
-			q.addWhereClause("unpermitted_wells.usbr_id = '" 
-				+ usbr_id + "'");
+			q.addWhereClause("unpermitted_wells.usbr_id = '" + usbr_id + "'");
 		}
 		ResultSet rs = dmiSelect(q);
 		// TODO sam 2017-03-12 can't return the following type without refactoring
@@ -20861,35 +20871,35 @@ throws Exception {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 		String[] triplet = null;
 		
-		if ( (structureNum >= 0) && !DMIUtil.isMissing(structureNum) ) {
+		if ( (structureNum >= 0) && !DMIUtil.isMissing(structureNum) && !HydroBase_Util.isMissing(structureNum)) {
 			triplet = new String[3];
 			triplet[0] = "structure_num";
 			triplet[1] = "EQ";
 			triplet[2] = "" + structureNum;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
-		if ( (wd >= 0) && !DMIUtil.isMissing(wd) ) {
+		if ( (wd >= 0) && !DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
 			triplet = new String[3];
 			triplet[0] = "wd";
 			triplet[1] = "EQ";
 			triplet[2] = "" + wd;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
-		if ( (id >= 0) && !DMIUtil.isMissing(id) ) {
+		if ( (id >= 0) && !DMIUtil.isMissing(id) && !HydroBase_Util.isMissing(id)) {
 			triplet = new String[3];
 			triplet[0] = "id";
 			triplet[1] = "EQ";
 			triplet[2] = "" + id;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
-		if ( (strWd >= 0) && !DMIUtil.isMissing(strWd) ) {
+		if ( (strWd >= 0) && !DMIUtil.isMissing(strWd) && !HydroBase_Util.isMissing(strWd)) {
 			triplet = new String[3];
 			triplet[0] = "str_wd";
 			triplet[1] = "EQ";
 			triplet[2] = "" + strWd;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
-		if ( (strId >= 0) && !DMIUtil.isMissing(strId) ) {
+		if ( (strId >= 0) && !DMIUtil.isMissing(strId) && !HydroBase_Util.isMissing(strId)) {
 			triplet = new String[3];
 			triplet[0] = "str_id";
 			triplet[1] = "EQ";
@@ -21012,7 +21022,7 @@ throws Exception {
 			null, null);
 			
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(wis_num)) {
+		if (!DMIUtil.isMissing(wis_num) && !HydroBase_Util.isMissing(wis_num)) {
 			triplet = new String[3];
 			triplet[0] = "wis_num";
 			triplet[1] = "EQ";
@@ -21045,7 +21055,7 @@ throws Exception {
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);	
 		buildSQL(q, __S_WIS_COMMENTS_FOR_WIS_NUM_SET_DATE);
-		if (!DMIUtil.isMissing(wis_num)) {
+		if (!DMIUtil.isMissing(wis_num) && !HydroBase_Util.isMissing(wis_num) ) {
 			q.addWhereClause("wis_comments.wis_num = " + wis_num);
 		}
 		if (set_date != null) {
@@ -21170,8 +21180,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (s != null && !DMIUtil.isMissing(f) && u != null
-		    && t != null) {
+		if (s != null && !DMIUtil.isMissing(f) && !HydroBase_Util.isMissing(f) && u != null && t != null) {
 			int meas_num = readWISDailyWCForWDIDSFUT(wd, id,
 				s, f, u, t);
 			if (meas_num > -1) {
@@ -21196,7 +21205,7 @@ throws Exception {
 					triplet);
 			}
 			
-			if (!DMIUtil.isMissing(f)) {
+			if (!DMIUtil.isMissing(f) && !HydroBase_Util.isMissing(f)) {
 				triplet = new String[3];
 				triplet[0] = "f";
 				triplet[1] = "EQ";
@@ -21268,7 +21277,7 @@ throws Exception {
 		if (s != null) {
 			q.addWhereClause("wis_daily_wc.S = '" + s + "'");
 		}
-		if (!DMIUtil.isMissing(f)) {
+		if (!DMIUtil.isMissing(f) && !HydroBase_Util.isMissing(f) ) {
 			q.addWhereClause("wis_daily_wc.F = " + f);
 		}
 		if (u != null) {
@@ -21491,7 +21500,7 @@ throws Exception {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters(null, null);
 		
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(wis_num)) {
+		if (!DMIUtil.isMissing(wis_num) && !HydroBase_Util.isMissing(wis_num)) {
 			triplet = new String[3];
 			triplet[0] = "wis_num";
 			triplet[1] = "EQ";
@@ -21509,7 +21518,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(wis_row)) {
+		if (!DMIUtil.isMissing(wis_row) && !HydroBase_Util.isMissing(wis_row) ) {
 			triplet = new String[3];
 			triplet[0] = "wis_row";
 			triplet[1] = "EQ";
@@ -21527,7 +21536,7 @@ throws Exception {
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WIS_DATA_FOR_WIS_NUM_SET_DATE);
-		if (!DMIUtil.isMissing(wis_num)) {
+		if (!DMIUtil.isMissing(wis_num) && !HydroBase_Util.isMissing(wis_num)) {
 			q.addWhereClause("wis_data.wis_num = " + wis_num);
 		}
 		if (set_date != null) {
@@ -21536,7 +21545,7 @@ throws Exception {
 			q.addWhereClause("wis_data.set_date = "
 				+ DMIUtil.formatDateTime(this, dt));
 		}
-		if (!DMIUtil.isMissing(wis_row)) {
+		if (!DMIUtil.isMissing(wis_row) && !HydroBase_Util.isMissing(wis_row)) {
 			q.addWhereClause("wis_data.wis_row = " + wis_row);
 		}
 		q.addOrderByClause("wis_data.wis_row");
@@ -21647,7 +21656,7 @@ throws Exception {
 			null, null);
 		
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(wis_num)) {
+		if (!DMIUtil.isMissing(wis_num) && !HydroBase_Util.isMissing(wis_num)) {
 			triplet = new String[3];
 			triplet[0] = "wis_num";
 			triplet[1] = "EQ";
@@ -21681,7 +21690,7 @@ throws Exception {
 	else {
 		DMISelectStatement q = new DMISelectStatement(this);
 		buildSQL(q, __S_WIS_FORMAT);
-		if (!DMIUtil.isMissing(wis_num)) {
+		if (!DMIUtil.isMissing(wis_num) && !HydroBase_Util.isMissing(wis_num)) {
 			q.addWhereClause("wis_format.wis_num = " + wis_num);
 		}
 		if (row_type != null) {
@@ -21744,7 +21753,7 @@ throws Exception {
                 for (int i = 0; i < size; i++) {
                         s = wisNums.get(i);
                         wisNum = StringUtil.atoi(s);
-                        if (!DMIUtil.isMissing(wisNum)) {
+                        if (!DMIUtil.isMissing(wisNum) && !HydroBase_Util.isMissing(wisNum)) {
                                 wheres.add("wis_format.wis_num = "
 					+ wisNum + " AND ("
 					+ " row_type Like 'Diversion' OR"
@@ -21810,7 +21819,7 @@ throws Exception {
                         s = wisNums.get(i);
                         wisNum = StringUtil.atoi(s);
 			identifier = identifiers.get(i);
-                        if (!DMIUtil.isMissing(wisNum)) {
+                        if (!DMIUtil.isMissing(wisNum) && !HydroBase_Util.isMissing(wisNum)) {
                                 wheres.add("wis_format.wis_num = "
 					+ wisNum 
 					+ " AND wis_format.identifier = '"
@@ -21998,7 +22007,7 @@ throws Exception {
 			
 		String[] triplet = null;
 
-		if (!DMIUtil.isMissing(wd)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
 			triplet = new String[3];
 			triplet[0] = "wd";
 			triplet[1] = "EQ";
@@ -22006,7 +22015,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 			
-		if (!DMIUtil.isMissing(wis_num)) {
+		if (!DMIUtil.isMissing(wis_num) && !HydroBase_Util.isMissing(wis_num)) {
 			triplet = new String[3];
 			triplet[0] = "wis_num";
 			triplet[1] = "EQ";
@@ -22052,10 +22061,10 @@ throws Exception {
 		if (getDatabaseVersion() <= VERSION_20040701) {
 			table = "sheet_name";
 		}		
-		if (!DMIUtil.isMissing(wd)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
 			q.addWhereClause(table + ".wd = " + wd);
 		}
-		if (!DMIUtil.isMissing(wis_num)) {
+		if (!DMIUtil.isMissing(wis_num) && !HydroBase_Util.isMissing(wis_num)) {
 			q.addWhereClause(table + ".wis_num = " + wis_num);
 		}
 		if (sheet_name != null && sheet_name.length() > 0) {
@@ -22364,7 +22373,7 @@ throws Exception {
                 for (int i = 0; i < size; i++) {
                         wisData=(HydroBase_WISSheetName)wisResults.get(i);
                         curInt = wisData.getWis_num();
-                        if (!DMIUtil.isMissing(curInt)) {
+                        if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                                 wisNums.add("" + curInt);
                         }                        
                 }		
@@ -22383,7 +22392,7 @@ throws Exception {
                         for (int i = 0; i < size; i++) {
                                 formatData = formatResults.get(i);
                                 curInt = formatData.getStructure_num();
-                                if (!DMIUtil.isMissing(curInt)) {
+                                if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
                                         structureNums.add("" + curInt);
                                 }
                         }
@@ -22441,7 +22450,7 @@ throws Exception
     }
     int numParameters = (parameters.length - 3)/3; // 3 is the first one and last two
     if ( numParameters > getSPFlexMaxParameters() ) {
-        String routine = getClass().getName() + "runSPFlex";
+        String routine = getClass().getSimpleName() + "runSPFlex";
         String message = "Trying to query HydroBase with SPFlex with " + numParameters +
             " parameters.  Maximum allowed is " + getSPFlexMaxParameters();
         Message.printWarning(3,routine, message );
@@ -32546,6 +32555,7 @@ throws Exception {
 			d = rs.getDouble(index++);
 			if (!rs.wasNull()) {
 				data.setAcres_total(d);
+				Message.printStatus(2, "", "Setting wd=" + data.getWD() + " id=" + data.getID() + " calYear=" + data.getCal_year() + " crop " + data.getLand_use() + " acres_total to " + d);
 			}
 			d = rs.getDouble(index++);
 			if (!rs.wasNull()) {
@@ -32569,6 +32579,7 @@ throws Exception {
 					data.setAcres_by_groundwater(d);
 				}	
 			}
+			// TODO smalers 2020-02-27 could add WDID
 		}
 
 		v.add(data);
@@ -38793,16 +38804,14 @@ throws Exception {
 			+ "NULL, " 
 			+ call.getDiv() + ",'" 
 			+ call.getDistricts_affected() + "', "	
-			+ DMIUtil.formatDateTime(this, 
-				new DateTime(call.getArchive_date())) + ", '" 
+			+ DMIUtil.formatDateTime(this, new DateTime(call.getArchive_date())) + ", '" 
 			+ call.getStr_name() + "', " 
 			+ call.getWD() + ", " 
 			+ call.getID() + ", '" 
 			+ call.getStrname() + "', " 
 			+ call.getStrtribto() + ", '" 
 			+ call.getDcr_amt() + "', " 
-			+ DMIUtil.formatDateTime(this, 
-				new DateTime(call.getApro_date())) + ")";
+			+ DMIUtil.formatDateTime(this, new DateTime(call.getApro_date())) + ")";
 		return dmiWrite(dmiString);
 	}
 }
@@ -39003,7 +39012,7 @@ throws Exception {
 	DMIWriteStatement w = new DMIWriteStatement(this);
 
 	int action = 0;
-	if (DMIUtil.isMissing(tsp.getTSProduct_num())) {
+	if (DMIUtil.isMissing(tsp.getTSProduct_num()) && !HydroBase_Util.isMissing(tsp.getTSProduct_num())) {
 		action = __W_TSPRODUCT_INSERT;
 	}
 	else {
@@ -39341,8 +39350,7 @@ public boolean writeTSProduct(TSProduct product) {
 			dmiWrite(sql);
 		}
 		catch (Exception e) {
-			Message.printWarning(1, routine, 
-				"Error writing to database.");
+			Message.printWarning(1, routine, "Error writing to database.");
 			Message.printWarning(2, routine, e);
 			return false;
 		}
@@ -39552,7 +39560,7 @@ throws Exception {
 			w.addWhereClause("wis_daily_wc.S = '" + wc.getS() 
 				+ "'");
 		}
-		if (DMIUtil.isMissing(wc.getF())) {
+		if (DMIUtil.isMissing(wc.getF()) && !HydroBase_Util.isMissing(wc.getF())) {
 			w.addWhereClause("wis_daily_wc.F = " 
 				+ DMIUtil.MISSING_INT);
 		}

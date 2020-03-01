@@ -753,21 +753,21 @@ private void generateGeophlogsReport() {
 
 	String s = "";
 	int i = wellView.getPermitno();
-	if (!DMIUtil.isMissing(i)) {
+	if (!DMIUtil.isMissing(i) && !HydroBase_Util.isMissing(i)) {
 		s += i;
 	}
 
 	s += "-";
 
 	String temp = wellView.getPermitsuf();
-	if (!DMIUtil.isMissing(temp)) {
+	if (!DMIUtil.isMissing(temp) ) {
 		s += temp;
 	}
 	
 	s += "-";
 
 	temp = wellView.getPermitrpl();
-	if (!DMIUtil.isMissing(temp)) {
+	if (!DMIUtil.isMissing(temp) ) {
 		s += temp;
 	}
 	report.add("Permit Info: " + s);
@@ -791,40 +791,36 @@ private void generateGeophlogsReport() {
 		data = (HydroBase_GroundWaterWellsGeophlogs)v.get(i);
 
 		aquifer = data.getAquifer_name();
-		if (DMIUtil.isMissing(aquifer)) {
+		if (DMIUtil.isMissing(aquifer) ) {
 			line = "                                 ";
 		}
 		else {
-			line = StringUtil.formatString(aquifer, "%-30.30s")	
-				+ "   ";
+			line = StringUtil.formatString(aquifer, "%-30.30s")	+ "   ";
 		}
 		
 		top = data.getGlogtop();
-		if (DMIUtil.isMissing(top)) {
+		if (DMIUtil.isMissing(top) || HydroBase_Util.isMissing(top)) {
 			line += "       ";
 		}
 		else {
-			line += StringUtil.formatString(top, "%4d")
-				+ "   ";
+			line += StringUtil.formatString(top, "%4d") + "   ";
 		}
 
 
 		base = data.getGlogbase();
-		if (DMIUtil.isMissing(base)) {
+		if (DMIUtil.isMissing(base) || HydroBase_Util.isMissing(base)) {
 			line += "       ";
 		}
 		else {
-			line += StringUtil.formatString(base, "%4d")
-				+ "   ";
+			line += StringUtil.formatString(base, "%4d") + "   ";
 		}
 
 		thickness = data.getGlogthickness();
-		if (DMIUtil.isMissing(thickness)) {
+		if (DMIUtil.isMissing(thickness) || HydroBase_Util.isMissing(thickness)) {
 			line += "       ";
 		}
 		else {
-			line += StringUtil.formatString(thickness, "%4d")
-				+ "   ";
+			line += StringUtil.formatString(thickness, "%4d") + "   ";
 		}
 
 		orig1986 = data.getOrig_1986();

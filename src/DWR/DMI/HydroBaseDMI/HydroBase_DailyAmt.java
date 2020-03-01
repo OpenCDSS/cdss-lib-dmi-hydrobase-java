@@ -799,7 +799,7 @@ public int findNearestDataDay(int year, int month, int day) {
 		}
 	}
 	for (int i = day; i >= 1; i--) {
-		if (!DMIUtil.isMissing(getAmountForDay(i))) {
+		if (!DMIUtil.isMissing(getAmountForDay(i)) && !HydroBase_Util.isMissing(getAmountForDay(i))) {
 			// Have data...
 			return i;
 		}

@@ -458,8 +458,7 @@ private void setupGUI() {
 	topWJPanel.add("South", topWSouthJPanel);
 
 	int y=0;
-	topWSouthJPanel.setBorder(BorderFactory.createTitledBorder(
-		"Irrigated Acres Summary"));
+	topWSouthJPanel.setBorder(BorderFactory.createTitledBorder("Irrigated Acres Summary"));
 
     JGUIUtil.addComponent(topWSouthJPanel, new JLabel("GIS Total (Acres):"),
 	0, y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.EAST);
@@ -474,7 +473,6 @@ private void setupGUI() {
     __gisTotDateJTextField.setEditable(false);
     JGUIUtil.addComponent(topWSouthJPanel, __gisTotDateJTextField, 
 	3, y++, 1, 1, 0, 0, insetsNLBR, GridBagConstraints.NONE, GridBagConstraints.WEST);
-
 
     JGUIUtil.addComponent(topWSouthJPanel, 
 	new JLabel("Diversion Comments Total (Acres):"),
@@ -597,8 +595,7 @@ displays the results in the gui.
 */
 private void submitAndDisplayIrrigSummaryStructureQuery() { 
 	JGUIUtil.setWaitCursor(this, true);
-	String routine = "HydroBase_GUI_IrrigatedAcres"
-		+ ".submitAndDisplayIrrigSummaryStructureQuery";
+	String routine = "HydroBase_GUI_IrrigatedAcres.submitAndDisplayIrrigSummaryStructureQuery";
 
 	List<HydroBase_StructureView> results = null;
 	try {
@@ -621,32 +618,27 @@ private void submitAndDisplayIrrigSummaryStructureQuery() {
 	HydroBase_StructureView iss = (HydroBase_StructureView)results.get(0);
     
 	curDouble = iss.getTia_gis();
-	if (!DMIUtil.isMissing(curDouble)) {
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 		__gisTotJTextField.setText( StringUtil.formatString(curDouble,"%6.3f").trim());
 	}
 
 	curInt = iss.getTia_gis_calyear();
-	if (!DMIUtil.isMissing(curInt)) {
-		__gisTotDateJTextField.setText("" + curInt);
-	}
-
-	curDouble = iss.getTia_div();
-	if (!DMIUtil.isMissing(curDouble)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__divTotJTextField.setText(StringUtil.formatString(curDouble,"%6.3f").trim());
 	}
 
 	curInt = iss.getTia_div_calyear();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__divTotDateJTextField.setText("" + curInt);
 	}        
 
 	curDouble = iss.getTia_struct();
-	if (!DMIUtil.isMissing(curDouble)) {
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 		__structTotJTextField.setText(StringUtil.formatString(curDouble,"%6.3f").trim());
 	}        
 
 	curInt = iss.getTia_struct_calyear();
-	if (!DMIUtil.isMissing(curInt)) {
+	if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
 		__structTotDateJTextField.setText("" + curInt);
 	}       	
 
@@ -658,8 +650,7 @@ Submits a query for the desired structure and displays the data in the GUI.
 */
 private void submitAndDisplayStructureQuery() {
 	JGUIUtil.setWaitCursor(this, true);
-	String routine = "HydroBase_GUI_IrrigatedAcres"
-		+ ".submitAndDisplayStructureQuery";
+	String routine = "HydroBase_GUI_IrrigatedAcres.submitAndDisplayStructureQuery";
 	
 	HydroBase_StructureView view = null;
 	try {
@@ -677,17 +668,17 @@ private void submitAndDisplayStructureQuery() {
 	}
 
 	int curInt = view.getWD();
-    if (!DMIUtil.isMissing(curInt)) {
+    if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
         __wdJTextField.setText("" + curInt);
     }
  
     curInt = view.getID();
-    if (!DMIUtil.isMissing(curInt)) {
+    if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
         __idJTextField.setText("" + curInt);        
     }
 
     curInt = view.getDiv();
-    if (!DMIUtil.isMissing(curInt)) {
+    if (!DMIUtil.isMissing(curInt) && !HydroBase_Util.isMissing(curInt)) {
         __divJTextField.setText("" + curInt);
     }
 	JGUIUtil.setWaitCursor(this, false);	

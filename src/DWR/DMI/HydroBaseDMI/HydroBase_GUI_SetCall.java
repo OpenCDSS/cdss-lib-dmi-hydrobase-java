@@ -470,19 +470,17 @@ private void callsClicked() {
 
 	Date curDate = netAmt.getApro_date();
 	if (!DMIUtil.isMissing(curDate)) {
-		__aproDateJTextField.setText((new DateTime(curDate)).toString(
-			DateTime.FORMAT_YYYY_MM_DD));	
+		__aproDateJTextField.setText((new DateTime(curDate)).toString( DateTime.FORMAT_YYYY_MM_DD));	
 	}
         
 	double curDouble = netAmt.getAdmin_no();
-	if (!DMIUtil.isMissing(curDouble)) {
-		__adminJTextField.setText(StringUtil.formatString(
-			curDouble, "%11.5f").trim());
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
+		__adminJTextField.setText(StringUtil.formatString( curDouble, "%11.5f").trim());
 	}
         
 	curDouble = netAmt.getNet_abs();
 	String unit = "";
-	if (!DMIUtil.isMissing(curDouble)) {
+	if (!DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 		unit = netAmt.getUnit();
 		if (unit.equalsIgnoreCase("C")) {
 			unit = CFS;
@@ -494,14 +492,12 @@ private void callsClicked() {
 			unit = "";
 		}
 
-		__decreedJTextField.setText(StringUtil.formatString(
-			curDouble, "%11.4f").trim() + " " + unit);
+		__decreedJTextField.setText(StringUtil.formatString( curDouble, "%11.4f").trim() + " " + unit);
 	}       
 
 	curDate = netAmt.getAdj_date();
 	if (!DMIUtil.isMissing(curDate)) {
-		__adjDateJTextField.setText((new DateTime(curDate)).toString(
-			DateTime.FORMAT_YYYY_MM_DD));
+		__adjDateJTextField.setText((new DateTime(curDate)).toString( DateTime.FORMAT_YYYY_MM_DD));
 	}
 		
 	__priorNumJTextField.setText(netAmt.getPri_case_no());
@@ -517,8 +513,7 @@ private boolean checkSetDate() {
 	DateTime setDateTime = null;
 
 	try {
-		setDateTime = DateTime.parse(__setDateJTextField.getText(),
-			DateTime.FORMAT_YYYY_MM_DD_HH_mm);
+		setDateTime = DateTime.parse(__setDateJTextField.getText(), DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 		setDateTime.setPrecision(DateTime.PRECISION_DAY);
 	}
 	catch (Exception e) {}
@@ -606,8 +601,7 @@ private void displayWaterRightNetResults(List<HydroBase_NetAmts> results, boolea
 			}
 			else {
 				try {
-	                    	curString = DMIUtil.formatDateTime(__dmi,
-					new DateTime(curDate));
+	               	curString = DMIUtil.formatDateTime(__dmi, new DateTime(curDate));
 				}
 				catch (Exception e) {
 					curString = "";
@@ -631,17 +625,16 @@ private void displayWaterRightNetResults(List<HydroBase_NetAmts> results, boolea
                 }
                 else if (display.equals(HydroBase_GUI_Options.ADMIN_NO)) {
 			curDouble = netAmt.getAdmin_no();
-			if (DMIUtil.isMissing(curDouble)) {
+			if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 	                    	curString = "";                  
 			}
 			else {				
-				curString = StringUtil.formatString(
-					curDouble, "%11.5f");
+				curString = StringUtil.formatString( curDouble, "%11.5f");
 			}
                 }	
                 else if (display.equals(HydroBase_GUI_Options.DECREED_AMT)) {
 			curDouble = netAmt.getNet_abs();
-			if (DMIUtil.isMissing(curDouble)) {
+			if (DMIUtil.isMissing(curDouble) && !HydroBase_Util.isMissing(curDouble)) {
 	                    	curString = "";                  
 			}
 			else {
@@ -657,16 +650,14 @@ private void displayWaterRightNetResults(List<HydroBase_NetAmts> results, boolea
 					unit = "";
 				}
 
-				curString = StringUtil.formatString(
-					curDouble, "%11.4f")+ " " + unit;
+				curString = StringUtil.formatString( curDouble, "%11.4f")+ " " + unit;
 			}                
 		}	
 		v.add(curString.trim());
 		__netWaterRights.add(netAmt);
 	}
 	
-	if (__dmi.getPreferenceValue("General.BypassCall").equals("1")
-	    && includeBypass) {
+	if (__dmi.getPreferenceValue("General.BypassCall").equals("1") && includeBypass) {
 		v.add(__BYPASS);
 	}
 
@@ -733,7 +724,7 @@ private void displayStructures() {
 
 			// get water district
 			curInt = view.getWD();
-			if (DMIUtil.isMissing(curInt)) {
+			if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 				wd = "";
 			}
 			else {
@@ -742,7 +733,7 @@ private void displayStructures() {
 
 			// structure id
         		curInt = view.getID();
-        		if (DMIUtil.isMissing(curInt)) {
+        		if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 		id = "";
         		}
         		else {
@@ -779,7 +770,7 @@ private void displayCalls() {
 
 			// get water district
 			curInt = call.getWD();
-			if (DMIUtil.isMissing(curInt)) {
+			if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 				wd = "";
 			}
 			else {
@@ -788,7 +779,7 @@ private void displayCalls() {
 
 			// structure id
         		curInt = call.getID();
-        		if (DMIUtil.isMissing(curInt)) {
+        		if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
                 		id = "";
         		}
         		else {
@@ -844,7 +835,7 @@ private void fillBypassCopyData() {
 
 		struct_num = findStructureNumForWDID(__bypassStructure);
 
-		if (struct_num == -1 || DMIUtil.isMissing(struct_num)) {
+		if (struct_num == -1 || DMIUtil.isMissing(struct_num) || HydroBase_Util.isMissing(struct_num)) {
 			__bypassStructure = null;
 			return;
 		}
@@ -1051,7 +1042,7 @@ private String findStructureName(String bypassText) {
 	}
 
 
-	if (structure_num == -1 || DMIUtil.isMissing(structure_num)) {
+	if (structure_num == -1 || DMIUtil.isMissing(structure_num) || HydroBase_Util.isMissing(structure_num)) {
 		return bypassText;
 	}
 
@@ -2029,7 +2020,7 @@ private int structureAddition(HydroBase_Calls newCall) {
 
 	// get water district
 	int curInt = newCall.getWD();
-	if (DMIUtil.isMissing(curInt)) {
+	if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 		wd = "";
 	}
 	else {
@@ -2038,7 +2029,7 @@ private int structureAddition(HydroBase_Calls newCall) {
 
 	// structure id
         curInt = newCall.getID();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
         	id = "";
        	}
        	else {
@@ -2112,7 +2103,7 @@ private void structureAddition(HydroBase_StructureView newCall) {
 
 	// get water district
 	int curInt = newCall.getWD();
-	if (DMIUtil.isMissing(curInt)) {
+	if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
 		wd = "";
 	}
 	else {
@@ -2121,7 +2112,7 @@ private void structureAddition(HydroBase_StructureView newCall) {
 
 	// structure id
         curInt = newCall.getID();
-        if (DMIUtil.isMissing(curInt)) {
+        if (DMIUtil.isMissing(curInt) || HydroBase_Util.isMissing(curInt)) {
         	id = "";
        	}
        	else {

@@ -433,7 +433,7 @@ throws Exception {
 	v.add(n.getPM());
 	v.add(translateNewToReport(n.getUse(), maxUseLength));
 
-	if (DMIUtil.isMissing(n.getRate_amt())) {
+	if (DMIUtil.isMissing(n.getRate_amt()) || HydroBase_Util.isMissing(n.getRate_amt())) {
 		v.add(format(n.getVol_amt(), "%12.4f"));
 		v.add(getUnit("A"));
 	}
@@ -445,24 +445,21 @@ throws Exception {
 	v.add(createStringAdjType(n));
 
 	if (!DMIUtil.isMissing(n.getAdj_date())) {
-		v.add((new DateTime(n.getAdj_date())).
-			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
+		v.add((new DateTime(n.getAdj_date())).toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {
 		v.add("");
 	}
 
 	if (!DMIUtil.isMissing(n.getPadj_date())) {
-		v.add((new DateTime(n.getPadj_date())).
-			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
+		v.add((new DateTime(n.getPadj_date())).toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {
 		v.add("");
 	}
 
 	if (!DMIUtil.isMissing(n.getApro_date())) {
-		v.add((new DateTime(n.getApro_date())).
-			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
+		v.add((new DateTime(n.getApro_date())).toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 	}
 	else {
 		v.add("");
@@ -500,8 +497,7 @@ throws Exception {
 		v.add(format(n.getPlan_wd())+ format(n.getPlan_id()));
 		v.add(n.getLast_due_dil());
 		if (n.getAction_update()!= null) {
-			v.add((new DateTime(n.getAction_update())).
-			toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
+			v.add((new DateTime(n.getAction_update())).toString(DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY));
 		}
 		else {	
 			v.add("");
@@ -512,12 +508,10 @@ throws Exception {
 	}
 
 	if (isExtended) {
-		return StringUtil.formatString(v, 
-			EXTENDED_WATER_RIGHTS_FORMAT);
+		return StringUtil.formatString(v, EXTENDED_WATER_RIGHTS_FORMAT);
 	}
 	else {
-		return StringUtil.formatString(v, 
-			STANDARD_WATER_RIGHTS_FORMAT);
+		return StringUtil.formatString(v, STANDARD_WATER_RIGHTS_FORMAT);
 	}	
 }
 
@@ -755,7 +749,7 @@ Format a double with the specified number of decimal places.
 */
 private String format(double d, String format)
 throws Exception {
-	if (DMIUtil.isMissing(d)) {
+	if (DMIUtil.isMissing(d) || HydroBase_Util.isMissing(d)) {
 		return "";
 	}
 	else {	
@@ -771,7 +765,7 @@ Formats an int type.
 */
 private String format(int i)
 throws Exception {
-	if (DMIUtil.isMissing(i)) {
+	if (DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 		return "";
 	}
 	else {	

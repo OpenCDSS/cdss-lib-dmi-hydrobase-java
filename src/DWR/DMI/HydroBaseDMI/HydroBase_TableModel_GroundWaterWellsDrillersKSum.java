@@ -510,21 +510,21 @@ public Object getValueAt(int row, int col) {
 		case COL_PERMIT_INFO:
 			String s = "";
 			int i = d.getPermitno();
-			if (!DMIUtil.isMissing(i)) {
+			if (!DMIUtil.isMissing(i) && !HydroBase_Util.isMissing(i)) {
 				s += i;
 			}
 
 			s += "-";
 
 			String temp = d.getPermitsuf();
-			if (!DMIUtil.isMissing(temp)) {
+			if (!DMIUtil.isMissing(temp) ) {
 				s += temp;
 			}
 			
 			s += "-";
 
 			temp = d.getPermitrpl();
-			if (!DMIUtil.isMissing(temp)) {
+			if (!DMIUtil.isMissing(temp) ) {
 				s += temp;
 			}
 			return s;

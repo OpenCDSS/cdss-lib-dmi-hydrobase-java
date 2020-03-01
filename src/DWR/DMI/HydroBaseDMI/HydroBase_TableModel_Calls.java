@@ -192,7 +192,7 @@ public Object getValueAt(int row, int col) {
 	switch (col) {
 		case COL_START:		
 			d = c.getDate_time_set();
-			if (DMIUtil.isMissing(d)) {
+			if (DMIUtil.isMissing(d) ) {
 				return "";
 			}
 			else {
@@ -200,7 +200,7 @@ public Object getValueAt(int row, int col) {
 			}
 		case COL_END:		
 			d = c.getDate_time_released();
-			if (DMIUtil.isMissing(d)) {
+			if (DMIUtil.isMissing(d) ) {
 				return "ACTIVE";
 			}
 			else {
@@ -211,14 +211,14 @@ public Object getValueAt(int row, int col) {
 			String wds = null;
 			String ids = null;
 			int wd = c.getWD();
-			if (DMIUtil.isMissing(wd)) {
+			if (DMIUtil.isMissing(wd) || HydroBase_Util.isMissing(wd)) {
 				wds = "";
 			}
 			else {
 				wds = "" + wd;
 			}			
 			int id = c.getID();
-			if (DMIUtil.isMissing(id)) {
+			if (DMIUtil.isMissing(id) || HydroBase_Util.isMissing(id)) {
 				ids = "";
 			}
 			else {
