@@ -1498,7 +1498,7 @@ private final int __S_WIS_SHEET_NAME_WIS_FORMAT_DISTINCT = 1567;
 private final int __W_WIS_SHEET_NAME_GAIN_METHOD = 1570;
 private final int __D_WIS_SHEET_NAME = 1571;
 
-// wis_data (not actualy tables, but groups of tables for SP)
+// wis_data (not actually tables, but groups of tables for SP)
 private final int __D_WIS_DATA_1 = 2100;
 private final int __D_WIS_DATA_2 = 2101;
 
@@ -22634,8 +22634,8 @@ public void setPreferenceValue(String keyword, String value) {
 }
 
 /**
-Creates the hashtable that will stored the relationship of view names to the
-view numbers used internally by SPFlex, and populates the hashtable as well.
+Create and populate the hashtable that stores the relationship of view names to the
+view numbers used internally by SPFlex.
 */
 private void setupViewNumbersHashtable() {
 	long version = getDatabaseVersion();
