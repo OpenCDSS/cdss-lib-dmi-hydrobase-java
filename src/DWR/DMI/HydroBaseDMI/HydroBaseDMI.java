@@ -890,7 +890,7 @@ with a variety of combinations of parameters.  The conversion of these calls
 to a static stored procedure representation will take further optimization.
 
 <p>
-<b>Notes on versioning:</b><br>
+<b>Notes on versions:</b><br>
 Version changes require changes throughout the code base.  In general, the
 HydroBase data objects include data members for the most recent database design,
 but place-holders for additional data from older designs may be retained.  New
@@ -938,9 +938,10 @@ HydroBase release dates.  The value of each integer is the design version, follo
 These values must be handled in determineDatabaseVersion() and isVersionAtLeast().
 */
 
+public final static long VERSION_20200720 = 2020072020200720L;
+public final static long VERSION_LATEST = VERSION_20200720;
 public final static long VERSION_20130404 = 2013040420130404L;
 public final static long VERSION_20070525 = 2007052520070525L;
-public final static long VERSION_LATEST = VERSION_20130404;
 
 public final static long VERSION_20070502 = 2007050220070502L;
 
@@ -1049,6 +1050,8 @@ public final static long VERSION_UNKNOWN  = 0L;
 /**
 Values to optimize database version checks.
 */
+private boolean __isVersion20200720Checked = false;
+private boolean __isVersionAtLeast20200720 = false;
 private boolean __isVersion20130404Checked = false;
 private boolean __isVersionAtLeast20130404 = false;
 private boolean __isVersion20070525Checked = false;
@@ -1306,6 +1309,9 @@ private final int __S_REF_CIU = 1430;
 
 // ref_county
 private final int __S_REF_COUNTY = 180;
+
+// release_comment
+private final int __S_RELEASE_COMMENT = 1450;
 
 // res_eom
 private final int __S_RES_EOM = 1460;
@@ -3454,6 +3460,17 @@ throws Exception {
 			}
 			select.addTable(table);
 			break;			
+		case __S_RELEASE_COMMENT:
+			// TODO smalers 2020-08-19 use diversion comments for release comments
+			select= (DMISelectStatement)statement;
+			select.addField("diversion_comment.meas_num");
+			select.addField("diversion_comment.structure_num");
+			select.addField("diversion_comment.not_used");
+			select.addField("diversion_comment.comm_date");
+			select.addField("diversion_comment.diver_comment");
+			select.addField("diversion_comment.acres_irrig");
+			select.addTable("diversion_comment");
+			break;
 		case __S_RES_EOM:
 			select = (DMISelectStatement)statement;
 			select.addField("res_eom.meas_num");
@@ -5841,6 +5858,10 @@ throws Exception {
 		case __S_PERSON_DETAILS:
 			name = "usp_CDSS_PersonDetails_Sel_By_Structure_num";
 			break;
+		case __S_RELEASE_COMMENT:
+			// Use DiversionComment for releases
+			name = "usp_CDSS_DiversionComment_Sel_By_Meas_num";
+			break;
 		case __S_RESERVOIR_FOR_STRUCTURE_NUM:
 			name = "usp_CDSS_StructureReservoir_Sel_By_Structure_num";
 			break;
@@ -7722,7 +7743,14 @@ throws Exception
 		Message.printDebug(5, routine, "Checking to see if database version is at least " + versionRequested);
 	}
 
-    if ( versionRequested == VERSION_20130404 ) {
+    if ( versionRequested == VERSION_20200720 ) {
+        if ( !__isVersion20200720Checked ) {
+            __isVersionAtLeast20200720 = isVersion20200720();
+            __isVersion20200720Checked = true;
+        }
+        return __isVersionAtLeast20200720;
+    }
+    else if ( versionRequested == VERSION_20130404 ) {
         if ( !__isVersion20130404Checked ) {
             __isVersionAtLeast20130404 = isVersion20130404();
             __isVersion20130404Checked = true;
@@ -8559,6 +8587,27 @@ throws Exception {
         if (Message.isDebugOn) {
             //Message.printDebug(30, routine, "vw_CDSS_Structure does not have wdid: not 20130404 version");
             Message.printStatus(2, routine, "vw_CDSS_Structure does not have wdid: not 20130404 version");
+        }
+        return false;
+    }
+
+    return true;
+}
+
+/**
+Check the database version to see if it matches the 2020-07-20 database,
+which includes the following detectable change (among others):<p>
+<ul>
+<li>The view vw_CDSS_ParcelUseTSStructureToParcel view is new.</li>
+</ul><p>
+@return true if the version matches the 2013-04-04 version.
+*/
+private boolean isVersion20200720 ()
+throws Exception {
+    String routine = "HydroBaseDMI.isVersion20200720";
+    if (!DMIUtil.databaseHasTable(this, "vw_CDSS_ParcelUseTSStructureToParcel")) {
+        if (Message.isDebugOn) {
+            Message.printStatus(2, routine, "vw_CDSS_ParcelUseTSStructureToParcel does not exist: not 20200720 version");
         }
         return false;
     }
@@ -13297,6 +13346,51 @@ throws Exception {
 }
 
 /**
+Release comments use diversion comment table (meas_num is unique for release comments).
+Read the diversion_comment table for all data and join with data in the structure table.<p>
+This method is used by:<ul>
+<li>readTimeSeries()</li>
+</ul>
+<p><b>Stored Procedure</b><p>
+The stored procedure that corresponds to this query is:<ul>
+<li>usp_CDSS_DiversionComment_Sel_By_Meas_num</li>
+</ul>
+@param meas_num struct_meas_type.meas_num for query.
+@param req_date1 If not null, specify the start date for the query.
+@param req_date2 If not null, specify the end date for the query.
+@return a list of HydroBase_DiversionComment objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_DiversionComment> readReleaseCommentList( int meas_num, DateTime req_date1, DateTime req_date2 ) 
+throws Exception {
+	DMISelectStatement q = new DMISelectStatement(this);
+	buildSQL(q, __S_RELEASE_COMMENT);
+	q.addWhereClause("diversion_comment.meas_num = " + meas_num);
+	// Application requests are in calendar year and the comm_date is also
+	// apparently in calendar year but all dates are typically Oct 31 so only the year is important...
+	// TODO (SAM 2003-12-09) - need to do some work to decide how best to
+	// handle this since DB has YYYY-MM-DD but in memory we are carrying the
+	// data with YYYY for time series.
+	//
+	//if (req_date1 != null) {
+	//	q.addWhereClause("diversion_comment.comm_date >=" + req_date1.getYear());
+	//}
+	//if (req_date2 != null) {
+	//	q.addWhereClause("diversion_comment.comm_date <=" + (req_date2.getYear() + 1));
+	//}
+	q.addOrderByClause("diversion_comment.comm_date");
+	ResultSet rs = dmiSelect(q);
+	List<HydroBase_DiversionComment> v = toDiversionCommentList(rs);
+	if (__useSP) {
+		closeResultSet(rs, q);
+	}
+	else {
+		closeResultSet(rs);
+	}
+	return v;
+}
+
+/**
 Read the res_eom table for all data.  <p>
 This is used by:<ul>
 <li>readTimeSeries()</li>
@@ -16249,7 +16343,7 @@ throws Exception, NoDataFoundException
 	}
 	else if (interval.equalsIgnoreCase("Year")) {
 		ts = new YearTS ();
-		if (data_type.equalsIgnoreCase("DivComment")) {
+		if (data_type.equalsIgnoreCase("DivComment") || data_type.equalsIgnoreCase("RelComment") ) {
 			// Allow data flags - HydroBase has 1 character flags...
 			((YearTS)ts).hasDataFlags(true,true);
 		}
@@ -17006,6 +17100,12 @@ throws Exception, NoDataFoundException
 		ts.setInputName ( "HydroBase annual_wc.ann_amt");
 		v = readAnnualWCList(str_mt_v.getMeas_num(),req_date1,req_date2);
 	}
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("RelComment")) {
+		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
+		ts.setDataUnitsOriginal ( ts.getDataUnits());
+		ts.setInputName ("HydroBase diversion_comment.not_used, diversion_comment.acres_irrig");
+		v = readReleaseCommentList(str_mt_v.getMeas_num(),req_date1,req_date2);
+	}
 	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("RelTotal")) {
 		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
@@ -17531,6 +17631,18 @@ throws Exception, NoDataFoundException
 		data = (HydroBase_AnnualWC)v.get(size - 1);
 		data_date2 = new DateTime ( DateTime.PRECISION_YEAR);
 		data_date2.setYear ( data.getIrr_year());
+	}
+	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("RelComment")) {
+		// DiversionComment is used for release comments
+		// Get the first and last dates...
+		HydroBase_DiversionComment data = (HydroBase_DiversionComment)v.get(0);
+		// Dates are typically Oct 31 of the irrigation year.
+		// Therefore the year corresponds to the irrigation year.
+		data_date1 = new DateTime(data.getComm_date());
+		data_date1.setPrecision ( DateTime.PRECISION_YEAR);
+		data = (HydroBase_DiversionComment)v.get(size - 1);
+		data_date2 = new DateTime(data.getComm_date());
+		data_date2.setPrecision ( DateTime.PRECISION_YEAR);
 	}
 	else if ((interval_base == TimeInterval.MONTH) &&
 		(data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("IRelTotal")) ) {
@@ -18157,7 +18269,8 @@ throws Exception, NoDataFoundException
 			}
 		}
 	}
-	else if ((interval_base == TimeInterval.YEAR) && data_type.equalsIgnoreCase("DivComment")) {
+	else if ((interval_base == TimeInterval.YEAR) &&
+		(data_type.equalsIgnoreCase("DivComment") || data_type.equalsIgnoreCase("RelComment")) ) {
 		HydroBase_DiversionComment data;
 		DateTime dt;
 		String not_used;
