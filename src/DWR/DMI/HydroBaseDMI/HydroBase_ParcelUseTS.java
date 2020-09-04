@@ -55,6 +55,8 @@ protected int _parcel_num = DMIUtil.MISSING_INT;
 protected int _div = DMIUtil.MISSING_INT;
 protected int _cal_year = DMIUtil.MISSING_INT;
 protected int _parcel_id = DMIUtil.MISSING_INT;
+// First 3 digits of _parcel_id (1-digit division + 2 digit WD), used to build tree index
+protected int _parcel_id3 = DMIUtil.MISSING_INT;
 protected double _perimeter = DMIUtil.MISSING_DOUBLE;
 protected double _area = DMIUtil.MISSING_DOUBLE;
 protected String _land_use = DMIUtil.MISSING_STRING;
@@ -113,6 +115,14 @@ Returns _parcel_id
 */
 public int getParcel_id() {
 	return _parcel_id;
+}
+
+/**
+Returns _parcel_id3
+@return _parcel_id3
+*/
+public int getParcel_id3() {
+	return _parcel_id3;
 }
 
 /**
@@ -177,6 +187,14 @@ Sets _parcel_id
 */
 public void setParcel_id(int parcel_id) {
 	_parcel_id = parcel_id;
+}
+
+/**
+Sets _parcel_id3
+@param parcel_id3 value to put into _parcel_id3
+*/
+public void setParcel_id3(int parcel_id3) {
+	_parcel_id3 = parcel_id3;
 }
 
 /**
