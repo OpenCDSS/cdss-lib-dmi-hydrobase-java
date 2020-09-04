@@ -797,6 +797,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -831,6 +832,7 @@ import RTi.Util.IO.PropList;
 import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
 import RTi.Util.Time.DateTime;
+import RTi.Util.Time.StopWatch;
 import RTi.Util.Time.TimeInterval;
 import RTi.Util.Time.TimeUtil;
 
@@ -1297,6 +1299,10 @@ private final int __S_PARCEL_USE_TS_DISTINCT = 1412;
 private final int __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN = 1411;
 private final int __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR = 1413;
 
+private final int __S_PARCEL_USE_TS_VIEW = 1415;
+
+private final int __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_VIEW = 1414;
+
 // person_details
 private final int __S_PERSON_DETAILS = 1420;
 
@@ -1458,6 +1464,9 @@ private final int __S_WELLS = 2200;
 
 // vw_CDSS_Wells
 private final int __S_WELLS_VIEW = 2201;
+
+// vw_CDSS_WellsWellToParcel
+private final int __S_WELLS_WELL_TO_PARCEL_VIEW = 2203;
 
 // wis_comments
 private final int __D_WIS_COMMENTS_FOR_WIS_NUM = 1999;
@@ -1679,37 +1688,91 @@ private List<HydroBase_StructureView> __WISStructures_List = null;
 Hashtable for cached results of ReadParcelUseTSListCache() calls.  A List of results is saved for
 each division that is queried.
 */
-private Hashtable<String,List<HydroBase_ParcelUseTS>> __readParcelUseTSListCache = new Hashtable<String,List<HydroBase_ParcelUseTS>>();
+// TODO smalers 2020-09-03 old cache approach - OK but division at top is not very granular
+//private Hashtable<String,List<HydroBase_ParcelUseTS>> __readParcelUseTSListCache = new Hashtable<String,List<HydroBase_ParcelUseTS>>();
 
 /**
 Index for __readParcelUseTSListCache hash that stores calendar year for each division.
 Initialize to 7 slots (one for each division) and allocate the sub-array when the cache is initialized.
 */
-private int [][] __readParcelUseTSListCacheCalendarYearIndexYears = new int[7][];
+// TODO smalers 2020-09-03 old cache approach - OK but division at top is not very granular
+//private int [][] __readParcelUseTSListCacheCalendarYearIndexYears = new int[7][];
 
 /**
 Index for __readParcelUseTSListCache hash that stores calendar year data position for each division.
 Initialize to 7 slots (one for each division) and allocate the sub-array when the cache is initialized.
 */
-private int [][] __readParcelUseTSListCacheCalendarYearIndexPos = new int[7][];
+// TODO smalers 2020-09-03 old cache approach - OK but division at top is not very granular
+//private int [][] __readParcelUseTSListCacheCalendarYearIndexPos = new int[7][];
 
 /**
 Hashtable for cached results of ReadWellsWellToParcelListCache() calls.  A List of results is saved for
 each division that is queried.
 */
-private Hashtable<String,List<HydroBase_Wells>> __readWellsWellToParcelListCache = new Hashtable<String,List<HydroBase_Wells>>();
+// TODO smalers 2020-09-03 old cache approach - OK but division at top is not very granular
+//private Hashtable<String,List<HydroBase_Wells>> __readWellsWellToParcelListCache = new Hashtable<String,List<HydroBase_Wells>>();
 
 /**
 Index for __readWellsWellToParcelListCache hash that stores calendar year for each division.
 Initialize to 7 slots (one for each division) and allocate the sub-array when the cache is initialized.
 */
-private int [][] __readWellsWellToParcelListCacheCalendarYearIndexYears = new int[7][];
+// TODO smalers 2020-09-03 old cache approach - OK but division at top is not very granular
+//private int [][] __readWellsWellToParcelListCacheCalendarYearIndexYears = new int[7][];
 
 /**
 Index for __readWellsWellToParcelListCache hash that stores calendar year data position for each division.
 Initialize to 7 slots (one for each division) and allocate the sub-array when the cache is initialized.
 */
-private int [][] __readWellsWellToParcelListCacheCalendarYearIndexPos = new int[7][];
+// TODO smalers 2020-09-03 old cache approach - OK but division at top is not very granular
+//private int [][] __readWellsWellToParcelListCacheCalendarYearIndexPos = new int[7][];
+
+/**
+ * Cache for HydroBase_ParcelUseTS, used when processing parcels StateCU *.cds, *.ipy, and StateMod *.wer,
+ * indexed to optimize lookups given first three digits from parcel ID (which correspond to div and WD)
+ * and calendar year.
+ * The data model is as follows:
+ *   List<HydroBase_ParcelUseTS_ParcelId3Cache> - list of data for parcel ID first 3 digits
+ *     List<HydroBase_ParcelUseTS_YearCache> - list of data for years
+ *       List<HydroBase_ParcelUseTS> - list of raw HydroBase data records
+ * - the cache is populated in lazy fashion as parcelId3 of interest are requested
+ */
+private List<HydroBase_ParcelUseTS_ParcelId3Cache> __parcelUseTS_ParcelId3_Year_Cache = new ArrayList<>();
+
+/**
+ * Cache for HydroBase_ParcelUseTSStructureToParcel, used when processing StateCU *.cds, *.ipy, and StateMod *.wer.
+ * The data model is as follows:
+ *   List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache> - list of data for districts
+ *     List<HydroBase_ParcelUseTSStructureToParcel_YearCache> - list of data for years
+ *       List<HydroBase_ParcelUseTSStructureToParcel_WDIDCache> - list of data for WDID
+ * - the cache is populated in lazy fashion as districts of interest are requested
+ */
+private List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache>
+	__parcelUseTSStructureToParcel_District_Year_WDID_Cache = new ArrayList<>();
+
+/**
+ * Cache for HydroBase_Wells (for well to parcel),
+ * used when processing parcels for StateCU *.cds, *.ipy, and StateMod *.wer,
+ * indexed to optimize lookups Well WDID and year.
+ * The data model is as follows:
+ *   List<HydroBase_WellsWellToParcel_WellWDCache> - list of data for well WD
+ *     List<HydroBase_WellsWellToParcel_YearCache> - list of data for years
+ *       List<HydroBase_Wells> - list of raw HydroBase data records
+ * - the cache is populated in lazy fashion as Well WD of interest are requested
+ */
+private List<HydroBase_WellsWellToParcel_WellWDCache> __wellsWellToParcel_WellWD_Year_Cache = new ArrayList<>();
+
+/**
+ * Cache for HydroBase_Wells (for well to parcel),
+ * used when processing parcels StateCU *.cds, *.ipy, and StateMod *.wer,
+ * indexed to optimize lookups given year and DivWD from first three digits from parcel ID,
+ * which correspond to div and WD.
+ * The data model is as follows:
+ *   List<HydroBase_WellsWellToParcel_ParcelId3Cache> - list of data for parcel ID first 3 digits
+ *     List<HydroBase_WellsWellToParcel_YearCache> - list of data for years
+ *       List<HydroBase_Wells> - list of raw HydroBase data records
+ * - the cache is populated in lazy fashion as parcelId3 are requested
+ */
+private List<HydroBase_WellsWellToParcel_ParcelId3Cache> __wellsWellToParcel_ParcelId3_Year_Cache = new ArrayList<>();
 
 /** 
 Constructor for a predefined ODBC DSN that does not enable Stored Procedures.
@@ -3308,6 +3371,19 @@ throws Exception {
 			select.addField("parcel_use_ts.irrig_type");
 			select.addTable("parcel_use_ts");
 			break;		
+		case __S_PARCEL_USE_TS_VIEW:
+			// Same as __S_PARCEL_USE_TS but a view
+			select = (DMISelectStatement)statement;
+			select.addField("vw_CDSS_ParcelUseTS.parcel_num");
+			select.addField("vw_CDSS_ParcelUseTS.div");
+			select.addField("vw_CDSS_ParcelUseTS.cal_year");
+			select.addField("vw_CDSS_ParcelUseTS.parcel_id");
+			select.addField("vw_CDSS_ParcelUseTS.perimeter");
+			select.addField("vw_CDSS_ParcelUseTS.area");
+			select.addField("vw_CDSS_ParcelUseTS.land_use");
+			select.addField("vw_CDSS_ParcelUseTS.irrig_type");
+			select.addTable("vw_CDSS_ParcelUseTS");
+			break;		
 		case __S_PARCEL_USE_TS_DISTINCT:
 			select = (DMISelectStatement)statement;
 			select.addField("parcel_use_ts.cal_year");
@@ -3330,6 +3406,23 @@ throws Exception {
 			select.addTable("parcel_use_ts");
 			select.addTable("structure_to_parcel");
 			select.addWhereClause("structure_to_parcel.parcel_num = parcel_use_ts.parcel_num");
+			break;					
+		case __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_VIEW:
+			// Available as of 20200720
+			select = (DMISelectStatement)statement;
+			select.addField("parcel_num");
+			select.addField("div");
+			select.addField("cal_year");
+			select.addField("parcel_id");
+			select.addField("perimeter");
+			select.addField("area");
+			select.addField("land_use");
+			select.addField("irrig_type");
+			select.addField("structure_num");
+			select.addField("wd");
+			select.addField("id");
+			select.addField("percent_irrig");
+			select.addTable("vw_CDSS_ParcelUseTSStructureToParcel");
 			break;					
 		case __S_PERSON_DETAILS:
 			select = (DMISelectStatement)statement;
@@ -5271,6 +5364,39 @@ throws Exception {
 			}
 			select.addWhereClause("wells.well_id = well_to_parcel.well_id");
 			break;
+		case __S_WELLS_WELL_TO_PARCEL_VIEW:
+			select = (DMISelectStatement)statement;
+			select.addField("well_id");
+			select.addField("div");
+			select.addField("wd");
+			select.addField("[id]");
+			select.addField("receipt");
+			select.addField("permitno");
+			select.addField("permitsuf");
+			select.addField("permitrpl");
+			select.addField("well_name");
+			select.addField("yield");
+			select.addField("yield_apex");
+			select.addField("perm_date");
+			select.addField("appr_date");
+			select.addField("tperf");
+			select.addField("bperf");
+			select.addField("depth");
+			select.addField("aquifer1");
+			// Put "wdid" in the same order as for "to" method
+			select.addField("wdid");
+			select.addField("flag");
+			select.addField("use1");
+			select.addField("use2");
+			select.addField("use3");
+			select.addField("class");
+			select.addField("distance");
+			select.addField("prorated_yield");
+			select.addField("percent_yield");
+			select.addField("cal_year");
+			select.addField("parcel_id");
+			select.addTable("vw_CDSS_WellsWellToParcel");
+			break;
 		case __S_WELLS_STRUCTURE:
 			select = (DMISelectStatement)statement;
 			select.addField("wells.well_id");
@@ -6206,8 +6332,14 @@ a new command file run in StateDMI and TSTool.
 */
 public void clearCaches ()
 {
-	__readParcelUseTSListCache.clear();
-	__readWellsWellToParcelListCache.clear();
+	//__readParcelUseTSListCache.clear();
+	//__readWellsWellToParcelListCache.clear();
+	
+	// The following are used with HydroBase >= 20200720
+	__parcelUseTSStructureToParcel_District_Year_WDID_Cache.clear();
+	__wellsWellToParcel_WellWD_Year_Cache.clear();
+	__wellsWellToParcel_ParcelId3_Year_Cache.clear();
+	__parcelUseTS_ParcelId3_Year_Cache.clear();
 }
 
 /**
@@ -6936,6 +7068,31 @@ public List<HydroBase_CUBlaneyCriddle> getBlaneyCriddleCUMethod() {
 	}
 
 	return __BlaneyCriddleCUMethod_List;
+}
+
+/**
+Return all records from the parcel use ts structure join cache that have the
+specified structure WDID, for the given calendar year,
+available for HydroBase version >= 20200720.
+The cache must have been populated.
+This is an alternative to the 'readParcelUseTSStructureToParcelListForStructureWdidCalYear() method,
+which was used before cache was implemented.
+This method is used by:<ul>
+<li>StateDMI for processing well data.</li>
+</ul>
+@param wd the structure water district (first part of WDID).
+@param id the structure identifier (second part of WDID).
+@param cal_year Calendar year for which to query the database.
+@return a list of HydroBase_ParcelUseTSStructureToParcel objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_ParcelUseTSStructureToParcel> getCachedParcelUseTSStructureToParcelListForStructureWdidCalYear(
+	int wd, int id, int cal_year ) 
+throws Exception {
+	List<HydroBase_ParcelUseTSStructureToParcel> putsList = new ArrayList<>();
+	// Loop through the cache.
+
+	return putsList;
 }
 
 /**
@@ -12775,25 +12932,60 @@ This method is used by StateDMI.
 @param cal_year cal year to query for - specify missing to ignore.
 @param div Division to query for - specify missing to ignore.
 @param parcel_id Parcel_id to query for - specify missing to ignore.
-@param cacheHydroBase if true, then caching will be performed, in which a full division of data is read upon
-the first query of a division (division must be specified).  Subsequent queries will use the cache to search for
-the object with matching division, calendar year, and parcel_id.  Caching will require more memory but can
-significantly improve performance.
 @return a list of HydroBase_ParcelUseTS objects.  The objects are sorted by
 div, parcel_id, and cal_year.
 */
-public List<HydroBase_ParcelUseTS> readParcelUseTSList(int cal_year, int div, int parcel_id, boolean cacheHydroBase )
+public List<HydroBase_ParcelUseTS> readParcelUseTSList(int cal_year, int div, int parcel_id )
 throws Exception
 {
-	if ( !cacheHydroBase ) {
-		// Pass through the query
-		return readParcelUseTSList( cal_year, div, parcel_id,
-				null, // landuse
-				null, // irrig_type
-				null, // req_date1,
-				null ); // req_date2
+	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
+		String routine = getClass().getSimpleName() + ".readParcelUseTSList";
+		// Get the data from the cached objects rather than a full database query.
+		// There is a tree index:
+		// - first level is parcel_id3 (first 3 digits of parcel_id, which correspond to division and water district)
+		// - second level is calendar year
+		if ( parcel_id > 0 ) {
+			// Querying based on parcel_id (looking up wells associated with parcel)
+			int parcelId3 = Integer.parseInt(("" + parcel_id).substring(0,3));
+			HydroBase_ParcelUseTS_ParcelId3Cache putsParcelId3 =
+				HydroBase_ParcelUseTS_ParcelId3Cache.getForParcelId3(
+					this.__parcelUseTS_ParcelId3_Year_Cache, parcelId3);
+			StopWatch sw = null;
+			if ( putsParcelId3 == null ) {
+				// Do not have parcels for the parcelId3 so read and add to the cache
+				Message.printStatus(2, routine, "Reading ParcelUseTS for cache 3-digit parcel ID " + parcelId3 + "...");
+				sw = new StopWatch(true);
+				List<HydroBase_ParcelUseTS> putsList = readParcelUseTSListForParcelId3(parcelId3);
+				sw.stop();
+				Message.printStatus(2, routine, "  Read " + putsList.size() + " ParcelUseTS for cache for 3-digit parcel ID " +
+					parcelId3 + " in " + sw.getMilliseconds() + " ms.");
+				// Add to the cache for the next read
+				sw.clearAndStart();
+				putsParcelId3 = HydroBase_ParcelUseTS_ParcelId3Cache.createCacheForParcelId3(parcelId3, putsList);
+				sw.stop();
+				Message.printStatus(2, routine, "  Created ParcelUseTS cache for 3-digit parcel ID " + parcelId3 +
+					" in " + sw.getMilliseconds() + " ms");
+				this.__parcelUseTS_ParcelId3_Year_Cache.add(putsParcelId3);
+			}
+			if ( Message.isDebugOn ) {
+				sw = new StopWatch(true);
+			}
+			// Search the cache the records of interest
+			// - have already matched parcelId3 so match cal_year and parcel_id
+			List<HydroBase_ParcelUseTS> putsList2 = putsParcelId3.getData(cal_year, parcel_id);
+			if ( Message.isDebugOn ) {
+				sw.stop();
+				Message.printStatus(2, routine, "Read " + putsList2.size() + " ParcelUseTS from cache for parcel_id=" + parcel_id +
+					" year=" + cal_year + " in " + sw.getMilliseconds() + " ms");
+			}
+			return putsList2;
+		}
+		else {
+			throw new Exception ( "Trying to read ParcelUseTS without parcel_id.");
+		}
 	}
-	else {
+	/* TODO smalers 2020-09-03 old caching design using division array
+	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
 		// Division is required for caching
 		if ( HydroBase_WaterDivision.getDivisionName(div) == null ) {
 			throw new IllegalArgumentException (
@@ -12858,20 +13050,68 @@ throws Exception
 		}
 		return filteredList;
 	}
+	*/
+	else {
+		// Not cached.
+		// Pass through the query
+		return readParcelUseTSList( cal_year, div, parcel_id,
+				null, // landuse
+				null, // irrig_type
+				null, // req_date1,
+				null ); // req_date2
+	}
+}
+
+/**
+Reads all records from the vw_CDSS_ParcelUseTS view for the specified 3-digit parcel ID.
+This method is used to build a tree index, which is when used by:
+<ul>
+<li>StateDMI for processing parcel data.</li>
+</ul>
+@param parcel_id3 the first 3 digits of he parcel identifier to read.
+@return a list of HydroBase_ParcelUseTS objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_ParcelUseTS> readParcelUseTSListForParcelId3(int parcel_id3) 
+throws Exception {
+	DMISelectStatement q = new DMISelectStatement(this);
+	boolean useSP = false; // Read from the a view
+	int sqlNumber = __S_PARCEL_USE_TS_VIEW;
+	buildSQL(useSP, q, sqlNumber );
+	if ( parcel_id3 > 100 ) {
+		// Use the database to match the first 3 digits
+		// - may be OK to add where like int(substring(str(parcel_id),0,3)) = parcel_id3
+		q.addWhereClause("SUBSTRING(CAST(parcel_id as varchar),1,3) = '" + parcel_id3 + "'");
+	}
+	else {
+		throw new IllegalArgumentException ( "The 3-digit parcel ID (" + parcel_id3 + ") is invalid.  Must be > 100 (division 1 + WD)" );
+	}
+	// This sort order is required to build the tree index
+	q.addOrderByClause("parcel_id");
+	q.addOrderByClause("cal_year");
+	q.addOrderByClause("land_use");
+	q.addOrderByClause("irrig_type");
+	ResultSet rs = dmiSelect(q);
+	List<HydroBase_ParcelUseTS> v = toParcelUseTSList(rs, false);
+	closeResultSet(rs);
+	return v;
 }
 
 /**
 Get the cache for the requested division, or return null if no has is available.
 */
+/* TODO smalers 20202-09-03 old version that uses arrays
 private List<HydroBase_ParcelUseTS> readParcelUseTSListCacheGetCache( int div )
 {
 	List<HydroBase_ParcelUseTS> list = __readParcelUseTSListCache.get("" + div);
 	return list;
 }
+*/
 
 /**
 Set the cache for the requested division.
 */
+/* TODO smalers 20202-09-03 old version that uses arrays
 private void readParcelUseTSListCacheSetCache( int div, List<HydroBase_ParcelUseTS> list )
 {	String routine = "HydroBaseDMI.readParcelUseTSListCacheSetCache";
 	// Sort the list by calendar year and build an index to calendar year positions
@@ -12914,6 +13154,7 @@ private void readParcelUseTSListCacheSetCache( int div, List<HydroBase_ParcelUse
 	}
 	__readParcelUseTSListCache.put("" + div, list);
 }
+*/
 
 /**
 Read the parcel_use_ts tables for all data with the matching criteria.<p>
@@ -13162,6 +13403,39 @@ throws Exception {
 }
 
 /**
+Reads all records from the parcel use ts structure join view for the specified water district.
+This method is used by:
+<ul>
+<li>StateDMI for processing parcel data.</li>
+</ul>
+@param wd the water district to read.
+@return a list of HydroBase_ParcelUseTSStructureToParcel objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelForDistrictList(int wd) 
+throws Exception {
+	DMISelectStatement q = new DMISelectStatement(this);
+	boolean useSP = false; // Read from the a view
+	int sqlNumber = __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_VIEW;
+	buildSQL(useSP, q, sqlNumber );
+	if ( wd > 0 ) {
+		q.addWhereClause("wd = " + wd);
+	}
+	else {
+		throw new IllegalArgumentException ( "The water district (" + wd + ") is invalid.  Must be 1+" );
+	}
+	q.addOrderByClause("cal_year");
+	q.addOrderByClause("wd");
+	q.addOrderByClause("id");
+	//q.addOrderByClause("parcel_use_ts.parcel_num");
+	q.addOrderByClause("land_use");
+	ResultSet rs = dmiSelect(q);
+	List<HydroBase_ParcelUseTSStructureToParcel> v = toParcelUseTSStructureToParcelList(rs, sqlNumber);
+	closeResultSet(rs);
+	return v;
+}
+
+/**
 Reads all record from the parcel use ts structure join table that have the specified structure_num.
 This method is used by:<ul>
 <li>HydroBase_GUI_IrrigatedAcres.HydroBase_GUI_IrrigatedAcres()</li>
@@ -13178,7 +13452,8 @@ The stored procedure that corresponds to this query is:<ul>
 public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForStructure_num(int structure_num) 
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
-	buildSQL(q, __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN);
+	int sqlNumber = __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN;
+	buildSQL(q, sqlNumber);
 	if ( structure_num > 0 ) {
 		q.addWhereClause("structure_to_parcel.structure_num = "+ structure_num);
 	}
@@ -13191,7 +13466,7 @@ throws Exception {
 	//q.addOrderByClause("parcel_use_ts.parcel_num");
 	q.addOrderByClause("parcel_use_ts.land_use");
 	ResultSet rs = dmiSelect(q);
-	List<HydroBase_ParcelUseTSStructureToParcel> v = toParcelUseTSStructureToParcelList(rs);
+	List<HydroBase_ParcelUseTSStructureToParcel> v = toParcelUseTSStructureToParcelList(rs, sqlNumber);
 	if (__useSP) {
 		closeResultSet(rs, q);
 		// Sort the data by calendar year since it is not done in the SP
@@ -13228,7 +13503,8 @@ throws Exception {
 		return readParcelUseTSStructureToParcelListForStructure_num(structure_num);
 	}
 	DMISelectStatement q = new DMISelectStatement(this);
-	buildSQL(q, __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR);
+	int sqlNumber = __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_JOIN_FOR_CAL_YEAR;
+	buildSQL(q, sqlNumber);
 	if ( structure_num > 0 ) {
 		q.addWhereClause("structure_to_parcel.structure_num = "+ structure_num);
 	}
@@ -13250,7 +13526,7 @@ throws Exception {
 	q.addOrderByClause("parcel_use_ts.parcel_id");
 	q.addOrderByClause("parcel_use_ts.land_use");
 	ResultSet rs = dmiSelect(q);
-	List<HydroBase_ParcelUseTSStructureToParcel> v = toParcelUseTSStructureToParcelList(rs);
+	List<HydroBase_ParcelUseTSStructureToParcel> v = toParcelUseTSStructureToParcelList(rs, sqlNumber);
 	if (__useSP) {
 		closeResultSet(rs, q);
 		if ( v != null ) {
@@ -13266,7 +13542,9 @@ throws Exception {
 /**
 Reads all records from the parcel use ts structure join table that have the
 specified structure WDID, for the given calendar year.
-The structure is first queried to get the structure number and then the overloaded method is called.
+For HydroBase >= 20200720 a cache is used to look up the data.
+For earlier HydroBase, 
+the structure is first queried to get the structure number and then the overloaded method is called.
 This method is used by:<ul>
 <li>StateDMI for processing well data.</li>
 </ul>
@@ -13283,9 +13561,48 @@ The stored procedure that corresponds to this query is:<ul>
 public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForStructureWdidCalYear(
 	int wd, int id, int cal_year ) 
 throws Exception {
+	String routine = getClass().getSimpleName() + ".readParcelUseTSStructureToParcelListForStructureWdidCalYear";
 	HydroBase_StructureView hbsv = this.readStructureViewForWDID(wd, id);
 
-	return readParcelUseTSStructureToParcelListForStructure_numCal_year( hbsv.getStructure_num(), cal_year );
+	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
+		// New HydroBase that has a view for data for bulk read.
+		// Get the data from the cached objects rather than a full database query.
+		HydroBase_ParcelUseTSStructureToParcel_DistrictCache putsDistrict =
+			HydroBase_ParcelUseTSStructureToParcel_DistrictCache.getForDistrict(
+				this.__parcelUseTSStructureToParcel_District_Year_WDID_Cache, wd);
+		StopWatch sw = null;
+		if ( putsDistrict == null ) {
+			// Do not have parcels for the water district so read all and add to the cache
+			Message.printStatus(2, routine, "Reading ParcelUseTSStructureToParcel for cache for district " + wd + "...");
+			sw = new StopWatch(true);
+			List<HydroBase_ParcelUseTSStructureToParcel> putsList = readParcelUseTSStructureToParcelForDistrictList(wd);
+			sw.stop();
+			Message.printStatus(2, routine, "  Read " + putsList.size() + " ParcelUseTSStructureToParcel for cache for district " +
+				wd + " in " + sw.getMilliseconds() + " ms.");
+			// Add to the cache for the next read
+			sw.clearAndStart();
+			putsDistrict = HydroBase_ParcelUseTSStructureToParcel_DistrictCache.createCache(wd, putsList);
+			sw.stop();
+			Message.printStatus(2, routine, "  Created ParcelUseTSStructureToParcel cache in " + sw.getMilliseconds() + " ms");
+			this.__parcelUseTSStructureToParcel_District_Year_WDID_Cache.add(putsDistrict);
+		}
+		// Search the list for the records of interest
+		if ( Message.isDebugOn ) {
+			sw = new StopWatch(true);
+		}
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList2 = putsDistrict.getData(cal_year, wd, id);
+		if ( Message.isDebugOn ) {
+			sw.stop();
+			Message.printStatus(2, routine, "Read " + putsList2.size() + " ParcelUseTSStructureToParcel from cache for year=" +
+				cal_year + " wd=" + wd + " id=" + id + " in " + sw.getMilliseconds() + " ms");
+		}
+		return putsList2;
+	}
+	else {
+		// HydroBase prior to 20200720 that uses stored procedure.
+		// Must do a call for each structure.
+		return readParcelUseTSStructureToParcelListForStructure_numCal_year( hbsv.getStructure_num(), cal_year );
+	}
 }
 
 /**
@@ -20677,6 +20994,72 @@ throws Exception {
 }
 
 /**
+Reads all records from the vw_CDSS_WellsWellToParcel view for the specified 3-digit parcel ID.
+This method is used to build a tree index, which is hen used by:
+<ul>
+<li>StateDMI for processing parcel data.</li>
+</ul>
+@param parcel_id3 the first 3 digits of he parcel identifier to read.
+@return a list of HydroBase_Wells objects (join of wells and parcels).
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_Wells> readWellsWellToParcelListForParcelId3(int parcel_id3) 
+throws Exception {
+	DMISelectStatement q = new DMISelectStatement(this);
+	boolean useSP = false; // Read from the a view
+	int sqlNumber = __S_WELLS_WELL_TO_PARCEL_VIEW;
+	buildSQL(useSP, q, sqlNumber );
+	if ( parcel_id3 > 100 ) {
+		// Use the database to match the first 3 digits
+		// - may be OK to add where like int(substring(str(parcel_id),0,3)) = parcel_id3
+		q.addWhereClause("SUBSTRING(CAST(parcel_id as varchar),1,3) = '" + parcel_id3 + "'");
+	}
+	else {
+		throw new IllegalArgumentException ( "The 3-digit parcel ID (" + parcel_id3 + ") is invalid.  Must be > 100 (division 1 + WD)" );
+	}
+	q.addOrderByClause("parcel_id");
+	q.addOrderByClause("cal_year");
+	q.addOrderByClause("wd");
+	q.addOrderByClause("id");
+	ResultSet rs = dmiSelect(q);
+	List<HydroBase_Wells> v = toWellsList(rs, sqlNumber);
+	closeResultSet(rs);
+	return v;
+}
+
+/**
+Reads all records from the vw_CDSS_WellsWellToParcel view for the specified well water district.
+This method is used to build a tree index, which is hen used by:
+<ul>
+<li>StateDMI for processing parcel data.</li>
+</ul>
+@param wd the well water district to read.
+@return a list of HydroBase_Wells objects (join of wells and parcels).
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_Wells> readWellsWellToParcelListForWellWD(int wd) 
+throws Exception {
+	DMISelectStatement q = new DMISelectStatement(this);
+	boolean useSP = false; // Read from the a view
+	int sqlNumber = __S_WELLS_WELL_TO_PARCEL_VIEW;
+	buildSQL(useSP, q, sqlNumber );
+	if ( wd > 0 ) {
+		q.addWhereClause("wd = " + wd);
+	}
+	else {
+		throw new IllegalArgumentException ( "The water district (" + wd + ") is invalid.  Must be 1+" );
+	}
+	q.addOrderByClause("wd");
+	q.addOrderByClause("cal_year");
+	q.addOrderByClause("id");
+	q.addOrderByClause("parcel_id");
+	ResultSet rs = dmiSelect(q);
+	List<HydroBase_Wells> v = toWellsList(rs, sqlNumber);
+	closeResultSet(rs);
+	return v;
+}
+
+/**
 Read the wells and well_to_parcel table for all data where the tables share
 the same well_id.  Possibly use irrig_acre<p>
 This is called by:<ul>
@@ -20696,14 +21079,16 @@ TODO (JTS - 2005-03-04) change the following to use -999 instead of -1
 more memory but greatly improves performance for subsequent reads.
 @throws Exception if an error occurs.
 */
-public List<HydroBase_Wells> readWellsWellToParcelList(int parcel_id, int cal_year, int div, boolean cacheHydroBase )
+public List<HydroBase_Wells> readWellsWellToParcelList(int parcel_id, int cal_year, int div )
 throws Exception
 {
-	if ( !cacheHydroBase ) {
-		// Pass the call through
-		return readWellsWellToParcelList( parcel_id, cal_year, div, null, -1, -1 );
-	}
-	else {
+	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
+		// Old code is commented out below.  The new code uses the tree index cache.
+		String receipt = null;
+		int wd = -1;
+		int id = -1;
+		return readWellsWellToParcelList ( parcel_id, cal_year, div, receipt, wd, id );
+		/*
 		// Division is required for caching
 		if ( HydroBase_WaterDivision.getDivisionName(div) == null ) {
 			throw new IllegalArgumentException (
@@ -20761,23 +21146,31 @@ throws Exception
 			filteredList.add ( listItem );
 		}
 		return filteredList;
+		*/
+	}
+	else {
+		// Pass the call through
+		return readWellsWellToParcelList( parcel_id, cal_year, div, null, -1, -1 );
 	}
 }
 
 /**
 Get the cache for the requested division, or return null if none is available.
 */
+/* TODO smalers 2020-09-03 has been replaced with tree index
 private List<HydroBase_Wells> readWellsWellToParcelListCacheGetCache( int div)
 {
 	List<HydroBase_Wells> list = __readWellsWellToParcelListCache.get("" + div);
 	return list;
 }
+*/
 
 /**
 Set the cache for the requested division.
 @param div division to indicate cache
 @param list list of all data objects in division
 */
+/* TODO smalers 2020-09-03 has been replaced with tree index
 private void readWellsWellToParcelListCacheSetCache( int div, List<HydroBase_Wells> list )
 {	String routine = "HydroBaseDMI.readWellsWellToParcelListCacheSetCache";
 	__readWellsWellToParcelListCache.put("" + div, list);
@@ -20821,6 +21214,7 @@ private void readWellsWellToParcelListCacheSetCache( int div, List<HydroBase_Wel
 	}
 	__readWellsWellToParcelListCache.put("" + div, list);
 }
+*/
 
 // TODO (SAM 2004-09-22) The HydroBase_Wells class is a join of all the well*
 // table data.  This is OK for now since it such esoteric data; however, it does
@@ -20848,83 +21242,169 @@ TODO (JTS - 2005-03-04) change the following to use -999 instead of -1
 */
 public List<HydroBase_Wells> readWellsWellToParcelList ( int parcel_id, int cal_year, int div, String receipt, int wd, int id ) 
 throws Exception {
-	if (__useSP) {
-		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
-			
-		String[] triplet = null;
-
-		if (parcel_id != -1) {
-			triplet = new String[3];
-			triplet[0] = "parcel_id";
-			triplet[1] = "EQ";
-			triplet[2] = "" + parcel_id;
-			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
+		String routine = getClass().getSimpleName() + ".readWellsWellToParcelList";
+		// New HydroBase that has a view for data for bulk read.
+		// Get the data from the cached objects rather than a full database query.
+		// There are two indexes:
+		// - either well WD or parcel_id3 (first 3 digits of parcel_id, which correspond to division and water district)
+		// - calendar year
+		// - does not make sense to index on full parcel or well WDID since relatively small number of records in each
+		StopWatch sw = null;
+		if ( parcel_id > 0 ) {
+			// Querying based on parcel_id (looking up wells associated with parcel, such as when processing ditches with wells)
+			int parcelId3 = Integer.parseInt(("" + parcel_id).substring(0,3));
+			HydroBase_WellsWellToParcel_ParcelId3Cache wellsParcelId3 =
+				HydroBase_WellsWellToParcel_ParcelId3Cache.getForParcelId3(
+					this.__wellsWellToParcel_ParcelId3_Year_Cache, parcelId3);
+			if ( wellsParcelId3 == null ) {
+				// Do not have wells for the parcelId3 so read and add to the cache
+				Message.printStatus(2, routine, "Reading WellsWellToParcel for cache 3-digit parcel ID " + parcelId3 + "...");
+				sw = new StopWatch(true);
+				List<HydroBase_Wells> wellsList = readWellsWellToParcelListForParcelId3(parcelId3);
+				sw.stop();
+				Message.printStatus(2, routine, "  Read " + wellsList.size() + " WellsWellToParcel for cache for 3-digit parcel ID " +
+					parcelId3 + " in " + sw.getMilliseconds() + " ms");
+				// Add to the cache for the next read
+				sw.clearAndStart();
+				wellsParcelId3 = HydroBase_WellsWellToParcel_ParcelId3Cache.createCacheForParcelId3(parcelId3, wellsList);
+				sw.stop();
+				Message.printStatus(2, routine, "  Created WellsWellToParcel cache for 3-digit parcel ID " + parcelId3 +
+					" in " + sw.getMilliseconds() + " ms");
+				this.__wellsWellToParcel_ParcelId3_Year_Cache.add(wellsParcelId3);
+			}
+			if ( Message.isDebugOn ) {
+				sw = new StopWatch(true);
+			}
+			//List<HydroBase_Wells> wellsList2 = wellsYear.getData(cal_year, wd, id, parcel_id, receipt);
+			// Search the cache the records of interest
+			// - have already matched parcelId3 so match cal_year and parcel_id
+			List<HydroBase_Wells> wellsList2 = wellsParcelId3.getData(cal_year, parcel_id);
+			if ( Message.isDebugOn ) {
+				sw.stop();
+				Message.printStatus(2, routine, "Read " + wellsList2.size() + " WellsWellToParcel from cache for parcel_id=" + parcel_id +
+					" year=" + cal_year + " in " + sw.getMilliseconds() + " ms");
+			}
+			return wellsList2;
 		}
-
-		if (cal_year != -1) {
-			triplet = new String[3];
-			triplet[0] = "cal_year";
-			triplet[1] = "EQ";
-			triplet[2] = "" + cal_year;
-			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		else if ( (wd > 0) || (receipt != null) ) {
+			// Querying based on well WDID (looking up parcels associated with well, such as when processing well-only lands)
+			HydroBase_WellsWellToParcel_WellWDCache wellsWellWD =
+				HydroBase_WellsWellToParcel_WellWDCache.getForWellWD(
+					this.__wellsWellToParcel_WellWD_Year_Cache, wd);
+			if ( wellsWellWD == null ) {
+				// Do not have wells for the well WD so read and add to the cache
+				Message.printStatus(2, routine, "Reading WellsWellToParcel for cache for well WD " + wd + "...");
+				sw = new StopWatch(true);
+				List<HydroBase_Wells> wellsList = readWellsWellToParcelListForWellWD(wd);
+				sw.stop();
+				Message.printStatus(2, routine, "  Read " + wellsList.size() + " WellsWellToParcel for cache well WD " +
+					wd + " in " + sw.getMilliseconds() + " ms");
+				// Add to the cache for the next read
+				sw.clearAndStart();
+				wellsWellWD = HydroBase_WellsWellToParcel_WellWDCache.createCacheForWellWD(wd, wellsList);
+				sw.stop();
+				Message.printStatus(2, routine, "  Created WellsWellToParcel cache for well WD " + wd + " in " + sw.getMilliseconds() + " ms");
+				this.__wellsWellToParcel_WellWD_Year_Cache.add(wellsWellWD);
+			}
+			// Search the list for the records of interest
+			if ( Message.isDebugOn ) {
+				sw = new StopWatch(true);
+			}
+			//List<HydroBase_Wells> wellsList2 = wellsYear.getData(cal_year, wd, id, parcel_id, receipt);
+			List<HydroBase_Wells> wellsList2 = wellsWellWD.getData(cal_year, wd, id, receipt);
+			if ( Message.isDebugOn ) {
+				sw.stop();
+				Message.printStatus(2, routine, "Read " + wellsList2.size() + " WellsWellToParcel from cache for wd=" + wd +
+					" id=" + id + " in " + sw.getMilliseconds() + " ms");
+			}
+			return wellsList2;
 		}
-
-		if (div != -1) {
-			triplet = new String[3];
-			triplet[0] = "div";
-			triplet[1] = "EQ";
-			triplet[2] = "" + div;
-			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		else {
+			throw new Exception ( "Trying to read WellsWellToParcel without parcel_id or wdid.");
 		}
-		
-		if ( (receipt != null) && !receipt.isEmpty() ) {
-			triplet = new String[3];
-			triplet[0] = "receipt";
-			triplet[1] = "MA";
-			triplet[2] = receipt;
-			HydroBase_GUI_Util.addTriplet(parameters, triplet);
-		}
-		
-		if (wd > 0) {
-			triplet = new String[3];
-			triplet[0] = "wd";
-			triplet[1] = "EQ";
-			triplet[2] = "" + wd;
-			HydroBase_GUI_Util.addTriplet(parameters, triplet);
-		}
-		
-		if (id > 0) {
-			triplet = new String[3];
-			triplet[0] = "id";
-			triplet[1] = "EQ";
-			triplet[2] = "" + id;
-			HydroBase_GUI_Util.addTriplet(parameters, triplet);
-		}
-
-		// TODO (JTS - 2005-02-16) if set_date is provided, should sort on set_date DESC
-
-		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_WellsWellToParcel"), 0, null);
-		ResultSet rs = runSPFlex(parameters);
-		List<HydroBase_Wells> v = toWellsWellToParcelSPList(rs);
-		closeResultSet(rs, __lastStatement);
-		return v;
 	}
 	else {
-		DMISelectStatement q = new DMISelectStatement(this);
-		buildSQL(q, __S_WELLS_PARCEL);
-		if (parcel_id >= 0) {
-			q.addWhereClause("well_to_parcel.parcel_id=" + parcel_id);
+		// HydroBase prior to 20200720 that uses stored procedure
+		// - does not use the cache
+		if (__useSP) {
+			String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
+			
+			String[] triplet = null;
+
+			if (parcel_id != -1) {
+				triplet = new String[3];
+				triplet[0] = "parcel_id";
+				triplet[1] = "EQ";
+				triplet[2] = "" + parcel_id;
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);
+			}
+
+			if (cal_year != -1) {
+				triplet = new String[3];
+				triplet[0] = "cal_year";
+				triplet[1] = "EQ";
+				triplet[2] = "" + cal_year;
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);
+			}
+
+			if (div != -1) {
+				triplet = new String[3];
+				triplet[0] = "div";
+				triplet[1] = "EQ";
+				triplet[2] = "" + div;
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);
+			}
+		
+			if ( (receipt != null) && !receipt.isEmpty() ) {
+				triplet = new String[3];
+				triplet[0] = "receipt";
+				triplet[1] = "MA";
+				triplet[2] = receipt;
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);
+			}
+		
+			if (wd > 0) {
+				triplet = new String[3];
+				triplet[0] = "wd";
+				triplet[1] = "EQ";
+				triplet[2] = "" + wd;
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);
+			}
+		
+			if (id > 0) {
+				triplet = new String[3];
+				triplet[0] = "id";
+				triplet[1] = "EQ";
+				triplet[2] = "" + id;
+				HydroBase_GUI_Util.addTriplet(parameters, triplet);
+			}
+
+			// TODO (JTS - 2005-02-16) if set_date is provided, should sort on set_date DESC
+
+			HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber("vw_CDSS_WellsWellToParcel"), 0, null);
+			ResultSet rs = runSPFlex(parameters);
+			List<HydroBase_Wells> v = toWellsWellToParcelSPList(rs);
+			closeResultSet(rs, __lastStatement);
+			return v;
 		}
-		if (cal_year >= 0) {
-			q.addWhereClause("well_to_parcel.cal_year=" + cal_year);
+		else {
+			DMISelectStatement q = new DMISelectStatement(this);
+			buildSQL(q, __S_WELLS_PARCEL);
+			if (parcel_id >= 0) {
+				q.addWhereClause("well_to_parcel.parcel_id=" + parcel_id);
+			}
+			if (cal_year >= 0) {
+				q.addWhereClause("well_to_parcel.cal_year=" + cal_year);
+			}
+			if (div >= 0) {
+				q.addWhereClause("well_to_parcel.div=" + div);
+			}
+			ResultSet rs = dmiSelect(q);
+			List<HydroBase_Wells> v = toWellsList(rs, __S_WELLS_PARCEL);
+			closeResultSet(rs);
+			return v;
 		}
-		if (div >= 0) {
-			q.addWhereClause("well_to_parcel.div=" + div);
-		}
-		ResultSet rs = dmiSelect(q);
-		List<HydroBase_Wells> v = toWellsList(rs, __S_WELLS_PARCEL);
-		closeResultSet(rs);
-		return v;
 	}
 }
 
@@ -30050,6 +30530,8 @@ throws Exception {
 			i = rs.getInt(index++);
 			if (!rs.wasNull()) {
 				data.setParcel_id(i);
+				// Also set the 3-digit identifier used with StateDMI indexing
+				data.setParcel_id3(Integer.parseInt(("" + i).substring(0,3)));
 			}
 			d = rs.getDouble(index++);
 			if (!rs.wasNull()) {
@@ -30077,10 +30559,11 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_ParcelUseTSStructureToParcel objects.
 @param rs ResultSet to translate.
+@param sqlNumber indicates the SQL that was used, to inform the order.
 @return a list of HydroBase_ParcelUseTSStructureToParcel
 @throws Exception if an error occurs.
 */
-private List<HydroBase_ParcelUseTSStructureToParcel> toParcelUseTSStructureToParcelList (ResultSet rs) 
+private List<HydroBase_ParcelUseTSStructureToParcel> toParcelUseTSStructureToParcelList (ResultSet rs, int sqlNumber) 
 throws Exception {
 	HydroBase_ParcelUseTSStructureToParcel data = null;
 	List<HydroBase_ParcelUseTSStructureToParcel> v = new ArrayList<HydroBase_ParcelUseTSStructureToParcel>();
@@ -30108,6 +30591,8 @@ throws Exception {
 		i = rs.getInt(index++);
 		if (!rs.wasNull()) {
 			data.setParcel_id(i);
+			// Also set the 3-digit identifier used with StateDMI indexing
+			data.setParcel_id3(Integer.parseInt(("" + i).substring(0,3)));
 		}
 		d = rs.getDouble(index++);
 		if (!rs.wasNull()) {
@@ -30129,13 +30614,31 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setStructure_num(i);
 		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setPrimary_flag(i);
+		if ( sqlNumber == __S_PARCEL_USE_TS_STRUCTURE_TO_PARCEL_VIEW ) {
+			// As of 20200720
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setStructureWD(i);
+			}
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setStructureID(i);
+			}
+			d = rs.getDouble(index++);
+			if (!rs.wasNull()) {
+				data.setPercent_irrig(d);
+			}
 		}
-		d = rs.getDouble(index++);
-		if (!rs.wasNull()) {
-			data.setPercent_irrig(d);
+		else {
+			// Legacy versions
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setPrimary_flag(i);
+			}
+			d = rs.getDouble(index++);
+			if (!rs.wasNull()) {
+				data.setPercent_irrig(d);
+			}
 		}
 		v.add(data);
 	}
@@ -36348,18 +36851,20 @@ throws Exception {
 /**
 Translate a ResultSet to HydroBase_Wells objects.
 @param rs ResultSet to translate.
+@param sqlNumber SQL number being processed, which modifies the behavior
 @return a list of HydroBase_Wells
 @throws Exception if an error occurs.
 */
 private List<HydroBase_Wells> toWellsList (ResultSet rs, int sqlNumber) 
 throws Exception {
 	HydroBase_Wells data = null;
-	List<HydroBase_Wells> v = new ArrayList<HydroBase_Wells>();
+	List<HydroBase_Wells> v = new ArrayList<>();
 	int index = 1;
 
 	if ( (sqlNumber != __S_WELLS) && (sqlNumber != __S_WELLS_VIEW) && (sqlNumber != __S_WELLS_LAYER)
 		&& (sqlNumber != __S_WELLS_PARCEL) &&
-		(sqlNumber != __S_WELLS_STRUCTURE) && (sqlNumber != __S_WELLS_PARCEL_STRUCTURE) ) {
+		(sqlNumber != __S_WELLS_STRUCTURE) && (sqlNumber != __S_WELLS_PARCEL_STRUCTURE) &&
+		(sqlNumber != __S_WELLS_WELL_TO_PARCEL_VIEW) ) {
 		throw new Exception ("Invalid sqlNumber passed to 'toWellsList': " + sqlNumber);
 	}
 
@@ -36447,6 +36952,7 @@ throws Exception {
 			data.setAquifer1(s.trim());
 		}
 		// wd_id - same as wdid at end
+		// TODO smalers 2020-09-03 why even parse since set above?
 		s = rs.getString(index++);
 		if (!rs.wasNull() && !s.isEmpty() ) {
 			wdidParts = HydroBase_WaterDistrict.parseWDID(s);
@@ -36488,10 +36994,13 @@ throws Exception {
 				data.setDitches_served(i);
 			}
 		} 
-		if ( (sqlNumber == __S_WELLS_PARCEL) || (sqlNumber == __S_WELLS_PARCEL_STRUCTURE) ) {
-			i = rs.getInt(index++);
-			if (!rs.wasNull()) {
-				data.setParcel(i);
+		if ( (sqlNumber == __S_WELLS_PARCEL) || (sqlNumber == __S_WELLS_PARCEL_STRUCTURE) ||
+			(sqlNumber == __S_WELLS_WELL_TO_PARCEL_VIEW) ) {
+			if ( sqlNumber != __S_WELLS_WELL_TO_PARCEL_VIEW ) {
+				i = rs.getInt(index++);
+				if (!rs.wasNull()) {
+					data.setParcel(i);
+				}
 			}
 			i = rs.getInt(index++);
 			if (!rs.wasNull()) {
@@ -36512,9 +37021,11 @@ throws Exception {
 				}
 			}
 			if (version >= VERSION_20040701) {
-				i = rs.getInt(index++);
-				if (!rs.wasNull()) {
-					data.setDiv(i);
+				if ( sqlNumber != __S_WELLS_WELL_TO_PARCEL_VIEW ) {
+					i = rs.getInt(index++);
+					if (!rs.wasNull()) {
+						data.setDiv(i);
+					}
 				}
 				i = rs.getInt(index++);
 				if (!rs.wasNull()) {
@@ -36523,6 +37034,8 @@ throws Exception {
 				i = rs.getInt(index++);
 				if (!rs.wasNull()) {
 					data.setParcel_id(i);
+					// Also set the 3-digit identifier used with StateDMI indexing
+					data.setParcel_id3(Integer.parseInt(("" + i).substring(0,3)));
 				}
 			}
 		}	
@@ -36563,6 +37076,8 @@ throws Exception {
 				i = rs.getInt(index++);
 				if (!rs.wasNull()) {
 					data.setParcel_id(i);
+					// Also set the 3-digit identifier
+					data.setParcel_id3(Integer.parseInt(("" + i).substring(0,3)));
 				}
 			}
 		}
@@ -36573,6 +37088,7 @@ throws Exception {
 			}
 		}
 
+		// Add to the result
 		v.add(data);
 	}
 

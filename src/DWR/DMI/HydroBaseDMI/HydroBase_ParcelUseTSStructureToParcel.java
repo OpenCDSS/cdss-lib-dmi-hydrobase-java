@@ -48,7 +48,9 @@ implements Comparable<HydroBase_ParcelUseTSStructureToParcel>
 
 // structure_to_parcel fields
 protected int _structure_num = DMIUtil.MISSING_INT;
+// 2020-08-24 note that primary_flag is not used in vw_CDSS_ParcelUseTSStructureToParcel in HydroBase 20200720
 protected int _primary_flag = DMIUtil.MISSING_INT;
+// _percent_irrig is actually a fraction 0.0 to 1.0
 protected double _percent_irrig = DMIUtil.MISSING_DOUBLE;
 
 // TODO SAM 2010-01-18 Figure out whether can be set in original query.

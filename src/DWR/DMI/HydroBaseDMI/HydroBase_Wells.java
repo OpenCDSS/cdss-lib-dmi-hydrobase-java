@@ -49,6 +49,8 @@ import java.util.Date;
 
 /**
 Class to store data from the HydroBase wells table and related parcel tables.
+TODO smalers 2020-08-24 this is a bit confusing because it does not follow the normal
+convention like HydroBase_Wells_WellToParcel, etc., probably because it would be a really long name?
 */
 public class HydroBase_Wells extends DMIDataObject
 {
@@ -90,6 +92,7 @@ protected float _prorated_yield = DMIUtil.MISSING_FLOAT;
 protected double _percent_yield = DMIUtil.MISSING_DOUBLE;
 protected int _cal_year = DMIUtil.MISSING_INT;
 protected int _parcel_id = DMIUtil.MISSING_INT;
+protected int _parcel_id3 = DMIUtil.MISSING_INT; // First 3 digits of _parcel_id, which correspond to Div and WD.
 
 // well_to_structure
 protected String _ditch_id = DMIUtil.MISSING_STRING;
@@ -271,6 +274,14 @@ Returns _parcel_id (same as parcel_use_ts._parcel_num)
 */
 public int getParcel_id() {
 	return _parcel_id;
+}
+
+/**
+Returns _parcel_id3
+@return _parcel_id3
+*/
+public int getParcel_id3() {
+	return _parcel_id3;
 }
 
 /**
@@ -583,6 +594,14 @@ Sets _parcel_id (same as parcel_use_ts.parcel_num)
 */
 public void setParcel_id(int parcel_id) {
 	_parcel_id = parcel_id;
+}
+
+/**
+Sets _parcel_id3
+@param value to put into _parcel_id3
+*/
+public void setParcel_id3(int parcel_id3) {
+	_parcel_id3 = parcel_id3;
 }
 
 /**

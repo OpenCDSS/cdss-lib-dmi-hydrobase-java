@@ -251,6 +251,21 @@ public static List<HydroBase_WaterDistrict> lookupWaterDistrictsForDivision (
 }
 
 /**
+Lookup the water division integer from a water district.
+TODO smalers 2020-08-24 this could be optimized by putting into an array with direct lookup.
+@param wd water district to evaluate.
+@return the water division integer identifier corresponding to the district, or -1 if not found.
+*/
+public static int lookupWaterDivisionIdForDistrict ( List<HydroBase_WaterDistrict> wdList, int wd ) {
+    for ( HydroBase_WaterDistrict wd2 : wdList ) {
+        if ( wd2.getWD() == wd ) {
+            return wd2.getDiv();
+        }
+    }
+    return -1;
+}
+
+/**
 This function takes a String consisting of the water district number and name and returns the water district
 number.  The format of the districtNumber_name String consist of at most a two digit number in the left most
 portion of the string followed by a space and a dash which separates the number from the water district name.
