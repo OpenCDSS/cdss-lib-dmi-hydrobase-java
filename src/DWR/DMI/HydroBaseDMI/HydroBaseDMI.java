@@ -797,7 +797,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -1756,7 +1755,7 @@ private List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache>
  * The data model is as follows:
  *   List<HydroBase_WellsWellToParcel_WellWDCache> - list of data for well WD
  *     List<HydroBase_WellsWellToParcel_YearCache> - list of data for years
- *       List<HydroBase_Wells> - list of raw HydroBase data records
+ *       List<HydroBase_Wells> - list of raw HydroBase data records (object includes well and parcel)
  * - the cache is populated in lazy fashion as Well WD of interest are requested
  */
 private List<HydroBase_WellsWellToParcel_WellWDCache> __wellsWellToParcel_WellWD_Year_Cache = new ArrayList<>();
@@ -1769,7 +1768,7 @@ private List<HydroBase_WellsWellToParcel_WellWDCache> __wellsWellToParcel_WellWD
  * The data model is as follows:
  *   List<HydroBase_WellsWellToParcel_ParcelId3Cache> - list of data for parcel ID first 3 digits
  *     List<HydroBase_WellsWellToParcel_YearCache> - list of data for years
- *       List<HydroBase_Wells> - list of raw HydroBase data records
+ *       List<HydroBase_Wells> - list of raw HydroBase data records (object includes well and parcel)
  * - the cache is populated in lazy fashion as parcelId3 are requested
  */
 private List<HydroBase_WellsWellToParcel_ParcelId3Cache> __wellsWellToParcel_ParcelId3_Year_Cache = new ArrayList<>();
@@ -20900,6 +20899,53 @@ throws Exception {
 }
 
 /**
+Read the wells table.
+This version queries the view, not SPFlex.
+This is called by StateDMI.
+@param divArray array of water divisions.
+@param distArray array of water districts.
+@param receipt if '*', wells with non-empty and non null receipt are returned.
+@return a list of HydroBase_Wells objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_Wells> readWellsList ( int [] divArray, int [] distArray, String receipt ) 
+throws Exception {
+	DMISelectStatement q = new DMISelectStatement(this);
+	if ( (divArray != null) && (divArray.length > 0) ) {
+		// Query for the divisions of interest
+		Integer [] divoArray = new Integer[divArray.length];
+		for ( int i = 0; i < divArray.length; i++ ) {
+			divoArray[i] = new Integer(divArray[i]);
+		}
+		q.addWhereClause(DMIUtil.formatIn(this, "vw_CDSS_Wells", "div", divoArray));
+	}
+	if ( (distArray != null) && (distArray.length > 0) ) {
+		// Query for the districts of interest
+		Integer [] distoArray = new Integer[distArray.length];
+		for ( int i = 0; i < distArray.length; i++ ) {
+			distoArray[i] = new Integer(distArray[i]);
+		}
+		q.addWhereClause(DMIUtil.formatIn(this, "vw_CDSS_Wells", "wd", distoArray));
+	}
+	if ( receipt != null ) {
+		if ( receipt.equals("*") ) {
+			// Search for non-empty receipt
+			q.addWhereClause("((vw_CDSS_Wells.receipt IS NOT NULL) AND (vw_CDSS_Wells.receipt != ''))");
+		}
+		else {
+			// Search for specific receipt
+			q.addWhereClause("((vw_CDSS_Wells.receipt IS NOT NULL) AND (vw_CDSS_Wells.receipt == '" + receipt + "'))");
+		}
+	}
+	boolean useSP = false;
+	buildSQL(useSP,q, __S_WELLS_VIEW);
+	ResultSet rs = dmiSelect(q);
+	List<HydroBase_Wells> v = toWellsList(rs, __S_WELLS_VIEW);
+	closeResultSet(rs);
+	return v;
+}
+
+/**
 Read the wells table for all data.<p>
 This is called by:<ul>
 <li>StateDMI</li>
@@ -20907,6 +20953,9 @@ This is called by:<ul>
 <p><b>Stored Procedure</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_Wells</li>
+@param receipt well receipt - if specified, filter the query
+@param wd water district- if specified > 0, filter the query
+@param id identifier part of WDID - if specified > 0, filter the query
 @return a list of HydroBase_Wells objects.
 @throws Exception if an error occurs.
 */
@@ -20925,12 +20974,14 @@ throws Exception {
 			triplet[2] = receipt;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
-		if ( (wd > 0) && (id > 0) ) {
+		if ( wd > 0 ) {
 			triplet = new String[3];
 			triplet[0] = "wd";
 			triplet[1] = "EQ";
 			triplet[2] = "" + wd;
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
+		}
+		if ( id > 0 ) {
 			triplet = new String[3];
 			triplet[0] = "id";
 			triplet[1] = "EQ";
