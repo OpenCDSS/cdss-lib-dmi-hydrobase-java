@@ -104,7 +104,7 @@ public class HydroBase_ParcelUseTSStructureToParcel_DistrictCache {
 		List<HydroBase_ParcelUseTSStructureToParcel> putsList = new ArrayList<>();
 		// Find the year data
 		for ( HydroBase_ParcelUseTSStructureToParcel_YearCache putsYearCache : this.parcelUseTSForYearList ) {
-			if ( cal_year == putsYearCache.getYear() ) {
+			if ( (cal_year < 0) || (cal_year == putsYearCache.getYear()) ) {
 				// Matched the requested year. Find the WDID data.
 				putsList.addAll(putsYearCache.getData(wd, id));
 			}
