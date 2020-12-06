@@ -6791,8 +6791,12 @@ public void determineDatabaseVersion() {
 	boolean version_found = false;
 	long version = VERSION_UNKNOWN;
 	try {
+	    // VERSION_20200720
+        if (isVersionAtLeast(VERSION_20200720)) {
+            version = VERSION_20200720;
+        }
 	    // VERSION_20130404
-        if (isVersionAtLeast(VERSION_20130404)) {
+        else if (isVersionAtLeast(VERSION_20130404)) {
             version = VERSION_20130404;
         }
 		// VERSION_20070525
