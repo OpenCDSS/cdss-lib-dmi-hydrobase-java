@@ -115,7 +115,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.text.JTextComponent;
 
 import java.awt.BorderLayout;
@@ -256,6 +258,8 @@ private String __MODEL_StateMod = "StateMod";
 /**
 Whether to display the models for users to select from - used by StateDMI since it
 has separate StateCU and StateMod looks.
+If __showModels = true, the dialog is configured for StateDMI.
+If __showModels = false, the dialog is configured for TSTool.
 */
 private boolean __showModels = false;
 
@@ -303,6 +307,18 @@ private JPasswordField __passwordJPasswordField = null;
 The textfield for entering the user name into.
 */
 private JTextField __loginJTextField = null;
+
+/**
+ * Checkbox for whether to define 'HydroBase' datastore,
+ * as default so configuration file does not need to be defined.
+ */
+private JCheckBox __defineHydroBaseDatastoreJCheckBox = null;
+
+/**
+ * Checkbox for whether to define 'HydroBaseYYYYMMDD' datastore,
+ * as default so configuration file does not need to be defined.
+ */
+private JCheckBox __defineHydroBaseVersionDatastoreJCheckBox = null;
 
 /**
 The status bar text field.
@@ -424,7 +440,7 @@ public SelectHydroBaseJDialog(JFrame parent, HydroBaseDMI hbdmi, PropList props)
 	JGUIUtil.setWaitCursor(parent, true);
 	readConfigurationFile();
 
-	__databaseNames = new Hashtable<String,List<String>>();
+	__databaseNames = new Hashtable<>();
 	
 	try {
 		initialize(parent, hbdmi, props);
@@ -447,7 +463,7 @@ Responds to action events.
 public void actionPerformed(ActionEvent event) {
 	String command = event.getActionCommand();
 	
-	// actions are ignored only when the __hostnameJComboBox is being
+	// Actions are ignored only when the __hostnameJComboBox is being
 	// repopulated via add() calls, otherwise each add() would result
 	// in an actionPerformed() being fired.
 	if (__ignoreAction) {
@@ -458,17 +474,17 @@ public void actionPerformed(ActionEvent event) {
 		okClicked();
 	}  
 	else if (command.equals(__BUTTON_CANCEL)) {
-        	cancelClicked();
+       	cancelClicked();
 	}
 	else if (event.getSource() == __hostnameJComboBox) {
 		findDatabaseNames();
 		__lastSelectedServer = __hostnameJComboBox.getSelected();
 	}
 	else if (event.getSource() == __useSPJCheckBox) {
-		// rebuild the hashtable because there is a chance that hashed
+		// Rebuild the hashtable because there is a chance that hashed
 		// database names for a server are no longer valid when 
 		// the stored procedure option is turned off and back on.
-		__databaseNames = new Hashtable<String,List<String>>();
+		__databaseNames = new Hashtable<>();
 		findDatabaseNames();
 	}
 }      
@@ -594,7 +610,7 @@ private void checkServerForDatabaseNames(String server)
 		
 		String s = null;
 		int count = 0;
-		List<String> databaseNames = new ArrayList<String>();
+		List<String> databaseNames = new ArrayList<>();
 		for ( int i = 0; i < size; i++) {
 			v2 = (List)v.get(i);
 			if ( v2.size() < 1 ) {
@@ -634,7 +650,7 @@ private void checkServerForDatabaseNames(String server)
 		Message.printWarning(3, routine, "Error getting database names (" + e + ").");
 		Message.printWarning(3,routine,e);
 		__databaseNamesJComboBox.removeAllItems();
-		List<String> v = new ArrayList<String>();
+		List<String> v = new ArrayList<>();
 		v.add(__NO_DATABASES);
 		__databaseNamesJComboBox.add(__NO_DATABASES);
 		ok(false);
@@ -873,6 +889,22 @@ public static String getDefaultPassword() {
 }
 
 /**
+ * Get whether to define a datastore named 'HydroBase'.
+ * @return whether to define a datastore named 'HydroBase'.
+ */
+public boolean getDefineHydroBaseDatastore() {
+	return this.__defineHydroBaseDatastoreJCheckBox.isSelected();
+}
+
+/**
+ * Get whether to define a datastore named 'HydroBaseYYYYMMDD'.
+ * @return whether to define a datastore named 'HydroBaseYYYYMMDD'.
+ */
+public boolean getDefineHydroBaseVersionDatastore() {
+	return this.__defineHydroBaseVersionDatastoreJCheckBox.isSelected();
+}
+
+/**
 Returns the model selected in the dialog.
 @return the model selected in the dialog.
 */
@@ -1060,6 +1092,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		
 	__connectionJComboBox = new SimpleJComboBox();
+	__connectionJComboBox.setToolTipText("HydroBase is currently only accessible as a SQL Server database.");
 	
 	if (__serverNames.size() == 0) {
 		// Only the local connection is available
@@ -1092,12 +1125,13 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	// Add the host name (only enabled if using a remote connection)
 
 	// Define because below set invisible if an Applet
-	JLabel hostname_JLabel = new JLabel("Database Hostname:");
+	JLabel hostname_JLabel = new JLabel("Database server hostname:");
    	JGUIUtil.addComponent(northWJPanel, hostname_JLabel,
 		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
 	// The contents will be set in "connectionSelected"
 	__hostnameJComboBox = new SimpleJComboBox ();
+	__hostnameJComboBox.setToolTipText("Use 'local' if HydroBase is installed on the local computer, or select a HydroBase database server.");
 	__hostnameJComboBox.setEditable(true);
 	__hostnameJComboBox.addKeyListener(this);
 	__hostnameJComboBox.addActionAndKeyListeners(this, this);
@@ -1111,10 +1145,10 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
     // - calls shellcon.exe which is no longer distributed
     // - moving to datastores where ODBC name is configured in datastore configuration file.
     //List<String> available_OdbcDsn = DMIUtil.getDefinedOdbcDsn(true);
-    List<String> available_OdbcDsn = new ArrayList<String>();
+    List<String> available_OdbcDsn = new ArrayList<>();
 	int size = available_OdbcDsn.size();
 	String s = null;
-	__available_OdbcDsn = new ArrayList<String>();
+	__available_OdbcDsn = new ArrayList<>();
 
 	// Only add DSNs that have "HydroBase" in the name.
 	for (int i = 0; i < size; i++) {
@@ -1172,11 +1206,12 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
    	JGUIUtil.addComponent(northWJPanel, __odbcDSNJComboBox,
 		1, y, 1, 1, 0, 0, RTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
-	__databaseNamesJLabel = new JLabel("Database Name:");
+	__databaseNamesJLabel = new JLabel("Database name:");
    	JGUIUtil.addComponent(northWJPanel, __databaseNamesJLabel, 
 		0, y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		
 	__databaseNamesJComboBox = new SimpleJComboBox();
+	__databaseNamesJComboBox.setToolTipText("Database names are determined from the selected database server and indicate version.");
 	__databaseNamesJComboBox.setEditable(true);
 	__databaseNamesJComboBox.addKeyListener(this);
 	__databaseNamesJComboBox.addItemListener(this);
@@ -1190,7 +1225,7 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	__odbcDSNJComboBox.setVisible(false);
 	
 	if (__showModels) {
-		JGUIUtil.addComponent(northWJPanel,	new JLabel("Model (for menu configuration):"),
+		JGUIUtil.addComponent(northWJPanel,	new JLabel("Model (for initial menu configuration):"),
 		0, ++y, 1, 1, 0, 0, LTB_insets, GridBagConstraints.NONE, GridBagConstraints.EAST);
 		// Always add the full list of choices...
 		__modelJComboBox = new SimpleJComboBox(false);	// Not editable
@@ -1264,6 +1299,43 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
 	}
 
+	if ( this.__showModels ) {
+		// Add datastore options to simplify datastore configuration.
+
+		// Separate from other controls with horizontal separator.
+		JGUIUtil.addComponent(northWJPanel, new JSeparator(SwingConstants.HORIZONTAL),
+			0, ++y, 2, 1, 0, 0, LTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+
+       	JGUIUtil.addComponent(northWJPanel,
+       		new JLabel("Datastores provide newer functionality to work with databases, for example to read data into tables."),
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
+       	JGUIUtil.addComponent(northWJPanel,
+       		new JLabel("Multiple datastores can be defined to facilitate processing."),
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
+       	JGUIUtil.addComponent(northWJPanel,
+       		new JLabel("Datastores defined below will replace matching datastores defined in configuration files."),
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
+       	JGUIUtil.addComponent(northWJPanel,
+       		new JLabel("Use the View / Datastores menu to list datastores."),
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
+
+		// Default 'HydroBase' datastore.
+		__defineHydroBaseDatastoreJCheckBox = new JCheckBox("Define 'HydroBase' datastore?");
+		__defineHydroBaseDatastoreJCheckBox.setSelected(true);
+       	JGUIUtil.addComponent(northWJPanel, this.__defineHydroBaseDatastoreJCheckBox,
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
+       	
+       	// 'HydroBaseYYYYMMDD' datastore
+		__defineHydroBaseVersionDatastoreJCheckBox = new JCheckBox("Define 'HydroBaseYYYYMMDD' datastore matching database version?");
+		__defineHydroBaseVersionDatastoreJCheckBox.setSelected(true);
+       	JGUIUtil.addComponent(northWJPanel, this.__defineHydroBaseVersionDatastoreJCheckBox,
+			0, ++y, 2, 1, 0, 0, LR_insets, GridBagConstraints.NONE, GridBagConstraints.WEST);
+
+		// Separate from other controls with horizontal separator.
+		JGUIUtil.addComponent(northWJPanel, new JSeparator(SwingConstants.HORIZONTAL),
+			0, ++y, 2, 1, 0, 0, LTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+	}
+
 	// Hide the database choice if running an applet (default to remote)...
 
 	if (IOUtil.isApplet()) {
@@ -1285,10 +1357,26 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 	southJPanel.add("North", southNJPanel);
 
 	__okJButton = new SimpleJButton(__BUTTON_OK, __BUTTON_OK,this);
+	if ( this.__showModels ) {
+		// StateDMI configuration.
+		__okJButton.setToolTipText("Open the default HydroBase database connection and optionally create datastore connection(s).");
+	}
+	else {
+		// TSTool configuration.
+		__okJButton.setToolTipText("Open the default HydroBase database connection. See also datastore configuration files.");
+	}
 	__okJButton.addKeyListener(this);
 	southNJPanel.add(__okJButton);
 
 	__cancelJButton = new SimpleJButton(__BUTTON_CANCEL, __BUTTON_CANCEL, this);
+	if ( this.__showModels ) {
+		// StateDMI configuration.
+		__cancelJButton.setToolTipText("Do not open HydroBase database connection(s). Datastore connections defined in configuration files will be active if defined.");
+	}
+	else {
+		// TSTool configuration.
+		__cancelJButton.setToolTipText("Do not open default HydroBase database connection. Datastore connections defined in configuration files will be active if defined.");
+	}
 	__cancelJButton.addKeyListener(this);
 	southNJPanel.add(__cancelJButton);
 
@@ -1432,7 +1520,7 @@ Use the information in the dialog to try to instantiate a new HydroBaseDMI
 instance.  If successful, save the new HydroBaseDMI information and close the dialog.
 */
 private void okClicked() {
-	String routine = "SelectHydroBaseJDialog.okClicked";
+	String routine = getClass().getSimpleName() + ".okClicked";
 
 	JGUIUtil.setWaitCursor(this, true);
 
@@ -1453,6 +1541,8 @@ private void okClicked() {
 		checkDatabaseVersion(hbdmi);
 		
 		// Save the connection.  The calling code can retrieve this to store for additional queries.
+		// Saving the connection occurs at the application level and is handled differently
+		// for StateDMI, TSTool, and other applications.
 		__hbdmi = hbdmi;
 
 		__selectedDivision = __waterDivisionJComboBox.getSelected();
@@ -1462,7 +1552,7 @@ private void okClicked() {
 			div = DIV_DEFAULT;
 		}
 		else {
-			// trim everything off after the DIVX (e.g., DIVX - Blah blah, trim off " - Blah blah"
+			// Trim everything off after the DIVX (e.g., "DIVX - abc", trim off " - abc")
 			div = __selectedDivision.substring(0, 4);
 		}
 		
@@ -1472,7 +1562,7 @@ private void okClicked() {
 		closeDialog ();
 	}
 	
-	// else... User has been warned about problems in openDatabase() and
+	// Else... the user has been warned about problems in openDatabase() and
 	// needs to cancel or get it right.
 	JGUIUtil.setWaitCursor(this, false);
 }
@@ -1601,7 +1691,7 @@ private void readConfigurationFile() {
 
 	String serverNames = __configurationProps.getValue( "HydroBase.ServerNames");
 	if (serverNames == null) {
-		__serverNames = new ArrayList<String>();
+		__serverNames = new ArrayList<>();
 		if (IOUtil.testing()) {
 			__serverNames.add("hbserver");
 		}

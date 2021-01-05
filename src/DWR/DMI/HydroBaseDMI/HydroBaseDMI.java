@@ -7269,6 +7269,27 @@ public List<String> getDatabaseProperties () {
 }
 
 /**
+ * Get the database version from the database name.
+ * For example, if the database name is HydroBase_CO_YYYYMMDD, return "YYYYMMDD".
+ * @return the database version from the database name, or null if database name does not
+ * adhere to the normal format.
+ */
+public String getDatabaseVersionFromName() {
+	String dbName = getDatabaseName();
+	String [] parts = dbName.split("_");
+	if ( parts.length == 3 ) {
+		return parts[2];
+	}
+	else {
+		// Database name does not match standard
+		String routine = getClass().getSimpleName() + ".getDatabaseVersionFromName";
+		Message.printWarning(2,routine, "Database name \"" + dbName +
+			"\" does not match standard name format HydroBase_CO_YYYYMMDD - cannot determine database version from name.");
+		return null;
+	}
+}
+
+/**
 Returns the name of the DMI in a format suitable for use in dialogs or window
 titles.  In this case, returns "HydroBase".  Method is from TSProductDMI.
 @return the name of the DMI ("HydroBase").
