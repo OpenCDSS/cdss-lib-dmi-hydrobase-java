@@ -91,6 +91,19 @@ protected final static String[] divisions = {
 	"Division 7: San Juan/Dolores River" };
 
 /**
+ * Static list of division numbers.
+ */
+protected final static int[] divisionNumbers = {
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	7
+};
+
+/**
 Static hashtable mapping division numbers as Integer to divisions string.
 */
 protected final static Hashtable<Integer,String> divisionTable = new Hashtable<Integer,String>();
@@ -131,11 +144,19 @@ public static String getDivisionName( int key ) {
 }
 
 /**
-Returns the list of division names.
+Returns the array of division names.
 @return a String array of division names.
 */
 public static String[] getDivisionNames() {
 	return divisions;
+}
+
+/**
+Returns the array of division numbers.
+@return int array of division numbers.
+*/
+public static int[] getDivisionNumbers() {
+	return divisionNumbers;
 }
 
 /**
