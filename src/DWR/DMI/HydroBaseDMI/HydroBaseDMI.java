@@ -15501,7 +15501,9 @@ throws Exception {
 			
 		HydroBase_GUI_Util.fillSPParameters(parameters, getViewNumber(viewName), orderNumber, null);
 		ResultSet rs = runSPFlex(parameters);
-		DMIUtil.dumpResultSetTypes(rs);
+		if ( Message.isDebugOn ) {
+			DMIUtil.dumpResultSetTypes(rs);
+		}
 		List<HydroBase_StructureView> v = toStructureIrrigSummaryTSSPList(rs, distinct);
 		closeResultSet(rs, __lastStatement);
 		return v;
