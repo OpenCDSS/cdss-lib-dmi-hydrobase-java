@@ -93,25 +93,75 @@ public class HydroBase_ParcelUseTSStructureToParcel_DistrictCache {
 	}
 
 	/**
+ 	* Get the ParcelUseTSStructureToParcel records given a parcel ID and year.
+ 	* This is used to look up surface water supplies for a parcel,
+ 	* used when processing DIV and D&W nodes in StateDMI ReadParcelsFromHydroBase command.
+ 	* @param districtCache instance of cache to search, from the HydroBaseDMI cache
+ 	* @param parcelId parcel identifier of interest
+ 	* @param calYear calendar year of interest
+ 	* @return list of matching ParcelUseTSStructureToParcel records given a parcel ID and year.
+ 	*/
+	public static List<HydroBase_ParcelUseTSStructureToParcel> getDataForParcelId (
+		List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache> districtCache, int parcelId, int calYear ) {
+		// Always return non-null to simplify error handling
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList = new ArrayList<>();
+		// Loop through all districts lists.
+		for ( HydroBase_ParcelUseTSStructureToParcel_DistrictCache putsDistrictCache : districtCache ) {
+			// The following adds to the list to optimize code
+			putsList = putsDistrictCache.getDataForParcelIdInternal(putsList, parcelId, calYear);
+		}
+		return putsList;
+	}
+
+	/**
+ 	* Get the ParcelUseTSStructureToParcel records given a parcel ID and year.
+ 	* This is used to look up surface water supplies for a parcel,
+ 	* called from the overloaded static method.
+ 	* @param parcelId parcel identifier of interest
+ 	* @param calYear calendar year of interest
+ 	* @return list of matching ParcelUseTSStructureToParcel records given a parcel ID and year.
+ 	*/
+	private List<HydroBase_ParcelUseTSStructureToParcel> getDataForParcelIdInternal (
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList, int parcelId, int calYear ) {
+		// Always return non-null to simplify error handling
+		if ( putsList == null ) {
+			putsList = new ArrayList<>();
+		}
+		// Loop through all years lists.
+		for ( HydroBase_ParcelUseTSStructureToParcel_YearCache putsYearCache : this.parcelUseTSForYearList ) {
+			if ( calYear > 0 ) {
+				if ( putsYearCache.getYear() != calYear ) {
+					// Requested year does not match the cache.
+					continue;
+				}
+			}
+			// The following modifies the list
+			putsList = putsYearCache.getDataForParcelId(putsList, parcelId);
+		}
+		return putsList;
+	}
+
+	/**
 	 * Get the cached HydroBase_ParcelUseTSStructureToParcel records for the given input.
-	 * @param cal_year calendar year of interest
+	 * This is used to determine the parcels associated with a ditch.
+	 * @param calYear calendar year of interest
 	 * @param wd water district (part of WDID) of interest
 	 * @param id structure identifier (part of WDID) of interest
 	 * @return list of matched records, guaranteed to be non-null
 	 */
-	public List<HydroBase_ParcelUseTSStructureToParcel> getData ( int cal_year, int wd, int id ) {
+	public List<HydroBase_ParcelUseTSStructureToParcel> getDataForStructureWDID ( int calYear, int wd, int id ) {
 		// Always return non-null to simplify error handling
 		List<HydroBase_ParcelUseTSStructureToParcel> putsList = new ArrayList<>();
 		// Find the year data
 		for ( HydroBase_ParcelUseTSStructureToParcel_YearCache putsYearCache : this.parcelUseTSForYearList ) {
-			if ( (cal_year < 0) || (cal_year == putsYearCache.getYear()) ) {
+			if ( (calYear < 0) || (calYear == putsYearCache.getYear()) ) {
 				// Matched the requested year. Find the WDID data.
-				putsList.addAll(putsYearCache.getData(wd, id));
+				putsList.addAll(putsYearCache.getDataForStructureWDID(wd, id));
 			}
 		}
 		return putsList;
 	}
-	
+
 	/**
 	 * Get the district for the list.
 	 */

@@ -49,6 +49,27 @@ public class HydroBase_ParcelUseTSStructureToParcel_WDIDCache {
 	}
 
 	/**
+	 * Get the list of data objects matching the parcel ID.
+	 * @param putsList list to add to, if null create a new list - fastest if list is supplied
+	 * @param parcelId parcel identifier to match.
+	 * @return the list of objects matching parcelId
+	 */
+	public List<HydroBase_ParcelUseTSStructureToParcel> getDataForParcelId (
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList, int parcelId ) {
+		if ( putsList == null ) {
+			// Create a list to return
+			putsList = new ArrayList<>();
+		}
+		// Search for matching parcel ID
+		for ( HydroBase_ParcelUseTSStructureToParcel puts : this.parcelUseTSListForWDID ) {
+			if ( puts._parcel_id == parcelId ) {
+				putsList.add(puts);
+			}
+		}
+		return putsList;
+	}
+
+	/**
 	 * Get the list of data objects at the index.
 	 */
 	public List<HydroBase_ParcelUseTSStructureToParcel> getData () {

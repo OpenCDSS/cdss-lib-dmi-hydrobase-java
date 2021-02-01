@@ -1740,10 +1740,11 @@ private List<HydroBase_ParcelUseTS_ParcelId3Cache> __parcelUseTS_ParcelId3_Year_
 /**
  * Cache for HydroBase_ParcelUseTSStructureToParcel, used when processing StateCU *.cds, *.ipy, and StateMod *.wer.
  * The data model is as follows:
- *   List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache> - list of data for districts
- *     List<HydroBase_ParcelUseTSStructureToParcel_YearCache> - list of data for years
- *       List<HydroBase_ParcelUseTSStructureToParcel_WDIDCache> - list of data for WDID
+ *   List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache> - list of data for water districts
+ *     List<HydroBase_ParcelUseTSStructureToParcel_YearCache> - list of data for calendar year
+ *       List<HydroBase_ParcelUseTSStructureToParcel_WDIDCache> - list of data for WDID (surface water supplies and associated parcels in year)
  * - the cache is populated in lazy fashion as districts of interest are requested
+ * - note that the structure WDID is not the model node ID, it is a WDID that provides supply to 1 or more parcels
  */
 private List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache>
 	__parcelUseTSStructureToParcel_District_Year_WDID_Cache = new ArrayList<>();
@@ -1753,8 +1754,8 @@ private List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache>
  * used when processing parcels for StateCU *.cds, *.ipy, and StateMod *.wer,
  * indexed to optimize lookups Well WDID and year.
  * The data model is as follows:
- *   List<HydroBase_WellsWellToParcel_WellWDCache> - list of data for well WD
- *     List<HydroBase_WellsWellToParcel_YearCache> - list of data for years
+ *   List<HydroBase_WellsWellToParcel_WellWDCache> - list of data for well water district
+ *     List<HydroBase_WellsWellToParcel_YearCache> - list of data for calendar year
  *       List<HydroBase_Wells> - list of raw HydroBase data records (object includes well and parcel)
  * - the cache is populated in lazy fashion as Well WD of interest are requested
  */
@@ -7457,6 +7458,13 @@ public List<HydroBase_MeasType> getMeasType() {
 }
 
 /**
+ * Return the cache used for HydroBase_ParcelUseTSStructureToParcel.
+ */
+public List<HydroBase_ParcelUseTSStructureToParcel_DistrictCache> getParcelUseStructureToParcelDistrictCache () {
+	return __parcelUseTSStructureToParcel_District_Year_WDID_Cache;
+}
+
+/**
 Returns the global PenmanMonteithCUMethod data, containing a list of distinct
 CU method descriptions from the cu_penman_monteith table. This is used by StateDMI.
 @return the global PenmanMonteithCUMethod data.
@@ -12948,7 +12956,8 @@ throws Exception {
 
 /**
 Read the parcel_use_ts tables for all data with the matching criteria, and optionally utilize a cache to
-optimize performance (use more memory but do local search rather than query HydroBase each time).<p>
+optimize performance (use more memory but do local search rather than query HydroBase each time).
+All parcels are read even if not irrigated.<p>
 <p><b>Stored Procedures</b><p>
 This method uses the following view:<p><ul>
 <li>vw_CDSS_Parcel_Use_TS</li></ul>
@@ -12960,6 +12969,26 @@ This method is used by StateDMI.
 div, parcel_id, and cal_year.
 */
 public List<HydroBase_ParcelUseTS> readParcelUseTSList(int cal_year, int div, int parcel_id )
+throws Exception {
+	boolean includeOnlyIrrigatedParcels = true;
+	return readParcelUseTSList(cal_year, div, parcel_id, includeOnlyIrrigatedParcels );
+}
+
+/**
+Read the parcel_use_ts tables for all data with the matching criteria, and optionally utilize a cache to
+optimize performance (use more memory but do local search rather than query HydroBase each time).<p>
+<p><b>Stored Procedures</b><p>
+This method uses the following view:<p><ul>
+<li>vw_CDSS_Parcel_Use_TS</li></ul>
+This method is used by StateDMI.
+@param cal_year cal year to query for - specify missing to ignore.
+@param div Division to query for - specify missing to ignore.
+@param parcel_id Parcel_id to query for - specify missing to ignore.
+@return a list of HydroBase_ParcelUseTS objects.  The objects are sorted by
+div, parcel_id, and cal_year.
+*/
+public List<HydroBase_ParcelUseTS> readParcelUseTSList(int cal_year, int div, int parcel_id,
+	boolean includeOnlyIrrigatedParcels )
 throws Exception
 {
 	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
@@ -12997,6 +13026,9 @@ throws Exception
 			// Search the cache the records of interest
 			// - have already matched parcelId3 so match cal_year and parcel_id
 			List<HydroBase_ParcelUseTS> putsList2 = putsParcelId3.getData(cal_year, parcel_id);
+			if ( includeOnlyIrrigatedParcels ) {
+				readParcelUseTSList_RemoveUnirrigated(putsList2);
+			}
 			if ( Message.isDebugOn ) {
 				sw.stop();
 				Message.printStatus(2, routine, "Read " + putsList2.size() + " ParcelUseTS from cache for parcel_id=" + parcel_id +
@@ -13078,11 +13110,32 @@ throws Exception
 	else {
 		// Not cached.
 		// Pass through the query
-		return readParcelUseTSList( cal_year, div, parcel_id,
+		List<HydroBase_ParcelUseTS> putsList2 = readParcelUseTSList( cal_year, div, parcel_id,
 				null, // landuse
 				null, // irrig_type
 				null, // req_date1,
 				null ); // req_date2
+		if ( includeOnlyIrrigatedParcels ) {
+			readParcelUseTSList_RemoveUnirrigated(putsList2);
+		}
+		return putsList2;
+	}
+}
+
+/**
+Remove crop types that are not irrigated.
+This should not occur but might due to historical data load issue or decision to store in HydroBase in the future.
+This is a helper method to query code.
+@param putsList list to process, will be modified.
+*/
+private void readParcelUseTSList_RemoveUnirrigated(List<HydroBase_ParcelUseTS> putsList) {
+	HydroBase_ParcelUseTS puts;
+	for ( int i = (putsList.size() - 1); i >= 0; i-- ) {
+		puts = putsList.get(i);
+		if ( puts._land_use.equals("NO_CROP)") || puts._irrig_type.equals("DRY") ) {
+			// Not irrigated parcel so remove from list
+			putsList.remove(i);
+		}
 	}
 }
 
@@ -13566,11 +13619,13 @@ throws Exception {
 /**
 Reads all records from the parcel use ts structure join table that have the
 specified structure WDID, for the given calendar year.
+All records are returned, including 'NO_CROP' and other non-crop parcels.
+This indicates the irrigated parcels for a surface water ditch.
 For HydroBase >= 20200720 a cache is used to look up the data.
 For earlier HydroBase, 
 the structure is first queried to get the structure number and then the overloaded method is called.
 This method is used by:<ul>
-<li>StateDMI for processing well data.</li>
+<li>StateDMI for processing surface water supply parcel data.</li>
 </ul>
 <p><b>Stored Procedure</b><p>
 The stored procedure that corresponds to this query is:<ul>
@@ -13583,10 +13638,39 @@ The stored procedure that corresponds to this query is:<ul>
 @throws Exception if an error occurs.
 */
 public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForStructureWdidCalYear(
-	int wd, int id, int cal_year ) 
+	int wd, int id, int cal_year )
+throws Exception {
+	// Return all parcels, as has historically been the behavior.
+	boolean includeOnlyIrrigatedParcels = false;
+	return readParcelUseTSStructureToParcelListForStructureWdidCalYear(wd, id, cal_year, includeOnlyIrrigatedParcels);
+}
+
+/**
+Reads all records from the parcel use ts structure join table that have the
+specified structure WDID, for the given calendar year.
+This indicates the irrigated parcels for a surface water ditch.
+For HydroBase >= 20200720 a cache is used to look up the data.
+For earlier HydroBase, 
+the structure is first queried to get the structure number and then the overloaded method is called.
+This method is used by:<ul>
+<li>StateDMI for processing surface water supply parcel data.</li>
+</ul>
+<p><b>Stored Procedure</b><p>
+The stored procedure that corresponds to this query is:<ul>
+<li>usp_CDSS_ParcelUseTSStructureToParcel_Sel_By_StructureNumCalYear</li>
+</ul>
+@param wd the structure water district (first part of WDID).
+@param id the structure identifier (second part of WDID).
+@param cal_year Calendar year for which to query the database.
+@param includeOnlyIrrigatedParcels if true records with land_use=NO_CROP and irrig_method=DRY are removed
+since they indicate fallowed land
+@return a list of HydroBase_ParcelUseTSStructureToParcel objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForStructureWdidCalYear(
+	int wd, int id, int cal_year, boolean includeOnlyIrrigatedParcels )
 throws Exception {
 	String routine = getClass().getSimpleName() + ".readParcelUseTSStructureToParcelListForStructureWdidCalYear";
-	HydroBase_StructureView hbsv = this.readStructureViewForWDID(wd, id);
 
 	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
 		// New HydroBase that has a view for data for bulk read.
@@ -13614,7 +13698,10 @@ throws Exception {
 		if ( Message.isDebugOn ) {
 			sw = new StopWatch(true);
 		}
-		List<HydroBase_ParcelUseTSStructureToParcel> putsList2 = putsDistrict.getData(cal_year, wd, id);
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList2 = putsDistrict.getDataForStructureWDID(cal_year, wd, id);
+		if ( includeOnlyIrrigatedParcels ) {
+			readParcelUseTSStructureToParcelList_RemoveUnirrigated(putsList2);
+		}
 		if ( Message.isDebugOn ) {
 			sw.stop();
 			Message.printStatus(2, routine, "Read " + putsList2.size() + " ParcelUseTSStructureToParcel from cache for year=" +
@@ -13625,9 +13712,97 @@ throws Exception {
 	else {
 		// HydroBase prior to 20200720 that uses stored procedure.
 		// Must do a call for each structure.
-		return readParcelUseTSStructureToParcelListForStructure_numCal_year( hbsv.getStructure_num(), cal_year );
+		HydroBase_StructureView hbsv = this.readStructureViewForWDID(wd, id);
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList2 = readParcelUseTSStructureToParcelListForStructure_numCal_year( hbsv.getStructure_num(), cal_year );
+		if ( includeOnlyIrrigatedParcels ) {
+			readParcelUseTSStructureToParcelList_RemoveUnirrigated(putsList2);
+		}
+		return putsList2;
 	}
 }
+
+/**
+Remove crop types that are not irrigated.
+This should not occur but might due to historical data load issue or decision to store in HydroBase in the future.
+This is a helper method to query code.
+@param putsList list to process, will be modified.
+*/
+private void readParcelUseTSStructureToParcelList_RemoveUnirrigated(List<HydroBase_ParcelUseTSStructureToParcel> putsList) {
+	HydroBase_ParcelUseTSStructureToParcel puts;
+	for ( int i = (putsList.size() - 1); i >= 0; i-- ) {
+		puts = putsList.get(i);
+		if ( puts._land_use.equals("NO_CROP)") || puts._irrig_type.equals("DRY") ) {
+			// Not irrigated parcel so remove from list
+			putsList.remove(i);
+		}
+	}
+}
+
+// See caching logic in similar readParcelUseTSStructureToParcelListForStructureWdidCalYear method,
+// which is where logic should be changed first.
+/**
+Reads all records from the parcel use ts structure join table that have the
+specified structure WD and parcel ID for the given calendar year.
+This indicates the surface water supplies for parcels for a surface water ditch.
+For HydroBase >= 20200720 a cache is used to look up the data.
+Earlier HydroBase is not supported.
+This method is used by:<ul>
+<li>StateDMI for processing surface water supply parcel data.</li>
+</ul>
+@param wd the structure water district (first part of WDID), needed for caching.
+@param parcelId the parcel identifier to match.
+@param calYear Calendar year for which to query the database, needed for caching.
+@return a list of HydroBase_ParcelUseTSStructureToParcel objects.
+@throws Exception if an error occurs.
+*/
+/* TODO smalers 2021-01-26 may not need this - under development
+public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForStructureWdParcelIdCalYear(
+	int wd, int parcelId, int calYear ) 
+throws Exception {
+	String routine = getClass().getSimpleName() + ".readParcelUseTSStructureToParcelListForStructureIdParcelIdCalYear";
+
+	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
+		// New HydroBase that has a view for data for bulk read.
+		// Get the data from the cached objects rather than a full database query.
+		HydroBase_ParcelUseTSStructureToParcel_DistrictCache putsDistrict =
+			HydroBase_ParcelUseTSStructureToParcel_DistrictCache.getForDistrict(
+				this.__parcelUseTSStructureToParcel_District_Year_WDID_Cache, wd);
+		StopWatch sw = null;
+		if ( putsDistrict == null ) {
+			// Do not have parcels for the water district so read all and add to the cache
+			Message.printStatus(2, routine, "Reading ParcelUseTSStructureToParcel for cache for district " + wd + "...");
+			sw = new StopWatch(true);
+			List<HydroBase_ParcelUseTSStructureToParcel> putsList = readParcelUseTSStructureToParcelForDistrictList(wd);
+			sw.stop();
+			Message.printStatus(2, routine, "  Read " + putsList.size() + " ParcelUseTSStructureToParcel for cache for district " +
+				wd + " in " + sw.getMilliseconds() + " ms.");
+			// Add to the cache for the next read
+			sw.clearAndStart();
+			putsDistrict = HydroBase_ParcelUseTSStructureToParcel_DistrictCache.createCache(wd, putsList);
+			sw.stop();
+			Message.printStatus(2, routine, "  Created ParcelUseTSStructureToParcel cache in " + sw.getMilliseconds() + " ms");
+			this.__parcelUseTSStructureToParcel_District_Year_WDID_Cache.add(putsDistrict);
+		}
+		// Search the list for the records of interest
+		if ( Message.isDebugOn ) {
+			sw = new StopWatch(true);
+		}
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList2 = putsDistrict.getDataForParcelId(calYear, wd, parcelId);
+		if ( Message.isDebugOn ) {
+			sw.stop();
+			Message.printStatus(2, routine, "Read " + putsList2.size() + " ParcelUseTSStructureToParcel from cache for year=" +
+				calYear + " wd=" + wd + " parcelId=" + parcelId + " in " + sw.getMilliseconds() + " ms");
+		}
+		return putsList2;
+	}
+	else {
+		// HydroBase prior to 20200720 that uses stored procedure.
+		// Must do a call for each structure.
+		//return readParcelUseTSStructureToParcelListForStructure_numCal_year( hbsv.getStructure_num(), cal_year );
+		throw new RuntimeException(routine + " is only supported for HydroBase >= 20200720");
+	}
+}
+*/
 
 /**
 Read the person_details table for all data and join with data in the structure table.<p>
