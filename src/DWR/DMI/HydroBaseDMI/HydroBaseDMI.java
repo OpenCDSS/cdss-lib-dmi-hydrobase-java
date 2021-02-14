@@ -13513,6 +13513,77 @@ throws Exception {
 }
 
 /**
+Reads all records from the parcel use ts structure join table that have the
+specified parcel ID, for the given calendar year.
+This indicates the surface water supplies for a parcel.
+For HydroBase >= 20200720 a cache is used to look up the data.
+For earlier HydroBase, this code is no supported.
+This method is used by:<ul>
+<li>StateDMI for processing well water supply parcel data (to check whether surface water supply also).</li>
+@param wd water district for parcel, needed for caching
+@param parcelId the parcel identifier, typically extracted from parcel ID
+@param cal_year Calendar year for which to query the database.
+@param includeOnlyIrrigatedParcels if true records with land_use=NO_CROP and irrig_method=DRY are removed
+since they indicate fallowed land
+@return a list of HydroBase_ParcelUseTSStructureToParcel objects.
+@throws Exception if an error occurs.
+*/
+public List<HydroBase_ParcelUseTSStructureToParcel> readParcelUseTSStructureToParcelListForParcelIdCalYear(
+	int wd, int parcelId, int cal_year, boolean includeOnlyIrrigatedParcels )
+throws Exception {
+	String routine = getClass().getSimpleName() + ".readParcelUseTSStructureToParcelListForParcelIdCalYear";
+
+	if ( isVersionAtLeast(HydroBaseDMI.VERSION_20200720) ) {
+		// New HydroBase that has a view for data for bulk read.
+		// Get the data from the cached objects rather than a full database query.
+		HydroBase_ParcelUseTSStructureToParcel_DistrictCache putsDistrict =
+			HydroBase_ParcelUseTSStructureToParcel_DistrictCache.getForDistrict(
+				this.__parcelUseTSStructureToParcel_District_Year_WDID_Cache, wd);
+		StopWatch sw = null;
+		if ( putsDistrict == null ) {
+			// Do not have parcels for the water district so read all and add to the cache
+			Message.printStatus(2, routine, "Reading ParcelUseTSStructureToParcel for cache for district " + wd + "...");
+			sw = new StopWatch(true);
+			List<HydroBase_ParcelUseTSStructureToParcel> putsList = readParcelUseTSStructureToParcelForDistrictList(wd);
+			sw.stop();
+			Message.printStatus(2, routine, "  Read " + putsList.size() + " ParcelUseTSStructureToParcel for cache for district " +
+				wd + " in " + sw.getMilliseconds() + " ms.");
+			// Add to the cache for the next read
+			sw.clearAndStart();
+			putsDistrict = HydroBase_ParcelUseTSStructureToParcel_DistrictCache.createCache(wd, putsList);
+			sw.stop();
+			Message.printStatus(2, routine, "  Created ParcelUseTSStructureToParcel cache in " + sw.getMilliseconds() + " ms");
+			this.__parcelUseTSStructureToParcel_District_Year_WDID_Cache.add(putsDistrict);
+		}
+		// Search the list for the records of interest
+		if ( Message.isDebugOn ) {
+			sw = new StopWatch(true);
+		}
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList2 = putsDistrict.getDataForParcelId(cal_year, parcelId);
+		if ( includeOnlyIrrigatedParcels ) {
+			readParcelUseTSStructureToParcelList_RemoveUnirrigated(putsList2);
+		}
+		if ( Message.isDebugOn ) {
+			sw.stop();
+			Message.printStatus(2, routine, "Read " + putsList2.size() + " ParcelUseTSStructureToParcel from cache for year=" +
+				cal_year + " wd=" + wd + " parcelId=" + parcelId + " in " + sw.getMilliseconds() + " ms");
+		}
+		return putsList2;
+	}
+	else {
+		// HydroBase prior to 20200720 does not have needed code.
+		// - TODO smalers would need to join views with new code.
+		//HydroBase_StructureView hbsv = this.readStructureViewForWDID(wd, id);
+		//List<HydroBase_ParcelUseTSStructureToParcel> putsList2 = readParcelUseTSStructureToParcelListForStructure_numCal_year( hbsv.getStructure_num(), cal_year );
+		//if ( includeOnlyIrrigatedParcels ) {
+			//readParcelUseTSStructureToParcelList_RemoveUnirrigated(putsList2);
+		//}
+		//return putsList2;
+		throw new Exception ( "HydroBase is older than 20200720 - query of ParcelUseTSStructureToParcel query for parcel ID not enabled.");
+	}
+}
+
+/**
 Reads all record from the parcel use ts structure join table that have the specified structure_num.
 This method is used by:<ul>
 <li>HydroBase_GUI_IrrigatedAcres.HydroBase_GUI_IrrigatedAcres()</li>

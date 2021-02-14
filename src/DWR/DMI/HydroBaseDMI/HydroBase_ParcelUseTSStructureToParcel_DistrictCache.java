@@ -114,6 +114,26 @@ public class HydroBase_ParcelUseTSStructureToParcel_DistrictCache {
 	}
 
 	/**
+	 * Get the cached HydroBase_ParcelUseTSStructureToParcel records for the given input.
+	 * This is used to determine the parcels associated with a ditch.
+	 * @param calYear calendar year of interest
+	 * @param id structure identifier (part of WDID) of interest
+	 * @return list of matched records, guaranteed to be non-null
+	 */
+	public List<HydroBase_ParcelUseTSStructureToParcel> getDataForParcelId ( int calYear, int parcelId ) {
+		// Always return non-null to simplify error handling
+		List<HydroBase_ParcelUseTSStructureToParcel> putsList = new ArrayList<>();
+		// Find the year data
+		for ( HydroBase_ParcelUseTSStructureToParcel_YearCache putsYearCache : this.parcelUseTSForYearList ) {
+			if ( (calYear < 0) || (calYear == putsYearCache.getYear()) ) {
+				// Matched the requested year. Find the data for parcel ID.
+				putsYearCache.getDataForParcelId(putsList, parcelId);
+			}
+		}
+		return putsList;
+	}
+
+	/**
  	* Get the ParcelUseTSStructureToParcel records given a parcel ID and year.
  	* This is used to look up surface water supplies for a parcel,
  	* called from the overloaded static method.

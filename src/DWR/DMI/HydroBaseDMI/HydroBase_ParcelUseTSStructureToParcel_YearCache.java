@@ -38,6 +38,7 @@ public class HydroBase_ParcelUseTSStructureToParcel_YearCache {
 	/**
 	 * Get the cached HydroBase_ParcelUseTSStructureToParcel records for the requested parcel ID
 	 * (will have already been filtered to year).
+	 * @param putsList results list to append to.  If null, return a new list.
 	 * @param parcelId parcel identifier of interest
 	 * @return list of matched records, guaranteed to be non-null
 	 */
