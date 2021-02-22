@@ -12730,6 +12730,7 @@ Read HydroBase Net Amount rights.
 @param wd Water district to select.  If missing or negative, will be ignored.
 @param id Identifier to select.  If missing or negative, will be ignored.
 @param positiveNetRateAbs whether to only return net amts with positive (> 0) net rates.
+Positive net volume absolute is not checked in this case since focusing on flow rights.
 @param orderCode orderBy code for stored procedure, if null use default (used by StateDMI)
 @throws Exception
 */
@@ -12756,7 +12757,7 @@ throws Exception {
 		String[] parameters = HydroBase_GUI_Util.getSPFlexParameters( null, null);
 			
 		String[] triplet = null;
-		if (!DMIUtil.isMissing(structure_num) && !HydroBase_Util.isMissing(structure_num)) {
+		if (!DMIUtil.isMissing(structure_num) && !HydroBase_Util.isMissing(structure_num) && (structure_num > 0) ) {
 			triplet = new String[3];
 			triplet[0] = "structure_num";
 			triplet[1] = "EQ";
@@ -12764,7 +12765,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd)) {
+		if (!DMIUtil.isMissing(wd) && !HydroBase_Util.isMissing(wd) && (wd > 0) ) {
 			triplet = new String[3];
 			triplet[0] = "wd";
 			triplet[1] = "EQ";
@@ -12772,7 +12773,7 @@ throws Exception {
 			HydroBase_GUI_Util.addTriplet(parameters, triplet);
 		}
 
-		if (!DMIUtil.isMissing(id) && !HydroBase_Util.isMissing(id)) {
+		if (!DMIUtil.isMissing(id) && !HydroBase_Util.isMissing(id) && (id > 0) ) {
 			triplet = new String[3];
 			triplet[0] = "id";
 			triplet[1] = "EQ";
@@ -13364,7 +13365,7 @@ This method uses the following Stored Procedure:<p><ul>
 This method is used by StateDMI.
 @param div Division to query for - specify missing to ignore.
 @return a list of Integer, each of which is a unique calendar year for the
-specified div (or all divs), sorted ascending.
+specified div (or all divs), sorted ascending, guaranteed to be non-null but may be empty.
 */
 public List<Integer> readParcelUseTSDistinctCalYearsList(int div)
 throws Exception {
