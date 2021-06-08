@@ -29,11 +29,13 @@ import RTi.DMI.AbstractDatabaseDataStore;
 import RTi.DMI.DMI;
 import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
+import RTi.Util.String.StringUtil;
+import riverside.datastore.DataStoreVersionChecker;
 
 /**
 Data store for HydroBase database.  This class maintains the database connection information in a general way.
 */
-public class HydroBaseDataStore extends AbstractDatabaseDataStore
+public class HydroBaseDataStore extends AbstractDatabaseDataStore implements DataStoreVersionChecker
 {
     
 /**
@@ -72,7 +74,26 @@ public HydroBaseDataStore ( String name, String description, DMI dmi, boolean is
 {   this ( name, description, dmi );
     __isLegacyDMI = isLegacyDMI;
 }
-    
+
+/**
+ * Check the database version using an operator and version string.
+ * @pra
+ * @param operator the operator to use to compare the datastore version with 'version',
+ * ">", ">=", "<", "<=", "=" or "==".
+ * @param version the version to compare to, format depends on the database version format.
+ */
+public boolean checkVersion ( String operator, String version ) {
+	String dbVersion = getVersionForCheck();
+	if ( (dbVersion == null) || dbVersion.isEmpty() ) {
+		// Unable to do check.
+		return false;
+	}
+	else {
+		// HydroBase versions are strings of format YYYYMMDD so can do alphabetical comparison.
+		return StringUtil.compareUsingOperator(dbVersion, operator, version);
+	}
+}
+
 /**
 Factory method to construct a data store connection from a properties file.
 @param filename name of file containing property strings
@@ -129,6 +150,25 @@ Indicate whether the datastore is a legacy DMI wrapper.
 public boolean getIsLegacyDMI ()
 {
     return __isLegacyDMI;
+}
+
+/**
+ * Return the version for version checks, in form YYYYMMDD,
+ * which is what HydroBase database distributions use.
+ * @return the database version string used in checks, taken from the database name,
+ * or null if no database connection.
+ */
+public String getVersionForCheck () {
+	if ( getDMI() == null ) {
+		// No DMI instance.
+		return null;
+	}
+	HydroBaseDMI dmi = (HydroBaseDMI)getDMI();
+	if ( !dmi.isOpen() ) {
+		// No database connection.
+		return null;
+	}
+	return dmi.getDatabaseVersionFromName();
 }
 
 }
