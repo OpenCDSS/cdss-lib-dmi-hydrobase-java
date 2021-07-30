@@ -29,13 +29,14 @@ import RTi.DMI.AbstractDatabaseDataStore;
 import RTi.DMI.DMI;
 import RTi.Util.IO.IOUtil;
 import RTi.Util.IO.PropList;
+import RTi.Util.IO.RequirementCheck;
 import RTi.Util.String.StringUtil;
-import riverside.datastore.DataStoreVersionChecker;
+import riverside.datastore.DataStoreRequirementChecker;
 
 /**
 Data store for HydroBase database.  This class maintains the database connection information in a general way.
 */
-public class HydroBaseDataStore extends AbstractDatabaseDataStore implements DataStoreVersionChecker
+public class HydroBaseDataStore extends AbstractDatabaseDataStore implements DataStoreRequirementChecker
 {
     
 /**
@@ -76,21 +77,42 @@ public HydroBaseDataStore ( String name, String description, DMI dmi, boolean is
 }
 
 /**
- * Check the database version using an operator and version string.
- * @pra
- * @param operator the operator to use to compare the datastore version with 'version',
- * ">", ">=", "<", "<=", "=" or "==".
- * @param version the version to compare to, format depends on the database version format.
+ * Check the database requirement, for example:
+ * <pre>
+ * @require datastore HydroBase version >= YYYYMMDD
+ * </pre>
+ * @param check a RequirementCheck object that has been initialized with the check text and
+ * will be updated in this method.
+ * @return whether the requirement condition is met, from call to check.isRequirementMet()
  */
-public boolean checkVersion ( String operator, String version ) {
+public boolean checkRequirement ( RequirementCheck check ) {
+	// Parse the string into parts:
+	// - calling code has already interpreted the first 3 parts to be able to do this call
+	String requirement = check.getRequirementText();
+	String [] parts = requirement.split(" ");
+	String dataName = parts[3];
+	String operator = parts[4];
+	String checkValue = parts[5];
 	String dbVersion = getVersionForCheck();
+	if ( !dataName.equalsIgnoreCase("version")) {
+		check.setIsRequirementMet(false, "Requirement does not contain keyword 'version' as in '@require datastore " +
+			this.getName() + " version >= YYYYMMDD" );
+		return check.isRequirementMet();
+	}
 	if ( (dbVersion == null) || dbVersion.isEmpty() ) {
 		// Unable to do check.
-		return false;
+		check.setIsRequirementMet(false, "HydroBase database cannot be determined.");
+		return check.isRequirementMet();
 	}
 	else {
 		// HydroBase versions are strings of format YYYYMMDD so can do alphabetical comparison.
-		return StringUtil.compareUsingOperator(dbVersion, operator, version);
+		boolean verCheck = StringUtil.compareUsingOperator(dbVersion, operator, checkValue);
+		String message = "";
+		if ( !verCheck ) {
+			message = "HydroBase version (" + dbVersion + ") does not meet the requirement.";
+		}
+		check.setIsRequirementMet(verCheck, message);
+		return check.isRequirementMet();
 	}
 }
 
