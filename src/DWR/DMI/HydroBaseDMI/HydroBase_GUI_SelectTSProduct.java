@@ -83,7 +83,7 @@ import javax.swing.event.ListSelectionListener;
 import java.util.List;
 import java.util.Vector;
 
-import RTi.DMI.DMI;
+import RTi.DMI.DMIDatabaseType;
 import RTi.DMI.DMIUtil;
 
 import RTi.GRTS.TSProduct;
@@ -758,7 +758,7 @@ private void setupGUI() {
 		0, y++, 1, 1, 1, 0, 
 		GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);		
 
-	if ( (__dmi.getDatabaseEngineType() == DMI.DBENGINE_SQLSERVER) && __dmi.isGuestLoggedIn()) {
+	if ( (__dmi.getDatabaseEngineType() == DMIDatabaseType.SQLSERVER) && __dmi.isGuestLoggedIn()) {
 		JGUIUtil.addComponent(northJPanel, 
 			new JLabel(" "),
 			0, y++, 1, 1, 1, 0, 
