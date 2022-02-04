@@ -93,6 +93,7 @@ public boolean checkRequirement ( RequirementCheck check ) {
 	String requirement = check.getRequirementText();
 	String [] requireParts = requirement.split(" ");
     String example = "\n  Example: #@require datastore HydroBase version >= 20200720";
+    String checkerName = "HydroBaseDatastore";
 	if ( requireParts.length >= 6 ) {
 		// Have a requirement to check:
 		// - evaluate the parts below
@@ -101,7 +102,7 @@ public boolean checkRequirement ( RequirementCheck check ) {
 		String dbVersion = getVersionForCheck();
 		if ( (dbVersion == null) || dbVersion.isEmpty() ) {
 			// Unable to do check.
-			check.setIsRequirementMet(false, "HydroBase database version cannot be determined.");
+			check.setIsRequirementMet(checkerName, false, "HydroBase database version cannot be determined.");
 			return check.isRequirementMet();
 		}
 		else if ( reqProperty.equalsIgnoreCase("version") ){
@@ -113,18 +114,18 @@ public boolean checkRequirement ( RequirementCheck check ) {
 				message = "HydroBase version (" + dbVersion + ") does not meet the requirement: " + operator + " " + reqVersion;
 			}
 			// The following will set to true or false, and fail message if failed.
-			check.setIsRequirementMet(verCheck, message);
+			check.setIsRequirementMet(checkerName, verCheck, message);
 			return check.isRequirementMet();
 		}
   		else {
    			String message = "@require datastore property (" + reqProperty + ") is not recognized: " + requirement + example;
-   			check.setIsRequirementMet(false, message);
+   			check.setIsRequirementMet(checkerName, false, message);
    			Message.printWarning(3, routine, message);
    		}
    		// If failure here and no message have a coding problem because message needs to be non-empty.
    		if ( ! check.isRequirementMet() && check.getFailReason().isEmpty() ) {
    			String message = "@require was not met but have empty fail message - need to fix software.";
-			check.setIsRequirementMet(false, message);
+			check.setIsRequirementMet(checkerName, false, message);
 			Message.printWarning(3, routine, message);
    		}
 	}
