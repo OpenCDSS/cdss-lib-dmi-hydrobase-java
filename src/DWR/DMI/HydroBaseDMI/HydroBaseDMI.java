@@ -17898,7 +17898,8 @@ throws Exception, NoDataFoundException
 		order.add("wis_data.set_date");
 		v = readWISDataListForWis_numWis_rowList(wisNums, wisRows,order);
 	}
-	// Real-time data...
+	// Real-time data.
+	// - TODO smalers 2022-03-24 disabled in TSTool UI and need to permanently remove after a period
 	else if ((interval_base == TimeInterval.IRREGULAR) &&
 		(data_type.equalsIgnoreCase("AdminFlow") ||
 		data_type.equalsIgnoreCase("Battery") ||

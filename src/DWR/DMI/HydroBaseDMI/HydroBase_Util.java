@@ -1408,7 +1408,7 @@ For example, all data related to reservoirs will be prefixed with
 "Reservoir - ".  This is useful for providing a better presentation to users in interfaces.
 */
 public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int include_types, boolean add_group )
-{	List<String> types = new ArrayList<String>();
+{	List<String> types = new ArrayList<>();
 	// Add these types exactly as they are listed in HydroBase.  If someone
 	// has a problem, HydroBase should be adjusted.  Notes are shown below
 	// where there may be an issue.  In all cases, documentation needs to
@@ -1445,6 +1445,7 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 	// WDID.DWR.DivClass-S:F:U:T:.Month
 	//
 	String prefix; // A string to add at the front of the type if add_group is true
+	/* TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
 	if ( (include_types&DATA_TYPE_HARDWARE) > 0 ) {
 		// RT_Misc BATTERY
 		prefix = "";
@@ -1453,6 +1454,7 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 		}
 		types.add ( prefix + "Battery" );
 	}
+	*/
 	if ( (include_types&DATA_TYPE_STATION_CLIMATE) > 0 ) {
 		prefix = "";
 		if ( add_group ) {
@@ -1481,12 +1483,13 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 							// monthly - it gets
 							// messy.
 		types.add ( prefix + "Precip" ); // Time step:  Month, Day, real-time with vax_field PRECIP
-		types.add ( prefix + "Temp" ); // Proposed for use with real-time AIRTEMP vax_field
+		// TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
+		//types.add ( prefix + "Temp" ); // Proposed for use with real-time AIRTEMP vax_field
 		types.add ( prefix + "TempMax" );// Proposed
 		types.add ( prefix + "TempMean" );	// Proposed
 		types.add ( prefix + "TempMeanMax" );	// Proposed
 		types.add ( prefix + "TempMeanMin" );	// Proposed
-		types.add ( prefix + "TempMin" );	// Proposed
+		//types.add ( prefix + "TempMin" );	// Proposed
 		types.add ( prefix + "Snow" );	// Time step:  Day, Month
 		//types.add ( "SnowCrse" );	// "SnowDepth" and
 							// "SnowWaterEquivalent"
@@ -1544,7 +1547,8 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 							// would be cleaner
 							// Time step:
 							// RealTime?  15Minute?
-		types.add ( prefix + "Stage" );	// Time step:  real-time RT_Misc GAGE_HT
+		// TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
+		//types.add ( prefix + "Stage" );	// Time step:  real-time RT_Misc GAGE_HT
 		types.add ( prefix + "Streamflow" );	// Also need
 		types.add ( prefix + "StreamflowMax" );
 							// "StreamflowMax" and
@@ -1552,7 +1556,8 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 							// "StreamflowMin"
 							// Time step:
 							// Day, Month, RealTime?
-		types.add ( prefix + "WatTemp" );// Water temperature:
+		// TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
+		//types.add ( prefix + "WatTemp" );// Water temperature:
 							// RT_Misc WATTEMP
 	}
 	if ( (include_types&DATA_TYPE_STATION_RESERVOIR) > 0 ) {
@@ -1560,7 +1565,8 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 		if ( add_group ) {
 			prefix = "Reservoir - ";
 		}
-		types.add ( prefix + "Release" );// Time step:
+		// TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
+		//types.add ( prefix + "Release" );// Time step:
 							// real-time with
 							// vax_field OUTLETQ
 		//types.add ( "RT_Vol" )		// "ResContent",
@@ -1575,10 +1581,12 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 							// time step separately
 							// Time step:
 							// RealTime?  15Minute?
-		types.add ( prefix + "PoolElev" );// Time step:
+		// TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
+		//types.add ( prefix + "PoolElev" );// Time step:
 							// RT_Height with
 							// vax_field ELEV
-		types.add ( prefix + "Storage" );// Time step:  realtime
+		// TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
+		//types.add ( prefix + "Storage" );// Time step:  realtime
 							// RT_Vol STORAGE
 	}
 	if ( (include_types&DATA_TYPE_STATION_WELL) > 0 ) {
@@ -1586,8 +1594,9 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 		if ( add_group ) {
 			prefix = "Well - ";
 		}
-		types.add ( prefix + "WellLevel (phasing out)"); // RT_Misc WELL_1
-		types.add ( prefix + "WellLevelElev"); // Replaces legacy WellLevel
+		// TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
+		//types.add ( prefix + "WellLevel (phasing out)"); // RT_Misc WELL_1
+		//types.add ( prefix + "WellLevelElev"); // Replaces legacy WellLevel
 		// Also see WellLevel for structures.
 	}
 	if ( (include_types&DATA_TYPE_AGRICULTURE) > 0 ) {
@@ -1668,7 +1677,8 @@ public static List<String> getTimeSeriesDataTypes ( HydroBaseDMI hdmi, int inclu
 		if ( add_group ) {
 			prefix = "Well - ";
 		}
-		types.add ( prefix + "WellLevel (phasing out)" );
+		// TODO smalers 2022-03-24 as of this date the real-time data are not read from HydroBase since have web services.
+		//types.add ( prefix + "WellLevel (phasing out)" );
 		types.add ( prefix + "WellLevelDepth" );
 		types.add ( prefix + "WellLevelElev" ); // Replaces legacy WellLevel
 		// TODO SAM 2012-07-02 Also somehow need to hook in "WellPumping"
@@ -1896,162 +1906,183 @@ public static List<String> getTimeSeriesTimeSteps (	HydroBaseDMI hbdmi, String d
 {	String Month = "Month";
 	String Day = "Day";
 	String Year = "Year";
-	String Irregular = "Irregular";
-	List<String> v = new ArrayList<String>();
-	// Alphabetize by data type, as much as possible...
+	//String Irregular = "Irregular";
+	List<String> timesteps = new ArrayList<>();
+	// Alphabetize by data type, as much as possible.
 	if ( data_type.equalsIgnoreCase("AdminFlow") ) {
-		v.add ( Day );
-		v.add ( Month );
-		v.add ( Irregular );  // Real-time
+		timesteps.add ( Day );
+		timesteps.add ( Month );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//v.add ( Irregular );  // Real-time
 	}
 	else if ( data_type.equalsIgnoreCase("AdminFlowMax") ||
 		data_type.equalsIgnoreCase("AdminFlowMin") ) {
-		v.add ( Month );
+		timesteps.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("Agstats") ) {
-		v.add ( Year );
+		timesteps.add ( Year );
 	}
 	else if ( data_type.startsWith("CropArea") ) {
-		v.add ( Year );
+		timesteps.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("Battery") ) {
-		v.add ( Irregular );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//v.add ( Irregular );
 	}
 	else if(data_type.equalsIgnoreCase("DivClass") || data_type.equalsIgnoreCase("DivTotal") ||
 		data_type.equalsIgnoreCase("IDivClass") || data_type.equalsIgnoreCase("IDivTotal") ) {
-		v.add ( Day );
-		v.add ( Month );
-		v.add ( Year );
+		timesteps.add ( Day );
+		timesteps.add ( Month );
+		timesteps.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("EvapPan") ) {
-		v.add ( Day );
-		v.add ( Month );
+		timesteps.add ( Day );
+		timesteps.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("DivComment") ) {
-		v.add ( Year );
+		timesteps.add ( Year );
 	}
 	else if( data_type.equalsIgnoreCase("FrostDateL28S") || data_type.equalsIgnoreCase("FrostDateL32S") ||
 		data_type.equalsIgnoreCase("FrostDateF32F") || data_type.equalsIgnoreCase("FrostDateF28F") ) {
-		v.add ( Year );
+		timesteps.add ( Year );
 	}
     else if ( data_type.equalsIgnoreCase("HumanPopulation") ) {
-        v.add ( Year );
+        timesteps.add ( Year );
     }
     else if ( data_type.equalsIgnoreCase("LivestockHead") ) {
-        v.add ( Year );
+        timesteps.add ( Year );
     }
 	else if ( data_type.equalsIgnoreCase("NaturalFlow") ) {
-		v.add ( Month );
+		timesteps.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("PoolElev") ) {
-		v.add ( Irregular );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//timesteps.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("Precip") ) {
-		v.add ( Day );
-		v.add ( Month );
-		v.add ( Irregular );
+		timesteps.add ( Day );
+		timesteps.add ( Month );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("RelClass") || data_type.equalsIgnoreCase("RelTotal") ||
 		data_type.equalsIgnoreCase("IRelClass") || data_type.equalsIgnoreCase("IRelTotal") ) {
-		v.add ( Day );
-		v.add ( Month );
-		v.add ( Year );
+		timesteps.add ( Day );
+		timesteps.add ( Month );
+		timesteps.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("RelComment") ) {
-		v.add ( Year );
+		timesteps.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("Release") ) {
-		v.add ( Irregular );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//timesteps.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("ResEOM") ) {
-		v.add ( Month );
+		timesteps.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("ResEOY") ) {
-		v.add ( Year );
+		timesteps.add ( Year );
 	}
 	else if ( data_type.equalsIgnoreCase("ResMeasElev") || data_type.equalsIgnoreCase ( "ResMeasEvap" ) ||
 		data_type.equalsIgnoreCase ( "ResMeasFill" ) || data_type.equalsIgnoreCase ( "ResMeasRelease") ||
 		data_type.equalsIgnoreCase ( "ResMeasStorage") ) {
-		v.add ( Day );
+		timesteps.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("Snow") ) {
 		// Snow accumulation - on the ground
-		v.add ( Day );
-		v.add ( Month );
+		timesteps.add ( Day );
+		timesteps.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("SnowCourseDepth") || data_type.equalsIgnoreCase("SnowCourseSWE") ) {
 		// Although the data are stored in a monthly table, the values are generally recorded to the day
-		v.add ( Day );
+		timesteps.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("Solar") ) {
-		v.add ( Day );
+		timesteps.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("Stage") ) {
-		v.add ( Irregular );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//timesteps.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("Storage") ) {
-		v.add ( Irregular );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//timesteps.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("Streamflow") ) {
-		v.add ( Day );
-		v.add ( Month );
+		timesteps.add ( Day );
+		timesteps.add ( Month );
 		//v.add ( RealTime );
-		v.add ( Irregular );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//v.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("StreamflowMax") ||
 		data_type.equalsIgnoreCase("StreamflowMin") ) {
-		v.add ( Month );
+		timesteps.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("Temp") ) {
-		v.add ( Irregular );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		// as per correspondence with Doug Stenzel.
+		//timesteps.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("TempMax") ) {
-		v.add ( Day );
+		timesteps.add ( Day );
 	}
 	else if(data_type.equalsIgnoreCase("TempMean") || data_type.equalsIgnoreCase("TempMeanMax") ||
 		data_type.equalsIgnoreCase("TempMeanMin") ) {
-		v.add ( Month );
+		timesteps.add ( Month );
 	}
 	else if ( data_type.equalsIgnoreCase("TempMin") ) {
-		v.add ( Day );
+		timesteps.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("VaporPressure") ) {
-		v.add ( Day );
+		timesteps.add ( Day );
 	}
 	else if ( data_type.equalsIgnoreCase("WatTemp") ) {
-		v.add ( Irregular );
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		//timesteps.add ( Irregular );
 	}
 	else if ( data_type.equalsIgnoreCase("WellLevel") ) {
 	    // Legacy, replaced by WellLevelElev
 		if ( (include_types&DATA_TYPE_STRUCTURE_WELL) != 0 ) {
-			v.add ( Day );
+			timesteps.add ( Day );
 		}
-		if ( (include_types&DATA_TYPE_STATION_WELL) != 0 ) {
-			v.add ( Irregular );
-		}
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+		//if ( (include_types&DATA_TYPE_STATION_WELL) != 0 ) {
+		//	timesteps.add ( Irregular );
+		//}
 	}
 	else if ( data_type.equalsIgnoreCase("WellLevelDepth")) {
         if ( (include_types&DATA_TYPE_STRUCTURE_WELL) != 0 ) {
-            v.add ( Day );
+            timesteps.add ( Day );
         }
 	}
     else if ( data_type.equalsIgnoreCase("WellLevelElev") ) {
         // Replaces legacy "WellLevel"
-        if ( (include_types&DATA_TYPE_STATION_WELL) != 0 ) {
-            v.add ( Irregular );
-        }
+		// TODO smalers 2022-03-24 as of this date don't allow real-time data queries out of HydroBase,
+        //if ( (include_types&DATA_TYPE_STATION_WELL) != 0 ) {
+        //    timesteps.add ( Irregular );
+        //}
         if ( (include_types&DATA_TYPE_STRUCTURE_WELL) != 0 ) {
-            v.add ( Day );
+            timesteps.add ( Day );
         }
     }
 	else if ( data_type.equalsIgnoreCase("Wind") ) {
-		v.add ( Day );
+		timesteps.add ( Day );
 	}
 	else if ( data_type.regionMatches(true,0,"WIS",0,3) ) {
 		// Water information sheet data types start with "WIS"...
-		v.add ( Day );
+		timesteps.add ( Day );
 	}
-	return v;
+	return timesteps;
 }
 
 /**
