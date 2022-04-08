@@ -793,6 +793,7 @@ NoticeEnd */
 package DWR.DMI.HydroBaseDMI;
 
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -19305,21 +19306,25 @@ throws Exception, NoDataFoundException
 	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("SnowCourseDepth")) {
 		HydroBase_SnowCrse data;
 		String day;
-		// Data records are monthly but data are actually daily...
+		// Data records are monthly but data are actually daily.
 		for ( int i = 0; i < size; i++) {
-			// Loop through and assign the data...
+			// Loop through and assign the data.
 			data = (HydroBase_SnowCrse)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
-			// The day in the records are set to a string
-			day = data.getDay();
-			if (!StringUtil.isInteger(day)) {
-				//Message.printStatus ( 2, routine, "Snow course \"day\" for:  " + date + " is \"" + day + "\"");
-				continue;
-			}
-			date.setDay ( StringUtil.atoi(day));
+			// TODO smalers 2022-04-07 old code used string for day, remove when new code checks out.
+			// The day in the records are set to a string.
+			//day = data.getDay();
+			//if (!StringUtil.isInteger(day)) {
+			//	//Message.printStatus ( 2, routine, "Snow course \"day\" for:  " + date + " is \"" + day + "\"");
+			//	continue;
+			//}
+			//date.setDay ( StringUtil.atoi(day));
+			date.setDay ( data.getDay() );
 			value = data.getDepth ();
-			//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
+			if ( Message.isDebugOn ) {
+				Message.printStatus ( 2, routine, "Day: " + data.getDay() + " date:  " + date + " value: " + value);
+			}
 			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
 				ts.setDataValue ( date, value);
 			}
@@ -19334,11 +19339,13 @@ throws Exception, NoDataFoundException
 			data = (HydroBase_SnowCrse)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
-			day = data.getDay();
-			if (!StringUtil.isInteger(day)) {
-				continue;
-			}
-			date.setDay ( StringUtil.atoi(day));
+			// Old HydroBase used string for day.
+			//day = data.getDay();
+			//if (!StringUtil.isInteger(day)) {
+				//continue;
+			//}
+			//date.setDay ( StringUtil.atoi(day));
+			date.setDay ( data.getDay());
 			value = data.getSwe ();
 			//Message.printStatus ( 2, routine, "Date:  " + date + " value: " + value);
 			if (!DMIUtil.isMissing(value) && !HydroBase_Util.isMissing(value)) {
@@ -31611,13 +31618,32 @@ Translate a ResultSet to HydroBase_SnowCrse objects.
 */
 private List<HydroBase_SnowCrse> toSnowCrseList (ResultSet rs) 
 throws Exception {
+	String routine = getClass().getSimpleName() + ".toSnowCrseSPList";
 	HydroBase_SnowCrse data = null;
-	List<HydroBase_SnowCrse> v = new ArrayList<HydroBase_SnowCrse>();
+	List<HydroBase_SnowCrse> v = new ArrayList<>();
 	int index = 1;
 	
 	int i;
 	String s;
 	double d;
+
+	// Figure out if the day is a string (old HydroBase) or integer (new HydroBase):
+	// - assume int, which is the current design
+	boolean dayIsString = false;
+	int dayColumn = 6;
+	if ( (rs.getMetaData().getColumnType(dayColumn) == Types.CHAR) ||
+		(rs.getMetaData().getColumnType(dayColumn) == Types.VARCHAR) ) {
+		// Older design.
+		dayIsString = true;
+	}
+	// Figure out if the depth is an int (old HydroBase) or double (new HydroBase):
+	// - assume double, which is the current design
+	boolean depthIsInt = false;
+	int depthColumn = 10;
+	if ( (rs.getMetaData().getColumnType(depthColumn) == Types.INTEGER) ) {
+		// Older design.
+		depthIsInt = true;
+	}
 
 	while (rs.next()) {
 		index = 1;
@@ -31642,9 +31668,28 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setCal_mon(s.trim());
 		}
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setDay(s.trim());
+		if ( dayIsString ) {
+			// Day is a string:
+			// - old design
+			s = rs.getString(index++);
+			if (!rs.wasNull()) {
+				try {
+					data.setDay(Integer.parseInt(s.trim()));
+				}
+				catch ( NumberFormatException e ) {
+					Message.printWarning(3, routine, "Snow course day (" + s + ") is an invalid integer,  meas_num=" + data.getMeas_num()
+						+ "cal_year=" + data.getCal_year() + " cal_mon_num=" + data.getCal_mon_num() );
+					// Should not happen.
+				}
+			}
+		}
+		else {
+			// Day is an integer:
+			// - changed in code 2022-04-07 based on database design
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setDay(i);
+			}
 		}
 		s = rs.getString(index++);
 		if (!rs.wasNull()) {
@@ -31658,9 +31703,39 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setM_type(i);
 		}
-		i = rs.getInt(index++);
-		if (!rs.wasNull()) {
-			data.setDepth(i);
+		if ( depthIsInt ) {
+			// Depth is an integer:
+			// - old design
+			i = rs.getInt(index++);
+			if ( Message.isDebugOn ) {
+				Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() +
+					" (cal_mon=" + data.getCal_mon() + ") depth int=" + i );
+			}
+			if (!rs.wasNull()) {
+				data.setDepth((double)i);
+			}
+			else {
+				if ( Message.isDebugOn ) {
+					Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() + " (cal_mon=" + data.getCal_mon() + ") null depth");
+				}
+			}
+		}
+		else {
+			// Depth is a double:
+			// - new design
+			d = rs.getInt(index++);
+			if ( Message.isDebugOn ) {
+				Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() +
+					" (cal_mon=" + data.getCal_mon() + ") depth double=" + d );
+			}
+			if (!rs.wasNull()) {
+				data.setDepth(d);
+			}
+			else {
+				if ( Message.isDebugOn ) {
+					Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() + " (cal_mon=" + data.getCal_mon() + ") null depth");
+				}
+			}
 		}
 		d = rs.getDouble(index++);
 		if (!rs.wasNull()) {
@@ -31681,13 +31756,32 @@ Translate a ResultSet to HydroBase_SnowCrse objects.
 */
 private List<HydroBase_SnowCrse> toSnowCrseSPList (ResultSet rs) 
 throws Exception {
+	String routine = getClass().getSimpleName() + ".toSnowCrseSPList";
 	HydroBase_SnowCrse data = null;
-	List<HydroBase_SnowCrse> v = new ArrayList<HydroBase_SnowCrse>();
+	List<HydroBase_SnowCrse> v = new ArrayList<>();
 	int index = 1;
 	
 	int i;
 	String s;
 	double d;
+	
+	// Figure out if the day is a string (old HydroBase) or integer (new HydroBase):
+	// - assume int, which is the current design
+	boolean dayIsString = false;
+	int dayColumn = 6;
+	if ( (rs.getMetaData().getColumnType(dayColumn) == Types.CHAR) ||
+		(rs.getMetaData().getColumnType(dayColumn) == Types.VARCHAR) ) {
+		// Older design.
+		dayIsString = true;
+	}
+	// Figure out if the depth is an int (old HydroBase) or double (new HydroBase):
+	// - assume double, which is the current design
+	boolean depthIsInt = false;
+	int depthColumn = 10;
+	if ( (rs.getMetaData().getColumnType(depthColumn) == Types.INTEGER) ) {
+		// Older design.
+		depthIsInt = true;
+	}
 
 	while (rs.next()) {
 		index = 1;
@@ -31712,9 +31806,28 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setCal_mon_num(i);
 		}		
-		s = rs.getString(index++);
-		if (!rs.wasNull()) {
-			data.setDay(s.trim());
+		if ( dayIsString ) {
+			// Day is a string:
+			// - old design
+			s = rs.getString(index++);
+			if (!rs.wasNull()) {
+				try {
+					data.setDay(Integer.parseInt(s.trim()));
+				}
+				catch ( NumberFormatException e ) {
+					Message.printWarning(3, routine, "Snow course day (" + s + ") is an invalid integer,  meas_num=" + data.getMeas_num()
+						+ "cal_year=" + data.getCal_year() + " cal_mon_num=" + data.getCal_mon_num() );
+					// Should not happen.
+				}
+			}
+		}
+		else {
+			// Day is an integer:
+			// - changed in code 2022-04-07 based on database design
+			i = rs.getInt(index++);
+			if (!rs.wasNull()) {
+				data.setDay(i);
+			}
 		}
 		s = rs.getString(index++);
 		if (!rs.wasNull()) {
@@ -31728,16 +31841,44 @@ throws Exception {
 		if (!rs.wasNull()) {
 			data.setM_type(i);
 		}
-		i = rs.getInt(index++);
-		//Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() + " (cal_mon=" + data.getCal_mon() + ") depth=" + i);
-		if (!rs.wasNull()) {
-			data.setDepth(i);
+		if ( depthIsInt ) {
+			// Depth is an integer:
+			// - old design
+			i = rs.getInt(index++);
+			if ( Message.isDebugOn ) {
+				Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() +
+					" (cal_mon=" + data.getCal_mon() + ") depth int=" + i );
+			}
+			if (!rs.wasNull()) {
+				data.setDepth((double)i);
+			}
+			else {
+				if ( Message.isDebugOn ) {
+					Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() + " (cal_mon=" + data.getCal_mon() + ") null depth");
+				}
+			}
 		}
 		else {
-			//Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() + " (cal_mon=" + data.getCal_mon() + ") null depth");
+			// Depth is a double:
+			// - new design
+			d = rs.getInt(index++);
+			if ( Message.isDebugOn ) {
+				Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() +
+					" (cal_mon=" + data.getCal_mon() + ") depth double=" + d );
+			}
+			if (!rs.wasNull()) {
+				data.setDepth(d);
+			}
+			else {
+				if ( Message.isDebugOn ) {
+					Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() + " (cal_mon=" + data.getCal_mon() + ") null depth");
+				}
+			}
 		}
-		//Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() +
-		//	" (cal_mon=" + data.getCal_mon() + ") after set depth=" + data.getDepth());
+		if ( Message.isDebugOn ) {
+			Message.printStatus(2,"SnowCourse","Date: " + data.getCal_year() + "-" + data.getCal_mon_num() + "-" + data.getDay() +
+				" (cal_mon=" + data.getCal_mon() + ") after set depth=" + data.getDepth());
+		}
 		d = rs.getDouble(index++);
 		if (!rs.wasNull()) {
 			data.setSwe(d);
