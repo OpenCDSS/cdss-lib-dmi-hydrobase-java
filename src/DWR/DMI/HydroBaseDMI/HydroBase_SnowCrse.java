@@ -46,37 +46,26 @@ Class to store data from the HydroBase snow_crse table.
 public class HydroBase_SnowCrse 
 extends DMIDataObject {
 
-protected int _meas_num = 	DMIUtil.MISSING_INT;
-protected int _cal_year = 	DMIUtil.MISSING_INT;
-protected int _m_num = 		DMIUtil.MISSING_INT;
-protected int _m_type = 	DMIUtil.MISSING_INT;
-protected int _station_num = 	DMIUtil.MISSING_INT;
-protected int _cal_mon_num = 	DMIUtil.MISSING_INT;
-protected String _cal_mon = 	DMIUtil.MISSING_STRING;
-protected String _day = 	DMIUtil.MISSING_STRING;
-protected String _unit = 	DMIUtil.MISSING_STRING;
-protected int _depth = 		DMIUtil.MISSING_INT;
-protected double _swe = 	DMIUtil.MISSING_DOUBLE;
+protected int _meas_num = DMIUtil.MISSING_INT;
+protected int _cal_year = DMIUtil.MISSING_INT;
+protected int _m_num = DMIUtil.MISSING_INT;
+protected int _m_type = DMIUtil.MISSING_INT;
+protected int _station_num = DMIUtil.MISSING_INT;
+protected int _cal_mon_num = DMIUtil.MISSING_INT;
+protected String _cal_mon = DMIUtil.MISSING_STRING;
+// TODO smalers 2022-04-07 used to be a string
+protected int _day = DMIUtil.MISSING_INT;
+protected String _unit = DMIUtil.MISSING_STRING;
+// TODO smalers 2022-04-07 used to be an int
+//protected int _depth = DMIUtil.MISSING_INT;
+protected double _depth = DMIUtil.MISSING_DOUBLE;
+protected double _swe = DMIUtil.MISSING_DOUBLE;
 
 /**
 Constructor.
 */
 public HydroBase_SnowCrse() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_cal_mon = null;
-	_day = null;
-	_unit = null;
-	
-	super.finalize();
 }
 
 /**
@@ -107,7 +96,7 @@ public int getCal_year() {
 Returns _day
 @return _day
 */
-public String getDay() {
+public int getDay() {
 	return _day;
 }
 
@@ -115,7 +104,7 @@ public String getDay() {
 Returns _depth
 @return _depth
 */
-public int getDepth() {
+public double getDepth() {
 	return _depth;
 }
 
@@ -195,7 +184,7 @@ public void setCal_year(int cal_year) {
 Sets _day
 @param day value to put into _day
 */
-public void setDay(String day) {
+public void setDay(int day) {
 	_day = day;
 }
 
@@ -203,7 +192,7 @@ public void setDay(String day) {
 Sets _depth
 @param depth value to put into _depth
 */
-public void setDepth(int depth) {
+public void setDepth(double depth) {
 	_depth = depth;
 }
 
