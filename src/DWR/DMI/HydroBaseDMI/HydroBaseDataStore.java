@@ -81,6 +81,7 @@ public HydroBaseDataStore ( String name, String description, DMI dmi, boolean is
  * Check the database requirement, for example:
  * <pre>
  * @require datastore HydroBase version >= YYYYMMDD
+ * @enabledif datastore HydroBase version >= YYYYMMDD
  * </pre>
  * @param check a RequirementCheck object that has been initialized with the check text and
  * will be updated in this method.
@@ -91,8 +92,10 @@ public boolean checkRequirement ( RequirementCheck check ) {
 	// Parse the string into parts:
 	// - calling code has already interpreted the first 3 parts to be able to do this call
 	String requirement = check.getRequirementText();
+	// Get the annotation that is being checked, so messages are appropriate.
+	String annotation = check.getAnnotation();
 	String [] requireParts = requirement.split(" ");
-    String example = "\n  Example: #@require datastore HydroBase version >= 20200720";
+    String example = "\n  Example: #" + annotation + " datastore HydroBase version >= 20200720";
     String checkerName = "HydroBaseDatastore";
 	if ( requireParts.length >= 6 ) {
 		// Have a requirement to check:
@@ -102,32 +105,43 @@ public boolean checkRequirement ( RequirementCheck check ) {
 		String dbVersion = getVersionForCheck();
 		if ( (dbVersion == null) || dbVersion.isEmpty() ) {
 			// Unable to do check.
+			Message.printStatus(2,routine,"Database version is empty.");
 			check.setIsRequirementMet(checkerName, false, "HydroBase database version cannot be determined.");
 			return check.isRequirementMet();
 		}
-		else if ( reqProperty.equalsIgnoreCase("version") ){
+		else if ( reqProperty.equalsIgnoreCase("version") ) {
 			// HydroBase versions are strings of format YYYYMMDD so can do alphabetical comparison.
 			String reqVersion = requireParts[5];
 			boolean verCheck = StringUtil.compareUsingOperator(dbVersion, operator, reqVersion);
 			String message = "";
 			if ( !verCheck ) {
 				message = "HydroBase version (" + dbVersion + ") does not meet the requirement: " + operator + " " + reqVersion;
+				Message.printStatus(2, routine, message);
+			}
+			else {
+				message = "HydroBase version (" + dbVersion + ") does meet the requirement: " + operator + " " + reqVersion;
+				Message.printStatus(2, routine, message);
 			}
 			// The following will set to true or false, and fail message if failed.
 			check.setIsRequirementMet(checkerName, verCheck, message);
 			return check.isRequirementMet();
 		}
   		else {
-   			String message = "@require datastore property (" + reqProperty + ") is not recognized: " + requirement + example;
+   			String message = annotation + " datastore property (" + reqProperty + ") is not recognized: " + requirement + example;
    			check.setIsRequirementMet(checkerName, false, message);
    			Message.printWarning(3, routine, message);
    		}
    		// If failure here and no message have a coding problem because message needs to be non-empty.
    		if ( ! check.isRequirementMet() && check.getFailReason().isEmpty() ) {
-   			String message = "@require was not met but have empty fail message - need to fix software.";
+   			String message = annotation + " was not met but have empty fail message - need to fix software.";
 			check.setIsRequirementMet(checkerName, false, message);
 			Message.printWarning(3, routine, message);
    		}
+	}
+	else {
+		String message = "Requirement format is invalid: " + check.getRequirementText();
+		Message.printWarning(3, routine, message);
+		check.setIsRequirementMet(checkerName, false, message);
 	}
 	return check.isRequirementMet();
 }
