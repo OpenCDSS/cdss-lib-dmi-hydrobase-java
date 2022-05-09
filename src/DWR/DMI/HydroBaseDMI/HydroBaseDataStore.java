@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2022 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ public class HydroBaseDataStore extends AbstractDatabaseDataStore implements Dat
 /**
 Indicate whether this datastore is wrapping a legacy DMI, for example as used with previously used with TSTool.
 This flag is needed because it is possible that the legacy DMI will be named "HydroBase" and a new datastore
-also will be named "HydroBase".  This may be done during transition to allow the datastore to be phased in with the
-same name.  However, there needs to be some way to tell the two datastores apart, for example to allow a list
+also will be named "HydroBase".  This may be done during transition to allow the datastore to be phased in with the same name.
+However, there needs to be some way to tell the two datastores apart, for example to allow a list
 of input filter panels to be searched in response to a user selecting "HydroBase" - in this case the input filter
 corresponding to the data store should be used in preference to the one used with the legacy DMI.
 */
@@ -56,8 +56,7 @@ Construct a data store given a DMI instance, which is assumed to be open.
 @param description name for the data store
 @param dmi DMI instance to use for the data store.
 */
-public HydroBaseDataStore ( String name, String description, DMI dmi )
-{
+public HydroBaseDataStore ( String name, String description, DMI dmi ) {
     setName ( name );
     setDescription ( description );
     setDMI ( dmi );
@@ -72,8 +71,8 @@ modern datastore instance.
 @param dmi DMI instance to use for the data store.
 @param isLegacyDMI specify as true if the data store is a 
 */
-public HydroBaseDataStore ( String name, String description, DMI dmi, boolean isLegacyDMI )
-{   this ( name, description, dmi );
+public HydroBaseDataStore ( String name, String description, DMI dmi, boolean isLegacyDMI ) {
+    this ( name, description, dmi );
     __isLegacyDMI = isLegacyDMI;
 }
 
@@ -151,9 +150,8 @@ Factory method to construct a data store connection from a properties file.
 @param filename name of file containing property strings
 */
 public static HydroBaseDataStore createFromFile ( String filename )
-throws IOException, Exception
-{
-    // Read the properties from the file
+throws IOException, Exception {
+    // Read the properties from the file.
     PropList props = new PropList ("");
     props.setPersistentName ( filename );
     props.readPersistent ( false );
@@ -164,12 +162,12 @@ throws IOException, Exception
     String databaseName = IOUtil.expandPropertyForEnvironment("DatabaseName",props.getValue("DatabaseName"));
     String systemLogin = IOUtil.expandPropertyForEnvironment("SystemLogin",props.getValue("SystemLogin"));
     String systemPassword = IOUtil.expandPropertyForEnvironment("SystemPassword",props.getValue("SystemPassword"));
-    // The following is used if making an ODBC DSN connection to a HydroBase database, rather than above
+    // The following is used if making an ODBC DSN connection to a HydroBase database, rather than above.
     String odbcName = IOUtil.expandPropertyForEnvironment("OdbcName",props.getValue("OdbcName"));
     
     if ( (odbcName != null) && !odbcName.equals("") ) {
     	/*
-        // An ODBC connection is configured so use it
+        // An ODBC connection is configured so use it.
         GenericDMI dmi = null;
         dmi = new GenericDMI (
             databaseEngine, // Needed for internal SQL handling
@@ -177,17 +175,17 @@ throws IOException, Exception
             systemLogin, // OK if null - use read-only guest
             systemPassword ); // OK if null - use read-only guest
             */
-        // Have to substitute the DMI from above into a new HydroBaseDMI
-    	boolean useStoredProcedures = true; // Newer databases should have stored procedures
+        // Have to substitute the DMI from above into a new HydroBaseDMI.
+    	boolean useStoredProcedures = true; // Newer databases should have stored procedures.
         HydroBaseDMI hdmi = new HydroBaseDMI(databaseEngine, odbcName, systemLogin, systemPassword, useStoredProcedures );
         hdmi.open();
         HydroBaseDataStore ds = new HydroBaseDataStore( name, description, hdmi );
         return ds;
     }
     else {
-	    // Get the properties and create an instance
-	    int port = -1; // Determine port from instance name
-	    boolean useStoredProcedures = true; // Always the case with newer database
+	    // Get the properties and create an instance.
+	    int port = -1; // Determine port from instance name.
+	    boolean useStoredProcedures = true; // Always the case with newer database.
 	    HydroBaseDMI dmi = new HydroBaseDMI ( databaseEngine, databaseServer,
 	        databaseName, port, systemLogin, systemPassword, useStoredProcedures );
 	    dmi.open();
@@ -198,9 +196,9 @@ throws IOException, Exception
 
 /**
 Indicate whether the datastore is a legacy DMI wrapper.
+@return true if the datastore wraps a legacy DMI
 */
-public boolean getIsLegacyDMI ()
-{
+public boolean getIsLegacyDMI () {
     return __isLegacyDMI;
 }
 
