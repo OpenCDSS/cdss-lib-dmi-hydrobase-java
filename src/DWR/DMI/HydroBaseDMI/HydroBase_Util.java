@@ -1068,31 +1068,31 @@ throws Exception
 }
 
 /**
-Fill a daily, monthly, or yearly diversion (DivTotal, DivClass) or reservoir (RelTotal, RelClass) time series
-using diversion comment information.  Certain "not used" flags ("A", "B", "C", "D") indicate a value of
-zero for the irrigation year (Nov 1 to Oct 31).  Yearly time series are assumed
-to be in irrigation year, to match the diversion comments.
+Fill a daily, monthly, or yearly diversion (DivTotal, DivClass) or reservoir (RelTotal, RelClass)
+time series using diversion comment information.
+Certain "not used" flags ("A", "B", "C", "D") indicate a value of zero for the irrigation year (Nov 1 to Oct 31).
+Yearly time series are assumed to be in irrigation year, to match the diversion comments.
 @param hbdmi HydroBaseDMI to use for queries.
 @param ts Time series to fill.
 @param date1 Starting date to fill, or null to fill all.
 @param date2 Ending date to fill, or null to fill all.
-@param fillflag If specified (not null or zero length), the time series will be
-updated to allow data flags and filled values will be tagged with the specified
-string.  A value of null or "Auto" will result in a one-character fill flag, where
-the flag value is set to the "not used" flag value.
+@param fillflag If specified (not null or zero length),
+the time series will be updated to allow data flags and filled values will be tagged with the specified string.
+A value of null or "Auto" will result in a one-character fill flag,
+where the flag value is set to the "not used" flag value.
 @param fillFlagDesc description for fillflag, used in report legends.
 @param extend_period Indicate whether the time series period should be extended
 if diversion comment values are found outside the current time series period.
-This will only occur if the fill dates are null (indicating that all available
-data should be used, for example in general queries).
+This will only occur if the fill dates are null (indicating that all available data should be used,
+for example in general queries).
 A value of true will extend the period if necessary.
 @exception Exception if there is an error filling the time series (e.g., exception thrown querying HydroBase).
 */
 public static void fillTSUsingDiversionComments(HydroBaseDMI hbdmi, TS ts, DateTime date1, DateTime date2,
 	String fillflag, String fillFlagDesc, boolean extend_period )
-throws Exception
-{	String routine = "HydroBase_Util.fillDiversionUsingComments";
-
+throws Exception {
+	String routine = "HydroBase_Util.fillDiversionUsingComments";
+	
 	if ( ts == null ) {
 		// Nothing to fill.
 		return;
@@ -1104,12 +1104,12 @@ throws Exception
 	try {
 	    // Get the diversion comments as a time series, where the year in the time series is irrigation year.
 		if ( ts.getDataType().equalsIgnoreCase("DivTotal") || ts.getDataType().toUpperCase().startsWith("DIVCLASS") ) {
-			// Diversion comments...
+			// Diversion comments.
 			divcomts = hbdmi.readTimeSeries(
 			ts.getLocation() + ".DWR.DivComment.Year", date1, date2, null, true, null);
 		}
 		else if(ts.getDataType().equalsIgnoreCase("RelTotal") || ts.getDataType().toUpperCase().startsWith("RELCLASS") ) {
-			// Release comments...
+			// Release comments.
 			divcomts = hbdmi.readTimeSeries(
 			ts.getLocation() + ".DWR.RelComment.Year", date1, date2, null, true, null);
 		}
@@ -1131,41 +1131,40 @@ throws Exception
 	}
 
 	DateTime divcomdate = new DateTime(divcomts.getDate1());
-	DateTime divcomend = new DateTime(divcomts.getDate2()); // Period for diversion comments
-	// The following causes the precision to be set correctly...
+	DateTime divcomend = new DateTime(divcomts.getDate2()); // Period for diversion comments.
+	// The following causes the precision to be set correctly.
 	DateTime tsdate1 = new DateTime(ts.getDate1());
 	DateTime tsdate2 = new DateTime(ts.getDate2()); // Period for time series to fill.
 	String zero_flags = "ABCD"; 	// "not used" flag that indicates a zero value.
 
 	String not_used = null; // Flag in diversion comments indicating whether diversion was used in irrigation year.
 	TSData tsdata = new TSData(); // Single data point from a time series.
-	int fill_count = 0; // Number of data values filled in the irrigation year (or number of years with
-						// diversion comments below).
-	StringBuilder usedCommentFlags = new StringBuilder(); // Flags that are actually encountered
+	// Number of data values filled in the irrigation year (or number of years with diversion comments below).
+	int fill_count = 0;
+	StringBuilder usedCommentFlags = new StringBuilder(); // Flags that are actually encountered.
 	if ( (date1 == null) && (date2 == null) && extend_period ) {
-		// Loop through diversion comments once and determine whether
-		// the period needs to be extended.  This should only be done if
-		// the not_used flag is one of the zero values.
+		// Loop through diversion comments once and determine whether the period needs to be extended.
+		// This should only be done if the not_used flag is one of the zero values.
 		int yearmin = 3000;
 		int yearmax = -3000;
 		for ( ; divcomdate.lessThanOrEqualTo(divcomend); divcomdate.addYear(1)) {
 			tsdata = divcomts.getDataPoint(divcomdate,tsdata);
 			not_used = tsdata.getDataFlag();
 			if ( (not_used == null)|| (not_used.length() == 0) || (zero_flags.indexOf(not_used) < 0) ) {
-				// No need to process the flag because a zero water use flag is not specified...
+				// No need to process the flag because a zero water use flag is not specified.
 				continue;
 			}
 			if ( usedCommentFlags.indexOf(not_used) < 0 ) {
 				usedCommentFlags.append(not_used);
 			}
 			++fill_count;
-			// Save the min and max year.  Note that these are irrigation years since that is what is stored in
-			// the diversion comment time series.
+			// Save the min and max year.
+			// Note that these are irrigation years since that is what is stored in the diversion comment time series.
 			yearmin = MathUtil.min ( yearmin, divcomdate.getYear());
 			yearmax = MathUtil.max ( yearmax, divcomdate.getYear());
 		}
-		// If the minimum and maximum year from the above indicate that
-		// the period should be longer, extend it.  Do the comparisons in calendar years.
+		// If the minimum and maximum year from the above indicate that the period should be longer, extend it.
+		// Do the comparisons in calendar years.
 		DateTime min_DateTime = new DateTime();
 		min_DateTime.setYear ( yearmin - 1 );
 		min_DateTime.setMonth ( 11 );
@@ -1187,7 +1186,7 @@ throws Exception
 			max_DateTime.setPrecision(DateTime.PRECISION_YEAR);
 		}
 		if ( min_DateTime.lessThan(tsdate1) || max_DateTime.greaterThan(tsdate2) ) {
-			// Resize the time series, using the original date/time on an end if necessary...
+			// Resize the time series, using the original date/time on an end if necessary.
 			if ( min_DateTime.greaterThan(tsdate1) ) {
 				min_DateTime = new DateTime ( tsdate1 );
 			}
@@ -1199,7 +1198,7 @@ throws Exception
 		}
 	}
 
-	// Check how to handle flags and set some booleans to optimize code
+	// Check how to handle flags and set some booleans to optimize code.
 	boolean doFillFlag = false;
 	boolean doFillFlagAuto = false;
 	if ( (fillflag != null) && !fillflag.isEmpty() ) {
@@ -1212,7 +1211,7 @@ throws Exception
 	DateTime tsdate;
 	int iyear = 0; // Irrigation year to process.
 	double dataValue = 0.0;	// Value from the time series.
-	String fillflag2 = fillflag; // String used to do filling, reflecting "Auto" value
+	String fillflag2 = fillflag; // String used to do filling, reflecting "Auto" value.
 	TSData divcomTsData = new TSData();
 	for ( divcomdate = new DateTime(divcomts.getDate1());
 		divcomdate.lessThanOrEqualTo(divcomend); divcomdate.addYear(1)) {
@@ -1222,28 +1221,27 @@ throws Exception
 			// No need to process the flag because a zero water use diversion comment flag is not specified.
             continue;
 		}
-		// Have a valid "not used" flag to be used in filling.  The year for diversion comments time series is
-		// irrigation year.
-		// TODO SAM 2006-04-25 Always fill the missing values.  It is assumed that HydroBase
-		// has diversion comments only for irrigation years where no detailed observations occur.  This should
-		// be checked during HydroBase verification (but is not checked in this code).
+		// Have a valid "not used" flag to be used in filling.  The year for diversion comments time series is irrigation year.
+		// TODO SAM 2006-04-25 Always fill the missing values.
+		// It is assumed that HydroBase has diversion comments only for irrigation years where no detailed observations occur.
+		// This should be checked during HydroBase verification (but is not checked in this code).
 		iyear = divcomdate.getYear();
 		fill_count = 0;
 		if ( interval_base == TimeInterval.YEAR ) {
-			// Can check one date, corresponding to the diversion comment year...
+			// Can check one date, corresponding to the diversion comment year.
 			dataValue = ts.getDataValue(divcomdate);
 			if ( ts.isDataMissing(dataValue) ) {
 				if ( doFillFlag ) {
-					// Set the data flag, appending to the old value...
+					// Set the data flag, appending to the old value.
 					if ( doFillFlagAuto ) {
-						// Automatically use the "not used" flag value...
+						// Automatically use the "not used" flag value.
 						fillflag2 = not_used;
 					}
 					tsdata = ts.getDataPoint(divcomdate,tsdata);
 					ts.setDataValue ( divcomdate, 0.0, (tsdata.getDataFlag().trim() + fillflag2), 1 );
 				}
 				else {
-				    // No data flag...
+				    // No data flag.
 					ts.setDataValue ( divcomdate, 0.0 );
 				}
 				++fill_count;
@@ -1253,36 +1251,35 @@ throws Exception
 			// Check every time series value in the irrigation year.
 			tsdate1.setDay(1);
 			tsdate1.setMonth(11);
-			// Diversion comments are in irrigation year, which
-			// corresponds to the end of the Nov-Oct period...
+			// Diversion comments are in irrigation year, which corresponds to the end of the Nov-Oct period.
 			tsdate1.setYear(iyear - 1);
 			tsdate2.setDay(31);
 			tsdate2.setMonth(10);
 			tsdate2.setYear(iyear);
 			// The following will work for either daily or monthly because the precision on tsdate1 is set based
-			// on the time series interval (if monthly the day will be ignored)...
+			// on the time series interval (if monthly the day will be ignored).
 			for ( tsdate = new DateTime(tsdate1); tsdate.lessThanOrEqualTo(tsdate2);
 				tsdate.addInterval(interval_base,interval_mult)) {
 				dataValue = ts.getDataValue(tsdate);
 				if ( ts.isDataMissing(dataValue)) {
 					if ( doFillFlag ) {
-						// Set the data flag, appending to the old value...
+						// Set the data flag, appending to the old value.
 						if ( doFillFlagAuto ) {
-							// Automatically use the "not used" flag value...
+							// Automatically use the "not used" flag value.
 							fillflag2 = not_used;
 						}
-						tsdata =ts.getDataPoint(tsdate,tsdata);
+						tsdata = ts.getDataPoint(tsdate,tsdata);
 						ts.setDataValue ( tsdate, 0.0, (tsdata.getDataFlag().trim() + fillflag2), 1 );
 					}
 					else {
-					    // No data flag...
+					    // No data flag.
 						ts.setDataValue ( tsdate, 0.0 );
 					}
 					++fill_count;
 				}
 			}
 		}
-		// Print/save a message for the year...
+		// Print/save a message for the year.
 		if ( fill_count > 0 ) {
 			String comment_string = "Filled " + fill_count + " values in irrigation year " +
 			iyear + " (Nov " + (iyear - 1) + "-Oct " + iyear + ") with zero because diversion comment not_used=\"" + not_used + "\"";
@@ -1291,13 +1288,13 @@ throws Exception
 			}
 			ts.addToGenesis(comment_string);
 			Message.printStatus(2, routine, comment_string);
-			// Save the flags that are used
+			// Save the flags that are used.
 			if ( doFillFlag ) {
-                // Set the data flag, appending to the old value...
+                // Set the data flag, appending to the old value.
 				if ( (fillFlagDesc != null) && !fillFlagDesc.isEmpty() ) {
 					// Description is provided
 					if ( fillFlagDesc.equalsIgnoreCase("Auto") ) {
-	                    // Use the standard values as documented by DWR
+	                    // Use the standard values as documented by DWR.
 	                    ts.addDataFlagMetadata(new TSDataFlagMetadata("A","Diversion comment - STRUCTURE NOT USABLE") );
 	                    ts.addDataFlagMetadata(new TSDataFlagMetadata("B","Diversion comment - NO WATER AVAILABLE") );
 	                    ts.addDataFlagMetadata(new TSDataFlagMetadata("C","Diversion comment - WATER AVAILABLE BUT NOT TAKEN") );
@@ -1307,7 +1304,7 @@ throws Exception
 	                    ts.addDataFlagMetadata(new TSDataFlagMetadata("F","Diversion comment - NO INFORMATION AVAILABLE") );
 					}
 					else {
-						// User-defined flag description same for all values
+						// User-defined flag description same for all values.
 						for ( int i = 0; i < usedCommentFlags.length(); i++ ) {
 							ts.addDataFlagMetadata(new TSDataFlagMetadata(""+usedCommentFlags.charAt(i),fillFlagDesc) );
 						}
