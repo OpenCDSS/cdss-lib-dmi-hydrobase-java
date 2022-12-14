@@ -16756,11 +16756,11 @@ more information.
 @return a time series or null if the time series is not defined in the database.
 If no data records are available within the requested period, a call to
 hasData() on the returned time series will return false.
-@param tsident_string TSIdent string indentifying the time series.
-@param req_date1 Optional date to specify the start of the query (specify 
-null to read the entire time series).
-@param req_date2 Optional date to specify the end of the query (specify 
-null to read the entire time series).
+@param tsident_string TSIdent string identifying the time series.
+@param req_date1 Optional date to specify the start of the query (specify null to read the entire time series),
+will be extended to full irrigation years for diversion records, and then set to the requested date.
+@param req_date2 Optional date to specify the end of the query (specify null to read the entire time series),
+will be extended to full irrigation years for diversion records, and then set to the requested date.
 @param req_units requested data units (specify null or blank string to 
 return units from the database).
 @param read_data Indicates whether data should be read (specify false to 
@@ -16956,6 +16956,20 @@ throws Exception, NoDataFoundException
 		return null;
 	}
 	int interval_base = ts.getDataIntervalBase();
+
+	// Define period for diversion records:
+	// - for daily data, extend to the full irrigation year to ensure that carry forward logic works
+	// - then reset after reading/filling to the requested period
+	// Make a copy of the start and end.
+	DateTime readStartIrrig = null;
+	DateTime readEndIrrig = null;
+	if ( req_date1 != null ) {
+		readStartIrrig = new DateTime(req_date1);
+	}
+	if ( req_date2 != null ) {
+		readEndIrrig = new DateTime(req_date2);
+	}
+	roundToIrrigationYear ( interval_base, readStartIrrig, readEndIrrig );
 
 	// Define the header information from station/meas_type or structure/struct_meas_type...
 
@@ -17567,7 +17581,8 @@ throws Exception, NoDataFoundException
 		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_wc.amt_*, daily_wc.obs_*");
-		v = readDailyWCList(str_mt_v.getMeas_num(),req_date1, req_date2);
+		//v = readDailyWCList(str_mt_v.getMeas_num(),req_date1, req_date2);
+		v = readDailyWCList(str_mt_v.getMeas_num(),readStartIrrig, readEndIrrig);
 	}
 	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("DivClass") ||
 		data_type.equalsIgnoreCase("IDivClass")) ) {
@@ -17593,7 +17608,8 @@ throws Exception, NoDataFoundException
 		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_amt.amt_*, daily_amt.obs_*");
-		v = readDailyAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
+		//v = readDailyAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
+		v = readDailyAmtList(str_mt_v.getMeas_num(),readStartIrrig,readEndIrrig);
 	}
 	else if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("DivTotal") ||
 		(data_type.equalsIgnoreCase("IDivTotal")) ) {
@@ -17675,7 +17691,8 @@ throws Exception, NoDataFoundException
 		ts.setDataUnits (HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_wc.amt_*, daily_wc.obs_*");
-		v = readDailyWCList(str_mt_v.getMeas_num(),req_date1,req_date2);
+		//v = readDailyWCList(str_mt_v.getMeas_num(),req_date1,req_date2);
+		v = readDailyWCList(str_mt_v.getMeas_num(),readStartIrrig,readEndIrrig);
 	}
 	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("RelClass") ||
 		data_type.equalsIgnoreCase("IRelClass")) ) {
@@ -17701,7 +17718,8 @@ throws Exception, NoDataFoundException
 		ts.setDataUnits ( HydroBase_Util.getTimeSeriesDataUnits (this, data_type, interval ));
 		ts.setDataUnitsOriginal ( ts.getDataUnits());
 		ts.setInputName ( "HydroBase daily_amt.amt_*, daily_amt.obs_*");
-		v = readDailyAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
+		//v = readDailyAmtList(str_mt_v.getMeas_num(),req_date1,req_date2);
+		v = readDailyAmtList(str_mt_v.getMeas_num(),readStartIrrig,readEndIrrig);
 	}
 	else if ((interval_base == TimeInterval.MONTH) && (data_type.equalsIgnoreCase("RelTotal") ||
 		data_type.equalsIgnoreCase("IRelTotal"))) {
@@ -17895,7 +17913,7 @@ throws Exception, NoDataFoundException
 			wisNums.add("" + format.getWis_num());
 			wisRows.add("" + format.getWis_row());
 		}
-		List<String> order = new ArrayList<String>();
+		List<String> order = new ArrayList<>();
 		order.add("wis_data.set_date");
 		v = readWISDataListForWis_numWis_rowList(wisNums, wisRows,order);
 	}
@@ -17921,7 +17939,7 @@ throws Exception, NoDataFoundException
 		v = readRTMeasList(mt_meas_num, req_date1, req_date2,true, false);
 	}
 
-	// Now set the returned data dates, which will be used further below...
+	// Now set the returned data dates, which will be used further below.
 
 	int size = 0;
 	if (v != null) {
@@ -18502,6 +18520,18 @@ throws Exception, NoDataFoundException
 			ts.setDate2Original(new DateTime(data_date2));
 		}
 	}
+
+	if ( (interval_base == TimeInterval.DAY) &&
+		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("DivClass") ||
+		data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("RelClass"))) {
+		// Round the to the irrigation year before transferring data:
+		// - may have only been able to determine this after reading data
+		readStartIrrig = new DateTime (ts.getDate1());
+		readEndIrrig = new DateTime (ts.getDate2());
+		roundToIrrigationYear ( interval_base, readStartIrrig, readEndIrrig );
+		ts.setDate1(readStartIrrig);
+		ts.setDate2(readEndIrrig);
+	}
     
     // Allocate the data space for the time series.  If data flags are used, the information will
     // have been specified above.
@@ -18514,8 +18544,8 @@ throws Exception, NoDataFoundException
 	int iday = 0;		// Index for days.
 	int ndays = 0;		// Number of days in a month.
 	
-	// The following is alphabetized by the data type as close as
-	// convenient.  All real-time data types are at the bottom and share code...
+	// The following is alphabetized by the data type as close as // convenient.
+	// All real-time data types are at the bottom and share code.
 
 	if ((interval_base == TimeInterval.MONTH) && data_type.equalsIgnoreCase("AdminFlow")) {
 		HydroBase_MonthlyFlow data;
@@ -18534,7 +18564,7 @@ throws Exception, NoDataFoundException
 		HydroBase_DailyTS data;
 		// Loop through each month...
 		for ( int i = 0; i < size; i++) {
-			// Loop through and assign the data...
+			// Loop through and assign the data.
 			data = (HydroBase_DailyTS)v.get(i);
 			date.setYear ( data.getCal_year());
 			date.setMonth ( data.getCal_mon_num());
@@ -19713,12 +19743,12 @@ throws Exception, NoDataFoundException
 		}
 	}
 
-	// Add to the genesis to explain where the time series were read from...
+	// Add to the genesis to explain where the time series were read from.
 
 	ts.addToGenesis("Read HydroBase time series from " + ts.getDate1() + " to " + ts.getDate2() + ".");
 
-	// Set the comments, consistent with previous CDSS work...
-	// TODO (SAM) - this is somewhat redundant
+	// Set the comments, consistent with previous CDSS work.
+	// TODO (SAM) - this is somewhat redundant.
 	if (((mtsView != null)) && (staView != null)) {
 		// Set comments for station data.  Some comments may have been
 		// added above so manipulate to add at the end...
@@ -19999,14 +20029,55 @@ throws Exception, NoDataFoundException
 			FillUsingDivComments = "false"; // Default is NOT to fill.
 		}
 		if ( FillUsingDivComments.equalsIgnoreCase("true") ) {
-			String FillUsingDivCommentsFlag = props.getValue ( "FillUsingDivCommentsFlag" );
+			String fillFlag = props.getValue("FillUsingDivCommentsFlag");
+			if ( (fillFlag == null) || fillFlag.isEmpty() ) {
+				// If not specified use "Auto".
+				fillFlag = "Auto";
+			}
+			// Fill flag description is automatically assigned to "notUsed" value.
+			String fillFlagDesc = "Auto";
 			// TODO SAM 2006-04-25 This throws an Exception.  Leave it for now but need
 			// to evaluate how to handle errors..
 			HydroBase_Util.fillTSUsingDiversionComments (
-				this, ts, req_date1, req_date2, FillUsingDivCommentsFlag, "Auto",
+				this, ts, req_date1, req_date2, fillFlag, fillFlagDesc,
 				true );	// Extend period if diversion comments are available
 		}
 	}
+
+	if ((interval_base == TimeInterval.DAY) &&
+		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("IDivTotal") ||
+		data_type.equalsIgnoreCase("IRelTotal") || data_type.equalsIgnoreCase("RelTotal"))) {
+		// Set the time series period to the original request:
+		// - irrigation year was used for processing to ensure that carry forward filling works
+		// - only need to change the period if the requested period is not null and is different from the irrigation year
+		// - if the original period was null, allow full irrigation years to be returned,
+		//   but limit to the current date
+		
+		if ( Message.isDebugOn ) {
+			Message.printStatus(2, routine, "Checking period at end for readStart=" + req_date1 + " and readEnd=" + req_date2);
+			Message.printStatus(2, routine, "Checking period at end for readStartIrrig=" + readStartIrrig + " and readEndIrrig=" + readEndIrrig);
+		}
+		if ( (req_date1 == null) && (req_date2 == null) ) {
+			// All data were read:
+			// - keep full irrigation year for start
+			// - end at the current date because otherwise would have a missing data into the future
+			DateTime readEndNow = new DateTime(DateTime.DATE_CURRENT);
+			if ( interval_base == TimeInterval.DAY ) {
+				readEndNow.setPrecision(DateTime.PRECISION_DAY);
+			}
+			if ( readEndIrrig.greaterThan(readEndNow) ) {
+				ts.changePeriodOfRecord(readStartIrrig, readEndNow);
+			}
+			else {
+				// Keep the historical irrigation years.
+			}
+		}
+		else if ( !req_date1.equals(readStartIrrig) || !req_date2.equals(readEndIrrig) ) {
+			// Need to change to the original output period.
+			ts.changePeriodOfRecord(req_date1, req_date2);
+		}
+	}
+
 	return ts;
 }
 
@@ -23335,6 +23406,54 @@ throws Exception {
         }
         __WISStructures_List = structureResults;
         return structureResults;
+	}
+}
+
+/**
+ * Helper method to round a period to irrigation year, used when reading daily and monthly diversion record time series.
+ * @param readStartIrrig start of read, can be null, will be updated to the start of the bounding irrigation year
+ * @param readEndIrrig end of read, can be null, will be updated to the end of the bounding irrigation year
+ */
+private void roundToIrrigationYear ( int intervalBase, DateTime readStartIrrig, DateTime readEndIrrig ) {
+	if ( (intervalBase != TimeInterval.DAY) && (intervalBase != TimeInterval.MONTH) ) {
+		return;
+	}
+	// Do the work as day and then set the precision at the end.
+	if ( readStartIrrig != null ) {
+		readStartIrrig.setDay(1);
+		if ( readStartIrrig.getMonth() < 11 ) {
+			// Round down to the start of the irrigation year in the previous year.
+			readStartIrrig.setYear(readStartIrrig.getYear() - 1);
+			readStartIrrig.setMonth(11);
+		}
+		else if ( readStartIrrig.getMonth() > 11 ) {
+			// Just need to set the month in the current year.
+			readStartIrrig.setMonth(11);
+		}
+		if ( intervalBase == TimeInterval.DAY ) {
+			readStartIrrig.setPrecision(DateTime.PRECISION_DAY);
+		}
+		else if ( intervalBase == TimeInterval.MONTH ) {
+			readStartIrrig.setPrecision(DateTime.PRECISION_MONTH);
+		}
+	}
+	if ( readEndIrrig != null ) {
+		readEndIrrig.setDay(31);
+		if ( readEndIrrig.getMonth() > 10 ) {
+			// Round up to the nd of the irrigation year in the next year.
+			readEndIrrig.setYear(readEndIrrig.getYear() + 1);
+			readEndIrrig.setMonth(10);
+		}
+		else if ( readEndIrrig.getMonth() < 10 ) {
+			// Just need to set the month in the current year.
+			readEndIrrig.setMonth(10);
+		}
+		if ( intervalBase == TimeInterval.DAY ) {
+			readEndIrrig.setPrecision(DateTime.PRECISION_DAY);
+		}
+		else if ( intervalBase == TimeInterval.MONTH ) {
+			readEndIrrig.setPrecision(DateTime.PRECISION_MONTH);
+		}
 	}
 }
 
