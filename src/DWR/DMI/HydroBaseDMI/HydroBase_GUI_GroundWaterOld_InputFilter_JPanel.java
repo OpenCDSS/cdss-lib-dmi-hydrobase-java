@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
+import RTi.Util.GUI.InputFilterCriterionType;
 import RTi.Util.GUI.InputFilter_JPanel;
 
 import RTi.Util.String.StringUtil;
@@ -79,10 +80,10 @@ public HydroBase_GUI_GroundWaterOld_InputFilter_JPanel(HydroBaseDMI dmi, MouseLi
 		null, null, false);
 	// all constraints other than EQUALS are removed because PLSS Locations
 	// are compared in a special way
-	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ONE_OF.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());
 	// the PLSS Location text field is not editable because users must go
 	// through the PLSS Location JDialog to build a location
 	filter.setInputJTextFieldEditable(false);

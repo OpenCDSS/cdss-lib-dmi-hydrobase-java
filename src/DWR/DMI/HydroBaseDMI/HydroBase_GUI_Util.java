@@ -1,129 +1,5 @@
 // HydroBase_GUI_Util - GUI utilities class that is used by all the GUI applications
 
-//------------------------------------------------------------------------------
-// HydroBase_GUI_Util - Main class that is used by all the GUI applications.
-//	It controls user preferences and general methods that can be called
-//	by any form.
-//------------------------------------------------------------------------------
-//  Copyright: See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-// 2003-02-28	J. Thomas Sapienza, RTi	Initial version
-// 2003-03-03	JTS, RTi		* Continued adding methods from the old
-//					  code.
-//					* Organized, cleaned, javadoc'd, 
-//					  reviewed and revised code.
-// 2003-03-04	JTS, RTi		Added code so that all fields in a query
-//					are preceded by their table's name.
-// 2003-03-05	JTS, RTi		SetGlobalData moved to HydroBaseDMI.
-// 2003-03-11	JTS, RTi		Added getValue().
-// 2003-03-12	JTS, RTi		* Added code to save user preferences
-//					  back to the database.
-//					* Cleaned up some old RE VISITs
-// 2003-03-13	JTS, RTi		Added the setText methods for use by
-//					many GUI forms.
-// 2003-03-20	JTS, RTi		Revised af/er SAM's review.
-// 2003-03-24	JTS, RTi		Moved in some header-formatting code.
-// 2003-03-25	JTS, RTi		* Removed references to local dmi
-//					* Moved user preferences code out
-//					* Made methods static
-// 2003-05-21	JTS, RTi		Reworked setWaterDistrictJComboBox so 
-//					that if the user has selected the 
-//					default water division and has a value 
-//					set in the database preferences under
-//					WD.DistrictDefault, the JComboBox will
-//					select that district after the box has
-//					been populated.  Otherwise, it will try
-//					to select the active water division.
-// 2003-09-23	JTS, RTi		* Added the getXXXFormatsAndExtensions
-//					  methods.  
-//					* Added the getXXXFilenameAndFormat
-//					  methods.
-//					* Added the export() code from the 
-//					  old ExportGUI.
-// 2003-09-30	JTS, RTi		Added trimText() methods.
-// 2003-11-18	JTS, RTi		Added parseWD().
-// 2003-11-25	SAM, RTi		* Add getTimeSeriesDataTypes() and
-//					  getDefaultTimeSeriesDataType().
-//					* Add convertToHydroBaseMeasType().
-//					* Add isStationTimeSeriesDataType().
-//					* Add isStructureTimeSeriesDataType().
-//					* Add getTimeSeriesDataUnits().
-//					* Add getTimeSeriesDataTypes().
-// 2003-12-04	JTS, RTi		Added generateDivisions().
-// 2003-12-17	SAM, RTi		* Add DATA_TYPE_* definitions to use as
-//					  a mask with with the
-//					  getTimeSeriesDataTypes() method and
-//					  overload this method to use the mask.
-//					  This is needed for greater flexibility
-//					  getting a list for different tools.
-// 2004-01-13	SAM, RTi		* Add addAlternateWellIdentifiers().
-// 2004-02-08	SAM, RTi		* Change Agriculture data type group to
-//					  include prefix from whether the data
-//					  came from GIS or AgStats.
-//					* Add isAgriculturalCropStats
-//					  TimeSeriesDataType().
-//					* Add isIrrigSummaryTimeSeriesDataType()
-// 2004-02-11	JTS, RTi		Removed Summary export type.
-// 2004-02-20	SAM, RTi		* Move isAgriculturalCropStatsTimeSeries
-//					  DataType() to HydroBase_Util.
-//					* Move getTimeSeries*() and related code
-//					  to HydroBase_Util since this code is
-//					  not really specific to GUIs.
-//					* Move all other non-GUI code to
-//					  HydroBase_Util.
-//					* Add the create*InputFilterJPanel()
-//					  methods - pulled out of TSTool.  These
-//					  methods return reusable JPanels for
-//					  input filters, possibly useful for
-//					  StateView.
-//					* Add createStructureGeoloc
-//					  InputFilterPanel().
-//					* Add the landuse/crop type to the input
-//					  filter for irrig_summary_ts.
-// 2004-05-19	SAM, RTi		* Add createWISInputFilterJPanel().
-// 2004-06-22	JTS, RTi		Following a review of HydroBaseDMI,
-//					moved in things from that class such
-//					as table strings.
-// 2004-07-30	JTS, RTi		Added
-//			      		getTimeSeriesDataTypeAndIntervalFor
-//					AppLayerType().
-// 2004-08-28	SAM, RTi		Use specific HydroBase instances of
-//					InputFilter_JPanel instead of the base
-//					class.  Therefore, remove the
-//					create*InputFilter methods.
-// 2005-01-10	JTS, RTi		Added 
-//					  getInputFilterGeoLocationWhereClause()
-// 2005-01-31	JTS, RTi		Added getLocationFromInputFilterJPanel()
-// 2005-02-01	JTS, RTi		* Added getSPFlexParameters()
-//					* Added getSPFlexParametersTriplet()
-// 2005-02-09	JTS, RTi		* Removed static strings that are
-//					  no longer used.
-//					* Removed getOrderByStrings().
-//					* Removed getOrderBySyntax().
-//					* Removed setSortOptions().
-//					* Removed setWhereOptions().
-//					* Removed getWhereStrings().
-//					* Removed getStructureWhereClause().
-//					* Removed getWaterRightsWhereClause().
-// 2005-02-11	JTS, RTi		* Removed 
-//					  getInputFilterGeoLocationWhereClause()
-//					* Removed
-//					  getLocationFromInputFilterJPanel()
-// 2005-04-25	JTS, RTi		Added support for map query limits in
-//					stored procedure queries.
-// 2005-07-07	JTS, RTi		* Added support for querying All 
-//					  Divisions at once.
-//					* Added support for querying Division 8.
-//					* Overloaded setWaterDistrictJComboBox.
-// 2005-11-16	JTS, RTi		Recommented setWaterDistrictJComboBox()
-//					because previous comments were 
-//					unclear and insufficient.
-// 2006-10-30	SAM, RTi		Add CASS livestock support.
-//					Add CUPopulation support.
-//------------------------------------------------------------------------------
-// EndHeader
-
 package DWR.DMI.HydroBaseDMI;
 
 import java.io.File;
@@ -147,6 +23,7 @@ import RTi.GIS.GeoView.PLSSLocationJDialog;
 import RTi.GR.GRLimits;
 
 import RTi.Util.GUI.InputFilter;
+import RTi.Util.GUI.InputFilterCriterionType;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.GUI.JGUIUtil;
 import RTi.Util.GUI.SimpleFileFilter;
@@ -162,10 +39,21 @@ import RTi.Util.String.StringUtil;
 import RTi.Util.Time.DateTime;
 
 /**
-Main class that is used by all the GUI applications.  It controls 
-user preferences and general methods that can be called by any form.
+Main class that is used by all the GUI applications.
+It controls user preferences and general methods that can be called by any form.
 */
 public class HydroBase_GUI_Util {
+
+/* REVISIT
+SAM - 2004-01-13
+	- printing dialog for selecting the format is ugly.
+	- CSV exporting in calls what not what was expected.  Probably need a
+	  CSV export that includes header information and one that doesn't.
+	  Right now we'll wait on feedback for this one.
+
+JTS - 2004-01-19
+	HydroBase_GUI_PumpTest - can't do screen or summary exports
+*/
 
 /**
 Reference to a cancel when doing export and print type selection.
@@ -237,17 +125,17 @@ Label string that appears by the query results table.
 */
 public final static String LIST_LABEL = "Query Results List:";	
 
-// TODO SAM 2006-10-30 Need to clarify what these are really used for... are they identifiers for
-// windows?  Table names should not be used in the applications!
+// TODO SAM 2006-10-30 Need to clarify what these are really used for... are they identifiers for windows?
+// Table names should not be used in the applications!
 /**
-Strings used by GUI objects.  These strings are used to separate database-
-dependent table names, field names, etc from the GUI objects.
+Strings used by GUI objects.
+These strings are used to separate database-dependent table names, field names, etc from the GUI objects.
 */
-protected static String 
+protected static String
 	_ADMIN_NUM_SHORT, _AUG, _LEGAL_LOCATION, _NET_AMOUNTS,
 	_NET_AMOUNTS_TABLE_NAME, _TRANS, _TRANS_TABLE_NAME,
-	_LOCATION, _PRIORITY_NO, _STRUCTURE_TYPE, _USE, _WATER_SOURCE, 
-	_ABAND_RIGHTS, _ALT_POINTS_WR, _AUG_PLAN_WR, _EXCHANGES, 
+	_LOCATION, _PRIORITY_NO, _STRUCTURE_TYPE, _USE, _WATER_SOURCE,
+	_ABAND_RIGHTS, _ALT_POINTS_WR, _AUG_PLAN_WR, _EXCHANGES,
 	_RIGHTS_AUG_PLAN, _CASE_NO, _STATUS_TYPE, _STRUCTURE,
 	_STRUCTURE_TABLE_NAME,
 	_GEOLOC,
@@ -262,7 +150,7 @@ strings can be versioned and assigned based on the proper version at run-time.
 */
 static {
 //	if (getDatabaseVersion()) {
-// From the Water Rights Query GUI
+// From the Water Rights Query GUI.
 	_ADMIN_NUM_SHORT = "Admin. Number";
 	_LEGAL_LOCATION = "Legal Location";
 	_NET_AMOUNTS = "Net Amounts";
@@ -283,17 +171,17 @@ static {
 	_CASE_NO = "Rights associated with Case No.";//*
 	_STATUS_TYPE = "Status Type (C, A, or CA)";	
 
-// From the Structure Query GUI
+// From the Structure Query GUI.
 	_STRUCTURE = "Structure";
 	_STRUCTURE_TABLE_NAME = "structure";
 
-// From the Station GUI
+// From the Station GUI.
 	_GEOLOC = "Geoloc";
 	_GEOLOC_TABLE_NAME = "geoloc";
 	_MEASTYPE_TABLE_NAME = "meas_type";
 	_STATION_TABLE_NAME = "station";
 
-// From the Well Application GUI
+// From the Well Application GUI.
 	_WELL_APPLICATION = "Well Application";
 	_WELL_APPLICATION_TABLE_NAME = "well_application";
 
@@ -302,7 +190,7 @@ static {
 	_NASS_TABLE_NAME = "Agricultural_NASS_Crop_stats";
 
 // The following are used for constraining queries by PLSS Location.
-// _PLSS_LOCATION is the label used internally in the InputFilters to refer to a location constraint
+// _PLSS_LOCATION is the label used internally in the InputFilters to refer to a location constraint.
 	_PLSS_LOCATION = "PLSS_Location";
 // _PLSS_LOCATION_LABEL is what the user sees in the InputFilters on the GUI.
 	_PLSS_LOCATION_LABEL = "PLSS Location";
@@ -330,16 +218,17 @@ public static void addTriplet(String[] parameters, String[] triplet) {
 			return;
 		}
 	}
-    // Trying to add a where more than the maximum that can be handled by SPFlex
+    // Trying to add a where more than the maximum that can be handled by SPFlex.
     String message = "Trying to add where clause (" + triplet[0] + " " + triplet[1] + " " +
         triplet[2] + ") to SPFlex - exceeding limit of " + __NUM_TRIPLETS;
     throw new RuntimeException ( message );
 }
 
 /**
-Appends "AND" to the String s if s is not zero length.  If s is null, a null
-value will be returned.  This function pertains to database queries and is
-used when building where clauses for GUIs.  Used by getLocationSyntax().
+Appends "AND" to the String s if s is not zero length.
+If s is null, a null value will be returned.
+This function pertains to database queries and is used when building where clauses for GUIs.
+Used by getLocationSyntax().
 @param s String to append "AND" to.
 @return returns the string s appended accordingly.
 */
@@ -357,8 +246,8 @@ private static String appendAnd(String s) {
 }
 
 /**
-Builds a location string and puts it in the given text field.  If the text
-field already contains a location string, that string is edited instead.
+Builds a location string and puts it in the given text field.
+If the text field already contains a location string, that string is edited instead.
 @param textField the textField for which to create a location string or edit an existing one.
 */
 public static void buildLocation(JFrame frame, JTextField textField) {
@@ -394,7 +283,7 @@ Exports a Vector of strings to a file.
 public static void export(JFrame parent, String filename, List<String> strings)
 throws Exception {
 	String routine = "HydroBase_GUI_Util.export";
-	// First see if we can write the file given the security settings...
+	// First see if we can write the file given the security settings.
 	if (!SecurityCheck.canWriteFile(filename)) {
 		Message.printWarning(1, routine, "Cannot save \"" + filename + "\".");
 		throw new Exception( "Security check failed - unable to write \"" + filename + "\"");
@@ -427,7 +316,7 @@ throws Exception {
 }
 
 /**
-Given an array of stored procedure parameters, this will fill in missing 
+Given an array of stored procedure parameters, this will fill in missing
 information, which includes the viewNumber to run, the order by information, and the mapQueryLimit information.<p>
 <b>NOTE:</b> currently order by and mapquery information are not filled in.
 @param parameters the array of stored procedure parameters to fill in.
@@ -436,8 +325,7 @@ information, which includes the viewNumber to run, the order by information, and
 the query.  If no ordering is to be done with the query, this should be less than or equal to 0.
 @param mapQueryLimits the mapquerylimits to use in limiting the geographic area of the query.
 */
-protected static void fillSPParameters(String[] parameters, String viewNumber, int orderBy, GRLimits mapQueryLimits)
-{
+protected static void fillSPParameters(String[] parameters, String viewNumber, int orderBy, GRLimits mapQueryLimits) {
 	parameters[0] = viewNumber;
 	if (orderBy > 0) {
 		parameters[parameters.length -2] = "" + orderBy;
@@ -447,13 +335,13 @@ protected static void fillSPParameters(String[] parameters, String viewNumber, i
 	}
 	parameters[parameters.length - 1] = "CDSS";
 
-	int FIRST_PARAMETER = 1; // Skip 0th element, which is the stored procedure number
+	int FIRST_PARAMETER = 1; // Skip 0th element, which is the stored procedure number.
 
 	if (mapQueryLimits == null) {
 		return;
 	}
 
-	String queryString = "" 
+	String queryString = ""
 		+ mapQueryLimits.getLeftX() + ","
 		+ mapQueryLimits.getRightX() + ","
 		+ mapQueryLimits.getBottomY() + ","
@@ -486,7 +374,7 @@ public static String formatStructureHeader (int format) {
 
 /**
 Format a structure header string used in output.
-@param structure_name the name of the structure 
+@param structure_name the name of the structure
 @param div the name of the div
 @param wd the wd of the structure
 @param id the id of the structure
@@ -498,7 +386,7 @@ public static String formatStructureHeader(String structure_name, String div, St
 
 /**
 Format a structure header string used in output.
-@param structure_name the name of the structure 
+@param structure_name the name of the structure
 @param div the name of the div
 @param wd the wd of the structure
 @param id the id of the structure
@@ -506,18 +394,18 @@ Format a structure header string used in output.
 */
 public static String formatStructureHeader(String structure_name, String div, String wd, String id, int format) {
 	if ((format == QINFO) || (format == SCREEN_VIEW)) {
-		return 	"STRUCTURE NAME: " 
+		return 	"STRUCTURE NAME: "
 			+ StringUtil.formatString (structure_name, "%-40.40s")
 			+ "  DIV: " + StringUtil.formatString (div, "%-2.2s")
 			+ "  WD: " + StringUtil.formatString (wd, "%-2.2s")
 			+ "  ID: " + StringUtil.formatString (id, "%-5.5s");
 	}
 	else {	
-		// delimited...
+		// Delimited.
 		char delim = getDelimiterForFormat (format);
 		return "" + structure_name + delim + div + delim + wd + delim + id + delim;
 	}
-} 
+}
 
 /**
 Generates the Divisions as specified in the display preferences and returns them in a list.
@@ -525,17 +413,17 @@ Generates the Divisions as specified in the display preferences and returns them
 @return a list with the divisions in it.
 */
 public static List<String> generateDivisions(HydroBaseDMI dmi) {
-        // retrieve divisions
-        String divisions = dmi.getPreferenceValue("WD." + getActiveWaterDivision() + ".DivisionSelect");
+    // Retrieve divisions.
+    String divisions = dmi.getPreferenceValue("WD." + getActiveWaterDivision() + ".DivisionSelect");
 	if (divisions == null) {
-		// Try the old-style...
+		// Try the old-style.
         divisions = dmi.getPreferenceValue("WD.DivisionSelect");
 	}
 
-	List<String> v = new ArrayList<String>();
+	List<String> v = new ArrayList<>();
 
     StringTokenizer st = new StringTokenizer(divisions.trim(),",");
-    // add divisions to the Choice component
+    // Add divisions to the Choice component.
 	String curToken = null;
         while (st.hasMoreTokens()) {
             curToken = st.nextToken();
@@ -557,36 +445,36 @@ public static List<String> generateWaterDistricts(HydroBaseDMI dmi) {
 /**
 This function generates the water Districts as specified in the user
 preferences WD.ActiveDivision.DistrictSelect property.
-@return a Vector of water districts according to user preferences.
+@return a List of water districts according to user preferences.
 TODO (JTS - 2004-06-03) is this stuff working properly?  For the load wis sheet, this method was not
-returning enough values, so we added the ignore parameter (for now).  How
-did this work in the old code?
+returning enough values, so we added the ignore parameter (for now).
+How did this work in the old code?
 */
 public static List<String> generateWaterDistricts(HydroBaseDMI dmi, boolean ignore) {
 	if (ignore) {
-		// preferences have not been set so default...
+		// Preferences have not been set so default.
         String districts = "1,2,3,4,5,6,7,8,9,23,48,49,64,65,76,80,10,11," +
         	"12,13,14,15,16,17,18,19,66,67,79,20,21,22,24,25,26,27,35," +
         	"28,40,41,42,59,60,61,62,63,68,73,36,37,38,39,45,50,51,52," +
         	"53,70,72,43,44,47,54,55,56,57,58,29,30,31,32,33,34,46,69," +
-        	"71,77,78,";       
+        	"71,77,78,";
     	List<String> v = StringUtil.breakStringList(districts.trim(), ",", StringUtil.DELIM_SKIP_BLANKS);
         return v;		
 	}
 	
     String districts = dmi.getPreferenceValue("WD." + getActiveWaterDivision() + ".DistrictSelect");
 	if (districts == null || districts.equals("")) {
-		// Old-style...
+		// Old-style.
 		districts = dmi.getPreferenceValue("WD.DistrictSelect");
 	}
 
 	if ((districts == null)  || districts.equals("") || districts.equals("NONE")) {
-		// preferences have not been set so default...
+		// Preferences have not been set so default.
     	districts = "1,2,3,4,5,6,7,8,9,23,48,49,64,65,76,80,10,11," +
     		"12,13,14,15,16,17,18,19,66,67,79,20,21,22,24,25,26,27,35," +
     		"28,40,41,42,59,60,61,62,63,68,73,36,37,38,39,45,50,51,52," +
     		"53,70,72,43,44,47,54,55,56,57,58,29,30,31,32,33,34,46,69," +
-    		"71,77,78,";       
+    		"71,77,78,";
 		dmi.setPreferenceValue("WD." + getActiveWaterDivision() + ".DistrictSelect",districts);
 	}
 	List<String> v = StringUtil.breakStringList(districts.trim(), ",", StringUtil.DELIM_SKIP_BLANKS);
@@ -627,8 +515,8 @@ protected static String getAquiferListForToolTip(List<HydroBase_Aquifer> aquifer
 }
 	
 /**
-Returns the kind of character delimiter for a given delimited format.  If an
-unrecognized format type is passed in, a pipe ('|') will be returned.
+Returns the kind of character delimiter for a given delimited format.
+If an unrecognized format type is passed in, a pipe ('|') will be returned.
 @return the kind of character delimiter for a given delimited format.
 */
 public static char getDelimiterForFormat(int format) {
@@ -654,7 +542,7 @@ Returns a list of all the names of the delimited formats.
 @return a list of all the names of the delimited formats.
 */
 public static List<String> getDelimitedFormats() {
-	List<String> v = new ArrayList<String>();
+	List<String> v = new ArrayList<>();
 	v.add("Tab-Delimited");
 	v.add("Comma-Delimited");
 	v.add("Semicolon-Delimited");
@@ -663,9 +551,9 @@ public static List<String> getDelimitedFormats() {
 }
 
 /**
-Returns a list of all the delimited formats and their extensions.  The format 
-of the list is a list of 2-element String arrays.  The first element is the
-English description of the delimited format and the second element is the filename extension.
+Returns a list of all the delimited formats and their extensions.
+The format of the list is a list of 2-element String arrays.
+The first element is the English description of the delimited format and the second element is the filename extension.
 @return a list of all the delimited formats and their extensions.
 */
 public static List<String []> getDelimitedFormatsAndExtensions() {
@@ -692,17 +580,17 @@ public static List<String []> getDelimitedFormatsAndExtensions() {
 
 /**
 This function returns a list of selected Divisions based on the user preferences.
-@return a Vector of Divisions.
+@return a list of Divisions.
 */
 public static List<String> getDivisions(HydroBaseDMI dmi) {
-    String divString = dmi.getPreferenceValue("WD." + getActiveWaterDivision() + ".DivisionSelect");       
+    String divString = dmi.getPreferenceValue("WD." + getActiveWaterDivision() + ".DivisionSelect");
 
 	if (divString == null || divString.equals("")) {
-		// Old-style...
-		divString = dmi.getPreferenceValue("WD.DivisionSelect");       
+		// Old-style.
+		divString = dmi.getPreferenceValue("WD.DivisionSelect");
 	}
 	if ((divString == null)  || divString.equals("") || divString.equals("NONE")) {
-		// Preferences have not been set so default to guest...
+		// Preferences have not been set so default to guest.
 		divString = "1,2,3,4,5,6,7,";
 		//setValue("WD.DivisionSelect", divString);
 		dmi.setPreferenceValue("WD." + getActiveWaterDivision() + ".DivisionSelect", divString);
@@ -771,7 +659,7 @@ private static String[] getFilenameAndFormat(JFrame parent, String title, List<S
 		JGUIUtil.setLastFileDialogDirectory("" + fc.getCurrentDirectory());
 		sff = (SimpleFileFilter)fc.getFileFilter();
 
-		// this will always return a one-element vector
+		// This will always return a one-element list.
 		List<String> extensionV = sff.getFilters();
 
 		String extension = extensionV.get(0);
@@ -797,14 +685,14 @@ private static String[] getFilenameAndFormat(JFrame parent, String title, List<S
 }
 
 /**
-Returns the list of possible export formats for use in a 
-SelectFormatTypeJDialog.  Note that the order in which these are added to the
-Vector MUST match the number of the formats above (*_DELIMITED).  E.g., 
-Tab-delimited must be at the 0th position because it has a defined value of 0 in TAB_DELIMITED.
-@return the list of export formats in a Vector.
+Returns the list of possible export formats for use in a SelectFormatTypeJDialog.
+Note that the order in which these are added to the
+list MUST match the number of the formats above (*_DELIMITED).
+For example, tab-delimited must be at the 0th position because it has a defined value of 0 in TAB_DELIMITED.
+@return the list of export formats in a list.
 */
 public static List<String> getFormats() {
-	List<String> v = new ArrayList<String>();
+	List<String> v = new ArrayList<>();
 	v.add("Tab-Delimited");
 	v.add("Comma-Delimited");
 	v.add("Semicolon-Delimited");
@@ -815,9 +703,9 @@ public static List<String> getFormats() {
 }
 
 /**
-Returns a list of all the output formats and their extensions.  The format of 
-the list is a list of 2-element String arrays.  The first element is the 
-English description of the format, and the second element is the filename extension.
+Returns a list of all the output formats and their extensions.
+The format of the list is a list of 2-element String arrays.
+The first element is the English description of the format, and the second element is the filename extension.
 @return a list of all the output formats and their extensions.
 */
 public static List<String []> getFormatsAndExtensions() {
@@ -847,7 +735,7 @@ public static List<String []> getFormatsAndExtensions() {
 }
 
 /**
-Builds the syntax for a location where clause. 
+Builds the syntax for a location where clause.
 The isString syntax expects the following format in order:<br>
 <ol>
    <li>ts</li>
@@ -859,18 +747,18 @@ The isString syntax expects the following format in order:<br>
    <li>q40</li>
    <li>q10</li>
 </ol>
-@param isString comma-deliminated location String 
+@param isString comma-delimited location String
 @param tableName the name of the table in which this will be used as a query
-@param form HydroBase_GUI_Util.WATER_RIGHT is passed if 
-querying HydroBase_NetAmts or HydroBase_Transact , 
+@param form HydroBase_GUI_Util.WATER_RIGHT is passed if
+querying HydroBase_NetAmts or HydroBase_Transact,
 HydroBase_GUI_Util.STRUCTURE is passed if querying HydroBase_StructureGeoloc.
 @return string to add as a where clause or null if where clause is not to be added to the query.
 */
 public static String getLocationSyntax(String isString, String tableName, int form)
-throws Exception { 
+throws Exception {
 	isString = isString.trim();
 
-	// check for wild card first
+	// Check for wild card first.
 	if (isString.equals("*") || isString.equals("%")) {
 		return null;
 	}
@@ -908,8 +796,8 @@ throws Exception {
 			whereFormat += " " + tableName + "." + "ts Like '%" + s + "%'";
 		}
    	}
-	else if (form == HydroBase_GUI_Util.STRUCTURE 
-	   	|| form == HydroBase_GUI_Util.WELL_APPLICATION 
+	else if (form == HydroBase_GUI_Util.STRUCTURE
+	   	|| form == HydroBase_GUI_Util.WELL_APPLICATION
 		|| form == HydroBase_GUI_Util.GROUND_WATER) {
 		if (!PLSSLocation.unset(ts)) {
 			whereFormat = appendAnd(whereFormat);
@@ -934,8 +822,8 @@ throws Exception {
 			whereFormat += " " + tableName + "." + "rng Like '%" + s + "%'";
 		}
    	}
-   	else if (form == HydroBase_GUI_Util.STRUCTURE 
-		|| form == HydroBase_GUI_Util.WELL_APPLICATION 
+   	else if (form == HydroBase_GUI_Util.STRUCTURE
+		|| form == HydroBase_GUI_Util.WELL_APPLICATION
 		|| form == HydroBase_GUI_Util.GROUND_WATER) {
 		if (!PLSSLocation.unset(rng)) {
 			whereFormat = appendAnd(whereFormat);
@@ -957,7 +845,7 @@ throws Exception {
 		whereFormat += tableName + "." + "seca Like '%" + half + "%'";
 	}
 
-    if (!PLSSLocation.unset(q160)){ 
+    if (!PLSSLocation.unset(q160)){
 		whereFormat = appendAnd(whereFormat);
    		whereFormat += tableName + "." + "q160 Like '" + q160 + "'";
 	}
@@ -972,7 +860,7 @@ throws Exception {
 		whereFormat += tableName + "." + "q40 Like '" + q10 + "'";
 	}
 
-	// check if whereFormat is empty. if so, return null so that records will be returned
+	// Check if whereFormat is empty. if so, return null so that records will be returned.
 	if (whereFormat.trim().equals("")) {
 		return null;
 	}
@@ -1019,7 +907,7 @@ Returns a list of all the names of the screen formats.
 @return a list of all the names of the screen formats.
 */
 public static List<String> getScreenFormats() {
-	List<String> v = new ArrayList<String>();
+	List<String> v = new ArrayList<>();
 	v.add("");
 	v.add("");
 	v.add("");
@@ -1030,9 +918,9 @@ public static List<String> getScreenFormats() {
 }
 
 /**
-Returns a list of all the screen formats and their extensions.  The format of
-the list is a list of String arrays.  The first element of the array is the
-English description of the format and the second element is the filename extension.
+Returns a list of all the screen formats and their extensions.
+The format of the list is a list of String arrays.
+The first element of the array is the English description of the format and the second element is the filename extension.
 @return a list of all the screen formats and their extensions.
 */
 public static List<String []> getScreenFormatsAndExtensions() {
@@ -1073,12 +961,11 @@ public static String[] getSaveFilenameAndFormat(JFrame parent, List<String []> f
 }
 
 /**
-Builds a SPFlex parameter array from an InputFilter_JPanel and the second 
+Builds a SPFlex parameter array from an InputFilter_JPanel and the second
 element of the value returned from HydroBaseDMI.getWaterDistrictWhereClause().
-@param panel the InputFilter_JPanel that contains the values for which to
-run the query.  It can be null, in which case no InputFilter values will 
-be included in the parameter list.
-@param districtWhere the second element of the array return from 
+@param panel the InputFilter_JPanel that contains the values for which to run the query.
+It can be null, in which case no InputFilter values will be included in the parameter list.
+@param districtWhere the second element of the array return from
 HydroBaseDMI.getWaterDistrictWhereClause().  It will look like either:<p><pre>
 	"DIV X"
 or
@@ -1090,7 +977,7 @@ This parameter can currently be null, in which case it will not be included in t
 See HydroBaseDMI.runSPFlex() for more information.
 @throws Exception if there is an error building the parameter array.
 */
-public static String[] getSPFlexParameters(InputFilter_JPanel panel, String[] districtWhere) 
+public static String[] getSPFlexParameters(InputFilter_JPanel panel, String[] districtWhere)
 throws Exception {
 	InputFilter filter = null;
 	int nfg = 0;
@@ -1110,8 +997,8 @@ throws Exception {
 		parameters[i] = "-999";
 	}
 
-	// first put the information for limiting the water district or 
-	// division in the parameter array.  The comparator is always "EQ".
+	// first put the information for limiting the water district or division in the parameter array.
+	// The comparator is always "EQ".
 
 	if (districtWhere != null) {	
 		if (districtWhere[1].equals(HydroBase_GUI_Util._ALL_DIVISIONS)){
@@ -1139,15 +1026,15 @@ throws Exception {
 	//	Message.printStatus(2,"getSPFlexParameters","Parameter[" + i + "] = \"" + parameters[i] + "\" after adding district where" );
 	//}
 
-	// Loop through all the InputFilters and put their values into 
-	// the array.  getSPFlexParametersTriplet() will build an array 
+	// Loop through all the InputFilters and put their values into
+	// the array.  getSPFlexParametersTriplet() will build an array
 	// with the field to query, the SPFlex comparator, and the value to query against.
 	for (int ifg = 0; ifg < nfg; ifg++) {
 		filter = panel.getInputFilter(ifg);
 		//Message.printStatus(2,"getSPFlexParameters","filter="+filter.getWhereLabel()+";"+panel.getOperator(ifg)+";"+filter.getInputInternal().trim());
 		triplet = getSPFlexParametersTriplet(filter, panel.getOperator(ifg));
 		if (triplet != null) {
-			// non-null triplets contain values and can be put into the array
+			// Non-null triplets contain values and can be put into the array.
 			parameters[count++] = triplet[0];
 			parameters[count++] = triplet[1];
 			parameters[count++] = triplet[2];
@@ -1177,16 +1064,16 @@ Builds an array containing the SPFlex information for a query from an InputFilte
 <i>null</i> will be returned if no field was selected in the InputFilter.
 @throws Exception if an error occurs.
 */
-public static String[] getSPFlexParametersTriplet(InputFilter filter, String op) 
+public static String[] getSPFlexParametersTriplet(InputFilter filter, String op)
 throws Exception {
 	String[] triplet = new String[3];
-	// Get the selected filter for the filter group...
+	// Get the selected filter for the filter group.
 	if (filter.getWhereLabel().trim().equals("")) {
-		// Blank indicates that the filter should be ignored...
+		// Blank indicates that the filter should be ignored.
 		return null;
 	}
 
-	// Get the input type...
+	// Get the input type.
 	int inputType = filter.getInputType();
 	if ( filter.getChoiceTokenType() > 0 ) {
 		inputType = filter.getChoiceTokenType();
@@ -1195,30 +1082,28 @@ throws Exception {
 	// Get the internal where.
 
 	// Note:
-	// getWhereInternal2() should always be used for stored procedure
-	// SPFlex parameter building from InputFilters.  InputFilters can have
-	// two where_internal values defined.  Typically, the first one is
-	// used for non-stored procedure queries and the second one is used
-	// for stored procedure queries.  However, some InputFilters are only
-	// used with Stored Procedures, and so they have a where_internal 
-	// set, but not a where_internal_2.  getWhereInternal2() handles this
-	// by return where_internal_2, unless it is null.  In that case,
-	// where_internal will be returned.
+	// getWhereInternal2() should always be used for stored procedure SPFlex parameter building from InputFilters.
+	// InputFilters can have two where_internal values defined.
+	// Typically, the first one is used for non-stored procedure queries and the second one is used for stored procedure queries.
+	// However, some InputFilters are only used with Stored Procedures,
+	// and so they have a where_internal set, but not a where_internal_2.
+	// getWhereInternal2() handles this by return where_internal_2, unless it is null.
+	// In that case, where_internal will be returned.
 	triplet[0] = filter.getWhereInternal2();
 
-	// Get the user input...
+	// Get the user input.
 	triplet[2] = filter.getInputInternal().trim();
 
-	if (op.equalsIgnoreCase(InputFilter.INPUT_BETWEEN)) {
+	if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_BETWEEN.toString())) {
 		// TODO - need to enable in InputFilter_JPanel.
 	}
-	else if (op.equalsIgnoreCase( InputFilter.INPUT_CONTAINS)) {
+	else if (op.equalsIgnoreCase( InputFilterCriterionType.INPUT_CONTAINS.toString())) {
 		triplet[1] = "CN";
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_ENDS_WITH)) {
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_ENDS_WITH.toString())) {
 		triplet[1] = "EW";
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_EQUALS)){
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_EQUALS.toString())){
 		if (inputType == StringUtil.TYPE_STRING) {
 			triplet[1] = "MA";
 		}
@@ -1226,25 +1111,25 @@ throws Exception {
 			triplet[1] = "EQ";
 		}
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_GREATER_THAN)) {
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_GREATER_THAN.toString())) {
 		triplet[1] = "GT";
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_GREATER_THAN_OR_EQUAL_TO)) {
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_GREATER_THAN_OR_EQUAL_TO.toString())) {
 	    	triplet[1] = "GE";
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_LESS_THAN)) {
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_LESS_THAN.toString())) {
 		triplet[1] = "LT";
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_LESS_THAN_OR_EQUAL_TO)) {
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_LESS_THAN_OR_EQUAL_TO.toString())) {
 		triplet[1] = "LE";
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_MATCHES)) {
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_MATCHES.toString())) {
 		triplet[1] = "MA";
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_ONE_OF)){
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_ONE_OF.toString())){
 		// TODO - need to enable in InputFilter_JPanel
 	}
-	else if (op.equalsIgnoreCase(InputFilter.INPUT_STARTS_WITH)) {
+	else if (op.equalsIgnoreCase(InputFilterCriterionType.INPUT_STARTS_WITH.toString())) {
 		triplet[1] = "SW";
 	}
 	else {	
@@ -1258,8 +1143,7 @@ throws Exception {
 Returns the list of tables that a GUI can use to populate its list of possible tables to query.
 @param gui the GUI for which to return the table SimpleJComboBox contents.
 i.e., call this method with a gui parameter of 'this'
-@return a list of Strings, each of which is a table name.  This method is
-guaranteed to return a non-null list.
+@return a list of Strings, each of which is a table name.  This method is guaranteed to return a non-null list.
 */
 public static List<String> getTableStrings(Object gui) {
 	List<String> v = new ArrayList<String>();
@@ -1306,21 +1190,19 @@ public static String getUserDate(String date)  {
 	String y2k_date 	= null;
 	DateTime user_DateTime 	= null;
 	
-	// value may be one of two formats, use the DateTime.parse()
-	// to determine which one is specified.
+	// Value may be one of two formats, use the DateTime.parse() to determine which one is specified.
 	try {
 		user_DateTime = DateTime.parse(date, DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 		y2k_date = date;
 	}
-	// exception detects that the date is not Y2K compliant, 
-	// parse according to the old format and convert to Y2K.
+	// Exception detects that the date is not Y2K compliant, parse according to the old format and convert to Y2K.
 	catch(Exception e1) {
 		try {
 			user_DateTime = DateTime.parse(date, DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH_mm );
 
 			y2k_date = user_DateTime.toString(DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 		}
-		// parse String according to '/', ' ', and ':'
+		// Parse String according to '/', ' ', and ':'.
 		catch (Exception e2) {
 			try {
 				List<String> v = StringUtil.breakStringList(date, "/ :", 0);
@@ -1334,7 +1216,7 @@ public static String getUserDate(String date)  {
 					+ ":"
 					+ StringUtil.formatString((String)v.get(4), "%02d");
 			}
-			// unrecognized format, default to current system time.
+			// Unrecognized format, default to current system time.
 			catch(Exception e3){
 				y2k_date = new DateTime().toString(DateTime.FORMAT_YYYY_MM_DD_HH_mm);
 			}
@@ -1344,31 +1226,30 @@ public static String getUserDate(String date)  {
 }
 
 /**
-Create a list of where clauses give an InputFilter_JPanel.  The InputFilter
-instances that are managed by the InputFilter_JPanel must have been defined with
+Create a list of where clauses give an InputFilter_JPanel.
+The InputFilter instances that are managed by the InputFilter_JPanel must have been defined with
 the database table and field names in the internal (non-label) data.
 @return a Vector of where clauses, each of which can be added to a DMI statement.
 @param dmi The DMI instance being used, which may be checked for specific formatting.
 @param panel The InputFilter_JPanel instance to be converted.  If null, an empty list will be returned.
 */
-public static List<String> getWhereClausesFromInputFilter (HydroBaseDMI dmi, InputFilter_JPanel panel) 
+public static List<String> getWhereClausesFromInputFilter (HydroBaseDMI dmi, InputFilter_JPanel panel)
 throws Exception {
 	return getWhereClausesFromInputFilter(dmi, panel, null, 0);
 }
 
 /**
-Create a list of where clauses give an InputFilter_JPanel.  The InputFilter
-instances that are managed by the InputFilter_JPanel must have been defined with
+Create a list of where clauses give an InputFilter_JPanel.
+The InputFilter instances that are managed by the InputFilter_JPanel must have been defined with
 the database table and field names in the internal (non-label) data.
 @return a list of where clauses, each of which can be added to a DMI statement.
 @param dmi The DMI instance being used, which may be checked for specific formatting.
 @param panel The InputFilter_JPanel instance to be converted.  If null, an empty list will be returned.
-@param tableName the name of the table that should be used for Location
-query information.  For Water Rights queries.
+@param tableName the name of the table that should be used for Location query information.  For Water Rights queries.
 @param form the form for which to generate a where clause.  For Water Rights queries.
 */
 public static List<String> getWhereClausesFromInputFilter (HydroBaseDMI dmi,
-InputFilter_JPanel panel, String tableName, int form) 
+InputFilter_JPanel panel, String tableName, int form)
 throws Exception {
 	// Loop through each filter group.  There will be one where clause per filter group.
 
@@ -1396,18 +1277,15 @@ throws Exception {
 }
 
 /**
-This function takes a String consisting of the water district number and name 
-and returns the water district number.  The format of the districtNumber_name 
-String consist of at most a two digit number in the left most portion of the 
-string followed by a space and a dash which separates the number from the 
-water district name.  In short, the water district number may always be found 
-in the first two positions of the districtNumber_name String.  if the 
-districtNumber_name begins with "Division" then a division number is present 
-therefore return the Division number preceed by -99.
+This function takes a String consisting of the water district number and name and returns the water district number.
+The format of the districtNumber_name String consist of at most a two digit number in the left most portion of the
+string followed by a space and a dash which separates the number from the water district name.
+In short, the water district number may always be found in the first two positions of the districtNumber_name String.
+If the districtNumber_name begins with "Division" then a division number is present
+therefore return the Division number precede by -99.
 @return The water district number and name.
 @param districtNumber_name Water district name.
-@deprecated Use HydroBase_WaterDistrict.parseWD() or
-HydroBase_WaterDistrict.parseWDID(). 
+@deprecated Use HydroBase_WaterDistrict.parseWD() or HydroBase_WaterDistrict.parseWDID().
 2005-04-19 still deprecated
 */
 public static String parseWD (String districtNumber_name) {
@@ -1438,7 +1316,7 @@ public static void setActiveWaterDivision(String div) {
 /**
 Sets the text in the given text field from the specified Date.  If the value
 of the Date matches DMIUtil.MISSING_DATE, the text field will be set to "".
-This is a utility function used by all methods that insert data into textfields
+This is a utility function used by all methods that insert data into text fields
 so as to avoid X-hundred if statements.
 @param t the JTextField into which the value should be placed.
 @param dt the Date value to place into the JTextField.
@@ -1452,8 +1330,8 @@ public static void setText(JTextField t, Date dt) {
 }
 
 /**
-Sets the text in the given text field from the specified double.  If the value
-of the double matches DMIUtil.MISSING_DOUBLE, the text field will be set to "".
+Sets the text in the given text field from the specified double.
+If the value of the double matches DMIUtil.MISSING_DOUBLE, the text field will be set to "".
 The double will be formatted with the specified format by StringUtil.formatString.
 This is a utility function used by all methods that insert data into text fields
 so as to avoid X-hundred if statements.
@@ -1471,9 +1349,9 @@ public static void setText(JTextField t, double d, String format) {
 }
 
 /**
-Sets the text in the given text field from the specified int.  If the value
-of the int matches DMIUtil.MISSING_INT, the text field will be set to "".
-This is a utility function used by all methods that insert data into textfields
+Sets the text in the given text field from the specified int.
+If the value of the int matches DMIUtil.MISSING_INT, the text field will be set to "".
+This is a utility function used by all methods that insert data into text fields
 so as to avoid X-hundred if statements.
 @param t the JTextField into which the value should be placed.
 @param i the int value to place into the JTextField.
@@ -1487,10 +1365,9 @@ public static void setText(JTextField t, int i) {
 }
 
 /**
-Sets the text in the given text field from the specified String.  If the value
-of the String matches DMIUtil.MISSING_String or if it is null
-, the text field will be set to "".
-This is a utility function used by all methods that insert data into textfields
+Sets the text in the given text field from the specified String.
+If the value of the String matches DMIUtil.MISSING_String or if it is null, the text field will be set to "".
+This is a utility function used by all methods that insert data into text fields
 so as to avoid X-hundred if statements.
 Also sets the font for the text field (currently Helvetica 11 point plain).
 @param t the JTextField into which the value should be placed.
@@ -1527,7 +1404,7 @@ the display preferences and adds them to the SimpleJComboBox component. The dist
 @return the Water District name of the one that MUST be included in the list, or "" if a null wd value was passed in.
 @throws Exception if an error occurs.
 */
-public static String setWaterDistrictJComboBox(HydroBaseDMI dmi, 
+public static String setWaterDistrictJComboBox(HydroBaseDMI dmi,
 SimpleJComboBox comboBox, String wd, boolean removeAll, boolean includeDivision8, boolean includeAllDivisions)
 throws Exception {
 	String spacer = "  ";
@@ -1538,12 +1415,12 @@ throws Exception {
 		wdNum = (new Integer(wd)).intValue();
 	}
 
-    // clear all the water districts
+    // Clear all the water districts.
     if (removeAll) {
         comboBox.removeAll();
     }
 
-    // retrieve water districts
+    // Retrieve water districts.
     List<String> divisions = getDivisions(dmi);
     List<String> districts = generateWaterDistricts(dmi);
 
@@ -1555,16 +1432,16 @@ throws Exception {
 		districts = new ArrayList<String>();
 	}
 
-	// If specified, make sure that the requested district is in the list (no leading 0)...
+	// If specified, make sure that the requested district is in the list (no leading 0).
 	if (wd != null) {
-		// Get the division for the water district...
+		// Get the division for the water district.
 		String wdString = "" + StringUtil.atoi(wd);
 		int div = dmi.lookupWaterDivisionForDistrict(StringUtil.atoi(wd));
 		String divString = "" + div;
 		
 		int size = districts.size();
 
-		// iterate through the districts and see if the requested one is in the list.  
+		// Iterate through the districts and see if the requested one is in the list.
 
 		boolean found = false;
 		for (int i = 0; i < size; i++) {
@@ -1597,14 +1474,13 @@ throws Exception {
 		}
 	}
 
-	// There should be at least one division and one district in each 
-	// list, otherwise an error of some sort occurred.
+	// There should be at least one division and one district in each list, otherwise an error of some sort occurred.
 
 	if (divisions.size() == 0 || districts.size() == 0) {
 		return "";
 	}
 
-	// Populate the combo box
+	// Populate the combo box.
 
 	HydroBase_WaterDistrict currentDistrict = null;
 	int currentWD = -1;
@@ -1622,15 +1498,15 @@ throws Exception {
 	// Iterate through all the divisions.
 	
 	for (int i = 0; i < divSize; i++) {
-		// add the name of the division to the combo box
+		// Add the name of the division to the combo box.
 		div = StringUtil.atoi(divisions.get(i));
 		comboBox.add(HydroBase_WaterDivision.getDivisionName(div));
 
-		// get the list of water districts in the given division.
+		// Get the list of water districts in the given division.
 		waterDivisionDistricts = dmi.lookupWaterDistrictsForDivision(div);
 		numDistricts = waterDivisionDistricts.size();
 
-		// iterate through all the districts in the current division 
+		// Iterate through all the districts in the current division.
 		for (j = 0; j < numDistricts; j++) {
 			currentDistrict = (HydroBase_WaterDistrict)waterDivisionDistricts.get(j);
 			currentWD = currentDistrict.getWD();
@@ -1639,14 +1515,15 @@ throws Exception {
 			for (k = 0; k < districts.size(); k++) {
 				prefWD = Integer.parseInt(districts.get(k).toString());
 
-				// If the # of the current district matches the one passed in to this method, the requested
-				// water district has been found.  Form its name so that it can be returned to the calling code.
+				// If the # of the current district matches the one passed in to this method,
+				// the requested water district has been found.
+				// Form its name so that it can be returned to the calling code.
 				if (currentWD == wdNum && requested == null) {
 					requested = spacer + currentWD + " - " + currentDistrict.getWd_name();
 				}
 
-				// if the # of the current district matches one of the ones the user wishes to see, add it
-				// to the combo box and break out of the "k" loop.
+				// If the # of the current district matches one of the ones the user wishes to see,
+				// add it to the combo box and break out of the "k" loop.
 				if (currentWD == prefWD) {
 					comboBox.add(spacer + currentWD + " - " + currentDistrict.getWd_name());
 					break;
@@ -1657,7 +1534,7 @@ throws Exception {
 	}
 
 	if (requested == null) {
-		// it was not matched above
+		// It was not matched above.
 		requested = "";
 	}
 	
@@ -1667,12 +1544,12 @@ throws Exception {
 	}
 
 	// Make sure to add the "Entire State" option at the bottom of the list if it is requested.
-	if (includeAllDivisions 
+	if (includeAllDivisions
 	    && dmi.getDatabaseVersion() >= HydroBaseDMI.VERSION_20050701) {
 		comboBox.add(_ALL_DIVISIONS);
 	}
 
-	// first check to see if a specific district has been set as a default district
+	// First check to see if a specific district has been set as a default district.
 	String s = dmi.getPreferenceValue("WD.DistrictDefault");
 
 	if (s.equals(_ALL_DIVISIONS)) {
@@ -1684,11 +1561,11 @@ throws Exception {
 		return requested;
 	}
 
-	// select the default district according to user preferences
+	// Select the default district according to user preferences.
 	String sdiv = getActiveWaterDivision();
 	if (sdiv.equals("NONE") || sdiv.equals("DEFAULT")) {
-		// no default district has been specified and no water 
-		// division is active, so just set the first item in the list to be selected by default.
+		// No default district has been specified and no water division is active,
+		// so just set the first item in the list to be selected by default.
 		comboBox.select(0);
 	}
 	else {
@@ -1715,7 +1592,7 @@ public static String trimText(JTextField t) {
 }
 
 /**
-Pulls out the currently-selected String in a SimpleJComboBox 
+Pulls out the currently-selected String in a SimpleJComboBox
 checking if it is null and trimming it if it is not.
 @return a String representing the data in the combo box.
 */
@@ -1728,15 +1605,3 @@ public static String trimText(SimpleJComboBox j) {
 }
 
 }
-
-/* REVISIT 
-SAM - 2004-01-13 
-	- printing dialog for selecting the format is ugly.  
-	- CSV exporting in calls what not what was expected.  Probably need a
-	  CSV export that includes header information and one that doesn't.
-	  Right now we'll wait on feedback for this one.
-
-JTS - 2004-01-19
-	HydroBase_GUI_PumpTest - can't do screen or summary exports
-
-*/

@@ -5,7 +5,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2023 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import RTi.Util.GUI.InputFilter;
+import RTi.Util.GUI.InputFilterCriterionType;
 import RTi.Util.GUI.InputFilter_JPanel;
 import RTi.Util.GUI.JGUIUtil;
 
@@ -88,7 +89,7 @@ throws Exception
 {   __dataStore = dataStore;
     __includeSFUT = includeSFUT;
     HydroBaseDMI hbdmi = (HydroBaseDMI)dataStore.getDMI();
-    // County choices...
+    // County choices.
 	List<HydroBase_CountyRef> countyDataList = hbdmi.getCountyRef();
 	List<String> countyList = new Vector<String> ( countyDataList.size() );
 	List<String> countyInternalList = new Vector<String> ( countyDataList.size());
@@ -100,7 +101,7 @@ throws Exception
 		countyInternalList.add (county.getCounty() );
 	}
 
-	// Water district choices...
+	// Water district choices.
 	List<HydroBase_WaterDistrict> districtDataList = hbdmi.getWaterDistricts();
 	List<String> districtList = new Vector<String> ( districtDataList.size() );
 	List<String> districtInternalList=new Vector<String>(districtDataList.size());
@@ -112,7 +113,7 @@ throws Exception
 		districtInternalList.add ("" + wd.getWD() );
 	}
 
-	// Water division choices...
+	// Water division choices.
 	List<HydroBase_WaterDivision> divisionDataList = hbdmi.getWaterDivisions();
 	List<String> divisionList = new Vector<String>( 7 );
 	List<String> divisionInternalList = new Vector<String>( 7 );
@@ -124,7 +125,7 @@ throws Exception
 		divisionInternalList.add ("" + div.getDiv() );
 	}
 	
-	// DSS structure type choices...
+	// DSS structure type choices.
     List<HydroBase_DssStructureType> dssStructureTypeDataList = hbdmi.getDssStructureTypeList();
     List<String> dssStructureTypeList = new Vector<String>();
     List<String> dssStructureTypeInternalList = new Vector<String>();
@@ -135,11 +136,11 @@ throws Exception
         dssStructureTypeList.add (dssStructureType.getStr_type() + " - " + dssStructureType.getStr_type_desc());
         dssStructureTypeInternalList.add ("" + dssStructureType.getStr_type() );
     }
-    
+
     List<String> adminStructureTypeList = null;
     List<String> adminStructureTypeInternalList = null;
     if (hbdmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_20130404)) {
-        // Admin structure type choices...
+        // Admin structure type choices.
         List<HydroBase_AdminStructureType> adminStructureTypeDataList = hbdmi.getAdminStructureTypeList();
         adminStructureTypeList = new Vector<String>();
         adminStructureTypeInternalList = new Vector<String>();
@@ -152,7 +153,7 @@ throws Exception
         }
     }
 
-	// Currently in use choices
+	// Currently in use choices.
     List<HydroBase_RefCIU> ciuDataList = hbdmi.getCIUVector();
     List<String> ciuList = new Vector<String>();
     List<String> ciuInternalList = new Vector<String>();
@@ -163,11 +164,11 @@ throws Exception
         ciuList.add(ciu.getCode() + " - " + ciu.getDescription());
         ciuInternalList.add(ciu.getCode());
     }
-    
+
 	List<InputFilter> input_filters = new Vector<InputFilter>(8);
 	input_filters.add ( new InputFilter (
 		"", "", StringUtil.TYPE_STRING,
-		null, null, true ) );	// Blank to disable filter
+		null, null, true ) );	// Blank to disable filter.
 		
 	InputFilter filter = new InputFilter (
 		"County Name", "geoloc.county", "county",
@@ -217,22 +218,22 @@ throws Exception
 		StringUtil.TYPE_DOUBLE,
 		null, null, true ) );	
 
-	// create the input filter for the PLSS Location
+	// Create the input filter for the PLSS Location.
 	filter = new InputFilter(
 		HydroBase_GUI_Util._PLSS_LOCATION_LABEL,
-		HydroBase_GUI_Util._PLSS_LOCATION, 
+		HydroBase_GUI_Util._PLSS_LOCATION,
 		HydroBase_GUI_Util._PLSS_LOCATION, StringUtil.TYPE_STRING,
 		null, null, false);
-	// all constraints other than EQUALS are removed because PLSS Locations
-	// are compared in a special way
-	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
-	// the PLSS Location text field is not editable because users must go
-	// through the PLSS Location JDialog to build a location
+	// All constraints other than EQUALS are removed because PLSS locations
+	// are compared in a special way.
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ONE_OF.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());
+	// The PLSS Location text field is not editable because users must go
+	// through the PLSS Location JDialog to build a location.
 	filter.setInputJTextFieldEditable(false);
-	// this listener must be set up so that the location builder dialog
+	// This listener must be set up so that the location builder dialog
 	// can be opened when the PLSS Location text field is clicked on.
 	filter.addInputComponentMouseListener(this);
 	filter.setInputComponentToolTipText("Click in this field to build a PLSS Location to use as a query constraint.");
@@ -248,16 +249,16 @@ throws Exception
 
 	if (hbdmi.isDatabaseVersionAtLeast(HydroBaseDMI.VERSION_19990305)) {
 		input_filters.add(new InputFilter("Stream Mile",
-			"geoloc.str_mile", "str_mile", 
+			"geoloc.str_mile", "str_mile",
 			StringUtil.TYPE_DOUBLE, null, null, false));
 	}
 	else {
 		input_filters.add(new InputFilter("Stream Mile",
-			"structure.abbrev", "abbrev", 
+			"structure.abbrev", "abbrev",
 			StringUtil.TYPE_DOUBLE, null, null, false));
 	}
 	
-	/* Not in HydroBase StructureStructMeasType view
+	/* Not in HydroBase StructureStructMeasType view.
     input_filters.add ( new InputFilter (
        "Structure CIU", "structure.ciu", "ciu",
        StringUtil.TYPE_STRING,
@@ -279,7 +280,7 @@ throws Exception
            "Structure Type", "structure.strtype", "strtype",
            StringUtil.TYPE_STRING,
            adminStructureTypeList, adminStructureTypeInternalList, true ) );
-       
+
        input_filters.add ( new InputFilter (
            "Structure WDID", "structure.wdid", "wdid",
            StringUtil.TYPE_STRING,
@@ -300,9 +301,9 @@ throws Exception
 		// TODO SAM 2012-09-05 - need larger default?
 		numFilterGroups = 3;
 	}
-    // Now create the filters, in alphabetical order of the label
+    // Now create the filters, in alphabetical order of the label.
     if ( numWhereChoicesToDisplay < 0 ) {
-        // Default to 20
+        // Default to 20.
         numWhereChoicesToDisplay = 20;
     }
 	setToolTipText ( "<html>HydroBase queries can be filtered based on structure data.</html>" );
@@ -312,24 +313,25 @@ throws Exception
 /**
 Return the datastore used with the filter.
 */
-public HydroBaseDataStore getDataStore ()
-{
+public HydroBaseDataStore getDataStore () {
     return __dataStore;
 }
 
 /**
 Return whether the filter includes SFUT.
 */
-public boolean getIncludeSFUT()
-{
+public boolean getIncludeSFUT() {
     return __includeSFUT;
 }
 
-public void mouseClicked(MouseEvent event) {}
+public void mouseClicked(MouseEvent event) {
+}
 
-public void mouseExited(MouseEvent event) {}
+public void mouseExited(MouseEvent event) {
+}
 
-public void mouseEntered(MouseEvent event) {}
+public void mouseEntered(MouseEvent event) {
+}
 
 /**
 Responds to mouse pressed events.
@@ -341,6 +343,7 @@ public void mousePressed(MouseEvent event) {
 	HydroBase_GUI_Util.buildLocation(temp, (JTextField)event.getSource());
 }
 
-public void mouseReleased(MouseEvent event) {}
+public void mouseReleased(MouseEvent event) {
+}
 
 }

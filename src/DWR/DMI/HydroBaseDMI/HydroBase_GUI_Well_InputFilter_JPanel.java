@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2023 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,24 +21,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
 
 NoticeEnd */
 
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_Well_InputFilter_JPanel - Input filter for well queries.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 2005-01-10	J. Thomas Sapienza, RTi	Initial version.
-// 2005-02-01	JTS, RTi		Renamed from
-//					HydroBase_InputFilter_JPanel_Well
-// 2005-01-31	JTS, RTi		* Location queries are now handled via
-//					  Input Filters.
-//					* A MouseListener is now passed to the
-//					  constructor for doing location builds.
-// 2005-03-24	JTS, RTi		Removed a number of fields that are 
-//					not returned from the stored procedure.
-//-----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.event.MouseListener;
@@ -47,6 +29,7 @@ import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
+import RTi.Util.GUI.InputFilterCriterionType;
 import RTi.Util.GUI.InputFilter_JPanel;
 
 import RTi.Util.String.StringUtil;
@@ -69,7 +52,7 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	String ld = dmi.getFieldLeftEscape();
 
 	InputFilter filter = null;
-	List<InputFilter> filters = new Vector<InputFilter>();
+	List<InputFilter> filters = new Vector<>();
 
 	String wellTableName = HydroBase_GUI_Util._WELL_APPLICATION_TABLE_NAME + "." + ld;
 	String geolocTableName = HydroBase_GUI_Util._GEOLOC_TABLE_NAME + "." + ld;
@@ -79,17 +62,17 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("ABCODate",
 		wellTableName + "abcodate" + rd, "abcodate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filter = new InputFilter("ABRDate",
 		wellTableName + "abrdate" + rd, "abrdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filters.add(new InputFilter("Abreq",
@@ -105,9 +88,9 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("Actdate",
 		wellTableName + "actdate" + rd, "actdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);				
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());				
 	filters.add(filter);
 
 	filters.add(new InputFilter("Aquifer 1",
@@ -153,9 +136,9 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("EXDate",
 		wellTableName + "exdate" + rd, "exdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);				
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());				
 	filters.add(filter);
 
 	filters.add(new InputFilter("Filing",
@@ -186,40 +169,40 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("NBUDate",
 		wellTableName + "nbudate" + rd, "nbudate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filter = new InputFilter("NPDate",
 		wellTableName + "npdate" + rd, "npdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filter = new InputFilter("NWCDate",
 		wellTableName + "nwcdate" + rd, "nwcdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);		
 
 	filter = new InputFilter("Notice date",
 		wellTableName + "noticedate" + rd, "noticedate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filters.add(new InputFilter("Parcel size",
 		wellTableName + "parcel_size" + rd, "parcel_size",
 		StringUtil.TYPE_DOUBLE, null, null, false));
 	filters.add(new InputFilter("Permit number",
-		wellTableName + "permitno" + rd, "permitno", 
+		wellTableName + "permitno" + rd, "permitno",
 		StringUtil.TYPE_INTEGER, null, null, false));
 	filters.add(new InputFilter("Permit rpl",
 		wellTableName + "permitrpl" + rd, "permitrpl",
@@ -228,21 +211,21 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 		wellTableName + "permitsuf" + rd, "permitsuf",
 		StringUtil.TYPE_STRING, null, null, false));
 
-	// create the input filter for the PLSS Location
+	// Create the input filter for the PLSS location.
 	filter = new InputFilter("PLSS Location",
 		"PLSS_Location", "PLSS_Location", StringUtil.TYPE_STRING,
 		null, null, false);
-	// all constraints other than EQUALS are removed because PLSS Locations
-	// are compared in a special way
-	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
-	// the PLSS Location text field is not editable because users must go
-	// through the PLSS Location JDialog to build a location
+	// All constraints other than EQUALS are removed because PLSS locations
+	// are compared in a special way.
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ONE_OF.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());
+	// The PLSS Location text field is not editable because users must go
+	// through the PLSS Location JDialog to build a location.
 	filter.setInputJTextFieldEditable(false);
-	// this listener must be set up so that the location builder dialog
-	// can be opened when the PLSS Location text field is clicked on.
+	// This listener must be set up so that the location builder dialog
+	// can be opened when the PLSS Location text field is clicked on
 	filter.addInputComponentMouseListener(listener);
 	filter.setInputComponentToolTipText("Click in this field to build "
 		+ "a PLSS Location to use as a query constraint.");
@@ -256,9 +239,9 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("PCDate",
 		wellTableName + "pcdate" + rd, "pcdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filters.add(new InputFilter("PDepth",
@@ -268,9 +251,9 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("PIDate",
 		wellTableName + "pidate" + rd, "pidate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filters.add(new InputFilter("PYield",
@@ -289,17 +272,17 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("SADate",
 		wellTableName + "sadate" + rd, "sadate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);		
 
 	filter = new InputFilter("SBUDate",
 		wellTableName + "sbudate" + rd, "sbudate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filters.add(new InputFilter("Statcode",
@@ -309,9 +292,9 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("Statdate",
 		wellTableName + "statdate" + rd, "statdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);		
 
 	filters.add(new InputFilter("Statute",
@@ -330,9 +313,9 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("Trandate",
 		wellTableName + "trandate" + rd, "trandate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filters.add(new InputFilter("Use 1",
@@ -357,24 +340,24 @@ public HydroBase_GUI_Well_InputFilter_JPanel(HydroBaseDMI dmi, MouseListener lis
 	filter = new InputFilter("WADate",
 		wellTableName + "wadate" + rd, "wadate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filter = new InputFilter("WCDate",
 		wellTableName + "wcdate" + rd, "wcdate",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	filters.add(new InputFilter("WD",
 		wellTableName + "Wd" + rd, "wd", StringUtil.TYPE_INTEGER,
 		null, null, false));
 	filters.add(new InputFilter("Well name",
-		wellTableName + "well_name" + rd, "well_name", 
+		wellTableName + "well_name" + rd, "well_name",
 		StringUtil.TYPE_STRING, null, null, false));		
 	filters.add(new InputFilter("Well type",
 		wellTableName + "well_type" + rd, "well_type",
