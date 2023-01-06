@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2023 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,27 +21,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
 
 NoticeEnd */
 
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_NetAmts_InputFilter_JPanel - Input filter for net amounts 
-//	queries.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 2005-01-10	J. Thomas Sapienza, RTi	Initial version.
-// 2005-02-01	JTS, RTi		Renamed from
-//					HydroBase_InputFilter_JPanel_NetAmts
-// 2005-02-08	JTS, RTi		* Added the listener to the constructor.
-//					* Added all fields from the GUI.
-// 2005-02-11	JTS, RTi		Added boolean to constructor which can
-//					be set to false if not doing a 
-//					query by example (eg, the water rights
-//					gui was opened from the structure gui).
-// 2005-07-11	JTS, RTi		Now use structure.strtype instead of
-//					xstrtype.
-//-----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.event.MouseListener;
@@ -50,6 +29,7 @@ import java.util.List;
 import java.util.Vector;
 
 import RTi.Util.GUI.InputFilter;
+import RTi.Util.GUI.InputFilterCriterionType;
 import RTi.Util.GUI.InputFilter_JPanel;
 
 import RTi.Util.String.StringUtil;
@@ -66,11 +46,10 @@ Constructor.
 @param dmi the dmi to use to connect to the database.  Cannot be null.
 @param listener the mouse listener to use for responding when the Location
 entry text field is clicked in.  Cannot be null.
-@param queryByExample if true, then the filter should be usable.  If false,
-then the GUI was opened from another screen with particular query settings 
-that should not be changed.
+@param queryByExample if true, then the filter should be usable.
+If false, then the GUI was opened from another screen with particular query settings that should not be changed.
 */
-public HydroBase_GUI_NetAmts_InputFilter_JPanel(HydroBaseDMI dmi, 
+public HydroBase_GUI_NetAmts_InputFilter_JPanel(HydroBaseDMI dmi,
 MouseListener listener, boolean queryByExample) {
 	if (queryByExample) {
 		setupNormalFilters(dmi, listener);
@@ -92,7 +71,7 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 
 	InputFilter filter = null;
 
-	List<InputFilter> filters = new Vector<InputFilter>();
+	List<InputFilter> filters = new Vector<>();
 
 	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME + "." + ld;
 
@@ -101,9 +80,9 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	filter = new InputFilter("Adj Date",
 		tableName + "adj_date" + rd, "adj_date", StringUtil.TYPE_STRING,
 		null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());
 	filters.add(filter);
 
 	filters.add(new InputFilter("Adj Type",
@@ -114,18 +93,18 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 		null, null, false));
 	
 	filter = new InputFilter("Apro Date",
-		tableName + "apro_date" + rd, "apro_date", 
+		tableName + "apro_date" + rd, "apro_date",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);		
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());		
 	filters.add(filter);
 
 	List<HydroBase_CountyRef> counties = dmi.getCountyRef();
 	HydroBase_CountyRef county = null;
 	int size = counties.size();
-	List<String> v1 = new Vector<String>();
-	List<String> v2 = new Vector<String>();
+	List<String> v1 = new Vector<>();
+	List<String> v2 = new Vector<>();
 	for (int i = 0; i < size; i++) {
 		county = counties.get(i);
 		if (county.getCty() > 0) {
@@ -163,10 +142,10 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 		null, null, false);
 	// all constraints other than EQUALS are removed because PLSS Locations
 	// are compared in a special way
-	filter.removeConstraint(InputFilter.INPUT_ONE_OF);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ONE_OF.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());
 	// the PLSS Location text field is not editable because users must go
 	// through the PLSS Location JDialog to build a location
 	filter.setInputJTextFieldEditable(false);
@@ -178,15 +157,15 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	filters.add(filter);
 
 	filters.add(new InputFilter("Order Number",
-		tableName + "order_no" + rd, "order_no", 
+		tableName + "order_no" + rd, "order_no",
 		StringUtil.TYPE_INTEGER, null, null, false));		
 
 	filter = new InputFilter("Padj Date",
 		tableName + "padj_date" + rd, "padj_date",
 		StringUtil.TYPE_STRING, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_STARTS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_ENDS_WITH);
-	filter.removeConstraint(InputFilter.INPUT_CONTAINS);				
+	filter.removeConstraint(InputFilterCriterionType.INPUT_STARTS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_ENDS_WITH.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_CONTAINS.toString());				
 	filters.add(filter);
 
 	filters.add(new InputFilter("Prior Case Number",
@@ -207,7 +186,7 @@ private void setupNormalFilters(HydroBaseDMI dmi, MouseListener listener) {
 	}
 		
 	filters.add(new InputFilter("Structure Type",
-		ld + "structure.strtype" + rd, "strtype", 
+		ld + "structure.strtype" + rd, "strtype",
 		StringUtil.TYPE_STRING, v1, v2, false));
 	filters.add(new InputFilter("Use",
 		tableName + "use" + rd, "use", StringUtil.TYPE_STRING,
@@ -243,13 +222,13 @@ private void setupStructureFilter(HydroBaseDMI dmi) {
 	String tableName = HydroBase_GUI_Util._NET_AMOUNTS_TABLE_NAME + "." + ld;
 
 	filter = new InputFilter("Structure Number",
-		tableName + "structure_num" + rd, "structure_num", 
+		tableName + "structure_num" + rd, "structure_num",
 		StringUtil.TYPE_INTEGER, null, null, false);
-	filter.removeConstraint(InputFilter.INPUT_BETWEEN);
-	filter.removeConstraint(InputFilter.INPUT_LESS_THAN);
-	filter.removeConstraint(InputFilter.INPUT_GREATER_THAN);
-	filter.removeConstraint(InputFilter.INPUT_LESS_THAN_OR_EQUAL_TO);
-	filter.removeConstraint(InputFilter.INPUT_GREATER_THAN_OR_EQUAL_TO);
+	filter.removeConstraint(InputFilterCriterionType.INPUT_BETWEEN.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_LESS_THAN.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_GREATER_THAN.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_LESS_THAN_OR_EQUAL_TO.toString());
+	filter.removeConstraint(InputFilterCriterionType.INPUT_GREATER_THAN_OR_EQUAL_TO.toString());
 	filter.setInputJTextFieldEditable(false);
 	filters.add(filter);
 
