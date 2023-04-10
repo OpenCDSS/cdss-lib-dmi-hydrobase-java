@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2023 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,23 +21,9 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
 
 NoticeEnd */
 
-// ----------------------------------------------------------------------------
-// HydroBase_DrawingArea_WISDiagram - the drawing area onto which the 
-//	wis diagram is drawn.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2003-12-15	J. Thomas Sapienza, RTi	Initial changelog.  
-// 2004-05-27	JTS, RTi		Renamed from 
-//					HydroBase_DrawingArea_WISNetwork
-//					to HydroBase_DrawingArea_WISDiagram.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
-import RTi.GR.GRAspect;
+import RTi.GR.GRAspectType;
 import RTi.GR.GRJComponentDrawingArea;
 import RTi.GR.GRLimits;
 import RTi.GR.GRUnits;
@@ -55,7 +41,7 @@ Constructor.
 */
 public HydroBase_DrawingArea_WISDiagram(HydroBase_Device_WISDiagram dev, 
 GRLimits drawingLimits) {
-	super(dev, "HydroBase_DrawingArea_WISDiagram", GRAspect.TRUE, 
+	super(dev, "HydroBase_DrawingArea_WISDiagram", GRAspectType.TRUE, 
 	drawingLimits, GRUnits.DEVICE, GRLimits.DEVICE, drawingLimits);
 }
 
