@@ -4,49 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2023 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_Device_WISDiagram - the device that controls all the drawing of 
-//	the WIS Diagram
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2004-02-02	J. Thomas Sapienza, RTi	Initial version.
-// 2004-05-18	JTS, RTi		Major overhaul of the entire design,
-//					reflecting lessons learned from the
-//					network diagram editor for StateMod
-//					and new goals for this tool.
-// 2004-05-21	JTS, RTi		Removed traces of the labels nodes.
-// 2004-05-27	JTS, RTi		Renamed from HydroBase_Device_WISNetwork
-//					to HydroBase_Device_WISDiagram.
-// 2004-06-08	JTS, RTi		* Added Show Calls option.
-//					* Added Show Rights option.
-// 2004-07-21	JTS, RTi		The popup menu item for deleting
-//					diagram data from the database is
-//					now enabled even when testing is false.
-// 2005-04-27	JTS, RTi		Added finalize().
-// 2005-05-25	JTS, RTi		readCallsList() now passes in a 
-//					DateTime object for the date.
-// 2006-05-25	JTS, RTi		Cleaned up code that needed revisited.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -79,7 +52,8 @@ import RTi.GR.GRColor;
 import RTi.GR.GRDrawingAreaUtil;
 import RTi.GR.GRJComponentDevice;
 import RTi.GR.GRLimits;
-import RTi.GR.GRSymbol;
+import RTi.GR.GRSymbolPosition;
+import RTi.GR.GRSymbolShapeType;
 import RTi.GR.GRText;
 import RTi.GR.GRUnits;
 
@@ -98,13 +72,12 @@ import RTi.Util.String.StringUtil;
 import RTi.Util.Time.DateTime;
 
 /**
-This class extends GRJComponentDevice to be the device that manages the 
-WIS diagram drawing area.
+This class extends GRJComponentDevice to be the device that manages the WIS diagram drawing area.
 */
 @SuppressWarnings("serial")
-public class HydroBase_Device_WISDiagram 
+public class HydroBase_Device_WISDiagram
 extends GRJComponentDevice
-implements ActionListener, MouseListener, MouseMotionListener, Printable, 
+implements ActionListener, MouseListener, MouseMotionListener, Printable,
 Scrollable {
 
 /**
@@ -115,7 +88,7 @@ public final static String CLASS = "HydroBase_Device_WISDiagram";
 /**
 Popup menu labels.
 */
-private final String 
+private final String
 	__MENU_ADD_ANNOTATION = "Add Annotation",
 	__MENU_ANNOTATION_BOUNDING_BOX = "Annotation Bounding Box On/Off",
 	__MENU_DELETE_ANNOTATION = "Delete Annotation",
@@ -131,8 +104,7 @@ private final String
 	__MENU_SHOW_RIGHTS = "Show Rights";
 
 /**
-Whether the annotatios have been processed into nodes properly yet.  This 
-should only happen once.
+Whether the annotations have been processed into nodes properly yet.  This should only happen once.
 */
 private boolean __annotationsProcessed = false;
 
@@ -209,8 +181,7 @@ Whether rights information have been queried from the database or not.
 private boolean __rightsQueried = false;
 
 /**
-Whether to show a red bounding box around the annotation text.  Used for 
-debugging.
+Whether to show a red bounding box around the annotation text.  Used for debugging.
 */
 private boolean __showAnnotationBoundingBox = false;
 
@@ -225,7 +196,7 @@ Whether flow information should be shown in the labels of the nodes.
 private boolean __showFlows = false;
 
 /**
-WHether right information should be shown in the labels of the node.
+Whether right information should be shown in the labels of the node.
 */
 private boolean __showRights = false;
 
@@ -240,8 +211,7 @@ The height of the canvas.
 private double __height = 0;
 
 /**
-The modifier to apply to normal pixel spacing values to transform them into
-data unit values.
+The modifier to apply to normal pixel spacing values to transform them into data unit values.
 */
 private double __mod = 1;
 
@@ -256,8 +226,7 @@ The last-clicked X location.
 private double __x;
 
 /**
-The amount to adjust the X value by to find the far lower-left extent of the
-drag bounding box.
+The amount to adjust the X value by to find the far lower-left extent of the drag bounding box.
 */
 private double __xAdjust;
 
@@ -267,8 +236,7 @@ The last-clicked Y location.
 private double __y;
 
 /**
-The amount to adjust the Y value by to find the lower-left extent of the
-drag bounding box.
+The amount to adjust the Y value by to find the lower-left extent of the drag bounding box.
 */
 private double __yAdjust;
 
@@ -378,11 +346,10 @@ private List<HydroBase_Node> __annotations = new ArrayList<HydroBase_Node>();
 
 /**
 Constructor.
-@param dmi the dmi to use for communicating with the database.
-@param parent the parent gui in which this device was instantiated.
+@param dmi the DMI to use for communicating with the database.
+@param parent the parent GUI in which this device was instantiated.
 */
-public HydroBase_Device_WISDiagram(HydroBaseDMI dmi, 
-HydroBase_GUI_WISDiagram parent, boolean editable) {
+public HydroBase_Device_WISDiagram(HydroBaseDMI dmi, HydroBase_GUI_WISDiagram parent, boolean editable) {
 	super("HydroBase_Device_WISDiagram");
 	__editable = editable;
 
@@ -391,7 +358,7 @@ HydroBase_GUI_WISDiagram parent, boolean editable) {
 
 	__dmi = dmi;
 	__parent = parent;
-//	__printScale = 1;
+	//__printScale = 1;
 
 	__popup = new JPopupMenu();
 	JMenuItem mi = null;
@@ -439,9 +406,9 @@ HydroBase_GUI_WISDiagram parent, boolean editable) {
 		jcbmi.addActionListener(this);
 		__popup.add(jcbmi);
 	}
-//	jcbmi = new JCheckBoxMenuItem(__MENU_MARGIN);
-//	jcbmi.addActionListener(this);
-//	__popup.add(jcbmi);
+	//jcbmi = new JCheckBoxMenuItem(__MENU_MARGIN);
+	//jcbmi.addActionListener(this);
+	//__popup.add(jcbmi);
 
 	__nodePopup = new JPopupMenu();
 	mi = new JMenuItem(__MENU_PROPERTIES);
@@ -510,8 +477,8 @@ public void actionPerformed(ActionEvent event) {
 		else {
 			node = __nodes[__popUpNode];
 		}
-		new HydroBase_GUI_WISDiagramNodeProperties(__dmi, this, 
-			__editable, node, __popUpNode, 
+		new HydroBase_GUI_WISDiagramNodeProperties(__dmi, this,
+			__editable, node, __popUpNode,
 			__isAnnotation);
 	}
 	else if (action.equals(__MENU_PIXEL_GRID)) {
@@ -594,9 +561,9 @@ public void addAnnotation(double x, double y) {
 Adds an annotation node to the drawing area at the specified point.
 */
 public void addAnnotation(double x, double y, boolean convert) {
-	String text = new TextResponseJDialog(__parent, 
+	String text = new TextResponseJDialog(__parent,
 		"Enter the annotation text",
-		"Enter the annotation text:", 
+		"Enter the annotation text:",
 		ResponseJDialog.OK | ResponseJDialog.CANCEL).response();
 
 	if (text == null) {
@@ -629,12 +596,11 @@ public void addAnnotation(double x, double y, boolean convert) {
 	GRLimits limits = GRDrawingAreaUtil.getTextExtents(
 		__drawingArea, text, GRUnits.DEVICE);	
 	double w = convertX(limits.getWidth()) - __dataLimits.getLeftX();
-	double h = convertY(limits.getHeight(), false) 
+	double h = convertY(limits.getHeight(), false)
 		- __dataLimits.getBottomY();
 
-	// calculate the actual limits for the from the lower-left corner
-	// to the upper-right, in order to know when the text has been 
-	// clicked on (for dragging, or popup menus).
+	// Calculate the actual limits for the from the lower-left corner to the upper-right,
+	// in order to know when the text has been clicked on (for dragging, or popup menus).
 	
 	if (position.equalsIgnoreCase("UpperRight")) {
 		node.setPosition(x, y, w, h);
@@ -701,12 +667,10 @@ private double calculateWidestKeyText() {
 /**
 Given a certain annotation, updates the proplist that holds the annotation
 info in reaction to the annotation being moved on the screen.
-@param annotation the number of the annotation in the __annotations Vector
-to have the proplist updated.
+@param annotation the number of the annotation in the __annotations list to have the proplist updated.
 */
 private void changeAnnotationLocation(int annotation) {
-	HydroBase_Node node = 
-		(HydroBase_Node)__annotations.get(annotation);
+	HydroBase_Node node = (HydroBase_Node)__annotations.get(annotation);
 
 	double x = node.getX();
 	double y = node.getY();
@@ -739,8 +703,7 @@ private void changeAnnotationLocation(int annotation) {
 	else if (position.equalsIgnoreCase("UpperLeft")) {
 		p.setValue("Point", "" + (x + w) + "," + y);
 	}
-	else if (position.equalsIgnoreCase("Above")
-		|| position.equalsIgnoreCase("AboveCenter")) {
+	else if (position.equalsIgnoreCase("Above") || position.equalsIgnoreCase("AboveCenter")) {
 		p.setValue("Point", "" + (x + (w / 2)) + "," + y);
 	}
 	else if (position.equalsIgnoreCase("Center")) {
@@ -797,9 +760,8 @@ private double convertY(double y) {
 /**
 Converts an y value from device units to data units.
 @param y the y value in device units to convert.
-@param invert whether to invert the y value (so that low values are at the
-bottom of the screen, opposite of normal java pixel numbering) prior to 
-conversion.
+@param invert whether to invert the y value (so that low values are at the bottom of the screen,
+opposite of normal java pixel numbering) prior to conversion.
 @return the y value in device units.
 */
 private double convertY(double y, boolean invert) {
@@ -816,7 +778,7 @@ private double convertY(double y, boolean invert) {
 Deletes the records for the current diagram from wis_diagram_data.
 */
 private void deleteDatabaseData() {
-	int x = new ResponseJDialog(__parent, 
+	int x = new ResponseJDialog(__parent,
 		"Delete Diagram Data?",
 		"Do you want to delete the diagram data from the database?\n"
 		+ "This will not affect WIS data -- only information directly "
@@ -847,8 +809,7 @@ private void deleteDatabaseData() {
 }
 
 /**
-Deletes the specified node from the diagram.  Should only be used on
-annotation nodes.
+Deletes the specified node from the diagram.  Should only be used on annotation nodes.
 */
 private void deleteNode(int node) {
 	if (!__isAnnotation) {
@@ -865,10 +826,9 @@ Draws the key.
 private void drawLegend() {
 	PageFormat pageFormat = getPageFormat();
 
-	// set the data limits for drawing the legend to not be the 
-	// normal data units but pixels instead.  This way the drawing can
-	// be easily done in pixel units.  The data units will be re-set
-	// at the end of this method.
+	// Set the data limits for drawing the legend to not be the normal data units but pixels instead.
+	// This way the drawing can be easily done in pixel units.
+	// The data units will be re-set at the end of this method.
 
 	useDeviceDataLimits();
 
@@ -896,21 +856,21 @@ private void drawLegend() {
 	int i = 0;
 	for (i = 0; i < __keyLabels.length; i++) {
 		if (i == 0) {
-			GRDrawingAreaUtil.drawSymbol(__drawingArea, 
-				GRSymbol.SYM_RTRI, x + 5, y - 13 - (23 * i),
-				HydroBase_Node.ICON_DIAM*2/3, GRUnits.DEVICE, 
-				GRSymbol.SYM_CENTER_Y | GRSymbol.SYM_LEFT);
+			GRDrawingAreaUtil.drawSymbol(__drawingArea,
+				GRSymbolShapeType.TRIANGLE_RIGHT, x + 5, y - 13 - (23 * i),
+				HydroBase_Node.ICON_DIAM*2/3, GRUnits.DEVICE,
+				GRSymbolPosition.CENTER_Y | GRSymbolPosition.LEFT );
 		}
 		else {
-			GRDrawingAreaUtil.drawSymbol(__drawingArea, 
-				GRSymbol.SYM_CIR, x + 5, y - 13 - (23 * i),
-				HydroBase_Node.ICON_DIAM*2/3, GRUnits.DEVICE, 
-				GRSymbol.SYM_CENTER_Y | GRSymbol.SYM_LEFT);
+			GRDrawingAreaUtil.drawSymbol(__drawingArea,
+				GRSymbolShapeType.CIRCLE, x + 5, y - 13 - (23 * i),
+				HydroBase_Node.ICON_DIAM*2/3, GRUnits.DEVICE,
+				GRSymbolPosition.CENTER_Y | GRSymbolPosition.LEFT );
 			GRDrawingAreaUtil.drawText(__drawingArea,
 				__keyText[i], x + 15, y - 13 - (23 * i), 0,
 				GRText.RIGHT| GRText.CENTER_Y);
 		}
-		GRDrawingAreaUtil.drawText(__drawingArea, __keyLabels[i], 
+		GRDrawingAreaUtil.drawText(__drawingArea, __keyLabels[i],
 			x + 30, y - 11 - (23 * i), 0, GRText.CENTER_Y);
 	}
 
@@ -932,7 +892,7 @@ private void drawDiagram() {
 	int reachMax = findMaxReachLevel();
 	for (int i = 0; i < __nodes.length; i++) {
 		ds = __nodes[i].getDownstreamNode();
-		while ( ds != null 
+		while ( ds != null
 			&& (  ds.getNodeType().equals("Annotation")
 			|| ds.getNodeType().equals("String")
 			|| ds.getNodeType().equals("Stream")
@@ -941,7 +901,7 @@ private void drawDiagram() {
 		}
 
 		GRDrawingAreaUtil.setColor(__drawingArea, GRColor.blue);
-		GRDrawingAreaUtil.setLineWidth(__drawingArea, 
+		GRDrawingAreaUtil.setLineWidth(__drawingArea,
 			reachMax - __nodes[i].getReachLevel() + 1);
 		if (ds != null) {
 			p1 = __nodes[i].getDrawToPoint(__drawingArea);	
@@ -951,13 +911,13 @@ private void drawDiagram() {
 		}
 	}
 
-	// set back to normal
+	// Set back to normal.
 	GRDrawingAreaUtil.setLineWidth(__drawingArea, 1);
 }
 
 /**
-Given the annotations read from the database, fills in the information 
-necessary to draw the annotation on the screen.
+Given the annotations read from the database,
+fills in the information necessary to draw the annotation on the screen.
 */
 private void fillAnnotationNodeData() {
 	int size = __annotations.size();
@@ -990,7 +950,7 @@ private void fillAnnotationNodeData() {
 			fontName, fontStyle, fontSize);	
 
 		w = convertX(limits.getWidth()) -__dataLimits.getLeftX();
-		h = convertY(limits.getHeight(), false) 
+		h = convertY(limits.getHeight(), false)
 			- __dataLimits.getBottomY();
 		
 		point = p.getValue("Point");
@@ -1036,29 +996,6 @@ private void fillAnnotationNodeData() {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dataLimits = null;
-	__drawingLimits = null;
-	__nodeLimits = null;
-	__dmi = null;
-	__drawingArea = null;
-	__parent = null;
-	IOUtil.nullArray(__nodes);
-	__network = null;
-	__popup = null;
-	__nodePopup = null;
-	__labelPopup = null;
-	IOUtil.nullArray(__keyLabels);
-	IOUtil.nullArray(__keyText);
-	__dateString = null;
-	__annotations = null;
-	super.finalize();
-}
-
-/**
 Finds the highest reach level in the entire network.
 @return the highest reach level in the entire network.
 */
@@ -1086,15 +1023,14 @@ private int findNodeAtXY(double x, double y) {
 		}
 	}
 
-	// if the node still wasn't found, search to see if an annotation was
-	// clicked on.
+	// If the node still wasn't found, search to see if an annotation was clicked on.
 
 	int size = __annotations.size();
 	HydroBase_Node node = null;
 	GRLimits limits = null;
 	for (int i = 0; i < size; i++) {
 		node = (HydroBase_Node)__annotations.get(i);
-		limits = new GRLimits(node.getX(), node.getY(), 
+		limits = new GRLimits(node.getX(), node.getY(),
 			node.getX() + node.getWidth(),
 			node.getY() + node.getHeight());
 		if (limits.contains(x, y) && node.isVisible()) {
@@ -1169,7 +1105,7 @@ public HydroBase_Node[] getNodes() {
 }
 
 /**
-Returns the pageformat for this GUI.
+Returns the page format for this GUI.
 */
 public PageFormat getPageFormat() {
 	String routine = CLASS + ".getPageFormat";
@@ -1196,8 +1132,7 @@ public Dimension getPreferredScrollableViewportSize() {
 /**
 Returns 20.
 */
-public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, 
-int direction) {
+public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
 	return 20;
 }
 
@@ -1218,13 +1153,12 @@ public boolean getScrollableTracksViewportWidth() {
 /**
 Returns 20.
 */
-public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, 
-int direction) {
+public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
 	return 20;
 }
 
 /**
-Creates a unique name for a proplist. 
+Creates a unique name for a proplist.
 @param num the number of proplists already in existence.
 @return a unique name for a proplist.
 */
@@ -1251,8 +1185,7 @@ private String getUniquePropListName(int num) {
 }
 
 /**
-Inverts Y from the typical Java-style (lower Y values are higher) to the RTI
-standard (lower Y values are lower).
+Inverts Y from the typical Java-style (lower Y values are higher) to lower Y values are lower.
 @param y the y value to invert.
 @return the inverted Y value.
 */
@@ -1312,11 +1245,11 @@ public boolean isDirty() {
 /**
 Does nothing.
 */
-public void mouseClicked(MouseEvent event) {}
+public void mouseClicked(MouseEvent event) {
+}
 
 /**
-If a node is currently being dragged, repaints the bounding box at the 
-specified point.
+If a node is currently being dragged, repaints the bounding box at the specified point.
 @param event the MouseEvent that happened.
 */
 public void mouseDragged(MouseEvent event) {
@@ -1332,17 +1265,20 @@ public void mouseDragged(MouseEvent event) {
 /**
 Does nothing.
 */
-public void mouseEntered(MouseEvent event) {}
+public void mouseEntered(MouseEvent event) {
+}
 
 /**
 Does nothing.
 */
-public void mouseExited(MouseEvent event) {}
+public void mouseExited(MouseEvent event) {
+}
 
 /**
 Does nothing.
 */
-public void mouseMoved(MouseEvent event) {}
+public void mouseMoved(MouseEvent event) {
+}
 
 /**
 Determines the node that is being dragged around the screen.
@@ -1356,19 +1292,19 @@ public void mousePressed(MouseEvent event) {
 	__xAdjust = 0;
 	__yAdjust = 0;
 	
-	// do not respond to popup events
+	// Do not respond to popup events.
 	if (event.getButton() == MouseEvent.BUTTON1) {
 		double x = convertX(event.getX());
 		double y = convertY(event.getY());
 		__leftClickNode = findNodeAtXY(x, y);
-		// if a node was clicked on ...
+		// If a node was clicked on.
 		if (__leftClickNode > -1) {
 			__x = x;
 			__y = y;
 			if (__isAnnotation) {
 				HydroBase_Node node = __annotations.get(__leftClickNode);
-				__nodeLimits = new GRLimits(node.getX(), 
-					node.getY(), 
+				__nodeLimits = new GRLimits(node.getX(),
+					node.getY(),
 					node.getX() + node.getWidth(),
 					node.getY() + node.getHeight());
 				node.setVisible(false);
@@ -1388,8 +1324,8 @@ public void mousePressed(MouseEvent event) {
 }
 
 /**
-Shows the popup menu if the popup mouse button was pressed, or drops the 
-dragged node at the new position on the screen.
+Shows the popup menu if the popup mouse button was pressed,
+or drops the dragged node at the new position on the screen.
 @param event the MouseEvent that happened.
 */
 public void mouseReleased(MouseEvent event) {
@@ -1401,16 +1337,16 @@ public void mouseReleased(MouseEvent event) {
 		__x = x - __xAdjust;
 		__y = y - __yAdjust;			
 		if (node < 0) {		
-			__popup.show(event.getComponent(), event.getX(), 
+			__popup.show(event.getComponent(), event.getX(),
 				event.getY());
 		}
 		else {
 			if (__isAnnotation) {
-				__labelPopup.show(event.getComponent(), 
+				__labelPopup.show(event.getComponent(),
 					event.getX(), event.getY());
 			}
 			else {
-				__nodePopup.show(event.getComponent(), 
+				__nodePopup.show(event.getComponent(),
 					event.getX(), event.getY());
 			}
 			__popUpNode = node;
@@ -1429,8 +1365,7 @@ public void mouseReleased(MouseEvent event) {
 			__x = x - __xAdjust;
 			__y = y - __yAdjust;
 
-			// prevent nodes from being dragged off the drawing
-			// area completely.
+			// Prevent nodes from being dragged off the drawing area completely.
 			if (__x < __dataLimits.getLeftX()) {
 				__x = __dataLimits.getLeftX();
 			}
@@ -1438,11 +1373,11 @@ public void mouseReleased(MouseEvent event) {
 				__y = __dataLimits.getBottomY();
 			}
 			if (__x + node.getWidth() >= __dataLimits.getRightX()) {
-				__x = __dataLimits.getRightX() 
+				__x = __dataLimits.getRightX()
 					- node.getWidth();
 			}
 			if (__y + node.getHeight() >= __dataLimits.getTopY()) {
-				__y = __dataLimits.getTopY() 
+				__y = __dataLimits.getTopY()
 					- node.getHeight();
 			}
 			
@@ -1462,30 +1397,29 @@ public void mouseReleased(MouseEvent event) {
 			__x = x;
 			__y = y;
 
-			// prevent nodes from being dragged off the drawing
-			// area completely.
+			// Prevent nodes from being dragged off the drawing area completely.
 			if (__x < __dataLimits.getLeftX()
 				+ __nodes[__leftClickNode].getWidth() / 2) {
 				__x = __dataLimits.getLeftX()
-					+ __nodes[__leftClickNode].getWidth() 
+					+ __nodes[__leftClickNode].getWidth()
 					/ 2;
 			}
 			if (__y < __dataLimits.getBottomY()
 				+ __nodes[__leftClickNode].getHeight() / 2) {
 				__y = __dataLimits.getBottomY()
-					+ __nodes[__leftClickNode].getHeight() 
+					+ __nodes[__leftClickNode].getHeight()
 					/ 2;
 			}
 			if (__x > __dataLimits.getRightX()
 				- __nodes[__leftClickNode].getWidth() /2) {
 				__x = __dataLimits.getRightX()
-					- __nodes[__leftClickNode].getWidth() 
+					- __nodes[__leftClickNode].getWidth()
 					/ 2;
 			}
 			if (__y > __dataLimits.getTopY()
 				- __nodes[__leftClickNode].getHeight() / 2) {
 				__y = __dataLimits.getTopY()
-					- __nodes[__leftClickNode].getHeight() 
+					- __nodes[__leftClickNode].getHeight()
 					/ 2;
 			}
 			
@@ -1508,19 +1442,19 @@ public void paint(Graphics g) {
 	if (!__ready) {
 		return;
 	}
-	// sets the graphics in the base class appropriately (double-buffered
-	// if doing double-buffered drawing, single-buffered if not)
+	// Sets the graphics in the base class appropriately
+	// (double-buffered if doing double-buffered drawing, single-buffered if not).
 
 	Graphics2D g2 = (Graphics2D)g;
 	setGraphics(g2);
 	setAntiAlias(true);
 
-	// Set up drawing limits based on current window size...
+	// Set up drawing limits based on current window size.
 	setLimits(getLimits(true));
 
-	// first time through, do the following ...
+	// First time through, do the following.
 	if (__initialize) {
-		// one time ONLY, do the following.
+		// One time ONLY, do the following.
 		if (__onceEver) {
 			__height = getBounds().height;
 			__width = getBounds().width;	
@@ -1539,7 +1473,7 @@ public void paint(Graphics g) {
 		__dataLimits = __drawingArea.getDataLimits();
 		__drawingLimits = __drawingArea.getDrawingLimits();
 		if (__drawingLimits.getHeight() > __drawingLimits.getWidth()) {
-			__mod = __dataLimits.getHeight() 
+			__mod = __dataLimits.getHeight()
 				/ __drawingLimits.getHeight();
 		}
 		else {
@@ -1549,45 +1483,39 @@ public void paint(Graphics g) {
 
 	}
 	else {
-		// check to see if the bounds of the device have changed --
-		// if they have then the GUI window has been resized and
-		// the double buffer size needs changed accordingly.
-		if (__height != getBounds().height 
-		    || __width != getBounds().width) {
+		// Check to see if the bounds of the device have changed.
+		// If they have then the GUI window has been resized and the double buffer size needs changed accordingly.
+		if (__height != getBounds().height || __width != getBounds().width) {
 			__height = getBounds().height;
 			__width = getBounds().width;				
 			GRLimits limits = new GRLimits(0, 0, getBounds().width,
 				getBounds().height);
-			__drawingArea.setDrawingLimits(limits, GRUnits.DEVICE,
-				GRLimits.DEVICE);
-			setupDoubleBuffer(0, 0, getBounds().width, 
+			__drawingArea.setDrawingLimits(limits, GRUnits.DEVICE, GRLimits.DEVICE);
+			setupDoubleBuffer(0, 0, getBounds().width,
 				getBounds().height);
 			__forceRefresh = true;
 		}
 	}
 
-	// only do the following if explicitly instructed to ...
+	// Only do the following if explicitly instructed to.
 	if (__forceRefresh) {
 		GRDrawingAreaUtil.setLineWidth(__drawingArea, 1);
 		GRDrawingAreaUtil.setFont(__drawingArea, "Arial", "Plain", 11);
 		JGUIUtil.setWaitCursor(__parent, true);
 
-		// if the currently specified node is set to be erased, then
-		// a box that is 200 pixels wider and taller (to account for
-		// dropshadows and anything else) is created around thenode  
-		// to erase, and clipping bounds are set on that.  The call
-		// to clear() after this if(){} will then only clear the 
-		// region inside the clipping box.  Drawing (such as of 
-		// relationship lines) will only occur inside the clipping box.
+		// If the currently specified node is set to be erased,
+		// then a box that is 200 pixels wider and taller
+		// (to account for dropshadows and anything else)
+		// is created around the node to erase, and clipping bounds are set on that.
+		// The call to clear() after this if(){} will then only clear the region inside the clipping box.
+		// Drawing (such as of relationship lines) will only occur inside the clipping box.
 		__eraseNode = false;
 		if (__eraseNode) {
-			GRLimits limits = 
-				new GRLimits(
-				(__x - __xAdjust - 100),
+			GRLimits limits =
+				new GRLimits((__x - __xAdjust - 100),
 				invertY(__y - __yAdjust - 100),
 				__x - __xAdjust + __nodeLimits.getWidth() + 100,
-				invertY(__y + __nodeLimits.getHeight() 
-					- __yAdjust + 100));
+				invertY(__y + __nodeLimits.getHeight() - __yAdjust + 100));
 
 			setClip(limits);
 		}
@@ -1606,15 +1534,15 @@ public void paint(Graphics g) {
 		drawDiagram();
 	
 		setAntiAlias(true);
-		// draw the nodes -- if they are visible
+		// Draw the nodes if they are visible.
 		for (int i = 0; i < __nodes.length; i++) {
 			if (__nodes[i].isVisible()) {
-			    	__nodes[i].draw(__drawingArea);
+		    	__nodes[i].draw(__drawingArea);
 			}
 		}
 	
 		if (__annotations.size() != 0 && !__annotationsProcessed) {
-			// annotations were read from the database
+			// Annotations were read from the database.
 			fillAnnotationNodeData();
 		}		
 
@@ -1623,14 +1551,12 @@ public void paint(Graphics g) {
 		HydroBase_Node node = null;
 		for (int i = 0; i < size; i++) {
 			if (i == __leftClickNode && __isAnnotation) {
-				// skip it -- outline being drawn for
-				// drag
+				// Skip it.  Outline being drawn for drag.
 				continue;
 			}
 			node = __annotations.get(i);
 
-			GRDrawingAreaUtil.drawAnnotation(__drawingArea, 
-				(PropList)node.getAssociatedObject());
+			GRDrawingAreaUtil.drawAnnotation(__drawingArea, (PropList)node.getAssociatedObject());
 
 			if (__showAnnotationBoundingBox) {
 			GRDrawingAreaUtil.setColor(__drawingArea, GRColor.red);
@@ -1641,7 +1567,7 @@ public void paint(Graphics g) {
 		}
 	
 		setAntiAlias(true);
-		// if the grid should be drawn, do so ...
+		// If the grid should be drawn, do so.
 		if (__drawInchGrid) {
 			useDeviceDataLimits();
 			String s = null;
@@ -1649,17 +1575,17 @@ public void paint(Graphics g) {
 			for (int i = 0; i < 100000; i+= ((72/__printScale)/2)) {
 				GRDrawingAreaUtil.drawLine(__drawingArea, i, 0,
 					i, 100000);
-				GRDrawingAreaUtil.drawLine(__drawingArea, 0, i, 
+				GRDrawingAreaUtil.drawLine(__drawingArea, 0, i,
 					100000, i);				
 				s = StringUtil.formatString(
 					((double)i/(72/__printScale)),"%10.1f");
-				GRDrawingAreaUtil.drawText(__drawingArea, 
-					s,i, 
+				GRDrawingAreaUtil.drawText(__drawingArea,
+					s,i,
 					0, 0, GRText.CENTER_X | GRText.BOTTOM);
 				s = StringUtil.formatString(
 					((double)i/(72/__printScale)),"%10.1f");
-				GRDrawingAreaUtil.drawText(__drawingArea, 
-					s,0, 
+				GRDrawingAreaUtil.drawText(__drawingArea,
+					s,0,
 					i, 0, GRText.CENTER_Y | GRText.LEFT);
 			}
 			useDataLimits();
@@ -1672,12 +1598,12 @@ public void paint(Graphics g) {
 			for (int i = 0; i < 100000; i+= 50) {
 				GRDrawingAreaUtil.drawLine(__drawingArea, i, 0,
 					i, 100000);
-				GRDrawingAreaUtil.drawLine(__drawingArea, 0, i, 
+				GRDrawingAreaUtil.drawLine(__drawingArea, 0, i,
 					100000, i);
-				GRDrawingAreaUtil.drawText(__drawingArea, 
+				GRDrawingAreaUtil.drawText(__drawingArea,
 					("" + i) ,i, 0, 0,
 					GRText.CENTER_X | GRText.BOTTOM);
-				GRDrawingAreaUtil.drawText(__drawingArea, 
+				GRDrawingAreaUtil.drawText(__drawingArea,
 					("" + i),0, i, 0,
 					GRText.CENTER_Y | GRText.LEFT);
 			}			
@@ -1688,31 +1614,23 @@ public void paint(Graphics g) {
 		setAntiAlias(true);
 		if (__drawMargin) {
 			useDeviceDataLimits();
-			GRDrawingAreaUtil.setColor(__drawingArea, 
-				GRColor.cyan);
+			GRDrawingAreaUtil.setColor(__drawingArea, GRColor.cyan);
 			PageFormat pageFormat = getPageFormat();
 			double leftX = pageFormat.getImageableX() /__printScale;
-			double topY = (pageFormat.getHeight() 
-				- pageFormat.getImageableY()) / __printScale;
+			double topY = (pageFormat.getHeight() - pageFormat.getImageableY()) / __printScale;
 			double rightX = (leftX + pageFormat.getImageableWidth()
 				/ __printScale) - 1;
 			double bottomY = ((pageFormat.getHeight()
-				- (pageFormat.getImageableY() 
-					+ pageFormat.getImageableHeight()))
+				- (pageFormat.getImageableY() + pageFormat.getImageableHeight()))
 				/ __printScale) + 1;
-			GRDrawingAreaUtil.drawLine(__drawingArea,
-				leftX, topY, leftX, bottomY);
-			GRDrawingAreaUtil.drawLine(__drawingArea,
-				rightX, topY, rightX, bottomY);
-			GRDrawingAreaUtil.drawLine(__drawingArea,
-				leftX, topY, rightX, topY);
-			GRDrawingAreaUtil.drawLine(__drawingArea,
-				leftX, bottomY, rightX, bottomY);
+			GRDrawingAreaUtil.drawLine(__drawingArea, leftX, topY, leftX, bottomY);
+			GRDrawingAreaUtil.drawLine(__drawingArea, rightX, topY, rightX, bottomY);
+			GRDrawingAreaUtil.drawLine(__drawingArea, leftX, topY, rightX, topY);
+			GRDrawingAreaUtil.drawLine(__drawingArea, leftX, bottomY, rightX, bottomY);
 			useDataLimits();
 		}
 
-		// if the clipping area was set up above, un-set it with a 
-		// call to setClip(null)
+		// If the clipping area was set up above, un-set it with a call to setClip(null).
 		if (__eraseNode) {
 			setClip(null);
 			__eraseNode = false;
@@ -1720,32 +1638,32 @@ public void paint(Graphics g) {
 		JGUIUtil.setWaitCursor(__parent, false);
 	}
 	
-	// displays the graphics
+	// Displays the graphics.
 	showDoubleBuffer(g2);
 	setAntiAlias(true);
-	// if a table is currently being dragged around the screen, draw the
-	// outline of the table on top of the double-buffer
+	// If a table is currently being dragged around the screen,
+	// draw the outline of the table on top of the double-buffer.
 	if (__inDrag) {
 		_graphics = (Graphics2D)g2;
 		GRDrawingAreaUtil.setColor(__drawingArea, GRColor.black);
-		GRDrawingAreaUtil.drawLine(__drawingArea, 
-			__x - __xAdjust - 2, 
-			__y - __yAdjust - 2, 
-			__nodeLimits.getWidth() + __x - __xAdjust + 2, 
+		GRDrawingAreaUtil.drawLine(__drawingArea,
+			__x - __xAdjust - 2,
+			__y - __yAdjust - 2,
+			__nodeLimits.getWidth() + __x - __xAdjust + 2,
 			__y - __yAdjust - 2);
-		GRDrawingAreaUtil.drawLine(__drawingArea, 
-			__x - __xAdjust - 2, 
+		GRDrawingAreaUtil.drawLine(__drawingArea,
+			__x - __xAdjust - 2,
 			__y + __nodeLimits.getHeight() - __yAdjust + 2,
 			__nodeLimits.getWidth() + __x - __xAdjust + 2,
 			__y + __nodeLimits.getHeight() - __yAdjust + 2);
-		GRDrawingAreaUtil.drawLine(__drawingArea, 
-			__x - __xAdjust - 2, 
+		GRDrawingAreaUtil.drawLine(__drawingArea,
+			__x - __xAdjust - 2,
 			__y - __yAdjust - 2,
-			__x - __xAdjust - 2, 
+			__x - __xAdjust - 2,
 			__y + __nodeLimits.getHeight() - __yAdjust + 2);
 		GRDrawingAreaUtil.drawLine(__drawingArea,
 			__x + __nodeLimits.getWidth() - __xAdjust + 2,	
-			__y - __yAdjust - 2, 
+			__y - __yAdjust - 2,
 			__x + __nodeLimits.getWidth() - __xAdjust + 2,
 			__y + __nodeLimits.getHeight() - __yAdjust + 2);
 	}	
@@ -1776,8 +1694,8 @@ Prints a page.
 @param g the Graphics context to which to print.
 @param pageFormat the pageFormat to use for printing.
 @param pageIndex the index of the page to print.
-@return Printable.NO_SUCH_PAGE if no page should be printed, or 
-Printable.PAGE_EXISTS if a page should be printed.
+@return Printable.NO_SUCH_PAGE if no page should be printed,
+or Printable.PAGE_EXISTS if a page should be printed.
 */
 public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
 	if (pageIndex > 0) {
@@ -1785,19 +1703,18 @@ public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
 	}
 
 	Graphics2D g2d = (Graphics2D)g;
-	// Set for the GRDevice because we will temporarily use 
-	// that to do the drawing...	
+	// Set for the GRDevice because we will temporarily use  that to do the drawing.
 
 	double transX = 0;
 	double transY = 0;
 	
 	if (!StringUtil.startsWithIgnoreCase(
-		PrintUtil.pageFormatToString(pageFormat), 
+		PrintUtil.pageFormatToString(pageFormat),
 		"Plotter")) {
 	if (pageFormat.getOrientation() == PageFormat.LANDSCAPE) {
 		transX = pageFormat.getImageableX();
-//		transY = pageFormat.getHeight() 
-//			- (pageFormat.getImageableHeight() 
+//		transY = pageFormat.getHeight()
+//			- (pageFormat.getImageableHeight()
 //			+ pageFormat.getImageableY());
 		transY = pageFormat.getImageableY();
 	}
@@ -1809,7 +1726,7 @@ public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
 
 //	g2d.scale(__printScale, __printScale);
 	// .57 because:
-	// 9.5 inches (.75 inch margin on L & R) * 72 = 684.  
+	// 9.5 inches (.75 inch margin on L & R) * 72 = 684.
 	// 684 / 1200 (size of drawing area in pixels) = .57
 	g2d.translate(transX, transY);
 	g2d.scale(0.56, 0.56);
@@ -1822,8 +1739,8 @@ public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
 /**
 Queries out call information for a node.
 @param node the node for which to query call information.
-@return the call information that was read from the database, or 
-DMIUtil.MISSING_STRING if the node has no call information.
+@return the call information that was read from the database,
+or DMIUtil.MISSING_STRING if the node has no call information.
 */
 private String queryCall(HydroBase_Node node) {
 	String id = node.getCommonID();
@@ -1853,25 +1770,21 @@ private String queryCall(HydroBase_Node node) {
 				dcr = dcr.substring(0, index);
 			}
 			return "\nCall set "
-				+ set.toString(DateTime.FORMAT_YYYY_MM_DD)
-				+ " for "
-				+ apro.toString(DateTime.FORMAT_YYYY_MM_DD)
-				+ " " + dcr + " CFS";
+				+ set.toString(DateTime.FORMAT_YYYY_MM_DD) + " for "
+				+ apro.toString(DateTime.FORMAT_YYYY_MM_DD) + " " + dcr + " CFS";
 		}
 	}
 	catch (Exception e) {
-		Message.printWarning(2, "queryCall", "Error reading from "
-			+ "database.");
+		Message.printWarning(2, "queryCall", "Error reading from database.");
 		Message.printWarning(2, "queryCall", e);
 		return DMIUtil.MISSING_STRING;
 	}
 }
 
 /**
-Queries right information for the specified node.  
+Queries right information for the specified node.
 @param node the node for which to query right information.
-@return the right information or DMIUtil.MISSING_STRING if the node has no
-right information.
+@return the right information or DMIUtil.MISSING_STRING if the node has no right information.
 */
 private String queryRight(HydroBase_Node node) {
 	String id = node.getCommonID();
@@ -1890,8 +1803,7 @@ private String queryRight(HydroBase_Node node) {
 		where.add("wd = " + wdid[0]);
 		where.add("id = " + wdid[1]);
 
-		List<HydroBase_NetAmts> v = __dmi.readNetAmtsList(DMIUtil.MISSING_INT, 
-			wdid[0], wdid[1], true, "72");
+		List<HydroBase_NetAmts> v = __dmi.readNetAmtsList(DMIUtil.MISSING_INT, wdid[0], wdid[1], true, "72");
 	
 		int size = v.size();
 		if (size == 0) {
@@ -1904,9 +1816,9 @@ private String queryRight(HydroBase_Node node) {
 			for (int i = 0; i < size; i++) {	
 				n = (HydroBase_NetAmts)v.get(i);
 				d = new DateTime(n.getApro_date());
-				ret += "\n" 
+				ret += "\n"
 					+ d.toString(DateTime.FORMAT_YYYY_MM_DD)
-					+ " = " 
+					+ " = "
 					+ StringUtil.formatString(
 					n.getNet_rate_abs(), "%12.2f").trim()
 					+ " CFS";
@@ -1915,8 +1827,7 @@ private String queryRight(HydroBase_Node node) {
 		}
 	}
 	catch (Exception e) {
-		Message.printWarning(2, "queryRight", "Error reading from "
-			+ "database.");
+		Message.printWarning(2, "queryRight", "Error reading from database.");
 		Message.printWarning(2, "queryRight", e);	
 		return DMIUtil.MISSING_STRING;
 	}
@@ -1978,7 +1889,7 @@ public void setNetwork(HydroBase_NodeNetwork network) {
 		}
 
 		holdNode = node;	
-		node = HydroBase_NodeNetwork.getDownstreamNode(node, 
+		node = HydroBase_NodeNetwork.getDownstreamNode(node,
 			HydroBase_NodeNetwork.POSITION_COMPUTATIONAL);		
 		if (node == holdNode) {
 			done = true;
@@ -2004,8 +1915,7 @@ protected void setWISDate(String s) {
 }
 
 /**
-Takes a double and trims its decimal values so that it only has 6 places of
-precision.
+Takes a double and trims its decimal values so that it only has 6 places of precision.
 @param d the double to trim.
 @return the same double with only 6 places of precision.
 */
@@ -2016,8 +1926,7 @@ private double toSixDigits(double d) {
 }
 
 /**
-Updates one of the nodes with location and text information stored in the
-passed-in node.
+Updates one of the nodes with location and text information stored in the passed-in node.
 @param nodeNum the number of the node (in the node array) to update.
 @param node the node holding information with which the other node should
 be updated.
@@ -2026,8 +1935,7 @@ public void updateNode(int nodeNum, HydroBase_Node node, boolean isAnnotation) {
 	if (__isAnnotation) {
 		PropList p = (PropList)node.getAssociatedObject();
 
-		HydroBase_Node vNode = (HydroBase_Node)__annotations.get(
-			nodeNum);
+		HydroBase_Node vNode = (HydroBase_Node)__annotations.get( nodeNum);
 		PropList vp = (PropList)vNode.getAssociatedObject();
 		vNode.setAssociatedObject(p);
 
@@ -2047,7 +1955,7 @@ public void updateNode(int nodeNum, HydroBase_Node node, boolean isAnnotation) {
 			|| !position.equals(vp.getValue("TextPosition"))
 			|| !fontSize.equals(vp.getValue("FontSize"))) {
 
-			int size = 
+			int size =
 				new Integer(p.getValue("FontSize")).intValue();
 
 			GRLimits limits = GRDrawingAreaUtil.getTextExtents(
@@ -2055,10 +1963,8 @@ public void updateNode(int nodeNum, HydroBase_Node node, boolean isAnnotation) {
 				p.getValue("FontName"), p.getValue("FontStyle"),
 				size);	
 
-			double w = convertX(limits.getWidth()) 
-				- __dataLimits.getLeftX();
-			double h = convertY(limits.getHeight(), false) 
-				- __dataLimits.getBottomY();
+			double w = convertX(limits.getWidth()) - __dataLimits.getLeftX();
+			double h = convertY(limits.getHeight(), false) - __dataLimits.getBottomY();
 
 			if (!val.equals(vp.getValue("Point"))) {
 				vp.setValue("Point", val);
@@ -2102,7 +2008,7 @@ public void updateNode(int nodeNum, HydroBase_Node node, boolean isAnnotation) {
 				vNode.setPosition(x - (w / 2), y, w, h);
 			}
 			else if (position.equalsIgnoreCase("Center")) {
-				vNode.setPosition(x - (w / 2), y - (h / 2), 
+				vNode.setPosition(x - (w / 2), y - (h / 2),
 					w, h);
 			}		
 		}
@@ -2135,7 +2041,7 @@ public void updateNode(int nodeNum, HydroBase_Node node, boolean isAnnotation) {
 			__nodes[nodeNum].setDirty(true);
 			__nodes[nodeNum].setY(node.getY());
 		}
-		if (__nodes[nodeNum].getLabelDirection() 
+		if (__nodes[nodeNum].getLabelDirection()
 		    != node.getLabelDirection()) {
 			__nodes[nodeNum].setDirty(true);
 			__nodes[nodeNum].setLabelDirection(
@@ -2170,7 +2076,7 @@ private void useDataLimits() {
 }
 
 /**
-If called, sets the drawing area to use device units as the data limits.  
+If called, sets the drawing area to use device units as the data limits.
 See useDataLimits().
 */
 private void useDeviceDataLimits() {

@@ -4,89 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2023 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_Node - a representation of a node on a stream network
-// ----------------------------------------------------------------------------
-// Notes:	(1)	This code is meant to support (at least) three
-//			CRDSS applications:
-//
-//			  makenet - used by planning model to generate network
-//			  StateMod GUI - to allow interactive network edits
-//			  Admin tool - to allow call analysis, water balance,
-//					etc.
-//
-//			The data members for each capability are listed
-//			separately, where appropriate.
-//		(2)	It may be necessary or desirable to make a base class
-//			and derive different node types (e.g., StateModNode,
-//			WISNode) from that, but for now keep in one class.
-// ----------------------------------------------------------------------------
-// History:
-// 
-// 27 Oct 1997	Steven A. Malers,	Initial version - from makenet.
-//		Riverside Technology,
-//		inc.
-// 28 Feb 1998	SAM, RTi		Final cleanup for makenet.
-// 19 Feb 1999	Daniel Weiler, RTi	Added Wells.
-// 31 Mar 1999	SAM, RTi		Code sweep.
-// 07 Apr 1999	SAM, RTi		Add __isDryRiver flag to support WIS
-//					(and potentially makene in Rio Grande).
-// 27 Jul 1999	SAM, RTi		Update to have XCONFL node type.
-// 18 Jul 1999	SAM, RTi		Add isValidType() for use by watright
-//					and other applications.
-// 15 Nov 1999	CEN, RTi		Added __labelAngle member and assoc.
-//					functions.
-// 06 Dec 1999	SAM, RTi		Add NODE_TYPE_DIV_AND_WELL to support
-//					makenet and add to check method.
-//					isValidType() is not used.  Instead, use
-//					lookupType() and check for negative
-//					return value.
-// ----------------------------------------------------------------------------
-// 2003-10-08	J. Thomas Sapienza, RTi	Updated to HydroBaseDMI.
-// 2003-12-15	JTS, RTi		* Javadoc cleanup.
-//					* Now extends DMIDataObject.
-//					* Added visible member variable.
-//					* Added initial hooks for the node to
-//					  draw itself on a GRDrawingArea.
-// 2004-04	JTS, RTi		Made numerous additions to class, most
-//					in response to new needs dictated by
-//					the network diagram drawing and plotting
-//					code.
-// 2004-05-18	JTS, RTi		Added setPosition().
-// 2004-07-09	JTS, RTi		Added isImport.
-//		SAM, RTi		Remove some new String() notation - it
-//					is not needed.
-//					Add some javadoc explaining the node
-//					type abbreviations versus full type
-//					strings.
-// 2004-07-21	JTS, RTi		Added getVerboseWISType() for use with
-//					WIS networks.
-// 2004-12-20	JTS, RTi		Changed how label positions are numbered
-//					so that original Makenet networks 
-//					display properly.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-12-21	JTS, RTi		&, < and > in any node IDs are now
-//					escaped.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -100,6 +33,9 @@ import RTi.GR.GRDrawingAreaUtil;
 import RTi.GR.GRJComponentDrawingArea;
 import RTi.GR.GRLimits;
 import RTi.GR.GRSymbol;
+import RTi.GR.GRSymbolPosition;
+import RTi.GR.GRSymbolShapeType;
+import RTi.GR.GRSymbolType;
 import RTi.GR.GRText;
 import RTi.GR.GRUnits;
 
@@ -113,7 +49,7 @@ import java.util.Vector;
 /**
 This class stores basic node information for use with HydroBase_NodeNetwork.
 */
-public class HydroBase_Node 
+public class HydroBase_Node
 extends DMIDataObject {
 
 /**
@@ -172,8 +108,7 @@ Other node type (unclassified).
 public static final int NODE_TYPE_OTHER = 9;
 
 /**
-Unknown node type for initialization and StateMod .rin files that do not have
-the node type.
+Unknown node type for initialization and StateMod .rin files that do not have the node type.
 */
 public static final int NODE_TYPE_UNKNOWN = 10;
 
@@ -208,16 +143,16 @@ Well node associated with surface water ditch.
 public static final int NODE_TYPE_DIV_AND_WELL = 16;
 
 /**
-Node only used in the network drawing code.  This is a node that functions as
-a user-defined label on the screen.
+Node only used in the network drawing code.
+This is a node that functions as a user-defined label on the screen.
 */
 public static final int NODE_TYPE_LABEL_NODE = 17;
 
 /**
-Indicate how upstream nodes are constructed.  The default is to add tributaries
-first (like makenet) but CWRAT adds the main stem first.
+Indicate how upstream nodes are constructed.
+The default is to add tributaries first (like makenet) but CWRAT adds the main stem first.
 */
-public static final int 
+public static final int
 	TRIBS_ADDED_FIRST = 1,
 	TRIBS_ADDED_LAST = 2;
 
@@ -244,7 +179,7 @@ Whether the node is a baseflow node or not.  Makenet-specific.
 private	boolean __isBaseflow;
 
 /**
-Whether the node is an import node or not. 
+Whether the node is an import node or not.
 */
 private boolean __isImport;
 
@@ -257,7 +192,7 @@ private boolean __isDryRiver;
 Area as float.  Makenet-specific.
 */
 private	double __area;
-	
+
 /**
 Angle to print label at.  0 == East.  Makenet-specific.
 */
@@ -287,7 +222,7 @@ private double __water;
 Plotting coordinates for node.  Makenet-specific.
 */
 private double
-	__x, 
+	__x,
 	__y;
 
 /**
@@ -306,14 +241,13 @@ The size of the icon in pixels on the screen.
 public static int ICON_DIAM = 20;
 
 /**
-The extra space around the node icon for displaying the extra circle 
-showing that it is a baseflow node.
+The extra space around the node icon for displaying the extra circle showing that it is a baseflow node.
 */
 public static int BASEFLOW_DIAM = 6;
 
 /**
-Computational order of nodes, with 1 being most upstream.  This generally has 
-to be set after the entire network has been populated. 
+Computational order of nodes, with 1 being most upstream.
+This generally has to be set after the entire network has been populated.
 */
 private int __computationalOrder = -1;
 
@@ -328,8 +262,8 @@ The node number in the reach (starting at one).
 private int __nodeInReachNum;
 
 /**
-The reach number counting the total number of streams in the system.  Therefore
-the first reach in the system is 1, the next reach added is 2, etc.
+The reach number counting the total number of streams in the system.
+Therefore the first reach in the system is 1, the next reach added is 2, etc.
 */
 private int __reachCounter;
 
@@ -344,10 +278,10 @@ Serial integer used to keep a running count of the nodes in the network.
 private int __serial;
 
 /**
-The number of tribs to the parent stream (starting at one).  In other words,
-if the downstream node has multiple upstream nodes, this is the counter for
-those nodes.  That allows a search coming from upstream to know which reach
-it is coming from.  Mainly important on nodes above a confluence.
+The number of tributaries to the parent stream (starting at one).
+In other words, if the downstream node has multiple upstream nodes, this is the counter for those nodes.
+That allows a search coming from upstream to know which reach it is coming from.
+Mainly important on nodes above a confluence.
 */
 private int __tributaryNum;
 
@@ -367,8 +301,7 @@ Link data for confluences.
 private long __link;
 
 /**
-Equivalent to wdwater_num or stream_num (when that gets implemented).  
-WIS-specific.
+Equivalent to wdwater_num or stream_num (when that gets implemented), WIS-specific.
 */
 private long __streamNum;
 
@@ -437,8 +370,7 @@ Whether this node was selected with a mouse drag.
 private boolean __isSelected = false;
 
 /**
-Whether this node was already stored in the database or was generated new
-for the current network drawer.
+Whether this node was already stored in the database or was generated new for the current network drawer.
 */
 private boolean __readFromDB = false;
 
@@ -478,10 +410,9 @@ The delivery flow value.
 private double __deliveryFlow = DMIUtil.MISSING_DOUBLE;
 
 /**
-The original UTM X and Y values read for this node's structure from the
-database.
+The original UTM X and Y values read for this node's structure from the database.
 */
-private double 
+private double
 	__dbX = DMIUtil.MISSING_DOUBLE,
 	__dbY = DMIUtil.MISSING_DOUBLE;
 
@@ -506,19 +437,19 @@ The width of the area drawn by this node.
 private double __width;
 
 /**
-The symbol drawn along with this node.  Depends on the type of node it is. 
+The symbol drawn along with this node.  Depends on the type of node it is.
 Can be null, in which case no symbol will be drawn.
 */
 private GRSymbol __symbol = null;
 
 /**
-A secondary symbol drawn in conjunction with the primary symbol.  If null,
-then it won't be drawn.
+A secondary symbol drawn in conjunction with the primary symbol.
+If null, then it won't be drawn.
 */
 private GRSymbol __secondarySymbol = null;
 
 /**
-The wis num of the wis that this node is associated with.
+The WIS num of the wis that this node is associated with.
 */
 private int __wisNum = DMIUtil.MISSING_INT;
 
@@ -564,9 +495,8 @@ private List<String> __upstreamNodeIDs = null;
 //--------------------------------------------------------------------------
 
 /**
-Constructor.  
-Constructs node and initializes to reasonable values(primarily empty strings
-and zero or -1 values.
+Constructor.
+Constructs node and initializes to reasonable values(primarily empty strings and zero or -1 values.
 */
 public HydroBase_Node() {
 	initialize();
@@ -588,15 +518,14 @@ public boolean addDownstreamNode(HydroBase_Node downstream_node) {
 			"Adding \"" + downstream_node.getCommonID()
 			+ "\" downstream of \"" + getCommonID() + "\"");
 	}
-	
+
 	HydroBase_Node oldDownstreamNode = __downstream;
 
 	if (__downstream != null) {
-		// There is a downstream node and we need to reconnect it...
+		// There is a downstream node and we need to reconnect it.
 
-		// For the original downstream node, reset its upstream
-		// reference to the new node.  Use the common identifier to
-		// find the element to reset...
+		// For the original downstream node, reset its upstream reference to the new node.
+		// Use the common identifier to find the element to reset.
 		int pos = __downstream.getUpstreamNodePosition(getCommonID());
 		if (pos >= 0) {
 			List<HydroBase_Node> downstreamUpstream = __downstream.getUpstreamNodes();
@@ -606,27 +535,26 @@ public boolean addDownstreamNode(HydroBase_Node downstream_node) {
 		}
 		// Connect the new downstream node to this node.
 		__downstream = downstream_node;
-		
-		// Set the upstream node of the new downstream node to point to
-		// this node.  For now, assume that the node that is being
-		// inserted is a new node...
+
+		// Set the upstream node of the new downstream node to point to this node.
+		// For now, assume that the node that is being inserted is a new node.
 		if (downstream_node.getNumUpstreamNodes() > 0) {
 			Message.printWarning(1, routine,
 				"Node \"" + downstream_node.getCommonID()
 				+ "\" has #upstream > 0");
 		}
-		
-		// Set the new downstream node data...
+
+		// Set the new downstream node data.
 		downstream_node.setDownstreamNode(oldDownstreamNode);
 		downstream_node.addUpstreamNode(this);
-		// Set the new current node data...
+		// Set the new current node data.
 		__tributaryNum = downstream_node.getNumUpstreamNodes();
 	}
-	else {	
-		// We always need to do this step...
+	else {
+		// Always need to do this step.
 		downstream_node.addUpstreamNode(this);
 	}
-	
+
 	String downstreamCommonid = null;
 	if (downstream_node.getDownstreamNode() != null) {
 		downstreamCommonid = oldDownstreamNode.getCommonID();
@@ -639,7 +567,7 @@ public boolean addDownstreamNode(HydroBase_Node downstream_node) {
 			+ downstreamCommonid + "\"");
 	}
 	return true;
-	
+
 	}
 	catch (Exception e) {
 		Message.printWarning(2,routine,"Error adding downstream node.");
@@ -649,9 +577,9 @@ public boolean addDownstreamNode(HydroBase_Node downstream_node) {
 }
 
 /**
-Adds a node upstream of this node.  This method is used by the network 
-plotting code and simply appends this node to the end of the __upstream 
-Vector, which is why it is used in lieu of the addUpstreamNode() method.
+Adds a node upstream of this node.
+This method is used by the network plotting code and simply appends this node to the end of the __upstream list,
+which is why it is used in lieu of the addUpstreamNode() method.
 @param node the node to add.
 */
 public void addUpstream(HydroBase_Node node) {
@@ -667,7 +595,7 @@ public boolean addUpstreamNode(HydroBase_Node upstream_node) {
 	String routine = __CLASS + ".addUpstreamNode";
 	int dl = 50;
 
-	// Add the node to the vector...
+	// Add the node to the vector.
 	try {
 
 	if (Message.isDebugOn) {
@@ -675,24 +603,24 @@ public boolean addUpstreamNode(HydroBase_Node upstream_node) {
 			"Adding \"" + upstream_node.getCommonID()
 			+ "\" upstream of \"" + getCommonID() + "\"");
 	}
-	
+
 	if (__upstream == null) {
-		// Need to allocate space for it...
+		// Need to allocate space for it.
 		__upstream = new Vector<HydroBase_Node>();
 	}
 
 	__upstream.add(upstream_node);
 
-	// Make so the upstream node has this node as its downstream node...
+	// Make so the upstream node has this node as its downstream node.
 	upstream_node.setDownstreamNode(this);
 	if (Message.isDebugOn) {
 		Message.printDebug(dl, routine, "\""
 			+ upstream_node.getCommonID() + "\" downstream is \""
 			+ getCommonID() + "\"");
 	}
-	
+
 	return true;
-	
+
 	}
 	catch (Exception e) {
 		Message.printWarning(2, routine, "Error adding upstream node.");
@@ -703,12 +631,11 @@ public boolean addUpstreamNode(HydroBase_Node upstream_node) {
 
 /**
 Adds an id to the list of upstream node ids.  Used by the network drawing code.
-@param id the id to add to the upstream node vector.  If the list is null
-it will first be created.
+@param id the id to add to the upstream node list.  If the list is null it will first be created.
 */
 public void addUpstreamNodeID(String id) {
 	if (__upstreamNodeIDs == null) {
-		__upstreamNodeIDs = new Vector<String>();
+		__upstreamNodeIDs = new Vector<>();
 	}
 	__upstreamNodeIDs.add(id);
 }
@@ -736,35 +663,35 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 	__nodeType = null;
 	if (__nodeType == null) {
 		switch (__type) {
-			case NODE_TYPE_BLANK: 	
+			case NODE_TYPE_BLANK:
 				__nodeType = "Blank";		break;
-			case NODE_TYPE_DIV:	
+			case NODE_TYPE_DIV:
 				__nodeType = "Diversion";	break;
-			case NODE_TYPE_FLOW:	
+			case NODE_TYPE_FLOW:
 				__nodeType = "Streamflow";	break;
-			case NODE_TYPE_CONFLUENCE: 
+			case NODE_TYPE_CONFLUENCE:
 				__nodeType = "Confluence";	break;
-			case NODE_TYPE_ISF:	
+			case NODE_TYPE_ISF:
 				__nodeType = "Instream Flow";	break;
-			case NODE_TYPE_RES:	
+			case NODE_TYPE_RES:
 				__nodeType = "Reservoir";	break;
-			case NODE_TYPE_IMPORT:	
+			case NODE_TYPE_IMPORT:
 				__nodeType = "Import";		break;
 			case NODE_TYPE_BASEFLOW:
 				__nodeType = "Baseflow";	break;
-			case NODE_TYPE_END:	
+			case NODE_TYPE_END:
 				__nodeType = "End";		break;
-			case NODE_TYPE_OTHER:	
+			case NODE_TYPE_OTHER:
 				__nodeType = "Other";		break;
-			case NODE_TYPE_UNKNOWN:	
+			case NODE_TYPE_UNKNOWN:
 				__nodeType = "Unknown";		break;
-			case NODE_TYPE_STREAM:	
+			case NODE_TYPE_STREAM:
 				__nodeType = "StreamTop";	break;
-			case NODE_TYPE_LABEL:	
+			case NODE_TYPE_LABEL:
 				__nodeType = "Label";		break;
-			case NODE_TYPE_WELL:	
+			case NODE_TYPE_WELL:
 				__nodeType = "Well";		break;
-			case NODE_TYPE_XCONFLUENCE: 
+			case NODE_TYPE_XCONFLUENCE:
 				__nodeType = "XConfluence";	break;
 			case NODE_TYPE_DIV_AND_WELL:
 				__nodeType = "DiversionAndWell";break;
@@ -775,77 +702,60 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 				break;
 		}
 	}
-	
-	// REVISIT (JTS - 2004-07-12)
-	// don't do string comparison
+
+	// REVISIT (JTS - 2004-07-12) don't do string comparison.
 	if (__symbol == null) {
-		int style = GRSymbol.TYPE_POLYGON;
+		GRSymbolType symbolType = GRSymbolType.POLYGON;
 		GRColor black = GRColor.black;
-		
+
 		if (__nodeType.equalsIgnoreCase("Reservoir")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_FRTRI,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.TRIANGLE_RIGHT_FILLED, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = null;
 		}
 		else if (__nodeType.equalsIgnoreCase("Streamflow")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = null;
 		}
 		else if (__nodeType.equalsIgnoreCase("Baseflow")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "B";
 		}
 		else if (__nodeType.equalsIgnoreCase("End")) {
-			__symbol = new GRSymbol (GRSymbol.SYM_EX,
-				style, black, black, ICON_DIAM, ICON_DIAM);
-			__secondarySymbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol (symbolType, GRSymbolShapeType.X, black, black, ICON_DIAM, ICON_DIAM);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = null;
 		}
 		else if (__nodeType.equalsIgnoreCase("Instream Flow")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "M";
 		}
 		else if (__nodeType.equalsIgnoreCase("Import")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "I";
 		}
 		else if (__nodeType.equalsIgnoreCase("DiversionAndWell")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "DW";
 		}
 		else if (__nodeType.equalsIgnoreCase("Well")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "W";
 		}
 		else if (__nodeType.equalsIgnoreCase("Diversion")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "D";
 		}
 		else if (__nodeType.equalsIgnoreCase("Other")) {
 			if (__isBaseflow) {
-				__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-					style, black, black, ICON_DIAM, 
-					ICON_DIAM);
+				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 				__symText = "B";
 			}
 			else if (__isImport) {
-				__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-					style, black, black, ICON_DIAM, 
-					ICON_DIAM);
+				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 				__symText = "I";
 			}
 			else {
-				__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-					style, black, black, ICON_DIAM, 
-					ICON_DIAM);
+				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
 				__symText = "O";
 			}
 		}
@@ -855,18 +765,16 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 		}
 		else if (__nodeType.equalsIgnoreCase("Confluence")
 			|| __nodeType.equalsIgnoreCase("XConfluence")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM/2, ICON_DIAM/2);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM/2, ICON_DIAM/2);
 			__symText = null;
 			__width /= 2;
 			__height /= 2;
 		}
 		else {
-			Message.printWarning(2, "", "Unknown how to draw "
-				+ __nodeType);
+			Message.printWarning(2, "", "Unknown how to draw " + __nodeType);
 			__symbol = null;
 			__symText = null;
-		}		
+		}
 	}
 
 	String label = __label;
@@ -874,17 +782,16 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 	if (__symbol != null) {
 		//double width = ICON_DIAM;
 		double height = ICON_DIAM;
-	
+
 		if (__label != null) {
-			GRLimits limits = GRDrawingAreaUtil.getTextExtents(da, 
-				label, GRUnits.DEVICE);
+			GRLimits limits = GRDrawingAreaUtil.getTextExtents(da, label, GRUnits.DEVICE);
 			if (limits.getHeight() > height) {
 				height = limits.getHeight();
 			}
 			//width += 4 + limits.getWidth();
 		}
 	}
-	
+
 	__boundsCalculated = true;
 }
 
@@ -894,82 +801,54 @@ Calculates bounds for nodes in the WIS Network display.
 */
 private void calculateWISBounds(GRJComponentDrawingArea da) {
 	if (__symbol == null) {
-		int style = GRSymbol.TYPE_POLYGON;
+		GRSymbolType symbolType = GRSymbolType.POLYGON;
 		GRColor black = GRColor.black;
 
-		// the secondary symbol is used to blank out the area behind
-		// the primary symbol's node icon.  
+		// The secondary symbol is used to blank out the area behind the primary symbol's node icon.
 
 		if (__nodeType.equalsIgnoreCase("Reservoir")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_RTRI,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
-			__secondarySymbol = new GRSymbol(GRSymbol.SYM_FRTRI,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.TRIANGLE_RIGHT, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.TRIANGLE_RIGHT_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = null;
 		}
 		else if (__nodeType.equalsIgnoreCase("Stream")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
-			__secondarySymbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = "X";
 		}
 		else if (__nodeType.equalsIgnoreCase("Confluence")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
-			__secondarySymbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM*2/3, 
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3,
 				ICON_DIAM*2/3);
 			__symText = "C";
 		}
 		else if (__nodeType.equalsIgnoreCase("Station")
 			|| __nodeType.equalsIgnoreCase("Streamflow")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
-			__secondarySymbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM*2/3, 
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3,
 				ICON_DIAM*2/3);
 			__symText = "B";
 		}
 		else if (__nodeType.equalsIgnoreCase("Diversion")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
-			__secondarySymbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM*2/3, 
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3,
 				ICON_DIAM*2/3);
 			__symText = "D";
 		}
 		else if (__nodeType.equalsIgnoreCase("MinFlow")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
-			__secondarySymbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = "M";
 		}
 		else if (__nodeType.equalsIgnoreCase("Other")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_CIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
-			__secondarySymbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = "O";
 		}
 		else if (__nodeType.equalsIgnoreCase("End")) {
-			__symbol = new GRSymbol(GRSymbol.SYM_FCIR,
-				style, black, black, ICON_DIAM*2/3, 
-				ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = null;
-		}	
+		}
 		else {
 			Message.printStatus(1, "", "Unknown node type: "
 				+ __nodeType);
@@ -977,13 +856,10 @@ private void calculateWISBounds(GRJComponentDrawingArea da) {
 	}
 
 	GRLimits data = da.getDataLimits();
-	// REVISIT (JTS - 2004-05-19)
-	// the following will need changed if we move from a scrollable
-	// area to a jumping area
+	// REVISIT (JTS - 2004-05-19) The following will need changed if we move from a scrollable area to a jumping area.
 	GRLimits draw = da.getDrawingLimits();
 
-	// calculate the multiplier necessary to convert data units to 
-	// device units.
+	// Calculate the multiplier necessary to convert data units to device units.
 	double mod = 1;
 	if (draw.getWidth() > draw.getHeight()) {
 		mod = data.getWidth() / draw.getWidth();
@@ -994,27 +870,25 @@ private void calculateWISBounds(GRJComponentDrawingArea da) {
 
 	__height = ICON_DIAM*2/3 * mod;
 	__width = ICON_DIAM*2/3 * mod;
-	
+
 	__boundsCalculated = true;
 }
 
 /**
-Clears the upstream node ids stored in the __upstreamNodeIDs Vector.  The
-Vector is set to null.
+Clears the upstream node ids stored in the __upstreamNodeIDs Vector.  The list is set to null.
 */
 public void clearUpstreamNodeIDs() {
 	__upstreamNodeIDs = null;
 }
 
 /**
-Checks to see if the specified point is contained in the area of the node 
-symbol.  Only checks the symbol of the node along with a tiny area outside
-the symbol as well.
+Checks to see if the specified point is contained in the area of the node symbol.
+Only checks the symbol of the node along with a tiny area outside the symbol as well.
 @return true if the point is contained, false if not.
 */
 public boolean contains(double x, double y) {
 	if ((x >= __x - 2 - (__width / 2)) && (x <= (__x + (__width / 2 )+ 2))){
-		if ((y >= __y - 2 - (__width/2)) 
+		if ((y >= __y - 2 - (__width/2))
 		    && (y <= (__y + (__height / 2) + 2))) {
 			return true;
 		}
@@ -1025,18 +899,18 @@ public boolean contains(double x, double y) {
 /**
 Break the link with an upstream node.
 @param upstream_node Upstream node to disconnect from the network.
-@return true if successful, falseif not.
+@return true if successful, false if not.
 */
 public boolean deleteUpstreamNode(HydroBase_Node upstream_node) {
 	String routine = __CLASS + ".deleteUpstreamNode";
 
-	// Find a matching node.  Just check addesses...
+	// Find a matching node.  Just check addresses.
 	try {
 
 	for (int i = 0; i < __upstream.size(); i++) {
 		if (upstream_node.equals(
 			(HydroBase_Node)__upstream.get(i))) {
-			// We have found a match.  Delete the element...
+			// We have found a match.  Delete the element.
 			__upstream.remove(i);
 			return true;
 		}
@@ -1072,21 +946,19 @@ Draws this node on the network editor display.
 @param da the GRJComponentDrawingArea on which to draw the node.
 */
 private void drawNetwork(GRJComponentDrawingArea da) {
-	String routine = "HydroBase_Node.drawNetwork";
+	String routine = getClass().getSimpleName() + ".drawNetwork";
 
 	double symbolSize = 0;
-	int symbol = 0;
+	GRSymbolShapeType shapeType = GRSymbolShapeType.NONE;
 
-	// if there is a symbol to be drawn
+	// if there is a symbol to be drawn.
 	if (__symbol != null) {
-		if (__symbol.getType() == GRSymbol.SYM_CIR) {
-			// fill in the background with white so the node
-			// can't be seen through
+		if (__symbol.getShapeType() == GRSymbolShapeType.CIRCLE) {
+			// Fill in the background with white so the node can't be seen through.
 			GRDrawingAreaUtil.setColor(da, GRColor.white);
-			GRDrawingAreaUtil.drawSymbol(da, GRSymbol.SYM_FCIR, 
-				__x, __y, __symbol.getSize(), GRUnits.DEVICE,0);
+			GRDrawingAreaUtil.drawSymbol(da, GRSymbolShapeType.CIRCLE_FILLED, __x, __y, __symbol.getSize(), GRUnits.DEVICE,0);
 		}
-		
+
 		if (__isSelected) {
 			GRDrawingAreaUtil.setColor(da, GRColor.cyan);
 		}
@@ -1099,23 +971,24 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 		if (__type == NODE_TYPE_RES) {
 			int labeldir = getLabelDirection()/10;
 			if (labeldir == 1) {
-				symbol = GRSymbol.SYM_FUTRI;
+				shapeType = GRSymbolShapeType.TRIANGLE_UP_FILLED;
 			}
 			else if (labeldir == 2) {
-				symbol = GRSymbol.SYM_FDTRI;
+				shapeType = GRSymbolShapeType.TRIANGLE_DOWN_FILLED;
 			}
 			else if (labeldir == 3) {
-				symbol = GRSymbol.SYM_FLTRI;
+				shapeType = GRSymbolShapeType.TRIANGLE_LEFT_FILLED;
 			}
 			else if (labeldir == 4) {
-				symbol = GRSymbol.SYM_FRTRI;
+				shapeType = GRSymbolShapeType.TRIANGLE_RIGHT_FILLED;
 			}
-			else {	
-				symbol = GRSymbol.SYM_FRTRI;
-			}			
+			else {
+				// Default.
+				shapeType = GRSymbolShapeType.TRIANGLE_RIGHT_FILLED;
+			}
 		}
 		else {
-			symbol = __symbol.getType();
+			shapeType = __symbol.getShapeType();
 		}
 
 	}
@@ -1125,13 +998,13 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 		int labelPos = 0;
 		double labelAngle = 0;
 		if (__type == NODE_TYPE_BLANK
-		    || (__type == NODE_TYPE_CONFLUENCE) 
+		    || (__type == NODE_TYPE_CONFLUENCE)
 		    || __type == NODE_TYPE_XCONFLUENCE) {
-		    	// do nothing
-		}    
-		else if (__type == NODE_TYPE_DIV 
-		    || __type == NODE_TYPE_DIV_AND_WELL 
-		    || __type == NODE_TYPE_WELL 
+		    	// Do nothing.
+		}
+		else if (__type == NODE_TYPE_DIV
+		    || __type == NODE_TYPE_DIV_AND_WELL
+		    || __type == NODE_TYPE_WELL
 		    || __type == NODE_TYPE_IMPORT
 		    || __type == NODE_TYPE_FLOW
 		    || __type == NODE_TYPE_END
@@ -1139,8 +1012,7 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 		    || __type == NODE_TYPE_ISF
 		    || __type == NODE_TYPE_OTHER
 		    || __type == NODE_TYPE_RES) {
-			label = getNodeLabel(
-				HydroBase_NodeNetwork.LABEL_NODES_COMMONID);
+			label = getNodeLabel( HydroBase_NodeNetwork.LABEL_NODES_COMMONID);
 		}
 		else {
 			Message.printWarning(2, routine, "No text specified!");
@@ -1149,9 +1021,9 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 
 		int dir = getLabelDirection();
 		dir = dir % 10;
-		
+
 		if (dir == 1) {
-			labelPos = GRText.BOTTOM | GRText.CENTER_X;	
+			labelPos = GRText.BOTTOM | GRText.CENTER_X;
 		}
 		else if (dir == 7) {
 			labelPos = GRText.BOTTOM | GRText.LEFT;
@@ -1186,26 +1058,26 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 		}
 
 		if (getIsBaseflow()) {
-			GRDrawingAreaUtil.drawSymbolText(da, GRSymbol.SYM_CIR, 
-				__x, __y, symbolSize + BASEFLOW_DIAM, label, 
+			GRDrawingAreaUtil.drawSymbolText(da, GRSymbolShapeType.CIRCLE,
+				__x, __y, symbolSize + BASEFLOW_DIAM, label,
 				labelAngle, labelPos, GRUnits.DEVICE, 0);
 		}
-		else {	
-			GRDrawingAreaUtil.drawSymbolText(da, symbol, __x, __y, 
-				symbolSize, label, labelAngle, labelPos, 
+		else {
+			GRDrawingAreaUtil.drawSymbolText(da, shapeType, __x, __y,
+				symbolSize, label, labelAngle, labelPos,
 				GRUnits.DEVICE, 0);
 		}
 	}
 
 	if (__drawText && !getIsBaseflow()) {
-		// do nothing
+		// Do nothing.
 	}
 	else {
-		GRDrawingAreaUtil.drawSymbol(da, symbol, 
+		GRDrawingAreaUtil.drawSymbol(da, shapeType,
 			__x, __y, symbolSize, GRUnits.DEVICE,0);
 	}
 
-	if (__symText != null){ 
+	if (__symText != null){
 		GRDrawingAreaUtil.drawText(da, __symText,
 			__x, __y, 0,
 			GRText.CENTER_Y | GRText.CENTER_X);
@@ -1213,14 +1085,14 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 
 
 	if (!__drawText && getIsBaseflow()) {
-		// draw a circle around baseflow nodes
-		GRDrawingAreaUtil.drawSymbol(da, GRSymbol.SYM_CIR,
-			__x, __y, __symbol.getSize() + BASEFLOW_DIAM, 
+		// Draw a circle around baseflow nodes.
+		GRDrawingAreaUtil.drawSymbol(da, GRSymbolShapeType.CIRCLE,
+			__x, __y, __symbol.getSize() + BASEFLOW_DIAM,
 			GRUnits.DEVICE, 0);
-	}	
+	}
 
 	if (__secondarySymbol != null) {
-		GRDrawingAreaUtil.drawSymbol(da, __secondarySymbol.getType(), 
+		GRDrawingAreaUtil.drawSymbol(da, __secondarySymbol.getShapeType(),
 			__x, __y, __secondarySymbol.getSize(),GRUnits.DEVICE,0);
 	}
 }
@@ -1230,20 +1102,18 @@ Draws this node for the WIS network display.
 @param da the GRJComponentDrawingArea on which to draw the node.
 */
 private void drawWIS(GRJComponentDrawingArea da) {
-	// Format the label that accompanies the text
+	// Format the label that accompanies the text.
 	String label = __label;
 	if (__showDeliveryFlow) {
-//		label += " DF: " + StringUtil.formatString(__deliveryFlow, 
-//			"%10.1f").trim();
+		// label += " DF: " + StringUtil.formatString(__deliveryFlow, "%10.1f").trim();
 	}
 	if (__showNaturalFlow) {
-//		label += " NF: " + StringUtil.formatString(__naturalFlow, 
-//			"%10.1f").trim();
+		// label += " NF: " + StringUtil.formatString(__naturalFlow, "%10.1f").trim();
 	}
 	if (__showPointFlow) {
 		double pf = __pointFlow;
 		if (!DMIUtil.isMissing(pf)) {
-			label += " PF: " 
+			label += " PF: "
 				+ StringUtil.formatString(pf, "%10.1f").trim();
 		}
 	}
@@ -1260,59 +1130,58 @@ private void drawWIS(GRJComponentDrawingArea da) {
 
 	if (__symbol != null) {
 		GRDrawingAreaUtil.setColor(da, GRColor.white);
-		GRDrawingAreaUtil.drawSymbol(da, __secondarySymbol.getType(), 
+		GRDrawingAreaUtil.drawSymbol(da, __secondarySymbol.getShapeType(),
 			__x, __y, __secondarySymbol.getSize(), GRUnits.DEVICE,
-			GRSymbol.SYM_CENTER_X | GRSymbol.SYM_CENTER_Y);
-	
-		// actually stored in the node with a +1 modifier, necessary
-		// to ensure some backwards compatability.
+			GRSymbolPosition.CENTER_X | GRSymbolPosition.CENTER_Y );
+
+		// Actually stored in the node with a +1 modifier, necessary to ensure some backwards compatibility.
 		int dir = getLabelDirection() - 1;
 		if (getType() == NODE_TYPE_RES) {
 			dir = dir % 10;
 		}
-		
+
 		int labelPos = GRText.TOP;
 
-		if (dir == 0) {		//  above
+		if (dir == 0) {	// Above.
 			labelPos = GRText.BOTTOM | GRText.CENTER_X;
 		}
-		else if (dir == 1) {	// below
+		else if (dir == 1) { // Below.
 			labelPos = GRText.TOP | GRText.CENTER_X;
 		}
-		else if (dir == 2) {	// center
+		else if (dir == 2) { // Center.
 			labelPos = GRText.CENTER_X | GRText.CENTER_Y;
 		}
-		else if (dir == 3) {	// left
+		else if (dir == 3) { // Left.
 			labelPos = GRText.RIGHT | GRText.CENTER_Y;
 		}
-		else if (dir == 4) {	// lower left
+		else if (dir == 4) { // Lower left.
 			labelPos = GRText.RIGHT | GRText.TOP;
 		}
-		else if (dir == 5) {	// lower right
+		else if (dir == 5) { // lower right.
 			labelPos = GRText.LEFT | GRText.TOP;
 		}
-		else if (dir == 6) {	// right
+		else if (dir == 6) { // Right.
 			labelPos = GRText.LEFT | GRText.CENTER_Y;
 		}
-		else if (dir == 7) {	// upper left
+		else if (dir == 7) { // Upper left.
 			labelPos = GRText.RIGHT | GRText.BOTTOM;
 		}
-		else if (dir == 8) {	// upper right
+		else if (dir == 8) { // Upper right
 			labelPos = GRText.LEFT | GRText.BOTTOM;
 		}
 
 		GRDrawingAreaUtil.setColor(da, GRColor.black);
-		GRDrawingAreaUtil.drawSymbolText(da, __symbol.getType(), 
-			__x, __y, __symbol.getSize(), 
+		GRDrawingAreaUtil.drawSymbolText(da, __symbol.getShapeType(),
+			__x, __y, __symbol.getSize(),
 			label, GRColor.black, 0, labelPos, GRUnits.DEVICE,
-			GRSymbol.SYM_CENTER_X | GRSymbol.SYM_CENTER_Y);
+			GRSymbolPosition.CENTER_X | GRSymbolPosition.CENTER_Y );
 	}
 
-	if (__symText != null) { 
+	if (__symText != null) {
 		GRDrawingAreaUtil.drawText(da, __symText,
 			__x, __y, 0,
 			GRText.CENTER_Y | GRText.CENTER_X);
-	}		
+	}
 }
 
 /**
@@ -1329,12 +1198,10 @@ protected String getNodeLabel(int lt) {
 		label = getCommonID();
 	}
 	else if (lt == HydroBase_NodeNetwork.LABEL_NODES_PF) {
-		if (isBaseflow() 
-		    && (getType() != HydroBase_Node.NODE_TYPE_FLOW)) {
-			label = StringUtil.formatString(
-				getProrationFactor(), "%5.3f");
+		if (isBaseflow() && (getType() != HydroBase_Node.NODE_TYPE_FLOW)) {
+			label = StringUtil.formatString( getProrationFactor(), "%5.3f");
 		}
-		else {	
+		else {
 			label = "";
 		}
 	}
@@ -1344,40 +1211,10 @@ protected String getNodeLabel(int lt) {
 	else if (lt == HydroBase_NodeNetwork.LABEL_NODES_WATER) {
 		label = getWaterString();
 	}
-	else {	
+	else {
 		label = getNetID();
 	}
 	return label;
-}
-
-/**
-Finalize before garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__downstream = null;
-	__wisFormat = null;
-	__associatedObject = null;
-	__areaString = null;
-	__desc = null;
-	__commonID = null;
-	__netID = null;
-	__precipString = null;
-	__riverNodeID = null;
-	__userDesc = null;
-	__waterString = null;
-	__upstream = null;
-	__symbol = null;
-	__secondarySymbol = null;
-	__call = null;
-	__identifier = null;
-	__label = null;
-	__nodeType = null;
-	__right = null;
-	__symText = null;
-	__downstreamNodeID = null;
-	__upstreamNodeIDs = null;
-	super.finalize();
 }
 
 /**
@@ -1421,10 +1258,8 @@ public int getComputationalOrder() {
 }
 
 /**
-Returns the diameter of the icon drawn for this node.  Used by the network
-plotting tools.
-REVISIT (JTS - 2004-05-20)
-might not be necessary -- many other methods -- would they work?
+Returns the diameter of the icon drawn for this node.  Used by the network plotting tools.
+REVISIT (JTS - 2004-05-20) might not be necessary -- many other methods -- would they work?
 @return the diameter of the icon drawn for this node.
 */
 public double getDataDiameter() {
@@ -1472,11 +1307,11 @@ public HydroBase_Node getDownstreamNode() {
 }
 
 /**
-Returns the id of the node immediately downstream from this node.  Used by
-the network drawing code.  This method only returns the id stored in the
-__downstreamNodeID data member.  It doesn't check the downstream node to get
-the ID.  If setDownstreamNodeID() has not been called first, it will return 
-null.
+Returns the id of the node immediately downstream from this node.
+Used by the network drawing code.
+This method only returns the id stored in the __downstreamNodeID data member.
+It doesn't check the downstream node to get the ID.
+If setDownstreamNodeID() has not been called first, it will return null.
 @return the id of the node immediately downstream from this node.
 */
 public String getDownstreamNodeID() {
@@ -1485,7 +1320,7 @@ public String getDownstreamNodeID() {
 
 /**
 Returns the point at which network connections should be drawn for the node.
-Currently only returns the x, y values.  
+Currently only returns the x, y values.
 @return the point at which network connections should be drawn for the node.
 */
 public double[] getDrawToPoint(GRJComponentDrawingArea da) {
@@ -1563,12 +1398,12 @@ public int getLabelDirection() {
 }
 
 /**
-Returns the limits of the area occupied by the drawn node.  The limits only 
-encompass the area occupied by the node icon.
+Returns the limits of the area occupied by the drawn node.
+The limits only encompass the area occupied by the node icon.
 @return the limits of the area occupied by the drawn node.
 */
 public GRLimits getLimits() {
-	return new GRLimits(__x - (__width / 2), __y - (__height / 2), 
+	return new GRLimits(__x - (__width / 2), __y - (__height / 2),
 		__x + (__width / 2), __y + (__height / 2));
 }
 
@@ -1620,7 +1455,7 @@ public int getNumUpstreamNodes() {
 	if (__upstream == null) {
 		return 0;
 	}
-	else {	
+	else {
 		return __upstream.size();
 	}
 }
@@ -1706,14 +1541,13 @@ public long getStreamNumber() {
 }
 
 /**
-Returns the label direction in a format that a proplist will know -- one of
-the string values from GRText.  This assumes the string format is between 
-1 and 9.  Any other values will result in "AboveCenter" being returned.
+Returns the label direction in a format that a proplist will know.
+One of the string values from GRText.
+This assumes the string format is between 1 and 9.  Any other values will result in "AboveCenter" being returned.
 @return the label direction in a string format.
 */
 public String getTextPosition() {
-	// the text position as compared to the values in GRText is actually
-	// stored +1 for some backwards compatability issues.
+	// The text position as compared to the values in GRText is actually stored +1 for some backwards compatibility issues.
 	String[] positions = GRText.getTextPositions();
 	if (__labelDir <= 0 || __labelDir > 9) {
 		return positions[0];
@@ -1721,7 +1555,7 @@ public String getTextPosition() {
 	else {
 		return positions[(__labelDir - 1)];
 	}
-}		
+}
 
 /**
 Returns the tributary number.
@@ -1741,10 +1575,9 @@ public int getType() {
 
 /**
 Returns the elements in the __upstreamNodeIDs Vector as an array of Strings.
-The Vector contains the IDs of all the nodes immediately upstream from this
-node.  This is used by network drawing code.
-@return a String array of all the ids of nodes immediately upstream from this
-node.
+The list contains the IDs of all the nodes immediately upstream from this node.
+This is used by network drawing code.
+@return a String array of all the ids of nodes immediately upstream from this node.
 */
 public String[] getUpstreamNodeIDs() {
 	int size = 0;
@@ -1759,11 +1592,10 @@ public String[] getUpstreamNodeIDs() {
 }
 
 /**
-Returns the IDs of all the nodes immediately upstream of this node.  Used by
-drawing code.  This goes to each of the upstream nodes in the __upstream 
-Vector and pulls out their ID to place in the String.
-@return a String array of all the nodes' ids in the order the nodes are found
-in the __upstream Vector.
+Returns the IDs of all the nodes immediately upstream of this node.
+Used by drawing code.
+This goes to each of the upstream nodes in the __upstream list and pulls out their ID to place in the String.
+@return a String array of all the nodes' ids in the order the nodes are found in the __upstream list.
 */
 public String[] getUpstreamNodesIDs() {
 	if (__upstream == null || __upstream.size() == 0) {
@@ -1788,15 +1620,15 @@ public String getUserDescription() {
 /**
 Returns the String node type from the integer type.
 @param type the type of the node.
-@param flag if FULL, return the full String (used in the network file).  If
-ABBREVIATION, return the 3 letter abbreviation (used in StateMod station names).
+@param flag if FULL, return the full String (used in the network file).
+If ABBREVIATION, return the 3 letter abbreviation (used in StateMod station names).
 @return the String node type from the integer type.
 */
 public static String getTypeString(int type, int flag) {
 	String stype = "";
 
 	if (flag == ABBREVIATION) {
-		// Abbreviations...
+		// Abbreviations.
 		if (type == NODE_TYPE_BLANK) {
 			stype = "BLK";
 		}
@@ -1852,7 +1684,8 @@ public static String getTypeString(int type, int flag) {
 			stype = "LBN";
 		}
 	}
-	else {	// Full name...
+	else {
+		// Full name.
 		if (type == NODE_TYPE_BLANK) {
 			stype = "BLANK";
 		}
@@ -1904,7 +1737,7 @@ public static String getTypeString(int type, int flag) {
 		else if (type == NODE_TYPE_XCONFLUENCE) {
 			stype = "XCONFL";
 		}
-		else if (type == NODE_TYPE_LABEL_NODE) { 
+		else if (type == NODE_TYPE_LABEL_NODE) {
 			stype = "LABELNODE";
 		}
 	}
@@ -1919,15 +1752,14 @@ public HydroBase_Node getUpstreamNode() {
 	if (__upstream == null) {
 		return null;
 	}
-	// Return the first one...
+	// Return the first one.
 	return getUpstreamNode(0);
 }
 
 /**
 Return the upstream node at the specific position.
 @param position 0-index position of upstream node.
-@return the reference to the upstream node for the specified position, or
-null if not found.
+@return the reference to the upstream node for the specified position, or null if not found.
 */
 public HydroBase_Node getUpstreamNode(int position) {
 	String routine = __CLASS + ".getUpstreamNode";
@@ -1937,11 +1769,10 @@ public HydroBase_Node getUpstreamNode(int position) {
 	}
 	if (__upstream.size() < (position + 1)) {
 		Message.printWarning(1, routine,
-			"Upstream position [" + position + "] is not found(max "
-			+ __upstream.size() + ")");
+			"Upstream position [" + position + "] is not found(max " + __upstream.size() + ")");
 		return null;
 	}
-	// Return the requested one...
+	// Return the requested one.
 	return(HydroBase_Node)__upstream.get(position);
 }
 
@@ -1957,7 +1788,7 @@ public int getUpstreamNodePosition(String commonID) {
 	int size = __upstream.size();
 	HydroBase_Node upstream;
 	for (int i = 0; i < size; i++) {
-		// Return the first one that matches...
+		// Return the first one that matches.
 		upstream = (HydroBase_Node)__upstream.get(i);
 		if (commonID.equalsIgnoreCase(upstream.getCommonID())) {
 			return i;
@@ -1989,7 +1820,7 @@ Returns the verbose node type description string.
 */
 public static String getVerboseType(int type) {
 	String stype = "";
-	// Abbreviations...
+	// Abbreviations.
 	if (type == NODE_TYPE_BLANK) {
 		stype = "Blank";
 	}
@@ -2054,7 +1885,7 @@ Returns the verbose node type description string.
 */
 public static String getVerboseWISType(int type) {
 	String stype = "";
-	// Abbreviations...
+	// Abbreviations.
 	if (type == NODE_TYPE_BLANK) {
 		stype = "Blank";
 	}
@@ -2169,8 +2000,8 @@ public double getY() {
 }
 
 /**
-Inserts an upstream node into the Vector of upstream nodes.  Used by the network
-diagramming tools.
+Inserts an upstream node into the Vector of upstream nodes.
+Used by the network diagramming tools.
 @param node the node to insert.
 @param pos the position at which to insert the node.
 */
@@ -2179,8 +2010,8 @@ public void insertUpstreamNode(HydroBase_Node node, int pos) {
 }
 
 /**
-Inserts multiple nodes into the list of upstream nodes.  Used by network
-diagramming tools.
+Inserts multiple nodes into the list of upstream nodes.
+Used by network diagramming tools.
 @param nodes a non-null list of nodes to be inserted upstream of this node.
 @param pos the position at which to insert the nodes.
 */
@@ -2224,7 +2055,7 @@ private void initialize() {
 	__upstream = 		null;
 	__upstreamOrder = 	TRIBS_ADDED_FIRST;
 
-	// WIS data...
+	// WIS data.
 	__streamMile = 		DMIUtil.MISSING_DOUBLE;
 	__streamNum = 		DMIUtil.MISSING_LONG;
 	__wisFormat = 		null;
@@ -2254,7 +2085,7 @@ public boolean isDryRiver() {
 }
 
 /**
-Returns whether this node was read from the database or generated from a 
+Returns whether this node was read from the database or generated from a
 network during the latest invocation of the network drawing code.
 @return whether this node was read from the database or not.
 */
@@ -2264,7 +2095,7 @@ public boolean isReadFromDB() {
 
 /**
 Returns whether this node was selected on the network diagram.
-@return whether this node was selected on the netowrk diagram.
+@return whether this node was selected on the network diagram.
 */
 public boolean isSelected() {
 	return __isSelected;
@@ -2285,14 +2116,14 @@ Returns whether this node is within the specified limits or not.
 @return true if the node is within the limits, false if not.
 */
 public boolean isWithinLimits(GRLimits limits, double scale) {
-	return limits.contains(__x * scale, __y * scale, 
+	return limits.contains(__x * scale, __y * scale,
 		(__x + __width) * scale, (__y + __height) * scale, false);
 }
 
 /**
-Lookup the type from a string.  The string can be any recognized full or
-abbreviated string used for the network or CWRAT.  It can also be the
-abbreviated string used in StateMod station names and node diagram.
+Lookup the type from a string.
+The string can be any recognized full or abbreviated string used for the network or CWRAT.
+It can also be the abbreviated string used in StateMod station names and node diagram.
 @return the integer node type or -1 if not recognized.
 */
 public static int lookupType(String type){
@@ -2368,14 +2199,13 @@ public static int lookupType(String type){
 	else if (type.equalsIgnoreCase("LabelNode")) {
 		return NODE_TYPE_LABEL_NODE;
 	}
-	else {	
+	else {
 		return -1;
 	}
 }
 
 /**
-Reset some internal node things when reusing a node (for use in the network
-editor layout).
+Reset some internal node things when reusing a node (for use in the network editor layout).
 @param type the new type of the node.
 */
 public void newNode(int type) {
@@ -2388,15 +2218,14 @@ public void newNode(int type) {
 }
 
 /**
-Breaks apart proration information and saves in the node.  
-@param string0 the input string.  Assumed to be either xxx*yyy or xxxx. 
+Breaks apart the proration information and saves in the node.
+@param string0 the input string.  Assumed to be either xxx*yyy or xxxx.
 @return true if successful, false if not.
 */
 public boolean parseAreaPrecip(String string0) {
 	String routine = __CLASS + ".getNodeAreaPrecip";
 
-	// If the proration information is empty, use empty strings for other
-	// parts...
+	// If the proration information is empty, use empty strings for other parts.
 	try {
 	setAreaString("");
 	setPrecipString("");
@@ -2420,12 +2249,11 @@ public boolean parseAreaPrecip(String string0) {
 			|| (string.charAt(i) == '/')) {
 			theOperator = string.charAt(i);
 			nfields = 2;
-			// Set to a space so that we can parse later...
-			string = string.substring(0,i) 
+			// Set to a space so that we can parse later.
+			string = string.substring(0,i)
 				+ " " + string.substring((i + 1));
 			if (Message.isDebugOn) {
-				Message.printDebug(10, routine, "String=\"" 
-					+ string + "\"");
+				Message.printDebug(10, routine, "String=\"" + string + "\"");
 			}
 		}
 	}
@@ -2433,15 +2261,14 @@ public boolean parseAreaPrecip(String string0) {
 	String area = "";
 	String precip = "";
 	if (nfields == 1) {
-		// Just use the original string but set the precip to one so
-		// that we can print it if we want...
+		// Just use the original string but set the precipitation to one so that can print it if we want.
 		setAreaString(string0);
 		setPrecipString("1");
 		setWaterString(string0);
 		return true;
 	}
 	else if (nfields == 2) {
-		// Assume that we have a valid theOperator and do the math...
+		// Assume that we have a valid theOperator and do the math.
 		List<String> v = StringUtil.breakStringList(string, " \t", 0);
 		area = v.get(0);
 		precip = v.get(1);
@@ -2455,21 +2282,20 @@ public boolean parseAreaPrecip(String string0) {
 			|| (theOperator == '+')
 			|| (theOperator == '-')) {
 			Message.printWarning(1, routine,
-				"Operator " + theOperator 
+				"Operator " + theOperator
 				+ " not allowed - use * for proration");
 			return false;
 			//water = a/p;
 			//water = a + p;
 			//water = a - p;
 		}
-		else {	
+		else {
 			Message.printWarning(1, routine,
-				"String \"" + string0 
+				"String \"" + string0
 				+ "\" cannot be converted to proration");
 			return false;
 		}
-		// Now save values in the node in both string and floating
-		// point form...
+		// Now save values in the node in both string and floating point form.
 		setAreaString(area);
 		setPrecipString(precip);
 		setWaterString(StringUtil.formatString(water, "%12.2f"));
@@ -2477,37 +2303,33 @@ public boolean parseAreaPrecip(String string0) {
 		setPrecip((new Double(precip)).doubleValue());
 		setWater(water);
 		if (getWater() > 0.0) {
-			// This is a baseflow node...
+			// This is a baseflow node.
 			setIsBaseflow(true);
 		}
 		return true;
 	}
 
-	Message.printWarning(1, routine,
-		"String \"" + string0 + "\" cannot be converted to proration");
+	Message.printWarning(1, routine, "String \"" + string0 + "\" cannot be converted to proration");
 	return false;
 
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "String \"" + string0 
-			+ "\" cannot be converted to proration");
+		Message.printWarning(1, routine, "String \"" + string0 + "\" cannot be converted to proration");
 		Message.printWarning(2, routine, e);
 		return false;
 	}
 }
 
 /**
-Removes a node from the upstream of this node.  Used by the network drawing 
-code.
+Removes a node from the upstream of this node.  Used by the network drawing code.
 @param pos the position in the __upstream Vector of the node to be removed.
 */
-public void removeUpstreamNode(int pos) {	
+public void removeUpstreamNode(int pos) {
 	__upstream.remove(pos);
 }
 
 /**
-Replaces one of this node's upstream nodes with another node.  Used by the
-network drawing code.
+Replaces one of this node's upstream nodes with another node.  Used by the network drawing code.
 @param node the node to replace the upstream node with.
 @param pos the position in the __upstream Vector of the node to be replaced.
 */
@@ -2542,8 +2364,8 @@ public void setAssociatedObject(Object o) {
 }
 
 /**
-Sets whether the bounds have been calculated or not.  If set to false, then
-the next time the node is drawn it will recalculate all its bounds.
+Sets whether the bounds have been calculated or not.
+If set to false, then the next time the node is drawn it will recalculate all its bounds.
 @param calculated whether the drawing bounds have been calculated or not.
 */
 public void setBoundsCalculated(boolean calculated) {
@@ -2577,9 +2399,8 @@ public void setComputationalOrder(int computationalOrder) {
 }
 
 /**
-Sets the diameter of the node in data units (for use in determing what points 
-are contained).
-@param diam the diam of the node in data units.
+Sets the diameter of the node in data units (for use in determining what points are contained).
+@param diam the diameter of the node in data units.
 */
 public void setDataDiameter(double diam) {
 	__width = diam;
@@ -2636,8 +2457,7 @@ public void setDownstreamNode(HydroBase_Node downstream) {
 }
 
 /**
-Sets the id of the node downstream from this node.  Used in the network
-drawing code.
+Sets the id of the node downstream from this node.  Used in the network drawing code.
 @param id the id of the node downstream from this node.
 */
 public void setDownstreamNodeID(String id) {
@@ -2645,8 +2465,7 @@ public void setDownstreamNodeID(String id) {
 }
 
 /**
-Sets whether text labels should be drawn along with the node in the network
-editor.
+Sets whether text labels should be drawn along with the node in the network editor.
 @param drawText whether to draw text labels.
 */
 public static void setDrawText(boolean drawText) {
@@ -2654,9 +2473,8 @@ public static void setDrawText(boolean drawText) {
 }
 
 /**
-Sets the icon diameter.  The baseflow icon diameter will be computed 
-accordingly.
-@param size size of the icon diameter in pixels.  
+Sets the icon diameter.  The baseflow icon diameter will be computed accordingly.
+@param size size of the icon diameter in pixels.
 */
 public static void setIconDiam(int size) {
 	ICON_DIAM = size;
@@ -2803,7 +2621,7 @@ public void setPosition(double x, double y, double width, double height) {
 Sets the precip.  Makenet-specific.
 @param precip the precip to set.
 */
-public void setPrecip(double precip) {	
+public void setPrecip(double precip) {
 	__precip = precip;
 }
 
@@ -2964,8 +2782,8 @@ public void setType(int type) {
 }
 
 /**
-Sets the node type based on the abbreviated String type.  The abbreviated
-string is used in the StateMod station names and the network diagram.
+Sets the node type based on the abbreviated String type.
+The abbreviated string is used in the StateMod station names and the network diagram.
 @param type the abbreviated string specifying what type of node this node is.
 */
 public void setTypeAbbreviation(String type) {
@@ -3027,10 +2845,8 @@ public void setTypeAbbreviation(String type) {
 }
 
 /**
-Sets the list nodes upstream of this node.  Used by the network
-diagramming tools.
-@param v the list of upstream nodes.  If null, then there are no nodes
-upstream of this node.
+Sets the list nodes upstream of this node.  Used by the network diagramming tools.
+@param v the list of upstream nodes.  If null, then there are no nodes upstream of this node.
 */
 public void setUpstreamNodes(List<HydroBase_Node> v) {
 	__upstream = v;
@@ -3044,7 +2860,7 @@ public void setUserDescription(String desc) {
 	if (desc == null) {
 		__userDesc = "";
 	}
-	else {	
+	else {
 		__userDesc = desc;
 	}
 }
@@ -3103,7 +2919,7 @@ Returns the verbose node type description string.
 @return the verbose node type description string.
 */
 public void setVerboseType(String stype) {
-	// Abbreviations...
+	// Abbreviations.
 	if (stype.equalsIgnoreCase("Blank")) {
 		__type = NODE_TYPE_BLANK;
 	}
@@ -3117,13 +2933,12 @@ public void setVerboseType(String stype) {
 		__type = NODE_TYPE_WELL;
 	}
 
-// The following is done because flow types have different names in WIS
-// and non-WIS screens.  Unfortunately, this causes a lot of problems.  
-// A far far better solution would be to rename one of the flow types, 
-// e.g. for WIS make a NODE_TYPE_STATION node that uses "Station" and leave
-// NODE_TYPE_FLOW for "Streamflow".  There's lots of work to be done in 
-// revising these classes, though.  It'll have to wait.
-	
+// The following is done because flow types have different names in WIS and non-WIS screens.
+// Unfortunately, this causes a lot of problems.
+// A far far better solution would be to rename one of the flow types,
+// (e.g., for WIS make a NODE_TYPE_STATION node that uses "Station" and leave NODE_TYPE_FLOW for "Streamflow").
+// There's lots of work to be done in revising these classes, though.  It'll have to wait.
+
 	else if (!__inWis && stype.equalsIgnoreCase("Streamflow")) {
 		__type = NODE_TYPE_FLOW;
 	}
@@ -3170,7 +2985,7 @@ public void setVerboseType(String stype) {
 		__type = NODE_TYPE_LABEL_NODE;
 	}
 	else {
-		Message.printWarning(2, "setVerboseType", 
+		Message.printWarning(2, "setVerboseType",
 			"Unknown type: '" + stype + "'");
 		__type = NODE_TYPE_BLANK;
 	}
@@ -3281,42 +3096,38 @@ Returns a String representation of the object suitable for debugging a network.
 public String toNetworkDebugString() {
 	String down = "";
 	String up = "";
-	
+
 	if (__downstream != null) {
 		down = __downstream.getCommonID();
 	}
-	else {	
+	else {
 		down = "null";
 	}
-	
+
 	if (__upstream != null) {
 		for (int i = 0; i < getNumUpstreamNodes(); i++) {
-			up = up + " [" + i + "]:\""
-				+ getUpstreamNode(i).getCommonID() + "\"";
+			up = up + " [" + i + "]:\"" + getUpstreamNode(i).getCommonID() + "\"";
 		}
 	}
-	else {	
+	else {
 		up = "null";
 	}
 
-	return "[" + __label + "]  US: '" + up + "'   DS: '" + down + "'"
-		+ "  RL: " + __reachLevel;
+	return "[" + __label + "]  US: '" + up + "'   DS: '" + down + "'" + "  RL: " + __reachLevel;
 }
 
 /**
-Returns information about the node in a format useful for debugging node layouts
-in the network editor.
-@return information about the node in a format useful for debugging node layouts
-in the network editor.
+Returns information about the node in a format useful for debugging node layouts in the network editor.
+@return information about the node in a format useful for debugging node layouts in the network editor.
 */
 public String toNetworkString() {
-	return 
+	return
 		"Identifier: '" + __identifier + "'\n" +
 		"Node type:  '" + __nodeType   + "'\n" +
-		"X:           " + __x 		+ "\n" + 
-		"DBX:         " + __dbX		+ "\n" + 
+		"X:           " + __x 		+ "\n" +
+		"DBX:         " + __dbX		+ "\n" +
 		"Y:           " + __y		+ "\n" +
-		"DBY:         " + __dbY		+ "\n" + 
+		"DBY:         " + __dbY		+ "\n" +
 		"Description:'" + __desc        + "'\n" +
 		"User desc:  '" + __userDesc    + "'\n" +
 		"CommonID:   '" + __commonID    + "'\n" +
@@ -3330,29 +3141,29 @@ Returns a verbose String representation of the object.
 public String toString() {
 	String down = "";
 	String up = "";
-	
+
 	if (__downstream != null) {
 		down = __downstream.getCommonID();
 	}
-	else {	
+	else {
 		down = "null";
 	}
-	
+
 	if (__upstream != null) {
 		for (int i = 0; i < getNumUpstreamNodes(); i++) {
 			up = up + " [" + i + "]:\""
 				+ getUpstreamNode(i).getCommonID() + "\"";
 		}
 	}
-	else {	
+	else {
 		up = "null";
 	}
 
-	return "\"" + getCommonID() + "\" T=" + getTypeString(__type,1) 
+	return "\"" + getCommonID() + "\" T=" + getTypeString(__type,1)
 		+ " T#=" + __tributaryNum + " RC=" + __reachCounter + " RL="
-		+ __reachLevel + " #=" + __serial + " #inR=" 
-		+ __nodeInReachNum + " CO=" + __computationalOrder 
-		+ " DWN=\"" + down + "\" #up=" + getNumUpstreamNodes() + " UP=" 
+		+ __reachLevel + " #=" + __serial + " #inR="
+		+ __nodeInReachNum + " CO=" + __computationalOrder
+		+ " DWN=\"" + down + "\" #up=" + getNumUpstreamNodes() + " UP="
 		+ up;
 }
 
@@ -3361,31 +3172,30 @@ Returns a String representation of the DB table data from the node.
 @return a String representation of the DB table data from the node.
 */
 public String toTableString() {
-	return 
-		"Wis_num:     " + __wisNum 	+ "\n" + 
-		"Identifier: '" + __identifier 	+ "'\n" + 
-		"Node type:  '" + __nodeType 	+ "'\n" + 
-		"X:           " + __x 		+ "\n" + 
-		"DBX:         " + __dbX		+ "\n" + 
+	return
+		"Wis_num:     " + __wisNum 	+ "\n" +
+		"Identifier: '" + __identifier 	+ "'\n" +
+		"Node type:  '" + __nodeType 	+ "'\n" +
+		"X:           " + __x 		+ "\n" +
+		"DBX:         " + __dbX		+ "\n" +
 		"Y:           " + __y		+ "\n" +
-		"DBY:         " + __dbY		+ "\n" + 
+		"DBY:         " + __dbY		+ "\n" +
 		"Label:      '" + __label;
 }
 
 /**
 Writes the node out to the given PrintWriter as XML.
 @param out the PrintWrite to write the node out to.
-@param verbose if true, then all the information about the node will
-be written out.
+@param verbose if true, then all the information about the node will be written out.
 */
 public String writeNodeXML(PrintWriter out, boolean verbose) {
 	String xml = "    <Node ";
-	String n = System.getProperty("line.separator");	
+	String n = System.getProperty("line.separator");
 
 	String id = __commonID;
 	id = StringUtil.replaceString(id, "&", "&amp;");
 	id = StringUtil.replaceString(id, "<", "&lt;");
-	id = StringUtil.replaceString(id, ">", "&gt;");	
+	id = StringUtil.replaceString(id, ">", "&gt;");
 
 	xml += "ID = \""  + id + "\"" + n;
 	xml += "         AlternateX = \"" + __dbX + "\"" + n;
@@ -3408,7 +3218,7 @@ public String writeNodeXML(PrintWriter out, boolean verbose) {
 	String sdir = null;
 	int dir = getLabelDirection();
 	dir = dir % 10;
-	
+
 	if (dir == 1) {
 		sdir = "AboveCenter";
 	}
@@ -3467,7 +3277,7 @@ public String writeNodeXML(PrintWriter out, boolean verbose) {
 			xml += "         ReservoirDir = \"" + sdir + "\"" + n;
 		}
 	}
-	
+
 //	String type = getTypeString(__type, 1);
 	String type = getVerboseType(__type);
 //	if (type.equalsIgnoreCase("D&W")) {
@@ -3483,7 +3293,7 @@ public String writeNodeXML(PrintWriter out, boolean verbose) {
 		xml += "        ReachCounter = \"" + __reachCounter + "\"" + n;
 		xml += "         Serial = \"" + __serial + "\"" + n;
 		xml += "         TributaryNum = \"" + __tributaryNum + "\"" + n;
-		xml += "         UpstreamOrder = \"" + __upstreamOrder + "\"" 
+		xml += "         UpstreamOrder = \"" + __upstreamOrder + "\""
 			+ n;
 	}
 
@@ -3508,8 +3318,7 @@ public String writeNodeXML(PrintWriter out, boolean verbose) {
 			up = StringUtil.replaceString(up, "&", "&amp;");
 			up = StringUtil.replaceString(up, "<", "&lt;");
 			up = StringUtil.replaceString(up, ">", "&gt;");
-			xml += "        <UpstreamNode ID = \"" + up
-				+ "\"/>" + n;
+			xml += "        <UpstreamNode ID = \"" + up + "\"/>" + n;
 		}
 	}
 	xml += "    </Node>" + n;
