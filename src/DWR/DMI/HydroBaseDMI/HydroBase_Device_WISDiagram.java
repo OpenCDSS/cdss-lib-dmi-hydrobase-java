@@ -857,13 +857,13 @@ private void drawLegend() {
 	for (i = 0; i < __keyLabels.length; i++) {
 		if (i == 0) {
 			GRDrawingAreaUtil.drawSymbol(__drawingArea,
-				GRSymbolShapeType.TRIANGLE_RIGHT, x + 5, y - 13 - (23 * i),
+				GRSymbolShapeType.TRIANGLE_RIGHT_HOLLOW, x + 5, y - 13 - (23 * i),
 				HydroBase_Node.ICON_DIAM*2/3, GRUnits.DEVICE,
 				GRSymbolPosition.CENTER_Y | GRSymbolPosition.LEFT );
 		}
 		else {
 			GRDrawingAreaUtil.drawSymbol(__drawingArea,
-				GRSymbolShapeType.CIRCLE, x + 5, y - 13 - (23 * i),
+				GRSymbolShapeType.CIRCLE_HOLLOW, x + 5, y - 13 - (23 * i),
 				HydroBase_Node.ICON_DIAM*2/3, GRUnits.DEVICE,
 				GRSymbolPosition.CENTER_Y | GRSymbolPosition.LEFT );
 			GRDrawingAreaUtil.drawText(__drawingArea,
