@@ -717,45 +717,45 @@ private void calculateNetworkBounds(GRJComponentDrawingArea da) {
 			__symText = null;
 		}
 		else if (__nodeType.equalsIgnoreCase("Baseflow")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "B";
 		}
 		else if (__nodeType.equalsIgnoreCase("End")) {
 			__symbol = new GRSymbol (symbolType, GRSymbolShapeType.X, black, black, ICON_DIAM, ICON_DIAM);
-			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = null;
 		}
 		else if (__nodeType.equalsIgnoreCase("Instream Flow")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "M";
 		}
 		else if (__nodeType.equalsIgnoreCase("Import")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "I";
 		}
 		else if (__nodeType.equalsIgnoreCase("DiversionAndWell")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "DW";
 		}
 		else if (__nodeType.equalsIgnoreCase("Well")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "W";
 		}
 		else if (__nodeType.equalsIgnoreCase("Diversion")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 			__symText = "D";
 		}
 		else if (__nodeType.equalsIgnoreCase("Other")) {
 			if (__isBaseflow) {
-				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 				__symText = "B";
 			}
 			else if (__isImport) {
-				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 				__symText = "I";
 			}
 			else {
-				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM, ICON_DIAM);
+				__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM, ICON_DIAM);
 				__symText = "O";
 			}
 		}
@@ -807,41 +807,41 @@ private void calculateWISBounds(GRJComponentDrawingArea da) {
 		// The secondary symbol is used to blank out the area behind the primary symbol's node icon.
 
 		if (__nodeType.equalsIgnoreCase("Reservoir")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.TRIANGLE_RIGHT, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.TRIANGLE_RIGHT_HOLLOW, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.TRIANGLE_RIGHT_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = null;
 		}
 		else if (__nodeType.equalsIgnoreCase("Stream")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = "X";
 		}
 		else if (__nodeType.equalsIgnoreCase("Confluence")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3,
 				ICON_DIAM*2/3);
 			__symText = "C";
 		}
 		else if (__nodeType.equalsIgnoreCase("Station")
 			|| __nodeType.equalsIgnoreCase("Streamflow")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3,
 				ICON_DIAM*2/3);
 			__symText = "B";
 		}
 		else if (__nodeType.equalsIgnoreCase("Diversion")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3,
 				ICON_DIAM*2/3);
 			__symText = "D";
 		}
 		else if (__nodeType.equalsIgnoreCase("MinFlow")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = "M";
 		}
 		else if (__nodeType.equalsIgnoreCase("Other")) {
-			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
+			__symbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_HOLLOW, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__secondarySymbol = new GRSymbol(symbolType, GRSymbolShapeType.CIRCLE_FILLED, black, black, ICON_DIAM*2/3, ICON_DIAM*2/3);
 			__symText = "O";
 		}
@@ -953,7 +953,7 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 
 	// if there is a symbol to be drawn.
 	if (__symbol != null) {
-		if (__symbol.getShapeType() == GRSymbolShapeType.CIRCLE) {
+		if (__symbol.getShapeType() == GRSymbolShapeType.CIRCLE_HOLLOW) {
 			// Fill in the background with white so the node can't be seen through.
 			GRDrawingAreaUtil.setColor(da, GRColor.white);
 			GRDrawingAreaUtil.drawSymbol(da, GRSymbolShapeType.CIRCLE_FILLED, __x, __y, __symbol.getSize(), GRUnits.DEVICE,0);
@@ -1058,7 +1058,7 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 		}
 
 		if (getIsBaseflow()) {
-			GRDrawingAreaUtil.drawSymbolText(da, GRSymbolShapeType.CIRCLE,
+			GRDrawingAreaUtil.drawSymbolText(da, GRSymbolShapeType.CIRCLE_HOLLOW,
 				__x, __y, symbolSize + BASEFLOW_DIAM, label,
 				labelAngle, labelPos, GRUnits.DEVICE, 0);
 		}
@@ -1086,7 +1086,7 @@ private void drawNetwork(GRJComponentDrawingArea da) {
 
 	if (!__drawText && getIsBaseflow()) {
 		// Draw a circle around baseflow nodes.
-		GRDrawingAreaUtil.drawSymbol(da, GRSymbolShapeType.CIRCLE,
+		GRDrawingAreaUtil.drawSymbol(da, GRSymbolShapeType.CIRCLE_HOLLOW,
 			__x, __y, __symbol.getSize() + BASEFLOW_DIAM,
 			GRUnits.DEVICE, 0);
 	}
