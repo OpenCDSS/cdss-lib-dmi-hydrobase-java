@@ -4,42 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_GroundWaterWellsPumpingTest.java - Class to hold data from 
-//	the HydroBase pump_test table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-10	J. Thomas Sapienza, RTi	Initial version from HBPumpTest.
-// 2003-02-14	JTS, RTi		Added getLocation method.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2004-06-22	JTS, RTi		Now uses HydroBase_Util for
-//					formatLegalLocation().
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-06-02	JTS, RTi		Now extends 
-//					HydroBase_GroundWaterWellsView
-// 2005-06-29	JTS, RTi		Renamed from HydroBase_PumpTest.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -50,7 +30,7 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase pump_test table.
 */
-public class HydroBase_GroundWaterWellsPumpingTest 
+public class HydroBase_GroundWaterWellsPumpingTest
 extends HydroBase_GroundWaterWellsView {
 
 protected int _structure_num = 	DMIUtil.MISSING_INT;
@@ -78,29 +58,6 @@ Constructor.
 */
 public HydroBase_GroundWaterWellsPumpingTest() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_k = null;
-	_storativity = null;
-	_leakance = null;
-	_testdate = null;
-	_ptsource = null;
-	_pttype = null;
-	_pm = null;
-	_rdir = null;
-	_seca = null;
-	_q160 = null;
-	_q40 = null;
-	_q10 = null;
-
-	super.finalize();
 }
 
 /**
@@ -140,12 +97,11 @@ Returns the location (an amalgation of pm, ts, tdir, rng, rdir, sec, seca,
 q160, q40 and q10).
 @return the location
 */
-public String getLocation() 
+public String getLocation()
 throws Exception {
-	return HydroBase_Util.formatLegalLocation(_pm, _ts, _tdir, _rng, 
+	return HydroBase_Util.formatLegalLocation(_pm, _ts, _tdir, _rng,
 		_rdir, _sec, _seca, _q160, _q40, _q10);
 }
-	
 
 /**
 Returns _ptmon
@@ -419,30 +375,30 @@ public void setTswl(double tswl) {
 	_tswl = tswl;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_GroundWaterWellsPumpingTest {"	+ "\n" + 
-		"Structure_num: " + _structure_num + "\n" + 
-		"Tswl:          " + _tswl + "\n" + 
-		"Tfwl:          " + _tfwl + "\n" + 
-		"Testq:         " + _testq + "\n" + 
-		"Testtime:      " + _testtime + "\n" + 
-		"Trans:         " + _trans + "\n" + 
-		"K:             " + _k + "\n" + 
-		"Storativity:   " + _storativity + "\n" + 
-		"Leakance:      " + _leakance + "\n" + 
-		"Toptestint:    " + _toptestint + "\n" + 
-		"Basetestint:   " + _basetestint + "\n" + 
-		"Drawdown:      " + _drawdown + "\n" + 
-		"Testdate:      " + _testdate + "\n" + 
-		"Ptsource:      " + _ptsource + "\n" + 
-		"Pttype:        " + _pttype + "\n" + 
-		"Ptmon:         " + _ptmon + "\n" + 
-		"Ptobs:         " + _ptobs + "\n" + 
-		"Ptmultiple:    " + _ptmultiple + "\n" + 
+	return "HydroBase_GroundWaterWellsPumpingTest {"	+ "\n" +
+		"Structure_num: " + _structure_num + "\n" +
+		"Tswl:          " + _tswl + "\n" +
+		"Tfwl:          " + _tfwl + "\n" +
+		"Testq:         " + _testq + "\n" +
+		"Testtime:      " + _testtime + "\n" +
+		"Trans:         " + _trans + "\n" +
+		"K:             " + _k + "\n" +
+		"Storativity:   " + _storativity + "\n" +
+		"Leakance:      " + _leakance + "\n" +
+		"Toptestint:    " + _toptestint + "\n" +
+		"Basetestint:   " + _basetestint + "\n" +
+		"Drawdown:      " + _drawdown + "\n" +
+		"Testdate:      " + _testdate + "\n" +
+		"Ptsource:      " + _ptsource + "\n" +
+		"Pttype:        " + _pttype + "\n" +
+		"Ptmon:         " + _ptmon + "\n" +
+		"Ptobs:         " + _ptobs + "\n" +
+		"Ptmultiple:    " + _ptmultiple + "\n" +
 		"Sp_cap:        " + _sp_cap + "\n";
 }
 

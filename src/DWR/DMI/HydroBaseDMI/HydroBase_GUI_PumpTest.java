@@ -4,57 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_PumpTest - Pump Test Detail GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 05 Jun 2000	Catherine E. Nutting-Lane, RTi
-//					Created initial version.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//-----------------------------------------------------------------------------
-// 2003-05-28	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2003-09-23	JTS, RTi		Changed the export code to use 
-//					the new export code in 
-//					HydroBase_GUI_Util.
-// 2004-01-07	JTS, RTi		* Numbers no longer float in the middle
-//					  of their text field due to 
-//				 	  justification issues.
-//					* Help button disabled.
-//					* Several fields widened.
-// 2004-01-12	SAM, RTi		* Set title consistent with other
-//					  windows.
-//					* Comment out help button.
-//					* Add tool tip text.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-05-09	JTS, RTi		HydroBase_GroundWaterWellsPumpingTest 
-//					objects now used for SP and 
-//					non-SP queries.
-// 2005-07-06	JTS, RTi		* Added Permit Info, Loc num, and 
-//					  Site ID fields.
-//					* Reorganized the layout of other 
-//					  fields.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -201,7 +166,7 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -237,53 +202,6 @@ public void actionPerformed(ActionEvent event) {
 
 private void closeClicked() {
 	setVisible(false);
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__hydroBasePumpTestView = null;
-	__closeJButton = null;
-	__exportJButton = null;
-	__printJButton = null;
-	__monJCheckBox = null;
-	__multJCheckBox = null;
-	__obsJCheckBox = null;
-	__basetestintJTextField = null;
-	__drawdownJTextField = null;
-	__idJTextField = null;
-	__kJTextField = null;
-	__leakanceJTextField = null;
-	__nameJTextField = null;
-	__pmJTextField = null;
-	__ptsourceJTextField = null;
-	__pttypeJTextField = null;
-	__q10JTextField = null;
-	__q160JTextField = null;
-	__q40JTextField = null;
-	__rdirJTextField = null;
-	__rngJTextField = null;
-	__secJTextField = null;
-	__secaJTextField = null;
-	__statusJTextField = null;
-	__storativityJTextField = null;
-	__tdirJTextField = null;
-	__testdateJTextField = null;
-	__testqJTextField = null;
-	__testtimeJTextField = null;
-	__tfwlJTextField = null;
-	__toptestintJTextField = null;
-	__transJTextField = null;
-	__tsJTextField = null;
-	__tswlJTextField = null;
-	__wdJTextField = null;
-	__locNumJTextField = null;
-	__siteIDJTextField = null;
-	__permitInfoJTextField = null;
-
-	super.finalize();
 }
 
 /**

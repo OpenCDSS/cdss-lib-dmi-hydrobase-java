@@ -4,41 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_WISFormat.java - Class to hold data from the HydroBase wis_format 
-//	table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-12	J. Thomas Sapienza, RTi	Initial version from HBWISFormat.
-// 2003-02-17	JTS, RTi		Added isKnownPoint method.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2003-10-08	JTS, RTi		Added some WIS support stuff from the
-//					old version of the class.
-// 2005-02-28	JTS, RTi		Private data members were made protected
-//					so this data object can be checked 
-//					during unit tests.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -102,10 +83,10 @@ public HydroBase_WISFormat() {
 		_wisFormula.add(new HydroBase_WISFormula());
 		_wisImport.add(new HydroBase_WISImport());
 		if (curCol < 6) {
-			_isEntryCell.add(new Boolean(false));
+			_isEntryCell.add(Boolean.valueOf(false));
 		}
 		else {
-			_isEntryCell.add(new Boolean(true));
+			_isEntryCell.add(Boolean.valueOf(true));
 		}
 	}
 }
@@ -117,21 +98,6 @@ public void clearFormulas() {
 	for (int curCol = 0; curCol < __COLS + 1; curCol++) {
 		_wisFormula.set(curCol, new HydroBase_WISFormula());
 	}
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_row_type = null;
-	_row_label = null;
-	_known_point = null;
-	_identifier = null;
-	
-	super.finalize();
 }
 
 /**

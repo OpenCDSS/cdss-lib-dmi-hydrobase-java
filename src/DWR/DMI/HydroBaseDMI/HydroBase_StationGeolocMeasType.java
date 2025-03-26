@@ -4,44 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_StationGeolocMeasType.java - Class to hold data from the 
-//	HydroBase station, geoloc and meas_type
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-11	J. Thomas Sapienza, RTi	Initial version from
-//					HBStationLocationMeasurementType.
-// 2003-02-19	JTS, RTi		Added some fields and methods to support
-//					older database versions.
-// 2003-02-24	JTS, RTi		* Corrected error in finalize() so that 
-//					  super.finalize() gets called.
-//					* Reworked so that it extends 
-//					  HydroBase_StationGeoloc.
-// 2003-11-30	Steven A. Malers, RTi	Add _data_units - SAM is proposing
-// 					that this be added to HydroBase - it
-//					is used by TSTool.
-// 2005-03-01	JTS, RTi		Added view copy constructor.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -128,23 +106,6 @@ public HydroBase_StationGeolocMeasType(HydroBase_StationView view) {
 	_transmit = view._transmit;
 	_meas_count = view._meas_count;
 	_data_source = view._data_source;
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_meas_type = null;
-	_time_step = null;
-	_vax_field = null;
-	_transmit = null;	
-	_data_source = null;
-	_data_units = null;
-
-	super.finalize();
 }
 
 /**

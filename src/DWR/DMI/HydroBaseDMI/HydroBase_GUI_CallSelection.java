@@ -4,93 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//------------------------------------------------------------------------------
-// HydroBase_GUI_CallSelection - JDialog with a multiple selection list to 
-//	select the
-//	call chronology records for graphing. Available records are defined
-//	according to the time interval which is displayed here, but defined
-//	in the HBCallChronologyGUI;
-//------------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//------------------------------------------------------------------------------
-// History:
-//
-// 10 Jun 1998	Chad G. Bierbaum , RTi	Created initial class description.
-// 04 Apr 1999	Steven A. Malers, RTi	Changed deprecated JList.addItem()call
-//					to add().
-// 12 Apr 1999	SAM, RTi		Change HourTS to DayTS.  This should
-//					significantly improve performance
-//					because Chad had a 1-hour time series!
-//					If the State decides to allow more than
-//					one call per day, go back to HourTS.
-//					Actually had to rework quite a bit.
-//					Chad was processing all the calls up
-//					front regardless if they are being
-//					plotted.  This can significantly impact
-//					performance.  Change so the time series
-//					are only processed if selected.
-//					Change precision on dates to days.
-//					Change from dialog to frame so windows
-//					can be layered better.
-// 15 May 2001	SAM, RTi		Update to new RTi graphing package, but
-//					do not make final until a better period
-//					of record plot can be enabled.
-//					Add finalize().  Change GUI to GUIUtil.
-//					Fix bug where some administration
-//					numbers for the graph were not being
-//					found because the double admin numbers
-//					did not equate.  Enable the key listener
-//					and Microsoft-style mouse events.
-//					Remove "Select All" button.
-// 2001-11-01	SAM, RTi		Use RTi graphing for calls.  Add more
-//					code to clean up memory.  Get rid of
-//					commented-out code to use MultiJList.
-//					In-line some code that is called only
-//					once.  Change so senior calls are
-//					numbered with the smaller number now
-//					that the period of record graph handles
-//					the time series order.  Change so if a
-//					warning occurs, the message is shown
-//					using the Call Chronology GUI as the
-//					parent Frame.
-// 2002-02-20	SAM, RTi		Update to use TSViewFrame instead of
-//					TSViewGUI.
-// 2002-02-25	SAM, RTi		Change the status text area to have gray
-//					background.
-//------------------------------------------------------------------------------
-// 2003-03-31	J. Thomas Sapienza, RTi	Initial swing version from old code.
-// 2003-04-02	JTS, RTi		* Put the list within a scrollpane.
-//					* Was displaying the wrong name and
-//					  admin number data; fixed.
-//					* Misc other bugfixes and documentation
-//					  done.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2003-12-09	JTS, RTi		Uncommented and enabled time series
-//					code.
-// 2004-01-12	SAM, RTi		* Set the title to use the app name.
-//					* Comment out the help button.
-//					* Add tool tips for the buttons.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-27	JTS, RTi		Added all data members to finalize().
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -138,13 +67,11 @@ import RTi.Util.Time.TimeInterval;
 import RTi.Util.Time.YearType;
 
 /**
-JDialog with a multiple selection list to select the
-call chronology records for graphing.  Available records are defined
-according to the time interval which is displayed here, but defined
-in the HBCallChronologyGUI.
+JDialog with a multiple selection list to select the call chronology records for graphing.
+Available records are defined according to the time interval which is displayed here, but defined in the HBCallChronologyGUI.
 */
 @SuppressWarnings("serial")
-public class HydroBase_GUI_CallSelection 
+public class HydroBase_GUI_CallSelection
 extends JDialog
 implements ActionListener, KeyListener, WindowListener {
 
@@ -197,7 +124,7 @@ private List<HydroBase_Calls> __results = null;
 /**
 HydroBase_GUI_CallSelection constructor
 */
-public HydroBase_GUI_CallSelection(HydroBaseDMI dmi, 
+public HydroBase_GUI_CallSelection(HydroBaseDMI dmi,
 HydroBase_GUI_CallsQuery parent, List<HydroBase_Calls> results) {
 	// don't want a modal dialog
 	super (parent, false);
@@ -232,22 +159,6 @@ protected void closeClicked() {
 }
 
 /**
-Clean up for garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__parent = null;
-	__listJLabel = null;
-	__fromJTextField = null;
-	__statusJTextField = null;
-	__toJTextField = null;
-	__list = null;
-	__results = null;
-
-	super.finalize();
-}
-
-/**
 This function initializes a TS object for the specified call.
 @param wd Water district for call of interest.
 @param id Structure identifier for call of interest.
@@ -262,9 +173,7 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 	int size = __results.size();
 
 	if (Message.isDebugOn) {
-		Message.printDebug(1, routine,
-			"Getting call time series for " + wd + " " + id 
-			+ " " + adminNum);
+		Message.printDebug(1, routine, "Getting call time series for " + wd + " " + id + " " + adminNum);
 	}
 
 	// The calls are ordered by admin number and date so if the admin
@@ -300,7 +209,7 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 	DateTime from = null;
 	DateTime to = null;
 
-	try {	
+	try {
 		from = DateTime.parse(__fromJTextField.getText(),
                             DateTime.FORMAT_YYYY_MM_DD);
 
@@ -330,7 +239,7 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 	ts.allocateDataSpace();
 	ts.setLocation(call.getStrname());
 	ts.setDescription(call.getStr_name());
-//	ts.setDescription(StringUtil.formatString(call.getAdminno(), 
+//	ts.setDescription(StringUtil.formatString(call.getAdminno(),
 //		"%11.5f")+ ", " + HydroBase_WaterDistrict.formWDID(wd,id));
 
 	// i set above.  Loop through the sorted call data until the WD, ID,
@@ -354,7 +263,7 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
     		if (DMIUtil.isMissing(call.getDate_time_set()) ) {
 			// Problem here. We need to set some warning.
 			Message.printWarning(1, routine, "Error.  Null set date for call.  Skipping.");
-			continue; 
+			continue;
        		}
 		startDate = new DateTime(call.getDate_time_set(), DateTime.PRECISION_DAY);
 		if (startDate.greaterThan(to)) {
@@ -374,7 +283,7 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 			// Assume that we are still active for this call
                 	endDate = new DateTime(to);
        		}
-		else {	
+		else {
 			endDate = new DateTime(call.getDate_time_released(), DateTime.PRECISION_DAY);
 			if (endDate.lessThan(from)) {
 				continue;
@@ -404,14 +313,14 @@ private DayTS getTimeSeries(int wd, int id, double adminNum, double value) {
 }
 
 /**
-This function formats a HydroBase_Calls object for the JList. 
+This function formats a HydroBase_Calls object for the JList.
 @param call the HydroBase_Calls object.
 @param count Count to use for label
 @return returns a formated String to add to the appropriate JList component.
 */
 private String getJListString(HydroBase_Calls call, int count) {
         String listString = "";
- 
+
  	String wds = "";
         int wdi = call.getWD();
         if (!DMIUtil.isMissing(wdi) && !HydroBase_Util.isMissing(wdi)) {
@@ -482,12 +391,10 @@ private void graphClicked() {
 		// With the RTi graphing, it automatically puts the time series
 		// in the right order for a period graph so use "1" as the data
 		// value, indicating the call is on.
-		DayTS ts = getTimeSeries(wdid_tokens[0], 
+		DayTS ts = getTimeSeries(wdid_tokens[0],
 			wdid_tokens[1], adminNum, value);
 		if (ts == null) {
-			Message.printWarning(1, function,
-				"Error setting up time series for \"" 
-				+ strings[i] + "\".  Not graphing.");
+			Message.printWarning(1, function, "Error setting up time series for \"" + strings[i] + "\".  Not graphing.");
 			continue;
 		}
 		if (Message.isDebugOn) {
@@ -513,14 +420,13 @@ private void graphClicked() {
 		}
 		catch (Exception e) {
 			Message.printWarning(1, function,
-				"Error setting up time series for \"" 
-				+ strings[i] + "\".  Not graphing.");
+				"Error setting up time series for \"" + strings[i] + "\".  Not graphing.");
 			Message.printWarning(2, function, e);
 			return;
 		}
 	}
 
-	try {	
+	try {
 		// Set properties common to all views...
 		tsview_props.set("CalendarType", "" + YearType.WATER);
 		tsview_props.set("TotalWidth", "750");
@@ -606,7 +512,7 @@ private void setupGUI() {
        	__fromJTextField = new JTextField(20);
         __fromJTextField.setEditable(false);
         topJPanel.add(__fromJTextField);
-  
+
        	topJPanel.add(new JLabel("to"));
 
         __toJTextField = new JTextField(20);
@@ -628,14 +534,14 @@ private void setupGUI() {
 		1, ++y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __listJLabel = new JLabel();
-        JGUIUtil.addComponent(centerJPanel, __listJLabel, 
+        JGUIUtil.addComponent(centerJPanel, __listJLabel,
 		1, ++y, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         __list = new SimpleJList<String>();
 	__list.setFont(new Font("Courier", Font.PLAIN, 11));
 	__list.addKeyListener(this);
 
-        JGUIUtil.addComponent(centerJPanel, new JScrollPane(__list), 
+        JGUIUtil.addComponent(centerJPanel, new JScrollPane(__list),
 		1, ++y, 1, 1, 1, 1, insetsNLNR, GridBagConstraints.BOTH, GridBagConstraints.WEST);
 
 	JPanel southJPanel = new JPanel();
@@ -652,17 +558,17 @@ private void setupGUI() {
 	b = new SimpleJButton(__BUTTON_CANCEL, this);
 	b.setToolTipText ( "Cancel the graph." );
 	buttonJPanel.add(b);
-	
+
 	JPanel statusJPanel = new JPanel();
 	statusJPanel.setLayout(gbl);
 	southJPanel.add("South", statusJPanel);
-	
+
 	__statusJTextField = new JTextField(
 		"Select the calls to graph from the list.");
 	__statusJTextField.setEditable(false);
 	JGUIUtil.addComponent(statusJPanel, __statusJTextField,
 		0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-	
+
 	if (	(JGUIUtil.getAppNameForWindows() == null) ||
 		JGUIUtil.getAppNameForWindows().equals("") ) {
 		setTitle ( "Call Chronology Data - Select Calls for Graph" );
@@ -721,9 +627,8 @@ private void setupGUI() {
 	}
 
 	__listJLabel.setText("Rights that have call history, sorted by "
-		+ "adminstration number (" + __list.getItemCount() 
-		+ " records returned):");
-	
+		+ "adminstration number (" + __list.getItemCount() + " records returned):");
+
 	pack();
 	setSize(550, 350);
 	JGUIUtil.center(this);

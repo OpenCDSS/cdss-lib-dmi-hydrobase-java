@@ -4,248 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_NodeNetwork - a representation of a stream node network
-// ----------------------------------------------------------------------------
-// Notes:	(1)	This code is meant to support (at least) three
-//			CRDSS applications:
-//			  makenet - used by planning model to generate network
-//			  StateMod GUI - to allow interactive network edits
-//			  Admin tool - to allow call analysis, water balance,
-//					etc.
-//		(2)	Right now, this class has member functions to read and
-//			write different network formats.  However, it may make
-//			sense to subclass to have, for example, a
-//			StateModNodeNetwork and a CWRATNodeNetwork.
-//		(3)	ALL PLOTTING CODE IS AT THE BOTTOM OF THE CLASS TO KEEP
-//			CODE SEPARATED.
-// ----------------------------------------------------------------------------
-// History:
-//
-// 27 Oct 1997	Steven A. Malers,	Initial version - from makenet.
-//		Riverside Technology,
-//		inc.
-// 12 Dec 1997	SAM, RTi		Make so that for the admin tool
-//					confluence nodes are treated as
-//					baseflow nodes.
-// 28 Feb 1998	SAM, RTi		Finish adding routines to support
-//					makenet - these use the SMUtil
-//					package.
-// 27 Aug 1998	SAM, RTi		Fix problem where makenet 5.01 was not
-//					printing most downstream node in the
-//					river network file.
-// 11 Sep 1998	SAM, RTi		Add network PostScript plotting
-//					capability for makenet.  Add the check
-//					file to be used with makenet (ugly, but
-//					preserves legacy output).
-// 21 Oct 1998	SAM, RTi		Add check to makenet network code to
-//					catch if a symbol direction has not been
-//					set.
-// 16 Dec 1998	SAM, RTi		Add printCheck to support DMIs.
-// 11 Jan 1999  Daniel Weiler, RTi	Add getStationsInNetwork, 
-//					getStructuresInNetwork and 
-//					setNodeDescriptions.
-// 19 Jan 1999	DKW, RTi		A few more modifications to speed up
-//					the setting of fancy descriptions.
-// 18 Feb 1999	SAM, RTi		Start Java 1.2 upgrades.  This includes
-//					more exception handling in some classes.
-// 19 Feb 1999	DKW, RTi		Added Wells to network. Cleaned up
-//					some WDID issues re: padding with 0
-//					in situations when either wd or id
-//					are less than 2 and 4/5 respectively.
-// 31 Mar 1999	SAM, RTi		Code sweep.
-// 07 Apr 1999	SAM, RTi		Add dry river feature to nodes - read
-//					from the wis data.
-// 27 Jul 1999	SAM, RTi		Add features to handle disconnected
-//					streams in the Rio Grande basin using
-//					the XCONFL node type.  Trim input lines
-//					in makenet input - this allows comments
-//					to be indented.  Break out drawNetwork()
-//					code so a network GUI can be tested.
-//					When creating the .ord file, also
-//					create text file(s)with lists of
-//					diversion structures, etc.  Rework some
-//					of Dan's code like getStationsInNetwork
-//					so that the stations are determined
-//					in that method so we avoid a global
-//					variable (traversing the list does not
-//					take very long and if we build a GUI
-//					we will need to get a list for the
-//					in-memory nodes).  Finalize moving the
-//					description set code until after the
-//					network has been read.  This is clearly
-//					faster based on early tests.
-// 20 Sep 1999	SAM, RTi		Add database version comment to output
-//					file headers.
-// 18 Oct 1999	SAM, RTi		Add X, Y to river order file so the
-//					plot positions can be debugged.  This
-//					can also be used in the future to
-//					display latitude and longitude.  Fixed
-//					bug introduced with XCONFL where
-//					confluence nodes were not plotting
-//					corectly.
-// 02 Nov 1999	SAM, RTi		Handle comments anywhere in makenet net
-//					file(done previously)but put in check
-//					to handle special case of _# being used
-//					in some identifiers in data sets.  For
-//					this case, put in a warning.
-// 08 Nov 1999	SAM, RTi		Change from "Streamflow" to "Streamflow
-//					Gage" in the makenet plot.  Change the
-//					nodelist.txt file to have header
-//					"makenet_id" instead of "id"(simplifies
-//					the GIS link).  Add a dashed line where
-//					there are disappearing streams.  Add
-//					labeling using name.
-// 29 Nov 1999	CEN, RTi		Added __autoLabel.
-// 06 Dec 1999	CEN, RTi		Added __plotCommands.
-// 06 Dec 1999	SAM, RTi		Add D&W node type and add initial well
-//					code to get information from well
-//					permits.
-// 07 Dec 1999	CEN, RTi		Added drawCarrier
-// 15 Mar 2000	SAM, RTi		Finalize handling of WELL and D&W nodes
-//					for makenet release.
-// 17 Apr 2000	SAM, RTi		When getting struct_to_well data,
-//					specify the query type for wells for
-//					WEL nodes(D&W information will come
-//					from structures).
-// 30 May 2000	SAM, RTi		Add node type to nodelist file so that
-//					it can be used for queries when joined
-//					to shapefiles, etc.  Don't print blank
-//					or confluence nodes to node list file.
-// 06 Feb 2001	SAM, RTi		Update for makenet to allow daily data
-//					printout as an option.  Change IO to
-//					IOUtil.  Update to reflect changes in
-//					SMRiverInfo.  Add __setrinData and
-//					__setrisData for resets from makenet.
-//					Update so when ris file is output files
-//					are also output with a list of potential
-//					streamflow time series.
-// 08 Jun 2001	SAM, RTi		Add header information to
-//					createIndentedRiverNetworkStrings().
-//					Change Timer to StopWatch.
-// 2002-03-07	SAM, RTi		Update for changes in the GR package.
-// 2002-06-16	SAM, RTi		Add readHydroBaseStreamNetwork().
-// ----------------------------------------------------------------------------
-// 2003-10-08	J. Thomas Sapienza, RTi	Updated to HydroBaseDMI;
-// 2003-10-21	JTS, RTi		Updated readWISFormatNetwork().
-// 2004-03-15	JTS, RTi		* Uncommented readMakenetNetworkFile()
-// 					* Uncommented readMakenetLineTokens()
-// 					* Uncommented processMakenetNodes()
-// 					* Uncommented setNodeDescriptions()
-// 					* Uncommented 
-//					  createIndentedRiverNetworkFile()
-// 					* Uncommented 
-//					  createIndentedRiverNetworkStrings()
-// 					* Uncommented 
-//					  createRiverBaseflowDataFile()
-// 					* Uncommented createRiverOrderFile()
-// 					* Uncommented printOrdNode()
-// 2004-03-23	JTS, RTi		* Wrapped all __dmi calls with 
-//					  __isDatabaseUp checks.
-//					* Check for __isDatabaseUp now makes
-//					  sure the database is connected.
-//					* Removed old drawing code.
-// 2004-04	JTS, RTi		Added a few new methods in reaction
-//					to needs discovered while working on
-//					the network plotting tool:
-//					* addNode().
-//					* checkUniqueID().
-//					* deleteNode().
-// 2004-07-02	JTS, RTi		Revised many methods.
-// 2004-07-07	JTS, RTi		Revised the XML writing code, in 
-//					particular newlines, tabstops, and
-//					page layouts.
-// 2004-07-11	SAM, RTi		In createStateModRiverNetwork(), handle
-//					confluence nodes and other non-physical
-//					node types.
-// 2004-08-15	SAM, RTi		* Remove createRiverBaseflowDataFile() -
-//					  functionality is in StateDMI.
-//					* Remove
-//					  createRiverStationBaseflowFile() -
-//					  functionality is in StateDMI.
-//					* Remove createRiverNetworkFile() -
-//					  functionality is in StateDMI.
-// 2004-08-17	JTS, RTi		* deleteNode() was not calculating the
-//					  tributary number properly for the 
-//					  nodes upstream of a deleted node.
-//					* addNode() was not calculating the 
-//					  serial number for a new node properly.
-// 2004-08-25	JTS, RTi		For XML networks, the layouts in the 
-//					XML file are now read in, processed,
-//					and stored in the network for retrieval
-//					when the network GUI is opened.
-// 2004-10-11	SAM, RTi		Fix so that the call to
-//					setNodeDescriptions() does not print
-//					exceptions trying to get descriptions
-//					for non-WDIDs, etc.  Normally these are
-//					non-fatal messages that can be treated
-//					as status messages.
-// 2004-10-20	JTS, RTi		Changed the names of some variables to
-//					represent the fact that the XML no
-//					longer stores the width and height of
-//					the network, but instead stores the 
-//					lower-left and upper-right corner points
-//					instead.
-// 2004-11-11	JTS, RTi		Networks from XML files now have 
-//					finalCheck() called on them to make sure
-//					all their nodes are within bounds.
-// 2004-11-15	JTS, RTi		Added findNextXConfluenceDownstreamNode.
-// 2004-12-20	JTS, RTi		Changed how label positions are numbered
-//					so that original Makenet networks 
-//					display properly.
-// 2005-01-14	JTS, RTi		writeXML(String) now calls the 
-//					overloaded version and fills in more
-//					parameters, so that it can be used
-//					as a simple way to write out an 
-//					existing XML network.
-// 2005-02-16	JTS, RTi		Converted queries to use stored 
-//					procedures.
-// 2005-04-19	JTS, RTi		* Removed isFileXML().
-//					* Added writeListFile().
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		* Only HydroBase_StationView objects are
-//					  returned from station queries now.
-//					* Only HydroBase_WellApplicationView
-//					  objects are returned from well app
-//					  queries now.
-// 2005-06-13	SAM, RTi		* Fix bug handling XCONFL nodes when
-//					  creating the StateMod RIN.  If the
-//					  downstream node is an XCONFL and has
-//					  only one upstream node, print a
-//					  blank downstream node in the StateMod
-//				  	  file.
-//					* Change printStatus(1,...) to level 2.
-// 2005-12-21	JTS, RTi		* &, < and > in page layout ID are now
-//					  escaped when saving to XML.
-//					* Notes added to the XML documentation
-//					  detailing how escaping must be done
-//					  if editing by hand.
-// 2005-12-22	JTS, RTi		* Link IDs are now escaped.
-//					* Annotation text is now escaped.
-// 2006-01-03	SAM, RTi		* Change getNodesForType() to accept
-//					  -1 for node type for all nodes.
-//					* Overload writeListFile() to accept
-//					  a list of comments.
-// 2007-02-18	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -255,7 +29,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -292,8 +66,7 @@ import RTi.Util.String.StringUtil;
 import RTi.Util.Time.StopWatch;
 
 /**
-This class contains all the information necessary to manage a network of 
-HydroBase_Node nodes.
+This class contains all the information necessary to manage a network of HydroBase_Node nodes.
 */
 public class HydroBase_NodeNetwork {
 
@@ -395,8 +168,7 @@ Used in reading in XML files.
 private static boolean __setInWIS = false;
 
 /**
-Boolean values that specify if all the bounds of the network were read in
-during a static XML read.
+Boolean values that specify if all the bounds of the network were read in during a static XML read.
 */
 private static boolean 
 	__lxSet = false,
@@ -624,9 +396,9 @@ REVISIT (JTS - 2004-11-11)
 I thought we weren't using inner classes here at RTi.
 */
 private class Label {
-	public double	size, x, y;
+	public double size, x, y;
 	public int	flag;
-	public String	text;
+	public String text;
 	public Label(double x0, double y0, double size0, int flag0,
 		String label) {
 		x = x0;
@@ -946,8 +718,7 @@ boolean isBaseflow, boolean isImport) {
 
 /**
 Adds plot commands to the plot commands list.
-@param plotCommands a list of plot commands, each of which will be added
-to the plot commands list.
+@param plotCommands a list of plot commands, each of which will be added to the plot commands list.
 */
 public void addPlotCommands(List plotCommands) {
 	if (plotCommands == null) {
@@ -1054,7 +825,7 @@ public void calculateNetworkNodeData(List<HydroBase_Node> nodesV, boolean endFir
 	// can be found.
 	Hashtable<String,Integer> hash = new Hashtable<String,Integer>(size);
 	for (int i = 0; i < size; i++) {
-		hash.put(nodes[i].getCommonID(), new Integer(i));
+		hash.put(nodes[i].getCommonID(), Integer.valueOf(i));
 	}
 
 	// certain data for the head node can be set immediately.
@@ -3395,13 +3166,12 @@ String dataValueToFind) {
 			+ HydroBase_Node.getTypeString(nodeTypeToFind,1)
 			+ " value \"" + dataValueToFind + "\"");
 	}
-	for (HydroBase_Node nodePt = getUpstreamNode(__nodeHead,
-		POSITION_ABSOLUTE);
+	for (HydroBase_Node nodePt = getUpstreamNode(__nodeHead, POSITION_ABSOLUTE);
 		nodePt.getDownstreamNode() != null;
 		nodePt = getDownstreamNode(nodePt, POSITION_COMPUTATIONAL)) {
-		if (nodePt == null) {
-			break;
-		}
+		//if (nodePt == null) {
+		//	break;
+		//}
 		// Get the WIS data in case we need it...
 		HydroBase_WISFormat wisFormat = nodePt.getWISFormat();
 		if (nodeTypeToFind > 0) {
@@ -4720,7 +4490,7 @@ private List<Object> getValidDownstreamNode(HydroBase_Node node, boolean main) {
 			reachLevel = currReach;
 			if (ds.getX() >= 0 && ds.getY() >= 0) {
 				v.add(ds);
-				v.add(new Integer(count));
+				v.add(Integer.valueOf(count));
 				return v;
 			}
 		}
@@ -4741,7 +4511,7 @@ private List<Object> getValidDownstreamNode(HydroBase_Node node, boolean main) {
 		count++;
 	}
 	v.add(null);
-	v.add(new Integer(count - 1));
+	v.add(Integer.valueOf(count - 1));
 	return v;
 }
 
@@ -5125,29 +4895,29 @@ public void incrementNodeInReachNumberForReach(HydroBase_Node node) {
 Initialize data.
 */
 private void initialize() {
-	__closeCount = 			0;
-	__isDatabaseUp = 		false;
-	__createOutputFiles = 		true;
-	__createFancyDescription = 	false;
-	__fontSize = 			10.0;
-	__dmi = 			null;
-	__labelType = 			LABEL_NODES_NETID;
-	//__legendDX = 			1.0;
-	//__legendDY = 			1.0;
-	//__legendX = 			0.0;
-	//__legendY = 			0.0;
-	__line = 			1;
-	__nodes = 			new Vector<HydroBase_Node>();
-	__plotCommands = 		new Vector();
-	__nodeCount = 			1;
-	__nodeDiam = 			10.0;
-	__nodeHead = 			null;
-	__openCount = 			0;
-	__reachCounter = 		0;
-	__title = 			"Node Network";
-	__titleX = 			0.0;
-	__titleY = 			0.0;
-	__treatDryAsBaseflow = 		false;
+	__closeCount = 0;
+	__isDatabaseUp = false;
+	__createOutputFiles = true;
+	__createFancyDescription = false;
+	__fontSize = 10.0;
+	__dmi = null;
+	__labelType = LABEL_NODES_NETID;
+	//__legendDX = 1.0;
+	//__legendDY = 1.0;
+	//__legendX = 0.0;
+	//__legendY = 0.0;
+	__line = 1;
+	__nodes = new ArrayList<HydroBase_Node>();
+	__plotCommands = new ArrayList();
+	__nodeCount = 1;
+	__nodeDiam = 10.0;
+	__nodeHead = null;
+	__openCount = 0;
+	__reachCounter = 0;
+	__title = "Node Network";
+	__titleX = 0.0;
+	__titleY = 0.0;
+	__treatDryAsBaseflow = false;
 }
 
 // insertDownstreamNode - insert a node downstream from a given node
@@ -6191,25 +5961,6 @@ boolean skipBlankNodes) {
 }
 
 /**
-Finalize before garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__dmi = null;
-	__nodeHead = null;
-	__checkFP = null;
-	__newline = null;
-	__title = null;
-	__annotations = null;
-	__layouts = null;
-	__links = null;
-	__nodes = null;	
-	__plotCommands = null;
-
-	super.finalize();
-}
-
-/**
 Read a Stream network from the HydroBase Stream table, given a top-level
 stream number as a start (e.g., 3865 is the Rio Grande River).  The network is
 created by traversing the stream to its smallest reaches.
@@ -6356,19 +6107,17 @@ throws Exception {
 			}				
 			break;
 		case Node.ELEMENT_NODE:
-			// Data set components.  Print the basic information...
+			// Data set components.  Print the basic information.
 			String elementName = node.getNodeName();
 			if (elementName.equalsIgnoreCase("StateMod_Network")) {
 				processStateMod_NetworkNode(node);
-				// The main document node will have a list 
-				// of children but components will not.
-				// Recursively process each node...
+				// The main document node will have a list of children but components will not.
+				// Recursively process each node.
 				children = node.getChildNodes();
 				if (children != null) {
 					int len = children.getLength();
 					for (int i = 0; i < len; i++) {
-						processDocumentNodeForRead(
-							children.item(i));
+						processDocumentNodeForRead( children.item(i));
 					}
 				}
 			}
@@ -6481,14 +6230,14 @@ throws Exception {
 		name = attributeNode.getNodeName();
 		value = attributeNode.getNodeValue();
 		if (name.equalsIgnoreCase("AlternateX")) {
-			hnode.setDBX(new Double(value).doubleValue());
+			hnode.setDBX(Double.valueOf(value).doubleValue());
 		}
 		else if (name.equalsIgnoreCase("AlternateY")) {
-			hnode.setDBY(new Double(value).doubleValue());
+			hnode.setDBY(Double.valueOf(value).doubleValue());
 		}
 		else if (name.equalsIgnoreCase("Area")) {
 			area = value;
-			hnode.setArea(new Double(value).doubleValue());
+			hnode.setArea(Double.valueOf(value).doubleValue());
 		}
 		else if (name.equalsIgnoreCase("ComputationalOrder")) {
 			hnode.setComputationalOrder(
@@ -6517,7 +6266,7 @@ throws Exception {
 			}
 		}		
 		else if (name.equalsIgnoreCase("LabelAngle")) {
-			hnode.setLabelAngle(new Double(value).doubleValue());
+			hnode.setLabelAngle(Double.valueOf(value).doubleValue());
 		}
 		else if (name.equalsIgnoreCase("LabelPosition")) {
 			int div = hnode.getLabelDirection() / 10;
@@ -6561,7 +6310,7 @@ throws Exception {
 		}
 		else if (name.equalsIgnoreCase("Precipitation")) {
 			precip = value;
-			hnode.setPrecip(new Double(value).doubleValue());
+			hnode.setPrecip(Double.valueOf(value).doubleValue());
 		}
 		else if (name.equalsIgnoreCase("ReachCounter")) {
 			hnode.setReachCounter(
@@ -6601,10 +6350,10 @@ throws Exception {
 				Integer.decode(value).intValue());
 		}						
 		else if (name.equalsIgnoreCase("X")) {
-			hnode.setX(new Double(value).doubleValue());
+			hnode.setX(Double.valueOf(value).doubleValue());
 		}
 		else if (name.equalsIgnoreCase("Y")) {
-			hnode.setY(new Double(value).doubleValue());
+			hnode.setY(Double.valueOf(value).doubleValue());
 		}
 	}
 
@@ -6661,27 +6410,27 @@ throws Exception {
 		name = attributeNode.getNodeName();
 		value = attributeNode.getNodeValue();
 		if (name.equalsIgnoreCase("XMin")) {
-			__staticLX = new Double(value).doubleValue();
+			__staticLX = Double.valueOf(value).doubleValue();
 			__lxSet = true;
 		}
 		if (name.equalsIgnoreCase("YMin")) {
-			__staticBY = new Double(value).doubleValue();
+			__staticBY = Double.valueOf(value).doubleValue();
 			__bySet = true;
 		}
 		if (name.equalsIgnoreCase("XMax")) {
-			__staticRX = new Double(value).doubleValue();
+			__staticRX = Double.valueOf(value).doubleValue();
 			__rxSet = true;
 		}
 		if (name.equalsIgnoreCase("YMax")) {
-			__staticTY = new Double(value).doubleValue();
+			__staticTY = Double.valueOf(value).doubleValue();
 			__tySet = true;
 		}
 		if (name.equalsIgnoreCase("LegendX")) {
-			__staticLegendX = new Double(value).doubleValue();
+			__staticLegendX = Double.valueOf(value).doubleValue();
 			__legendXSet = true;
 		}
 		if (name.equalsIgnoreCase("LegendY")) {
-			__staticLegendY = new Double(value).doubleValue();
+			__staticLegendY = Double.valueOf(value).doubleValue();
 			__legendYSet = true;
 		}
 	}
@@ -7367,12 +7116,9 @@ Message.printStatus(2, "", "(" + currentRow.getWdwater_num() + " =?= "
 					+ "as previous row");
 			}			
 			nodeFound = findNode(NODE_DATA_LINK, 
-				HydroBase_Node.NODE_TYPE_CONFLUENCE,
-				(new Long(
-				currentRow.getWdwater_num())).toString());
+				HydroBase_Node.NODE_TYPE_CONFLUENCE, Long.valueOf( currentRow.getWdwater_num()).toString());
 			if (nodeFound != null) {
-				// We found a confluence node so add this node
-				// above it(case 1 above)...
+				// Found a confluence node so add this node above it(case 1 above).
 				if (Message.isDebugOn) {
 					Message.printDebug(dl, routine,
 						"Node \"" + node.getCommonID()
@@ -7389,17 +7135,14 @@ Message.printStatus(2, "", "(" + currentRow.getWdwater_num() + " =?= "
 				}				
 				nodeFound.addUpstreamNode(node);
 				// Set some of the reach number information.
-				// Need to put this in the add*Node code at
-				// some point...
-				node.setReachLevel(
-					nodeFound.getReachLevel() + 1);
+				// Need to put this in the add*Node code at some point.
+				node.setReachLevel( nodeFound.getReachLevel() + 1);
 				++reachCounter;
 				node.setReachCounter(reachCounter);
 
 				// Always set the trib number to the counter
 				// of upstream nodes in the downstream node...
-				node.setTributaryNumber(
-					nodeFound.getNumUpstreamNodes());
+				node.setTributaryNumber( nodeFound.getNumUpstreamNodes());
 
 /* all of this is messed up!  The trib number is always the trib count as
  it is added, regardless of the order of adding.  Deal with the order with
@@ -8594,8 +8337,8 @@ comments should be added).
 public static void writeListFile ( String filename, String delimiter, 
 					boolean update, List<HydroBase_Node> nodes,
 					String [] comments )
-throws Exception
-{	int size = 0;
+throws Exception {
+	int size = 0;
 	if (nodes != null) {
 		size = nodes.size();
 	}
@@ -8618,8 +8361,16 @@ throws Exception
 	HydroBase_Node node = null;
 	int j = 0;
 	PrintWriter out = null;
-	String[] commentString = { "#" };
-	String[] ignoreCommentString = { "#>" };
+	List<String> commentList = new ArrayList<>();
+	if ( comments != null ) {
+		for ( String comment : comments ) {
+			commentList.add ( comment );
+		}
+	}
+	List<String> commentString = new ArrayList<>();
+	commentString.add( "#" );
+	List<String> ignoreCommentString = new ArrayList<>();
+	ignoreCommentString.add("#>");
 	String[] line = new String[fieldCount];
 	StringBuffer buffer = new StringBuffer();
 
@@ -8627,7 +8378,7 @@ throws Exception
 		out = IOUtil.processFileHeaders(
 			oldFile,
 			IOUtil.getPathUsingWorkingDir(filename), 
-			comments, commentString, ignoreCommentString, 0);
+			commentList, commentString, ignoreCommentString, 0);
 
 		for (int i = 0; i < fieldCount; i++) {
 			buffer.append("\"" + names[i] + "\"");

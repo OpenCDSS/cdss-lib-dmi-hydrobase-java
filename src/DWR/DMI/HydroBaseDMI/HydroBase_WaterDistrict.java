@@ -4,48 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_WaterDistrict - class for HydroBase WaterDistrict objects to hold
-//	data from the HydroBase water_district table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2002-10-27	Steven A. Malers, RTi	Initial version.  Split code out of
-//					HydroBaseDMI and review functionality.
-//					This class should be an improved version
-//					of the older HBWaterDistrict class.
-//					For now only include the static methods
-//					(no water_district table data).
-// 2002-11-08	SAM, RTi		Change the parseWDID() method to return
-//					an array of int rather than String to
-//					streamline the use of the returned
-//					values.  Also overload to take an
-//					int[] as input to reuse the array.
-// 2003-02-13	J. Thomas Sapienza, RTi	Added the data members and get and set
-//					methods.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2007-02-26	SAM, RTi		Clean up based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -108,13 +82,13 @@ Form a WDID string from its parts.
 public static String formWDID ( int length, int wd, int id ) {
 	Integer iwd, iid;
 
-	iwd = new Integer (wd);
-	iid = new Integer (id);
+	iwd = Integer.valueOf (wd);
+	iid = Integer.valueOf (id);
 	List<Object> v = new ArrayList<>(2);
 	v.add(iwd);
 	v.add(iid);
 	if ((length <= 2) || (length >= 12)) {
-		// Requested length is out of range - use default of 7 characters
+		// Requested length is out of range - use default of 7 characters.
 		return StringUtil.formatString (v, "%02d%05d");
 	}
 	else {
@@ -277,7 +251,7 @@ public static int [] lookupWaterDivisionIdsForDistricts ( List<HydroBase_WaterDi
 		int wd = wds[i];
 		int div = lookupWaterDivisionIdForDistrict ( wdList, wd );
 		if ( div >= 0 ) {
-			divs.add(new Integer(div));
+			divs.add(Integer.valueOf(div));
 		}
 	}
 	int [] divs2 = new int[divs.size()];

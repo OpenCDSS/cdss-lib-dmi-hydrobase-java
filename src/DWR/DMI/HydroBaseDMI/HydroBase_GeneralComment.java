@@ -4,38 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_GeneralComment.java - Class to hold data from the HydroBase 
-//	general_comment table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-10	J. Thomas Sapienza, RTi	Initial version from HBGeneralComment.
-// 2003-02-19	JTS, RTi		Added fields and methods to handled 
-//					data members used in older versions of
-//					the database.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -47,7 +31,7 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase general_comment table.
 */
-public class HydroBase_GeneralComment 
+public class HydroBase_GeneralComment
 extends DMIDataObject {
 
 protected int _structure_num = 	DMIUtil.MISSING_INT;
@@ -59,30 +43,19 @@ protected int _user_num = 	DMIUtil.MISSING_INT;
 // older fields
 protected int _genl_comm_num = 	DMIUtil.MISSING_INT;
 protected String _notes = 	DMIUtil.MISSING_STRING;
+
 /*
-This is also an older field, but it will be stored in the _comment
-member variable -- though it has get and set methods appropriate to its name.
-protected String _genl_comment = DMIUtil.MISSING_STRING;
+This is also an older field, but it will be stored in the _comment member variable,
+although it has get and set methods appropriate to its name.
 */
+
+//protected String _genl_comment = DMIUtil.MISSING_STRING;
 
 /**
 Constructor.
 */
 public HydroBase_GeneralComment() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-*/
-protected void finalize()
-throws Throwable {
-	_comment = null;
-	_date_entered = null;
-	_modified = null;
-	_notes = null;
-	super.finalize();
 }
 
 /**
@@ -213,19 +186,17 @@ public void setUser_num(int user_num) {
 	_user_num = user_num;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_GeneralComment {"		+ "\n" + 
+	return "HydroBase_GeneralComment {"		+ "\n" +
 		"Structure_num: " + _structure_num + "\n" +
 		"Date_entered:  " +  _date_entered + "\n" +
 		"Comment:       " + _comment + "\n" +
 		"Modified:      " + _modified + "\n" +
 		"User_num:      " + _user_num + "\n}\n";
-
-	
 }
 
 }

@@ -4,83 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_StructureMoreInfo - Structure Data GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 18 Aug 1997	Darrell L. Gillmeister,	Created initial version.
-//		RTi
-// 01 Oct 1997	DLG, RTi		Added querying functionality	
-// 02 Dec 1997	Steven A. Malers, RTi	Enable full export and print.
-// 16 Dec 1997	DLG, RTi		Added court case, map file, and general 
-//					comment query.
-// 10 Feb 1998	DLG, RTi		Moved stream mile display to
-//					HBLocationDataGUI. Updated to 1.1 event
-//					model.
-// 04 Apr 1999	SAM, RTi		Add HBDMI to queries.
-// 02 Sep 1999	SAM, RTi		Updated because of changes to general
-//					comments in the database.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-// 2002-02-25	SAM, RTi		Make the ID field wider.
-//-----------------------------------------------------------------------------
-// 2003-04-09	J. Thomas Sapienza, RTi	Began initial Swing version.
-// 2003-05-30	JTS, RTi		Added code to copy from the table.
-// 2003-06-02	JTS, RTi		Added code so an hourglass displays when
-//					sorting the table
-// 2003-10-01	JTS, RTi		Continued work on the GUI after a bit
-//					of a hiatus.
-// 2003-12-10	JTS, RTi		Modified the GUI so that more than one
-//					court case or map file can be displayed
-//					per structure.
-// 2004-01-08	JTS, RTi		* Changed column sizes in worksheets.
-//					* Changed field sizes.
-//					* Got export and print working.
-// 2004-01-21	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2004-08-11	JTS, RTi		Fixed a bug related to getting data
-//					for the date installed field after
-//					the row count column was removed.
-// 2005-02-11	JTS, RTi		Converted 
-//					readStructureGeolocForStructure_num()
-//					to Stored procedures, and had to make
-//					changes in here because that method now
-//					returns a HydroBase_StructureView.
-// 2005-02-15	JTS, RTi		Converted all queries to use stored
-//					procedures.
-// 2005-03-24	JTS, RTi		Added support for Structure View objects
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-06-09	JTS, RTi		Added mapfile, courtcase, and notes
-//					to the exported data.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -95,7 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -226,19 +165,18 @@ int structureNum) {
 	JGUIUtil.setWaitCursor(this, false);
 	__statusJTextField.setText("Finished retrieving data.");
 
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 	String name = __structureNameJTextField.getText().trim();
 
 	String rest = "Structure Data - More Structure Information - "
 		+ HydroBase_WaterDistrict.formWDID(wd, id)
 		+ " (" + name + ")";
-	if (	(JGUIUtil.getAppNameForWindows() == null) ||
-		JGUIUtil.getAppNameForWindows().equals("") ) {
+	if ( (JGUIUtil.getAppNameForWindows() == null) || JGUIUtil.getAppNameForWindows().equals("") ) {
 		setTitle ( rest );
 	}
-	else {	setTitle( JGUIUtil.getAppNameForWindows() +
-		" - " + rest);
+	else {
+		setTitle( JGUIUtil.getAppNameForWindows() + " - " + rest);
 	}						
 }
 
@@ -264,7 +202,7 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -306,33 +244,6 @@ Responsible for closing the GUI.
 public void closeClicked() {
 	setVisible(false);	
 	dispose();
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__closeJButton = null;
-	__exportJButton = null;
-	__printJButton = null;
-	__ciuCodeJTextField = null;
-	__decreedCapacityJTextField = null;
-	__divJTextField = null;
-	__estimatedCapacityJTextField = null;
-	__idJTextField = null;
-	__statusJTextField = null;
-	__structureTypeJTextField = null;
-	__structureNameJTextField = null;
-	__wdJTextField = null;
-	__equipmentWorksheet = null;
-	__courtCaseWorksheet = null;
-	__mapFileWorksheet = null;
-	__notesJList = null;
-	__structureAKAJList = null;
-	__structureName = null;
-	super.finalize();
 }
 
 /**
@@ -1015,12 +926,12 @@ private List<GenericWorksheetData> submitMapfileQuery() {
 		return null;
 	}
 
-	List<GenericWorksheetData> v = new Vector<GenericWorksheetData>();
+	List<GenericWorksheetData> v = new ArrayList<>();
 	for (int i = 0; i < results.size(); i++) {
 		GenericWorksheetData d = new GenericWorksheetData(5);
 		HydroBase_Mapfile data = results.get(i);
 		
-		// store date as a string
+		// Store date as a string.
 		if (data.getMap_file_date() == null) {
 			d.setValueAt(0, "");
 		}
@@ -1030,7 +941,7 @@ private List<GenericWorksheetData> submitMapfileQuery() {
 			d.setValueAt(0, dt.toString());
 		}
 		
-		d.setValueAt(1, new Integer(data.getMapfile_num()));
+		d.setValueAt(1, Integer.valueOf(data.getMapfile_num()));
 		d.setValueAt(2, data.getMap_suffix());
 		d.setValueAt(3, data.getMap_supp_stmt());
 		d.setValueAt(4, data.getMap_file());

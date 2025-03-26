@@ -4,34 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_ReservoirData - Table Model for a Vector of 
-//	HydroBase_AreaCap objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-10-02	J. Thomas Sapienza, RTi	Initial version.
-// 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -149,10 +137,10 @@ public Object getValueAt(int row, int col) {
 
 	HydroBase_AreaCap a = _data.get(row);
 	switch (col) {
-		case COL_ELEVATION:	return new Double(a.getElevation());
- 		case COL_GAGE_HEIGHT:	return new Double(a.getGage_height());
-		case COL_SURFACE_AREA:	return new Double(a.getSurface_area());
-		case COL_VOLUME:	return new Double(a.getVolume());
+		case COL_ELEVATION:	return Double.valueOf(a.getElevation());
+ 		case COL_GAGE_HEIGHT:	return Double.valueOf(a.getGage_height());
+		case COL_SURFACE_AREA:	return Double.valueOf(a.getSurface_area());
+		case COL_VOLUME:	return Double.valueOf(a.getVolume());
 		default:		return "";
 	}
 }

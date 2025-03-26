@@ -11,12 +11,12 @@ TSTool is free software:  you can redistribute it and/or modify
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    TSTool is distributed in the hope that it will be useful,
+TSTool is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with TSTool.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
@@ -280,7 +280,7 @@ public Object getValueAt(int row, int col)
 		    }
 		    return units;
 		case COL_START:
-		    //return new Integer(mt.getStart_year() );
+		    //return Integer.valueOf(mt.getStart_year() );
 			i = mt.getStart_year();
 			if ( DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 				return "";
@@ -289,7 +289,7 @@ public Object getValueAt(int row, int col)
 			    return "" + i;
 			}
 		case COL_END:
-		    //return new Integer (mt.getEnd_year() );
+		    //return Integer.valueOf (mt.getEnd_year() );
 			i = mt.getEnd_year();
 			if ( DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 				return "";
@@ -306,7 +306,7 @@ public Object getValueAt(int row, int col)
 			    return "" + i;
 			}
 		case COL_DIV:
-		    //return new Integer ( mt.getDiv() );
+		    //return Integer.valueOf ( mt.getDiv() );
 			i = mt.getDiv();
 			if ( DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 				return "";
@@ -315,7 +315,7 @@ public Object getValueAt(int row, int col)
 			    return "" + i;
 			}
 		case COL_DIST:
-		    //return new Integer ( mt.getWD() );
+		    //return Integer.valueOf ( mt.getWD() );
 			i = mt.getWD();
 			if ( DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 				return "";

@@ -4,85 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_LoadWIS - Dialog to assist in 
-// Building/Loading a Water Information Sheet
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file. 
-//-----------------------------------------------------------------------------
-// History: 
-//
-// 16 Sep 1997	DLG, RTi 		Created initial class description.
-// 19 Nov 1997	DLG, RTi 		Added functionality for __mode =
-//					WIS_BUILDER.
-// 28 Apr 1998	DLG, RTi		Added javadoc comments, updated to 1.1
-//					event model.
-// 03 Apr 1999	SAM, RTi		Add HBDMI to all queries.
-// 21 May 1999	Steven A. Malers, RTi	Remove HBData.TIME_ZONE_DATUM.  Clean
-//					up code.
-// 08 Jul 2001	SAM, RTi		Select the first sheet in the list so
-//					the user does not have to when loading
-//					sheets for the builder.  Add
-//					finalize().  Change GUI to JGUIUtil.
-//					Use HBGUIApp.generateWaterDistricts()
-//					instead of HBGUIApp.getWDVector().
-// 15 Jul 2001	SAM, RTi		Add some StopWatch's to see why the load
-//					takes so long in the builder.
-// 2002-06-17	SAM, RTi		When listing sheet names, optionally
-//					show the count of sheets and the range
-//					of dates for the sheets.  Add the
-//					Delete button to help with testing.
-//-----------------------------------------------------------------------------
-// 2003-04-08	J. Thomas Sapienza, RTi	Began the initial Swing version.
-// 2003-04-09	JTS, RTi		Completed the initial Swing version.
-// 2003-10-08	JTS, RTI		Cleaned up, javadoc'd more.
-// 2003-11-19	JTS, RTi		Can now open a builder GUI.
-// 2003-11-28	JTS, RTi		Added reference to the parent object.
-// 2003-12-02	JTS, RTi		Changed the order in which districts
-//					are listed.
-// 2003-12-04	JTS, RTi		Opened the new wis GUI.
-// 2004-05-13	JTS, RTi		Checkbox for opening a read-only WIS
-//					is now a specific button.
-// 2005-02-14	JTS, RTi		Converted MOST queries to stored
-//					procedures.
-// 2005-02-22	JTS, RTi		The delete code now calls two  
-//					methods in the DMI in order to support
-//					stored procedures.
-// 2005-03-09	JTS, RTi		HydroBase_SheetName 	
-//					  -> HydroBase_WISSheetName.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-25	JTS, RTi		* Corrected errors resulting from 
-//					  transition to stored procedures.
-// 					* Call new version of formatDateTime()
-//					  suitable for use with stored 
-//					  procedures.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2006-04-11	JTS, RTi		All calls to readWISSheetNameList()
-//					now pass a "true" to make sure the 
-//					query results are sorted by 
-//					effective date.
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass JFrame to constructor.
-//					Add GoeViewUI to handle map interactions.
-//					Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -127,18 +64,17 @@ import RTi.Util.String.StringUtil;
 import RTi.Util.Time.DateTime;
 
 /**
-This class is a GUI for choosing the water information sheet to display on 
-the WIS gui.
+This class is a GUI for choosing the water information sheet to display on the WIS gui.
 */
 @SuppressWarnings("serial")
-public class HydroBase_GUI_LoadWIS 
+public class HydroBase_GUI_LoadWIS
 extends JFrame
 implements ActionListener, ItemListener, MouseListener, WindowListener {
 
 /**
 Modes in which this GUI can be instantiated.
 */
-public final static int 
+public final static int
 	WIS_BUILDER = 	0,
 	DISTRICT_WIS = 	1,
 	DIVISION_WIS = 	2;
@@ -146,7 +82,7 @@ public final static int
 /**
 Button labels.
 */
-private final String	
+private final String
 	__BUTTON_CANCEL = 		"Cancel",
 	__BUTTON_DELETE = 		"Delete",
 	__BUTTON_EDIT = 		"Edit",
@@ -262,10 +198,10 @@ public void actionPerformed(ActionEvent event) {
 
         if (s.equals(__BUTTON_CANCEL)) {
                 cancelClicked();
-        }       
+        }
         else if (s.equals(__BUTTON_DELETE)) {
 		deleteClicked();
-        }       
+        }
         else if (s.equals(__BUTTON_OPEN)) {
                 okClicked(true);
         }
@@ -274,12 +210,12 @@ public void actionPerformed(ActionEvent event) {
 	}
         else if (s.equals(__BUTTON_EDIT)) {
                 editClicked();
-        }        
+        }
         else if (s.equals(__BUTTON_NEW)) {
                 newClicked();
-        }        
+        }
         else if (s.equals(__BUTTON_HELP)) {
-        }        
+        }
 }
 
 /**
@@ -331,7 +267,7 @@ private void deleteClicked() {
 		return;
 	}
 	DateTime sDateTime = null;
-	try {	
+	try {
 		sDateTime = DateTime.parse(sheetDateString);
 	}
 	catch (Exception e) {
@@ -403,11 +339,11 @@ private void editClicked() {
         else if (index == -1) {
                 Message.printWarning(1, function, "A date must be selected.");
                 return;
-        } 
+        }
 
 	JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Please Wait...Loading WIS");
- 
+
       	HydroBase_WISSheetName data = (HydroBase_WISSheetName)__sheetDatesVector.get(index);
 
         new HydroBase_GUI_WISBuilder(__parent, __geoview_ui, __dmi, data);
@@ -415,22 +351,6 @@ private void editClicked() {
 	JGUIUtil.setWaitCursor(this, false);
         __statusJTextField.setText("Ready");
 	cancelClicked();
-}
-
-/**
-Clean up for garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__parent = null;
-	__dmi = null;
-	__newWISGUI = null;
-	__statusJTextField = null;
-	__historyList = null;
-	__sheetNameComboBox = null;
-	__wisVector = null;
-	__sheetDatesVector = null;
-	super.finalize();
 }
 
 /**
@@ -447,7 +367,7 @@ private void generateDates() {
 
 	DateTime dt = null;
         int sheetIndex = __sheetNameComboBox.getSelectedIndex();
-	
+
 	int vsize = __wisVector.size();
 	if (sheetIndex >= vsize) {
 		return;
@@ -456,9 +376,8 @@ private void generateDates() {
 	String sheetName = data.getSheet_name();
         String tempString = "Please Wait...Retrieving dates for " + sheetName;
         __statusJTextField.setText(tempString);
- 
-        // process WIS query to get all the wis_nums associated with 
-        // the currently selected sheet name
+
+        // Process WIS query to get all the wis_nums associated with the currently selected sheet name.
 	JGUIUtil.setWaitCursor(this, true);
 	try {
 		List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, sheetName,null,
@@ -476,14 +395,13 @@ private void generateDates() {
 	                        data = results.get(curRow);
 				results2 = __dmi.readWISCommentsList(
 					data.getWis_num(), null, 42);
-	
+
 				if (!results2.isEmpty()) {
 		                        size2 = results2.size();
-		                        for (int i = 0; i < size2; 
+		                        for (int i = 0; i < size2;
 						i++) {
-		                                HydroBase_WISComments 
-							commentsData = results2.get(i);
-		                                dt = new DateTime(
+		                    HydroBase_WISComments commentsData = results2.get(i);
+                            dt = new DateTime(
 							commentsData
 							.getSet_date());
 						rows.add(dt.toString(
@@ -498,16 +416,15 @@ private void generateDates() {
 		}
 		else {
 			List<String> rows = new Vector<String>();
-	                int size = results.size(); 
+	                int size = results.size();
 	                List<String> wis_numVector = new Vector<String>(size);
 	                for (int curRow = 0; curRow < size; curRow++) {
 	                        data = results.get(curRow);
 	                        wis_numVector.add(""+ data.getWis_num());
 	                }
 			List<HydroBase_WISComments> resultsWISComments = __dmi.readWISCommentsList(wis_numVector, null);
-	
-	                // add the dates for the selected sheet into the 
-			// __historyList object
+
+	                // Add the dates for the selected sheet into the __historyList object.
 			if (!resultsWISComments.isEmpty()) {
 	                        size = results.size();
 	                        for (int curRow = 0; curRow < size; curRow++) {
@@ -549,11 +466,10 @@ private void generateDates() {
         }
         else {
         	// no other dates exist to compare today's date against
-                __historyList.add(newRecord 
-			+ dt.toString(DateTime.FORMAT_Y2K_SHORT), 0);
+                __historyList.add(newRecord + dt.toString(DateTime.FORMAT_Y2K_SHORT), 0);
                 __sheetDatesVector.add(new HydroBase_WISComments());
         }
-         
+
 	// now select the first item in the list.
         if (__historyList.getItemCount() > 0) {
 		 __historyList.select(0);
@@ -572,7 +488,7 @@ private void generateFormatDates() {
         if (__sheetNameComboBox.getItemCount() == 0) {
                 return;
         }
-	
+
 	String routine = "HydroBase_GUI_LoadWIS.generateFormatDates";
 
         int sheetIndex = __sheetNameComboBox.getSelectedIndex();
@@ -581,21 +497,20 @@ private void generateFormatDates() {
         __historyList.removeAll();
         __sheetDatesVector.clear();
 
-        // process WIS query to get all the wis_nums associated with 
-        // the currently selected sheet name
+        // Process WIS query to get all the wis_nums associated with // the currently selected sheet name.
 	JGUIUtil.setWaitCursor(this, true);
         String tempString = "Please Wait...Retrieving dates for " + sheetName;
         __statusJTextField.setText(tempString);
         Message.printStatus(1, routine, tempString);
-        
+
 
 	try {
 
 		List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, sheetName,
 		null, true);
-	
+
 	if (!results.isEmpty()) {
-                int size = results.size(); 
+                int size = results.size();
 
                 // add the dates for the selected sheet into the __historyList
 		// object
@@ -618,7 +533,7 @@ private void generateFormatDates() {
         if (__historyList.getItemCount()> 0) {
 		 __historyList.select(0);
 	}
-         
+
 	JGUIUtil.setWaitCursor(this, false);
         __statusJTextField.setText("Ready");
 }
@@ -654,7 +569,7 @@ private void getWISSheets() {
 
 	JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Please Wait...Retrieving WIS list...");
-                              
+
         // results Vector contains the query results
         List<String> wds = getWD();
 	try {
@@ -675,7 +590,7 @@ private void getWISSheets() {
 	List<HydroBase_WISSheetName> newResults = new Vector<HydroBase_WISSheetName>();
 
 	if (!results.isEmpty()) {
-                int size = results.size(); 
+                int size = results.size();
 		int len = 0;
                 for (int i = 0; i < size; i++) {
                         data = results.get(i);
@@ -717,9 +632,9 @@ private void getWISSheets() {
 	}
 
 	if (!newResults.isEmpty()) {
-                int size = newResults.size(); 
+                int size = newResults.size();
 		int vsize = 0;
-		int wis_num = 0;	
+		int wis_num = 0;
 		HydroBase_WISSheetName sheetName = null;
 		List<HydroBase_WISSheetName> sheets = null;
 		List<HydroBase_WISComments> wis_comments = null;
@@ -744,7 +659,7 @@ private void getWISSheets() {
 					if (DMIUtil.isMissing(wis_num) || HydroBase_Util.isMissing(wis_num)) {
 						continue;
 					}
-			
+
 					v = __dmi.readWISCommentsList(wis_num, null);
 					vsize = v.size();
 
@@ -765,16 +680,16 @@ private void getWISSheets() {
 					first = new DateTime(wis_comments.get(0).getSet_date(),
 						DateTime.PRECISION_DAY);
 					__sheetNameComboBox.add(
-						name + " - " + nsheets 
-							+ " WIS " + first  
+						name + " - " + nsheets
+							+ " WIS " + first
 							+ "..." + last);
 				}
-				else {	
+				else {
 					__sheetNameComboBox.add(
 						name + " - No sheets saved");
 				}
 			}
-			else {	
+			else {
 				__sheetNameComboBox.add(
 					name + " - No sheets saved");
 			}
@@ -787,7 +702,7 @@ private void getWISSheets() {
 		Message.printWarning(1, routine, e);
 		ready();
 		return;
-	}	
+	}
 	// select the default wis according to preferences
 	String def = __dmi.getPreferenceValue("WIS.WISdefault");
 	if (__sheetNameComboBox.contains(def)) {
@@ -810,13 +725,13 @@ public void itemStateChanged(ItemEvent event) {
 	if (__ignoreItemStateChanged) {
 		return;
 	}
-	
+
 	if (event.getStateChange() != ItemEvent.SELECTED) {
 		return;
 	}
-	
+
 	Object o = event.getItemSelectable();
-	
+
         if (o == __sheetNameComboBox) {
 		sheetNameSelected();
         }
@@ -836,7 +751,7 @@ public void mouseClicked(MouseEvent event) {
 		}
 		else if (__mode == WIS_BUILDER) {
 			editClicked();
-		}	
+		}
         }
 }
 
@@ -868,10 +783,10 @@ public void mouseReleased(MouseEvent event) {}
 Prompts user for new water information sheet information.
 */
 private void newClicked() {
-	if (__newWISGUI == null) {	
+	if (__newWISGUI == null) {
 	        __newWISGUI = new HydroBase_GUI_NewWIS(__parent, __geoview_ui, __dmi, this);
 	}
-	else {	
+	else {
 		__newWISGUI.setVisible(true);
 	}
 }
@@ -895,15 +810,14 @@ private void okClicked(boolean editable) {
 		"-", 0, 0).trim();
 
         boolean isNewSheet = false;
- 
+
         // return if a date has not been selected
         if (index == -1) {
                 Message.printWarning(1, routine, "Must select a date.");
                 return;
         }
 
-        HydroBase_WISComments data = 
-		(HydroBase_WISComments)__sheetDatesVector.get(index);
+        HydroBase_WISComments data = (HydroBase_WISComments)__sheetDatesVector.get(index);
 	String status = null;
 	Date setDate = null;
 	Date archiveDate = null;
@@ -919,29 +833,28 @@ private void okClicked(boolean editable) {
 	// load a sheet with no data. The check for MISSING_DATE will catch the
 	// item corresponding to a new adminstration record as determined in
 	// generateDates(). if this item is added to the __historyList object
-	// then an empty HydroBase_WISComments object is added at element 0 in 
+	// then an empty HydroBase_WISComments object is added at element 0 in
 	// the __sheetDatesVector.
 	HydroBase_WISSheetName sheetData = null;
-//System.out.println("Archive date: " + data.getArchive_date());	
+//System.out.println("Archive date: " + data.getArchive_date());
         if (DMIUtil.isMissing(data.getArchive_date()) ) {
                 // get the most recent wis_num for the selected sheet name.
                 // most recent is determined via the effective date in
 		// Sheet_Name table.
 
-        	List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, 
-			sheetName, null, true);
+        	List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, sheetName, null, true);
 
                 // element 0 is the most recent date since the order of the
 		// results is descending by effective date. get the effective
 		// date.
                 sheetData = (HydroBase_WISSheetName)results.get(0);
                 recentFormat = sheetData.getEffective_date();
-         
+
                 // only item in the list is the new administrative record item
                 // will need to load a sheet using the wis_num of the currently
 		// selected sheet name.
                 if (numItems == 1) {
-//System.out.println("NUM ITEMS 1");		
+//System.out.println("NUM ITEMS 1");
                         setDate = null;
                         archiveDate = null;
 			Message.printStatus(1, routine,
@@ -953,7 +866,7 @@ private void okClicked(boolean editable) {
 		// the format may be more recent than the most recently
 		// archived WIS_Data. if so, load the most
                 // recent WIS_format with empty data.
-		else {	
+		else {
 			previousData = true;
 			data = (HydroBase_WISComments)
 				__sheetDatesVector.get(index+1);
@@ -968,7 +881,7 @@ private void okClicked(boolean editable) {
                                 isNewSheet = true;
 				previousData = false;
                         }
-                        else {	
+                        else {
 				setDate = data.getSet_date();
 				Message.printStatus(1, routine, "Copying "
 					+ "data from previous date.");
@@ -980,12 +893,11 @@ private void okClicked(boolean editable) {
                         }
                 }
         }
-        else {	
-		// check for most recent format           
+        else {
+		// Check for most recent format.
                 recentWIS = data.getArchive_date();
 
-                List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, 
-			sheetName, null, true);
+                List<HydroBase_WISSheetName> results = __dmi.readWISSheetNameList(-999, -999, sheetName, null, true);
                 sheetData = results.get(0);
                 recentFormat = sheetData.getEffective_date();
                	if (recentWIS.before(recentFormat)) {
@@ -998,7 +910,7 @@ private void okClicked(boolean editable) {
 			previousData = true;
 			oldFormatWISNum = data.getWis_num();
                	}
-		else {	
+		else {
 			sheetData.setWis_num(data.getWis_num());
 	                setDate = data.getSet_date();
         	        archiveDate = data.getArchive_date();
@@ -1008,7 +920,7 @@ private void okClicked(boolean editable) {
 	                isNewSheet = false;
 		}
         }
-	
+
         // format the setDate
         if (setDate != null) {
                 DateTime tsDate = new DateTime(setDate);
@@ -1029,10 +941,10 @@ Message.printStatus(1, "", "      oldFormatWISNum: " + oldFormatWISNum);
 
 	JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Please Wait...Displaying WIS ");
-	new HydroBase_GUI_WIS(__parent, __geoview_ui, __dmi, sheetData, __mode, date, 
+	new HydroBase_GUI_WIS(__parent, __geoview_ui, __dmi, sheetData, __mode, date,
 		status, sheetName, isNewSheet, previousData, editable,
 		oldFormatWISNum);
-		
+
 	}
 	catch (Exception e) {
 		Message.printWarning(1, routine, "Error displaying WIS.");
@@ -1076,22 +988,22 @@ private void setupGUI() {
         topJPanel.setLayout(gbl);
         getContentPane().add("North", topJPanel);
 
-        JGUIUtil.addComponent(topJPanel, new JLabel("Sheet Name:"), 
+        JGUIUtil.addComponent(topJPanel, new JLabel("Sheet Name:"),
 		0, 0, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
-                
+
         __sheetNameComboBox = new SimpleJComboBox();
 	__sheetNameComboBox.addItemListener(this);
-        JGUIUtil.addComponent(topJPanel, __sheetNameComboBox, 
+        JGUIUtil.addComponent(topJPanel, __sheetNameComboBox,
 		1, 0, 1, 1, 1, 0, insetsTNNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
         // Center JPanel
         JPanel centerJPanel = new JPanel();
         centerJPanel.setLayout(gbl);
         getContentPane().add("Center", centerJPanel);
-         
-        JGUIUtil.addComponent(centerJPanel, new JLabel("Date:"), 
+
+        JGUIUtil.addComponent(centerJPanel, new JLabel("Date:"),
 		0, 1, 1, 1, 0, 0, insetsNLNR, GridBagConstraints.NONE, GridBagConstraints.WEST);
-                
+
         __historyList = new SimpleJList<String>();
 	__historyList.addMouseListener(this);
         JGUIUtil.addComponent(centerJPanel, new JScrollPane(__historyList),
@@ -1099,9 +1011,9 @@ private void setupGUI() {
 
         JPanel buttonJPanel = new JPanel();
         buttonJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JGUIUtil.addComponent(centerJPanel, buttonJPanel, 
-		0, 3, 2, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST); 
- 
+        JGUIUtil.addComponent(centerJPanel, buttonJPanel,
+		0, 3, 2, 1, 1, 0, insetsNLNR, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
+
  	SimpleJButton openReadOnly = new SimpleJButton(__BUTTON_OPEN_READ_ONLY,
 		this);
 	openReadOnly.setToolTipText("Accept selection and open WIS in "
@@ -1115,11 +1027,11 @@ private void setupGUI() {
 
         if (__mode != WIS_BUILDER) {
 		buttonJPanel.add(openReadOnly);
-		if (!__readonly) {		
+		if (!__readonly) {
 	                buttonJPanel.add(open);
 		}
         }
-         
+
         if (__mode == WIS_BUILDER) {
                 buttonJPanel.add(edit);
                 buttonJPanel.add(newWIS);
@@ -1128,31 +1040,28 @@ private void setupGUI() {
         if (!__dmi.canWriteToDatabase()) {
                 newWIS.setEnabled(false);
         }
-	
+
 	SimpleJButton cancel = new SimpleJButton(__BUTTON_CANCEL, this);
 	cancel.setToolTipText("Close dialog and return.");
         buttonJPanel.add(cancel);
 //        buttonJPanel.add(new SimpleJButton(__BUTTON_HELP, this));
 	if (IOUtil.testing()) {
 		if (__dmi.canWriteToDatabase()) {
-			// Add a delete button to allow deleting a sheet.  Use 
-			// this to completely clear a current sheet or a 
-			// corrupt old sheet.
-			SimpleJButton del = new SimpleJButton(__BUTTON_DELETE, 
-				this);
+			// Add a delete button to allow deleting a sheet.  Use this to completely clear a current sheet or a corrupt old sheet.
+			SimpleJButton del = new SimpleJButton(__BUTTON_DELETE, this);
 			del.setToolTipText("Delete existing WIS.");
 	        	buttonJPanel.add(del);
 		}
 	}
-                                  
+
         // South JPanel
         JPanel southJPanel = new JPanel();
         southJPanel.setLayout(gbl);
         getContentPane().add("South", southJPanel);
-                                
+
         __statusJTextField = new JTextField();
         __statusJTextField.setEditable(false);
-        JGUIUtil.addComponent(southJPanel, __statusJTextField, 
+        JGUIUtil.addComponent(southJPanel, __statusJTextField,
 		0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	String app = JGUIUtil.getAppNameForWindows();
@@ -1160,14 +1069,14 @@ private void setupGUI() {
 		app = "";
 	}
 	else {
-		app += " - ";	
+		app += " - ";
 	}
 
-        // frame settings        
-        if (__mode == WIS_BUILDER) {      
+        // frame settings
+        if (__mode == WIS_BUILDER) {
                 setTitle(app + "Build Water Information Sheet");
         }
-	else {	
+	else {
 		setTitle(app + "Load Information Sheet");
         }
         pack();
@@ -1186,10 +1095,9 @@ public void setVisible(boolean state) {
                 __wisVector = new Vector<HydroBase_WISSheetName>();
                 __sheetDatesVector = new Vector<Object>();
 
-                // generate a list of WIS sheets and show dates for the 
-                // top most sheet in the list.
+                // Generate a list of WIS sheets and show dates for the top most sheet in the list.
                 if (__mode == DISTRICT_WIS || __mode == DIVISION_WIS) {
-                        getWISSheets();          
+                        getWISSheets();
                         generateDates();
                 }
                 else if (__mode == WIS_BUILDER) {
@@ -1205,7 +1113,7 @@ Responds to the __sheetNameComboBox action event and generates dates according
 to the __mode in which this gui was instantiated.
 */
 private void sheetNameSelected() {
-	if (__mode == DISTRICT_WIS || __mode == DIVISION_WIS) {      
+	if (__mode == DISTRICT_WIS || __mode == DIVISION_WIS) {
 	        generateDates();
         }
         else if (__mode == WIS_BUILDER) {

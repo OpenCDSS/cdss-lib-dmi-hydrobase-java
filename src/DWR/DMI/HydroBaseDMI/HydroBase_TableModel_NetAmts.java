@@ -4,50 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_NetAmts - Table Model for a Vector of 
-//	HydroBase_NetAmts objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-03-05	J. Thomas Sapienza, RTi	Initial version.
-// 2003-03-07	JTS, RTi		Added initial sorting code.
-// 2003-03-10	JTS, RTi		Added table column width code.
-// 2003-03-11	JTS, RTi		Added code for column 'HALF SEC'
-// 2003-03-20	JTS, RTi		Revised after SAM's review.
-// 2003-05-13	JTS, RTi		Row numbers (the 0th column) now are
-//					not affected by column sorting.
-// 2004-01-19	JTS, RTi		Dates are now returned as Strings.
-// 2004-01-20	JTS, RTi		Removed 0th column in favor of the new
-//					JWorksheet column header system.
-// 2004-06-01	JTS, RTi		Converted the location to be a 
-//					single string.
-// 2005-04-06	JTS, RTi		Adjusted column names and sizes.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2005-07-06	Steven A. Malers, RTi	Review headers and add tooltips.
-// 2005-07-11	JTS, RTi		Added the strtype field.
-// 2005-11-15	JTS, RTi		Added div column.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -528,9 +500,9 @@ public Object getValueAt(int row, int col) {
 	switch (_type) {
 	case LEGAL:
 	switch (col) {
-		case 0:		return new Integer(r.getDiv());
-		case 1:		return new Integer(r.getWD());
-		case 2:		return new Integer(r.getID());
+		case 0:		return Integer.valueOf(r.getDiv());
+		case 1:		return Integer.valueOf(r.getWD());
+		case 2:		return Integer.valueOf(r.getID());
 		case 3:		return r.getWr_name();
 		case 4:		return r.getWd_stream_name();
 		case 5:		
@@ -543,41 +515,41 @@ public Object getValueAt(int row, int col) {
 		case 7:		return parseDate(r.getAdj_date());
 		case 8:		return parseDate(r.getPadj_date());
 		case 9:		return parseDate(r.getApro_date());
-		case 10:	return new Double(r.getAdmin_no());
-		case 11:	return new Integer(r.getOrder_no());
+		case 10:	return Double.valueOf(r.getAdmin_no());
+		case 11:	return Integer.valueOf(r.getOrder_no());
 		case 12:	return r.getPri_case_no();
 		case 13:	return r.getAdj_type();
 		case 14:	return r.getUse();
-		case 15:	return new Double(r.getNet_rate_abs());
-		case 16:	return new Double(r.getNet_vol_abs());
-		case 17:	return new Double(r.getNet_rate_cond());
-		case 18:	return new Double(r.getNet_vol_cond());
-		case 19:	return new Double(r.getNet_rate_apex());
-		case 20:	return new Double(r.getNet_vol_apex());
+		case 15:	return Double.valueOf(r.getNet_rate_abs());
+		case 16:	return Double.valueOf(r.getNet_vol_abs());
+		case 17:	return Double.valueOf(r.getNet_rate_cond());
+		case 18:	return Double.valueOf(r.getNet_vol_cond());
+		case 19:	return Double.valueOf(r.getNet_rate_apex());
+		case 20:	return Double.valueOf(r.getNet_vol_apex());
 		case 21: 	return r.getStrtype();
 		default:	return "";
 	}
 	case SUMMARY:
 	switch (col) {
-		case 0:		return new Integer(r.getDiv());
-		case 1:		return new Integer(r.getWD());
-		case 2:		return new Integer(r.getID());
+		case 0:		return Integer.valueOf(r.getDiv());
+		case 1:		return Integer.valueOf(r.getWD());
+		case 2:		return Integer.valueOf(r.getID());
 		case 3:		return r.getWr_name();
 		case 4:		return r.getWd_stream_name();
 		case 5:		return parseDate(r.getAdj_date());
 		case 6:		return parseDate(r.getPadj_date());
 		case 7:		return parseDate(r.getApro_date());
-		case 8:		return new Double(r.getAdmin_no());
-		case 9:		return new Integer(r.getOrder_no());
+		case 8:		return Double.valueOf(r.getAdmin_no());
+		case 9:		return Integer.valueOf(r.getOrder_no());
 		case 10:	return r.getPri_case_no();
 		case 11:	return r.getAdj_type();
 		case 12:	return r.getUse();
-		case 13:	return new Double(r.getNet_rate_abs());
-		case 14:	return new Double(r.getNet_vol_abs());
-		case 15:	return new Double(r.getNet_rate_cond());
-		case 16:	return new Double(r.getNet_vol_cond());
-		case 17:	return new Double(r.getNet_rate_apex());
-		case 18:	return new Double(r.getNet_vol_apex());
+		case 13:	return Double.valueOf(r.getNet_rate_abs());
+		case 14:	return Double.valueOf(r.getNet_vol_abs());
+		case 15:	return Double.valueOf(r.getNet_rate_cond());
+		case 16:	return Double.valueOf(r.getNet_vol_cond());
+		case 17:	return Double.valueOf(r.getNet_rate_apex());
+		case 18:	return Double.valueOf(r.getNet_vol_apex());
 		case 19:	
 			return HydroBase_Util.buildLocation(
 				r.getPM(), r.getTS(), r.getTdir(),

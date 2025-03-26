@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,26 +20,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_NetAmts.java - Class to hold data from the HydroBase net_amts table
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-13	J. Thomas Sapienza, RTi	Initial version from HBWaterRightNet.
-// 2003-02-20	JTS, RTi		Commented out X* data.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2003-02-25	JTS, RTi		Moved the add*() methods to 
-//					HydroBase_Report_Cumulative.
-//					Added rdir, rnga, tdir, tsa.
-// 2005-07-11	JTS, RTi		Added strtype, wr_stream_no.
-// 2006-04-17	Steven A. Malers, RTi	Add common_id and set/get methods, for
-//					use in StateDMI when storing well
-//					permits as water rights.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -179,44 +159,6 @@ Constructor.
 */
 public HydroBase_NetAmts() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_abs = null;
-	_action_comment = null;
-	_xstrtype = null;
-	_strtype = null;
-	_wr_name = null;
-	_wd_stream_name = null;
-	_use = null;
-	_unit = null;
-	_ts = null;
-	_tab_trib = null;
-	_seca = null;
-	_rng = null;
-	_rdir = null;
-	_rnga = null;
-	_tdir = null;
-	_tsa = null;
-	_q10 = null;
-	_q40 = null;
-	_q160 = null;
-	_pri_case_no = null;
-	_pm = null;
-	_padj_date = null;
-	_cond = null;
-	_apro_date = null;
-	_apex = null;
-	_adj_type = null;
-	_adj_date = null;
-	
-	super.finalize();
 }
 
 /**

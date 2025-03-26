@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2023 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2272,8 +2272,8 @@ public boolean parseAreaPrecip(String string0) {
 		List<String> v = StringUtil.breakStringList(string, " \t", 0);
 		area = v.get(0);
 		precip = v.get(1);
-		double a = (new Double(area)).doubleValue();
-		double p = (new Double(precip)).doubleValue();
+		double a = Double.valueOf(area).doubleValue();
+		double p = Double.valueOf(precip).doubleValue();
 		double water = 0;
 		if (theOperator == '*') {
 			water = a*p;

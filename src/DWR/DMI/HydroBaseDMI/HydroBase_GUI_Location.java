@@ -4,58 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_Location - Location Data GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// Notes: 
-//	(1)Can be used to display both structure and station location data.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 18 Aug 1997	DLG, RTi 		Created initial version.
-// 22 Aug 1997  DLG, RTi 		Added additional GUI components
-// 03 Dec 1997	Steven A. Malers, RTi	Implement full export, print.
-// 10 Feb 1998	DLG, RTi		Added stream mile display.
-//					Updated to 1.1 event model.
-// 23 Mar 1998 	DLG, RTi		Added a constructor to accept a 
-//					HBStationLocation object
-// 04 Apr 1999	SAM, RTi		Change cursors to Cursor class because
-//					Frame version is deprecated.
-// 12 Apr 1999	SAM, RTi		Minor update because of database
-//					changes.  Change the range field to be
-//					four characters.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//-----------------------------------------------------------------------------
-// 2003-09-30	J. Thomas Sapienza, RTi	Initial swing version.
-// 2005-02-11	JTS, RTi		Added support for Structure view objects
-//					that are returned from stored procedures
-// 2005-03-24	JTS, RTi		Completed support for structure view
-//					objects.
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-07-07	JTS, RTi		* Organized the GUI components.
-//					* Added UTM values.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -223,7 +187,7 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -560,19 +524,18 @@ public List<String> formatOutput(int format) {
 Initializes some settings for the GUI.
 */
 private void initialize() {
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 	String name = __structureNameJTextField.getText().trim();
 
 	String rest = "Structure Data - Location Data - "
 		+ HydroBase_WaterDistrict.formWDID(wd, id)
 		+ " (" + name + ")";
-	if (	(JGUIUtil.getAppNameForWindows() == null) ||
-		JGUIUtil.getAppNameForWindows().equals("") ) {
+	if ( (JGUIUtil.getAppNameForWindows() == null) || JGUIUtil.getAppNameForWindows().equals("") ) {
 		setTitle ( rest );
 	}
-	else {	setTitle( JGUIUtil.getAppNameForWindows() +
-		" - " + rest);
+	else {
+		setTitle( JGUIUtil.getAppNameForWindows() + " - " + rest);
 	}					
 }
 

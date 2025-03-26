@@ -4,182 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_StationQuery - Station Query GUI
-//-----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 10 Mar 1997  DLG, RTi        Created initial version.
-// 06 Apr 1998  DLG, RTi        Commented out location and data types from the
-//                              the MultiList object.
-// 28 Apr 1998  CEN, RTi        Rearrange layout: remove filter checkboxes; 
-//				add pulldown selections for data type, time
-//				step, and auxiliary data type.  The logic
-//				has changed so that there is more filtering
-//				initially, so that the resulting list contains
-//				more specific station data.  From there, 
-//				multiple stations may be selected to be 
-//				displayed in a graph form, summary, etc.  
-//				Previously, one station only could be selected
-//				and then the resulting list was dynamically
-//				created on potential options.
-// 04 May 1998  CEN, RTi        Change strings in display views; alphabetize
-//				all choices; change label on list; add "start",
-//				"end", "drain area", and "cont. area" columns
-//				to multilist.
-// 05 May 1998  CEN, RTi        added members for data type, modified data
-//				type, and time step.  These are set whenever
-//				a user selects "get data".  That way, we can
-//				always know what was selected the last time
-//				the station list was created.
-// 04 Apr 1999	SAM, RTi	Add HBDMI to queries.
-// 14 Apr 1999	SAM, RTi	Add query time message to output.  Take some
-//				obsolete code for a different data type GUIs
-//				so the code is simple.  Change the Display View
-//				from a list to buttons.  Add warning when
-//				summary cannot be created.
-// 15 Apr 1999	SAM, RTi	Add frost dates.
-// 02 Sep 1999	SAM, RTi	Fix bug where district choice was not getting
-//				updated after preferences where changed.
-// 10 Apr 2001	SAM, RTi	Change to RTi graphing tool.  Change GUI to
-//				GUIUtil.  Change so daily precip is total, not
-//				average.  Change so monthly mean/max/min
-//				temperatures work.  Add finalize().  Change
-//				some data flags to non-static to save memory.
-// 2001-10-05	SAM, RTi	Enable new map interface.  Change so print and
-//				export buttons are class members so they can be
-//				enabled and disabled depending on the state of
-//				the interface.  Add UTM X, Y to the table
-//				output.
-//				NO TIME RIGHT NOW BUT WHY ARE THERE
-//				displayResults()AND
-//				displayStationLocationResults()METHODS?  The
-//				structure query does not have.  The methods
-//				probably need to be combined.  Remove unused
-//				code(old station data type checkboxes).
-// 2001-12-13	SAM, RTi	Use updated GeoView classes that are named to
-//				support Swing and NoSwing code.
-// 2002-02-20	SAM, RTi	Replace TSViewGUI with TSViewJFrame.
-// 2002-05-07	SAM, RTi	Fix - warning message when selecting on map
-//				used wrong count.
-// 2002-08-19	SAM, RTi	Change so a point click on the map does NOT
-//				result in a query.  Update so the window is
-//				automatically displayed if not visible when
-//				a map select is made.
-//-----------------------------------------------------------------------------
-// 2003-03-17	J. Thomas Sapienza, RTi	Initial work on moving to SWING version.
-// 2003-03-20	JTS, RTi		Post-snowstorm, work continues on SWING.
-// 2003-03-21	JTS, RTi		Implemented __locationGUI.
-// 2003-03-24	JTS, RTi		* Fixed status bar update and hourglass
-//					  cursor issues.
-//					* Renamed from HydroBase_GUI_Station to
-//					  HydroBase_GUI_StationQuery.
-// 2003-03-25	JTS, RTi		* Removed references to
-//					  HydroBase_GUI_Util parent object.
-// 2003-03-27	JTS, RTi		* Corrected error in database query that
-//					  resulted in too many records being
-//					  returned.
-//					* Changed query to a non-distinct one.
-//					* Corrected error that resulted in 
-//					  duplicate data types appearing
-// 2003-03-28	JTS, RTi		Title is now set with the program name
-//					as well as the form name.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2003-04-07	JTS, RTi		Fixed when things should be enabled
-//					or disabled based on how many records
-//					are selected.
-// 2003-05-15	JTS, RTi		* Opened up the GeoViewJPanel code.
-//					* Added a CWRATMainJFrame parent (for
-//					  isMapVisible()).
-// 2003-05-30	JTS, RTi		Added code to copy from the table
-// 2003-06-02	JTS, RTi		Added code so an hourglass displays when
-//					sorting the table
-// 2003-07-28	JTS, RTi		* Updated JWorksheet code to stop using
-//					  deprecated methods.
-//					* Removed old JWorksheet method of
-//					  enabling copy/paste.
-// 2003-09-23	JTS, RTi		Changed the export code to use 
-//					the new export code in 
-//					HydroBase_GUI_Util.
-// 2003-12-02	JTS, RTi		* Data types are now queried from the
-//					  database.
-//					* Time steps are now queried from the
-//					  database.
-//					* Removed the data type modifier
-//					  combo box.
-//					* Time series are finally read from
-//					  the database.
-// 2004-01-07	JTS, RTi		* Corrected bug in label for 
-//					  number of records reach. 
-//					* Changed how the data types are 
-//					  determined for a query.
-//					* Corrected bug so that formatOutput()
-//					  behaves like the original code.
-//					* Removed getMeasType() method.
-// 2004-01-21	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2004-02-20	SAM, RTi		* Some methods in HydroBase_GUI_Util
-//					  were moved to HydroBase_Util.
-// 2004-06-22	JTS, RTi		Table strings were moved from the 
-//					DMI class to HydroBase_GUI_Util so they
-//					were renamed in here.
-// 2004-07-26	JTS, RTi		* Users no longer have to scroll the
-//					  "Where" combo box.
-//					* Cache the most-recently dragged time 
-//					  series.
-// 2004-07-30	JTS, RTi		Added support for the Precipitation
-//					and Temperature GeoView layers.
-// 2005-01-10	JTS, RTi		Converted to use InputFilters.
-// 2005-02-09	JTS, RTi		* Removed getWhereClause().
-//					* Removed getOrderByClause().
-//					* Where and order by clauses are now 
-//					  built within the 
-//					  readStationGeolocMeasTypeList() 
-//					  method called from this GUI.  That
-//					  method will call an SQL query or
-//					  stored procedure query as appropriate.
-// 					* Separate table models and cell 
-//					  renderers are used if a stored 
-//					  procedure query was run.
-//					* Removed order by combo boxes.
-// 2005-02-11	JTS, RTi		* Converted code to work on either data
-//					  objects returned from an SQL query or
-//					  from a stored procedure.
-//					* Removed lookupStation().
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		Only uses HydroBase_StationView objects.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-11-15	JTS, RTi		Option to query the entire state at once
-//					added to the district combo box.
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass a JFrame to the constructor.
-//					Use GeoViewUI to link to map interface.
-//					Clean up code based on Eclipse feedback.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
  
@@ -425,7 +265,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 		 		// First format the output...
 				List<String> outputStrings = formatOutput(format);
@@ -645,33 +485,6 @@ private void enableMapLayers() {
 		__statusJTextField.setText( "Map shows base layers and station layers.  Ready.");
 		ready();
 	}
-}
-
-/**
-Clean up for garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__mapQueryLimits = null;
-	__dmi = null;
-	__filterJPanel = null;
-	__tableJLabel = null;
-	__statusJTextField = null;
-	__worksheet = null;
-	__tsGraphJButton = null;
-	__tsSummaryJButton = null;
-	__tsTableJButton = null;
-	__printJButton = null;
-	__exportJButton = null;
-	__selectOnMapJButton = null;
-	__dataTypeJComboBox = null;
-	__timeStepJComboBox = null;
-	__waterDistrictJComboBox = null;
-	__dtypeJComboBoxString = null;
-	__timestepJComboBoxString = null;
-	__results = null;
-
-	super.finalize();
 }
 
 /**

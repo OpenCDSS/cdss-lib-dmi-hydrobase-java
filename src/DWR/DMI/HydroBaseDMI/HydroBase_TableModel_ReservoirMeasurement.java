@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,18 +20,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_ReservoirMeasurement - Table Model for a Vector of 
-//	HydroBase_ResMeas objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-09-26	J. Thomas Sapienza, RTi	Initial version.
-// 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -157,11 +145,11 @@ public Object getValueAt(int row, int col) {
 	HydroBase_ResMeas r = _data.get(row);
 	switch (col) {
 		case COL_DATE:		return r.getDate_time();
-		case COL_GAGE_HEIGHT:	return new Double(r.getGage_height());
-		case COL_STORAGE:	return new Double(r.getStorage_amt());
-		case COL_INFLOW:	return new Double(r.getFill_amt());
-		case COL_RELEASE:	return new Double(r.getRelease_amt());
-		case COL_EVAP_LOSS:	return new Double(r.getEvap_loss_amt());
+		case COL_GAGE_HEIGHT:	return Double.valueOf(r.getGage_height());
+		case COL_STORAGE:	return Double.valueOf(r.getStorage_amt());
+		case COL_INFLOW:	return Double.valueOf(r.getFill_amt());
+		case COL_RELEASE:	return Double.valueOf(r.getRelease_amt());
+		case COL_EVAP_LOSS:	return Double.valueOf(r.getEvap_loss_amt());
 		default:		return "";
 	}
 }

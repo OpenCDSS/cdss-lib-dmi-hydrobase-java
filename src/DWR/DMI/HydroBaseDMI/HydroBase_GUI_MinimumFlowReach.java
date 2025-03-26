@@ -4,51 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_MinimumFlowReach - Minimum Flow Reach Data GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 13 Oct 1997	DLG, RTi 		Created initial version.
-// 07 Dec 1997	SAM, RTi		Add full print, export.
-// 30 Apr 1998  DLG, RTi		Updated to 1.1 event model, added
-//					javadoc comments.
-// 04 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 02 Sep 1999	SAM, RTi		Remove import *.  Change so that if
-//					there is an entry in the structure
-//					table but not mf_reach the basic
-//					structure information is still
-//					displayed.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//					Don't use static for internal strings.
-//-----------------------------------------------------------------------------
-// 2003-10-02	J. Thomas Sapienza, RTi	Initial swing version.
-// 2005-02-14	JTS, RTi		Converted all queries to stored 
-//					procedures.
-// 2005-03-24	JTS, RTi		Added support for View objects.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -143,19 +114,18 @@ int structureNum) {
 
 	submitAndDisplayMFReachQuery();
 	
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 	String name = __structureName;
 
 	String rest = "Structure Data - Minimum Flow Detail - "
 		+ HydroBase_WaterDistrict.formWDID(wd, id)
 		+ " (" + name + ")";
-	if (	(JGUIUtil.getAppNameForWindows() == null) ||
-		JGUIUtil.getAppNameForWindows().equals("") ) {
+	if ( (JGUIUtil.getAppNameForWindows() == null) || JGUIUtil.getAppNameForWindows().equals("") ) {
 		setTitle ( rest );
 	}
-	else {	setTitle( JGUIUtil.getAppNameForWindows() +
-		" - " + rest);
+	else {
+		setTitle( JGUIUtil.getAppNameForWindows() + " - " + rest);
 	}							
 }
 
@@ -181,7 +151,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...

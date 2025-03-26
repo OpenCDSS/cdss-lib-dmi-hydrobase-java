@@ -4,36 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_ParcelUseTSStructureToParcel.java - class to hold data from the
-//		HydroBase parcel_use_ts and structure_to_parcel tables
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2004-09-21	Steven A. Malers, RTi	Split out of HydroBase_ParcelUseTS,
-//					which was mistakenly a join of two
-//					tables.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -93,15 +79,6 @@ public int compareTo ( HydroBase_ParcelUseTSStructureToParcel o2 )
 	}
 	// Fall through... they are the same, at least to this level of comparison
 	return 0;
-}
-
-/**
-Cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-*/
-protected void finalize()
-throws Throwable
-{	super.finalize();
 }
 
 /**

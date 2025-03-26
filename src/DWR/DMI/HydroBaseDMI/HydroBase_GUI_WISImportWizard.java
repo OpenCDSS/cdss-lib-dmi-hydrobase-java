@@ -4,55 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WISImportWizard - Adds Import sources to the 
-//	HydroBase_GUI_WISBuilder template.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History: 
-//
-// 11 Jul 1998	CGB, RTi		Created initial class description.
-// 03 Apr 1999	SAM, RTi		Add HBDMI to all queries.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//					Remove import *.
-//-----------------------------------------------------------------------------
-// 2003-11-28	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2003-12-01	JTS, RTi		Completed initial version.
-// 2004-01-21	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2005-03-09	JTS, RTi		HydroBase_SheetName 	
-//					  -> HydroBase_WISSheetName.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-05-03	JTS, RTi		Table model now takes a dmi reference.
-// 2005-05-09	JTS, RTi		Only HydroBase_StationView objects are
-//					returned from station queries now.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-06-28	JTS, RTi		Removed DMI parameter from table model.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -283,28 +250,6 @@ protected boolean cancelClicked() {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__wizardCard = null;
-	__dmi = null;
-	__parentGUI = null;
-	__wizardJPanel = null;
-	__rtWorksheet = null;
-	__wisWorksheet = null;
-	__sourceList = null;
-	__rtEndSimpleJComboBox = null;
-	__rtOffsetSimpleJComboBox = null;
-	__rtWDSimpleJComboBox = null;
-	__wisDataSimpleJComboBox = null;
-	__wisNameSimpleJComboBox = null;
-	__infoVector = null;
-	__wisVector = null;
-	super.finalize();
-}
-
-/**
 Responds when the OK button is pressed.  Sets the import information in the
 falling GUI.
 @return true if the finish button could be pressed successfully.  False if 
@@ -314,7 +259,7 @@ protected boolean finishClicked() {
 	int curRow = 0;
 	int offset = DMIUtil.MISSING_INT;
 	int end = DMIUtil.MISSING_INT;
-        int meas_num = DMIUtil.MISSING_INT;
+    int meas_num = DMIUtil.MISSING_INT;
 	int importWISNum = DMIUtil.MISSING_INT;
 	String importMethod = "AVE";
 	String importIdentifier = DMIUtil.MISSING_STRING;
@@ -758,7 +703,7 @@ private void setupGUI() {
 	int to = __MIL_TIMES.length - 1;
 	String s = null;
 	for (int i = 0; i < to; i++) {
-		s = new Integer(__MIL_TIMES[i]).toString();
+		s = Integer.valueOf(__MIL_TIMES[i]).toString();
 		if (s.length() == 3) {
 			s = "0" + s;
 		}
@@ -779,7 +724,7 @@ private void setupGUI() {
 
 	__rtOffsetSimpleJComboBox = new SimpleJComboBox();
 	for (int i = 0; i < __MIL_TIMES.length; i++) {
-		s = new Integer(__MIL_TIMES[i]).toString();
+		s = Integer.valueOf(__MIL_TIMES[i]).toString();
 		if (s.length() == 3) {
 			s = "0" + s;
 		}		

@@ -4,55 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_GUI_SelectTSProdcut - Class for selecting a TSProduct to work with
-//	or for creating a new TSProduct.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2004-03-08	J. Thomas Sapienza, RTi	Initial version.
-// 2004-04-30	JTS, RTi		Many changes following SAM's review.
-// 2004-05-03	JTS, RTi		Converted to use the dmi connection
-//					rather than reading data from a flat
-//					table file.
-// 2004-05-04	JTS, RTi		Added the Delete button.
-// 2004-05-11	JTS, RTi		* Added new text to the display.
-//					* Added the TSP Open button.
-// 2004-05-13	JTS, RTi		List can now be double-clicked on to
-//					open a TSProduct from the database.
-// 2004-07-26	JTS, RTi		* Resized the window.
-//					* Added a new line of text to the
-//					  product explanation paragraph.
-//					* Added the Rename button.
-// 2005-02-15	JTS, RTi		Converted all queries except for
-//					readTimeSeries() to use stored
-//					procedures.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-25	JTS, RTi		Updated dmiWrite() to DMI writes().
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-08-04	SAM, RTi		Clean up the notes at the top of the
-//					frame.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -106,8 +73,7 @@ import RTi.Util.Message.Message;
 import RTi.Util.String.StringUtil;
 
 /**
-This class allows a TSProduct to be read from the database and worked with, or
-to create a new TSProduct to work with.
+This class allows a TSProduct to be read from the database and worked with, or to create a new TSProduct to work with.
 */
 @SuppressWarnings("serial")
 public class HydroBase_GUI_SelectTSProduct 
@@ -256,19 +222,6 @@ private void deleteClicked() {
 		Message.printWarning(2, routine, e);
 	}
 	__list.setListData(readTSProducts());
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__deleteButton = null;
-	__okButton = null;
-	__renameButton = null;
-	__list = null;
-	super.finalize();
 }
 
 /**

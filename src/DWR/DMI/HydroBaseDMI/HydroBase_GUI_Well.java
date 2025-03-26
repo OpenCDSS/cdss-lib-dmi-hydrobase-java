@@ -4,49 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_Well - Well or Well Field Data GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 13 Oct 1997	DLG, RTi		Created initial version.
-// 07 Dec 1997	SAM, RTi		Enable print and export.
-// 30 Apr 1998  DLG, RTi		Updated to 1.1 event model, added
-//					javadoc comments.
-// 04 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 02 Sep 1999	SAM, RTi		Remove import *.  Add a label to
-//					indicate taht no additional well data
-//					are available.
-// 15 May 2001	SAM, RTi		Add a finalize()method.  Don't use
-//					static for simple GUI strings.  Change
-//					GUI to JGUIUtil.
-//-----------------------------------------------------------------------------
-// 2003-10-02	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2005-02-14	JTS, RTi		Converted all queries to use 
-//					stored procedures.
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -137,19 +110,18 @@ int structureNum) {
 
 	submitAndDisplayStructureQuery();
 
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 	String name = __structureName;
 
 	String rest = "Structure Data - Well Data Detail - "
 		+ HydroBase_WaterDistrict.formWDID(wd, id)
 		+ " (" + name + ")";
-	if (	(JGUIUtil.getAppNameForWindows() == null) ||
-		JGUIUtil.getAppNameForWindows().equals("") ) {
+	if ( (JGUIUtil.getAppNameForWindows() == null) || JGUIUtil.getAppNameForWindows().equals("") ) {
 		setTitle ( rest );
 	}
-	else {	setTitle( JGUIUtil.getAppNameForWindows() +
-		" - " + rest);
+	else {
+		setTitle( JGUIUtil.getAppNameForWindows() + " - " + rest);
 	}								
 }
 
@@ -175,7 +147,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -245,21 +217,6 @@ private List<String> formatOutput(int format) {
 	}	
 
 	return v;
-}
-
-/**
-Clean up before garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__dmi = null;
-	__divJTextField = null;
-	__idJTextField = null;
-	__statusJTextField = null;
-	__structureJTextField = null;
-	__wdJTextField = null;
-	__structureName = null;
-	super.finalize();
 }
 
 /**

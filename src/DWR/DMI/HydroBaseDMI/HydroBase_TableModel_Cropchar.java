@@ -4,38 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_Cropchar - Table Model for a Vector of 
-//	HydroBase_Cropchar objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-05-29	J. Thomas Sapienza, RTi	Initial version.
-// 2004-01-20	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// 2004-02-10	JTS, RTi		Removed the GIS Irrig Crop Num field.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2005-06-28	JTS, RTi		Removed the unused DMI parameter.
-// 2005-07-06	Steven A. Malers, RTi	Review headings.  Add tool tips.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -265,30 +249,29 @@ public Object getValueAt(int row, int col) {
 		case COL_METHOD:		
 			return c.getMethod_desc();
 		case COL_TEMP_EARLY_MOIST:	
-			return new Double(c.getTempearlymoisture());
+			return Double.valueOf(c.getTempearlymoisture());
 		case COL_TEMP_LATE_MOIST:	
-			return new Double(c.getTemplatemoisture());
+			return Double.valueOf(c.getTemplatemoisture());
 		case COL_INIT_ROOT:		
-			return new Double(c.getInitialroot());
+			return Double.valueOf(c.getInitialroot());
 		case COL_MAX_ROOT:		
-			return new Double(c.getMaxroot());
+			return Double.valueOf(c.getMaxroot());
 		case COL_MADLEVEL:		
-			return new Double(c.getMadlevel());
+			return Double.valueOf(c.getMadlevel());
 		case COL_MAXAPPDEP:		
-			return new Double(c.getMaxappdepth());
+			return Double.valueOf(c.getMaxappdepth());
 		case COL_DAYS_TO_COVER:		
-			return new Integer(c.getDaystofullcover());
+			return Integer.valueOf(c.getDaystofullcover());
 		case COL_PLANTING_DATE:		
-			return "" + c.getPlantingmon() + "/"
-				+ c.getPlantingday();
+			return "" + c.getPlantingmon() + "/" + c.getPlantingday();
 		case COL_HARVEST_DATE:	
 			return "" + c.getHarvestmon() + "/" + c.getHarvestday();
 		case COL_DAYS_TO_CUT:	
-			return new Integer(c.getDaystofirstcut());
+			return Integer.valueOf(c.getDaystofirstcut());
 		case COL_DAYS_BETWEEN_CUTS:	
-			return new Integer(c.getDaysbetweencuts());
+			return Integer.valueOf(c.getDaysbetweencuts());
 		case COL_SEASON_LENGTH:	
-			return new Integer(c.getLengthofseason());
+			return Integer.valueOf(c.getLengthofseason());
 		default:	return "";
 	}
 }

@@ -4,46 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_DailyAmt.java - Class to hold data from the HydroBase 
-//	daily_amt table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-18	J. Thomas Sapienza, RTi	Initial version from 
-//					HBStructureDailyAmount
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2003-10-15	JTS, RTi		Added wis-specific data members.
-// 2003-10-16	JTS, RTI		* Added findNearestDataDay().
-//					* Added getAmountForDay().
-//					* Added setAmountForDay().
-//					* Added getObservationForDay().
-//					* Added setObservationForDay().
-// 2003-12-09	JTS, RTi		Removed all the setObs*() and
-//					setAmt*() methods.
-// 2004-06-08	JTS, RTi		Corrected bug caused by the wrong order
-//					of parameters to TimeUtil.numDaysInMonth
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -155,56 +131,9 @@ public HydroBase_DailyAmt() {
 }
 
 /**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_quality = null;
-	_obs1 = null;
-	_obs2 = null;
-	_obs3 = null;
-	_obs4 = null;
-	_obs5 = null;
-	_obs6 = null;
-	_obs7 = null;
-	_obs8 = null;
-	_obs9 = null;
-	_obs10 = null;
-	_obs11 = null;
-	_obs12 = null;
-	_obs13 = null;
-	_obs14 = null;
-	_obs15 = null;
-	_obs16 = null;
-	_obs17 = null;
-	_obs18 = null;
-	_obs19 = null;
-	_obs20 = null;
-	_obs21 = null;
-	_obs22 = null;
-	_obs23 = null;
-	_obs24 = null;
-	_obs25 = null;
-	_obs26 = null;
-	_obs27 = null;
-	_obs28 = null;
-	_obs29 = null;
-	_obs30 = null;
-	_obs31 = null;
-	_unit = null;
-	_func = null;
-	_modified = null;
-	
-	super.finalize();
-}
-
-/**
 Returns the data value stored in the specified day.
 @param day the day (1 - 31) for which to return the data amount.
-@return the value stored in that day, or DMIUtil.MISSING_DOUBLE if day &lt; 1
-or &gt; 31
+@return the value stored in that day, or DMIUtil.MISSING_DOUBLE if day &lt; 1 or &gt; 31
 */
 public double getAmountForDay(int day) {
 	if (day < 1 || day > 31) {

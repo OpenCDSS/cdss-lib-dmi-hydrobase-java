@@ -4,53 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_DailyWC - QInfo Report GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 01 Sep 1997	DLG, RTi 		Created initial version.
-// 08 Dec 1997	SAM, RTi		Enable print, export.
-// 29 Apr 1998  DLG, RTi		Updated to 1.1 event model, added
-//					javadoc comments.
-// 04 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//					Remove import *.
-//					Don't use static strings for internal
-//					data.
-//-----------------------------------------------------------------------------
-// 2003-12-11	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2004-01-20	JTS, RTi		Began using the JScrollWorksheet in
-//					order to use worksheet row headers.
-// 2005-02-14	JTS, RTi		Converted all queries to use
-//					stored procedures.
-// 2005-02-17	JTS, RTi		Can now handled HydroBase_WISDailyWC
-//					objects, which are returned when 
-//					stored procedures are used.
-// 2005-04-27	JTS, RTi		Added finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -167,8 +136,8 @@ String structureName) {
 
 	submitQuery();
 
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = (Integer.valueOf(__wdJTextField.getText().trim())).intValue();
+	int id = (Integer.valueOf(__idJTextField.getText().trim())).intValue();
 	String name = __structureName;
 	String rest = "Structure Data - Historical Diversion Daily WC - "
 		+ HydroBase_WaterDistrict.formWDID(wd, id)
@@ -204,7 +173,7 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -226,9 +195,9 @@ public void actionPerformed(ActionEvent event) {
 				return;
 			}
 			d.dispose();
-	 		// First format the output...
+	 		// First format the output.
 			List<String> outputStrings = formatOutput(format);
-	 		// Now print...
+	 		// Now print.
 			PrintJGUI.print(this, outputStrings);
 		}
 		catch (Exception ex) {
@@ -311,28 +280,9 @@ private void displayResults(List<HydroBase_DailyWC> results) {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__worksheetJLabel = null;
-	__divJTextField = null;
-	__idJTextField = null;
-	__statusJTextField = null;
-	__structureJTextField = null;
-	__unitsJTextField = null;
-	__wdJTextField = null;
-	__worksheet = null;
-	__recordType = null;
-	__structureName = null;
-	super.finalize();
-}
-
-/**
 Formats output for printing or export.
 @param format format delimiter flag defined in this class
-@return returns a formatted Vector for exporting, printing, etc..
+@return returns a formatted List for exporting, printing, etc..
 */
 public List<String> formatOutput(int format) {
 	String routine = CLASS + ".formatOutput";
@@ -408,9 +358,8 @@ public List<String> formatOutput(int format) {
 					HBStructureDailyAmountRecord
 					.getDataObservationCode(string);
 					record.setAmountForDay(j,
-					(new Double(amount)).doubleValue());
-					record.setObservationCodeForDay(j,
-						obs);
+					(Double.valueOf(amount)).doubleValue());
+					record.setObservationCodeForDay(j, obs);
 				}
 			}
 			string =(String)strings.elementAt(37);
@@ -478,7 +427,7 @@ private List<GenericWorksheetData> resultsToGenericData(List<HydroBase_DailyWC> 
 			data.setValueAt(0, "" + result.getIrr_year());
 			data.setValueAt(1, "" + result.getIrr_mon());
 			data.setValueAt(2, result.getS());
-			data.setValueAt(3, new Integer(result.getF()));
+			data.setValueAt(3, Integer.valueOf(result.getF()));
 			data.setValueAt(4, result.getU());
 			data.setValueAt(5, result.getT());
 	
@@ -515,7 +464,7 @@ private List<GenericWorksheetData> resultsToGenericData(List<HydroBase_DailyWC> 
 			data.setValueAt(0, "" + result.getIrr_year());
 			data.setValueAt(1, "" + result.getIrr_mon());
 			data.setValueAt(2, result.getS());
-			data.setValueAt(3, new Integer(result.getF()));
+			data.setValueAt(3, Integer.valueOf(result.getF()));
 			data.setValueAt(4, result.getU());
 			data.setValueAt(5, result.getT());
 	

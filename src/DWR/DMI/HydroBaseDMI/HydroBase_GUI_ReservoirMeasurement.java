@@ -4,55 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_ReservoirMeasurement - Reservoir Measurements GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 01 Sept 1997	Darrell L. Gillmeister, RTi Created initial version.
-// 06 Oct 1997 	DLG, RTi		Added querying functionality
-// 06 Dec 1997	Steven A. Malers, RTi	Update to enable export, print.
-// 10 Feb 1998 	DLG, RTi		changed column headings to AC-FT for
-//					flows. Updated to java 1.1 event model.
-// 04 Apr 1999	SAM, RTi		Added HBDMI to queries.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//					Remove import *.
-// 2002-02-25	SAM, RTi		Increase ID textfield width.
-//-----------------------------------------------------------------------------
-// 2003-09-26	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2004-01-21	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2005-02-15	JTS, RTi		Converted all queries to use stored
-//					procedures.
-// 2005-03-24	JTS, RTi		Added support for View objects.
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -169,19 +136,18 @@ String structureName) {
         submitStructureQuery();
         submitReservoirMeasurementQuery();
 
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 	String name = __structureName;
 
 	String rest = "Structure Data - Historical Reservoir Measurements - "
 		+ HydroBase_WaterDistrict.formWDID(wd, id)
 		+ " (" + name + ")";
-	if (	(JGUIUtil.getAppNameForWindows() == null) ||
-		JGUIUtil.getAppNameForWindows().equals("") ) {
+	if ( (JGUIUtil.getAppNameForWindows() == null) || JGUIUtil.getAppNameForWindows().equals("") ) {
 		setTitle ( rest );
 	}
-	else {	setTitle( JGUIUtil.getAppNameForWindows() +
-		" - " + rest);
+	else {
+		setTitle( JGUIUtil.getAppNameForWindows() + " - " + rest);
 	}								
 }
 
@@ -207,7 +173,7 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -281,26 +247,6 @@ private void displayStructureResults(HydroBase_StructureView structure) {
                 curString = StringUtil.formatString(curInt, "%5d");             
         }
         __idJTextField.setText(curString);
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__dmi = null;
-	__closeJButton = null;
-	__exportJButton = null;
-	__printJButton = null;
-	__listJLabel = null;
-	__statusJTextField = null;
-	__structureJTextField = null;
-	__divJTextField = null;
-	__idJTextField = null;
-	__wdJTextField = null;
-	__worksheet = null;
-	__structureName = null;
-	super.finalize();
 }
 
 /**

@@ -4,85 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_OtherQuery - Other Query GUI
-//-----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 01 Jun 1998	CGB, RTi		Created initial version. Modified from
-//					from HBStationGUI.java
-// 15 Feb 1999	Steven A. Malers, RTi	Changed some of the query code because
-//					of changes in the low-level code.
-// 04 Apr 1999	SAM, RTi		Add HBDMI to queries.
-// 21 May 1999	SAM, RTi		Standardize reports with View Data.
-//					Clean up code some.
-// 16 May 2001	SAM, RTi		Change so report does not page.  Java
-//					does not seem to have the limitation
-//					any more.  Add finalize().  Change GUI
-//					to JGUIUtil.  Change GUI strings to
-//					not be static to save some memory.
-//					Add more descriptive title to 
-//					ReportGUI.
-//					Change Crop Growth Characteristics to
-//					Consumptive Use Method Data and add a
-//					new summary report(this is kind of
-//					hacked in but needed to keep the old
-//					code working).
-// 12 Jun 2001	SAM, RTi		Change so interface is not resizable.
-//					Change "Is" to choices since all are
-//					known.
-//-----------------------------------------------------------------------------
-// 2003-05-29	J. Thomas Sapienza, RTi	Initial swing version.
-// 2003-05-30	JTS, RTi		Added code to copy from the table
-// 2003-06-02	JTS, RTi		Added code so an hourglass displays when
-//					sorting the table
-// 2003-07-28	JTS, RTi		* Updated JWorksheet code to stop using
-//					  deprecated methods.
-//					* Removed old JWorksheet method of
-//					  enabling copy/paste.
-// 2003-09-23	JTS, RTi		Changed the export code to use 
-//					the new export code in 
-//					HydroBase_GUI_Util.
-// 2004-01-20	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2004-06-16	JTS, RTi		Changed how agstats is queried.
-// 2005-02-10	JTS, RTi		* Agstats was split out to Colorado 
-//					  and National agriculatural statistics.
-// 2005-02-14	JTS, RTi		Checked all dmi calls to make sure they
-//					use stored procedures.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-06-28	JTS, RTi		Removed DMI parameters from table models
-// 2005-07-06	SAM, RTi		* Remove comment about irrigated crop
-//					  numbers since they are no longer used.
-// 2006-10-31	SAM, RTi		Change from ...CASS...InputFilter to
-//					...CASSCropStats... input filter.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
  
@@ -101,7 +38,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -282,7 +219,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -420,26 +357,6 @@ private void displayResults(List<HydroBase_AgriculturalCASSCropStats> resultsCAS
 }
 
 /**
-Clean up for garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__dmi = null;
-	__cassFilterJPanel = null;
-	__nassFilterJPanel = null;
-	__cropGrowthFilterJPanel = null;
-	__tableJLabel = null;
-	__statusJTextField = null;
-	__worksheet = null;
-	__exportButton = null;
-	__printButton = null;
-	__dataTypeJComboBox = null;
-	__tableLabelString = null;
-	__methods = null;
-	super.finalize();
-}
-
-/**
 Formats crop growth data for display in a report.
 @param vectors An array of 3 lists.  [0] contains the list of records
 read from CUBlaneyCriddle, [1] contains the vector of records read from
@@ -463,15 +380,13 @@ private int formatCropGrowthReport(List[] vectors) {
         reportProp.set("PrintSize=7");
         //reportProp.set("PageLength=100");
         reportProp.set("PageLength=50000");
-	String report_title= __dataTypeJComboBox.getSelected().trim() 
-		+ " Report";
+	String report_title= __dataTypeJComboBox.getSelected().trim() + " Report";
 	reportProp.set("Title="+report_title);
 
 	int recordCount = 0;
 	
-	List<String> strings = new Vector<String>();
-	strings.add("Crop Growth Characteristics by Consumptive Use (CU) "
-		+ "Method");
+	List<String> strings = new ArrayList<>();
+	strings.add("Crop Growth Characteristics by Consumptive Use (CU) Method");
 	@SuppressWarnings("unchecked")
 	List<HydroBase_CUBlaneyCriddle> blaney = (List<HydroBase_CUBlaneyCriddle>)vectors[0];
 	String current = "";

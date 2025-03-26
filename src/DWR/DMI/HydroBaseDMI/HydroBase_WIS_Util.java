@@ -4,66 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_WIS_Util - static utility functions to be used with the WIS code
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 20 Jul 1998	CGB, RTi		Added queries for Special Data and
-//					other WIS sheets to define a value based
-//					on the WISImport.
-// 01 Aug 1998	CGB, RTi		Added computational methods for
-//					gainloss calculations by mile and by
-//					weight. The methods are overloaded to
-//					handle calls from HydroBase_GUI_WIS and
-//					HBWISBUILDERGUI.
-// 01 Aug 1998	CGB, RTi		Added format methods to setup a string
-//					equation for the WIS gainloss.
-// 02 Apr 1999	Steven A. Malers, RTi	Code sweep.
-// 08 Apr 1999	SAM, RTi		Add dry river feature.
-// 15 Jul 2001	SAM, RTi		Add getWISColumnHeading().
-//-----------------------------------------------------------------------------
-// Notes:
-//
-// THERE IS A PROBLEM WITH THE DEFINITION OF THE STATIC COLUMN IDENTIFIERS BEING
-// PLACED IN --- HydroBase_GUI_WIS --- !!!!!!!!!!!!!!!!!!
-//
-// WE EVENTUALLY NEED TO MOVE THEM INTO THIS CLASS OR PERHAPS THE HBDATA CLASS.
-// THIS WILL REQUIRE SOME MAJOR CODE REVISION FOR THESE STATIC DEFINITIONS. FOR
-// NOW I AM IMPORTING THE ---- HydroBase_GUI_WIS --- CLASS INTO THIS CLASS SO 
-// I CAN GET A VALUE FROM ANOTHER WIS TO IMPORT.
-//-----------------------------------------------------------------------------
-// 2003-10-08	J. Thomas Sapienza, RTi	Began moving to code to HydroBaseDMI.
-// 2003-10-09	JTS, RTi		Continued work.
-// 2003-10-16	JTS, RTi		Continued work.
-// 2003-11-18	JTS, RTi		Uncommented formatWeightedGainLoss().
-// 2005-02-16	JTS, RTi		* Removed special data code.
-//					* Converted queries to use stored
-//					  procedures.
-// 2005-05-25	JTS, RTi		Converted queries that pass in a 
-//					String date to pass in DateTimes 
-//					instead.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -641,8 +597,8 @@ HydroBase_WISImport wis_import) {
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
-	v.add(new Double(0.0));
-	v.add(new Integer(0));
+	v.add(Double.valueOf(0.0));
+	v.add(Integer.valueOf(0));
 
 	if (wis_import == null) {
 		Message.printWarning(2, routine, "NULL HydroBase_WISImport");
@@ -677,8 +633,8 @@ HydroBase_WISImport wis_import) {
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
-	v.add(new Double(0.0));
-	v.add(new Integer(0));
+	v.add(Double.valueOf(0.0));
+	v.add(Integer.valueOf(0));
 
 	// Start by getting the RT_meas data for the import.  The dates are
 	// limited as follows.  In all cases, the end_time and offset are
@@ -850,8 +806,8 @@ HydroBase_WISImport wis_import) {
 				"Problem.  Do not know how to convert "
 				+ "units from \"" + units 
 				+ "\" to CFS for WIS");
-			v.set(0,new Double(0.0));
-			v.set(1,new Integer(0));
+			v.set(0,Double.valueOf(0.0));
+			v.set(1,Integer.valueOf(0));
 			return v;
 		}
 		if (import_method.equalsIgnoreCase("ave")
@@ -875,15 +831,15 @@ HydroBase_WISImport wis_import) {
 
 	if (import_method.equalsIgnoreCase("ave")) {
 		sum /= (double)size;
-		v.set(0,new Double(sum));
+		v.set(0,Double.valueOf(sum));
 	}
 	else if (import_method.equalsIgnoreCase("min")) {
-		v.set(0,new Double(min));
+		v.set(0,Double.valueOf(min));
 	}
 	else if (import_method.equalsIgnoreCase("max")) {
-		v.set(0,new Double(max));
+		v.set(0,Double.valueOf(max));
 	}
-	v.set(1,new Integer(size));
+	v.set(1,Integer.valueOf(size));
 	return v;
 }
 
@@ -902,8 +858,8 @@ HydroBase_WISImport wis_import) {
 	
 	// Set the vector's initial values to a flow of zero and zero
 	// measurements found...
-	v.add(new Double(0.0));
-	v.add(new Integer(0));
+	v.add(Double.valueOf(0.0));
+	v.add(Integer.valueOf(0));
 
 	String id = wis_import.getImport_identifier();
 
@@ -1007,8 +963,8 @@ HydroBase_WISImport wis_import) {
 	double value = getWISColumnValue(data, wis_import.getImport_column());
 	if ( !DMIUtil.isMissing(value) || HydroBase_Util.isMissing(value) ) {
 		// If we get here than set the value
-		v.set(0,new Double(value));
-		v.set(1,new Integer(1));
+		v.set(0,Double.valueOf(value));
+		v.set(1,Integer.valueOf(1));
 	}
 
 	return v;

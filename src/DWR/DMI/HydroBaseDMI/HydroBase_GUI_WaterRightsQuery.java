@@ -4,146 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WaterRightsQuery - Class to display the water rights form,
-//	process user input into database SQL, and display the results of
-//	user queries.
-//-----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-// 2003-02-27	J. Thomas Sapienza, RTi	Initial version from 
-//					HBWaterRightsQueryGUI
-// 2003-03-03	JTS, RTi		* Further work in moving over old 
-//					  methods and variables.
-//					* Started on revising, reviewing, 
-//					  javadoc'ing, etc.
-// 2003-03-04	JTS, RTi		* Finished the initial iteration.
-//					* Added code so that all fields in 
-//					  the WHERE or ORDER BY clauses 
-//					  also contain the name of the table
-// 2003-03-05	JTS, RTi		* Worked on code to get the NetAmts
-//					  table to show up in here.
-//					* Moved a lot of GUI-related code
-//					  out to HydroBaseDMI.
-// 2003-03-06	JTS, RTi		* Implemented code for the Transact	
-//					  table.
-// 2003-03-07	JTS, RTi		* Move location of Report JComboBox
-//					* Added "Save As" button.
-// 2003-03-10	JTS, RTi		Added code to handle resizing of GUI
-//					better.
-// 2003-03-11	JTS, RTi		* Added several new file filters to 
-//					  the save dialog.
-// 2003-03-12	JTS, RTi		Added code so that reports display.
-// 2003-03-14	JTS, RTi		Started porting the export code.
-// 2003-03-17	JTS, RTi		Finished porting the export code.
-// 2003-03-20	JTS, RTi		Revised after SAM's review.
-// 2003-03-21	JTS, RTi		Implemented __locationGUI.
-// 2003-03-24	JTS, RTi		Fixed status bar update and hourglass
-//					cursor issues.
-// 2003-03-25	JTS, RTi		* Removed references to
-//					  HydroBase_GUI_Util parent object.
-// 2003-03-27	JTS, RTi		Did exact comparison with old CWRAT
-//					Water Rights Query form and corrected:
-//					* Secondary Sort is now initially
-//					  Admin Number
-// 2003-03-28	JTS, RTi		* Now using a ReportJFrame that can turn
-//					  off word-wrapping.
-//					* Fixed bug so that no Transaction 
-//					  records could be PRINTed or EXPORTed.
-//					* Title is now set with the program name
-//					  as well as the form name.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2003-04-07	JTS, RTi		* Corrected error that would occur when 
-//					  view was pressed and no records were 
-//					  selected.
-//					* Also corrected bug that would cause 
-//					  errors if a user tried to adjust the 
-//					  column order of results after creating
-//					  a view report.
-// 2003-05-16	JTS, RTi		* Opened up the GeoViewJPanel code.
-//					* Added a CWRATMainJFrame parent (for
-//					  isMapVisible()).
-// 2003-05-30	JTS, RTi		Added code to copy from the table.
-// 2003-06-02	JTS, RTi		Added code so an hourglass displays when
-//					sorting the table
-// 2003-07-28	JTS, RTi		* Updated JWorksheet code to stop using
-//					  deprecated methods.
-//					* Removed old JWorksheet method of
-//					  enabling copy/paste.
-// 2004-01-21	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2004-05-10	JTS, RTi		Activated code that was in place but
-//					not used that optimizes when report
-//					queries are run.
-// 2004-06-22	JTS, RTi		Table strings were moved from the 
-//					DMI class to HydroBase_GUI_Util so they
-//					were renamed in here.
-// 2004-07-12	Steven A. Malers, RTi	Make some minor changes to tool tips
-//					to clarify functionality.
-// 2004-07-26	JTS, RTi		* Users no longer have to scroll the
-//					  "Where" combo box.
-//					* Changed the view report button label
-//					  slightly.
-// 2005-01-11	JTS, RTi		* Converted to use InputFilters.
-//					* Changed how legal locations are 
-//					  passed to queries.
-//					* Added finalize().
-// 2005-02-08	JTS, RTi		Removed the build location button
-//					and related code.
-// 2005-02-09	JTS, RTi		* Removed getOrderByClause().
-//					* Where and order by clauses are now 
-//					  built within the 
-//					  readStructureGeolocList() 
-//					  method called from this GUI.  That
-//					  method will call an SQL query or
-//					  stored procedure query as appropriate.
-// 					* Separate table models and cell 
-//					  renderers are used if a stored 
-//					  procedure query was run.
-//					* Removed order by combo boxes.
-// 2005-02-11	JTS, RTi		* The non-query by example constructor
-//					  and related code has been converted to
-//					  use stored procedures.
-//					* Removed getWhereClause()
-// 2005-02-15	JTS, RTi		Converted all queries to stored 
-//					procedures.
-// 2005-04-28	JTS, RTI		* Added all data members to finalize().
-//					* Added super.finalize() to finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-06-22	JTS, RTi		Column widths now come from the 
-//					table model, not the cell renderer.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-11-15	JTS, RTi		Option to query the entire state at once
-//					added to the district combo box.
-// 2007-02-07	SAM, RTi		Remove the dependence on CWRAT.
-//					Pass a JFrame in the constructor.
-//					Also pass in a GeoViewAppUI instance for map interaction.
-//					Clean up code based on Eclipse feedback.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -512,12 +388,11 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 				List<String> outputStrings = formatOutput(format);
-	 			// Now export, letting the user decide the 
-				// file...
+	 			// Now export, letting the user decide the file.
 				HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 			}
 			else {
@@ -774,35 +649,6 @@ private void enableMapLayers() {
 }
 
 /**
-Cleans up member variables.
-*/
-protected void finalize()
-throws Throwable {
-	__mapQueryLimits = null;
-	__dmi = null;
-	__netAmountsReport = null;
-	__transactReport = null;
-	__netAmtsFilterJPanel = null;
-	__transactFilterJPanel = null;
-	__closeJButton = null;
-	__exportJButton = null;
-	__getDataJButton = null;
-	__printJButton = null;
-	__viewJButton = null;
-	__tableJLabel = null;
-	__worksheet = null;
-	__statusJTextField = null;
-	__outputTemplateJComboBox = null;
-	__tableJComboBox = null;
-	__viewJComboBox = null;
-	__waterDistrictJComboBox = null;
-	__currTable = null;
-	__resultsNetAmts = null;
-	__resultsTransact = null;
-	super.finalize();
-}
-
-/**
 Responsible for formatting output.
 @param format the format in which the output should be exported.
 */
@@ -842,8 +688,7 @@ throws Exception {
 // REVISIT (JTS - 2005-01-10)
 // need another way of getting the structure num
 		int structure_num = 0;
-//              int structure_num = (new Integer(
-//			__searchForJTextField.getText())).intValue();
+//              int structure_num = (Integer.valueOf( __searchForJTextField.getText())).intValue();
 
 		HydroBase_StructureGeoloc hbsg = __dmi.readStructureGeolocForStructure_num(structure_num);
                 v.add(HydroBase_GUI_Util.formatStructureHeader(

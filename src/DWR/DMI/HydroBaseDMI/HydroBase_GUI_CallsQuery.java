@@ -4,113 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_CallsQuery - CallChronology GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 05 Aug 1997	DLG, RTi 		Created initial class description.
-// 29 Sep 1997 	DLG, RTi		Added submit query
-// 08 Dec 1997	SAM, RTi		Enable print, export.
-// 11 Feb 1998  DLG, RTi		Submits query for default interval when
-//					showing the GUI. Updated to java
-//					1.1 event model.
-// 22 Apr 1998  DLG, RTi		Maded changes specified by 
-//					crdss-00467.txt
-// 23 Apr 1998  DLG, RTi		Added javadoc comments.
-// 29 May 1998  CGB, RTi		Added simple graphing capabilities
-//					An additional method needs to be defined
-//					which will retrieve selected strings
-//					from the lists based on column id!!
-//					This will help clean up this class.
-// 04 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 15 Apr 1999	SAM, RTi		Add a refresh button.
-// 2001-11-12	SAM, RTi		Change GUI to GUIUtil.
-// 2002-02-25	SAM, RTi		Remove a status message.  Pass the
-//					call data to HBReleaseCallGUI so that
-//					it can be easily displayed.
-//-----------------------------------------------------------------------------
-// 2003-03-28	J. Thomas Sapienza, RTi	Began moving the GUI to Swing.
-// 2003-03-31	JTS, RTi		Continued moving the GUI to Swing.
-// 2003-04-02	JTS, RTi		* Corrected miscellaneous problems in 
-//					  in formatting output data.
-//					* Changed ResponseDialogs to 
-//					  ResponseJDialogs.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2003-04-07	JTS, RTi		Added code to enable/disable buttons
-//					as different things are selected.
-// 2003-05-30	JTS, RTi		Added code to copy from the table.
-// 2003-06-02	JTS, RTi		Added code so an hourglass displays when
-//					sorting the tables
-// 2003-07-28	JTS, RTi		* Updated JWorksheet code to stop using
-//					  deprecated methods.
-//					* Removed old JWorksheet method of
-//					  enabling copy/paste.
-// 2003-09-23	JTS, RTi		Changed the export code to use 
-//					the new export code in 
-//					HydroBase_GUI_Util.
-// 2004-01-12	SAM, RTi		* Add tool tips to important components.
-//					* Comment out the help button.
-// 2004-01-20	JTS, RTi		Began using the JScrollWorksheet in
-//					order to use worksheet row headers.
-// 2004-06-14	JTS, RTi		Time series can now be dragged out of
-//					the worksheets and into a time series
-//					product properties window.
-// 2004-07-20	JTS, RTi		When reactivating a released calls, 
-//					users can now choose to cancel out
-//					of the operation, to blank the release
-//					comments or to leave the release
-//					comments.  
-// 2005-02-14	JTS, RTi		Converted queries to use stored 
-//					procedure queries.
-// 2005-02-23	JTS, RTi		readCallsListForCall_num() was changed
-//					to readCallsForCall_num().
-// 2005-04-12	JTS, RTi		Added button for editing call comments.
-// 2005-04-25	JTS, RTi		Turned dmiWrite() calls into dmi calls.
-// 2005-04-26	JTS, RTi		* Moved Set Comments button position.
-//					* Release comments can only be edited
-//					  now if the call has been released.
-//					* Renamed "Set Comments" button to
-//					  "Edit Comments".
-// 					* Added a "Copy Call" button.
-// 2005-04-27	JTS, RTi		Added all data members to finalize().
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-06-28	JTS, RTi		Removed DMI parameters from table models
-// 2005-08-03	JTS, RTi		Returned record totals are returned 
-//					properly now for people who limit the
-//					returned records to only certain WDs.
-// 2005-08-15	JTS, RTi		Copying a call now creates a copied
-//					object of the call to use in the copy
-//					call GUI, rather than using the object
-//					being displayed in the worksheet.
-// 2007-02-07	SAM, RTi		Remove dependences on CWRAT.
-//					Just pass a JFrame as the parent.
-//					Add GeoViewUI to the constructor to handle map interaction.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -187,7 +96,7 @@ Misc strings.
 */
 private final String    
 		__MAIN_LABEL = 		"Main Stem Calls:", 
-                __TRIB_LABEL = 		"Tributary Calls:", 
+        __TRIB_LABEL = 		"Tributary Calls:", 
 		__BUTTON_COPY_CALL = 	"Copy Call",
 		__BUTTON_EDIT_COMMENTS = "Edit Comments",
 		__BUTTON_GRAPH = 	"Graph",
@@ -342,7 +251,7 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -634,34 +543,6 @@ private void editComments() {
 		__tribTable.selectRow(row);
 	}
 	checkAndSetButtons();
-}
-
-/**
-Cleans up when the object is finalized.
-*/
-public void finalize()
-throws Throwable {
-	__mainTable = null;
-	__tribTable = null;
-	__parent = null;
-	__dmi = null;
-	__mainJLabel = null;
-	__tribJLabel = null;
-	__fromJTextField = null;
-	__statusJTextField = null;
-	__toJTextField = null;
-	__setCallGUI = null;
-	__dateProps = null;
-	__copyCallJButton = null;
-	__editCommentsJButton = null;
-	__exportJButton = null;
-	__graphJButton = null;
-	__printJButton = null;
-	__reactivateJButton = null;
-	__releaseJButton = null;
-	__removeJButton = null;
-	__setJButton = null;
-	super.finalize();
 }
 
 /**

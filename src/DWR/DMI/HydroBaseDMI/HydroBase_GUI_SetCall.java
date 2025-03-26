@@ -4,76 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_SetCall - GUI to assist in setting a call.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-// 03 Nov 1997 DLG, RTi 		Created initial class description.
-// 10 Feb 1998 DLG, RTi			Updated to java 1.1 event model.
-// 22 Apr 1998 DLG, RTi			Maded changes specified by 
-//					crdss-00467.txt
-// 04 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 07 Sep 1999	SAM, RTi		Change setVisible()to not be
-//					synchronized.  Remove import *.
-// 2001-11-12	SAM, RTi		Change GUI to GUIUtil.
-//					Don't use static for private strings.
-// 2002-03-01	SAM, RTi		Add a search popup to the list of
-//					structures.  Order the water rights when
-//					queried.  Make a few minor cosmetic
-//					changes to make the GUI easier to use.
-//-----------------------------------------------------------------------------
-// 2003-03-31	J. Thomas Sapienza, RTi	Began moving the GUI to Swing.
-// 2003-04-01	JTS, RTi		Finished moving the GUI to Swing.
-// 2003-04-02	JTS, RTi		Got the GUI into a usable state.
-// 2003-04-02	JTS, RTi		* Strings are trimmed before being 
-//					  inserted in any fields.
-//					* Appropriation date was not being 
-//					  displayed; fixed.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2004-06-15	JTS, RTi		Lists are now populated by calls to
-//					setListData rather than adding each
-//					individual item.
-// 2004-07-13	JTS, RTi		Date checks for set dates in the
-//					future or past were being done with
-//					minute precision.  Changed them to
-//					day.
-// 2005-02-11	JTS, RTi		Added support for structure view data
-//					that would be returned from stored
-//					procedures.
-// 2005-02-21	JTS, RTi		The __structures Vector could now
-//					contain HydroBase_StructureView objects,
-//					so the code was changed appropriately.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-28	JTS, RTi		* Added all data members to finalize().
-//					* Added super.finalize() to finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-07-28	JTS, RTi		The net amounts Vector was not being
-//					created properly for Bypass Structures.
-// 2006-01-11	JTS, RTi		Bypass Calls GUI now gets passed the
-//					CWRATMainJFrame.
-// 2007-02-07	SAM, RTi		Remove dependence on CWRAT.
-//					Just pass a JFrame as the parent.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
  
@@ -85,6 +31,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -954,44 +901,6 @@ private void fillCopyData() {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__main_parent = null;
-	__dmi = null;
-	__call = null;
-	__callStructureQueryGUI = null;
-	__bypassGUI = null;
-	__parent = null;
-	__waterDistrictWaterData = null;
-	__callJLabel = null;
-	__callJLabel2 = null;
-	__structureListJLabel = null;
-	__structureListJLabel2 = null;
-	__adjDateJTextField = null;
-	__adminJTextField = null;
-	__affectedJTextField = null;
-	__aproDateJTextField = null;
-	__callsJTextField = null;
-	__decreedJTextField = null;
-	__priorNumJTextField = null;
-	__setDateJTextField = null;
-	__setCommentJTextField = null;
-	__statusJTextField = null;
-	__callList = null;
-	__structureList = null;
-	__structureJPopupMenu = null;
-	__dateProps = null;
-	__okJButton = null;
-	__calls = null;
-	__netWaterRights = null;
-	__structures = null;
-	__textFields_Vector = null;
-	super.finalize();
-}
-
-/**
 Finds the structure number that corresponds to a bypass structure string 
 containing a WDID.
 @param bypassStructure the bypass structure string to parse the WDID out of
@@ -1193,13 +1102,12 @@ public void mouseExited(MouseEvent event) {}
 Handle mouse pressed event.
 */
 public void mousePressed(MouseEvent event) {
-	int mods = event.getModifiers();
+	int mods = event.getModifiersEx();
 	Component c = event.getComponent();
 	
 	if (c.equals(__structureList) && (__structureList.getItemCount() > 0)
-	    && ((mods & MouseEvent.BUTTON3_MASK) != 0)) {
-		__structureJPopupMenu.show(
-			event.getComponent(), event.getX(), event.getY());
+	    && ((mods & InputEvent.BUTTON3_DOWN_MASK) != 0)) {
+		__structureJPopupMenu.show( event.getComponent(), event.getX(), event.getY());
 	}
 }
 

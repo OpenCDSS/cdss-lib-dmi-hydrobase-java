@@ -4,45 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_SelectDefaultDistrict - GUI to select a district
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History: 
-//
-// 14 Apr 1999	Steven A. Malers, RTi	First version of GUI to select the
-//					default district.
-// 2001-11-12	SAM, RTi		Change GUI to GUIUtil.
-//					Change IO to IOUtil.
-//					Don't use static data for private
-//					strings.
-//-----------------------------------------------------------------------------
-// 2003-03-26	J. Thomas Sapienza, RTi	Convert to Swing.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-11-16	JTS, RTi		Added support for the "Entire State"
-//					option.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -172,20 +149,6 @@ If Cancel is clicked, this method is called.  It disposes the dialog.
 private void cancelClicked() {
 	super.setVisible(false);
 	dispose();
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__parent = null;
-	__districtJList = null;
-	__okJButton = null;
-	__currentDefaultJTextField = null;
-	__statusJTextField = null;
-	super.finalize();
 }
 
 /**

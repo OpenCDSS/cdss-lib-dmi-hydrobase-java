@@ -4,34 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_CellRenderer - The cell renderer to be used for tables in
-//	HydroBase.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2005-06-22	J. Thomas Sapienza, RTi	Initial version.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -63,20 +51,11 @@ The table model this cell renderer works with.
 JWorksheet_AbstractRowTableModel __tableModel = null;
 
 /**
-Constructor. 
+Constructor.
 @param tableModel the table model this cell renderer will work with.
 */
 public HydroBase_CellRenderer(JWorksheet_AbstractRowTableModel tableModel) {
 	__tableModel = tableModel;
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__tableModel = null;
-	super.finalize();
 }
 
 /**
@@ -89,8 +68,9 @@ public String getFormat(int column) {
 }
 
 /**
-Renders a value for a cell in a JTable.  This method is called automatically
-by the JTable when it is rendering its cells.  This overrides some code from DefaultTableCellRenderer.
+Renders a value for a cell in a JTable.
+This method is called automatically by the JTable when it is rendering its cells.
+This overrides some code from DefaultTableCellRenderer.
 @param table the JTable (in this case, JWorksheet) in which the cell to be rendered will appear.
 @param value the cell's value to be rendered.
 @param isSelected whether the cell is selected or not.
@@ -105,33 +85,33 @@ boolean isSelected, boolean hasFocus, int row, int column) {
  	if (value != null) {
 		str = value.toString();
 	}
-	
+
 	int abscolumn = ((JWorksheet)table).getAbsoluteColumn(column);
-	
+
 	String format = getFormat(abscolumn);
-	
+
 	int justification = SwingConstants.LEFT;
 
 	if (value instanceof Integer) {
 		if (DMIUtil.isMissing(((Integer)value).intValue()) || HydroBase_Util.isMissing(((Integer)value).intValue())) {
 			str = "";
-		} 
+		}
 		else {
 			justification = SwingConstants.RIGHT;
 			str = StringUtil.formatString(value, format);
 		}
-	}	
-	else if (value instanceof Double) {		
+	}
+	else if (value instanceof Double) {
 		if (DMIUtil.isMissing(((Double)value).doubleValue()) || HydroBase_Util.isMissing(((Double)value).doubleValue())) {
 			str = "";
-		}	
+		}
 		else {
 			justification = SwingConstants.RIGHT;
 			str = StringUtil.formatString(value, format);
 		}
 	}
 	else if (value instanceof Date) {
-		justification = SwingConstants.LEFT;		
+		justification = SwingConstants.LEFT;
 		// FYI: str has been set above with str = value.toString()
 	}
 	else if (value instanceof String) {
@@ -144,15 +124,14 @@ boolean isSelected, boolean hasFocus, int row, int column) {
 
 	str = str.trim();
 
-	// call DefaultTableCellRenderer's version of this method so that
-	// all the cell highlighting is handled properly.
-	super.getTableCellRendererComponent(table, str, isSelected, hasFocus, row, column);	
+	// Call DefaultTableCellRenderer's version of this method so that all the cell highlighting is handled properly.
+	super.getTableCellRendererComponent(table, str, isSelected, hasFocus, row, column);
 
 	int tableAlignment = ((JWorksheet)table).getColumnAlignment(abscolumn);
 	if (tableAlignment != JWorksheet.DEFAULT) {
 		justification = tableAlignment;
 	}
-		
+
 	setHorizontalAlignment(justification);
 	setFont(((JWorksheet)table).getCellFont());
 

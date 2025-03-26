@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2023 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -944,7 +944,7 @@ private void fillAnnotationNodeData() {
 		text = p.getValue("Text");
 		fontName = p.getValue("FontName");
 		fontStyle = p.getValue("FontStyle");
-		fontSize = (new Integer(p.getValue("FontSize"))).intValue();
+		fontSize = (Integer.valueOf(p.getValue("FontSize"))).intValue();
 		limits = GRDrawingAreaUtil.getTextExtents(
 			__drawingArea, text, GRUnits.DEVICE,
 			fontName, fontStyle, fontSize);	
@@ -955,9 +955,9 @@ private void fillAnnotationNodeData() {
 		
 		point = p.getValue("Point");
 		temp = StringUtil.getToken(point, ",", 0, 0);
-		x = (new Double(temp)).doubleValue();
+		x = (Double.valueOf(temp)).doubleValue();
 		temp = StringUtil.getToken(point, ",", 0, 1);
-		y = (new Double(temp)).doubleValue();
+		y = (Double.valueOf(temp)).doubleValue();
 
 		position = p.getValue("TextPosition");
 
@@ -1921,7 +1921,7 @@ Takes a double and trims its decimal values so that it only has 6 places of prec
 */
 private double toSixDigits(double d) {
 	String s = StringUtil.formatString(d, "%20.6f");
-	Double D = new Double(s);
+	Double D = Double.valueOf(s);
 	return D.doubleValue();
 }
 
@@ -1955,8 +1955,7 @@ public void updateNode(int nodeNum, HydroBase_Node node, boolean isAnnotation) {
 			|| !position.equals(vp.getValue("TextPosition"))
 			|| !fontSize.equals(vp.getValue("FontSize"))) {
 
-			int size =
-				new Integer(p.getValue("FontSize")).intValue();
+			int size = Integer.valueOf(p.getValue("FontSize")).intValue();
 
 			GRLimits limits = GRDrawingAreaUtil.getTextExtents(
 				__drawingArea, text, GRUnits.DEVICE,
@@ -1976,9 +1975,9 @@ public void updateNode(int nodeNum, HydroBase_Node node, boolean isAnnotation) {
 			}
 		
 			String temp = StringUtil.getToken(val, ",", 0, 0);
-			double x = (new Double(temp)).doubleValue();
+			double x = (Double.valueOf(temp)).doubleValue();
 			temp = StringUtil.getToken(val, ",", 0, 1);
-			double y = (new Double(temp)).doubleValue();
+			double y = (Double.valueOf(temp)).doubleValue();
 	
 			if (position.equalsIgnoreCase("UpperRight")) {
 				vNode.setPosition(x, y, w, h);

@@ -4,54 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_NewWIS - GUI for creating a new wis.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History: 
-//
-// 16 Sep 1997	DLG, RTi 		Created initial class description.
-// 19 Nov 1997	DLG, RTi		Updated all functionality
-// 02 Mar 1998	DLG, RTi		Updated to java 1.1 event model.
-// 03 Apr 1999	SAM, RTi		Add HBDMI for all queries.
-// 21 May 1999	Steven A. Malers, RTi	Remove HBData.TIME_ZONE_DATUM reference
-//					and clean up code.
-// 2001-11-12	SAM, RTi		Change GUI to GUIUtil.
-//-----------------------------------------------------------------------------
-// 2003-12-04	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2005-02-15	JTS, RTi		Converted queries to stored procedures.
-// 2005-03-09	JTS, RTi		HydroBase_SheetName 	
-//					  -> HydroBase_WISSheetName.
-// 2005-04-25	JTS, RTi		Turned dmiWrite() calls into dmi calls.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-05-23	JTS, RTi		Uses HydroBase_WaterDistrict now for
-// 					parseWD().
-// 2005-05-25	JTS, RTi		Converted queries that pass in a 
-//					String date to pass in DateTimes 
-//					instead.
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass JFrame to the constructor.
-//					Add GeoViewUI for map interactions.
-//					Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -191,24 +159,6 @@ private void closeClicked() {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__parent = null;
-	__dmi = null;
-	__loadWISGUI = null;
-	__sheetNameJTextField = null;
-	__statusJTextField = null;
-	__cancelJButton = null;
-	__okJButton = null;
-	__associatedJComboBox = null;
-	__streamJComboBox = null;
-	__streamVector = null;
-	super.finalize();
-}
-
-/**
 Generates a list of streams based on the water district the sheet is most 
 closely associated with.
 */
@@ -226,18 +176,15 @@ private void generateStreamList() {
         JGUIUtil.setWaitCursor(this, true);
         __statusJTextField.setText("Retrieving stream list...");
 
-	String swd = HydroBase_WaterDistrict.parseWD(
-		__associatedJComboBox.getSelected());
-	int wd = (new Integer(swd)).intValue();
+	String swd = HydroBase_WaterDistrict.parseWD( __associatedJComboBox.getSelected());
+	int wd = Integer.valueOf(swd).intValue();
 
 	List<HydroBase_Stream> results = null;
 	try {
-		results = __dmi.readStreamListForWDStr_trib_to(wd, 
-			DMIUtil.MISSING_INT);
+		results = __dmi.readStreamListForWDStr_trib_to(wd, DMIUtil.MISSING_INT);
 	}
 	catch (Exception e) {
-		Message.printWarning(1, routine, "Error reading stream list "
-			+ "from database.");
+		Message.printWarning(1, routine, "Error reading stream list from database.");
 		Message.printWarning(2, routine, e);
 		ready();
 		return;

@@ -4,50 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_Report_Transaction - Class for generating Water Right Transaction
-//	reports.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-26	J. Thomas Sapienza, RTi	Initial version.
-// 2003-02-27	JTS, RTi		Javadoc'd, reviewed, cleaned.
-// 2003-03-03	JTS, RTi		Changed getOrderVector to public static.
-// 2003-04-03	JTS, RTi		Use types are now retrieved with the 
-//					dmi's "getUseTypes()" method, rather
-//					than being requeried everytime.  The
-//					use types should have already been 
-//					initialized in the dmi by the calling
-//					application with the readGlobalData()
-//					method.
-// 2004-05-10	JTS, RTi		Corrected error in formatting Q* fields.
-// 2005-02-11	JTS, RTi		Converted to use the new version of
-//					readTransactList() that can call either
-//					SQL or stored procedure versions of 
-//					the queries.
-// 2005-02-23	JTS, RTi		Removed getOrderVector.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-07-11	JTS, RTi		Stopped using transact.x* fields.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -370,21 +342,6 @@ throws Exception {
 			}		
 		}
 	}
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__filterPanel = null;
-	IOUtil.nullArray(__districtWhere);
-	__reportList = null;
-	__results = null;
-	__strtypesList = null;
-	__useList = null;
-	super.finalize();
 }
 
 /**

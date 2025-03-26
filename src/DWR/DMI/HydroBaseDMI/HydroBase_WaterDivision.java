@@ -4,44 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_WaterDivision.java - Class to hold data from the HydroBase 
-//	water_division table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-12	J. Thomas Sapienza, RTi	Initial version from HBWaterDivision.
-// 2003-02-17	JTS, RTi		Added static getDivisionNumber method.
-// 2003-02-24	JTS, RTi		- Corrected error in finalize() so that 
-//					  super.finalize() gets called.
-//					- Made the getDivisionNumber method
-//					  more robust.
-// 2003-03-03	JTS, RTi		Added the division table.
-// 2003-03-17	JTS, RTi		Cleaned up, javadoc'd.
-// 2003-03-26	JTS, RTi		Added null-checking to the 
-//					getDivisionNumber() method.
-// 2005-02-28	JTS, RTi		Changed private member variables to 
-//					protected for doing unit tests.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -114,7 +92,7 @@ static {
 	int num = 0;
 	for ( int i=0; i<size; i++ ) {
 		num = i + 1;
-		divisionTable.put( new Integer( num ), divisions[i] );
+		divisionTable.put( Integer.valueOf( num ), divisions[i] );
 	}	
 }
 
@@ -140,7 +118,7 @@ Returns a division name for a given integer key.
 @return a division name for a given integer key.
 */
 public static String getDivisionName( int key ) {
-	return divisionTable.get(new Integer(key));
+	return divisionTable.get(Integer.valueOf(key));
 }
 
 /**

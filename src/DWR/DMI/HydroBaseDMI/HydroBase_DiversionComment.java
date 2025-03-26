@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,20 +21,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
 
 NoticeEnd */
 
-// ----------------------------------------------------------------------------
-// HydroBase_DiversionComment.java - Class to hold data from 
-//		the HydroBase diversion_comment table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-06	J. Thomas Sapienza, RTi	Initial version from HBDiversionComment.
-// 2003-02-20	JTS, RTi		Added _irr_year
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import RTi.DMI.DMIDataObject;
@@ -45,7 +31,7 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase diversion_comment table.
 */
-public class HydroBase_DiversionComment 
+public class HydroBase_DiversionComment
 extends DMIDataObject {
 
 protected int _meas_num = 		DMIUtil.MISSING_INT;
@@ -69,21 +55,6 @@ Constructor.
 */
 public HydroBase_DiversionComment() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_diver_comment = null;
-	_comm_date = null;
-	_modified = null;
-	_not_used = null;
-	
-	super.finalize();
 }
 
 /**
@@ -290,12 +261,12 @@ public void setWD(int wd) {
 	_wd = wd;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_DiversionComment {"		+ "\n" + 
+	return "HydroBase_DiversionComment {"		+ "\n" +
 		"Meas_num:      " + _meas_num + "\n" +
 		"Comm_date:     " + _comm_date + "\n" +
 		"Structure_num: " + _structure_num + "\n" +
@@ -303,7 +274,7 @@ public String toString() {
 		"Diver_comment: '" + _diver_comment + "'\n" +
 		"Acres_irrig:   " + _acres_irrig + "\n" +
 		"ID:            " + _id + "\n" +
-		"WD:            " + _wd + "\n" + 
+		"WD:            " + _wd + "\n" +
 		"Div:           " + _div + "\n" +
 		"Modified:      " + _modified + "\n" +
 		"User_num:      " + _user_num + "\n}\n";

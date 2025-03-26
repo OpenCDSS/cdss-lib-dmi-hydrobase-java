@@ -4,35 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_DamOutlet.java - Class to hold data from the HydroBase 
-//	dam_outlet table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-07	J. Thomas Sapienza, RTi	Initial version from HBDamOutlet.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -44,7 +31,7 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase dam_outlet table.
 */
-public class HydroBase_DamOutlet 
+public class HydroBase_DamOutlet
 extends DMIDataObject {
 
 protected int _outlet_num = 	DMIUtil.MISSING_INT;
@@ -64,21 +51,6 @@ Constructor.
 */
 public HydroBase_DamOutlet() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_outlet_name = null;
-	_type = null;
-	_description = null;
-	_modified = null;
-	
-	super.finalize();
 }
 
 /**
@@ -259,22 +231,22 @@ public void setUser_num(int user_num) {
 }
 
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_DamOutlet {"		+ "\n" + 
-		"Outlet_num:    " + _outlet_num + "\n" + 
-		"Structure_num: " + _structure_num + "\n" + 
-		"Damid:         " + _damid + "\n" + 
-		"Outlet_name:   '" + _outlet_name + "'\n" + 
-		"Type:          '" + _type + "'\n" + 
-		"Diameter:      " + _diameter + "\n" + 
-		"Length:        " + _length + "\n" + 
-		"Description:   '" + _description + "'\n" + 
-		"Capacity:      " + _capacity + "\n" + 
-		"Modified:      " + _modified + "\n" + 
+	return "HydroBase_DamOutlet {"		+ "\n" +
+		"Outlet_num:    " + _outlet_num + "\n" +
+		"Structure_num: " + _structure_num + "\n" +
+		"Damid:         " + _damid + "\n" +
+		"Outlet_name:   '" + _outlet_name + "'\n" +
+		"Type:          '" + _type + "'\n" +
+		"Diameter:      " + _diameter + "\n" +
+		"Length:        " + _length + "\n" +
+		"Description:   '" + _description + "'\n" +
+		"Capacity:      " + _capacity + "\n" +
+		"Modified:      " + _modified + "\n" +
 		"User_num:      " + _user_num + "\n}\n";
 }
 

@@ -4,40 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2024 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_DailyTS.java - Class to hold data from the HydroBase 
-//	DailyTS table.  Used to	hold data for the daily_* tables.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-17	J. Thomas Sapienza, RTi	Initial version from
-//					HBStationDayTSRecord.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2003-12-08	SAM, RTi		Change so the set/get method for data
-//					passes the day as an argument and remove
-//					all the more primitive methods.
-// 2005-03-01	JTS, RTi		Added the flag values.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -163,84 +145,6 @@ Constructor.
 */
 public HydroBase_DailyTS() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_cal_mon = null;
-	_unit = null;
-	_data_source = null;
-	_modified = null;
-
-	_flag1a  = null;
-	_flag1b  = null;
-	_flag2a = null;
-	_flag2b  = null;
-	_flag3a  = null;
-	_flag3b  = null;
-	_flag4a  = null;
-	_flag4b  = null;
-	_flag5a  = null;
-	_flag5b  = null;
-	_flag6a  = null;
-	_flag6b  = null;
-	_flag7a  = null;
-	_flag7b  = null;
-	_flag8a  = null;
-	_flag8b  = null;
-	_flag9a  = null;
-	_flag9b  = null;
-	_flag10a = null;
-	_flag10b = null;
-	_flag11a = null;
-	_flag11b = null;
-	_flag12a = null;
-	_flag12b = null;
-	_flag13a = null;
-	_flag13b = null;
-	_flag14a = null;
-	_flag14b = null;
-	_flag15a = null;
-	_flag15b = null;
-	_flag16a = null;
-	_flag16b = null;
-	_flag17a = null;
-	_flag17b = null;
-	_flag18a = null;
-	_flag18b = null;
-	_flag19a = null;
-	_flag19b = null;
-	_flag20a = null;
-	_flag20b = null;
-	_flag21a = null;
-	_flag21b = null;
-	_flag22a = null;
-	_flag22b = null;
-	_flag23a = null;
-	_flag23b = null;
-	_flag24a = null;
-	_flag24b = null;
-	_flag25a = null;
-	_flag25b = null;
-	_flag26a = null;
-	_flag26b = null;
-	_flag27a = null;
-	_flag27b = null;
-	_flag28a = null;
-	_flag28b = null;
-	_flag29a = null;
-	_flag29b = null;
-	_flag30a = null;
-	_flag30b = null;
-	_flag31a = null;
-	_flag31b = null;
-
-	super.finalize();
 }
 
 /**

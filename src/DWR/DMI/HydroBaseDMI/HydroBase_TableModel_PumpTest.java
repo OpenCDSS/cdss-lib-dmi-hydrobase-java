@@ -4,34 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_PumpTest - Table Model for a Vector of 
-//	HydroBase_PumpTest objects
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2004-02-09	J. Thomas Sapienza, RTi	Initial version.
-// 2005-04-06	JTS, RTi		Adjusted column names and sizes.
-// 2005-04-29	JTS, RTI		Added finalize().
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -221,8 +209,8 @@ public Object getValueAt(int row, int col) {
 
 	HydroBase_GroundWaterWellsPumpingTest p = _data.get(row);
 	switch (col) {
-		case COL_WD:		return new Integer(p.getWD());
-		case COL_ID:		return new Integer(p.getID());
+		case COL_WD:		return Integer.valueOf(p.getWD());
+		case COL_ID:		return Integer.valueOf(p.getID());
 		case COL_STR_NAME:	return p.getStr_name();
 		case COL_LOCATION:	
 			return HydroBase_Util.buildLocation(
@@ -230,17 +218,17 @@ public Object getValueAt(int row, int col) {
 				p.getRng(), p.getRdir(), p.getSec(),
 				p.getSeca(), p.getQ160(), p.getQ40(),
 				p.getQ10());
-		case COL_TSWL:		return new Double(p.getTswl());
-		case COL_TFWL:		return new Double(p.getTfwl());
-		case COL_TESTQ:		return new Double(p.getTestq());
-		case COL_TESTTIME:	return new Double(p.getTesttime());
-		case COL_TRANS:		return new Integer(p.getTrans());
+		case COL_TSWL:		return Double.valueOf(p.getTswl());
+		case COL_TFWL:		return Double.valueOf(p.getTfwl());
+		case COL_TESTQ:		return Double.valueOf(p.getTestq());
+		case COL_TESTTIME:	return Double.valueOf(p.getTesttime());
+		case COL_TRANS:		return Integer.valueOf(p.getTrans());
 		case COL_K:		return p.getK();
 		case COL_STORATIVITY:	return p.getStorativity();
 		case COL_LEAKANCE:	return p.getLeakance();
-		case COL_TOPTESTINT:	return new Integer(p.getToptestint());
-		case COL_BASETESTINT:	return new Integer(p.getBasetestint());
-		case COL_DRAWDOWN:	return new Double(p.getDrawdown());
+		case COL_TOPTESTINT:	return Integer.valueOf(p.getToptestint());
+		case COL_BASETESTINT:	return Integer.valueOf(p.getBasetestint());
+		case COL_DRAWDOWN:	return Double.valueOf(p.getDrawdown());
 		case COL_TEST_DATE:	
 			if (DMIUtil.isMissing(p.getTestdate())) {
 				return "";
@@ -249,9 +237,9 @@ public Object getValueAt(int row, int col) {
 				DateTime.FORMAT_YYYY_MM_DD);
 		case COL_PT_SOURCE:	return p.getPtsource();
 		case COL_PT_TYPE:	return p.getPttype();
-		case COL_PTMON:		return new Integer(p.getPtmon());
-		case COL_PTOBS:		return new Integer(p.getPtobs());
-		case COL_PTMULTIPLE:	return new Integer(p.getPtmultiple());
+		case COL_PTMON:		return Integer.valueOf(p.getPtmon());
+		case COL_PTOBS:		return Integer.valueOf(p.getPtobs());
+		case COL_PTMULTIPLE:	return Integer.valueOf(p.getPtmultiple());
 		default:		return "";
 	}
 }

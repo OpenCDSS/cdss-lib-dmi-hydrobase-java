@@ -4,53 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_Dam - Dam Data GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 19 Aug 1997	DLG, RTi		Created initial version.
-// 07 Dec 1997	SAM, RTi		Enable export and print.
-// 29 Apr 1998  DLG, RTi		Updated to 1.1 event model, added
-//					javadoc comments.
-// 04 Apr 1999	Steven A. Malers, RTi	Added HBDMI to queries.
-//					Remove import *.
-// 2002-02-25	SAM, RTi		Increase width of ID field.
-//-----------------------------------------------------------------------------
-// 2003-10-03	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2003-10-06	JTS, RTi		Completed work on initial Swing version.
-// 2004-01-20	JTS, RTi		Began using the JScrollWorksheet in
-//					order to use worksheet row headers.
-// 2004-07-26	JTS, RTi		Changed "Emergency" tab to 
-//					"Emergency Plan."
-// 2005-02-14	JTS, RTi		Checked all dmi calls to make sure they
-//					use stored procedures.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2007-02-26	SAM, RTi		Clean up code baed on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -184,8 +153,8 @@ int structureNum) {
 	submitAndDisplayOutletQuery();
 	submitAndDisplayEmergencyPlanQuery();
 
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 	String name = __structureName;
 
 	String rest = "Structure Data - Jurisdictional Dam Detail - "
@@ -222,7 +191,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -287,48 +256,6 @@ private String convertAbandCode(String abandCode) {
         }
  
         return fullName; 
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__dmi = null;
-	__damAKAJTextField = null;
-	__damTypeJTextField = null;
-	__divJTextField = null;
-	__distanceJTextField = null;
-	__elevationJTextField = null;
-	__federalLandJTextField = null;
-	__forestIDJTextField = null;
-	__hazardClassJTextField = null;
-	__hydraulicJTextField = null;
-	__idJTextField = null;
-	__jurisdictionalJTextField = null;
-	__lengthJTextField = null;
-	__nabCodeJTextField = null;
-	__nameJTextField = null;
-	__nationalIDJTextField = null;
-	__outletJTextField = null;
-	__purposeJTextField = null;
-	__regulationsJTextField = null;
-	__remarksJTextField = null;
-	__spillwayJTextField = null;
-	__stateDamIDJTextField = null;
-	__statusJTextField = null;
-	__streamCodeJTextField = null;
-	__structuralJTextField = null;
-	__structureJTextField = null;
-	__wdJTextField = null;
-	__widthJTextField = null;
-	__yearJTextField = null;
-	__emergencyWorksheet = null;
-	__inspectionWorksheet = null;
-	__outletWorksheet = null;
-	__spillwayWorksheet = null;
-	__structureName = null;
-	super.finalize();
 }
 
 /**

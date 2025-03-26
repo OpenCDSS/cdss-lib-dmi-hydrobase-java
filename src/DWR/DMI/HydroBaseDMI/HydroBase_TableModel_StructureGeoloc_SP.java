@@ -5,40 +5,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_StructureGeoloc_SP - class that handles the table model 
-//	for the GUI for the times that StructureGeoloc is queried when using
-//	SPFlex stored procedures.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2005-02-04	J. Thomas Sapienza, RTi	Initial version from 
-//					HydroBase_TableModel_StructureGeoloc.
-// 2005-04-06	JTS, RTi		Adjusted column text and sizes.
-// 2005-06-28	Steven A. Malers, RTi	* Add getColumnToolTips().
-//					* Add units for decree columns.
-//					* Make minor adjustments to column
-//					  widths.
-// 2005-11-15	JTS, RTi		Added div column.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -372,11 +354,11 @@ public Object getValueAt(int row, int col) {
 	HydroBase_StructureView sv = _data.get(row);
 	switch (col) {
 		case COL_DIV:
-			return new Integer(sv.getDiv());
+			return Integer.valueOf(sv.getDiv());
 		case COL_WD:		
-			return new Integer(sv.getWD());
+			return Integer.valueOf(sv.getWD());
 		case COL_ID:		
-			return new Integer(sv.getID());
+			return Integer.valueOf(sv.getID());
 		case COL_NAME:		
 			return sv.getStr_name();
 		case COL_LOCATION:
@@ -388,7 +370,7 @@ public Object getValueAt(int row, int col) {
 		case COL_SOURCE:	
 			return sv.getStrname();
 		case COL_STRMILE:	
-			return new Double(sv.getStr_mile());
+			return Double.valueOf(sv.getStr_mile());
 		case COL_OWNER:		
 			return sv.getFull_name();
 		case COL_TYPE:		
@@ -397,35 +379,35 @@ public Object getValueAt(int row, int col) {
 		case COL_CIU:		
 			return sv.getCiu();
 		case COL_TRANSBSN:	
-			return new Integer(sv.getTransbsn());
+			return Integer.valueOf(sv.getTransbsn());
 		case COL_DCR_RATE_ABS:
-			return new Double(sv.getDcr_rate_abs());
+			return Double.valueOf(sv.getDcr_rate_abs());
 		case COL_DCR_RATE_COND:
-			return new Double(sv.getDcr_rate_cond());
+			return Double.valueOf(sv.getDcr_rate_cond());
 		case COL_DCR_RATE_APEX_ABS:
-			return new Double(sv.getDcr_rate_APEX_abs());
+			return Double.valueOf(sv.getDcr_rate_APEX_abs());
 		case COL_DCR_RATE_APEX_COND:
-			return new Double(sv.getDcr_rate_APEX_cond());
+			return Double.valueOf(sv.getDcr_rate_APEX_cond());
 		case COL_DCR_RATE_TOTAL:
-			return new Double(sv.getDcr_rate_total());
+			return Double.valueOf(sv.getDcr_rate_total());
 		case COL_DCR_VOL_ABS:	
-			return new Double(sv.getDcr_vol_abs());
+			return Double.valueOf(sv.getDcr_vol_abs());
 		case COL_DCR_VOL_COND:
-			return new Double(sv.getDcr_vol_cond());
+			return Double.valueOf(sv.getDcr_vol_cond());
 		case COL_DCR_VOL_APEX_ABS:
-			return new Double(sv.getDcr_vol_APEX_abs());
+			return Double.valueOf(sv.getDcr_vol_APEX_abs());
 		case COL_DCR_VOL_APEX_COND:
-			return new Double(sv.getDcr_vol_APEX_cond());
+			return Double.valueOf(sv.getDcr_vol_APEX_cond());
 		case COL_DCR_VOL_TOTAL:
-			return new Double(sv.getDcr_vol_total());
+			return Double.valueOf(sv.getDcr_vol_total());
 		case COL_UTMX:		
-			return new Double(sv.getUtm_x());
+			return Double.valueOf(sv.getUtm_x());
 		case COL_UTMY:		
-			return new Double(sv.getUtm_y());
+			return Double.valueOf(sv.getUtm_y());
 		case COL_LONGITUDE:	
-			return new Double(sv.getLongdecdeg());
+			return Double.valueOf(sv.getLongdecdeg());
 		case COL_LATITUDE:	
-			return new Double(sv.getLatdecdeg());
+			return Double.valueOf(sv.getLatdecdeg());
 		default:		return " ";
 	}
 }

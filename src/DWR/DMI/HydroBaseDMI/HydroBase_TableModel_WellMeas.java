@@ -4,49 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_WellMeas - Table Model for a Vector of 
-//	HydroBase_StructureGeolocStructMeasType well meas objects
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2003-05-28	J. Thomas Sapienza, RTi	Initial version.
-// 2003-12-02	JTS, RTi		Columns are now referred to by a 
-//					variable.
-// 2004-01-07	JTS, RTi		Column headers are now multi-line.
-// 2004-01-20	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet row header system.
-// 2004-05-17	JTS, RTi		Added usgs_id and usbr_id columns.
-// 2004-06-01	JTS, RTi		Converted the location to be a 
-//					single string.
-// 2005-02-23	JTS, RTi		Now supports data retrieved from stored
-//					procedures.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2005-05-10	JTS, RTi		Only view objects are used now.
-// 2005-06-21	JTS, RTi		Supports new objects from the new
-//					well queries.
-// 2005-06-28	JTS, RTi		Removed unused DMI parameter.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -185,9 +158,9 @@ public Object getValueAt(int row, int col) {
 	HydroBase_StructureGeolocStructMeasTypeView g = _data.get(row);
 	switch (col) {
 		case COL_WD:		
-			return new Integer(g.getWD());
+			return Integer.valueOf(g.getWD());
 		case COL_ID:		
-			return new Integer(g.getID());
+			return Integer.valueOf(g.getID());
 		case COL_USGS_ID:	
 			return g.getUsgs_id();
 		case COL_USBR_ID:	
@@ -195,16 +168,16 @@ public Object getValueAt(int row, int col) {
 		case COL_STRNAME:	
 			return g.getStr_name();
 		case COL_ELEVATION:	
-			return new Double(g.getElev());
+			return Double.valueOf(g.getElev());
 		case COL_LOCATION:	
 			return HydroBase_Util.buildLocation(g.getPM(),
 				g.getTS(), g.getTdir(), g.getRng(), 
 				g.getRdir(), g.getSec(), g.getSeca(), 
 				g.getQ160(), g.getQ40(), g.getQ10());
 		case COL_START:		
-			return new Integer(g.getStart_year());
+			return Integer.valueOf(g.getStart_year());
 		case COL_END:		
-		return new Integer(g.getEnd_year());
+		return Integer.valueOf(g.getEnd_year());
 		default:		
 			return "";
 	}

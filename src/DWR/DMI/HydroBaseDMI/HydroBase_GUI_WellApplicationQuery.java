@@ -4,104 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WellApplicationQuery - Well permit Query GUI
-//-----------------------------------------------------------------------------
-// There is no print button because there are so many columns.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//----------------------------------------------------------------------------- 
-// History:
-//
-// 03 Apr 2000	CEN, RTi		Created initial version using 
-//					HBStructureQueryGUI as a reference.
-// 2001-10-15	Steven A. Malers, RTi	Updated to interact with map interface.
-//					Change static strings to non-static.
-//					Add finalize().  Use new
-//					HBWellApplicationLocation class and
-//					display UTM and lat/long coordinates.
-// 2001-12-13	SAM, RTi		Update to use new GeoView classes that
-//					support Swing and  development.
-// 2002-02-20	SAM, RTi		Update to use new GeoView method.
-// 2002-08-19	SAM, RTi		Change so a point click on the map does
-//					NOT result in a query.  Add a
-//					constructor that allows the GUI to be
-//					created but made invisible.
-// 2003-02-09	SAM, RTi		Since HBWellApplicationLocation is being
-//					used, change to overload its toString()
-//					to export location data so that it
-//					works.
-//-----------------------------------------------------------------------------
-// 2003-05-19	J. Thomas Sapienza, RTi	Started on initial Swing version.
-// 2003-05-20	JTS, RTi		Completed work on initial swing version.
-// 2003-05-30	JTS, RTi		Added code to copy from the table.
-// 2003-06-02	JTS, RTi		Added code so an hourglass displays when
-//					sorting the table
-// 2003-07-28	JTS, RTi		* Updated JWorksheet code to stop using
-//					  deprecated methods.
-//					* Removed old JWorksheet method of
-//					  enabling copy/paste.
-// 2003-09-23	JTS, RTi		Changed the export code to use 
-//					the new export code in 
-//					HydroBase_GUI_Util.
-// 2004-01-21	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2004-06-22	JTS, RTi		Table strings moved from DMI to 
-//					HydroBase_GUI_Util, so they were renamed
-//					in this class.
-// 2004-07-26	JTS, RTi		* Users no longer have to scroll the
-//					  "Where" combo box.
-// 					* Cleaned up the class.
-// 2005-01-10	JTS, RTi		Converted to use InputFilters for the 
-//					query filtering.
-// 2005-02-08	JTS, RTi		* Removed the build location button and
-//					  all related code.
-// 2005-02-09	JTS, RTi		* Where and order by clauses are now 
-//					  built within the 
-//					  readWellApplicationGeolocList() 
-//					  method called from this GUI.  That
-//					  method will call an SQL query or
-//					  stored procedure query as appropriate.
-// 					* Separate table models and cell 
-//					  renderers are used if a stored 
-//					  procedure query was run.
-//					* Removed getWhereClause().
-// 2005-02-11	JTS, RTi		Changed code to support when well
-//					views are returned from stored procedure
-//					queries.
-// 2005-05-09	JTS, RTi		Queries now only return well app
-//					view objects.
-// 2005-06-22	JTS, RTi		Column widths now come from the 
-//					table model, not the cell renderer.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-06-28	JTS, RTi		Removed DMI parameter from table model.
-// 2005-11-15	JTS, RTi		Option to query the entire state at once
-//					added to the district combo box.
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass a JFrame in the constructor.
-//					Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
  
@@ -289,7 +207,7 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -382,29 +300,6 @@ private void enableMapLayers() {
 			+ "Ready.");
 	}
 }
-
-/**
-Clean up for garbage collection.
-@exception Throwable if an error.
-*/
-protected void finalize()
-throws Throwable {
-	__parent = null;
-	__mapQueryLimits = null;
-	__dmi = null;
-	__filterJPanel = null;
-	__closeJButton = null;
-	__exportJButton = null;
-	__getDataJButton = null;
-	__selectOnMapJButton = null;
-	__viewJButton = null;
-	__worksheetJLabel = null;
-	__statusJTextField = null;
-	__worksheet = null;
-	__waterDistrictJComboBox = null;
-	super.finalize();
-}
-
 
 /**
 Responsible for formatting output.

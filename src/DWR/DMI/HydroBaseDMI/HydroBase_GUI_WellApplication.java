@@ -4,45 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WellApplication - Well Application Detail GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 07 Jun 2000	Catherine E. Nutting-Lane, RTi
-//					Created initial version.
-// 19 Jun 2000	CEN, RTi		Enabled print/export buttons
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-// 2003-02-12	SAM, RTi		Fix the comment text field size to
-//					reasonable limit.  Long comments were
-//					making it too long.
-//-----------------------------------------------------------------------------
-// 2003-05-19	J. Thomas Sapienza, RTi	Initial swing version.
-// 2005-02-11	JTS, RTi		Changed code to support when well
-//					views are returned from stored procedure
-//					queries.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -240,85 +217,6 @@ Closes the GUI.
 */
 protected void closeClicked() {
         setVisible(false);
-}
-
-/**
-Cleans up the data members.
-*/
-public void finalize()
-throws Throwable {
-	__closeJButton = null;
-	__exportJButton = null;
-	__printJButton = null;
-	__abcoDateJTextField = null;
-	__abrDateJTextField = null;
-	__acreFtJTextField = null;
-	__actCodeJTextField = null;
-	__actDateJTextField = null;
-	__aquifer1JTextField = null;
-	__aquifer2JTextField = null;
-	__areaIrrJTextField = null;
-	__basinJTextField = null;
-	__blockJTextField = null;
-	__bperfJTextField = null;
-	__caseNoJTextField = null;
-	__commentJTextField = null;
-	__depthJTextField = null;
-	__divJTextField = null;
-	__drillerLicJTextField = null;
-	__elevJTextField = null;
-	__engineerJTextField = null;
-	__exDateJTextField = null;
-	__filingJTextField = null;
-	__irrMeasJTextField = null;
-	__levelJTextField = null;
-	__lotJTextField = null;
-	__mdJTextField = null;
-	__nbuDateJTextField = null;
-	__noticeDateJTextField = null;
-	__npDateJTextField = null;
-	__nwcDateJTextField = null;
-	__pyieldJTextField = null;
-	__pacreftJTextField = null;
-	__parcelNoJTextField = null;
-	__parcelSizeJTextField = null;
-	__pcDateJTextField = null;
-	__pdepthJTextField = null;
-	__permitNoJTextField = null;
-	__permitRplJTextField = null;
-	__permitSufJTextField = null;
-	__piDateJTextField = null;
-	__pumpLicJTextField = null;
-	__receiptJTextField = null;
-	__saDateJTextField = null;
-	__sbuDateJTextField = null;
-	__statCodeJTextField = null;
-	__statDateJTextField = null;
-	__statusJTextField = null;
-	__statuteJTextField = null;
-	__subdivNameJTextField = null;
-	__tperfJTextField = null;
-	__tranCodeJTextField = null;
-	__tranDateJTextField = null;
-	__use1JTextField = null;
-	__use2JTextField = null;
-	__use3JTextField = null;
-	__userJTextField = null;
-	__waDateJTextField = null;
-	__wcDateJTextField = null;
-	__wdJTextField = null;
-	__wellNameJTextField = null;
-	__wellxNoJTextField = null;
-	__wellxSufJTextField = null;
-	__wellxRplJTextField = null;
-	__yieldJTextField = null;
-	__meterJCheckBox = null;
-	__logJCheckBox = null;
-	__abreqJCheckBox = null;
-	__qualJCheckBox = null;
-	__wellApp = null;
-	__wellView = null;
-	super.finalize();
 }
 
 /**

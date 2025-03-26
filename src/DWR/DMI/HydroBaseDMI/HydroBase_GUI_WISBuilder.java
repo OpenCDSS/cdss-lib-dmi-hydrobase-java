@@ -4,135 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WISBuilder - Water Information Sheet Builder GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file. 
-//-----------------------------------------------------------------------------
-// History:
-//
-// 25 Aug 1997 DLG, RTi			RTi Created initial version.
-// 18 Sep 1997 DLG, RTi			Cleaned up the code and added 
-//					archiving routineality
-// 20 Feb 1998 DLG, RTi			Added the option to compute gain/loss
-//					via weight coefficent or stream mile.
-// 27 Feb 1998 DLG, RTi			Added default gain selection.
-// 12 Mar 1998 DLG, RTi			Added unique String determination for
-//					wis rows.
-// 18 Mar 1998 DLG, RTi			Defaulted water district to the one
-//					that the wis is most closely associated
-//					with. Fixed bug when deleting a row.
-// 27 May 1998 CGB, RTi			Added display of gains information.
-//					Added radio button for retrieving
-//					confluence list by WD or by stream.
-//					Fixed same type radio buttons
-//					for structures.
-// 04 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 07 Apr 1999	SAM, RTi		Update for database changes.
-//					Change HBStructure and
-//					HBStructureQuery to
-//					HBStructureLocation and
-//					HBStructureLocationQuery so that
-//					stream mile are included, etc(HydroBase
-//					change).
-// 21 May 1999	SAM, RTi		Remove reference to
-//					DMIUtil.TIME_ZONE_DATUM.
-// 07 Jun 2001	SAM, RTi		Change so network output has a
-//					descriptive header and use the normal
-//					report GUI with search enabled.
-//					Change GUI to JGUIUtil.  Add finalize().
-//					Change some data to non-static to save
-//					memory.  Add ability to do JPopupMenu
-//					on right-click to show properties for a
-//					row.  Add an HydroBase_NodeNetwork 
-//					object to allow gain properties to be 
-//					shown and allow for future displays.
-// 15 Jul 2001	SAM, RTi		Add timers to see why the sheet takes
-//					so long to load.
-// 2002-05-13	SAM, RTi		Follow up on the long load times. Also
-//					make general improvements to improve
-//					loading, editing, and verification to
-//					close out the RGDSS project:
-//					* change internal data to not be static
-//					* change "Archive" button to "Save".
-//					* add the __showExpandedDetails switch
-//					  to allow more information to be shown
-//					* add more information to row labels to
-//					  help understand WIS implementation
-//					* add stream number to name choice when
-//					  expanded details are shown
-// 2002-06-09	SAM, RTi		Update to optimize query and storage of
-//					row objects so that the performance is
-//					increased.  Remove references to
-//					WDWater where not used - stream data is
-//					from the Stream table and 
-//					HydroBase_Stream.  Apparently wd_water 
-//					was never used in the builder.  Add a 
-//					Current Stream: field to make it 
-//					easier to know the position in the WIS.
-//					The setUniqueID()method had the
-//					identifier parts reversed for
-//					confluences.
-// 2002-06-18	SAM, RTi		Fix so when a row is added or deleted
-//					the label refreshes to reflect expanded
-//					details.
-//-----------------------------------------------------------------------------
-// 2003-11-17 to 2003-12-02
-//		J. Thomas Sapienza, RTi	Getting initial Swing version working
-//					like the old AWT version.
-// 2003-12-15	JTS, RTi		Added the button for opening the
-//					network builder.
-// 2005-02-15	JTS, RTi		Converted most queries to use stored
-//					procedures.
-// 2005-03-09	JTS, RTi		HydroBase_SheetName 	
-//					  -> HydroBase_WISSheetName.
-// 2005-03-10	JTS, RTi		Converted some delete code to use 
-//					new methods added for SP deletes.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-25	JTS, RTi		* Corrected errors resulting from the
-//					  transition to stored procedures.
-//					* Uses new version of formatDateTime()
-//					  suitable for stored procedures.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		Only HydroBase_StationView objects are
-//					returned from station queries now.
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-05-23	JTS, RTi		Uses HydroBase_WaterDistrict now for
-// 					parseWD().
-// 2005-05-25	JTS, RTi		Converted queries that pass in a 
-//					String date to pass in DateTimes 
-//					instead.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-08-03	JTS, RTi		Keyboard navigation around the worksheet
-//					is now handled properly.
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass JFrame to constructor.
-//					Add GeoViewUI for map interaction.
-//					Clean up code based on Eclipse feedback.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -146,6 +33,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -201,8 +89,7 @@ builder.  So do something about it.
 */
 
 /**
-The WISBuilderGUI is the graphical user interface for building WIS.  The GUI is
-laid out as follows:
+The WISBuilderGUI is the graphical user interface for building WIS.  The GUI is laid out as follows:
 <pre>
 -------------------------------------------------------------------------------
 | SheetName                         Date                  Gain Method         |
@@ -818,7 +705,7 @@ private void addConstantClicked() {
 	}
 
 	try {	
-		valueAsDouble = new Double(valueAsString);
+		valueAsDouble = Double.valueOf(valueAsString);
 		finalValue = valueAsDouble.doubleValue();
 	}
 	catch (NumberFormatException e) {
@@ -1619,7 +1506,7 @@ private void displayConfluenceList(int flag) {
 		
 		JGUIUtil.setWaitCursor(this, true);
 
-		int wd = (new Integer(current_wd)).intValue();
+		int wd = Integer.valueOf(current_wd).intValue();
 		try {
 			__confluenceVector = __dmi.readStreamListForWDStr_trib_to( wd, tempStream_num);
 		}
@@ -2240,7 +2127,7 @@ private void displayStreamList() {
         	__statusJTextField.setText(tempString);
         	Message.printStatus(1, routine, tempString);
 
-		int wd = (new Integer(current_wd)).intValue();
+		int wd = Integer.valueOf(current_wd).intValue();
 		try {
 			__streamVector = __dmi.readStreamListForWDStr_trib_to( wd, DMIUtil.MISSING_INT);
 		}
@@ -3716,11 +3603,11 @@ formulas if in formula-building mode.
 @param event MouseEvent object.
 */
 public void mousePressed(MouseEvent event) {
-	int mods = event.getModifiers(); 
+	int mods = event.getModifiersEx(); 
 	Component c = event.getComponent();
 	
-	// show the cell popup menu if right-clicking on the worksheet
-	if (c.equals(__worksheet) && ((mods & MouseEvent.BUTTON3_MASK)!= 0)) {
+	// Show the cell popup menu if right-clicking on the worksheet.
+	if (c.equals(__worksheet) && ((mods & InputEvent.BUTTON3_DOWN_MASK)!= 0)) {
 		__cellJPopupMenu.show(c, event.getX(), event.getY());
 	}
 	else if (c.equals(__worksheet)) {
@@ -5683,7 +5570,7 @@ private double stringToDouble(String s) {
 		return DMIUtil.MISSING_DOUBLE;
 	}
 	try {
-		Double D = new Double(s);
+		Double D = Double.valueOf(s);
 		return D.doubleValue();
 	}
 	catch (Exception e) {

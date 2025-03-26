@@ -4,42 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_GroundWaterWellsDrillersKSum - Table Model for a Vector 
-//	of HydroBase_GroundWaterWellsView objects for the 20050701 pump test
-//	data.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2005-06-29	J. Thomas Sapienza, RTi	Initial version.
-// 2005-07-05	Steven A. Malers, RTi	* Cleanup headers and tool tips, pending
-//					  more information from the State.
-//					* Remove well number.
-//					* Add "dunctopbasek".
-// 2005-07-06	JTS, RTi		Add wd column.
-// 2005-11-15	JTS, RTi		* Added div column.
-// 					* Added DSS_aquifer1, DSS_aquifer2,
-//					  DSS_aquifer_comment columns.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -502,9 +482,9 @@ public Object getValueAt(int row, int col) {
 	HydroBase_GroundWaterWellsDrillersKSum d = _data.get(row);
 	switch (col) {
 		case COL_DIV:
-			return new Integer(d.getDiv());
+			return Integer.valueOf(d.getDiv());
 		case COL_WD:
-			return new Integer(d.getWD());
+			return Integer.valueOf(d.getWD());
 		case COL_WELL_NAME:	
 			return d.getWell_name();
 		case COL_PERMIT_INFO:
@@ -534,40 +514,40 @@ public Object getValueAt(int row, int col) {
 				d.getRdir(), d.getSec(), d.getSeca(), 
 				d.getQ160(), d.getQ40(), d.getQ10());
 		case COL_UTM_X:
-			return new Double(d.getUtm_x());
+			return Double.valueOf(d.getUtm_x());
 		case COL_UTM_Y:
-			return new Double(d.getUtm_y());
+			return Double.valueOf(d.getUtm_y());
 		case COL_LATDECDEG:
-			return new Double(d.getLatdecdeg());
+			return Double.valueOf(d.getLatdecdeg());
 		case COL_LONDECDEG:
-			return new Double(d.getLongdecdeg());
-		case COL_DUNCTOP:	return new Integer(d.getDunctop());
-		case COL_DUNCBASE:	return new Integer(d.getDuncbase());
-		case COL_DUNCTOPBASEK:	return new Integer(d.getDunctopbasek());
-		case COL_DCONTOP:	return new Integer(d.getDcontop());
-		case COL_D500:		return new Integer(d.getD500());
-		case COL_DCON500K:	return new Integer(d.getDcon500k());
-		case COL__2D500:	return new Integer(d.get_2d500());
-		case COL_D1000:		return new Integer(d.getD1000());
-		case COL_D500TO1000K:	return new Integer(d.getD500to1000k());
-		case COL__2D1000:	return new Integer(d.get_2d1000());
-		case COL__1500:		return new Integer(d.get_1500());
-		case COL_D1000_1500K:	return new Integer(d.getD1000_1500k());
-		case COL__2D1500:	return new Integer(d.get_2d1500());
-		case COL_D2000:		return new Integer(d.getD2000());
-		case COL_D1500_2000K:	return new Integer(d.getD1500_2000k());
-		case COL__2D2000:	return new Integer(d.get_2d2000());
-		case COL_D2500:		return new Integer(d.getD2500());
-		case COL_D2000_2500:	return new Integer(d.getD2000_2500());
-		case COL__2D2500:	return new Integer(d.get_2d2500());
-		case COL_D3000:		return new Integer(d.getD3000());
-		case COL_D2500_3000:	return new Integer(d.getD2500_3000());
-		case COL__2D3000:	return new Integer(d.get_2d3000());
-		case COL_D3500:		return new Integer(d.getD3500());
-		case COL_D3000_3500K:	return new Integer(d.getD3000_3500k());
-		case COL__2D3500:	return new Integer(d.get_2d3500());
-		case COL_D4000:		return new Integer(d.getD4000());
-		case COL_D3500_4000K:	return new Integer(d.getD3500_4000k());
+			return Double.valueOf(d.getLongdecdeg());
+		case COL_DUNCTOP:	return Integer.valueOf(d.getDunctop());
+		case COL_DUNCBASE:	return Integer.valueOf(d.getDuncbase());
+		case COL_DUNCTOPBASEK:	return Integer.valueOf(d.getDunctopbasek());
+		case COL_DCONTOP:	return Integer.valueOf(d.getDcontop());
+		case COL_D500:		return Integer.valueOf(d.getD500());
+		case COL_DCON500K:	return Integer.valueOf(d.getDcon500k());
+		case COL__2D500:	return Integer.valueOf(d.get_2d500());
+		case COL_D1000:		return Integer.valueOf(d.getD1000());
+		case COL_D500TO1000K:	return Integer.valueOf(d.getD500to1000k());
+		case COL__2D1000:	return Integer.valueOf(d.get_2d1000());
+		case COL__1500:		return Integer.valueOf(d.get_1500());
+		case COL_D1000_1500K:	return Integer.valueOf(d.getD1000_1500k());
+		case COL__2D1500:	return Integer.valueOf(d.get_2d1500());
+		case COL_D2000:		return Integer.valueOf(d.getD2000());
+		case COL_D1500_2000K:	return Integer.valueOf(d.getD1500_2000k());
+		case COL__2D2000:	return Integer.valueOf(d.get_2d2000());
+		case COL_D2500:		return Integer.valueOf(d.getD2500());
+		case COL_D2000_2500:	return Integer.valueOf(d.getD2000_2500());
+		case COL__2D2500:	return Integer.valueOf(d.get_2d2500());
+		case COL_D3000:		return Integer.valueOf(d.getD3000());
+		case COL_D2500_3000:	return Integer.valueOf(d.getD2500_3000());
+		case COL__2D3000:	return Integer.valueOf(d.get_2d3000());
+		case COL_D3500:		return Integer.valueOf(d.getD3500());
+		case COL_D3000_3500K:	return Integer.valueOf(d.getD3000_3500k());
+		case COL__2D3500:	return Integer.valueOf(d.get_2d3500());
+		case COL_D4000:		return Integer.valueOf(d.getD4000());
+		case COL_D3500_4000K:	return Integer.valueOf(d.getD3500_4000k());
 		case COL_LOC_NUM: 	return d.getLoc_num();
 		case COL_SITE_ID:	return d.getSite_id();
 		case COL_DSS_AQUIFER1:	return d.getDSS_aquifer1();

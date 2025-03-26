@@ -4,67 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WISDiversionCoding - Detail for diversion SFUT
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 2001-07-02	Steven A. Malers, RTi	Initial version.  Copy and modify
-//					HBFlowDataGUI.
-// 2001-07-15	SAM, RTi		Change HBWIS_SFUTDetailGUI to
-//					HBWISDiversionCodingGUI.  Pass in
-//					existing records at construction.
-// 2002-02-20	SAM, RTi		Change TSViewGUI to TSViewJFrame.
-// 2002-03-03	SAM, RTi		Hopefully final push to finish RGDSS
-//					deliverables.  Focus on feature cleanup
-//					while documenting.
-// 2002-03-31	SAM, RTi		Support W code from automatic edits.
-// 2002-06-19	SAM, RTi		Add more comments at the top of the
-//					dialog to help users.
-//-----------------------------------------------------------------------------
-// 2003-11-17	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2004-01-21	JTS, RTi		Began using the JScrollWorksheet in
-//					order to use worksheet row headers.
-// 2004-05-12	JTS, RTi		Corrected error in the positions of
-//					the combo boxes resulting from the move
-//					to the new Worksheet version.
-// 2004-06-06	JTS, RTi		Uncommented and updated the code for
-//					viewing the history.
-// 2004-06-09	JTS, RTi		Added the flag to set whether the data
-//					can be edited or not.
-// 2005-02-15	JTS, RTi		Converted queries to use stored
-//					procedures.
-// 2005-03-09	JTS, RTi		HydroBase_SheetName 	
-//					  -> HydroBase_WISSheetName.
-// 2005-05-25	JTS, RTi		Converted queries that pass in a 
-//					String date to pass in DateTimes 
-//					instead.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -370,23 +325,6 @@ Cancels the GUI, closing without saving any changes.
 private void cancelClicked() {
 	setVisible(false);
 	dispose();
-}
-
-/**
-Clean up before garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__detailDateTime = null;
-	__dmi = null;
-	__wisGUI = null;
-	__tableModel = null;
-	__statusJTextField = null;
-	__worksheet = null;
-	__wisCellContents = null;
-	__previousRecords = null;
-	__ca = null;
-	super.finalize();
 }
 
 /**

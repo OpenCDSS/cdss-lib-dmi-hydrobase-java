@@ -4,37 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_WIS - Table Model for a WIS display.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-10-20	J. Thomas Sapienza, RTi	Initial version.
-// 2003-11-18	JTS, RTi		Started adding code for WISBuilder.
-// 2003-11-20	JTS, RTi		Removed code for WISBuilder.
-// 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -240,7 +225,7 @@ Returns the data that should be placed in the JTable at the given row and column
 public Object getValueAt(int row, int col) {
 	// make sure the row numbers are never sorted ...
 	if (col == 0) {
-		return new Integer(row + 1);
+		return Integer.valueOf(row + 1);
 	}
 	
 	if (_sortOrder != null) {
@@ -252,23 +237,23 @@ public Object getValueAt(int row, int col) {
 		case HydroBase_GUI_WIS.ROW_LABEL_COL:	
 			return w.getRow_label();
 		case HydroBase_GUI_WIS.POINT_FLOW_COL:	
-			return new Double(w.getPoint_flow());
+			return Double.valueOf(w.getPoint_flow());
 		case HydroBase_GUI_WIS.NATURAL_FLOW_COL:	
-			return new Double(w.getNat_flow());
+			return Double.valueOf(w.getNat_flow());
 		case HydroBase_GUI_WIS.DELIVERY_FLOW_COL:
-			return new Double(w.getDelivery_flow());
+			return Double.valueOf(w.getDelivery_flow());
 		case HydroBase_GUI_WIS.GAIN_LOSS_COL:	
-			return new Double(w.getGain());
+			return Double.valueOf(w.getGain());
 		case HydroBase_GUI_WIS.RELEASES_COL:	
-			return new Double(w.getRelease());
+			return Double.valueOf(w.getRelease());
 		case HydroBase_GUI_WIS.PRIORITY_DIV_COL:	
-			return new Double(w.getPriority_divr());
+			return Double.valueOf(w.getPriority_divr());
 		case HydroBase_GUI_WIS.DELIVERY_DIV_COL:	
-			return new Double(w.getDelivery_divr());
+			return Double.valueOf(w.getDelivery_divr());
 		case HydroBase_GUI_WIS.TRIB_NATURAL_COL:	
-			return new Double(w.getTrib_natural());
+			return Double.valueOf(w.getTrib_natural());
 		case HydroBase_GUI_WIS.TRIB_DELIVERY_COL:	
-			return new Double(w.getTrib_delivery());
+			return Double.valueOf(w.getTrib_delivery());
 		case HydroBase_GUI_WIS.COMMENTS_COL:	
 			return w.getComment();
 		default:
@@ -374,15 +359,15 @@ public void setValueAt(Object o, int row, int col) {
 			if (o instanceof String) {
 				String s = (String)o;
 				if (s.trim().equals("")) {
-					D = new Double(DMIUtil.MISSING_DOUBLE);
+					D = Double.valueOf(DMIUtil.MISSING_DOUBLE);
 				}
 				else {
-					D = new Double((String)o);
+					D = Double.valueOf((String)o);
 				}
 			}
 			else {
 				if (o == null) {
-					D = new Double(DMIUtil.MISSING_DOUBLE);
+					D = Double.valueOf(DMIUtil.MISSING_DOUBLE);
 				}
 				else {
 					D = (Double)o;
@@ -600,7 +585,7 @@ Set the contents of the specified cell.
 */
 public void setCellContents(double contents, int row, int col, 
 JWorksheet_CellAttributes ca) {
-	setValueAt((new Double(contents)).toString(), row, col);
+	setValueAt((Double.valueOf(contents)).toString(), row, col);
 	__worksheet.setCellAttributes(row, col, ca);
 }
 

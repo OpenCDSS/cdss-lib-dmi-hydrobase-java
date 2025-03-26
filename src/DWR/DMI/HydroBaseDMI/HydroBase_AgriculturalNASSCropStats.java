@@ -4,34 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_AgriculturalNASSCropStats.java - Class to hold data from the
-//	HydroBase Agricultural_NASS_crop_stats table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2004-02-20	Steven A. Malers, RTi	Initial version - copy and modify
-//					HydroBase_AgriculturalCASSCropStats.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -41,7 +29,7 @@ import RTi.DMI.DMIUtil;
 /**
 Class to store data from the HydroBase Agricultural_NASS_crop_stats table.
 */
-public class HydroBase_AgriculturalNASSCropStats 
+public class HydroBase_AgriculturalNASSCropStats
 extends DMIDataObject {
 
 protected String _st = 		DMIUtil.MISSING_STRING;
@@ -57,20 +45,6 @@ Constructor.
 */
 public HydroBase_AgriculturalNASSCropStats() {
 	super();
-}
-
-/**
-Cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_st = null;
-	_county = null;
-	_Commodity = null;
-	_flag = null;
-	super.finalize();
 }
 
 /**
@@ -185,17 +159,17 @@ public void setST(String st) {
 	_st = st;
 }
 
-/** 
+/**
 Return a string representation of this object.
 @return a string representation of this object.
 */
 public String toString() {
-	return "HydroBase_AgriculturalNASSCropStats {"		+ "\n" + 
-		"St:       '" 	+ _st 		+ "'\n" + 
-		"County:   '" 	+ _county 	+ "'\n" + 
-		"Commodity:'" 	+ _Commodity 	+ "'\n" + 
-		"Cal_year: " 	+ _cal_year 	+ "\n" + 
-		"Ag_amt:"	+ _ag_amt 	+ "\n" + 
+	return "HydroBase_AgriculturalNASSCropStats {"		+ "\n" +
+		"St:       '" 	+ _st 		+ "'\n" +
+		"County:   '" 	+ _county 	+ "'\n" +
+		"Commodity:'" 	+ _Commodity 	+ "'\n" +
+		"Cal_year: " 	+ _cal_year 	+ "\n" +
+		"Ag_amt:"	+ _ag_amt 	+ "\n" +
 		"Flag:"		+ _flag 	+ "\n";
 }
 

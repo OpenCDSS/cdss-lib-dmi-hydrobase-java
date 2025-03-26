@@ -4,34 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_Dam - Table Model for a Vector of 
-//	HydroBase_Dam objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-10-06	J. Thomas Sapienza, RTi	Initial version.
-// 2004-01-20	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet row header system.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -81,16 +69,14 @@ Constructor.  This builds the Model for displaying the given dam results.
 public HydroBase_TableModel_Dam(List results)
 throws Exception {
 	if (results == null) {
-		throw new Exception ("Invalid results Vector passed to " 
-			+ "HydroBase_TableModel_Dam constructor.");
+		throw new Exception ("Invalid results Vector passed to HydroBase_TableModel_Dam constructor.");
 	}
 	_rows = results.size();
 	_data = results;
 }
 
 /**
-From AbstractTableModel.  Returns the class of the data stored in a given
-column.
+From AbstractTableModel.  Returns the class of the data stored in a given column.
 @param columnIndex the column for which to return the data class.
 */
 public Class getColumnClass (int columnIndex) {
@@ -242,18 +228,17 @@ public Object getValueAt(int row, int col) {
 				case COL_SPILLWAY_NAME:	
 					return s.getSpillway_name();
 				case COL_SPILLWAY_CAPACITY:	
-					return new Integer(s.getCapacity());
+					return Integer.valueOf(s.getCapacity());
 				case COL_FREEBOARD:	
-					return new Double(s.getFreeboard());
+					return Double.valueOf(s.getFreeboard());
 				case COL_CODE:	
 					return s.getSply_code();
 				case COL_SPILLWAY_TYPE:	
 					return s.getSply_type();
 				case COL_WALL_SS:	
-					return new Double(
-						s.getWall_side_slope());
+					return Double.valueOf( s.getWall_side_slope());
 				case COL_WIDTH:	
-					return new Double(s.getWidth());
+					return Double.valueOf(s.getWidth());
 			}
 
 		// inspection
@@ -284,11 +269,11 @@ public Object getValueAt(int row, int col) {
 				case COL_OUTLET_NAME:	
 					return o.getOutlet_name();
 				case COL_OUTLET_CAPACITY:	
-					return new Double(o.getCapacity());
+					return Double.valueOf(o.getCapacity());
 				case COL_DIAMETER:	
-					return new Double(o.getDiameter());
+					return Double.valueOf(o.getDiameter());
 				case COL_LENGTH:	
-					return new Double(o.getLength());
+					return Double.valueOf(o.getLength());
 				case COL_OUTLET_TYPE:	
 					return o.getType();
 				case COL_DESCRIPTION:	

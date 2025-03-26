@@ -1412,7 +1412,7 @@ throws Exception {
 	
 	int wdNum = -1;
 	if (wd != null) {
-		wdNum = (new Integer(wd)).intValue();
+		wdNum = Integer.valueOf(wd).intValue();
 	}
 
     // Clear all the water districts.
