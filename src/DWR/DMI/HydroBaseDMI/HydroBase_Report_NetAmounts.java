@@ -4,62 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_Report_NetAmounts - Class for generating Water Right reports.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-25	J. Thomas Sapienza, RTi	Initial version.
-// 2003-02-26	JTS, RTi		* Continued work on adding in all the 
-//					  reports, javadoc'd and reviewed code.
-//					* Ran through all the reports and 
-//					  compared them to existing reports.
-// 2003-02-27	JTS, RTi		* Added generic "createReport" method.
-//					* Added code to more intelligently 
-//					  figure when the database needs
-//					  requeried.
-// 2003-03-27	JTS, RTi		* Made some variable names more 
-//					  meaningful, i.e NET_ADMIN ->
-//					  PRIORITY, TRANS_ADMIN -> ADMIN
-//					* Corrected bug that made "by stream"
-//					  reports occasionally be replaced
-//					  by regular summary reports.
-// 2003-04-03	JTS, RTi		Use types are now retrieved with the 
-//					dmi's "getUseTypes()" method, rather
-//					than being requeried everytime.  The
-//					use types should have already been 
-//					initialized in the dmi by the calling
-//					application with the readGlobalData()
-//					method.
-// 2003-12-10	JTS, RTI		Removed reference to a never-set 
-//					property value "Region".
-// 2005-02-11	JTS, RTi		Converted to use the new version of
-//					readNetAmtsList() that can call either
-//					SQL or stored procedure versions of 
-//					the queries.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-07-14	JTS, RTi		Altered the tabulation report to include
-//					tdir and rdir.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -69,8 +29,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import RTi.DMI.DMIUtil;
-
-import RTi.Util.IO.IOUtil;
 
 import RTi.Util.String.StringUtil;
 
@@ -713,24 +671,6 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__sums = null;
-	__sumsAF = null;
-	__dmi = null;
-	__filterPanel = null;
-	IOUtil.nullArray(__districtWhere);
-	__streamName = null;
-	__reportList = null;
-	__results = null;
-	__strtypesList = null;
-	__useVector = null;
-	super.finalize();
-}
-
-/**
 Format a double with the specified number of decimal places.
 @param d double value
 @param format desired format (e.g., "%10.2f")
@@ -839,19 +779,19 @@ throws Exception {
 		if (D != null) {
 			cumulTotal += D.doubleValue();
 		}
-		__sums.put(ID, new Double(cumulTotal));
+		__sums.put(ID, Double.valueOf(cumulTotal));
 	}
 	else {
 		Double D = (Double)__sumsAF.get(ID);
 		if (D != null) {
 			cumulTotal += D.doubleValue();
 		}
-		__sumsAF.put(ID, new Double(cumulTotal));
+		__sumsAF.put(ID, Double.valueOf(cumulTotal));
 	}
 
 	v.add(format(cumulTotal, "%6.2f"));
 
-	// keep track of the last admin number
+	// Keep track of the last admin number.
 	__lastAdminNum = admin_no;
 
 	return StringUtil.formatString(v, PRIORITY_SUMMARY_FORMAT);
@@ -934,7 +874,7 @@ throws Exception {
 	v.add(n.getWr_name());
 	v.add(createStructureType(n.getXstrtype()));
 	v.add(n.getWd_stream_name());
-	v.add(new Integer(n.getWD()));
+	v.add(Integer.valueOf(n.getWD()));
 	
 	// create location string
 	List<Object> vl = new ArrayList<Object>(7);

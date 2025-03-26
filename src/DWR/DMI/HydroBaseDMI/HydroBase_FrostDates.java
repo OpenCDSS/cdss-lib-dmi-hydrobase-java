@@ -4,36 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_FrostDates.java - Class to hold data from the HydroBase 
-//	frost_dates table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-11	J. Thomas Sapienza, RTi	Initial version from
-//					HBStationFrostDatesRecord.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -45,7 +31,7 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase frost_dates table.
 */
-public class HydroBase_FrostDates 
+public class HydroBase_FrostDates
 extends DMIDataObject {
 
 protected int _meas_num = 	DMIUtil.MISSING_INT;
@@ -61,20 +47,6 @@ Constructor.
 */
 public HydroBase_FrostDates() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_l28s = null;
-	_f28f = null;
-	_l32s = null;
-	_f32f = null;
-	super.finalize();
 }
 
 /**
@@ -189,18 +161,18 @@ public void setStation_num(int station_num) {
 	_station_num = station_num;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_FrostDates {"		+ "\n" + 
-		"Meas_num:    " + _meas_num + "\n" + 
-		"Cal_year:    " + _cal_year + "\n" + 
-		"Station_num: " + _station_num + "\n" + 
-		"L28s:        " + _l28s + "\n" + 
-		"F28f:        " + _f28f + "\n" + 
-		"L32s:        " + _l32s + "\n" + 
+	return "HydroBase_FrostDates {"		+ "\n" +
+		"Meas_num:    " + _meas_num + "\n" +
+		"Cal_year:    " + _cal_year + "\n" +
+		"Station_num: " + _station_num + "\n" +
+		"L28s:        " + _l28s + "\n" +
+		"F28f:        " + _f28f + "\n" +
+		"L32s:        " + _l32s + "\n" +
 		"F32f:        " + _f32f + "\n}\n";
 }
 

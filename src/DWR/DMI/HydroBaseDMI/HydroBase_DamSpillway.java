@@ -4,35 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_DamSpillway.java - Class to hold data from the HydroBase 
-//	dam_spillway table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-06 	J. Thomas Sapienza, RTi	Initial version from HBDamSpillway.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -44,7 +31,7 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase dam_spillway table.
 */
-public class HydroBase_DamSpillway 
+public class HydroBase_DamSpillway
 extends DMIDataObject {
 
 protected int _dam_spillway_num = 	DMIUtil.MISSING_INT;
@@ -65,21 +52,6 @@ Constructor.
 */
 public HydroBase_DamSpillway() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_spillway_name = null;
-	_sply_type = null;
-	_sply_code = null;
-	_modified = null;
-	
-	super.finalize();
 }
 
 /**
@@ -277,23 +249,23 @@ public void setWidth(double width) {
 
 
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_DamSpillway {"		+ "\n" + 
-		"Dam_spillway_num: " + _dam_spillway_num + "\n" + 
-		"Structure_num:    " + _structure_num + "\n" + 
-		"Damid:            " + _damid + "\n" + 
-		"Spillway_name:    '" + _spillway_name + "\n" + 
-		"Width:            " + _width + "\n" + 
-		"Freeboard:        " + _freeboard + "\n" + 
-		"Wall_side_slope:  " + _wall_side_slope + "\n" + 
-		"Capacity:         " + _capacity + "\n" + 
-		"Sply_type:        '" + _sply_type + "\n" + 
-		"Sply_code:        '" + _sply_code + "\n" + 
-		"Modified:         " + _modified + "\n" + 
+	return "HydroBase_DamSpillway {"		+ "\n" +
+		"Dam_spillway_num: " + _dam_spillway_num + "\n" +
+		"Structure_num:    " + _structure_num + "\n" +
+		"Damid:            " + _damid + "\n" +
+		"Spillway_name:    '" + _spillway_name + "\n" +
+		"Width:            " + _width + "\n" +
+		"Freeboard:        " + _freeboard + "\n" +
+		"Wall_side_slope:  " + _wall_side_slope + "\n" +
+		"Capacity:         " + _capacity + "\n" +
+		"Sply_type:        '" + _sply_type + "\n" +
+		"Sply_code:        '" + _sply_code + "\n" +
+		"Modified:         " + _modified + "\n" +
 		"User_num:         " + _user_num + "\n}\n";
 }
 

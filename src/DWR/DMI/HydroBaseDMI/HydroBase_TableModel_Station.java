@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,34 +20,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_Station - Table Model for a Vector of 
-//	HydroBase_StationGeolocMeasType objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-03-20	J. Thomas Sapienza, RTi	Initial version.
-// 2003-03-27	JTS, RTi		Changed from using getID() (id field)
-//					to used getStation_id() (station_id 
-//					field).
-// 2003-04-23	JTS, RTi		Added the Elevation field.
-// 2003-05-13	JTS, RTi		Row numbers (the 0th column) now are
-//					not affected by column sorting.
-// 2003-12-02	JTS, RTi		* Added new columns:
-//					  - data source
-//					  - data type
-//					  - time step
-//					* Column numbers have variable 
-//					  representation now.
-// 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// 2004-05-05	JTS, RTi		Added methods setDataType() and
-//					setTimeStep() to override the data type
-//					and time step read from the database.
-// 2005-04-29	JTS, RTi		Added finalize().
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -248,7 +220,7 @@ public Object getValueAt(int row, int col) {
 
 	HydroBase_StationGeolocMeasType s = _data.get(row);
 	switch (col) {
-		case COL_WD:		return new Integer(s.getWD());
+		case COL_WD:		return Integer.valueOf(s.getWD());
 		case COL_ID:		return s.getStation_id();
 		case COL_ABBREV:	return s.getAbbrev();
 		case COL_NAME:		return s.getStation_name();
@@ -271,19 +243,19 @@ public Object getValueAt(int row, int col) {
 						return __timeStep;
 					}
 					return s.getTime_step();
-		case COL_START:		return new Integer(s.getStart_year());
-		case COL_END:		return new Integer(s.getEnd_year());
+		case COL_START:		return Integer.valueOf(s.getStart_year());
+		case COL_END:		return Integer.valueOf(s.getEnd_year());
 		case COL_COUNTY:	return __dmi.lookupCountyName(
 						s.getCty());
 		case COL_STATE:		return s.getST();
 		case COL_HUC:		return s.getHUC();
-		case COL_ELEVATION:	return new Double(s.getElev());
-		case COL_UTMX:		return new Double(s.getUtm_x());
-		case COL_UTMY:		return new Double(s.getUtm_y());
-		case COL_LONGITUDE:	return new Double(s.getLongdecdeg());
-		case COL_LATITUDE:	return new Double(s.getLatdecdeg());
-		case COL_DRAIN:		return new Double(s.getDrain_area());
-		case COL_CONTR:		return new Double(s.getContr_area());
+		case COL_ELEVATION:	return Double.valueOf(s.getElev());
+		case COL_UTMX:		return Double.valueOf(s.getUtm_x());
+		case COL_UTMY:		return Double.valueOf(s.getUtm_y());
+		case COL_LONGITUDE:	return Double.valueOf(s.getLongdecdeg());
+		case COL_LATITUDE:	return Double.valueOf(s.getLatdecdeg());
+		case COL_DRAIN:		return Double.valueOf(s.getDrain_area());
+		case COL_CONTR:		return Double.valueOf(s.getContr_area());
 		default:		return "";
 	}
 }

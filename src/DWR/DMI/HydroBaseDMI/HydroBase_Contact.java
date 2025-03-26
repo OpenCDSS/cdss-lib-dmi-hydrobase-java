@@ -4,34 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_Contact.java - Class to hold data from the HydroBase contact table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-06	J. Thomas Sapienza, RTi	Initial version from HBContact.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -43,7 +31,7 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase contact table.
 */
-public class HydroBase_Contact 
+public class HydroBase_Contact
 extends DMIDataObject {
 
 protected int _contact_num = 		DMIUtil.MISSING_INT;
@@ -61,23 +49,6 @@ Constructor.
 */
 public HydroBase_Contact() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_contact_type = null;
-	_phone_number = null;
-	_phone_ext = null;
-	_contact_text = null;
-	_first_contact = null;
-	_modified = null;
-	
-	super.finalize();
 }
 
 /**
@@ -152,8 +123,6 @@ public int getUser_num() {
 	return _user_num;
 }
 
-
-
 /**
 Sets _contact_num
 @param contact_num value to put into _contact_num
@@ -226,20 +195,20 @@ public void setUser_num(int user_num) {
 	 _user_num = user_num;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_Contact {"				+ "\n" + 
-		"Contact_num:   " + _contact_num + "\n" + 
-		"Rolodex_num:   " + _rolodex_num + "\n" + 
-		"Contact_type:  '" + _contact_type + "'\n" + 
-		"Phone_number:  '" + _phone_number + "'\n" + 
-		"Phone_ext:     '" + _phone_ext + "'\n" + 
-		"Contact_text:  '" + _contact_text + "'\n" + 
-		"First_contact: '" + _first_contact + "'\n" + 
-		"Modified:      " + _modified + "\n" + 
+	return "HydroBase_Contact {"				+ "\n" +
+		"Contact_num:   " + _contact_num + "\n" +
+		"Rolodex_num:   " + _rolodex_num + "\n" +
+		"Contact_type:  '" + _contact_type + "'\n" +
+		"Phone_number:  '" + _phone_number + "'\n" +
+		"Phone_ext:     '" + _phone_ext + "'\n" +
+		"Contact_text:  '" + _contact_text + "'\n" +
+		"First_contact: '" + _first_contact + "'\n" +
+		"Modified:      " + _modified + "\n" +
 		"User_num:      " + _user_num + "\n}\n";
 }
 

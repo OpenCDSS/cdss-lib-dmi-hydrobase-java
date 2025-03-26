@@ -4,114 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_GroundWaterQuery - Ground water data GUI similar to Other 
-//	Query GUI which includes pump tests, drillers logs, wall measurements, 
-//	and pumping time series
-//-----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 01 May 2000	CEN, RTi	Created initial version. Modified from
-//				from HBOtherGUI.java
-// 05 Jun 2000	CEN, RTi	Change well measurement to query
-//				struct_meas_type first rather than 
-//				well_meas for initial list, then display
-//				final list selection as a graphical time series
-//				after querying well_meas
-// 07 Jun 2000	CEN, RTi	Final detail clean up before TAC
-// 16 May 2001	SAM, RTi	Change GUI to JGUIUtil.  Add finalize().
-//				Change GUI strings to not be static to save
-//				memory.  Change so title of graph is
-//				"Well Level".
-// 2002-02-20	SAM, RTi	Update to use TSViewJFrame instead of TSViewGUI.
-//				Change some column widths to not waste so much
-//				space.
-//-----------------------------------------------------------------------------
-// 2003-05-28	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2003-05-30	JTS, RTi		Added code to copy from the table.
-// 2003-06-02	JTS, RTi		Added code so an hourglass displays when
-//					sorting the table
-// 2003-07-28	JTS, RTi		* Updated JWorksheet code to stop using
-//					  deprecated methods.
-//					* Removed old JWorksheet method of
-//					  enabling copy/paste.
-// 2003-09-23	JTS, RTi		Changed the export code to use 
-//					the new export code in 
-//					HydroBase_GUI_Util.
-// 2003-12-09	JTS, RTI		Uncommented the time series code.
-// 2004-01-12	SAM, RTI		* Set the title to use the application
-//					  name.
-//					* Comment out the help button and add
-//					  tool tips to buttons.
-//					* Fix wording on the Pumping Time Series
-//					  warning to match the current GUI.
-//					* Fix so View is enabled when more than
-//					  one well measurement is selected.
-// 2004-01-20	JTS, RTi		Began using the JScrollWorksheet in
-//					order to use worksheet row headers.
-// 2004-05-18	JTS, RTi		Added buildTSID() to properly build the
-//					TSID for time series, using the usbr_id
-//					or usgs_id if available.
-// 2004-06-22	JTS, RTi		Table strings were moved from the 
-//					DMI class to HydroBase_GUI_Util so they
-//					were renamed in here.
-// 2004-07-26	JTS, RTi		Users no longer have to scroll the
-//					"Where" combo box.
-// 2005-01-10	JTS, RTi		Converted to use InputFilters.
-// 2005-02-09	JTS, RTi		* Removed the build location button and
-//					  all related code.
-// 					* Removed getWhereClause().
-//					* Removed getOrderByClause().
-//					* Where and order by clauses are now 
-//					  built within the 
-//					  readStructureGeolocList() 
-//					  method called from this GUI.  That
-//					  method will call an SQL query or
-//					  stored procedure query as appropriate.
-// 					* Separate table models and cell 
-//					  renderers are used if a stored 
-//					  procedure query was run.
-//					* Removed order by combo boxes.
-//					* Removed structure type check boxes.
-// 2005-02-11	JTS, RTi		Converted to allow the pump test GUI
-//					to open for a pump test view object or
-//					the original pump test data.
-// 2005-03-25	JTS, RTi		Added support for View objects.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		HydroBase_PumpTestView objects now used
-//					for SP and non-SP queries.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-06-28	JTS, RTi		Removed DMI parameters from table models
-// 2005-06-29	JTS, RTi		Added support for volcanics and dillers
-//					k sum data.
-// 2005-11-15	JTS, RTi		Option to query the entire state at once
-//					added to the district combo box.
-// 2007-02-07	SAM, RTi		Remove the dependence on CWRAT.
-//					Pass a JFrame to the constructor.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -326,7 +234,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -629,25 +537,6 @@ public void dropNotAllowed() {}
 public void dropSuccessful() {}
 public void dropUnsuccessful() {}
 public void dragStarted() {}
-
-/**
-Clean up for garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__dmi = null;
-	__oldFilterJPanel = null;
-	__exportButton = null;
-	__printButton = null;
-	__viewButton = null;
-	__waterDistrictJComboBox = null;
-	__dataTypeJComboBox = null;
-	__tableJLabel = null;
-	__statusJTextField = null;
-	__worksheet = null;
-	__tableLabelString = null;
-	super.finalize();
-}
 
 /**
 Responsible for formatting output.

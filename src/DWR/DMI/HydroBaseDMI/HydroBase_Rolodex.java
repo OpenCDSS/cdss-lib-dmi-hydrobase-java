@@ -4,35 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_Rolodex.java - Class to hold data from the HydroBase rolodex table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-10	J. Thomas Sapienza, RTi	Initial version from HBRolodex.
-// 2003-02-20	JTS, RTi		Commented out X* data.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -74,36 +61,6 @@ Constructor.
 */
 public HydroBase_Rolodex() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_last_name = null;
-	_first_name = null;
-	_middle_name = null;
-	_title = null;
-	_prefix = null;
-	_suffix = null;
-	_full_name = null;
-	_address1 = null;
-	_address2 = null;
-	_city = null;
-	_st = null;
-	_zip = null;
-//	_xaoo = null;
-//	_xaoo2 = null;
-	_org_name = null;
-	_bond_co_name = null;
-	_lic_no = null;
-	_lic_type = null;
-	_modified = null;
-	
-	super.finalize();
 }
 
 /**

@@ -1,23 +1,23 @@
-// HydroBase_Geoloc - this class provides storage for data from the HydroBase geoloc table and 
+// HydroBase_Geoloc - this class provides storage for data from the HydroBase geoloc table and
 // serves as a base class for joined objects that need geographic information
 
 /* NoticeStart
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
@@ -30,13 +30,13 @@ import RTi.DMI.DMIUtil;
 import java.util.Date;
 
 /**
-This class provides storage for data from the HydroBase geoloc table and 
+This class provides storage for data from the HydroBase geoloc table and
 serves as a base class for joined objects that need geographic information, such as:
 HydroBase_StationGeoloc
 HydroBase_StructureGeoloc
 Hydrobase_WellApplicationGeoloc
 */
-public class HydroBase_Geoloc 
+public class HydroBase_Geoloc
 extends DMIDataObject {
 
 // List in the order of the ER diagram (March 2001)
@@ -93,39 +93,6 @@ Construct and initialize to empty strings and missing data.
 */
 public HydroBase_Geoloc() {
 	super();
-}
-
-/**
-Finalize before garbage collection.
-@exception Throwable if an error occurs.
-*/
-protected void finalize ()
-throws Throwable
-{	
-	_pm = null;
-	_tdir = null;
-	_tsa = null;
-	_rdir = null;
-	_rnga = null;
-	_seca = null;
-	_q160 = null;
-	_q40 = null;
-	_q10 = null;
-	_coordsns_dir = null;
-	_coordsew_dir = null;
-	_county = null;
-	_topomap = null;
-	_loc_type = null;
-	_feature_type = null;
-	_st = null;
-	_loc_description = null;
-	_spotter_version = null;
-	_modified = null;
-	_huc = null;
-	_strname = null;
-	_full_name = null;
-
-	super.finalize();
 }
 
 /**
@@ -838,7 +805,7 @@ Returns a string representation of this object.
 @return a string representation of this object.
 */
 public String toString() {
-	return "HydroBase_Geoloc{" 		+ "\n" + 
+	return "HydroBase_Geoloc{" 		+ "\n" +
 		"Geoloc_num:      " + _geoloc_num + "\n" +
 		"UTM_X:           " + _utm_x + "\n" +
 		"UTM_Y:           " + _utm_y + "\n" +
@@ -879,7 +846,6 @@ public String toString() {
 		"Spotter_version: " + _spotter_version + "\n" +
 		"Modified:        " + _modified + "\n" +
 		"User_num:        " + _user_num + "\n}\n";
-	
 }
 
 }

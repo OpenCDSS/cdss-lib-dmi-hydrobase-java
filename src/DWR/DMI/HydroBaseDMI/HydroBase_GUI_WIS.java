@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,95 +21,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
 
 NoticeEnd */
 
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WIS - WIS Information GUI 
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 25 Aug 1997	DLG, RTi 		Created initial version.
-// 16 Feb 1998	DLG, RTi		Updated to java 1.1 event model,
-//					added popup menu for cell attributes.
-// 20 Feb 1998	DLG, RTi		Added the option to compute gain/loss
-//					via weight coefficent or stream mile.
-// 23 Feb 1998	DLG, RTi		Reworked GUI layout so that Archive 
-//					will stand out more. Satisfies 
-//					CRDSS-00394 log.
-// 02 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 07 Apr 1999	SAM, RTi		Update for database changes.
-// 21 May 1999	SAM, RTi		Remove HBData.TIME_ZONE_DATA reference.
-// 08 Sep 1999	SAM, RTi		Now that there is a database to test,
-//					change the isKnownPoint methods to
-//					not consider dry river conditions.  For
-//					computations, check for dry river
-//					manually.
-// 09 Mar 2000	SAM, RTi		Add code to repair WIS that has missing
-//					data records.
-// 09 Apr 2001	SAM, RTi		Add ability to do PopupMenu on right
-//					mouse click for diversion coding
-//					editing.  Change GUI to GUIUtil.
-//					Add finalize() method and start to
-//					work on memory cleanup.  Add graph
-//					right-click menu item and remove graph
-//					button from bottom.  Use some static
-//					lookup methods to help share code
-//					between HBWISGUI and HBWISBuilderGUI.
-// 14 Jul 2001	SAM, RTi		Change so that if the user has turned
-//					diversion coding on, then when a new
-//					WIS is loaded, carry forward records
-//					for the sheet are automatically added.
-//					Then the records are modified as the
-//					user enters diversion coding
-//					information.  Change so the records are
-//					held in memory until the user indicates
-//					that the WIS should be saved.
-// 2002-02-20	SAM, RTi		Change TSViewGUI to TSViewFrame.
-// 2002-03-02	SAM, RTi		Change the Archive button to Save.
-// 2002-06-18	SAM, RTi		If an entire row is selected, graph
-//					all the data rows.
-//-----------------------------------------------------------------------------
-// 2003-10-08	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2003-10-20	JTS, RTi		* Added initial worksheet code.
-//					* Started removing __wisDataVector
-//					  code and moving it into the worksheet.
-// 2003-11-17	JTS, RTi		* Continued work on WIS.
-//					* Opened the Load GUI.
-// 2003-11-28	JTS, RTi		Added reference to the parent JFrame.
-// 2003-12-03	JTS, RTi		Can now export the text in HTML format.
-// 2004-03-10	JTS, RTi		Added code so that a WIS can be opened
-//					in read-only form.
-// 2004-05-21	JTS, RTi		* Added getColumnTSDataType().
-//					* Opened TS reading.
-// 2004-05-24	JTS, RTi		graphCell() now allows the graphing
-//					of multiple cells at once.
-// 2005-02-15	JTS, RTi		Converted most queries except for 
-//					readTimeSeries to use stored procedures.
-// 2005-03-09	JTS, RTi		HydroBase_SheetName 	
-//					  -> HydroBase_WISSheetName.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-05-25	JTS, RTi		Converted queries that pass in a 
-//					String date to pass in DateTimes 
-//					instead.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-08-04	JTS, RTi		Code has been modified so that if
-//					a user opens a WIS for which the format
-//					has changed (because a new format was
-//					built in the WIS Builder) the old data
-//					is fit into the new format gracefully.
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass a JFrame to the constructor.
-//					Add GeoViewUI for map interaction.
-//					Clean up based on Eclipse feedback.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
-
 package DWR.DMI.HydroBaseDMI;
 
 import java.awt.BorderLayout;
@@ -121,6 +32,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -855,7 +767,7 @@ private boolean checkForNegatives() {
 Sets all of a row's data (except for the row label) to missing.
 */
 private void clearRow(int row) {	
-	Double d = new Double(DMIUtil.MISSING_DOUBLE);
+	Double d = Double.valueOf(DMIUtil.MISSING_DOUBLE);
 	__tableModel.setValueAt(d, row, POINT_FLOW_COL);
 	__tableModel.setValueAt(d, row, NATURAL_FLOW_COL);
 	__tableModel.setValueAt(d, row, DELIVERY_FLOW_COL);
@@ -1785,7 +1697,7 @@ private void exportClicked() {
 			return ;
 		}
 
-		int format = new Integer(eff[1]).intValue();
+		int format = Integer.valueOf(eff[1]).intValue();
 	 	// First format the output...
 		if (format == TEXT) {
 			List<String> outputStrings = formatTextOutput();
@@ -1800,52 +1712,6 @@ private void exportClicked() {
 		Message.printWarning(1, routine, "Error in Export.");
 		Message.printWarning (2, routine, ex);
 	}	
-}
-
-/**
-Clean up before garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__parent = null;
-	__adminDateTime = null;
-	__dmi = null;
-	__loadWISGUI = null;
-	__diagramGUI = null;
-	__network = null;
-	__wis = null;
-	__tableModel = null;
-	__archiveJButton = null;
-	__calculateJButton = null;
-	__clearJButton = null;
-	__closeJButton = null;
-	__dateJButton = null;
-	__dryRiverJButton = null;
-	__exportJButton = null;
-	__loadJButton = null;
-	__printJButton = null;
-	__summaryJButton = null;
-	__cellJPopupMenu = null;
-	__diversionJPopupMenu = null;
-	__tabJPanel = null;
-	__commentsJTextField = null;
-	__dateJTextField = null;
-	__statusJTextField = null;
-	__statusUserJTextField = null;
-	__worksheet = null;
-	__gainSimpleJComboBox = null;
-	__cellGraphJMenuItem1 = null;
-	__cellGraphJMenuItem2 = null;
-	__wisDiversionCodingVector = null;
-	__wisFormatVector = null;
-	__wisFormulaVector = null;
-	__wisImportVector = null;
-	__dateProps = null;
-	__set_date = null;
-	__sheetName = null;
-	__wisStatus = null;
-
-	super.finalize();
 }
 
 /**
@@ -3985,19 +3851,19 @@ so that the data can be graphed from the popup menu.
 @param event MouseEvent object.
 */
 public void mousePressed(MouseEvent event) {
-	int mods = event.getModifiers();
+	int mods = event.getModifiersEx();
 	Component c = event.getComponent();
-	if ((c == __worksheet) && ((mods & MouseEvent.BUTTON3_MASK) != 0)) {
+	if ((c == __worksheet) && ((mods & InputEvent.BUTTON3_DOWN_MASK) != 0)) {
 		c = null;
 		// If a diversion row, display the diversion JPopupMenu.
-		// Otherwise show the general popup.  Also, if in a column
-		// and row that has data, enable the graph button...
+		// Otherwise show the general popup.
+		// Also, if in a column and row that has data, enable the graph button.
 		int col = __worksheet.getSelectedColumn();
 		int row = __worksheet.getSelectedRow();
 		if (((col == PRIORITY_DIV_COL) || (col == RELEASES_COL) 
 			|| (col == DELIVERY_DIV_COL)) 
 			&&getIdentifier(row).regionMatches(true,0,"wdid:",0,5)){
-			// Only show menu if the row has data...
+			// Only show menu if the row has data.
 			if (cellHasData(row, col)) {
 				__cellGraphJMenuItem2.setEnabled(true);
 			}
@@ -4732,15 +4598,15 @@ private boolean saveClicked() {
 			wd.setWis_num(__wisNum);
 			wd.setWis_row(curRow + 1);
 			wd.setSet_date(tsDate.getDate(TimeZoneDefaultType.LOCAL));
-			wd.setPoint_flow((new Double(point_flow)).doubleValue());
-			wd.setNat_flow((new Double(nat_flow)).doubleValue());
-			wd.setDelivery_flow((new Double(delivery_flow)).doubleValue());
-			wd.setGain((new Double(gain)).doubleValue());
-			wd.setTrib_natural((new Double(trib_natural)).doubleValue());
-			wd.setTrib_delivery((new Double(trib_delivery)).doubleValue());
-			wd.setPriority_divr((new Double(priority_divr)).doubleValue());
-			wd.setDelivery_divr((new Double(delivery_divr)).doubleValue());
-			wd.setRelease((new Double(release)).doubleValue());
+			wd.setPoint_flow(Double.valueOf(point_flow).doubleValue());
+			wd.setNat_flow(Double.valueOf(nat_flow).doubleValue());
+			wd.setDelivery_flow(Double.valueOf(delivery_flow).doubleValue());
+			wd.setGain(Double.valueOf(gain).doubleValue());
+			wd.setTrib_natural(Double.valueOf(trib_natural).doubleValue());
+			wd.setTrib_delivery(Double.valueOf(trib_delivery).doubleValue());
+			wd.setPriority_divr(Double.valueOf(priority_divr).doubleValue());
+			wd.setDelivery_divr(Double.valueOf(delivery_divr).doubleValue());
+			wd.setRelease(Double.valueOf(release).doubleValue());
 			wd.setComment(comment);
 			wd.setDry_river(dry_river);
 

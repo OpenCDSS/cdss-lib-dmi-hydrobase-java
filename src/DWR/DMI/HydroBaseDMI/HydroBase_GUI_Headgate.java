@@ -4,14 +4,14 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
@@ -20,32 +20,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_Headgate - Headgate Information GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-// 19 Aug 1997	DLG, RTi 		Created initial version.
-// 07 Dec 1997	SAM, RTi		Implement full export/print.
-// 29 Apr 1998  DLG, RTi		Updated to 1.1 event model, added
-//					javadoc comments.
-// 04 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 02 Sep 1999	SAM, RTi		Remove import *.
-// 2001-11-12	SAM, RTi		Change GUI to GUIUtil.
-//					Remove static from internal strings.
-//-----------------------------------------------------------------------------
-// 2003-12-08	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2005-02-14	JTS, RTi		* Checked all dmi calls to make sure 
-//					  they use stored procedures.
-//					* Changed query to the more specific
-//					  version that passes in a structure
-//					  number rather than a where clause.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -221,7 +195,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -252,21 +226,6 @@ public void actionPerformed(ActionEvent evt) {
 			Message.printWarning(2, routine, ex);
 		}			
         }
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__divJTextField = null;
-        __idJTextField = null;
-        __statusJTextField = null;
-    	__structureJTextField = null;
-	__wdJTextField = null;
-	__strName = null;
-	super.finalize();
 }
 
 /**

@@ -5,58 +5,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WISCellAttributes - Shows information pertaining to a 
-//	particular WIS cell such as formula, and import information.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-// Dec 02, 1997	Darrell L. Gillmeister,	Created initial class description.
-//		RTi
-// Feb 16, 1998	DLG, 			Updated to java 1.1 event model.
-// Feb 20, 1998	DLG, 			Added a JTextField object to display the
-//					weight value for gain/loss.
-// Apr 16, 2001	Steven A. Malers, RTi	Update GUI to display the internal
-//					identifier for troubleshooting and to
-//					compare to graphs.  Remove import * and
-//					add finalize().  Change GUI to JGUIUtil.
-//					Change "Attributes" in title to
-//					"Properties".  Add button next to
-//					internal identifier to allow full
-//					query of structure/station data for the
-//					identifier.  Add HBGUIApp paramenter to
-//					constructor.
-// 2001-07-01 	SAM, RTi		Add "Downstream Node" information.
-// 2002-05-13	SAM, RTi		Add stream and downstream stream
-//					information.
-// 2002-06-09	SAM, RTi		Fix layout problems with resizing.
-//-----------------------------------------------------------------------------
-// 2003-11-28	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2004-05-13	JTS, RTi		Minor revisions following review.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass JFrame to constructor.
-//					Add GeoViewUI to pass to structure query.
-//					Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
  
@@ -259,26 +223,6 @@ public void actionPerformed(ActionEvent event) {
 		// Show information for structure or station...
 		showFullInformation();
         }
-}
-
-/**
-Clean up before garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__parent = null;
-	__dmi = null;
-	__wisFormat = null;
-	__wisFormula = null;
-	__wisImport = null;
-	__infoJButton = null;
-	__okJButton = null;
-	__gainLossJTextField = null;
-	__weightJTextField = null;
-	__formulaJList = null;
-	__importJList = null;
-
-	super.finalize();
 }
 
 /**

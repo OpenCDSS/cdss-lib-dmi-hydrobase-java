@@ -4,105 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_Report_StructureSummary - Class for creating structure summary
-//	reports.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-20	J. Thomas Sapienza, RTi	Initial version.
-// 2003-02-21	JTS, RTi		Javadoc'd, reviewed, revised, cleaned.
-// 2003-02-24	JTS, RTi		- Added finalize() method.
-//					- Converted underscore section headers
-//					  to dashes.
-//					- Removed unnecessary constructor.
-//					- Combined createSummaryForWDID() and
-//					  createSummary()
-// 2003-02-25	JTS, RTi		Converted TSDate to DateTime.
-// 2003-03-13	JTS, RTi		Added constructor that takes a 
-//					structure num.
-// 2003-03-27	JTS, RTi		* Added check for null AND empty result
-//					  sets being returned from queries.
-//					* Corrected a wrong value being 
-//					  displayed (getStr_name() replaced with
-//					  getStrname())
-//					* Action comment was being truncated 
-//					  in some reports, stopped that.
-// 2003-12-09	JTS, RTi		Changed the annual amounts query in
-//					response to changes in how the dmi
-//					joins tables together.
-// 2003-01-08	JTS, RTI		Monthly data was being printed out
-//					in year order (January - December) 
-//					when it should be printed out from
-//					November through October.
-// 2004-05-05	JTS, RTi		Revised irrigated acres query to reflect
-//					changes made to HydroBaseDMI.
-// 2004-05-10	JTS, RTi		Corrected error in formatting decreed
-//					volume amounts.
-// 2004-05-11	JTS, RTi		* Corrected error in report generation
-//					  for irrigated acres summary that was
-//					  causing every line to be the same as
-//					  the first.
-//					* Added ACRES UNKNOWN column to 
-//					  irrigated acres summary.
-//					* Irrigated acres summary report was
-//					  actually GIS irrigated acres report, 
-//					  so the second was replaced with the
-//					  first.
-//					* Added a new irrigated acres summary
-//					  report.
-// 2004-07-08	JTS, RTi		* Added a water rights net query report.
-//					* Added more diversion comment support
-//					  to diversion summary.
-// 2004-07-12	SAM, RTi		* Minor change.  There are actually
-//					  "Release comments" that are stored
-//					  with the diversion comments so change
-//					  some wording slightly.
-// 2005-02-11	JTS, RTi		readStructureGeolocForStructure_num()
-//					was changed to use stored procedures,
-//					requiring changes here (such as using
-//					the structure view object in places).
-// 2005-02-16	JTS, RTi		Converted queries to use stored
-//					procedures.
-// 2005-03-24 	JTS, RTi		Converted to support View objects.
-// 2005-03-28	JTS, RTi		Further work to support View objects.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-07-13	JTS, RTi		Changed the logic of the report 
-//					slightly when it comes to diversion
-//					summary information based on suggestions
-//					from Doug Stenzel:  
-//					* Comments are no longer shown right 
-//					   under to the year they are for.
-//					* Infrequent years are marked as such
-//					  and shown in the summary.
-//					* Infrequent year data is used for
-//					  averages and totals if it is 
-//					  available and if data doesn't exist
-//					  for a normal year. 
-//					* Zeroes are shown now instead of being
-//					  displayed as blanks.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -1165,20 +1082,6 @@ throws Exception {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__dmi = null;
-	__view = null;
-	__structureView = null;
-	__rolodexNum = null;
-	__reportList = null;
-
-	super.finalize();
-}
-
-/**
 For a diversion summary report, searches through the provided list and sees
 if there are any non-infrequent data with the given year.  If so, returns true.
 If no infreq data with the given year are found, returns false.
@@ -1740,7 +1643,7 @@ throws Exception {
 			continue;
 		}
 		else {	
-			c.add(new Integer(iyear));
+			c.add(Integer.valueOf(iyear));
 		}
 
 		if (!DMIUtil.isMissing(r.getQuality()) && r.getQuality().equalsIgnoreCase("I")) {

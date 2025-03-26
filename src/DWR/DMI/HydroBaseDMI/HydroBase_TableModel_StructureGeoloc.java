@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,27 +20,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_StructureGeoloc - class that handles the table model 
-//	for the GUI for the times that StructureGeoloc is queried.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-03-13	J. Thomas Sapienza, RTi	Initial version.
-// 2003-03-20	JTS, RTi		Revised after initial version.
-// 2003-05-13	JTS, RTi		Row numbers (the 0th column) now are
-//					not affected by column sorting.
-// 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// 2004-06-01	JTS, RTi		Converted the location to be a 
-//					single string.
-// 2004-07-09	JTS, RTi		* Added CIU field.
-//					* Added Transbsn field.
-// 2005-04-06	JTS, RTi		Adjusted column text and sizes.
-// 2005-04-29	JTS, RTi		Added finalize().
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -294,8 +273,8 @@ public Object getValueAt(int row, int col) {
 
 	HydroBase_StructureGeoloc r = _data.get(row);
 	switch (col) {
-		case COL_WD:		return new Integer(r.getWD());
-		case COL_ID:		return new Integer(r.getID());
+		case COL_WD:		return Integer.valueOf(r.getWD());
+		case COL_ID:		return Integer.valueOf(r.getID());
 		case COL_NAME:		return r.getStr_name();
 		case COL_LOCATION:
 			return HydroBase_Util.buildLocation(
@@ -304,19 +283,19 @@ public Object getValueAt(int row, int col) {
 				r.getSeca(), r.getQ160(), r.getQ40(),
 				r.getQ10());
 		case COL_SOURCE:	return r.getStrname();
-		case COL_STRMILE:	return new Double(r.getStr_mile());
+		case COL_STRMILE:	return Double.valueOf(r.getStr_mile());
 		case COL_OWNER:		return r.getFull_name();
 		case COL_TYPE:		return __dmi
 						.getStructureTypeDescription(
 						r.getStr_type());
 		case COL_CIU:		return r.getCiu();
-		case COL_TRANSBSN:	return new Integer(r.getTransbsn());
-		case COL_CAPACITY:	return new Double(r.getDcr_capacity());
+		case COL_TRANSBSN:	return Integer.valueOf(r.getTransbsn());
+		case COL_CAPACITY:	return Double.valueOf(r.getDcr_capacity());
 		case COL_UNITS:		return r.getDcr_unit();
-		case COL_UTMX:		return new Double(r.getUtm_x());
-		case COL_UTMY:		return new Double(r.getUtm_y());
-		case COL_LONGITUDE:	return new Double(r.getLongdecdeg());
-		case COL_LATITUDE:	return new Double(r.getLatdecdeg());
+		case COL_UTMX:		return Double.valueOf(r.getUtm_x());
+		case COL_UTMY:		return Double.valueOf(r.getUtm_y());
+		case COL_LONGITUDE:	return Double.valueOf(r.getLongdecdeg());
+		case COL_LATITUDE:	return Double.valueOf(r.getLatdecdeg());
 		default:		return " ";
 	}
 }

@@ -4,19 +4,19 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2023 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
@@ -2682,39 +2682,39 @@ This allows the properties to be retrieved after the initial query.
 */
 public static void setTimeSeriesProperties ( TS ts, HydroBase_StationGeolocMeasType hbsta ) {
     // Use the same names as the database view columns, same order as view.
-    ts.setProperty("station_num", (DMIUtil.isMissing(hbsta.getStation_num()) || HydroBase_Util.isMissing(hbsta.getStation_num()))? null : new Integer(hbsta.getStation_num()));
-    ts.setProperty("geoloc_num", (DMIUtil.isMissing(hbsta.getGeoloc_num()) || HydroBase_Util.isMissing(hbsta.getGeoloc_num())) ? null : new Integer(hbsta.getGeoloc_num()));
+    ts.setProperty("station_num", (DMIUtil.isMissing(hbsta.getStation_num()) || HydroBase_Util.isMissing(hbsta.getStation_num()))? null : Integer.valueOf(hbsta.getStation_num()));
+    ts.setProperty("geoloc_num", (DMIUtil.isMissing(hbsta.getGeoloc_num()) || HydroBase_Util.isMissing(hbsta.getGeoloc_num())) ? null : Integer.valueOf(hbsta.getGeoloc_num()));
     ts.setProperty("station_name", hbsta.getStation_name());
     ts.setProperty("station_id", hbsta.getStation_id());
     ts.setProperty("cooperator_id", hbsta.getCooperator_id());
     ts.setProperty("nesdis_id", hbsta.getNesdis_id());
-    ts.setProperty("drain_area", (DMIUtil.isMissing(hbsta.getDrain_area()) || HydroBase_Util.isMissing(hbsta.getDrain_area())) ? Double.NaN : new Double(hbsta.getDrain_area()));
-    ts.setProperty("contr_area", (DMIUtil.isMissing(hbsta.getContr_area()) || HydroBase_Util.isMissing(hbsta.getContr_area())) ? Double.NaN : new Double(hbsta.getContr_area()));
+    ts.setProperty("drain_area", (DMIUtil.isMissing(hbsta.getDrain_area()) || HydroBase_Util.isMissing(hbsta.getDrain_area())) ? Double.NaN : Double.valueOf(hbsta.getDrain_area()));
+    ts.setProperty("contr_area", (DMIUtil.isMissing(hbsta.getContr_area()) || HydroBase_Util.isMissing(hbsta.getContr_area())) ? Double.NaN : Double.valueOf(hbsta.getContr_area()));
     ts.setProperty("source", hbsta.getSource());
     ts.setProperty("abbrev", hbsta.getAbbrev());
-    ts.setProperty("transbsn", (DMIUtil.isMissing(hbsta.getTransbsn()) || HydroBase_Util.isMissing(hbsta.getTransbsn())) ? null : new Integer(hbsta.getTransbsn()));
-    ts.setProperty("meas_num", (DMIUtil.isMissing(hbsta.getMeas_num()) || HydroBase_Util.isMissing(hbsta.getMeas_num())) ? null : new Integer(hbsta.getMeas_num()));
+    ts.setProperty("transbsn", (DMIUtil.isMissing(hbsta.getTransbsn()) || HydroBase_Util.isMissing(hbsta.getTransbsn())) ? null : Integer.valueOf(hbsta.getTransbsn()));
+    ts.setProperty("meas_num", (DMIUtil.isMissing(hbsta.getMeas_num()) || HydroBase_Util.isMissing(hbsta.getMeas_num())) ? null : Integer.valueOf(hbsta.getMeas_num()));
     ts.setProperty("meas_type", hbsta.getMeas_type());
     ts.setProperty("time_step", hbsta.getTime_step());
-    ts.setProperty("start_year", (DMIUtil.isMissing(hbsta.getStart_year()) || HydroBase_Util.isMissing(hbsta.getStart_year())) ? null : new Integer(hbsta.getStart_year()));
-    ts.setProperty("end_year", (DMIUtil.isMissing(hbsta.getEnd_year()) || HydroBase_Util.isMissing(hbsta.getEnd_year())) ? null : new Integer(hbsta.getEnd_year()));
+    ts.setProperty("start_year", (DMIUtil.isMissing(hbsta.getStart_year()) || HydroBase_Util.isMissing(hbsta.getStart_year())) ? null : Integer.valueOf(hbsta.getStart_year()));
+    ts.setProperty("end_year", (DMIUtil.isMissing(hbsta.getEnd_year()) || HydroBase_Util.isMissing(hbsta.getEnd_year())) ? null : Integer.valueOf(hbsta.getEnd_year()));
     ts.setProperty("vax_field", hbsta.getVax_field());
     ts.setProperty("transmit", hbsta.getTransmit());
-    ts.setProperty("meas_count", (DMIUtil.isMissing(hbsta.getMeas_count()) || HydroBase_Util.isMissing(hbsta.getMeas_count())) ? null : new Integer(hbsta.getMeas_count()));
+    ts.setProperty("meas_count", (DMIUtil.isMissing(hbsta.getMeas_count()) || HydroBase_Util.isMissing(hbsta.getMeas_count())) ? null : Integer.valueOf(hbsta.getMeas_count()));
     ts.setProperty("data_source", hbsta.getData_source());
-    ts.setProperty("UTM_X", (DMIUtil.isMissing(hbsta.getUtm_x()) || HydroBase_Util.isMissing(hbsta.getUtm_x())) ? Double.NaN : new Double(hbsta.getUtm_x()));
-    ts.setProperty("UTM_Y", (DMIUtil.isMissing(hbsta.getUtm_y()) || HydroBase_Util.isMissing(hbsta.getUtm_y())) ? Double.NaN : new Double(hbsta.getUtm_y()));
-    ts.setProperty("longdecdeg", (DMIUtil.isMissing(hbsta.getLongdecdeg()) || HydroBase_Util.isMissing(hbsta.getLongdecdeg())) ? Double.NaN : new Double(hbsta.getLongdecdeg()));
-    ts.setProperty("latdecdeg", (DMIUtil.isMissing(hbsta.getLatdecdeg()) || HydroBase_Util.isMissing(hbsta.getLatdecdeg())) ? Double.NaN : new Double(hbsta.getLatdecdeg()));
-    ts.setProperty("div", (DMIUtil.isMissing(hbsta.getDiv()) || HydroBase_Util.isMissing(hbsta.getDiv())) ? null : new Integer(hbsta.getDiv()));
-    ts.setProperty("wd", (DMIUtil.isMissing(hbsta.getWD()) || HydroBase_Util.isMissing(hbsta.getWD())) ? null : new Integer(hbsta.getWD()));
+    ts.setProperty("UTM_X", (DMIUtil.isMissing(hbsta.getUtm_x()) || HydroBase_Util.isMissing(hbsta.getUtm_x())) ? Double.NaN : Double.valueOf(hbsta.getUtm_x()));
+    ts.setProperty("UTM_Y", (DMIUtil.isMissing(hbsta.getUtm_y()) || HydroBase_Util.isMissing(hbsta.getUtm_y())) ? Double.NaN : Double.valueOf(hbsta.getUtm_y()));
+    ts.setProperty("longdecdeg", (DMIUtil.isMissing(hbsta.getLongdecdeg()) || HydroBase_Util.isMissing(hbsta.getLongdecdeg())) ? Double.NaN : Double.valueOf(hbsta.getLongdecdeg()));
+    ts.setProperty("latdecdeg", (DMIUtil.isMissing(hbsta.getLatdecdeg()) || HydroBase_Util.isMissing(hbsta.getLatdecdeg())) ? Double.NaN : Double.valueOf(hbsta.getLatdecdeg()));
+    ts.setProperty("div", (DMIUtil.isMissing(hbsta.getDiv()) || HydroBase_Util.isMissing(hbsta.getDiv())) ? null : Integer.valueOf(hbsta.getDiv()));
+    ts.setProperty("wd", (DMIUtil.isMissing(hbsta.getWD()) || HydroBase_Util.isMissing(hbsta.getWD())) ? null : Integer.valueOf(hbsta.getWD()));
     ts.setProperty("county", hbsta.getCounty());
     ts.setProperty("topomap", hbsta.getTopomap());
-    ts.setProperty("cty", (DMIUtil.isMissing(hbsta.getCty()) || HydroBase_Util.isMissing(hbsta.getCty())) ? null : new Integer(hbsta.getCty()));
+    ts.setProperty("cty", (DMIUtil.isMissing(hbsta.getCty()) || HydroBase_Util.isMissing(hbsta.getCty())) ? null : Integer.valueOf(hbsta.getCty()));
     ts.setProperty("huc", hbsta.getHUC());
-    ts.setProperty("elev", (DMIUtil.isMissing(hbsta.getElev()) || HydroBase_Util.isMissing(hbsta.getElev())) ? Double.NaN : new Double(hbsta.getElev()));
+    ts.setProperty("elev", (DMIUtil.isMissing(hbsta.getElev()) || HydroBase_Util.isMissing(hbsta.getElev())) ? Double.NaN : Double.valueOf(hbsta.getElev()));
     ts.setProperty("loc_type", hbsta.getLoc_type());
-    ts.setProperty("accuracy", (DMIUtil.isMissing(hbsta.getAccuracy()) || HydroBase_Util.isMissing(hbsta.getAccuracy())) ? null : new Integer(hbsta.getAccuracy()));
+    ts.setProperty("accuracy", (DMIUtil.isMissing(hbsta.getAccuracy()) || HydroBase_Util.isMissing(hbsta.getAccuracy())) ? null : Integer.valueOf(hbsta.getAccuracy()));
     ts.setProperty("st", hbsta.getST());
 }
 
@@ -2726,39 +2726,39 @@ This allows the properties to be retrieved after the initial query.
 */
 public static void setTimeSeriesProperties ( TS ts, HydroBase_StationView hbsta ) {
     // Use the same names as the database view columns, same order as view.
-    ts.setProperty("station_num", (DMIUtil.isMissing(hbsta.getStation_num()) || HydroBase_Util.isMissing(hbsta.getStation_num())) ? null : new Integer(hbsta.getStation_num()));
-    ts.setProperty("geoloc_num", (DMIUtil.isMissing(hbsta.getGeoloc_num()) || HydroBase_Util.isMissing(hbsta.getGeoloc_num())) ? null : new Integer(hbsta.getGeoloc_num()));
+    ts.setProperty("station_num", (DMIUtil.isMissing(hbsta.getStation_num()) || HydroBase_Util.isMissing(hbsta.getStation_num())) ? null : Integer.valueOf(hbsta.getStation_num()));
+    ts.setProperty("geoloc_num", (DMIUtil.isMissing(hbsta.getGeoloc_num()) || HydroBase_Util.isMissing(hbsta.getGeoloc_num())) ? null : Integer.valueOf(hbsta.getGeoloc_num()));
     ts.setProperty("station_name", hbsta.getStation_name());
     ts.setProperty("station_id", hbsta.getStation_id());
     ts.setProperty("cooperator_id", hbsta.getCooperator_id());
     ts.setProperty("nesdis_id", hbsta.getNesdis_id());
-    ts.setProperty("drain_area", (DMIUtil.isMissing(hbsta.getDrain_area()) || HydroBase_Util.isMissing(hbsta.getDrain_area())) ? Double.NaN : new Double(hbsta.getDrain_area()));
-    ts.setProperty("contr_area", (DMIUtil.isMissing(hbsta.getContr_area()) || HydroBase_Util.isMissing(hbsta.getContr_area())) ? Double.NaN : new Double(hbsta.getContr_area()));
+    ts.setProperty("drain_area", (DMIUtil.isMissing(hbsta.getDrain_area()) || HydroBase_Util.isMissing(hbsta.getDrain_area())) ? Double.NaN : Double.valueOf(hbsta.getDrain_area()));
+    ts.setProperty("contr_area", (DMIUtil.isMissing(hbsta.getContr_area()) || HydroBase_Util.isMissing(hbsta.getContr_area())) ? Double.NaN : Double.valueOf(hbsta.getContr_area()));
     ts.setProperty("source", hbsta.getSource());
     ts.setProperty("abbrev", hbsta.getAbbrev());
-    ts.setProperty("transbsn", (DMIUtil.isMissing(hbsta.getTransbsn()) || HydroBase_Util.isMissing(hbsta.getTransbsn())) ? null : new Integer(hbsta.getTransbsn()));
-    ts.setProperty("meas_num", (DMIUtil.isMissing(hbsta.getMeas_num()) || HydroBase_Util.isMissing(hbsta.getMeas_num())) ? null : new Integer(hbsta.getMeas_num()));
+    ts.setProperty("transbsn", (DMIUtil.isMissing(hbsta.getTransbsn()) || HydroBase_Util.isMissing(hbsta.getTransbsn())) ? null : Integer.valueOf(hbsta.getTransbsn()));
+    ts.setProperty("meas_num", (DMIUtil.isMissing(hbsta.getMeas_num()) || HydroBase_Util.isMissing(hbsta.getMeas_num())) ? null : Integer.valueOf(hbsta.getMeas_num()));
     ts.setProperty("meas_type", hbsta.getMeas_type());
     ts.setProperty("time_step", hbsta.getTime_step());
-    ts.setProperty("start_year", (DMIUtil.isMissing(hbsta.getStart_year()) || HydroBase_Util.isMissing(hbsta.getStart_year())) ? null : new Integer(hbsta.getStart_year()));
-    ts.setProperty("end_year", (DMIUtil.isMissing(hbsta.getEnd_year()) || HydroBase_Util.isMissing(hbsta.getEnd_year())) ? null : new Integer(hbsta.getEnd_year()));
+    ts.setProperty("start_year", (DMIUtil.isMissing(hbsta.getStart_year()) || HydroBase_Util.isMissing(hbsta.getStart_year())) ? null : Integer.valueOf(hbsta.getStart_year()));
+    ts.setProperty("end_year", (DMIUtil.isMissing(hbsta.getEnd_year()) || HydroBase_Util.isMissing(hbsta.getEnd_year())) ? null : Integer.valueOf(hbsta.getEnd_year()));
     ts.setProperty("vax_field", hbsta.getVax_field());
     ts.setProperty("transmit", hbsta.getTransmit());
-    ts.setProperty("meas_count", (DMIUtil.isMissing(hbsta.getMeas_count()) || HydroBase_Util.isMissing(hbsta.getMeas_count())) ? null : new Integer(hbsta.getMeas_count()));
+    ts.setProperty("meas_count", (DMIUtil.isMissing(hbsta.getMeas_count()) || HydroBase_Util.isMissing(hbsta.getMeas_count())) ? null : Integer.valueOf(hbsta.getMeas_count()));
     ts.setProperty("data_source", hbsta.getData_source());
-    ts.setProperty("UTM_X", (DMIUtil.isMissing(hbsta.getUtm_x()) || HydroBase_Util.isMissing(hbsta.getUtm_x())) ? Double.NaN : new Double(hbsta.getUtm_x()));
-    ts.setProperty("UTM_Y", (DMIUtil.isMissing(hbsta.getUtm_y()) || HydroBase_Util.isMissing(hbsta.getUtm_y())) ? Double.NaN : new Double(hbsta.getUtm_y()));
-    ts.setProperty("longdecdeg", (DMIUtil.isMissing(hbsta.getLongdecdeg()) || HydroBase_Util.isMissing(hbsta.getLongdecdeg())) ? Double.NaN : new Double(hbsta.getLongdecdeg()));
-    ts.setProperty("latdecdeg", (DMIUtil.isMissing(hbsta.getLatdecdeg()) || HydroBase_Util.isMissing(hbsta.getLatdecdeg())) ? Double.NaN : new Double(hbsta.getLatdecdeg()));
-    ts.setProperty("div", (DMIUtil.isMissing(hbsta.getDiv()) || HydroBase_Util.isMissing(hbsta.getDiv())) ? null : new Integer(hbsta.getDiv()));
-    ts.setProperty("wd", (DMIUtil.isMissing(hbsta.getWD()) || HydroBase_Util.isMissing(hbsta.getWD())) ? null : new Integer(hbsta.getWD()));
+    ts.setProperty("UTM_X", (DMIUtil.isMissing(hbsta.getUtm_x()) || HydroBase_Util.isMissing(hbsta.getUtm_x())) ? Double.NaN : Double.valueOf(hbsta.getUtm_x()));
+    ts.setProperty("UTM_Y", (DMIUtil.isMissing(hbsta.getUtm_y()) || HydroBase_Util.isMissing(hbsta.getUtm_y())) ? Double.NaN : Double.valueOf(hbsta.getUtm_y()));
+    ts.setProperty("longdecdeg", (DMIUtil.isMissing(hbsta.getLongdecdeg()) || HydroBase_Util.isMissing(hbsta.getLongdecdeg())) ? Double.NaN : Double.valueOf(hbsta.getLongdecdeg()));
+    ts.setProperty("latdecdeg", (DMIUtil.isMissing(hbsta.getLatdecdeg()) || HydroBase_Util.isMissing(hbsta.getLatdecdeg())) ? Double.NaN : Double.valueOf(hbsta.getLatdecdeg()));
+    ts.setProperty("div", (DMIUtil.isMissing(hbsta.getDiv()) || HydroBase_Util.isMissing(hbsta.getDiv())) ? null : Integer.valueOf(hbsta.getDiv()));
+    ts.setProperty("wd", (DMIUtil.isMissing(hbsta.getWD()) || HydroBase_Util.isMissing(hbsta.getWD())) ? null : Integer.valueOf(hbsta.getWD()));
     ts.setProperty("county", hbsta.getCounty());
     ts.setProperty("topomap", hbsta.getTopomap());
-    ts.setProperty("cty", (DMIUtil.isMissing(hbsta.getCty()) || HydroBase_Util.isMissing(hbsta.getCty())) ? null : new Integer(hbsta.getCty()));
+    ts.setProperty("cty", (DMIUtil.isMissing(hbsta.getCty()) || HydroBase_Util.isMissing(hbsta.getCty())) ? null : Integer.valueOf(hbsta.getCty()));
     ts.setProperty("huc", hbsta.getHUC());
-    ts.setProperty("elev", (DMIUtil.isMissing(hbsta.getElev()) || HydroBase_Util.isMissing(hbsta.getElev())) ? Double.NaN : new Double(hbsta.getElev()));
+    ts.setProperty("elev", (DMIUtil.isMissing(hbsta.getElev()) || HydroBase_Util.isMissing(hbsta.getElev())) ? Double.NaN : Double.valueOf(hbsta.getElev()));
     ts.setProperty("loc_type", hbsta.getLoc_type());
-    ts.setProperty("accuracy", (DMIUtil.isMissing(hbsta.getAccuracy()) || HydroBase_Util.isMissing(hbsta.getAccuracy())) ? null : new Integer(hbsta.getAccuracy()));
+    ts.setProperty("accuracy", (DMIUtil.isMissing(hbsta.getAccuracy()) || HydroBase_Util.isMissing(hbsta.getAccuracy())) ? null : Integer.valueOf(hbsta.getAccuracy()));
     ts.setProperty("st", hbsta.getST());
 }
 
@@ -2772,47 +2772,47 @@ This allows the properties to be retrieved after the initial query.
 public static void setTimeSeriesProperties ( TS ts, HydroBase_StructMeasTypeView str_mt_v,
     HydroBase_SFUTG2 sfutg2 ) {
     // Use the same names as the database view columns, same order as view.
-    ts.setProperty("div", (DMIUtil.isMissing(str_mt_v.getDiv()) || HydroBase_Util.isMissing(str_mt_v.getDiv())) ? null : new Integer(str_mt_v.getDiv()));
-    ts.setProperty("wd", (DMIUtil.isMissing(str_mt_v.getWD()) || HydroBase_Util.isMissing(str_mt_v.getWD())) ? null : new Integer(str_mt_v.getWD()));
-    ts.setProperty("id", (DMIUtil.isMissing(str_mt_v.getID()) || HydroBase_Util.isMissing(str_mt_v.getID())) ? null : new Integer(str_mt_v.getID()));
+    ts.setProperty("div", (DMIUtil.isMissing(str_mt_v.getDiv()) || HydroBase_Util.isMissing(str_mt_v.getDiv())) ? null : Integer.valueOf(str_mt_v.getDiv()));
+    ts.setProperty("wd", (DMIUtil.isMissing(str_mt_v.getWD()) || HydroBase_Util.isMissing(str_mt_v.getWD())) ? null : Integer.valueOf(str_mt_v.getWD()));
+    ts.setProperty("id", (DMIUtil.isMissing(str_mt_v.getID()) || HydroBase_Util.isMissing(str_mt_v.getID())) ? null : Integer.valueOf(str_mt_v.getID()));
     ts.setProperty("wdid", DMIUtil.isMissing(str_mt_v.getWDID()) ? null : str_mt_v.getWDID());
     ts.setProperty("str_name", str_mt_v.getStr_name());
     ts.setProperty("str_type", str_mt_v.getStr_type());
     ts.setProperty("strtype", str_mt_v.getSTRTYPE());
-    ts.setProperty("UTM_X", (DMIUtil.isMissing(str_mt_v.getUtm_x()) || HydroBase_Util.isMissing(str_mt_v.getUtm_x())) ? Double.NaN : new Double(str_mt_v.getUtm_x()));
-    ts.setProperty("UTM_Y", (DMIUtil.isMissing(str_mt_v.getUtm_y()) || HydroBase_Util.isMissing(str_mt_v.getUtm_y())) ? Double.NaN : new Double(str_mt_v.getUtm_y()));
-    ts.setProperty("longdecdeg", (DMIUtil.isMissing(str_mt_v.getLongdecdeg()) || HydroBase_Util.isMissing(str_mt_v.getLongdecdeg())) ? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
-    ts.setProperty("latdecdeg", (DMIUtil.isMissing(str_mt_v.getLatdecdeg()) || HydroBase_Util.isMissing(str_mt_v.getLatdecdeg())) ? Double.NaN : new Double(str_mt_v.getLatdecdeg()));
+    ts.setProperty("UTM_X", (DMIUtil.isMissing(str_mt_v.getUtm_x()) || HydroBase_Util.isMissing(str_mt_v.getUtm_x())) ? Double.NaN : Double.valueOf(str_mt_v.getUtm_x()));
+    ts.setProperty("UTM_Y", (DMIUtil.isMissing(str_mt_v.getUtm_y()) || HydroBase_Util.isMissing(str_mt_v.getUtm_y())) ? Double.NaN : Double.valueOf(str_mt_v.getUtm_y()));
+    ts.setProperty("longdecdeg", (DMIUtil.isMissing(str_mt_v.getLongdecdeg()) || HydroBase_Util.isMissing(str_mt_v.getLongdecdeg())) ? Double.NaN : Double.valueOf(str_mt_v.getLongdecdeg()));
+    ts.setProperty("latdecdeg", (DMIUtil.isMissing(str_mt_v.getLatdecdeg()) || HydroBase_Util.isMissing(str_mt_v.getLatdecdeg())) ? Double.NaN : Double.valueOf(str_mt_v.getLatdecdeg()));
     ts.setProperty("pm", str_mt_v.getPM());
-    ts.setProperty("ts", (DMIUtil.isMissing(str_mt_v.getTS()) || HydroBase_Util.isMissing(str_mt_v.getTS())) ? null : new Integer(str_mt_v.getTS()));
+    ts.setProperty("ts", (DMIUtil.isMissing(str_mt_v.getTS()) || HydroBase_Util.isMissing(str_mt_v.getTS())) ? null : Integer.valueOf(str_mt_v.getTS()));
     ts.setProperty("tdir", str_mt_v.getTdir());
     ts.setProperty("tsa", str_mt_v.getTsa());
-    ts.setProperty("rng", (DMIUtil.isMissing(str_mt_v.getRng()) || HydroBase_Util.isMissing(str_mt_v.getRng())) ? null : new Integer(str_mt_v.getRng()));
+    ts.setProperty("rng", (DMIUtil.isMissing(str_mt_v.getRng()) || HydroBase_Util.isMissing(str_mt_v.getRng())) ? null : Integer.valueOf(str_mt_v.getRng()));
     ts.setProperty("rdir", str_mt_v.getRdir());
     ts.setProperty("rnga", str_mt_v.getRnga());
-    ts.setProperty("sec", (DMIUtil.isMissing(str_mt_v.getSec()) || HydroBase_Util.isMissing(str_mt_v.getSec())) ? null : new Integer(str_mt_v.getSec()));
+    ts.setProperty("sec", (DMIUtil.isMissing(str_mt_v.getSec()) || HydroBase_Util.isMissing(str_mt_v.getSec())) ? null : Integer.valueOf(str_mt_v.getSec()));
     ts.setProperty("seca", str_mt_v.getSeca());
     ts.setProperty("q160", str_mt_v.getQ160());
     ts.setProperty("q40", str_mt_v.getQ40());
     ts.setProperty("q10", str_mt_v.getQ10());
-    ts.setProperty("coordsns", (DMIUtil.isMissing(str_mt_v.getCoordsns()) || HydroBase_Util.isMissing(str_mt_v.getCoordsns())) ? null : new Integer(str_mt_v.getCoordsns()));
+    ts.setProperty("coordsns", (DMIUtil.isMissing(str_mt_v.getCoordsns()) || HydroBase_Util.isMissing(str_mt_v.getCoordsns())) ? null : Integer.valueOf(str_mt_v.getCoordsns()));
     ts.setProperty("coordsns_dir", str_mt_v.getCoordsns_dir());
-    ts.setProperty("coordsew", (DMIUtil.isMissing(str_mt_v.getCoordsew()) || HydroBase_Util.isMissing(str_mt_v.getCoordsew())) ? null : new Integer(str_mt_v.getCoordsew()));
+    ts.setProperty("coordsew", (DMIUtil.isMissing(str_mt_v.getCoordsew()) || HydroBase_Util.isMissing(str_mt_v.getCoordsew())) ? null : Integer.valueOf(str_mt_v.getCoordsew()));
     ts.setProperty("coordsew_dir", str_mt_v.getCoordsew_dir());
     ts.setProperty("county", str_mt_v.getCounty());
     ts.setProperty("topomap", str_mt_v.getTopomap());
-    ts.setProperty("cty", (DMIUtil.isMissing(str_mt_v.getCty()) || HydroBase_Util.isMissing(str_mt_v.getCty())) ? null : new Integer(str_mt_v.getCty()));
+    ts.setProperty("cty", (DMIUtil.isMissing(str_mt_v.getCty()) || HydroBase_Util.isMissing(str_mt_v.getCty())) ? null : Integer.valueOf(str_mt_v.getCty()));
     ts.setProperty("huc", str_mt_v.getHUC());
-    ts.setProperty("elev", (DMIUtil.isMissing(str_mt_v.getElev()) || HydroBase_Util.isMissing(str_mt_v.getElev())) ? Double.NaN : new Double(str_mt_v.getElev()));
+    ts.setProperty("elev", (DMIUtil.isMissing(str_mt_v.getElev()) || HydroBase_Util.isMissing(str_mt_v.getElev())) ? Double.NaN : Double.valueOf(str_mt_v.getElev()));
     ts.setProperty("loc_type", str_mt_v.getLoc_type());
     ts.setProperty("st", str_mt_v.getST());
-    ts.setProperty("str_mile", (DMIUtil.isMissing(str_mt_v.getStr_mile()) || HydroBase_Util.isMissing(str_mt_v.getStr_mile())) ? null : new Double(str_mt_v.getStr_mile()));
-    ts.setProperty("meas_num", (DMIUtil.isMissing(str_mt_v.getMeas_num()) || HydroBase_Util.isMissing(str_mt_v.getMeas_num())) ? null : new Integer(str_mt_v.getMeas_num()));
-    ts.setProperty("structure_num", (DMIUtil.isMissing(str_mt_v.getStructure_num()) || HydroBase_Util.isMissing(str_mt_v.getStructure_num())) ? null : new Integer(str_mt_v.getStructure_num()));
+    ts.setProperty("str_mile", (DMIUtil.isMissing(str_mt_v.getStr_mile()) || HydroBase_Util.isMissing(str_mt_v.getStr_mile())) ? null : Double.valueOf(str_mt_v.getStr_mile()));
+    ts.setProperty("meas_num", (DMIUtil.isMissing(str_mt_v.getMeas_num()) || HydroBase_Util.isMissing(str_mt_v.getMeas_num())) ? null : Integer.valueOf(str_mt_v.getMeas_num()));
+    ts.setProperty("structure_num", (DMIUtil.isMissing(str_mt_v.getStructure_num()) || HydroBase_Util.isMissing(str_mt_v.getStructure_num())) ? null : Integer.valueOf(str_mt_v.getStructure_num()));
     ts.setProperty("meas_type", str_mt_v.getMeas_type());
     ts.setProperty("time_step", str_mt_v.getTime_step());
-    ts.setProperty("start_year", (DMIUtil.isMissing(str_mt_v.getStart_year()) || HydroBase_Util.isMissing(str_mt_v.getStart_year())) ? null : new Integer(str_mt_v.getStart_year()));
-    ts.setProperty("end_year", (DMIUtil.isMissing(str_mt_v.getEnd_year()) || HydroBase_Util.isMissing(str_mt_v.getEnd_year())) ? null : new Integer(str_mt_v.getEnd_year()));
+    ts.setProperty("start_year", (DMIUtil.isMissing(str_mt_v.getStart_year()) || HydroBase_Util.isMissing(str_mt_v.getStart_year())) ? null : Integer.valueOf(str_mt_v.getStart_year()));
+    ts.setProperty("end_year", (DMIUtil.isMissing(str_mt_v.getEnd_year()) || HydroBase_Util.isMissing(str_mt_v.getEnd_year())) ? null : Integer.valueOf(str_mt_v.getEnd_year()));
     ts.setProperty("identifier", str_mt_v.getIdentifier());
     if ( sfutg2 != null ) {
         ts.setProperty("identifier_S", sfutg2.getSource());
@@ -2823,7 +2823,7 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_StructMeasTypeView
         ts.setProperty("identifier_2", sfutg2.getTo());
     }
     ts.setProperty("transmit", str_mt_v.getTransmit());
-    ts.setProperty("meas_count", (DMIUtil.isMissing(str_mt_v.getMeas_count()) || HydroBase_Util.isMissing(str_mt_v.getMeas_count())) ? null : new Integer(str_mt_v.getMeas_count()));
+    ts.setProperty("meas_count", (DMIUtil.isMissing(str_mt_v.getMeas_count()) || HydroBase_Util.isMissing(str_mt_v.getMeas_count())) ? null : Integer.valueOf(str_mt_v.getMeas_count()));
     ts.setProperty("data_source", str_mt_v.getData_source());
 }
 
@@ -2836,50 +2836,50 @@ This allows the properties to be retrieved after the initial query.
 public static void setTimeSeriesProperties ( TS ts, HydroBase_StructureGeolocStructMeasType str_mt_v ) {
     // Use the same names as the database view columns, same order as view.
     // Below same as HydroBase_StructMeasType.
-    ts.setProperty("div", (DMIUtil.isMissing(str_mt_v.getDiv()) || HydroBase_Util.isMissing(str_mt_v.getDiv())) ? null : new Integer(str_mt_v.getDiv()));
-    ts.setProperty("wd", (DMIUtil.isMissing(str_mt_v.getWD()) || HydroBase_Util.isMissing(str_mt_v.getWD())) ? null : new Integer(str_mt_v.getWD()));
-    ts.setProperty("id", (DMIUtil.isMissing(str_mt_v.getID()) || HydroBase_Util.isMissing(str_mt_v.getID())) ? null : new Integer(str_mt_v.getID()));
+    ts.setProperty("div", (DMIUtil.isMissing(str_mt_v.getDiv()) || HydroBase_Util.isMissing(str_mt_v.getDiv())) ? null : Integer.valueOf(str_mt_v.getDiv()));
+    ts.setProperty("wd", (DMIUtil.isMissing(str_mt_v.getWD()) || HydroBase_Util.isMissing(str_mt_v.getWD())) ? null : Integer.valueOf(str_mt_v.getWD()));
+    ts.setProperty("id", (DMIUtil.isMissing(str_mt_v.getID()) || HydroBase_Util.isMissing(str_mt_v.getID())) ? null : Integer.valueOf(str_mt_v.getID()));
     ts.setProperty("wdid", DMIUtil.isMissing(str_mt_v.getWDID()) ? null : str_mt_v.getWDID());
     ts.setProperty("str_name", str_mt_v.getStr_name());
     ts.setProperty("str_type", str_mt_v.getStr_type());
     ts.setProperty("strtype", str_mt_v.getSTRTYPE());
-    ts.setProperty("UTM_X", (DMIUtil.isMissing(str_mt_v.getUtm_x()) || HydroBase_Util.isMissing(str_mt_v.getUtm_x())) ? Double.NaN : new Double(str_mt_v.getUtm_x()));
-    ts.setProperty("UTM_Y", (DMIUtil.isMissing(str_mt_v.getUtm_y()) || HydroBase_Util.isMissing(str_mt_v.getUtm_y())) ? Double.NaN : new Double(str_mt_v.getUtm_y()));
-    ts.setProperty("longdecdeg", (DMIUtil.isMissing(str_mt_v.getLongdecdeg()) || HydroBase_Util.isMissing(str_mt_v.getLongdecdeg())) ? Double.NaN : new Double(str_mt_v.getLongdecdeg()));
-    ts.setProperty("latdecdeg", (DMIUtil.isMissing(str_mt_v.getLatdecdeg()) || HydroBase_Util.isMissing(str_mt_v.getLatdecdeg())) ? Double.NaN : new Double(str_mt_v.getLatdecdeg()));
+    ts.setProperty("UTM_X", (DMIUtil.isMissing(str_mt_v.getUtm_x()) || HydroBase_Util.isMissing(str_mt_v.getUtm_x())) ? Double.NaN : Double.valueOf(str_mt_v.getUtm_x()));
+    ts.setProperty("UTM_Y", (DMIUtil.isMissing(str_mt_v.getUtm_y()) || HydroBase_Util.isMissing(str_mt_v.getUtm_y())) ? Double.NaN : Double.valueOf(str_mt_v.getUtm_y()));
+    ts.setProperty("longdecdeg", (DMIUtil.isMissing(str_mt_v.getLongdecdeg()) || HydroBase_Util.isMissing(str_mt_v.getLongdecdeg())) ? Double.NaN : Double.valueOf(str_mt_v.getLongdecdeg()));
+    ts.setProperty("latdecdeg", (DMIUtil.isMissing(str_mt_v.getLatdecdeg()) || HydroBase_Util.isMissing(str_mt_v.getLatdecdeg())) ? Double.NaN : Double.valueOf(str_mt_v.getLatdecdeg()));
     ts.setProperty("pm", str_mt_v.getPM());
-    ts.setProperty("ts", (DMIUtil.isMissing(str_mt_v.getTS()) || HydroBase_Util.isMissing(str_mt_v.getTS())) ? null : new Integer(str_mt_v.getTS()));
+    ts.setProperty("ts", (DMIUtil.isMissing(str_mt_v.getTS()) || HydroBase_Util.isMissing(str_mt_v.getTS())) ? null : Integer.valueOf(str_mt_v.getTS()));
     ts.setProperty("tdir", str_mt_v.getTdir());
     ts.setProperty("tsa", str_mt_v.getTsa());
-    ts.setProperty("rng", (DMIUtil.isMissing(str_mt_v.getRng()) || HydroBase_Util.isMissing(str_mt_v.getRng())) ? null : new Integer(str_mt_v.getRng()));
+    ts.setProperty("rng", (DMIUtil.isMissing(str_mt_v.getRng()) || HydroBase_Util.isMissing(str_mt_v.getRng())) ? null : Integer.valueOf(str_mt_v.getRng()));
     ts.setProperty("rdir", str_mt_v.getRdir());
     ts.setProperty("rnga", str_mt_v.getRnga());
-    ts.setProperty("sec", (DMIUtil.isMissing(str_mt_v.getSec()) || HydroBase_Util.isMissing(str_mt_v.getSec())) ? null : new Integer(str_mt_v.getSec()));
+    ts.setProperty("sec", (DMIUtil.isMissing(str_mt_v.getSec()) || HydroBase_Util.isMissing(str_mt_v.getSec())) ? null : Integer.valueOf(str_mt_v.getSec()));
     ts.setProperty("seca", str_mt_v.getSeca());
     ts.setProperty("q160", str_mt_v.getQ160());
     ts.setProperty("q40", str_mt_v.getQ40());
     ts.setProperty("q10", str_mt_v.getQ10());
-    ts.setProperty("coordsns", (DMIUtil.isMissing(str_mt_v.getCoordsns()) || HydroBase_Util.isMissing(str_mt_v.getCoordsns())) ? null : new Integer(str_mt_v.getCoordsns()));
+    ts.setProperty("coordsns", (DMIUtil.isMissing(str_mt_v.getCoordsns()) || HydroBase_Util.isMissing(str_mt_v.getCoordsns())) ? null : Integer.valueOf(str_mt_v.getCoordsns()));
     ts.setProperty("coordsns_dir", str_mt_v.getCoordsns_dir());
-    ts.setProperty("coordsew", (DMIUtil.isMissing(str_mt_v.getCoordsew()) || HydroBase_Util.isMissing(str_mt_v.getCoordsew())) ? null : new Integer(str_mt_v.getCoordsew()));
+    ts.setProperty("coordsew", (DMIUtil.isMissing(str_mt_v.getCoordsew()) || HydroBase_Util.isMissing(str_mt_v.getCoordsew())) ? null : Integer.valueOf(str_mt_v.getCoordsew()));
     ts.setProperty("coordsew_dir", str_mt_v.getCoordsew_dir());
     ts.setProperty("county", str_mt_v.getCounty());
     ts.setProperty("topomap", str_mt_v.getTopomap());
-    ts.setProperty("cty", (DMIUtil.isMissing(str_mt_v.getCty()) || HydroBase_Util.isMissing(str_mt_v.getCty())) ? null : new Integer(str_mt_v.getCty()));
+    ts.setProperty("cty", (DMIUtil.isMissing(str_mt_v.getCty()) || HydroBase_Util.isMissing(str_mt_v.getCty())) ? null : Integer.valueOf(str_mt_v.getCty()));
     ts.setProperty("huc", str_mt_v.getHUC());
-    ts.setProperty("elev", (DMIUtil.isMissing(str_mt_v.getElev()) || HydroBase_Util.isMissing(str_mt_v.getElev())) ? Double.NaN : new Double(str_mt_v.getElev()));
+    ts.setProperty("elev", (DMIUtil.isMissing(str_mt_v.getElev()) || HydroBase_Util.isMissing(str_mt_v.getElev())) ? Double.NaN : Double.valueOf(str_mt_v.getElev()));
     ts.setProperty("loc_type", str_mt_v.getLoc_type());
     ts.setProperty("st", str_mt_v.getST());
-    ts.setProperty("str_mile", (DMIUtil.isMissing(str_mt_v.getStr_mile()) || HydroBase_Util.isMissing(str_mt_v.getStr_mile())) ? null : new Double(str_mt_v.getStr_mile()));
-    ts.setProperty("meas_num", (DMIUtil.isMissing(str_mt_v.getMeas_num()) || HydroBase_Util.isMissing(str_mt_v.getMeas_num())) ? null : new Integer(str_mt_v.getMeas_num()));
-    ts.setProperty("structure_num", (DMIUtil.isMissing(str_mt_v.getStructure_num()) || HydroBase_Util.isMissing(str_mt_v.getStructure_num())) ? null : new Integer(str_mt_v.getStructure_num()));
+    ts.setProperty("str_mile", (DMIUtil.isMissing(str_mt_v.getStr_mile()) || HydroBase_Util.isMissing(str_mt_v.getStr_mile())) ? null : Double.valueOf(str_mt_v.getStr_mile()));
+    ts.setProperty("meas_num", (DMIUtil.isMissing(str_mt_v.getMeas_num()) || HydroBase_Util.isMissing(str_mt_v.getMeas_num())) ? null : Integer.valueOf(str_mt_v.getMeas_num()));
+    ts.setProperty("structure_num", (DMIUtil.isMissing(str_mt_v.getStructure_num()) || HydroBase_Util.isMissing(str_mt_v.getStructure_num())) ? null : Integer.valueOf(str_mt_v.getStructure_num()));
     ts.setProperty("meas_type", str_mt_v.getMeas_type());
     ts.setProperty("time_step", str_mt_v.getTime_step());
-    ts.setProperty("start_year", (DMIUtil.isMissing(str_mt_v.getStart_year()) || HydroBase_Util.isMissing(str_mt_v.getStart_year())) ? null : new Integer(str_mt_v.getStart_year()));
-    ts.setProperty("end_year", (DMIUtil.isMissing(str_mt_v.getEnd_year()) || HydroBase_Util.isMissing(str_mt_v.getEnd_year())) ? null : new Integer(str_mt_v.getEnd_year()));
+    ts.setProperty("start_year", (DMIUtil.isMissing(str_mt_v.getStart_year()) || HydroBase_Util.isMissing(str_mt_v.getStart_year())) ? null : Integer.valueOf(str_mt_v.getStart_year()));
+    ts.setProperty("end_year", (DMIUtil.isMissing(str_mt_v.getEnd_year()) || HydroBase_Util.isMissing(str_mt_v.getEnd_year())) ? null : Integer.valueOf(str_mt_v.getEnd_year()));
     ts.setProperty("identifier", str_mt_v.getIdentifier());
     ts.setProperty("transmit", str_mt_v.getTransmit());
-    ts.setProperty("meas_count", (DMIUtil.isMissing(str_mt_v.getMeas_count()) || HydroBase_Util.isMissing(str_mt_v.getMeas_count())) ? null : new Integer(str_mt_v.getMeas_count()));
+    ts.setProperty("meas_count", (DMIUtil.isMissing(str_mt_v.getMeas_count()) || HydroBase_Util.isMissing(str_mt_v.getMeas_count())) ? null : Integer.valueOf(str_mt_v.getMeas_count()));
     ts.setProperty("data_source", str_mt_v.getData_source());
 }
 
@@ -2892,42 +2892,42 @@ This allows the properties to be retrieved after the initial query.
 public static void setTimeSeriesProperties ( TS ts, HydroBase_StructureView hbstr ) {
     // Use the same names as the database view columns, same order as view.
     // Below same as HydroBase_StructMeasType.
-    ts.setProperty("div", (DMIUtil.isMissing(hbstr.getDiv()) || HydroBase_Util.isMissing(hbstr.getDiv())) ? null : new Integer(hbstr.getDiv()));
-    ts.setProperty("wd", (DMIUtil.isMissing(hbstr.getWD()) || HydroBase_Util.isMissing(hbstr.getWD())) ? null : new Integer(hbstr.getWD()));
-    ts.setProperty("id", (DMIUtil.isMissing(hbstr.getID()) || HydroBase_Util.isMissing(hbstr.getID())) ? null : new Integer(hbstr.getID()));
+    ts.setProperty("div", (DMIUtil.isMissing(hbstr.getDiv()) || HydroBase_Util.isMissing(hbstr.getDiv())) ? null : Integer.valueOf(hbstr.getDiv()));
+    ts.setProperty("wd", (DMIUtil.isMissing(hbstr.getWD()) || HydroBase_Util.isMissing(hbstr.getWD())) ? null : Integer.valueOf(hbstr.getWD()));
+    ts.setProperty("id", (DMIUtil.isMissing(hbstr.getID()) || HydroBase_Util.isMissing(hbstr.getID())) ? null : Integer.valueOf(hbstr.getID()));
     ts.setProperty("wdid", DMIUtil.isMissing(hbstr.getWDID()) ? null : hbstr.getWDID());
     ts.setProperty("str_name", hbstr.getStr_name());
     ts.setProperty("str_type", hbstr.getStr_type());
     ts.setProperty("strtype", hbstr.getSTRTYPE());
-    ts.setProperty("UTM_X", (DMIUtil.isMissing(hbstr.getUtm_x()) || HydroBase_Util.isMissing(hbstr.getUtm_x())) ? Double.NaN : new Double(hbstr.getUtm_x()));
-    ts.setProperty("UTM_Y", (DMIUtil.isMissing(hbstr.getUtm_y()) || HydroBase_Util.isMissing(hbstr.getUtm_y())) ? Double.NaN : new Double(hbstr.getUtm_y()));
-    ts.setProperty("longdecdeg", (DMIUtil.isMissing(hbstr.getLongdecdeg()) || HydroBase_Util.isMissing(hbstr.getLongdecdeg())) ? Double.NaN : new Double(hbstr.getLongdecdeg()));
-    ts.setProperty("latdecdeg", (DMIUtil.isMissing(hbstr.getLatdecdeg()) || HydroBase_Util.isMissing(hbstr.getLatdecdeg())) ? Double.NaN : new Double(hbstr.getLatdecdeg()));
+    ts.setProperty("UTM_X", (DMIUtil.isMissing(hbstr.getUtm_x()) || HydroBase_Util.isMissing(hbstr.getUtm_x())) ? Double.NaN : Double.valueOf(hbstr.getUtm_x()));
+    ts.setProperty("UTM_Y", (DMIUtil.isMissing(hbstr.getUtm_y()) || HydroBase_Util.isMissing(hbstr.getUtm_y())) ? Double.NaN : Double.valueOf(hbstr.getUtm_y()));
+    ts.setProperty("longdecdeg", (DMIUtil.isMissing(hbstr.getLongdecdeg()) || HydroBase_Util.isMissing(hbstr.getLongdecdeg())) ? Double.NaN : Double.valueOf(hbstr.getLongdecdeg()));
+    ts.setProperty("latdecdeg", (DMIUtil.isMissing(hbstr.getLatdecdeg()) || HydroBase_Util.isMissing(hbstr.getLatdecdeg())) ? Double.NaN : Double.valueOf(hbstr.getLatdecdeg()));
     ts.setProperty("pm", hbstr.getPM());
-    ts.setProperty("ts", (DMIUtil.isMissing(hbstr.getTS()) || HydroBase_Util.isMissing(hbstr.getTS())) ? null : new Integer(hbstr.getTS()));
+    ts.setProperty("ts", (DMIUtil.isMissing(hbstr.getTS()) || HydroBase_Util.isMissing(hbstr.getTS())) ? null : Integer.valueOf(hbstr.getTS()));
     ts.setProperty("tdir", hbstr.getTdir());
     ts.setProperty("tsa", hbstr.getTsa());
-    ts.setProperty("rng", (DMIUtil.isMissing(hbstr.getRng()) || HydroBase_Util.isMissing(hbstr.getRng())) ? null : new Integer(hbstr.getRng()));
+    ts.setProperty("rng", (DMIUtil.isMissing(hbstr.getRng()) || HydroBase_Util.isMissing(hbstr.getRng())) ? null : Integer.valueOf(hbstr.getRng()));
     ts.setProperty("rdir", hbstr.getRdir());
     ts.setProperty("rnga", hbstr.getRnga());
-    ts.setProperty("sec", (DMIUtil.isMissing(hbstr.getSec()) || HydroBase_Util.isMissing(hbstr.getSec())) ? null : new Integer(hbstr.getSec()));
+    ts.setProperty("sec", (DMIUtil.isMissing(hbstr.getSec()) || HydroBase_Util.isMissing(hbstr.getSec())) ? null : Integer.valueOf(hbstr.getSec()));
     ts.setProperty("seca", hbstr.getSeca());
     ts.setProperty("q160", hbstr.getQ160());
     ts.setProperty("q40", hbstr.getQ40());
     ts.setProperty("q10", hbstr.getQ10());
-    ts.setProperty("coordsns", (DMIUtil.isMissing(hbstr.getCoordsns()) || HydroBase_Util.isMissing(hbstr.getCoordsns())) ? null : new Integer(hbstr.getCoordsns()));
+    ts.setProperty("coordsns", (DMIUtil.isMissing(hbstr.getCoordsns()) || HydroBase_Util.isMissing(hbstr.getCoordsns())) ? null : Integer.valueOf(hbstr.getCoordsns()));
     ts.setProperty("coordsns_dir", hbstr.getCoordsns_dir());
-    ts.setProperty("coordsew", (DMIUtil.isMissing(hbstr.getCoordsew()) || HydroBase_Util.isMissing(hbstr.getCoordsew())) ? null : new Integer(hbstr.getCoordsew()));
+    ts.setProperty("coordsew", (DMIUtil.isMissing(hbstr.getCoordsew()) || HydroBase_Util.isMissing(hbstr.getCoordsew())) ? null : Integer.valueOf(hbstr.getCoordsew()));
     ts.setProperty("coordsew_dir", hbstr.getCoordsew_dir());
     ts.setProperty("county", hbstr.getCounty());
     ts.setProperty("topomap", hbstr.getTopomap());
-    ts.setProperty("cty", (DMIUtil.isMissing(hbstr.getCty()) || HydroBase_Util.isMissing(hbstr.getCty())) ? null : new Integer(hbstr.getCty()));
+    ts.setProperty("cty", (DMIUtil.isMissing(hbstr.getCty()) || HydroBase_Util.isMissing(hbstr.getCty())) ? null : Integer.valueOf(hbstr.getCty()));
     ts.setProperty("huc", hbstr.getHUC());
-    ts.setProperty("elev", (DMIUtil.isMissing(hbstr.getElev()) || HydroBase_Util.isMissing(hbstr.getElev())) ? Double.NaN : new Double(hbstr.getElev()));
+    ts.setProperty("elev", (DMIUtil.isMissing(hbstr.getElev()) || HydroBase_Util.isMissing(hbstr.getElev())) ? Double.NaN : Double.valueOf(hbstr.getElev()));
     ts.setProperty("loc_type", hbstr.getLoc_type());
     ts.setProperty("st", hbstr.getST());
-    ts.setProperty("str_mile", (DMIUtil.isMissing(hbstr.getStr_mile()) || HydroBase_Util.isMissing(hbstr.getStr_mile())) ? null : new Double(hbstr.getStr_mile()));
-    ts.setProperty("structure_num", (DMIUtil.isMissing(hbstr.getStructure_num()) || HydroBase_Util.isMissing(hbstr.getStructure_num())) ? null : new Integer(hbstr.getStructure_num()));
+    ts.setProperty("str_mile", (DMIUtil.isMissing(hbstr.getStr_mile()) || HydroBase_Util.isMissing(hbstr.getStr_mile())) ? null : Double.valueOf(hbstr.getStr_mile()));
+    ts.setProperty("structure_num", (DMIUtil.isMissing(hbstr.getStructure_num()) || HydroBase_Util.isMissing(hbstr.getStructure_num())) ? null : Integer.valueOf(hbstr.getStructure_num()));
 }
 
 /**
@@ -2951,70 +2951,70 @@ public static void setTimeSeriesProperties ( TS ts, HydroBase_GroundWaterWellsVi
     else {
         ts.setProperty("tsid_loc_file", DMIUtil.isMissing(tsloc)? null : tsloc );
     }
-    ts.setProperty("well_num", (DMIUtil.isMissing(well.getWell_num()) || HydroBase_Util.isMissing(well.getWell_num())) ? null : new Integer(well.getWell_num()));
+    ts.setProperty("well_num", (DMIUtil.isMissing(well.getWell_num()) || HydroBase_Util.isMissing(well.getWell_num())) ? null : Integer.valueOf(well.getWell_num()));
     ts.setProperty("well_name", well.getWell_name());
-    ts.setProperty("div", (DMIUtil.isMissing(well.getDiv()) || HydroBase_Util.isMissing(well.getDiv())) ? null : new Integer(well.getDiv()));
-    ts.setProperty("wd", (DMIUtil.isMissing(well.getWD()) || HydroBase_Util.isMissing(well.getWD())) ? null : new Integer(well.getWD()));
-    ts.setProperty("id", (DMIUtil.isMissing(well.getID()) || HydroBase_Util.isMissing(well.getID())) ? null : new Integer(well.getID()));
+    ts.setProperty("div", (DMIUtil.isMissing(well.getDiv()) || HydroBase_Util.isMissing(well.getDiv())) ? null : Integer.valueOf(well.getDiv()));
+    ts.setProperty("wd", (DMIUtil.isMissing(well.getWD()) || HydroBase_Util.isMissing(well.getWD())) ? null : Integer.valueOf(well.getWD()));
+    ts.setProperty("id", (DMIUtil.isMissing(well.getID()) || HydroBase_Util.isMissing(well.getID())) ? null : Integer.valueOf(well.getID()));
     ts.setProperty("receipt", well.getReceipt());
-    ts.setProperty("permitno", (DMIUtil.isMissing(well.getPermitno()) || HydroBase_Util.isMissing(well.getPermitno())) ? null : new Integer(well.getPermitno()));
+    ts.setProperty("permitno", (DMIUtil.isMissing(well.getPermitno()) || HydroBase_Util.isMissing(well.getPermitno())) ? null : Integer.valueOf(well.getPermitno()));
     ts.setProperty("permitsuf", well.getPermitsuf());
     ts.setProperty("permitrpl", well.getPermitrpl());
     ts.setProperty("locnum", well.getLoc_num());
     ts.setProperty("Site_ID", well.getSite_id());
     ts.setProperty("basin", well.getBasin());
     ts.setProperty("md", well.getMD());
-    ts.setProperty("well_depth", (DMIUtil.isMissing(well.getWell_depth()) || HydroBase_Util.isMissing(well.getWell_depth())) ? Double.NaN : new Double(well.getWell_depth()));
+    ts.setProperty("well_depth", (DMIUtil.isMissing(well.getWell_depth()) || HydroBase_Util.isMissing(well.getWell_depth())) ? Double.NaN : Double.valueOf(well.getWell_depth()));
     ts.setProperty("aquifer1", well.getAquifer1());
     ts.setProperty("aquifer2", well.getAquifer2());
     ts.setProperty("aquifer_comment", well.getAquifer_comment());
-    ts.setProperty("tperf", (DMIUtil.isMissing(well.getTperf()) || HydroBase_Util.isMissing(well.getTperf())) ? null : new Integer(well.getTperf()));
-    ts.setProperty("bperf", (DMIUtil.isMissing(well.getBperf()) || HydroBase_Util.isMissing(well.getBperf())) ? null : new Integer(well.getBperf()));
-    ts.setProperty("yield", (DMIUtil.isMissing(well.getYield()) || HydroBase_Util.isMissing(well.getYield())) ? Double.NaN : new Double(well.getYield()));
-    ts.setProperty("bedrock_elev", (DMIUtil.isMissing(well.getBedrock_elev()) || HydroBase_Util.isMissing(well.getBedrock_elev())) ? Double.NaN : new Double(well.getBedrock_elev()));
-    ts.setProperty("sat_1965", (DMIUtil.isMissing(well.getSat_1965()) || HydroBase_Util.isMissing(well.getSat_1965())) ? Double.NaN : new Double(well.getSat_1965()));
+    ts.setProperty("tperf", (DMIUtil.isMissing(well.getTperf()) || HydroBase_Util.isMissing(well.getTperf())) ? null : Integer.valueOf(well.getTperf()));
+    ts.setProperty("bperf", (DMIUtil.isMissing(well.getBperf()) || HydroBase_Util.isMissing(well.getBperf())) ? null : Integer.valueOf(well.getBperf()));
+    ts.setProperty("yield", (DMIUtil.isMissing(well.getYield()) || HydroBase_Util.isMissing(well.getYield())) ? Double.NaN : Double.valueOf(well.getYield()));
+    ts.setProperty("bedrock_elev", (DMIUtil.isMissing(well.getBedrock_elev()) || HydroBase_Util.isMissing(well.getBedrock_elev())) ? Double.NaN : Double.valueOf(well.getBedrock_elev()));
+    ts.setProperty("sat_1965", (DMIUtil.isMissing(well.getSat_1965()) || HydroBase_Util.isMissing(well.getSat_1965())) ? Double.NaN : Double.valueOf(well.getSat_1965()));
     ts.setProperty("remarks1", well.getRemarks1());
     ts.setProperty("remarks2", well.getRemarks2());
-    ts.setProperty("well_meas_num", (DMIUtil.isMissing(well.getWell_meas_num()) || HydroBase_Util.isMissing(well.getWell_meas_num())) ? null : new Integer(well.getWell_meas_num()));
+    ts.setProperty("well_meas_num", (DMIUtil.isMissing(well.getWell_meas_num()) || HydroBase_Util.isMissing(well.getWell_meas_num())) ? null : Integer.valueOf(well.getWell_meas_num()));
     ts.setProperty("meas_type", well.getMeas_type());
     ts.setProperty("time_step", well.getTime_step());
-    ts.setProperty("start_year", (DMIUtil.isMissing(well.getStart_year()) || HydroBase_Util.isMissing(well.getStart_year())) ? null : new Integer(well.getStart_year()));
-    ts.setProperty("end_year", (DMIUtil.isMissing(well.getEnd_year()) || HydroBase_Util.isMissing(well.getEnd_year())) ? null : new Integer(well.getEnd_year()));
-    ts.setProperty("meas_count", (DMIUtil.isMissing(well.getMeas_count()) || HydroBase_Util.isMissing(well.getMeas_count())) ? null : new Integer(well.getMeas_count()));
+    ts.setProperty("start_year", (DMIUtil.isMissing(well.getStart_year()) || HydroBase_Util.isMissing(well.getStart_year())) ? null : Integer.valueOf(well.getStart_year()));
+    ts.setProperty("end_year", (DMIUtil.isMissing(well.getEnd_year()) || HydroBase_Util.isMissing(well.getEnd_year())) ? null : Integer.valueOf(well.getEnd_year()));
+    ts.setProperty("meas_count", (DMIUtil.isMissing(well.getMeas_count()) || HydroBase_Util.isMissing(well.getMeas_count())) ? null : Integer.valueOf(well.getMeas_count()));
     ts.setProperty("identifier", well.getIdentifier());
     ts.setProperty("data_source_id", well.getData_source_id());
     ts.setProperty("data_source", well.getData_source());
-    ts.setProperty("UTM_X", (DMIUtil.isMissing(well.getUtm_x()) || HydroBase_Util.isMissing(well.getUtm_x())) ? Double.NaN : new Double(well.getUtm_x()));
-    ts.setProperty("UTM_Y", (DMIUtil.isMissing(well.getUtm_y()) || HydroBase_Util.isMissing(well.getUtm_y())) ? Double.NaN : new Double(well.getUtm_y()));
-    ts.setProperty("longdecdeg", (DMIUtil.isMissing(well.getLongdecdeg()) || HydroBase_Util.isMissing(well.getLongdecdeg())) ? Double.NaN : new Double(well.getLongdecdeg()));
-    ts.setProperty("latdecdeg", (DMIUtil.isMissing(well.getLatdecdeg()) || HydroBase_Util.isMissing(well.getLatdecdeg())) ? Double.NaN : new Double(well.getLatdecdeg()));
+    ts.setProperty("UTM_X", (DMIUtil.isMissing(well.getUtm_x()) || HydroBase_Util.isMissing(well.getUtm_x())) ? Double.NaN : Double.valueOf(well.getUtm_x()));
+    ts.setProperty("UTM_Y", (DMIUtil.isMissing(well.getUtm_y()) || HydroBase_Util.isMissing(well.getUtm_y())) ? Double.NaN : Double.valueOf(well.getUtm_y()));
+    ts.setProperty("longdecdeg", (DMIUtil.isMissing(well.getLongdecdeg()) || HydroBase_Util.isMissing(well.getLongdecdeg())) ? Double.NaN : Double.valueOf(well.getLongdecdeg()));
+    ts.setProperty("latdecdeg", (DMIUtil.isMissing(well.getLatdecdeg()) || HydroBase_Util.isMissing(well.getLatdecdeg())) ? Double.NaN : Double.valueOf(well.getLatdecdeg()));
     ts.setProperty("pm", well.getPM());
-    ts.setProperty("ts", (DMIUtil.isMissing(well.getTS()) || HydroBase_Util.isMissing(well.getTS())) ? null : new Integer(well.getTS()));
+    ts.setProperty("ts", (DMIUtil.isMissing(well.getTS()) || HydroBase_Util.isMissing(well.getTS())) ? null : Integer.valueOf(well.getTS()));
     ts.setProperty("tdir", well.getTdir());
     ts.setProperty("tsa", well.getTsa());
-    ts.setProperty("rng", (DMIUtil.isMissing(well.getRng()) || HydroBase_Util.isMissing(well.getRng())) ? null : new Integer(well.getRng()));
+    ts.setProperty("rng", (DMIUtil.isMissing(well.getRng()) || HydroBase_Util.isMissing(well.getRng())) ? null : Integer.valueOf(well.getRng()));
     ts.setProperty("rdir", well.getRdir());
     ts.setProperty("rnga", well.getRnga());
-    ts.setProperty("sec", (DMIUtil.isMissing(well.getSec()) || HydroBase_Util.isMissing(well.getSec())) ? null : new Integer(well.getSec()));
+    ts.setProperty("sec", (DMIUtil.isMissing(well.getSec()) || HydroBase_Util.isMissing(well.getSec())) ? null : Integer.valueOf(well.getSec()));
     ts.setProperty("seca", well.getSeca());
     ts.setProperty("q160", well.getQ160());
     ts.setProperty("q40", well.getQ40());
     ts.setProperty("q10", well.getQ10());
-    ts.setProperty("coordsns", (DMIUtil.isMissing(well.getCoordsns()) || HydroBase_Util.isMissing(well.getCoordsns())) ? null : new Integer(well.getCoordsns()));
+    ts.setProperty("coordsns", (DMIUtil.isMissing(well.getCoordsns()) || HydroBase_Util.isMissing(well.getCoordsns())) ? null : Integer.valueOf(well.getCoordsns()));
     ts.setProperty("coordsns_dir", well.getCoordsns_dir());
-    ts.setProperty("coordsew", (DMIUtil.isMissing(well.getCoordsew()) || HydroBase_Util.isMissing(well.getCoordsew())) ? null : new Integer(well.getCoordsew()));
+    ts.setProperty("coordsew", (DMIUtil.isMissing(well.getCoordsew()) || HydroBase_Util.isMissing(well.getCoordsew())) ? null : Integer.valueOf(well.getCoordsew()));
     ts.setProperty("coordsew_dir", well.getCoordsew_dir());
     ts.setProperty("county", well.getCounty());
     ts.setProperty("topomap", well.getTopomap());
-    ts.setProperty("cty", (DMIUtil.isMissing(well.getCty()) || HydroBase_Util.isMissing(well.getCty())) ? null : new Integer(well.getCty()));
+    ts.setProperty("cty", (DMIUtil.isMissing(well.getCty()) || HydroBase_Util.isMissing(well.getCty())) ? null : Integer.valueOf(well.getCty()));
     ts.setProperty("huc", well.getHUC());
-    ts.setProperty("elev", (DMIUtil.isMissing(well.getElev()) || HydroBase_Util.isMissing(well.getElev())) ? Double.NaN : new Double(well.getElev()));
-    ts.setProperty("elev_accuracy", (DMIUtil.isMissing(well.getElev_accuracy()) || HydroBase_Util.isMissing(well.getElev_accuracy())) ? null : new Double(well.getElev_accuracy()));
+    ts.setProperty("elev", (DMIUtil.isMissing(well.getElev()) || HydroBase_Util.isMissing(well.getElev())) ? Double.NaN : Double.valueOf(well.getElev()));
+    ts.setProperty("elev_accuracy", (DMIUtil.isMissing(well.getElev_accuracy()) || HydroBase_Util.isMissing(well.getElev_accuracy())) ? null : Double.valueOf(well.getElev_accuracy()));
     ts.setProperty("loc_type", well.getLoc_type());
-    ts.setProperty("loc_accuracy", (DMIUtil.isMissing(well.getLoc_accuracy()) || HydroBase_Util.isMissing(well.getLoc_accuracy())) ? null : new Integer(well.getLoc_accuracy()));
+    ts.setProperty("loc_accuracy", (DMIUtil.isMissing(well.getLoc_accuracy()) || HydroBase_Util.isMissing(well.getLoc_accuracy())) ? null : Integer.valueOf(well.getLoc_accuracy()));
     ts.setProperty("st", well.getST());
-    ts.setProperty("stream_num", (DMIUtil.isMissing(well.getStream_num()) || HydroBase_Util.isMissing(well.getStream_num())) ? null : new Integer(well.getStream_num()));
-    ts.setProperty("str_mile", (DMIUtil.isMissing(well.getStr_mile()) || HydroBase_Util.isMissing(well.getStr_mile())) ? null : new Double(well.getStr_mile()));
+    ts.setProperty("stream_num", (DMIUtil.isMissing(well.getStream_num()) || HydroBase_Util.isMissing(well.getStream_num())) ? null : Integer.valueOf(well.getStream_num()));
+    ts.setProperty("str_mile", (DMIUtil.isMissing(well.getStr_mile()) || HydroBase_Util.isMissing(well.getStr_mile())) ? null : Double.valueOf(well.getStr_mile()));
     ts.setProperty("spotter_version", well.getSpotter_version());
     ts.setProperty("DSS_aquifer1", well.getDSS_aquifer1());
     ts.setProperty("DSS_aquifer2", well.getDSS_aquifer2());

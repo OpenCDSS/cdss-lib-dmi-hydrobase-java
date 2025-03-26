@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,27 +20,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_GUI_WISDiagramNodeProperties - class to display and edit
-// 	properties for a node in the diagram display.
-// ----------------------------------------------------------------------------
-//  Copyright:	See the COPYRIGHT file.
-// ----------------------------------------------------------------------------
-// History:
-// 2003-12-18	J. Thomas Sapienza, RTi	initial version.
-// 2004-05-18	JTS, RTi		Major overhaul of the entire design,
-//					reflecting lessons learned from the
-//					network diagram editor for StateMod
-//					and new goals for this tool.
-// 2004-05-24	JTS, RTi		Added apply button.
-// 2004-05-27	JTS, RTi		Renamed from 
-//					HydroBase_GUI_WISNetworkNodeProperties
-//					to 
-//					HydroBase_GUI_WISDiagramNodeProperties.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -229,13 +208,10 @@ private void applyChanges() {
 		node.setAssociatedObject(p);
 	}
 	else {
-		node.setX((new Double(
-			__xTextField.getText().trim())).doubleValue());
-		node.setY((new Double(
-			__yTextField.getText().trim())).doubleValue());
-		// offset by 1 for some backwards-compatability issues
-		node.setLabelDirection(
-			__textPositionComboBox.getSelectedIndex() + 1);
+		node.setX(Double.valueOf( __xTextField.getText().trim()).doubleValue());
+		node.setY(Double.valueOf( __yTextField.getText().trim()).doubleValue());
+		// Offset by 1 for some backwards-compatibility issues.
+		node.setLabelDirection( __textPositionComboBox.getSelectedIndex() + 1);
 	}
 
 	__parent.updateNode(__nodeNum, node, __isAnnotation);
@@ -281,27 +257,6 @@ private void displayPropListValues() {
 
 	val = p.getValue("FontStyle").trim();
 	__fontStyleComboBox.select(val);
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__textFieldBackground = null;
-	__parent = null;
-	__node = null;
-	__applyButton = null;
-	__okButton = null;
-	__fontSizeTextField = null;
-	__nodeTypeTextField = null;
-	__textTextField = null;
-	__xTextField = null;
-	__yTextField = null;
-	__fontNameComboBox = null;
-	__fontStyleComboBox = null;
-	__textPositionComboBox = null;
-	super.finalize();
 }
 
 /**
@@ -631,7 +586,7 @@ private boolean validateData() {
 	// make sure the X value is a double and that it is within the range
 	// of the X values in the data limits
 	try {
-		x = (new Double(__xTextField.getText().trim())).doubleValue();
+		x = Double.valueOf(__xTextField.getText().trim()).doubleValue();
 		if (x < limits.getLeftX() || x > limits.getRightX()) {
 			badX = true;
 		}
@@ -652,7 +607,7 @@ private boolean validateData() {
 	// make sure the Y value is a double and that it is within the range
 	// of the Y values in the data limits
 	try {
-		y = (new Double(__yTextField.getText().trim())).doubleValue();
+		y = Double.valueOf(__yTextField.getText().trim()).doubleValue();
 		if (y < limits.getBottomY() || x > limits.getTopY()) {
 			badY = true;
 		}
@@ -684,16 +639,13 @@ private boolean validateData() {
 		}
 	}
 
-	// make sure that the font size is an integer greater than 0.  If not,
-	// set its textfield to red.  Otherwise the textfield will have a
-	// normal textfield color.
+	// Make sure that the font size is an integer greater than 0.  If not,
+	// set its textfield to red.  Otherwise the textfield will have a normal textfield color.
 	boolean badFontSize = false;
 	if (__isAnnotation) {
 		int size = 0;
 		try {
-			size = (new Integer(
-				__fontSizeTextField.getText().trim()))
-				.intValue();
+			size = Integer.valueOf( __fontSizeTextField.getText().trim()) .intValue();
 		}
 		catch (Exception e) {
 			badFontSize = true;

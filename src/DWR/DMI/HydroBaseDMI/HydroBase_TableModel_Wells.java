@@ -4,19 +4,19 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
@@ -251,19 +251,19 @@ public Object getValueAt(int row, int col) {
 	HydroBase_Wells well = _data.get(row);
 	Date date = null;
 	switch (col) {
-		case COL_YEAR: return new Integer(well.getCal_year());
-		case COL_DIV: return new Integer(well.getDiv());
-		case COL_PARCEL_ID: return new Integer(well.getParcel_id());
-		case COL_CLASS: return new Integer(well.get_Class());
-		case COL_DISTANCE: return new Double(well.getDistance());
-		case COL_PRORATED_YIELD: return new Double(well.getProrated_yield());
-		case COL_PERCENT_YIELD: return new Double(100.0*well.getPercent_yield());
-		case COL_WELL_WD: return new Integer(well.getWD());
-		case COL_WELL_ID: return new Integer(well.getID());
-		case COL_WELL_RECEIPT: return new String(well.getReceipt());
-		case COL_WELL_NAME: return new String(well.getWell_name());
-		case COL_WELL_YIELD: return new Double(well.getYield());
-		case COL_WELL_YIELD_APEX: return new Double(well.getYield_apex());
+		case COL_YEAR: return Integer.valueOf(well.getCal_year());
+		case COL_DIV: return Integer.valueOf(well.getDiv());
+		case COL_PARCEL_ID: return Integer.valueOf(well.getParcel_id());
+		case COL_CLASS: return Integer.valueOf(well.get_Class());
+		case COL_DISTANCE: return Double.valueOf(well.getDistance());
+		case COL_PRORATED_YIELD: return Double.valueOf(well.getProrated_yield());
+		case COL_PERCENT_YIELD: return Double.valueOf(100.0*well.getPercent_yield());
+		case COL_WELL_WD: return Integer.valueOf(well.getWD());
+		case COL_WELL_ID: return Integer.valueOf(well.getID());
+		case COL_WELL_RECEIPT: return String.valueOf(well.getReceipt());
+		case COL_WELL_NAME: return String.valueOf(well.getWell_name());
+		case COL_WELL_YIELD: return Double.valueOf(well.getYield());
+		case COL_WELL_YIELD_APEX: return Double.valueOf(well.getYield_apex());
 		case COL_WELL_PERMIT_DATE:
 			date = well.getPerm_date();
 			if ( date == null ) {
@@ -280,8 +280,8 @@ public Object getValueAt(int row, int col) {
 			else {
 				return "" + new DateTime(date).toString();
 			}
-		case COL_WELL_DEPTH: return new Double(well.getDepth());
-		case COL_DITCHES_SERVED: return new Integer(well.getDitches_served());
+		case COL_WELL_DEPTH: return Double.valueOf(well.getDepth());
+		case COL_DITCHES_SERVED: return Integer.valueOf(well.getDitches_served());
 		default: return "";
 	}
 }

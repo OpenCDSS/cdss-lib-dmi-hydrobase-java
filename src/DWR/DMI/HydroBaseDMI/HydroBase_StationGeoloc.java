@@ -4,43 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_StationGeoloc.java - Class to hold data from the HydroBase 
-//	station and geoloc
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-11	J. Thomas Sapienza, RTi	Initial version from HBStationLocation.
-// 2003-02-19	JTS, RTi		Added field to accomodate older database
-//					versions
-// 2003-02-22	Steven A. Malers, RTi	Copy JTS HydroBase_StationLocation and
-//					change internal class name.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2004-02-09	JTS, RTi		Corrected design flaw -- class was
-//					extending Geoloc and should have 
-//					extended Station.  
-// 2005-03-01	JTS, RTi		Added view copy constructor.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -149,39 +128,6 @@ public HydroBase_StationGeoloc(HydroBase_StationView view) {
 	_loc_type = view._loc_type;
 	_accuracy = view._accuracy;
 	_st = view._st;
-}
-
-/**
-Finalize before garbage collection.
-@exception Throwable if an error occurs.
-*/
-protected void finalize ()
-throws Throwable
-{	
-	_pm = null;
-	_tdir = null;
-	_tsa = null;
-	_rdir = null;
-	_rnga = null;
-	_seca = null;
-	_q160 = null;
-	_q40 = null;
-	_q10 = null;
-	_coordsns_dir = null;
-	_coordsew_dir = null;
-	_county = null;
-	_topomap = null;
-	_loc_type = null;
-	_feature_type = null;
-	_st = null;
-	_loc_description = null;
-	_spotter_version = null;
-	_modified = null;
-	_huc = null;
-	_strname = null;
-	_full_name = null;
-
-	super.finalize();
 }
 
 /**

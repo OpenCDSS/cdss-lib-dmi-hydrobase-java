@@ -4,36 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_Equipment - Table Model for a Vector of 
-//	HydroBase_Equipment objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-04-09	J. Thomas Sapienza, RTi	Initial version.
-// 2003-05-13	JTS, RTi		Row numbers (the 0th column) now are
-//					not affected by column sorting.
-// 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -159,9 +145,9 @@ public Object getValueAt(int row, int col) {
 	HydroBase_Equipment e = _data.get(row);
 	switch (col) {
 		case COL_EQUIP_NUM:		
-			return new Integer(e.getEquip_num());	
+			return Integer.valueOf(e.getEquip_num());	
 		case COL_STRUCTURE_NUM:		
-			return new Integer(e.getStructure_num());
+			return Integer.valueOf(e.getStructure_num());
 		case COL_DATE_INSTALLED:
 			return parseDate(e.getDate_installed());
 		case COL_MEAS_DEVICE:		

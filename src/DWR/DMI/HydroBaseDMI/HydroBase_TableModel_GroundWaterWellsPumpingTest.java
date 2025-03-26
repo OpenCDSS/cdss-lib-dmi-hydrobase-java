@@ -4,42 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_GroundWaterWellsPumpingTest - Table Model for a Vector 
-//	of HydroBase_GroundWaterWellsView objects for the 20050701 pump test
-//	data.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2005-06-22	J. Thomas Sapienza, RTi	Initial version.
-// 2005-07-05	Steven A. Malers, RTi	Review headers, tool tips.
-//					* Put test type, data source,
-//					  test date, and duration at the front
-//					  of specific information.
-// 2005-07-06	JTS, RTi		Add wd column.
-// 2005-11-15	JTS, RTi		* Added div column.
-// 					* Added DSS_aquifer1, DSS_aquifer2,
-//					  DSS_aquifer_comment columns.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -429,9 +409,9 @@ public Object getValueAt(int row, int col) {
 	HydroBase_GroundWaterWellsPumpingTest p = _data.get(row);
 	switch (col) {
 		case COL_DIV:
-			return new Integer(p.getDiv());
+			return Integer.valueOf(p.getDiv());
 		case COL_WD:
-			return new Integer(p.getWD());
+			return Integer.valueOf(p.getWD());
 		case COL_WELL_NAME:	
 			return p.getWell_name();
 		case COL_LOC_NUM:
@@ -465,9 +445,9 @@ public Object getValueAt(int row, int col) {
 				p.getRdir(), p.getSec(), p.getSeca(), 
 				p.getQ160(), p.getQ40(), p.getQ10());		
 		case COL_ELEV:
-			return new Double(p.getElev());
+			return Double.valueOf(p.getElev());
 		case COL_DEPTH:
-			return new Integer(p.getWell_depth());
+			return Integer.valueOf(p.getWell_depth());
 		case COL_PT_TYPE:	return p.getPttype();
 		case COL_PT_SOURCE:	return p.getPtsource();
 		case COL_TEST_DATE:	
@@ -476,28 +456,28 @@ public Object getValueAt(int row, int col) {
 			}
 			return (new DateTime(p.getTestdate())).toString(
 				DateTime.FORMAT_YYYY_MM_DD);
-		case COL_TESTTIME:	return new Double(p.getTesttime());
-		case COL_TSWL:		return new Double(p.getTswl());
-		case COL_TFWL:		return new Double(p.getTfwl());
-		case COL_TESTQ:		return new Double(p.getTestq());
-		case COL_TRANS:		return new Integer(p.getTrans());
+		case COL_TESTTIME:	return Double.valueOf(p.getTesttime());
+		case COL_TSWL:		return Double.valueOf(p.getTswl());
+		case COL_TFWL:		return Double.valueOf(p.getTfwl());
+		case COL_TESTQ:		return Double.valueOf(p.getTestq());
+		case COL_TRANS:		return Integer.valueOf(p.getTrans());
 		case COL_K:		return p.getK();
 		case COL_STORATIVITY:	return p.getStorativity();
 		case COL_LEAKANCE:	return p.getLeakance();
-		case COL_TOPTESTINT:	return new Integer(p.getToptestint());
-		case COL_BASETESTINT:	return new Integer(p.getBasetestint());
-		case COL_DRAWDOWN:	return new Double(p.getDrawdown());
-		case COL_PTMON:		return new Integer(p.getPtmon());
-		case COL_PTOBS:		return new Integer(p.getPtobs());
-		case COL_PTMULTIPLE:	return new Integer(p.getPtmultiple());
+		case COL_TOPTESTINT:	return Integer.valueOf(p.getToptestint());
+		case COL_BASETESTINT:	return Integer.valueOf(p.getBasetestint());
+		case COL_DRAWDOWN:	return Double.valueOf(p.getDrawdown());
+		case COL_PTMON:		return Integer.valueOf(p.getPtmon());
+		case COL_PTOBS:		return Integer.valueOf(p.getPtobs());
+		case COL_PTMULTIPLE:	return Integer.valueOf(p.getPtmultiple());
 		case COL_UTM_X:
-			return new Double(p.getUtm_x());
+			return Double.valueOf(p.getUtm_x());
 		case COL_UTM_Y:
-			return new Double(p.getUtm_y());
+			return Double.valueOf(p.getUtm_y());
 		case COL_LATDECDEG:
-			return new Double(p.getLatdecdeg());
+			return Double.valueOf(p.getLatdecdeg());
 		case COL_LONDECDEG:
-			return new Double(p.getLongdecdeg());			
+			return Double.valueOf(p.getLongdecdeg());			
 
 		case COL_DSS_AQUIFER1:	return p.getDSS_aquifer1();
 		case COL_DSS_AQUIFER2:	return p.getDSS_aquifer2();

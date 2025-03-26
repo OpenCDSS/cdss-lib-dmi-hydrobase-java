@@ -4,43 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_StructMeasType.java - Class to hold data from the HydroBase 
-//	struct_meas_type table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-11	J. Thomas Sapienza, RTi	Initial version from
-//					HBStructMeasType.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2003-09-26	JTS, RTi		Added copy constructor.
-// 2003-12-02	JTS, RTi		* Added reference to the time series.
-//					* Added ts identifier.
-// 2004-12-01	Steven A. Malers, RTi	Clarify comments about the time series
-//					since it is for internal use (not part
-//					of the HydroBase tables).
-// 2005-03-01	JTS, RTi		Added view copy constructor.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -136,26 +115,6 @@ public HydroBase_StructMeasType(HydroBase_StructMeasType h) {
 		_ts = (TS)(h.getTS().clone());
 	}
 	_tsIdentifier = h.getTSIdentifier();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_data_source = null;
-	_identifier = null;
-	_meas_type = null;
-	_modified = null;
-	_str_name = null;
-	_time_step = null;
-	_transmit = null;
-	_ts = null;
-	_tsIdentifier = null;
-	
-	super.finalize();
 }
 
 /**

@@ -4,43 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_ExemptDam - Exempt Dam Data GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 13 Oct 1997	DLG, RTi		Created initial version.
-// 07 Dec 1997	SAM, RTi		Enable export/print.
-// 29 Apr 1998  DLG, RTi		Updated to 1.1 event model, added
-//					javadoc comments.
-// 04 Apr 1999	SAM, RTi		Add HBDMI to queries.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//					Remove import *;
-// 2002-02-25	SAM, RTi		Make ID text field wider.
-//-----------------------------------------------------------------------------
-// 2003-10-03	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2005-02-14	JTS, RTi		Checked all dmi calls to make sure they
-//					use stored procedures.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -146,8 +125,8 @@ int structureNum) {
 
 	submitAndDisplayDamQuery();
 
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 	String name = __structureName;
 
 	String rest = "Structure Data - Nonjurisdictional Dam Detail - "
@@ -184,7 +163,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -223,33 +202,6 @@ Closes the GUI.
 private void closeClicked() {
 	setVisible(false);
 	dispose();
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__capacityJTextField = null;
-	__damHeightJTextField = null;
-	__damTypeJTextField = null;
-	__dateAppJTextField = null;
-	__dateConstJTextField = null;
-	__divJTextField = null;
-	__drainageJTextField = null;
-	__idJTextField = null;
-	__receiptJTextField = null;
-	__sizeOutJTextField = null;
-	__spillHeightJTextField = null;
-	__spillWidthJTextField = null;
-	__statusJTextField = null;
-	__structureJTextField = null;
-	__titleNumJTextField = null;
-	__typeOutJTextField = null;
-	__wdJTextField = null;
-	__structureName = null;
-	super.finalize();
 }
 
 /**

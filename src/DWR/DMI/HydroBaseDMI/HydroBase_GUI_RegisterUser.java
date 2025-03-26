@@ -4,51 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_RegisterUser - GUI to assist in user registration.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:  
-//
-// 29 Apr 1998	DLG, RTi		Created initial class description.
-// 18 May 1998  DLG, RTi		Added registration functionality.
-// 04 Apr 1999	Steven A. Malers, RTi	Added HBDMI to queries.
-// 07 Apr 1999	SAM, RTi		Update for database changes.
-// 07 Sep 1999	SAM, RTi		Update messages for new and
-//					re-registering users.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//-----------------------------------------------------------------------------
-// 2003-04-04	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2005-02-02	JTS, RTi		readUserPreferences...() method no
-//					longer requires Application, because
-//					the user_num in the table is always
-//					unique.
-// 2005-02-14	JTS, RTi		Checked all dmi calls to make sure they
-//					use stored procedures.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass JFrame to constructor.
-//					Clean up code based on Elipse feedback.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -82,8 +53,8 @@ import RTi.Util.GUI.SimpleJButton;
 import RTi.Util.Message.Message;
 
 @SuppressWarnings("serial")
-public class HydroBase_GUI_RegisterUser 
-extends JFrame 
+public class HydroBase_GUI_RegisterUser
+extends JFrame
 implements ActionListener, KeyListener, WindowListener {
 
 /**
@@ -148,7 +119,7 @@ private final String __READY = "Ready";
 HydroBase_GUI_RegisterUser constructor
 @param dmi HydroBaseDMI object
 @param parent JFrame that instantiated this object.
-@param options_ui OptionsUI to handle 
+@param options_ui OptionsUI to handle
 */
 public HydroBase_GUI_RegisterUser(HydroBaseDMI dmi, JFrame parent,
 		OptionsUI options_ui ) {
@@ -219,28 +190,12 @@ private boolean checkFields() {
 
 	return true;
 }
-  
+
 /**
 Closes the GUI
 */
 private void closeClicked() {
-	setVisible(false); 
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__firstJTextField = null;
-	__lastJTextField = null;
-	__loginJTextField = null;
-	__middleJTextField = null;
-	__statusJTextField = null;
-	__confirmJPasswordField = null;
-	__passwordJPasswordField = null;
-	super.finalize();
+	setVisible(false);
 }
 
 /**
@@ -267,7 +222,7 @@ private boolean isEmpty(String s) {
 	if (s == null) {
 		return true;
 	}
-	
+
 	String test = s.trim();
 
 	if (DMIUtil.isMissing(test)) {
@@ -317,12 +272,11 @@ private void registerClicked() {
 		return;
 	}
 
-	String userName = __lastJTextField.getText().trim()+ ", " 
+	String userName = __lastJTextField.getText().trim()+ ", "
 			+ __firstJTextField.getText().trim()+ " "
 			+ __middleJTextField.getText().trim();
 	String login = __loginJTextField.getText().trim();
-	String password = 
-		(new String(__passwordJPasswordField.getPassword())).trim();
+	String password = (new String(__passwordJPasswordField.getPassword())).trim();
 
 	// Perform query to determine if user has registered before...
 
@@ -342,10 +296,9 @@ private void registerClicked() {
 
 	// User is not registered.
 	if (userSecurity == null) {
-		// Now make sure that the login itself is not being used
-		// by someone else...
+		// Now make sure that the login itself is not being used by someone else.
 		try {
-		userSecurity = 
+		userSecurity =
 			__dmi.readUserSecurityForLoginPasswordApplication(
 				login, null, "CWRAT");
 		}
@@ -360,7 +313,7 @@ private void registerClicked() {
 		// Warn user that login is already selected and to
 		// select another login.
 		if (userSecurity != null) {
-			new ResponseJDialog(this, "Login, " + login 
+			new ResponseJDialog(this, "Login, " + login
 				+ ", is already being used."
 				+ " Please select another login.",
 				ResponseJDialog.OK);
@@ -369,7 +322,7 @@ private void registerClicked() {
 			ready();
 			return;
 		}
-		else {	
+		else {
 			// Insert new user record...
 			int userNum = DMIUtil.MISSING_INT;
 			if (__dmi.isDatabaseVersionAtLeast(
@@ -379,11 +332,11 @@ private void registerClicked() {
 				// with the central database.
 				userNum = -999;
 			}
-			else {	
+			else {
 				// SAM(1999-09-07)- Not sure what the
 				// following lines do but leave in for now...
-				userNum = DMIUtil.getMinRecord(__dmi, 
-					"user_security", 
+				userNum = DMIUtil.getMinRecord(__dmi,
+					"user_security",
 					"user_security.userNum") - 1;
 
 				// Set user num to negative so that we can later
@@ -397,7 +350,7 @@ private void registerClicked() {
 			String dmiString = "";
 			if (__dmi.isDatabaseVersionAtLeast(
 				HydroBaseDMI.VERSION_19990305)) {
-				HydroBase_UserSecurity us = 
+				HydroBase_UserSecurity us =
 					new HydroBase_UserSecurity();
 				us.setUser_num(userNum);
 				us.setLogin(login);
@@ -408,16 +361,16 @@ private void registerClicked() {
 				try {
 					__dmi.writeUserSecurity(us);
 				}
-				catch (Exception e) {	
-					Message.printWarning(1, routine, 
+				catch (Exception e) {
+					Message.printWarning(1, routine,
 						"Error writing user to "
 						+ "database.");
 					Message.printWarning(2, routine, e);
 					ready();
 					return;
-				}			
+				}
 			}
-			else {	
+			else {
 				// Old db does not have some of the fields...
 				dmiString = "Insert INTO user_security ("
 					+ " userNum,"
@@ -433,21 +386,20 @@ private void registerClicked() {
 				try {
 					__dmi.dmiWrite(dmiString);
 				}
-				catch (Exception e) {	
-					Message.printWarning(1, routine, 
+				catch (Exception e) {
+					Message.printWarning(1, routine,
 						"Error writing user to "
 						+ "database.");
 					Message.printWarning(2, routine, e);
 					ready();
 					return;
-				}					
+				}
 			}
-			
+
 			// Query user preferences from guest login...
 			try {
-			userSecurity = 
-			__dmi.readUserSecurityForLoginPasswordApplication(
-				"guest", "guest", "CWRAT");		
+			userSecurity =
+			__dmi.readUserSecurityForLoginPasswordApplication( "guest", "guest", "CWRAT");
 			}
 			catch (Exception e) {
 				Message.printWarning(2, routine, "Error "
@@ -456,8 +408,8 @@ private void registerClicked() {
 				Message.printWarning(2, routine, e);
 				ready();
 				return;
-			}			
-			
+			}
+
 			// Error, no preferences located for guest...
 			if (userSecurity == null) {
 				new ResponseJDialog(this, "Error retrieving"
@@ -470,7 +422,7 @@ private void registerClicked() {
 			int guestUserNum = userSecurity.getUser_num();
 			List<HydroBase_UserPreferences> results = null;
 			try {
-			results = 
+			results =
 			__dmi.readUserPreferencesListForUser_num(
 				guestUserNum);
 			}
@@ -486,15 +438,12 @@ private void registerClicked() {
 			// Copy new user preferences from guest preferences...
 			int size = results.size();
 			for (int i = 0; i < size; i++) {
-				HydroBase_UserPreferences prefData = 
-					(HydroBase_UserPreferences)
-					results.get(i);
+				HydroBase_UserPreferences prefData = (HydroBase_UserPreferences)results.get(i);
 				if (__dmi.isDatabaseVersionAtLeast(
 					HydroBaseDMI.VERSION_19990305)) {
 					// New database does not have
 					// appliation in preferences...
-					HydroBase_UserPreferences up = 
-						new HydroBase_UserPreferences();
+					HydroBase_UserPreferences up = new HydroBase_UserPreferences();
 					up.setUser_num(userNum);
 					up.setPreference(
 						prefData.getPreference());
@@ -512,7 +461,7 @@ private void registerClicked() {
 					return;
 				}
 				}
-				else {	
+				else {
 					// Old database...
 					dmiString =
 						"Insert INTO"
@@ -522,7 +471,7 @@ private void registerClicked() {
 						+" preference,"
 						+"pref_value)"
 						+ " VALUES ("
-						+ userNum 
+						+ userNum
 						+ ", 'CWRAT', '"
 						+ prefData.getPreference()
 						+ "', '"
@@ -538,14 +487,13 @@ private void registerClicked() {
 					Message.printWarning(2, routine, e);
 					ready();
 					return;
-				}						
+				}
 				}
 			}
-		}		
+		}
 	}
-	else {	
-		new ResponseJDialog(this, "You have already registered.", 
-			ResponseJDialog.OK);
+	else {
+		new ResponseJDialog(this, "You have already registered.", ResponseJDialog.OK);
 		ready();
 		return;
 	}
@@ -559,7 +507,7 @@ private void registerClicked() {
  		+ "\nLogin: " + login, ResponseJDialog.OK);
 
 	__options_ui.setupNewUser(login, password);
-	closeClicked();	
+	closeClicked();
 }
 
 /**
@@ -605,14 +553,14 @@ private void setupGUI() {
 		new JLabel("Name:"),
 		0, y, 1, 1, 0, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 
-	__lastJTextField = new JTextField(15);	
+	__lastJTextField = new JTextField(15);
 	__lastJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(northWJPanel,
 		__lastJTextField,
 		1, y, 1, 1, 0, 1, TLNN, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 
 	__firstJTextField = new JTextField(15);
-	__firstJTextField.addKeyListener(this);	
+	__firstJTextField.addKeyListener(this);
 	JGUIUtil.addComponent(northWJPanel,
 		__firstJTextField,
 		2, y, 1, 1, 0, 1, TLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
@@ -713,24 +661,24 @@ private void setupGUI() {
 	SimpleJButton cancel = new SimpleJButton(__BUTTON_CANCEL, this);
 	cancel.setToolTipText("Discard data and return.");
 	buttonJPanel.add(cancel);
-	
+
 	JPanel statusJPanel = new JPanel();
 	statusJPanel.setLayout(gbl);
 	southJPanel.add("South", statusJPanel);
-	
+
 	__statusJTextField = new JTextField();
 	__statusJTextField.setEditable(false);
 	JGUIUtil.addComponent(statusJPanel, __statusJTextField,
 		0, 0, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
-	
+
 	String app = JGUIUtil.getAppNameForWindows();
 	if (app == null || app.trim().equals("")) {
 		app = "";
 	}
 	else {
-		app += " - ";	
+		app += " - ";
 	}
-	
+
 	setTitle(app + "User Registration");
 	setResizable(false);
 	pack();

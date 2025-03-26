@@ -4,73 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_IrrigatedAcres - Irrigated Acres Data GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-// 14 Oct 1997	DLG, RTi	Created initial version.
-// 07 Dec 1997	SAM RTi		Enable export, print.
-// 30 Apr 1998  DLG, RTi	Updated to 1.1 event model, added
-//				javadoc comments.
-// 22 May 1998  CGB		Comment out soil type and AWC displays
-// 09 Feb 1999	CEN, RTi	The field choice selection was being filled
-//				by calling "getIrrigationStructureNumber".
-//				That should have been "getIrrigatedAcreNumber".
-//				Therefore, the initial data in the remainder
-//				of the GUI was correct until the user selected
-//				an item from the field choice.  From that point
-//				on, the user was working with bogus field #'s.
-// 04 Apr 1999	SAM, RTi	Add HBDMI to queries.
-// 07 Nov 2000	CEN, RTi	Pulled contents of the irrig summary window
-//				into this window.
-// 2001-11-12	SAM, RTi	Change GUI to JGUIUtil.  Remove import *.
-// 2002-02-25	SAM, RTi	Lengthen ID field (need for dams).
-//-----------------------------------------------------------------------------
-// 2003-09-24	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2004-01-20	JTS, RTi		Began using the JScrollWorksheet in
-//					order to use worksheet row headers.
-// 2004-02-20	SAM, RTi		Change IrrigSummaryStructure to
-//					StructureIrrigSummary.
-// 2004-05-12	JTS, RTi		Parcel details moved out of the old
-//					method of displaying them and into
-//					a worksheet.
-// 2004-09-22	SAM, RTi		Change HydroBase_ParcelUseTS to joined
-//					HydroBase_ParcelUseTSStructureToParcel.
-// 2005-03-24	JTS, RTi		Now supports display of View data.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-07-11	SAM, RTi		Widen the window to view additional
-//					columns without resizing.
-// 2007-02-08	SAM, RTi		Remove dependence on CWRAT.
-//					Pass JFrame to constructor.
-//					Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -182,8 +131,8 @@ int structureNum) {
 	submitAndDisplayIrrigSummaryStructureQuery();
 	submitAndDisplayStructureQuery();
 
-	int wd = (new Integer(__wdJTextField.getText().trim())).intValue();
-	int id = (new Integer(__idJTextField.getText().trim())).intValue();
+	int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 	String name = __structureJTextField.getText().trim();
 
 	String rest = "Structure Data - Irrigated Acres by Parcel - "
@@ -230,7 +179,7 @@ public void actionPerformed(ActionEvent e) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -242,8 +191,7 @@ public void actionPerformed(ActionEvent e) {
 	}
 	else if (s.equals(__BUTTON_PRINT)) {
 		try {
-			SelectFormatTypeJDialog d = 
-				new SelectFormatTypeJDialog(this,HydroBase_GUI_Util.getFormats());
+			SelectFormatTypeJDialog d = new SelectFormatTypeJDialog(this,HydroBase_GUI_Util.getFormats());
 			int format = d.getSelected();
 			if (format == HydroBase_GUI_Util.CANCEL) {
 				return;
@@ -265,30 +213,6 @@ Closes the GUI.
 */
 private void closeClicked() {
 	dispose();
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__statusJTextField = null;
-	__wdJTextField = null;
-	__idJTextField = null;
-	__divJTextField = null;
-	__gisTotJTextField = null;
-	__gisTotDateJTextField = null;
-	__divTotJTextField = null;
-	__divTotDateJTextField = null;
-	__structTotJTextField = null;
-	__structTotDateJTextField = null;
-	__structureJTextField = null;
-	//__awcJTextField = null;
-	//__soilTypeJTextField = null;
-	__worksheet = null;
-	__structureName = null;
-	super.finalize();
 }
 
 /**

@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,17 +21,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
 
 NoticeEnd */
 
-//-----------------------------------------------------------------------------
-// HBWISMath - class to assist in building and manipulating
-//	       the WIS sheet formula language.
-//-----------------------------------------------------------------------------
-// History:
-// 24 Nov 1997	Darrell L. Gillmeister, RTi Created initial version.
-//-----------------------------------------------------------------------------
-// 2003-10-08	J. Thomas Sapienza, RTi	* Updated for HydroBaseDMI.
-//					* Rough draft of javadocs.	
-// 2004-01-05	JTS, RTi		Added toString().
-//-----------------------------------------------------------------------------
 package DWR.DMI.HydroBaseDMI;
 
 import java.util.List;
@@ -335,10 +324,8 @@ public static List<HydroBase_WISMath> parseFormula(String formula, int flag) {
 					// term is a constant. otherwise
 					// set the column type.
 					try {
-						curTermAsDouble = new Double(
-							entireTerm.trim());
-						finalValue = 
-						curTermAsDouble.doubleValue();
+						curTermAsDouble = Double.valueOf( entireTerm.trim());
+						finalValue = curTermAsDouble.doubleValue();
 						wisMath.setConstant(finalValue);
 						wisMath.setIsConstant(true);
 
@@ -370,8 +357,7 @@ public static List<HydroBase_WISMath> parseFormula(String formula, int flag) {
 					// term is a constant. otherwise
 					// set the column type.
 					try {
-						curTermAsDouble = new Double(
-							entireTerm.trim());
+						curTermAsDouble = Double.valueOf( entireTerm.trim());
 						finalValue = 
 						  curTermAsDouble.doubleValue();
 						wisMath.setConstant(finalValue);

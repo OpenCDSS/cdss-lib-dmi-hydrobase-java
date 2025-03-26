@@ -4,39 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_AgriculturalCASSCropStats.java - Class to hold data from the
-//	HydroBase Agricultural_CASS_crop_stats table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2004-02-07	Steven A. Malers, RTi	Initial version from HydroBase_Agstats.
-//					Because column names have uppercase
-//					letters, the names of methods also use
-//					the same uppercase letters.
-// 2004-02-20	SAM, RTi		Change the name of the class from
-//					AgriculturalCropStats because the table
-//					name was changed.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -68,22 +51,6 @@ Constructor.
 */
 public HydroBase_AgriculturalCASSCropStats() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_st = null;
-	_county = null;
-	_Commodity = null;
-	_Practice = null;
-	_YieldUnit = null;
-	_ProductionUnit = null;
-	super.finalize();
 }
 
 /**

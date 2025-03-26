@@ -5,19 +5,19 @@
 
 TSTool
 TSTool is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 1994-2019 Colorado Department of Natural Resources
+Copyright (C) 1994-2025 Colorado Department of Natural Resources
 
 TSTool is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    TSTool is distributed in the hope that it will be useful,
+TSTool is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with TSTool.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
@@ -367,7 +367,7 @@ public Object getValueAt(int row, int col)
 		case COL_UNITS: // The units are not in HydroBase.meas_type but are set by TSTool...
 			return wv.getData_units();
 		case COL_START:
-		    //return new Integer(wv.getStart_year() );
+		    //return Integer.valueOf(wv.getStart_year() );
 			i = wv.getStart_year();
 			if ( DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 				return "";
@@ -376,7 +376,7 @@ public Object getValueAt(int row, int col)
 			    return "" + i;
 			}
 		case COL_END:
-		    //return new Integer (wv.getEnd_year() );
+		    //return Integer.valueOf (wv.getEnd_year() );
 			i = wv.getEnd_year();
 			if ( DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 				return "";
@@ -393,7 +393,7 @@ public Object getValueAt(int row, int col)
 			    return "" + i;
 			}
 		case COL_DIV:
-		    //return new Integer ( wv.getDiv() );
+		    //return Integer.valueOf ( wv.getDiv() );
 			i = wv.getDiv();
 			if ( DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 				return "";
@@ -402,7 +402,7 @@ public Object getValueAt(int row, int col)
 			    return "" + i;
 			}
 		case COL_DIST:
-		    //return new Integer ( wv.getWD() );
+		    //return Integer.valueOf ( wv.getWD() );
 			i = wv.getWD();
 			if ( DMIUtil.isMissing(i) || HydroBase_Util.isMissing(i)) {
 				return "";

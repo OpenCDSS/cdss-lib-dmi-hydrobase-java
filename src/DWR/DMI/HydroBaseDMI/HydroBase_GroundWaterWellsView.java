@@ -4,37 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_GroundWaterWellsView.java - Class to hold data from the HydroBase 
-//	pump_test view table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2005-06-20	J. Thomas Sapienza, RTi	Initial version to hold groundwaterwell
-//					data as a baseclass.
-// 2005-11-15	JTS, RTi		Added DSS_aquifer1, DSS_aquifer2, and
-//					DSS_aquifer_comment.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -141,60 +126,6 @@ Constructor.
 */
 public HydroBase_GroundWaterWellsView() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_str_name = null;
-	_pm = null;
-	_tdir = null;
-	_tsa = null;
-	_rdir = null;
-	_rnga = null;
-	_seca = null;
-	_q160 = null;
-	_q40 = null;
-	_q10 = null;
-	_county = null;
-	_st = null;
-	_topomap = null;
-	_huc = null;
-	_loc_type = null;
-	_coordsew_dir = null;
-	_coordsns_dir = null;
-	_well_name = null;
-	_receipt = null;
-	_permitsuf = null;
-	_permitrpl = null;	
-	_md = null;	
-	_basin = null;
-	_aquifer1 = null;
-	_aquifer2 = null;	
-	_aquifer_comment = null;
-	_remarks1 = null;
-	_remarks2 = null;
-	_data_source = null;
-	_data_source_id = null;
-	_data_units = null;
-	_locnum = null;
-	_site_id = null;
-	_spotter_version = null;	
-	_usgs_id = null;
-	_usbr_id = null;
-	_meas_type = null;
-	_time_step = null;
-	_identifier = null;
-	_log_type = null;
-	_log_date = null;
-	_DSS_aquifer1 = null;
-	_DSS_aquifer2 = null;
-	_DSS_aquifer_comment = null;
-	super.finalize();
 }
 
 /**
@@ -1444,7 +1375,7 @@ public void setWell_depth(int well_depth) {
 Sets _well_meas_num
 @param well_meas_num value to put into _well_meas_num
 */
-public void setWell_meas_num(int well_meas_num) {	
+public void setWell_meas_num(int well_meas_num) {
 	_well_meas_num = well_meas_num;
 }
 

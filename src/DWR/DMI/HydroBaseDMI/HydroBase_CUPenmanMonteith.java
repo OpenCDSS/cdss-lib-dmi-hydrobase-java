@@ -4,19 +4,19 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
@@ -27,19 +27,19 @@ import RTi.DMI.DMIDataObject;
 import RTi.DMI.DMIUtil;
 
 /**
-Class to store data from the HydroBase cu_penman_monteith table.  A Penman-Monteith
-crop coefficient curve requires data from several tables in order to 
-define the object.  This is different from most other HydroBase objects.
+Class to store data from the HydroBase cu_penman_monteith table.
+A Penman-Monteith crop coefficient curve requires data from several tables in order to define the object.
+This is different from most other HydroBase objects.
 CU_Blaney_Criddle and CU_mod_hargreaves are similar.
 */
-public class HydroBase_CUPenmanMonteith 
+public class HydroBase_CUPenmanMonteith
 extends DMIDataObject {
 
-// From crop
+// From crop.
 protected int _cropnum = DMIUtil.MISSING_INT;
 protected String _cropname = DMIUtil.MISSING_STRING;
 
-// From cu_penman_monteith
+// From cu_penman_monteith>
 protected int _method_num = DMIUtil.MISSING_INT;
 protected int _growthstage_no = DMIUtil.MISSING_INT;
 protected int _curve_value = DMIUtil.MISSING_INT;
@@ -52,19 +52,6 @@ Constructor.
 */
 public HydroBase_CUPenmanMonteith() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_cropname = null;
-	_method_desc = null;
-
-	super.finalize();
 }
 
 /**
@@ -123,7 +110,6 @@ public int getMethod_num() {
 	return _method_num;
 }
 
-
 /**
 Sets _cropgrowcoeff
 @param cropgrowcoeff value to put in _cropgrowcoeff
@@ -180,12 +166,12 @@ public void setMethod_num(int method_num) {
 	 _method_num = method_num;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_CUPenmanMonteith {"		+ "\n" + 
+	return "HydroBase_CUPenmanMonteith {"		+ "\n" +
 		"Cropnum:        " + _cropnum		+ "\n" +
 		"Cropname:       '" + _cropname 	+ "'\n" +
 		"Method_num:     " + _method_num 	+ "\n" +

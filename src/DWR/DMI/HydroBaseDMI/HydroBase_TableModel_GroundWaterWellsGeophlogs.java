@@ -4,39 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_GroundWaterWellsGeophlogs - Table Model for a Vector of 
-//	HydroBase_GroundWaterWellsView objects displayed in the ground water
-//	GUI in order to generate a Geophlogs report.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2005-06-22	J. Thomas Sapienza, RTi	Initial version.
-// 2005-07-05	Steven A. Malers, RTi	Review headers and tool tips.
-// 2005-07-06	JTS, RTi		Add wd column.
-// 2005-11-15	JTS, RTi		* Added div column.
-// 					* Added DSS_aquifer1, DSS_aquifer2,
-//					  DSS_aquifer_comment columns.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -323,9 +306,9 @@ public Object getValueAt(int row, int col) {
 	HydroBase_GroundWaterWellsGeophlogs g = _data.get(row);
 	switch (col) {
 		case COL_DIV:
-			return new Integer(g.getDiv());
+			return Integer.valueOf(g.getDiv());
 		case COL_WD:
-			return new Integer(g.getWD());
+			return Integer.valueOf(g.getWD());
 		case COL_WELL_NAME:	
 			return g.getWell_name();
 		case COL_PERMIT_INFO:
@@ -355,23 +338,23 @@ public Object getValueAt(int row, int col) {
 				g.getRdir(), g.getSec(), g.getSeca(), 
 				g.getQ160(), g.getQ40(), g.getQ10());		
 		case COL_UTM_X:
-			return new Double(g.getUtm_x());
+			return Double.valueOf(g.getUtm_x());
 		case COL_UTM_Y:
-			return new Double(g.getUtm_y());
+			return Double.valueOf(g.getUtm_y());
 		case COL_LATDECDEG:
-			return new Double(g.getLatdecdeg());
+			return Double.valueOf(g.getLatdecdeg());
 		case COL_LONDECDEG:
-			return new Double(g.getLongdecdeg());			
+			return Double.valueOf(g.getLongdecdeg());			
 		case COL_ELEV:
-			return new Double(g.getElev());
+			return Double.valueOf(g.getElev());
 		case COL_DEPTH:
-			return new Integer(g.getWell_depth());
+			return Integer.valueOf(g.getWell_depth());
 		case COL_LOG_TYPE:
 			return g.getLog_type();
 		case COL_LOG_SWL:
-			return new Integer(g.getLog_swl());
+			return Integer.valueOf(g.getLog_swl());
 		case COL_LOG_DEPTH:
-			return new Integer(g.getLog_depth());
+			return Integer.valueOf(g.getLog_depth());
 		case COL_LOG_DATE:
 			if (g.getLog_date() == null) {
 				return null;

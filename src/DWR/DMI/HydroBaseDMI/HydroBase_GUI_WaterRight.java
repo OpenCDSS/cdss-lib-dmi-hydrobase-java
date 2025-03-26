@@ -4,59 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WaterRight - Water Right Detail GUI for displaying NetAmts
-//	and Transact data.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 17 Oct 2000	Catherine E. Nutting-Lane, RTi
-//				Started initial version.
-// 23 Oct 2000	CEN, RTi	Completed initial version.
-// 16 Jul 2001	SAM, RTi	Change "Prior No.:" to "Prior/Case No.:" to
-//				agree with the data dictionary.  Get rid of
-//				extra new String()calls.  Change GUI to
-//				GUIUtil.  Add finalize().
-// 2002-02-27	SAM, RTi	Set the status text field background to light
-//				gray.
-// 2002-08-22	SAM, RTi	Fix location fields.  County was not being
-//				displayed and all other fields were shifted to
-//				the left.
-//-----------------------------------------------------------------------------
-// 2003-03-13	J. Thomas Sapienza, RTi	Initial SWING version.
-// 2003-03-14	JTS, RTi		Finished initial swing version.
-// 2003-03-20	JTS, RTi		* Revised after SAM's review.
-//					* Javadoc'd.
-// 2003-03-25	JTS, RTi		* Removed references to
-//					  HydroBase_GUI_Util parent object.
-// 2003-03-27	JTS, RTi		Converted literal button labels to
-//					__BUTTON_ Strings.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-07-11	JTS, RTi		* Stopped using X* fields.
-//					* Transact had two strtype fields.  
-//					  Removed the second one.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -530,76 +493,12 @@ private void fillJTextFields() {
 }
 
 /**
-Clean up for garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__dmi = null;
-	__hydroBaseNetAmts = null;
-	__hydroBaseTransact = null;
-	__closeJButton = null;
-	__exportJButton = null;
-	__printJButton = null;
-	__actionCommentJTextArea = null;
-	__abandJTextField = null;
-	__actionUpdateJTextField = null;
-	__adjDateJTextField = null;
-	__adjTypeJTextField = null;
-	__adminNoJTextField = null;
-	__aproDateJTextField = null;
-	__assocIDJTextField = null;
-	__assocTypeJTextField = null;
-	__assocWDJTextField = null;
-	__augRoleJTextField = null;
-	__caseNoJTextField = null;
-	__countyJTextField = null;
-	__divJTextField = null;
-	__idJTextField = null;
-	__lastDueDilJTextField = null;
-	__orderNoJTextField = null;
-	__padjDateJTextField = null;
-	__planIDJTextField = null;
-	__planWDJTextField = null;
-	__pmJTextField = null;
-	__priorNoJTextField = null;
-	__q10JTextField = null;
-	__q40JTextField = null;
-	__q160JTextField = null;
-	__rateAbsJTextField = null;
-	__rateAmtJTextField = null;
-	__rateApexJTextField = null;
-	__rateCondJTextField = null;
-	__rngJTextField = null;
-	__rdirJTextField = null;
-	__secJTextField = null;
-	__secaJTextField = null;
-	__sourceJTextField = null;
-	__statusJTextField = null;
-	__structTypeJTextField = null;
-	__tranIDJTextField = null;
-	__transTypeJTextField = null;
-	__tranWDJTextField = null;
-	__twnJTextField = null;
-	__tdirJTextField = null;
-	__useTypeJTextField = null;
-	__volAbsJTextField = null;
-	__volAmtJTextField = null;
-	__volApexJTextField = null;
-	__volCondJTextField = null;
-	__wdJTextField = null;
-	__wrnameJTextField = null;
-	__wrstatusJTextField = null;
-
-	super.finalize();
-}
-
-/**
 Formats the data for output as export or print.
 @return a list of strings, each of which is a line in the GUI.
 */
 public List<String> formatOutput() {
-	List<String> v = new Vector<String>(30, 5);
-	List<String> tmpV = new Vector<String>(10,5);
+	List<String> v = new Vector<>(30, 5);
+	List<String> tmpV = new Vector<>(10,5);
 
 	if (__table == NET_AMOUNTS) {
 		v.add("Water Right - Net Amounts");

@@ -4,44 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//------------------------------------------------------------------------------
-// HydroBase_CountyRef - data structure to hold data from the HydroBase 
-//	county_ref table
-//------------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//------------------------------------------------------------------------------
-// Notes:	(1)	This class has no knowledge of the database itself
-//			(aside from its own data members), and there is no
-//			knowledge of the connection with the database.
-//		(2)	This class only holds information from the county_ref
-//			table.
-//------------------------------------------------------------------------------
-// History:
-// 
-// 2002-11-08	Steven A. Malers, RTi	Initial version from HBCounty.
-// 2003-01-05	SAM, RTi		Update based on changes to the DMI
-//					package.
-// 2003-02-13	J. Thomas Sapienza, RTi	Added static methods for forming and
-//					parsing IDs.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -52,6 +30,7 @@ import RTi.Util.Message.Message;
 
 import RTi.Util.String.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -63,14 +42,14 @@ in the HydroBase data dictionary.
 public class HydroBase_CountyRef 
 extends DMIDataObject {
 
-// List in the order of the ER diagram (March 2001)
+// List in the order of the ER diagram (March 2001).
 
-protected String _fips_cty = 	DMIUtil.MISSING_STRING;
-protected String _fips_st = 	DMIUtil.MISSING_STRING;
-protected int _cty =	 	DMIUtil.MISSING_INT;
-protected String _county = 	DMIUtil.MISSING_STRING;
-protected String _st = 		DMIUtil.MISSING_STRING;
-protected String _abbrev = 	DMIUtil.MISSING_STRING;
+protected String _fips_cty = DMIUtil.MISSING_STRING;
+protected String _fips_st = DMIUtil.MISSING_STRING;
+protected int _cty = DMIUtil.MISSING_INT;
+protected String _county = DMIUtil.MISSING_STRING;
+protected String _st = DMIUtil.MISSING_STRING;
+protected String _abbrev = DMIUtil.MISSING_STRING;
 
 /**
 Construct and initialize to empty strings and missing data.
@@ -80,29 +59,15 @@ public HydroBase_CountyRef() {
 }
 
 /**
-Finalize before garbage collection.
-@exception Throwable if an error occurs.
-*/
-protected void finalize ()
-throws Throwable {
-	_fips_cty = null;
-	_fips_st = null;
-	_county = null;
-	_st = null;
-	_abbrev = null;
-	super.finalize();
-}
-
-/**
 Form a countyID from its parts.
 @param cty the cty to use
 @param id the id to use
 @return a countyid
 */
 public static String formCountyID(int cty, int id) {
-	Integer icty = new Integer(cty);
-	Integer iid = new Integer(id);
-	List<Object> v = new Vector<Object>(2, 1);
+	Integer icty = Integer.valueOf(cty);
+	Integer iid = Integer.valueOf(id);
+	List<Object> v = new ArrayList<Object>(2);
 	v.add(icty);
 	v.add(iid);
 	return StringUtil.formatString(v, "%02d%05d");
@@ -115,7 +80,7 @@ Form a countyID from its parts.
 @return a countyid
 */
 public static String formCountyID(String cty, String id) {
-	List<Object> v = new Vector<Object>(2, 1);
+	List<Object> v = new ArrayList<Object>(2);
 	v.add(cty);
 	v.add(id);
 	return StringUtil.formatString(v, "%02d%05d");

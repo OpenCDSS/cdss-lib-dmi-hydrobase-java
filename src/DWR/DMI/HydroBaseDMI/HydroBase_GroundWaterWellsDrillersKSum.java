@@ -4,39 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_GroundWaterWellsDrillersKSum.java - Class to hold data from the 
-//	HydroBase drillers_k_sum table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-07	J. Thomas Sapienza, RTi	Initial version from HBDrillerLog.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2005-04-27	JTS, RTi		Added all data members to finalize().
-// 2005-06-29	JTS, RTi		* Changed structure_num to well_num.
-//					* Now extends GroundWaterWellsView.
-// 2005-06-29	JTS, RTi		Renamed from HydroBase_DrillersKSum
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -45,7 +28,7 @@ import RTi.DMI.DMIUtil;
 /**
 Class to store data from the HydroBase drillers_k_sum table.
 */
-public class HydroBase_GroundWaterWellsDrillersKSum 
+public class HydroBase_GroundWaterWellsDrillersKSum
 extends HydroBase_GroundWaterWellsView {
 
 protected int _well_num =	DMIUtil.MISSING_INT;
@@ -82,16 +65,6 @@ Constructor.
 */
 public HydroBase_GroundWaterWellsDrillersKSum() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	super.finalize();
 }
 
 /**
@@ -542,39 +515,39 @@ public void setD3500_4000k(int d3500_4000k) {
 	_d3500_4000k = d3500_4000k;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
 	return "HydroBase_GroundWaterWellsDrillersKSum {"		+ "\n" +
-		"Well_num: " + _well_num + "\n" + 
-		"Dunctop:       " + _dunctop  + "\n" + 
-		"Duncbase:      " + _duncbase  + "\n" + 
-		"Dunctopbasek:  " + _dunctopbasek  + "\n" + 
-		"Dcontop:       " + _dcontop  + "\n" + 
-		"D500:          " + _d500  + "\n" + 
-		"Dcon500k:      " + _dcon500k  + "\n" + 
-		"_2d500:        " + __2d500  + "\n" + 
-		"D1000:         " + _d1000  + "\n" + 
-		"D500to1000k:   " + _d500to1000k  + "\n" + 
-		"_2d1000:       " + __2d1000  + "\n" + 
-		"_1500:         " + __1500  + "\n" + 
-		"D1000_1500k:   " + _d1000_1500k  + "\n" + 
-		"_2d1500:       " + __2d1500  + "\n" + 
-		"D2000:         " + _d2000  + "\n" + 
-		"D1500_2000k:   " + _d1500_2000k  + "\n" + 
-		"_2d2000:       " + __2d2000  + "\n" + 
-		"D2500:         " + _d2500  + "\n" + 
-		"D2000_2500:    " + _d2000_2500  + "\n" + 
-		"_2d2500:       " + __2d2500  + "\n" + 
-		"D3000:         " + _d3000  + "\n" + 
-		"_2d3000:       " + __2d3000  + "\n" + 
-		"D2500_3000:    " + _d2500_3000  + "\n" + 
-		"D3500:         " + _d3500  + "\n" + 
-		"D3000_3500k:   " + _d3000_3500k  + "\n" + 
-		"_2d3500:       " + __2d3500  + "\n" + 
-		"D4000:         " + _d4000  + "\n" + 
+		"Well_num: " + _well_num + "\n" +
+		"Dunctop:       " + _dunctop  + "\n" +
+		"Duncbase:      " + _duncbase  + "\n" +
+		"Dunctopbasek:  " + _dunctopbasek  + "\n" +
+		"Dcontop:       " + _dcontop  + "\n" +
+		"D500:          " + _d500  + "\n" +
+		"Dcon500k:      " + _dcon500k  + "\n" +
+		"_2d500:        " + __2d500  + "\n" +
+		"D1000:         " + _d1000  + "\n" +
+		"D500to1000k:   " + _d500to1000k  + "\n" +
+		"_2d1000:       " + __2d1000  + "\n" +
+		"_1500:         " + __1500  + "\n" +
+		"D1000_1500k:   " + _d1000_1500k  + "\n" +
+		"_2d1500:       " + __2d1500  + "\n" +
+		"D2000:         " + _d2000  + "\n" +
+		"D1500_2000k:   " + _d1500_2000k  + "\n" +
+		"_2d2000:       " + __2d2000  + "\n" +
+		"D2500:         " + _d2500  + "\n" +
+		"D2000_2500:    " + _d2000_2500  + "\n" +
+		"_2d2500:       " + __2d2500  + "\n" +
+		"D3000:         " + _d3000  + "\n" +
+		"_2d3000:       " + __2d3000  + "\n" +
+		"D2500_3000:    " + _d2500_3000  + "\n" +
+		"D3500:         " + _d3500  + "\n" +
+		"D3000_3500k:   " + _d3000_3500k  + "\n" +
+		"_2d3500:       " + __2d3500  + "\n" +
+		"D4000:         " + _d4000  + "\n" +
 		"D3500_4000k:   " + _d3500_4000k  + "\n}\n";
 }
 

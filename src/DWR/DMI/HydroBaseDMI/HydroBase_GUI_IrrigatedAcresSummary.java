@@ -4,47 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_IrrigatedAcresSummary - Irrigated Acres Summary Data GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 18 Jan 1999	CEN, RTi 		Created initial version.
-// 08 Feb 1999	Steven A. Malers, RTi	Change HBIrrigatedAcresSummary code
-//					to HBStructureIrrigSummary.
-// 04 Apr 1999	SAM, RTi		Add HBDMI to queries.
-// 27 May 1999	SAM, RTi		Update for changes to
-//					HBStructureIrrigSummary.
-// 02 Sep 1999	SAM, RTi		Fix bug where the structure name, etc.
-//					was not getting displayed - need to
-//					display whether other data exist or not.
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil.
-//-----------------------------------------------------------------------------
-// 2003-12-09	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2005-04-28	JTS, RTi		Added finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -138,22 +113,18 @@ String structureName, int structureNum) {
         // Submit total acres query as specified from Structure Query
         submitQuery();
 
-	int wd = (new Integer(__structureWDJTextField.getText().trim()))
-		.intValue();
-	int id = (new Integer(__structureIDJTextField.getText().trim()))
-		.intValue();
+	int wd = Integer.valueOf(__structureWDJTextField.getText().trim()).intValue();
+	int id = Integer.valueOf(__structureIDJTextField.getText().trim()).intValue();
 	String name = __structureNameJTextField.getText().trim();
 
 	String rest = "Structure Data - Irrigated Acres Summary - "
 		+ HydroBase_WaterDistrict.formWDID(wd, id) 
 		+ " (" + name + ")";
 
-	if (	(JGUIUtil.getAppNameForWindows() == null) ||
-		JGUIUtil.getAppNameForWindows().equals("") ) {
+	if ( (JGUIUtil.getAppNameForWindows() == null) || JGUIUtil.getAppNameForWindows().equals("") ) {
 		setTitle ( rest );
 	}
-	else {	setTitle( JGUIUtil.getAppNameForWindows() +
-		" - " + rest);
+	else {	setTitle( JGUIUtil.getAppNameForWindows() + " - " + rest);
 	}					
 }
 
@@ -179,7 +150,7 @@ public void actionPerformed(ActionEvent event) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -290,25 +261,6 @@ private void displayResults(List<HydroBase_StructureView> results) {
                         __structTotDateJTextField.setText("" + curInt);
                 }        
         }
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize()
-throws Throwable {
-	__dmi = null;
-	__divTotDateJTextField = null;
-	__divTotJTextField = null;
-	__gisTotDateJTextField = null;
-	__gisTotJTextField = null;
-	__structTotDateJTextField = null;
-	__structTotJTextField = null;
-	__structureDivJTextField = null;
-	__structureNameJTextField = null;
-	__structureIDJTextField = null;
-	__structureWDJTextField = null;
-	super.finalize();
 }
 
 /**

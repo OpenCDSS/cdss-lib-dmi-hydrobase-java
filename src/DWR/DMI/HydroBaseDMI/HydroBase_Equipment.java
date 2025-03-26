@@ -4,35 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_Equipment.java - Class to hold data from the HydroBase 
-//	equipment table.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-02-10	J. Thomas Sapienza, RTi	Initial version from HBEquipment.
-// 2003-02-24	JTS, RTi		Corrected error in finalize() so that 
-//					super.finalize() gets called.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -44,7 +31,7 @@ import java.util.Date;
 /**
 Class to store data from the HydroBase equipment table.
 */
-public class HydroBase_Equipment 
+public class HydroBase_Equipment
 extends DMIDataObject {
 
 protected int _equip_num = 		DMIUtil.MISSING_INT;
@@ -60,20 +47,6 @@ Constructor.
 */
 public HydroBase_Equipment() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_date_installed = null;
-	_modified = null;
-	_meas_device = null;
-	_recorder = null;
-	super.finalize();
 }
 
 /**
@@ -188,18 +161,18 @@ public void setUser_num(int user_num) {
 	_user_num = user_num;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_Equipment {"		+ "\n" + 
-		"Equip_num:      " + _equip_num + "\n" + 
-		"Structure_num:  " + _structure_num + "\n" + 
-		"Date_installed: " + _date_installed + "\n" + 
-		"Meas_device:    " + _meas_device + "\n" + 
+	return "HydroBase_Equipment {"		+ "\n" +
+		"Equip_num:      " + _equip_num + "\n" +
+		"Structure_num:  " + _structure_num + "\n" +
+		"Date_installed: " + _date_installed + "\n" +
+		"Meas_device:    " + _meas_device + "\n" +
 		"Recorder:       " + _recorder + "\n" +
-		"Modified:       " + _modified + "\n" + 
+		"Modified:       " + _modified + "\n" +
 		"User_num:       " + _user_num + "\n}\n";
 }
 

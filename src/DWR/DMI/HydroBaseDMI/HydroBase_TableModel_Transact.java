@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,37 +20,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_Transact - class that handles the table model for the
-//	GUI for the times that Transact is queried.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-03-06	J. Thomas Sapienza, RTi	Initial version.
-// 2003-03-07	JTS, RTi		Added initial sorting code.
-// 2003-03-10	JTS, RTi		Added table column width code.
-// 2003-03-11	JTS, RTi		Added code for column 'HALF SEC'
-// 2003-03-20	JTS, RTi		Revised after SAM's review.
-// 2003-03-27	JTS, RTi		Changed "case no"'s column width.
-// 2003-05-13	JTS, RTi		Row numbers (the 0th column) now are
-//					not affected by column sorting.
-// 2004-01-19	JTS, RTi		Dates are now returned as Strings.
-// 2004-01-20	JTS, RTi		Removed 0th column in favor of the new
-//					JWorksheet column header system.
-// 2004-06-01	JTS, RTi		Converted the location to be a 
-//					single string.
-// 2005-04-06	JTS, RTi		Adjusted column names and sizes.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2005-07-06	Steven A. Malers, RTi	* Review headers.
-//					* Add tool tips.
-//					* Remove transaction number.
-// 2005-07-11	JTS, RTi		Changed from using xstrtype to using
-//					strtype.
-// 2005-11-15	JTS, RTi		Added div column.
-// ----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -1438,9 +1407,9 @@ public Object getValueAt(int row, int col) {
 	switch (_type) {
 	case ASSOCIATED_RIGHTS:
 	switch (col) {
-		case 0:		return new Integer(r.getDiv());
-		case 1:		return new Integer(r.getWD());		
-		case 2:		return new Integer(r.getID());
+		case 0:		return Integer.valueOf(r.getDiv());
+		case 1:		return Integer.valueOf(r.getWD());		
+		case 2:		return Integer.valueOf(r.getID());
 		case 3:		return r.getWr_name();
 		case 4:		return r.getWd_stream_name();
 		case 5:
@@ -1453,13 +1422,13 @@ public Object getValueAt(int row, int col) {
 		case 7:		return parseDate(r.getAdj_date());
 		case 8:		return parseDate(r.getPadj_date());
 		case 9:		return parseDate(r.getApro_date());
-		case 10:	return new Double(r.getAdmin_no());
-		case 11:	return new Integer(r.getOrder_no());
+		case 10:	return Double.valueOf(r.getAdmin_no());
+		case 11:	return Integer.valueOf(r.getOrder_no());
 		case 12:	return r.getPrior_no();
 		case 13:	return r.getAdj_type();
 		case 14:	return r.getUse();
-		case 15:	return new Double(r.getRate_amt());
-		case 16:	return new Double(r.getVol_amt());
+		case 15:	return Double.valueOf(r.getRate_amt());
+		case 16:	return Double.valueOf(r.getVol_amt());
 		case 17:	return r.getAband();
 		case 18:	return r.getStatus_type();
 		case 19:	return r.getCase_no();
@@ -1467,33 +1436,33 @@ public Object getValueAt(int row, int col) {
 		case 21:	return r.getAction_comment();
 		case 22:	return parseDate(r.getAction_update());
 		case 23:	return r.getAssoc_type();
-		case 24:	return new Integer(r.getAssoc_wd());
-		case 25:	return new Integer(r.getAssoc_id());
+		case 24:	return Integer.valueOf(r.getAssoc_wd());
+		case 25:	return Integer.valueOf(r.getAssoc_id());
 		case 26:	return r.getAug_role();
-		case 27:	return new Integer(r.getPlan_wd());
-		case 28:	return new Integer(r.getPlan_id());
+		case 27:	return Integer.valueOf(r.getPlan_wd());
+		case 28:	return Integer.valueOf(r.getPlan_id());
 		case 29:	return r.getTransfer_type();
-		case 30:	return new Integer(r.getTran_wd());
-		case 31:	return new Integer(r.getTran_id());
+		case 30:	return Integer.valueOf(r.getTran_wd());
+		case 31:	return Integer.valueOf(r.getTran_id());
 		case 32:	return r.getStrtype();
 		default:	return "";
 	}
 	case AUG_PLANS:
 	switch (col) {
-		case 0:		return new Integer(r.getDiv());
-		case 1:		return new Integer(r.getWD());		
-		case 2:		return new Integer(r.getID());
+		case 0:		return Integer.valueOf(r.getDiv());
+		case 1:		return Integer.valueOf(r.getWD());		
+		case 2:		return Integer.valueOf(r.getID());
 		case 3:		return r.getWr_name();
 		case 4:		return r.getWd_stream_name();
-		case 5:		return new Double(r.getRate_amt());
-		case 6:		return new Double(r.getVol_amt());
+		case 5:		return Double.valueOf(r.getRate_amt());
+		case 6:		return Double.valueOf(r.getVol_amt());
 		case 7:		return r.getAband();
 		case 8:		return r.getStatus_type();
 		case 9: 	return parseDate(r.getAdj_date());
 		case 10:	return parseDate(r.getPadj_date());
 		case 11:	return parseDate(r.getApro_date());
-		case 12:	return new Double(r.getAdmin_no());
-		case 13:	return new Integer(r.getOrder_no());
+		case 12:	return Double.valueOf(r.getAdmin_no());
+		case 13:	return Integer.valueOf(r.getOrder_no());
 		case 14:	return r.getPrior_no();
 		case 15:	return r.getAdj_type();
 		case 16:	return r.getUse();
@@ -1509,27 +1478,27 @@ public Object getValueAt(int row, int col) {
 				r.getQ10());			
 		case 22:	return __dmi.lookupCountyName(r.getCty());
 		case 23:	return r.getAssoc_type();
-		case 24:	return new Integer(r.getAssoc_wd());
-		case 25:	return new Integer(r.getAssoc_id());
+		case 24:	return Integer.valueOf(r.getAssoc_wd());
+		case 25:	return Integer.valueOf(r.getAssoc_id());
 		case 26:	return r.getAug_role();
-		case 27:	return new Integer(r.getPlan_wd());
-		case 28:	return new Integer(r.getPlan_id());
+		case 27:	return Integer.valueOf(r.getPlan_wd());
+		case 28:	return Integer.valueOf(r.getPlan_id());
 		case 29:	return r.getTransfer_type();
-		case 30:	return new Integer(r.getTran_wd());
-		case 31:	return new Integer(r.getTran_id());
+		case 30:	return Integer.valueOf(r.getTran_wd());
+		case 31:	return Integer.valueOf(r.getTran_id());
 		case 32:	return r.getStrtype();
 		default:	return "";
 	}
 	case LEGAL:
 	switch (col) {
-		case 0:		return new Integer(r.getDiv());
-		case 1:		return new Integer(r.getWD());		
-		case 2:		return new Integer(r.getID());
+		case 0:		return Integer.valueOf(r.getDiv());
+		case 1:		return Integer.valueOf(r.getWD());		
+		case 2:		return Integer.valueOf(r.getID());
 		case 3:		return r.getWr_name();
 		case 4:		return r.getWd_stream_name();
 		case 5:		return r.getAssoc_type();
-		case 6:		return new Integer(r.getAssoc_wd());
-		case 7:		return new Integer(r.getAssoc_id());
+		case 6:		return Integer.valueOf(r.getAssoc_wd());
+		case 7:		return Integer.valueOf(r.getAssoc_id());
 		case 8:
 			return HydroBase_Util.buildLocation(
 				r.getPM(), r.getTS(), r.getTdir(),
@@ -1540,13 +1509,13 @@ public Object getValueAt(int row, int col) {
 		case 10:	return parseDate(r.getAdj_date());
 		case 11:	return parseDate(r.getPadj_date());
 		case 12:	return parseDate(r.getApro_date());
-		case 13:	return new Double(r.getAdmin_no());
-		case 14:	return new Integer(r.getOrder_no());
+		case 13:	return Double.valueOf(r.getAdmin_no());
+		case 14:	return Integer.valueOf(r.getOrder_no());
 		case 15:	return r.getPrior_no();
 		case 16:	return r.getAdj_type();
 		case 17:	return r.getUse();
-		case 18:	return new Double(r.getRate_amt());
-		case 19:	return new Double(r.getVol_amt());
+		case 18:	return Double.valueOf(r.getRate_amt());
+		case 19:	return Double.valueOf(r.getVol_amt());
 		case 20:	return r.getAband();
 		case 21:	return r.getStatus_type();
 		case 22:	return r.getCase_no();
@@ -1554,24 +1523,24 @@ public Object getValueAt(int row, int col) {
 		case 24:	return r.getAction_comment();
 		case 25:	return parseDate(r.getAction_update());
 		case 26:	return r.getAug_role();
-		case 27:	return new Integer(r.getPlan_wd());
-		case 28:	return new Integer(r.getPlan_id());
+		case 27:	return Integer.valueOf(r.getPlan_wd());
+		case 28:	return Integer.valueOf(r.getPlan_id());
 		case 29:	return r.getTransfer_type();
-		case 30:	return new Integer(r.getTran_wd());
-		case 31:	return new Integer(r.getTran_id());
+		case 30:	return Integer.valueOf(r.getTran_wd());
+		case 31:	return Integer.valueOf(r.getTran_id());
 		case 32:	return r.getStrtype();
 		default:	return "";
 	}
 	case SUMMARY:
 	switch (col) {
-		case 0:		return new Integer(r.getDiv());
-		case 1:		return new Integer(r.getWD());		
-		case 2:		return new Integer(r.getID());
+		case 0:		return Integer.valueOf(r.getDiv());
+		case 1:		return Integer.valueOf(r.getWD());		
+		case 2:		return Integer.valueOf(r.getID());
 		case 3:		return r.getWr_name();
 		case 4:		return r.getWd_stream_name();
 		case 5:		return r.getAug_role();
-		case 6:		return new Integer(r.getPlan_wd());
-		case 7:		return new Integer(r.getPlan_id());
+		case 6:		return Integer.valueOf(r.getPlan_wd());
+		case 7:		return Integer.valueOf(r.getPlan_id());
 		case 8:		
 			return HydroBase_Util.buildLocation(
 				r.getPM(), r.getTS(), r.getTdir(),
@@ -1582,13 +1551,13 @@ public Object getValueAt(int row, int col) {
 		case 10:	return parseDate(r.getAdj_date());
 		case 11:	return parseDate(r.getPadj_date());
 		case 12:	return parseDate(r.getApro_date());
-		case 13:	return new Double(r.getAdmin_no());
-		case 14:	return new Integer(r.getOrder_no());
+		case 13:	return Double.valueOf(r.getAdmin_no());
+		case 14:	return Integer.valueOf(r.getOrder_no());
 		case 15:	return r.getPrior_no();
 		case 16:	return r.getAdj_type();
 		case 17:	return r.getUse();		
-		case 18:	return new Double(r.getRate_amt());
-		case 19:	return new Double(r.getVol_amt());
+		case 18:	return Double.valueOf(r.getRate_amt());
+		case 19:	return Double.valueOf(r.getVol_amt());
 		case 20:	return r.getAband();
 		case 21:	return r.getStatus_type();		
 		case 22:	return r.getCase_no();
@@ -1596,24 +1565,24 @@ public Object getValueAt(int row, int col) {
 		case 24:	return r.getAction_comment();
 		case 25:	return parseDate(r.getAction_update());
 		case 26:	return r.getAssoc_type();
-		case 27:	return new Integer(r.getAssoc_wd());
-		case 28:	return new Integer(r.getAssoc_id());
+		case 27:	return Integer.valueOf(r.getAssoc_wd());
+		case 28:	return Integer.valueOf(r.getAssoc_id());
 		case 29:	return r.getTransfer_type();
-		case 30:	return new Integer(r.getTran_wd());
-		case 31:	return new Integer(r.getTran_id());
+		case 30:	return Integer.valueOf(r.getTran_wd());
+		case 31:	return Integer.valueOf(r.getTran_id());
 		case 32:	return r.getStrtype();
 		default:	return "";
 	}
 	case TRANSFER_RIGHTS:
 	switch (col) {
-		case 0:		return new Integer(r.getDiv());
-		case 1:		return new Integer(r.getWD());		
-		case 2:		return new Integer(r.getID());
+		case 0:		return Integer.valueOf(r.getDiv());
+		case 1:		return Integer.valueOf(r.getWD());		
+		case 2:		return Integer.valueOf(r.getID());
 		case 3:		return r.getWr_name();
 		case 4:		return r.getWd_stream_name();
 		case 5:		return r.getTransfer_type();
-		case 6:		return new Integer(r.getTran_wd());
-		case 7:		return new Integer(r.getTran_id());
+		case 6:		return Integer.valueOf(r.getTran_wd());
+		case 7:		return Integer.valueOf(r.getTran_id());
 		case 8:
 			return HydroBase_Util.buildLocation(
 				r.getPM(), r.getTS(), r.getTdir(),
@@ -1624,13 +1593,13 @@ public Object getValueAt(int row, int col) {
 		case 10:	return parseDate(r.getAdj_date());
 		case 11:	return parseDate(r.getPadj_date());
 		case 12:	return parseDate(r.getApro_date());
-		case 13:	return new Double(r.getAdmin_no());
-		case 14:	return new Integer(r.getOrder_no());
+		case 13:	return Double.valueOf(r.getAdmin_no());
+		case 14:	return Integer.valueOf(r.getOrder_no());
 		case 15:	return r.getPrior_no();
 		case 16:	return r.getAdj_type();
 		case 17:	return r.getUse();		
-		case 18:	return new Double(r.getRate_amt());
-		case 19:	return new Double(r.getVol_amt());
+		case 18:	return Double.valueOf(r.getRate_amt());
+		case 19:	return Double.valueOf(r.getVol_amt());
 		case 20:	return r.getAband();
 		case 21:	return r.getStatus_type();		
 		case 22:	return r.getCase_no();
@@ -1638,11 +1607,11 @@ public Object getValueAt(int row, int col) {
 		case 24:	return r.getAction_comment();
 		case 25:	return parseDate(r.getAction_update());
 		case 26:	return r.getAssoc_type();
-		case 27:	return new Integer(r.getAssoc_wd());
-		case 28:	return new Integer(r.getAssoc_id());
+		case 27:	return Integer.valueOf(r.getAssoc_wd());
+		case 28:	return Integer.valueOf(r.getAssoc_id());
 		case 29:	return r.getAug_role();
-		case 30:	return new Integer(r.getPlan_wd());
-		case 31:	return new Integer(r.getPlan_id());
+		case 30:	return Integer.valueOf(r.getPlan_wd());
+		case 31:	return Integer.valueOf(r.getPlan_id());
 		case 32:	return r.getStrtype();
 		default:	return "";
 	}

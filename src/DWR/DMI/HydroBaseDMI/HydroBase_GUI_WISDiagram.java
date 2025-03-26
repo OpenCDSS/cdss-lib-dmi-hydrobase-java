@@ -4,48 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_WISDiagram - GUI that allows the user to view or edit a 
-//	graphical representation of a wis node diagram.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// 2003-12-15	J. Thomas Sapienza, RTi	Initial version.
-// 2004-05-18	JTS, RTi		Major overhaul of the entire design,
-//					reflecting lessons learned from the
-//					network diagram editor for StateMod
-//					and new goals for this tool.
-// 2004-05-21	JTS, RTi		Converted to read data from HydroBaseDMI
-//					instead of from a flat file.
-// 2004-05-27	JTS, RTi		Renamed from HydroBase_GUI_WISNetwork
-//					to HydroBase_GUI_WISDiagram.
-// 2004-07-20	JTS, RTi		Annotations are now taken into account
-//					when determining network extents.
-// 2005-02-16	JTS, RTi		Converted queries to use stored
-//					procedures.
-// 2005-05-09	JTS, RTi		Only HydroBase_StationView objects are
-//					returned from station queries now.
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -516,7 +490,7 @@ private void buildDiagram() {
 				temp = (String)v.get(i);
 				temp = temp.trim();
 				try {
-					D = new Double(temp);
+					D = Double.valueOf(temp);
 					vals[i] = D.doubleValue();
 				}
 				catch (Exception e) {
@@ -879,25 +853,6 @@ private void dumpNodes(HydroBase_Node[] nodes) {
 */
 
 /**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__dmi = null;
-	__device = null;
-	__drawingArea = null;
-	__wis = null;
-	__wisBuilder = null;
-	__network = null;
-	__saveButton = null;
-	__panel = null;
-	__jsp = null;
-	__statusField = null;
-	__records = null;
-	super.finalize();
-}
-
-/**
 Returns the WIS being shown in the wis diagram.
 @return the WIS being shown in the wis diagram.
 */
@@ -1170,10 +1125,10 @@ private void saveClicked() {
 					nodes[i].getType()));
 				xtemp = nodes[i].getX();
 				stemp = StringUtil.formatString(xtemp,"%18.6f");
-				xtemp = (new Double(stemp)).doubleValue();
+				xtemp = (Double.valueOf(stemp)).doubleValue();
 				ytemp = nodes[i].getY();
 				stemp = StringUtil.formatString(ytemp,"%18.6f");
-				ytemp = (new Double(stemp)).doubleValue();
+				ytemp = (Double.valueOf(stemp)).doubleValue();
 				props = "Point=" + xtemp + ", " + ytemp + ";";
 				props += "TextPosition=" 
 					+ nodes[i].getTextPosition();

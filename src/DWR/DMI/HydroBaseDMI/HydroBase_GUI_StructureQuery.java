@@ -4,193 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// HydroBase_GUI_StructureQuery - Structure Query GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//----------------------------------------------------------------------------- 
-// History:
-//
-// 07 Aug 1997	DLG, RTi	Created initial version.
-// 12 Aug 1997	DLG, RTi	Cleaned up functions.
-// 16 Sep 1997 	DLG, RTi	Added print to Message class and generation
-//			 	of water district names
-// 06 Dec 1997	SAM, RTi	Get full print and export working.
-// 10 Feb 1997 	DLG, RTi	Implemented threaded query.
-// 11 Feb 1997 	DLG, RTi	Decreased the number of views available from
-//				3 to 1. Removed display view button. This is
-//				now invoked when selecting an item from 
-//				the _view_Choice object.
-// 01 May 1998 	DLG, RTi	Arranged contents of Choice objects 
-//				alphabetically.
-// 18 Jan 1999	CEN, RTi	Added HBIrrigatedAcresSummaryGUI
-// 04 Apr 1999	SAM, RTi	Add HBDMI to queries.
-// 12 Apr 1999	SAM, RTi	Change so the GUI is not set visible until
-//				all the menu choices are set.  Add the query
-//				time to the output.
-// 02 Sep 1999	SAM, RTi	Fix bug where changed district preferences were
-//				not reflected in settings when set visible.
-// 11 Jul 2000	CEN, RTi	Modifying to use as simply a tool to select
-//				a structure ... not get views, etc.
-// 09 Apr 2001	SAM, RTi	Add map selection checkbox.  Change GUI to
-//				GUIUtil.
-// 21 May 2001	SAM, RTi	Change "Time Series" view to Structure
-//				Source/From/Use/Type
-// 08 Jun 2001	SAM, RTi	Add finalize().  Change static data to
-//				non-static to save memory.  Add setQueryWDID()
-//				to allow the query to be automatically started
-//				for a structure.
-// 17 Jul 2001	SAM, RTi	Change diversion time series view name to
-//				"Diversion Coding".
-// 01 Aug 2001	SAM, RTi	Add interaction with the map interface using the
-//				GeoViewListener.
-// 03 Oct 2001	SAM, RTi	Add "Select On Map" button to select features
-//				and zoom to them on the map.  Add UTM X, Y and
-//				lat/long to output.  Clean up some of the 
-//				display method code.  Set unused variables to
-//				null to help with garbage collection.
-// 2001-10-15	SAM, RTi	Add warnings when map select does not select all
-//				features.  When doing the query, make sure the
-//				window is in the foreground and is deiconified.
-// 2001-12-13	SAM, RTi	Update to use new GeoView classes that allow
-//				Swing and NoSwing development.
-// 2002-02-20	SAM, RTi	Update to use new GeoViewPanel method calls.
-//				Fix - stream mile query was not working due to
-//				changes in the database design.
-// 2002-05-07	SAM, RTi	Fix - warning message when selecting on map
-//				used wrong count.
-// 2002-06-20	SAM, RTi	Fix bug where export was not exporting all the
-//				columns.
-// 2002-08-19	SAM, RTi	Change so a point click on the map does NOT
-//				result in a query.  Overload the constructor so
-//				that the GUI can be created invisible by
-//				StateView/CWRAT.  This is needed to ensure that
-//				the GeoView listener is properly initialized.
-//				When a GeoView select is done, make sure the
-//				Frame is visible if necessary and select the
-//				proper structure types to match selected layers.
-//				Change the "Water Source" column from 200 to 150
-//				in width in the MultiList.
-//-----------------------------------------------------------------------------
-// 2003-03-12	J. Thomas Sapienza, RTi	Initial Swing version from old AWT code.
-// 2003-03-13	JTS, RTi		Continued getting the class to work 
-//					with Swing and the new DMI.
-// 2003-03-17	JTS, RTi		Opened the export and print buttons.
-// 2003-03-20	JTS, RTi		Revised after SAM's review.
-// 2003-03-21	JTS, RTi		Implemented __locationGUI.
-// 2003-03-24	JTS, RTi		Fixed status bar update and hourglass
-//					cursor issues.
-// 2003-03-25	JTS, RTi		* Removed references to
-//					  HydroBase_GUI_Util parent object.
-// 2003-03-28	JTS, RTi		Title is set with the program name as
-//					well as the form name.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2003-04-07	JTS, RTi		Fixed when things should be enabled
-//					or disabled based on how many records
-//					are selected.
-// 2003-05-16	JTS, RTi		* Opened up the GeoViewJPanel code.
-//					* Added a CWRATMainJFrame parent (for
-//					  isMapVisible()).
-// 2003-05-21	JTS, RTi		geoViewSelect now de-selects all the 
-//					checkboxes before selecting the kind
-//					of layer that was selected.
-// 2003-05-23	JTS, RTi		Added __inGeoViewSelect so that selects
-//					do not trigger accidentally when the 
-//					state of a checkbox changes in the first
-//					part of geoViewSelect().
-// 2003-06-02	JTS, RTi		Added code so an hourglass displays when
-//					sorting the table
-// 2003-07-28	JTS, RTi		* Updated JWorksheet code to stop using
-//					  deprecated methods.
-//					* Removed old JWorksheet method of
-//					  enabling copy/paste.
-// 2003-09-23	JTS, RTi		Changed the export code to use 
-//					the new export code in 
-//					HydroBase_GUI_Util.
-// 2003-09-25	JTS, RTi		Opened the structure detail gui.
-// 2003-09-26	JTS, RTi		Opened the reservoir measurement gui.
-// 2003-09-29	JTS, RTi		Opened the location gui.
-// 2003-10-01	JTS, RTi		Opened the structure more info and
-//					owner contact guis.
-// 2003-10-02	JTS, RTi		Opened the reservoir data gui.
-// 2004-01-21	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2004-05-10	JTS, RTi		All structure types are now selected by
-//					default when the GUI opens.
-// 2004-05-11	JTS, RTi		No structure types are no selected by
-//					default when the GUI opens.
-// 2004-06-22	JTS, RTi		Table strings were moved from the 
-//					DMI class to HydroBase_GUI_Util so they
-//					were renamed in here.
-// 2004-07-26	JTS, RTi		Where combo box sized so the user
-//					doesn't have to scroll.
-// 2004-07-27	JTS, RTi		* Added the __gvs* variables to avoid
-//					  changing the status of checkboxes
-//					  during a geoview select query.
-//					* Removed __inGeoViewSelect.
-// 2005-01-31	JTS, RTi		Location queries are now set up via
-//					an InputFilter.
-// 2005-02-04	JTS, RTi		For SPFlex stored procedure queries,
-//					a new table model is used.
-// 2005-02-09	JTS, RTi		* Removed getWhereClauses().
-//					* Removed getOrderByClause().
-//					* Where and order by clauses are now 
-//					  built within the 
-//					  readStructureGeolocList() 
-//					  method called from this GUI.  That
-//					  method will call an SQL query or
-//					  stored procedure query as appropriate.
-// 					* Separate table models and cell 
-//					  renderers are used if a stored 
-//					  procedure query was run.
-//					* Removed order by combo boxes.
-//					* Removed structure type check boxes.
-// 2005-02-11	JTS, RTi		Converted code to work on either data
-//					objects returned from an SQL query or
-//					from a stored procedure.
-// 2005-04-06	JTS, RTi		Removed enableMapLayers().
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2005-11-15	JTS, RTi		Option to query the entire state at once
-//					added to the district combo box.
-// 2006-01-23	JTS, RTi		The view button and combo box are now
-//					disabled completely if running in
-//					the "display structures" mode.
-// 2006-01-23	SAM, RTi		Do not clear the filter when doing a
-//					GeoView query.  The spatial query should
-//					work in conjunction with the filters.
-// 2006-01-25	JTS, RTi		Checks for Control-A pressed to select
-//					all rows on the worksheet, and enables/
-//					disables components appropriately.
-// 2007-02-07	SAM, RTi		Remove the dependency on CWRAT.
-//					Use a JFrame in the constructor.
-//					Also require an instance of GeoViewUI in the constructor.
-//					Clean up the code based on Eclipse feedback.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
  
@@ -477,12 +306,11 @@ public void actionPerformed(ActionEvent event) {
 				return;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
 				List<String> outputStrings = formatOutput(format);
-	 			// Now export, letting the user decide the 
-				// file...
+	 			// Now export, letting the user decide the file.
 				HydroBase_GUI_Util.export(this, eff[0], outputStrings);
 			}
 			else {
@@ -597,33 +425,6 @@ public void displayStructsOnly(JFrame caller) {
 	if (__displayStructsOnly) {
 		__closeJButton.setEnabled(false);
 	}	
-}
-
-/**
-Clean up for garbage collection.
-*/
-protected void finalize()
-throws Throwable {
-	__parent = null;
-	__mapQueryLimits = null;
-	__dmi = null;
-	__filterJPanel = null;
-	__currentStructureView = null;
-	__closeJButton = null;
-	__exportJButton = null;
-	__getDataJButton = null;
-	__printJButton = null;
-	__selectOnMapJButton = null;
-	__caller = null;
-	__tableJLabel = null;
-	__worksheet = null;
-	__statusJTextField = null;
-	__displayViewJButton = null;
-	__viewJComboBox = null;
-	__waterDistrictJComboBox = null;
-	__lastSelectedView = null;
-	__results = null;
-	super.finalize();
 }
 
 /**

@@ -4,64 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// DateTimeSelectPeriodJDialog - GUI to assist in selecting a time period to 
-//	plot.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// Notes:
-//(1)Use as follows:
-// 	TSLimits l = new DateTimeSelectPeriodJDialog(...).getLimits();
-//	l = null if Cancel or X was selected
-//	OR
-//	l = TSLimits object if OK was selected
-// 
-//(2)PropList Use:
-//	PreferredState = Maximum, Minimum, UserDefined
-//	DateFormat = Y2K, US
-//	DatePrecision = Year, Month, Day, Hour, Minute
-//-----------------------------------------------------------------------------
-// History: 
-//
-// 04 May 1998	DLG, RTi		Created initial class description.
-// 14 May 2001	Steven A. Malers, RTi	Remove import *.  Add finalize.
-//					Don't use static flags(trying to limit
-//					use of static data).  Change GUI to
-//					GUIUtil.  Add isMaxPeriodSelected().
-// 2001-11-06	SAM, RTi		Review javadoc.  Verify that variables
-//					are set to null when no longer used.
-// 2002-02-25	SAM, RTi		Change so status text field background
-//					is lightGray.
-//-----------------------------------------------------------------------------
-// 2003-03-21	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2003-03-27	JTS, RTi		Put the __simpleList in a JScrollPane.
-//-----------------------------------------------------------------------------
-// 2003-06-03	JTS, RTi		Initial Rti.Util.Time version (from
-//					TSSelectPeriodJDialog in RTi.TS)
-// 2004-05-05	JTS, RTi		* Time Series list now displays UNKNOWN
-//					  when the year in -999.
-//					* Updated some things that were still
-//					  in the old AWT style.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -196,28 +154,6 @@ public void actionPerformed(ActionEvent evt) {
 	else if (s.equals(__SET_PERIOD)) {
 		setPeriod_clicked();
 	}
-}
-
-/**
-Clean up before garbage collection.
-@exception Throwable if there is an error.
-*/
-protected void finalize()
-throws Throwable {
-	__minJRadioButton = null;
-	__maxJRadioButton = null;
-	__userJRadioButton = null;
-	__simpleList = null;
-	__statusJTextField = null;
-	__toJTextField = null;
-	__fromJTextField = null;
-	__setPeriodJButton = null;
-	__ts = null;
-	__frame = null;
-	__prop = null;
-	__buttonChoice = null;
-	__preferredState = null;
-	super.finalize();
 }
 
 /**

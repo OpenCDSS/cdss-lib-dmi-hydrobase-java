@@ -4,35 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_AgriculturalCASSCropStats - Table Model for a Vector of 
-//	HydroBase_AgriculturalCASSCropStats objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2005-02-10	J. Thomas Sapienza, RTi	Initial version.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2005-06-28	JTS, RTi		Removed the unused DMI parameter.
-// 2005-07-06	Steven A. Malers, RTi	Change precision on acres to .0.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -215,14 +202,14 @@ public Object getValueAt(int row, int col) {
 		case COL_COUNTY:	return c.getCounty();
 		case COL_COMMODITY:	return c.getCommodity();
 		case COL_PRACTICE:	return c.getPractice();
-		case COL_CAL_YEAR:	return new Integer(c.getCal_year());
-		case COL_PLANTED:	return new Double(c.getPlanted());
-		case COL_PLTDHARV:	return new Double(c.getPltdHarv());
-		case COL_HARVESTED:	return new Double(c.getHarvested());
-		case COL_PLTDYLD:	return new Double(c.getPltdYld());
-		case COL_YIELD:		return new Double(c.getYield());
+		case COL_CAL_YEAR:	return Integer.valueOf(c.getCal_year());
+		case COL_PLANTED:	return Double.valueOf(c.getPlanted());
+		case COL_PLTDHARV:	return Double.valueOf(c.getPltdHarv());
+		case COL_HARVESTED:	return Double.valueOf(c.getHarvested());
+		case COL_PLTDYLD:	return Double.valueOf(c.getPltdYld());
+		case COL_YIELD:		return Double.valueOf(c.getYield());
 		case COL_YIELDUNIT:	return c.getYieldUnit();
-		case COL_PRODUCTION:	return new Double(c.getProduction());
+		case COL_PRODUCTION:	return Double.valueOf(c.getProduction());
 		case COL_PRODUCTIONUNIT:return c.getProductionUnit();
 		default:		return "";
 	}

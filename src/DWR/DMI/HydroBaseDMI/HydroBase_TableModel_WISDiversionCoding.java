@@ -4,38 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_WISDiversionCoding - Table Model for the wis diversion
-//	coding gui.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-12-04	J. Thomas Sapienza, RTi	Initial version.
-// 2004-01-21	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// 2004-06-09	JTS, RTi		Worksheet data can now be set 
-//					uneditable.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -209,11 +193,11 @@ public Object getValueAt(int row, int col) {
 		switch (col) {
 			case COL_ID:	return "TOTAL";
 			case COL_S:	return " ";
-			case COL_F:	return new Integer(DMIUtil.MISSING_INT);
+			case COL_F:	return Integer.valueOf(DMIUtil.MISSING_INT);
 			case COL_U:	return " ";
 			case COL_T:	return " ";
 			case COL_OBS:	return " ";
-			case COL_AMT:	return new Double(getTotalAmount());
+			case COL_AMT:	return Double.valueOf(getTotalAmount());
 			default:	return "";
 		}
 	}
@@ -222,11 +206,11 @@ public Object getValueAt(int row, int col) {
 	switch (col) {
 		case COL_ID:	return "" + wc.getID();
 		case COL_S:	return wc.getS();
-		case COL_F:	return new Integer(wc.getF());
+		case COL_F:	return Integer.valueOf(wc.getF());
 		case COL_U:	return wc.getU();
 		case COL_T:	return wc.getT();
 		case COL_OBS:	return wc.getObservationForDay(__day);
-		case COL_AMT:	return new Double(wc.getAmountForDay(__day));
+		case COL_AMT:	return Double.valueOf(wc.getAmountForDay(__day));
 		default:	return "";
 	}
 }

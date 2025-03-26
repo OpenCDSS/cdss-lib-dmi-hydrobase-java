@@ -4,40 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_GroundWaterWellsVolcanics - Table Model for a Vector 
-//	of HydroBase_GroundWaterWellsView objects for the 20050701 pump test
-//	data.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-//
-// 2005-06-22	J. Thomas Sapienza, RTi	Initial version.
-// 2005-07-05	Steven A. Malers, RTi	* Review header, tool tips.
-//					* Remove well_num.
-// 2005-07-06	JTS, RTi		Add wd column.
-// 2005-11-15	JTS, RTi		* Added div column.
-// 					* Added DSS_aquifer1, DSS_aquifer2,
-//					  DSS_aquifer_comment columns.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -298,9 +280,9 @@ public Object getValueAt(int row, int col) {
 	HydroBase_GroundWaterWellsVolcanics v = _data.get(row);
 	switch (col) {
 		case COL_DIV:
-			return new Integer(v.getDiv());
+			return Integer.valueOf(v.getDiv());
 		case COL_WD:
-			return new Integer(v.getWD());
+			return Integer.valueOf(v.getWD());
 		case COL_WELL_NAME:	
 			return v.getWell_name();
 		case COL_PERMIT_INFO:
@@ -330,15 +312,15 @@ public Object getValueAt(int row, int col) {
 				v.getRdir(), v.getSec(), v.getSeca(), 
 				v.getQ160(), v.getQ40(), v.getQ10());
 		case COL_UTM_X:
-			return new Double(v.getUtm_x());
+			return Double.valueOf(v.getUtm_x());
 		case COL_UTM_Y:
-			return new Double(v.getUtm_y());
+			return Double.valueOf(v.getUtm_y());
 		case COL_LATDECDEG:
-			return new Double(v.getLatdecdeg());
+			return Double.valueOf(v.getLatdecdeg());
 		case COL_LONDECDEG:
-			return new Double(v.getLongdecdeg());	
-		case COL_VOLTOP:	return new Integer(v.getVoltop());
-		case COL_VOLBASE:	return new Integer(v.getVolbase());
+			return Double.valueOf(v.getLongdecdeg());	
+		case COL_VOLTOP:	return Integer.valueOf(v.getVoltop());
+		case COL_VOLBASE:	return Integer.valueOf(v.getVolbase());
 		case COL_LOC_NUM: 	return v.getLoc_num();
 		case COL_SITE_ID:	return v.getSite_id();		
 		case COL_DSS_AQUIFER1:	return v.getDSS_aquifer1();

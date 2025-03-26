@@ -4,44 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//------------------------------------------------------------------------------
-// HydroBase_Cropchar - data structure to hold data from the HydroBase 
-//	cropchar table
-//------------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//------------------------------------------------------------------------------
-// Notes:	(1)	This class has no knowledge of the database itself
-//			(aside from its own data members), and there is no
-//			knowledge of the connection with the database.
-//		(2)	This class only holds information from the cropchar
-//			table.
-//------------------------------------------------------------------------------
-// History:
-// 
-// 2002-11-25	Steven A. Malers, RTi	Initial version from
-//					HBCropChar
-// 2003-01-05	SAM, RTi		Update based on changes to the DMI
-//					package.
-// 2003-02-13	J. Thomas Sapienza, RTi	Added static methods from HBDMI package.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -50,8 +28,7 @@ import RTi.DMI.DMIUtil;
 
 /**
 This class provides storage for data from the HydroBase cropchar table.
-The data and methods in this class correspond to the table entities described
-in the HydroBase data dictionary.
+The data and methods in this class correspond to the table entities described in the HydroBase data dictionary.
 */
 public class HydroBase_Cropchar 
 extends DMIDataObject {
@@ -118,19 +95,6 @@ public static int convertMethodToFrostDateFlag(String method) {
 	else {
 		return 0;
 	}
-}
-
-/**
-Finalize before garbage collection.
-@exception Throwable if an error occurs.
-*/
-protected void finalize ()
-throws Throwable {
-	_method_desc = null;
-	_cropname = null;
-	_springfrostmethod = null;
-	_fallfrostmethod = null;
-	super.finalize();
 }
 
 /**

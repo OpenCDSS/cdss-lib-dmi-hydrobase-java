@@ -4,791 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBaseDMI.java - base class for all HydroBase operations
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// Notes:
-// (1) This class must override determineDatabaseVersion() and readGlobalData()
-// in DMI.java
-// ----------------------------------------------------------------------------
-// History:
-// 2002-09-19	J. Thomas Sapienza, RTi	Initial version from HydroBase_DMI.
-// 2002-09-23	JTS, RTi		Updated readCUGeolocsForWDIDs.
-// 2002-09-30	JTS, RTi		Code to handle reading CUCrop info
-//					was finalized.
-// 2002-10-04	JTS, RTi		Query to read BlaneyCriddle methods
-//					added.
-// 2002-10-14	Steven A. Malers, RTi	Update to handle more true HydroBase
-//					design.  In particular:
-//					* Defined VERSION_* contants consistent
-//					  with previous HydroBase versions.
-//					  The secondary dates on versions need
-//                                        to be researched but for now set to
-//					  the same as the first version number.
-//					* Add getProperties() to return a Vector
-//					  of String that can be displayed in,
-//					  for example, a ReportJFrame.
-//					* Remove test main program - should not
-//					  carry around the code in the general
-//					  package.
-//					* Move the utility methods for handling
-//					  water district id parsing/forming to
-//					  the HydroBaseWaterDistrict class.
-//					* Add getDatabaseProperties().
-//					* Add support for db_version table.
-//					* Change conventions to match those
-//					  of RTi.DMI and RTi.DMI.RiversideDB_DMI
-//					  so that code is easier to maintain.
-//					* Add readStructureGeolocList().
-//					* As queries are tested, add trim() for
-//					  all string data before setting in data
-//					  objects.
-// 2002-11-08	SAM, RTi		Make further changes:
-//					* changed
-//					  HydroBase_WaterDistrict.parseWDID to
-//					  return an int[] so adjust as needed.
-//					* Remove readCUGeoloc* since this
-//					  processing should be handled in
-//					  StateDMI using more fundamental
-//					  queries.
-//					* Implement code in readGlobalData() and
-//					  add getCountyRef(), getHUC() to return
-//					  global data.
-// 2002-11-11	SAM, RTi		Adjust structure query for WDIDs because
-//					Access craps on long statements.  Just
-//					recursively call the same read method
-//					to simplify the logic.
-// 2002-11-25	SAM, RTi		Add support for queries of:
-//					* cu_method
-//					* cropchar
-//					* cu_blaney_criddle
-// 2003-01-05	SAM, RTi		Update based on changes to the DMI
-//					package.  In particular, change the
-//					constructors.
-// 2003-02-05	JTS, RTi		Added code to handle new tables:
-//					agstats, area_cap, cu_clim_wts, cu_coeff
-// 2003-02-06	JTS, RTi		Added code to handle new tables:
-//					cu_mod_hargreaves, cu_penman_monteith,
-//					cu_structure, calls, call_chronology,
-//					contact, courtcase, irrig_acre,
-//					irrig_time_series, dam, emergency_plan,
-//					dam_inspection, dam_outlet,
-//					dam_spillway
-// 2003-02-07	JTS, RTi		Added code for new tables:
-//					Diversion_comment, drillers_k_sum
-// 2003-02-10	JTS, RTi		Added code for new tables:
-//					Geoloc, Equipment, general_comment, 
-//					irrig_acre (query), irrig_structure,
-//					legacy_stream, loc_type, map_file,
-//					meas_type, mf_reach, person_details
-//					pump_test, rt_meas, res_eom, res_meas,
-//					reservoir
-// 2003-02-11	JTS, RTi		Added code for new tables:
-//					rolodex, small_dam, frost_dates,
-//					stationGeolocMeasType,
-//					stationGeoloc, station, station_rem,
-//					snow_crse, stream, struct_meas_type,
-//					structure_aka, irrig_summary,
-//					structurelocation, sync_preferences,
-//					special_data
-// 2003-02-12	JTS, RTi		Added code for new tables:
-//					template_format, special_data/wis
-//					user_preferences, user_security,
-//					user_template, wd_water, wd_water_aka,
-//					sheet_name, wis_comments, wis_data,
-//					wis_format, wis_formula, wis_import,
-//					water_district, waterrightirrigsummary,
-// 2003-02-13	JTS, RTi		- Added code for new tables:
-//					  net_amts, transact, wells, 
-//					  well_to_layer, well_to_parcel,
-//					  well_to_structure, well_application,
-//					  well_application/geoloc, well_meas
-//					- Check query code to make sure it
-//					  is consistent with the HBDMI code
-//					  from which it was ported
-// 2003-02-14	JTS, RTi		- Check query code to make sure it
-//					  is consistent with the HBDMI code
-//					  from which it was ported.
-//					- Added code for headgate table.
-// 2003-02-17	JTS, RTi		- Check query code to make sure it 
-//					  is consistent with the HBDMI code
-//					  from which it was ported.
-// 					- Added code for annual_amt,
-//					  use, irr_type_ref, irr_status_ref,
-//					  crop_ref, basin, month_ref, tab_trib,
-//					  infrequent_wc, unpermitted_wells,
-//					  geophlogs, logtypes, volcanics tables.
-//					  Also for the daily_* queries.
-// 2003-02-18	JTS, RTi		- Added code for daily_pcpn, 
-//					  monthly_pcpn,	monthly_temp, 
-//					  monthly_evap, monthly_snow, 
-//					  monthly_flow,	monthly_nflow, 
-//					  annual_wc, daily_amt,	daily_wc, 
-//					  structure/geoloc/strucmeastype
-//					- Fixed SQL errors in various queries
-// 2003-02-19	JTS, RTi		- Fixed SQL errors in various queries
-//					- Added versioning methods from HBDMI
-//					  and began adding versioning support
-//					  to individual queries.
-//					- Listed names of all tables involved
-//					  in a query in the read...() method's
-//					  javadoc.
-// 2003-02-20	JTS, RTi		- Finished adding versioning support
-//					  to individual queries.
-//					- Adapted many queries for use in 
-//					  the structure summary report.
-// 2003-02-21	JTS, RTi		- Corrected errors in misc queries.
-// 2003-02-22	SAM, RTi		* Add
-//			  readCUClimWtsStationGeolocListForCountyAndHydrounit
-//					  and remove CUClimateWeights code.
-//					* Add CUClimWtsStationGeoloc for joined
-//					  data and related code.
-// 2003-02-24	JTS, RTi		* Renamed all *Geoloc* objects to 
-//					  *Geoloc*
-//					* Many more revisions, code cleaning.
-// 2003-02-25	JTS, RTi		* Moved a number of methods in from
-//					  HBDMIUtil.  
-//					* Cleaned up miscellaneous RE VISIT 
-//					  statements.
-// 2003-02-26	JTS, RTi		* Modified the readNetAmtsList() query
-//					  for Water Right reports.
-//					* Added str_type query.
-// 2003-02-27	JTS, RTi		* Added code for irrig_summary_ts table.
-// 2003-03-05	JTS, RTi		* Added code for county table lookup.
-//					* Moved a lot of code related to lookup
-//					  tables in here from HydroBase_GUI_Main
-// 2003-03-12	JTS, RTi		* Added code for writing a user 
-//					  preference to the database. 
-//					* Added table-specific code in here
-//					  from out of the HydroBase_GUI screens.
-// 2003-03-13	JTS, RTi		* Moved in code to get the structure
-//					  description for a given str type.
-//					* Added method to find WD, ID for a 
-//					  given structure num
-// 2003-03-25	JTS, RTi		Added the user preference reading,
-//					setting and saving code.
-// 2003-03-26	JTS, RTi		* Removed use of StringTokenizer from 
-//					  methods moved in here.
-//					* Updated the getDatabaseProperties to
-//					  return water district information.
-// 2003-03-27	JTS, RTi		* Corrected logic problems in saving
-//					  user preferences.
-//					* Eliminated duplicate options in 
-//					  sort fields.
-// 2003-03-31	JTS, RTi		* Added the __userSecurityPermissions
-//					  code.
-// 2003-04-01	JTS, RTi		* Added the readWISStructures query.
-// 2003-04-01				* Added the getMax..., getMin... and 
-//					  getExtreme... methods.
-//					* Added the 
-//					  readWDWaterNoStructureJoinList query.
-// 2003-04-02	JTS, RTi		Corrected all the getDate()s that should
-//					have been getTimestamp()s.
-// 2003-04-03	JTS, RTi		* Added a lot of variables to the 
-//					  finalize() method.
-//					* Did a lot of alphebetization.
-//					* Removed some very old and unused 
-//					  methods; moved others to other files.
-//					* Went over all the javadocs for 
-//					  accuracy.  
-//					* Marked methods that are not used in
-//					  DWR.DMI.HydroBaseDMI package.
-//					* Marked which other classes and methods
-//					  call the various readXXX() methods.
-// 2003-04-14	JTS, RTi		Split buildSQL into the multiple
-//					buildSQL version to get around a
-//					constraint of class files that limits
-//					the number of byte operations.
-// 2003-05-20	JTS, RTi		Added code for the well application gui.
-// 2003-05-28	JTS, RTi		* Added code for the ground water gui
-//					* Cleaned up some older code
-// 2003-08-06	JTS, RTi		Added SQL for all the queries to the 
-//					javadocs.
-// 2003-09-23	JTS, RTi		* Corrected bug in getDatabaseProperties
-//					  that was resulting in invalid water
-//					  districts being returned.
-// 2003-09-24	JTS, RTi		* Added readStructureForStructure_num().
-//					* Added 
-//				       readIrrigStructureListForStructure_num().
-//					* Added
-//				     readIrrigTimeSeriesListForIrrig_acre_num().
-// 					* Added
-//				     readIrrigTimeSeriesYearForIrrig_acre_num().
-//					* Added
-//				     readIrrigTimeSeriesYearsForStructure_num().
-// 2003-09-25	JTS, RTi		Added 
-//				       readStructMeasTypeListForStructure_num().
-// 2003-09-26	JTS, RTi		Added 
-//					readStructureListForStructure_num().
-// 2003-10-01	JTS, RTi		* Added getLocationTypeDescription().
-// 2003-10-02	JTS, RTi		* Added 
-//				       readRolodexForRolodex_numStructure_num().
-//					* Added readContactListForRolodex_num().
-//					* Added
-//				       readReservoirStructureForStructure_num().
-//					* Added
-//			      readStructMeasTypeListForStructure_numMeas_type().
-// 2003-10-03	JTS, RTi		* Added
-//					readSmallDamStructureForStructure_num().
-//					* Added
-// 					  readDamForStructure_num().
-// 2003-10-06	JTS, RTi		* Added
-//					readEmergencyPlanListForStructure_num().
-//					* Added
-//					readDamInspectionListForStructure_num().
-//					* Added
-//					  readDamOutletListForStructure_num().
-//					* Added
-//					  readDamSpillwayListForStructure_num().
-// 2003-10-16	JTS, RTi		* Added readWis_daily_wc().
-//					* Added readSheetNameListForWis_num().
-//					* Added readWis_formatListForWis_num().
-//					* Added 
-//					  readWis_dataListForWis_numSet_date().
-//					* Added
-//				       readWis_commentsListForWis_numSet_date().
-//					* Added
-//					  readWis_formulaListForWis_num().
-//					* Added
-//					  readWis_importListForWis_num().
-// 2003-10-17	JTS, RTi		* Added 
-//					  deleteWis_dataForWis_numSet_date().
-//					* Added
-//					 deleteWis_commentsForWis_numSet_date().
-//					* Added writeWis_comments().
-// 					* Added
-// 		    deleteWis_daily_wcForWis_numWis_columnWdIdCal_yearCal_mon().
-//					* Added readStructureForWDID().
-// 2003-11-19	JTS, RTi		* Renamed all the readWISXXX*() methods
-//					  to readWis_xxx*().
-//					* Added:
-//					  deleteWis_formatForWis_num()
-//					  deleteWis_importForWis_num()
-//					  deleteWis_formulaForWis_num()
-//					  writeWis_format()
-//					  writeWis_formula()
-//					  writeWis_import()
-//					  readStreamListForWDStr_trib_to()
-//					  writeSheet_name()
-//					  deleteWis_dataForWis_num()
-//					  deleteWis_commentsForWis_num()
-//			   updateSheet_nameGain_methodEffective_dateForWis_num()
-// 2003-11-28	JTS, RTi		Added readSheetNameListForSheet_type().
-// 2003-11-30	SAM, RTi		* Add readTimeSeries() for use by TSTool
-//					  and StateView/CWRAT.
-//					* Rename readMonthlyData() to
-//					  readMonthlyStationData().
-//					* readTimeSeries() is public but make
-//					  helper methods like
-//					  readMonthlyStationData() private.
-//					* Remove readMonthlyPCPN, etc. since
-//					  readMonthlyStationData() does all the
-//					  work and its documentation tells what
-//					  to do.
-//					* In read methods for MeasType,
-//					  StationGeolocMeasType, or
-//					  StructureGeolocStructMeasType, allow
-//					  missing/null input to be ignored when
-//					  adding the where clauses.
-//					* The division was not getting queried
-//					  for StationGeooocMeasType - add it to
-//					  the query.
-//					* Add readDailyStationData() and remove
-//					  individual methods since the one
-//					  method can do all the work.
-//					* Streamline toDailyTSList().
-//					* Update readRTMeasList() to take
-//					  required parameters.
-//					* Change
-//					  readStationGeolocMeasTypeFor
-//					  Meas_typeTime_step () to
-//					  readStationGeolocMeasTypeList
-//					  ForMeas_typeTime_step () since it
-//					  returns a Vector.
-//					* Add
-//					  readStructureGeolocStructMeasTypeFor
-//					  Meas_typeTime_step () - for use by
-//					  TSTool.
-//					* Add readStructureGeolocForWDID().
-// 2003-12-03	JTS, RTi		Corrected bug in 
-//					readSheetNameDistinctList that was 
-//					causing all records to be read.
-// 2003-12-08	SAM, RTi		* Add readResMeasList() with period.
-// 					* Add period to
-//					  readResMeasListForStructure_num().
-// 					* Add period to
-//					  readAnnualAmtList().
-//					* Add support for HydroBase_AnnualRes.
-//					* Don't join diversion_comment with
-//					  structure when doing a query.
-// 2003-12-17	SAM, RTi		* Add methods to read Agstats for
-//					  distinct county/type and also read all
-//					  records for a county/type - rearrange
-//					  the select to facilitate data
-//					  processing.
-//					* Add
-//					  readIrrigSummaryTSStructureList(
-//					  distinct).
-//					* Change readIrrigSummaryTSStructureList
-//					  ForWDIDAndPeriod () to
-//					  readIrrigSummaryTSStructureListForWDID
-//					  ListLand_usePeriod () for greater
-//					  flexibility.
-// 2004-01-02	SAM, RTi		* Update readStationGeolocMeasTypeList
-//					  ForMeas_typeTime_StepVax_field
-//					  Data_source() to also take a list of
-//					  where clauses, for use with the new
-//					  InputFilter_JPanel.
-//					* Similar for readStructureGeolocStruct
-//					  MeasTypeListForMeas_typeTime_step ().
-// 2004-01-07	JTS, RTi		Corrected where clause construction 
-//					in:
-//					  - getGroundWaterWhereClause().
-//					  - getStructureWhereClause().
-// 2004-01-14	SAM, RTi		* Change readTimeSeries for historical
-//					  well levels to take a USGS, USBR, or
-//					  WDID.
-//					* Add getLatestVersionString() to
-//					  support getVersionComments(), similar
-//					  to legacy HBDMI code.
-// 2004-01-26	SAM, RTi		* Remove structure table from diversion
-//					  comments query statement in buildSQL()
-//					  and let the one read method add the
-//					  table itself.
-// 2004-01-28	SAM, RTi		* Change "Available period" to
-//					  "HydroBase available period" and
-//					  "Requested Period" to
-//					  "HydroBase query period".
-//					* ResEOM and ResEOY time series were
-//					  using a meas_type instance instead
-//					  of struct_meas_type - fixed.
-// 2004-02-07	SAM, RTi		* Add read methods for
-//					  agricultural_crop_stats.
-//					* Change readTimeSeries() to process the
-//					  agricultural_crop_stats time series,
-//					  not ag_stats.
-//					* Add code to support
-//					  readStructureIrrigSummaryTS() - the
-//					  old code had base and derived parts
-//					  of the table names reversed.
-//					* Change STR_TYPE to STRTYPE in several
-//					  places in buildSQL().
-// 2004-02-18	SAM, RTi		* Fix bug in readTimeSeries() - the
-//					  standard comments were clobbering
-//					  notes added to comments during
-//					  processing.
-// 2004-02-20	SAM, RTi		* Change agricultural_crop_stats to
-//					  agricultural_CASS_crop_stats.
-//					* Add code to read
-//					  agricultural_NASS_crop_stats.
-//					* Add global data for water divisions -
-//					  this can be used in GUI code to
-//					  format menus and also input filters.
-// 2004-02-23	SAM, RTi		* Add readParcelUseTS().
-// 2004-02-26	JTS, RTi		* Added readStructureIrrigSummaryList
-//					  ForStructure_num().
-// 2004-02-28	SAM, RTi		* Change readStationGeolocList() to
-//					  readStationGeolocListForStationIDs().
-//					  The former was not used.
-//					  Remove "meas_type" from the query
-//					  since there is other more appropriate
-//					  code to do a join.
-// 2004-03-01	SAM, RTi		* Finish adding readParcelUseTS() -
-//					  apparently was in the middle of this
-//					  but did not finish before.
-//					* Also overload to take a list of parcel
-//					  identifiiers.
-// 2004-03-08	JTS, RTi		Added code to read and write from 
-//					the TSProduct and TSProductProps tables.
-// 2004-04-12	SAM, RTi		* Reservoir measurements where clause
-//					  for query period did not have proper
-//					  SQL - fixed.
-//					* Similar for well measurements.
-// 2004-05-03	JTS, RTi		* Implements TSProductDMI's getDMIName()
-//					  and writeTSProduct() methods.
-//					* Added 
-//					readTSProductPropsListForTSProduct_num()
-//					* Added 
-//		     readTSProductListForTSProduct_numProductGroup_numUser_num()
-//					* Added readTSProductForIdentifier().
-//					* Added deleteTSProductForIdentifier().
-//					* Added
-// 					 deleteTSProductPropsForTSProduct_num().
-//					* Added writeTSProductProps().
-// 2004-05-12	JTS, RTi		* Added isGuestLoggedIn() to determine 
-//					  whether the currently-logged-in user 
-//					  is guest.
-//					* Added readParcelUseTSStructureToParcel
-//					  ListForStructure_num().
-// 2004-05-17	JTS, RTi		* Changed
-//					 readStructureGeolocStructMeasTypeList()
-//					  so that it can pull some data from
-//					  the unpermitted_wells table.
-//		SAM, RTi		* RelTotal time series data were not
-//					  being processed.  Fix.
-// 2004-05-19	SAM, RTi		* Enable reading WIS time series in
-//					  readTimeSeries().
-//					* When reading sheet names, default the
-//					  order by to the sheet name.
-// 2004-05-21	SAM, RTi		* Add readSheetNameWISFormatList
-//					  DistinctSheetNameIdentifier()
-// 2004-05-21	JTS, RTi		* Converted improper underscoring in
-//					  method names to make them consistent
-//					  with other read* and write* methods.
-//					* Added readWISNetworkDataForWis_num().
-//					* Added deleteWISNetworkDataForWis_num()
-//					* Added 
-//					  deleteWISNetworkDataForWis_numID().
-//					* Added writeWISNetworkData().
-// 2004-05-27	JTS, RTi		Structure of the wis_network_data table
-//					(now the wis_diagram_data table)
-//					changed.
-// 2004-06-14	SAM, RTi		* Add readStructureIrrigSummaryForWDID()
-//					  to support StateDMI.
-// 2004-06-15	SAM, RTi		* Take advantage of the new DMI JOIN
-//					  features for the above method.
-// 2004-06-22	JTS, RTi		Revised class following review.
-//					* GUI-related strings and methods moved 
-//					  to HydroBase_GUI_Util.
-//					* Other static methods moved to
-//					  HydroBase_Util.
-//					* getExtremeRecord(), getMinRecord(),
-//					  getMaxRecord() moved to DMIUtil.
-//					* Updated version number to 20040701.
-// 2004-07-07	JTS, RTi		Corrected errors in:
-//					* readRolodexForRolodex_num().
-//					* readDiversionCommentListFor
-//					  Structure_num().
-//					* Checked queries with multiple tables
-//					  to ensure that they are setting their
-//					  linking WHERE statements properly 
-//					  from within buildSQL().
-// 2004-07-09	JTS, RTi		* readGlobalData() now reads the
-//					  ref_ciu lookup table data.
-//					* Added lookupCIUDescription().
-// 2004-09-06	SAM, RTi		* Add elevation to the HydroBase station
-//					  time series comments.
-// 2004-09-21	SAM, RTi		* Use new
-//					  HydroBase_ParcelUseTSStructureToParcel
-//					  class for joined data.
-//					* Change readWellsWellToParcelList to
-//					  take parameters to limit the query.
-//					* Update readParcelUseTSList() to take
-//					  the calendar year - this is an open-
-//					  ended query so one more parameter
-//					  should not make a difference.
-// 2004-11-18	JTS, RTi		Database connections are now closed with
-//					DMI.closeResultSet().
-// 2005-01-10	JTS, RTi		Removed getStationWhereClause().
-// 2005-01-13	JTS, RTi		Updated readStrTypeList() to use the
-//					new ref_Structure_Type table.
-// 2005-01-27	JTS, RTi		* Made query type constants protected.
-//					* Added lookupUseDefinitionForUse().
-//					* Added lookupUseDefinitionForXUse().
-// 2005-02-02	JTS, RTi		* Changed the default login to 'cdss'.
-//					* Added new constructors that take an
-//					  additional parameter specifying
-//					  whether to enable stored procedures.
-//					* Corrected small errors related to
-//					  stored procedure naming conventions.
-//					* User preferences is no longer queried
-//					  on both user_num and application,
-//					  since user_num is unique in the table.
-// 2005-02-03	JTS, RTi		* Moved some queries out of 
-//					  readGlobalData() into their own 
-//					  methods.
-//					* Added setupViewNumbersHashtable()
-//					* Added code to do SPFlex queries for
-//					  the structure view.
-// 2005-02-09	JTS, RTi		* Created open SPFlex queries for 
-//					  several existing queries:
-//					  - readNetAmtsList()
-//					  - readTransactList()
-//					  - readPumpTestList()
-// 					  - readStationGeolocMeasTypeList()
-//				       - readStructureGeolocStructMeasTypeList()
-//					  - readWellApplicationGeolocList()
-//					  - readStructureGeolocList()
-//					* Removed old definitions of old 
-//					  stored procedures that have been 
-//					  changed out of the code for setting
-//					  up stored procedures.
-// 2005-02-10	JTS, RTi		* Created open SPFlex queries for:
-//					  - readCropcharList()
-//					  - readAgriculturalCASSCropStatsList()
-//					  - readAgriculturalNASSCropStatsList()
-// 2005-02-11	JTS, RTi		* Created open SPFlex queries for:
-//					 - readStructureGeolocForStructure_num()
-// 2005-02-14	JTS, RTi		* Added toDamSPList().
-//					* Added toDamInspectionSPList().
-//					* Added toStructureSmallDamSPList().
-//					* Added toStructureMFReachSPList().
-//					* Added toStreamSPList().
-//					* Added toContactSPList().
-//					* Removed
-//				 readUserPreferencesListForUser_numApplication()
-//					* Added toGeolocSPList().
-//					* Added toEquipmentSPList().
-//					* Added toMapfileSPList().
-//					* Added toStructureAKASPList().
-//					* Added readCallsListForCall_num().
-//					* Added toCallsSPList().
-//				       * Added readCallsListForSetReleaseDates()
-// 					* Added 
-//				     readDailyWCListForStructure_numRecordType()
-//					* Added toWISSheetNameSPList().
-//					* Added readWISCommentsListForWis_num().
-// 2005-02-15	JTS, RTi		* Added toTSProductSPList().
-//					* Added 
-//				readStructureGeolocListForWDStream_numStr_type()
-//					* Added
-//				  readSheetNameListForSheet_nameEffective_date()
-//					* Added
-//					readWISFormatListForWis_numNotRow_type()
-//					* Removed code related to the following
-//					  tables:
-//					  - irrig_acre
-//					  - irrig_status
-//					  - irrig_structure
-//					  - irrig_time_series
-//					  - irrig_type
-//					  - legacy_stream
-//					  - logtypes
-//					  - special_data
-//					  - sync_preferences
-//					  - tab_trib
-//					  - template_format
-//					  - user_template
-//					  - volcanics
-//					  - wd_water_aka
-//					* Removed SQL from the Javadocs for
-//					  the methods.
-//					* Cleaned up the list of stored 
-//					  procedures, removing those that 
-//					  do not exist.
-// 2005-02-16	JTS, RTi		* Continued updating queries to support
-//					  views and stored procedures.
-//					* Renamed sheet_name table to 
-//					  wis_sheet_name.
-// 2005-02-17	JTS, RTi		* Added toIrrigSummaryNetAmtsSPList().
-//					* Added 
-//					  toAgriculturalCASSCropStatsSPList()
-//					* Added 
-//					  toAgriculturalNASSCropStatsSPList()
-//					* Continued converting methods to use
-//					  views and stored procedures.
-//					* Added toAnnualResSPList().
-//					* Added toResEOMSPList():
-// 2005-02-21	JTS, RTi		* Added toSnowCrseSPList();
-//					* Added readStructureIrrigSummaryTSList
-//					  that takes a Vector of WDIDs.
-//					* A new readNetAmtsList() method was
-//					  added that takes a Vector of WDIDs.
-//					* readStructureReservoirListForWDIDList
-//					  was renamed to 
-//					  readStructureReservoirForWDID
-//					* Added toCropcharSPList().
-//					* Cross-referenced deprecated methods
-//					  with TSTool, StateDMI, and StateView
-//					  and removed those that were not used
-//					  anywhere.
-//					* Alphabetized read methods as they
-//					  were badly out of order.
-//					* Removed all unused toX() methods.
-//					* Removed all unused query constants.
-// 2005-02-22	JTS, RTi		* Added toStationGeolocCUClimWtsSPList()
-//					* Finalized the readWISFormat() methods.
-//					* Added deleteWISForWis_numSet_date().
-//					* Converted delete methods to use
-//					  stored procedures.
-//					* Converted write methods to use
-//					  stored procedures.
-// 2005-02-23	JTS, RTi		* Corrected errors in toNetAmtsSPList()
-//					  and toTransactSPList().
-//					* Removed getSFUTCombinations().
-//					* Renamed readCallsListForCall_num()
-//					  to readCallsForCall_num().
-//					* Removed readGeolocListForDistinctHUC()
-//					  because all the code related to it
-//					  has been commented out for over 2 
-//					  years.
-//					* Cleaned up REVISITs.
-//					* getUserDate() moved to 
-//					  HydroBase_GUI_Util.
-//					* Changed the query variables to 
-//					  private because they are not used
-//					  outside this class.
-//					* Recombined the buildSQL() method into
-//					  a single method because whatever 
-//					  constraint was being worked around 
-//					  before appears to be gone now.
-// 2005-02-24	JTS, RTi		Begin work on unit tests, fixing small
-//					bugs as they appear.
-// 2005-02-28	JTS, RTi		Continue fixing query bus for unit
-//					tests.
-// 2005-03-01	JTS, RTi		* Daily TS queries changed to match the
-//					  columns returned from the views. 
-//					  All TS queries other than PCPN had the
-//					  daily data flags added to their
-// 					  field list.
-// 2005-03-04	JTS, RTi			* Finished checked every Stored 
-//					  Procedure/View query against the 
-//					  old SQL query to make sure they 
-//					  return the same values.
-//					* Some methods were taking -1 as
-//					  a marker to not use an int value and
-//					  others were taking -999.  Made them
-//					  all use -999.
-// 2005-03-07	JTS, RTi		closeResultSet() calls were modified
-//					to handle additional closing that needs
-//					done when stored procedures are used.
-// 2005-03-09	JTS, RTi		* Began testing delete and write
-//					  statements.
-//					* HydroBase_SheetName ->
-//					  HydroBase_WISSheetName.
-//					* HydroBase_SheetNameSpecialData ->
-//					  HydroBase_WISSheetNameSpecialData.
-//					* HydroBase_SheetNameWISFormat ->
-//					  HydroBase_WISSheetNameWISFormat.
-//					* Overrode dmiSelect(), dmiDelete(),
-//					  and dmiWrite() for printing
-//					  debugging information.
-// 2005-03-10	JTS, RTi		Added 
-//					readParcelUseTSDistinctCalYearsList().
-// 2005-03-24	JTS, RTi		Corrected null pointer exception 
-//					happening in readTimeSeries() because
-//					mt.getMeas_num() was being used, when
-//					stored procedures weren't setting mt.
-// 2005-04-07	JTS, RTi		Corrected error in readTimeSeries() 
-//					where meas_nums were not being set 
-//					properly for certain non-store procedure
-//					time series reads.
-// 2005-04-08	JTS, RTi		When constructors are called with null
-//					user names and passwords, the default
-//					values are determined based on whether
-//					the dmi is supposed to use stored 
-//					procedures or not.
-// 2005-04-11	JTS, RTi		Added updateCallCommentsForCall_num().
-// 2005-04-27	JTS, RTi		When checking for the latest database
-//					version (20040701) stored procedures 
-//					are checked for.
-// 2005-05-09	JTS, RTi		* All Pump Test queries now return
-//					  pump test view objects (for non-SP
-//					  queries).
-//					* Station and related queries now
-//					  return Station view objects for
-//					  non-SP queries.
-//					* Well application queries now return
-//					  well application view objects for
-//					  non-SP queries.
-// 2005-05-22	SAM, RTi		* Fix typo in constructor for default
-//					  login for old database.
-//					* Add stored procedure and input name
-//					  information to getVersionComments().
-//					* Change readTimeSeries() warnings to
-//					  level 3 to be consistent with TSTool
-//					  error-handling.
-// 2005-05-23	JTS, RTi		readStructureReservoirForWDID() now 
-//					returns a HydroBase_StructureReservoir
-//					object, not a Vector.
-// 2005-06-01	JTS, RTi		Corrected error in query that joins
-//					structure to irrig_summary_ts.
-// 2005-06-03	JTS, RTi		Added new version (20050501).
-// 2005-06-07	JTS, RTi		* Corrected error in 
-//					  getLatestVersionString() that was 
-//					  preventing version strings from being
-//					  pulled out for stored procedure 
-//					  connections.
-//					* Views have been checked for backwards
-//					  compatability with older database
-//					  versions.  Corrections were made to
-//					  the station and structure views.
-// 2005-06-13	JTS, RTi		Began working on the 20050701 version.
-//					This versio of the database has support
-//					for the new design of the groundwater
-//					well data.
-// 2005-07-07	JTS, RTi		* Added support for querying All 
-//					  Divisions at once.
-//					* Added support for querying Division 8.
-// 2005-07-11	JTS, RTi		* The net_amts and transacts tables
-//					  no longer use their x.... fields.
-// 2005-07-13	SAM, RTi		* Add support for IDivTotal, IDivClass,
-//					  IRelTotal, IRelClass, time series.
-// 2005-10-18	JTS, RTi		* Boosted performance by moving 
-//					  lookup Vector reading to when they
-//					  are needed first, rather than reading
-//					  all in at initialization.
-// 2005-10-27	JTS, RTi		Stored Procedure and SQL strings are now
-//					also printed at Debug level 30, though
-//					for certain security-sensitive 
-//					operations this is temporarily disabled.
-// 2005-11-10	SAM, RTi		Changed "Station and time series
-//					information from HydroBase" to include
-//					"determined at time of query" because
-//					TSTool changes result in new units, etc.
-// 2005-11-15	JTS, RTi		New database version 20051115, which
-//					adds 3 fields to the groundwater tables.
-// 2005-11-21	JTS, RTi		Added code to read Aquifer data.
-// 2005-12-01	SAM, RTi		Fix so that units for temperature time
-//					series are set from the data records and
-//					not hard-coded.
-// 2005-12-14	JTS, RTi		"local" is now recognized as a valid
-//					server name in the constructor that 
-//					takes a proplist.  In addition, if 
-//					local is specified to this constructor
-//					it will attempt to try the two known
-//					ports (one after the other) in the
-//					open() method.
-// 2006-04-26	SAM, RTi		Update readTimeSeries() to recognize
-//					properties to fill daily diversion time
-//					series with carry forward.
-// 2006-05-25	JTS, RTi		Cleaned up as many REVISITs as possible.
-// 2006-06-28	SAM, RTi		When reading structure time series,
-//					throw a NoDataFoundException if a
-//					struct_meas_type is not found, so that
-//					calling code can handle the exception
-//					more explicitly.
-// 2006-08-15	SAM, RTi		Change setSecure(true) to
-//					setSecure(false) to prevent password
-//					information from being printed in debug
-//					messages.
-// 2006-10-30	SAM, RTi		Add code to read CASS livestock
-//					statistics.
-//					Add code to read CUPopulation.
-// 2007-02-23	SAM, RTi
-//					Update to handle HydroBase 20060201 release.
-//					Since there is not a DB design version record for
-//					this, key off the 20061003 version.
-//					In particular, handle SFUT with G: at end and F: that
-//					is 7-digit, padded with zeros.
-//					Clean up code based on Eclipse feedback.
-// 2007-04-16	SAM, RTi		Update to specify optional calendar year when
-//					reading parcel_use and structure data.
-// 2007-05-02	SAM, RTi		Update to handle HydroBase 20070502 release.
-//					Include administrative flows.
-//					Add query for usp_Developer_FLEX_codes to help with
-//					version checks.
-// ----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -6967,36 +6198,6 @@ throws Exception {
 // E METHODS
 // F METHODS
 
-/**
-Cleans up member variables.
-@throws Throwable if there is an error.
-*/
-protected void finalize() 
-throws Throwable {
-	__storedProcedureHashtable = null;
-	__viewNumbers = null;
-	__prefsProps = null;
-	__userSecurityPermissions = null;
-	__CountyRef_List = null;
-	__BlaneyCriddleCUMethod_List = null;
-	__CropcharCUMethod_List = null;
-	__CropRef_List = null;
-	__HUC_Vector = null;
-	__LocTypes_List = null;
-	__MeasType_List = null;
-	__PenmanMonteithCUMethod_List = null;
-	__RefCIU_List = null;
-	__dssStructureTypeList = null;
-	__StructMeasType_List = null;
-	__UseTypes_List = null;
-	__WaterDistricts_List = null;
-	__WaterDistrictsByDiv_List = null;
-	__WaterDistrictsFromStructures_List = null;
-	__WaterDivisions_List = null;
-	__WISStructures_List = null;
-	super.finalize();
-}
-
 // G METHODS
 
 /**
@@ -8856,7 +8057,7 @@ by which water districts were returned from a distinct query on the
 HydroBase_Structures list.
 */
 public boolean isWaterDistrictAvailable(int num) {
-	return isWaterDistrictAvailable(new Integer(num));
+	return isWaterDistrictAvailable(Integer.valueOf(num));
 }
 
 /**
@@ -8868,7 +8069,7 @@ by which water districts were returned from a distinct query on the HydroBase_St
 */
 public boolean isWaterDistrictAvailable(String num) {
 	num.trim();
-	return isWaterDistrictAvailable(new Integer(num));
+	return isWaterDistrictAvailable(Integer.valueOf(num));
 }
 
 /**
@@ -13401,7 +12602,7 @@ throws Exception {
 	List<Integer> calYears = new ArrayList<Integer>();
 	for (int i = 0; i < size; i++) {
 		p = v.get(i);
-		calYears.add(new Integer(p.getCal_year()));
+		calYears.add(Integer.valueOf(p.getCal_year()));
 	}
 	return calYears;
 }
@@ -15908,7 +15109,7 @@ throws Exception {
 	List<Integer> wdv = new ArrayList<Integer>(v.size());
 	for (int i = 0; i < v.size(); i++) {
 		data = v.get(i);
-		wdv.add(new Integer(data.getWD()));
+		wdv.add(Integer.valueOf(data.getWD()));
 	}
 	return wdv;
 }
@@ -17146,10 +16347,10 @@ throws Exception, NoDataFoundException
                 // Make negative to match database
                 lon = -lon;
             }
-		    Double latmin = new Double(lat - buffer);
-		    Double latmax = new Double(lat + buffer);
-		    Double lonmin = new Double(lon - buffer);
-		    Double lonmax = new Double(lon + buffer);
+		    Double latmin = Double.valueOf(lat - buffer);
+		    Double latmax = Double.valueOf(lat + buffer);
+		    Double lonmin = Double.valueOf(lon - buffer);
+		    Double lonmax = Double.valueOf(lon + buffer);
 		    Message.printStatus(2, routine, "For location ID \"" + loc + "\" querying lon/lat " +
 	                lonmin + "," + latmin + " to " + lonmax + "," + latmax );
 		    List<HydroBase_GroundWaterWellsView> wellList0 = readGroundWaterWellMeasTypeListForLatLong(
@@ -19335,7 +18536,7 @@ throws Exception, NoDataFoundException
 	}
 	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("SnowCourseDepth")) {
 		HydroBase_SnowCrse data;
-		String day;
+		//String day;
 		// Data records are monthly but data are actually daily.
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data.
@@ -19362,7 +18563,7 @@ throws Exception, NoDataFoundException
 	}
 	else if ((interval_base == TimeInterval.DAY) && data_type.equalsIgnoreCase("SnowCourseSWE")) {
 		HydroBase_SnowCrse data;
-		String day;
+		//String day;
 		// Data records are monthly but data are actually daily...
 		for ( int i = 0; i < size; i++) {
 			// Loop through and assign the data...
@@ -21268,7 +20469,7 @@ throws Exception {
 		// Query for the divisions of interest
 		Integer [] divoArray = new Integer[divArray.length];
 		for ( int i = 0; i < divArray.length; i++ ) {
-			divoArray[i] = new Integer(divArray[i]);
+			divoArray[i] = Integer.valueOf(divArray[i]);
 		}
 		q.addWhereClause(DMIUtil.formatIn(this, "vw_CDSS_Wells", "div", divoArray));
 	}
@@ -21276,7 +20477,7 @@ throws Exception {
 		// Query for the districts of interest
 		Integer [] distoArray = new Integer[distArray.length];
 		for ( int i = 0; i < distArray.length; i++ ) {
-			distoArray[i] = new Integer(distArray[i]);
+			distoArray[i] = Integer.valueOf(distArray[i]);
 		}
 		q.addWhereClause(DMIUtil.formatIn(this, "vw_CDSS_Wells", "wd", distoArray));
 	}
@@ -40061,7 +39262,7 @@ throws Exception {
 		if (insert) {
 			if (canSetUpStoredProcedure(write, 
 				__W_USER_PREFERENCES_INSERT)) {
-				int user_num= (new Integer(userNum)).intValue();
+				int user_num= (Integer.valueOf(userNum)).intValue();
 				write.addValue(user_num);
 				write.addValue(prefName.trim());
 				write.addValue(prefValue.trim());
@@ -40078,7 +39279,7 @@ throws Exception {
 		else {
 			if (canSetUpStoredProcedure(write, 
 				__W_USER_PREFERENCES_UPDATE)) {
-				int user_num= (new Integer(userNum)).intValue();
+				int user_num= (Integer.valueOf(userNum)).intValue();
 				write.addValue(user_num);
 				write.addValue(prefName.trim());
 				write.addValue(prefValue.trim());

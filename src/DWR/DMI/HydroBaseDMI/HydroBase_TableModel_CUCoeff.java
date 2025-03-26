@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,20 +20,6 @@ CDSS HydroBase Database Java Library is free software:  you can redistribute it 
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_CUCoeff - Table Model for a Vector of 
-//	HydroBase_CUCoeff objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-05-29	J. Thomas Sapienza, RTi	Initial version.
-// 2004-01-20	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet column header system.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2005-06-28	JTS, RTi		Removed the unused DMI parameter.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -147,8 +133,8 @@ public Object getValueAt(int row, int col) {
 	HydroBase_CUCoeff c = _data.get(row);
 	switch (col) {
 		case COL_NAME:		return c.getConsname();
-		case COL_USE:		return new Double(c.getConsuse());
-		case COL_EFFICIENCY:	return new Double(c.getCU_coeff());
+		case COL_USE:		return Double.valueOf(c.getConsuse());
+		case COL_EFFICIENCY:	return Double.valueOf(c.getCU_coeff());
 		default:		return "";
 	}
 }

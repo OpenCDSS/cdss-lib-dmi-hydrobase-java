@@ -5,130 +5,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_StructureDetail - This GUI is responsible for displaying 
-//	available time series and periods for structure historic data.
-//-----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-//
-// 11 Feb 1998  DLG, RTi                Created initial version.
-// 26 Mar 1998  DLG, RTi                Enabled plotting and graphing.
-// 04 Apr 1999	Steven A. Malers, RTi	Added HBDMI to queries.
-// 02 Sep 1999	SAM, RTi		Remove * imports, increase number of
-//					displayed combinations, and print a
-//					warning if no time series are
-//					available.  Set the periods to the
-//					month rather down to the minute as
-//					done previously.
-// 21 May 2001	SAM, RTi		Change the time series from checkboxes
-//					to lists and allow all combinations to
-//					be shown(for now leave old code in
-//					place in case we need to resurrect).
-//					Use the new RTi graphing components.
-//					Do not use static data for labels(save
-//					memory).  Add finalize().
-// 2001-11-05	SAM, RTi		Completely phase out old graphing
-//					package.  Completely phase in new layout
-//					(list of time series instead of
-//					checkboxes).
-// 2002-02-20	SAM, RTi		Change to use TSViewJFrame instead of
-//					TSViewGUI.  Increase the size of the
-//					ID textfield.
-//-----------------------------------------------------------------------------
-// 2003-09-24	J. Thomas Sapienza, RTi	Initial swing version from
-//					HBStructureDetailGUI.
-// 2003-10-02	JTS, RTi		* Added finalize.
-//					* Javadoc'd.
-// 2003-12-09	JTS, RTi		Removed checkDailyTimeSeries().
-// 2004-05-06	JTS, RTi		* Changed the list to a 
-//					  DragAndDropMutableJList in order that
-//					  the time series could be dragged into
-//					  a TSProduct.
-//					* Class is now a DragAndDropListener.
-//					* Class is now a MouseListener in order
-//					  to determine which list time series
-//					  are dragged from.
-// 2004-05-17	JTS, RTi		* Changed the values shown in the list.
-//					* Changed the way data is queried from
-//					  the database in response to the list
-//					  change.
-// 					* Rename setGUIInfo() to addListItem().
-//					* Removed an old and unused 
-//					  addListItem() method body.
-// 2004-07-26	JTS, RTi		TS data is now sorted by meas_type
-//					before being placed in the lists.
-// 2004-12-01	SAM, RTi		* The period that is shown was not being
-//					  properly determined - fix it.
-//					* Change getSelectedTypes() method to
-//					  getSelectedStructMeasType(), which is
-//					  more indicative of the action.
-//					* Remove some old code that was
-//					  commented out.
-//					* Remove some unneeded code that was
-//					  being called to determine a period
-//					  when reading the initial time series
-//					  headers - just read all the data.
-// 2005-01-27	JTS, RTi		* Added the "Diversion Report" button to
-//					  generate water division reports for 
-//					  daily data.
-//					* Updated code to make the water
-//					  diversion reports.
-// 2005-02-11	JTS, RTi		Added support for Structure view objects
-//					that are returned from stored procedures
-// 2005-02-15	JTS, RTi		Converted all queries except
-//					readTimeSeriesList() to use stored
-//					procedures.
-// 2005-04-12	JTS, RTi		MutableJList changed to SimpleJList.
-// 2005-04-28	JTS, RTi		Added all data members to finalize().
-// 2005-05-09	JTS, RTi		All structure queries now return
-//					structure view objects.
-// 2005-09-26	JTS, RTi		* Added titles to all the 
-//					  ResponseJDialog instances.
-//					* If "Graph", "Summary" or "Table" 
-//					  buttons are pushed with no time series
-//					  selected, the wait cursor is now
-//					  turned off appropriately.
-//					* If "Graph", "Summary" or "Table"
-//					  buttons are pushed with no time series
-//					  selected, there is no longer a null
-//					  pointer exception thrown by trying
-//					  to take the size of a null Vector.
-//					* The dates in the text fields are
-//					  now parsed however the DateTime.parse
-//					  method can, instead of just being 
-//					  parsed to month.
-// 2005-09-28	JTS, RTi		* Error ResponseJDialogs have been 
-//					  changed to warning dialog boxes.
-//					* Table/Summary/Graph buttons will now
-//					  be disabled if no time series are
-// 					  selected.
-// 2006-04-25	SAM, RTi		* Handle the new daily diversion filling
-//					  properties when reading time series.
-//					* Add title to daily report.
-// 2007-02-26	SAM, RTi		Update for new SFUT conventions with G and
-//					7-digit F.
-//					Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -1089,35 +981,6 @@ public boolean dragAboutToStart() {
 	}
 
 	return true;
-}
-
-/**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__dayJList = null;
-	__monthJList = null;
-	__lastJList = null;
-	__dmi = null;
-	__structureView = null;
-	__divJTextField = null;
-	__fromJTextField = null;
-	__idJTextField = null;
-	__nameJTextField = null;
-	__statusJTextField = null;
-	__toJTextField = null;
-	__wdJTextField = null;
-	__dateProps = null;
-	__prop = null;
-	__originalJButton = null;
-	__reportJButton = null;
-	__allMeasTypes = null;
-	__measType = null;
-	__graphJButton = null;
-	__summaryJButton = null;
-	__tableJButton = null;
-	super.finalize();
 }
 
 /**

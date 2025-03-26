@@ -4,45 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_IrrigatedAcres - Table Model for a Vector of 
-//	HydroBase_IrrigTimeSeries objects (used in the
-//	HydroBase_IrrigatedAcres GUI)
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2003-09-24	J. Thomas Sapienza, RTi	Initial version.
-// 2004-01-20	JTS, RTi		Removed 0th column in order to use the 
-//					new JWorksheet row header system.
-// 2004-05-12	JTS, RTi		Revised the columns drastically due
-//					to revision of the GUI.
-// 2004-09-22	SAM, RTi		Change HydroBase_ParcelUseTS to
-//					HydroBase_ParcelUseTSStructureToParcel.
-// 2005-07-08	SAM, RTi	 	* Clarify some column headings.
-//					* Add a column multiplying the parcel
-//					  acres by the irrigation percent.
-//					* Add a column with the total by
-//					  structure for the year.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -235,17 +212,17 @@ public Object getValueAt(int row, int col) {
 
 	HydroBase_ParcelUseTSStructureToParcel pts = _data.get(row);
 	switch (col) {
-		case COL_YEAR:		return new Integer(pts.getCal_year());
-		case COL_DIV:		return new Integer(pts.getDiv());
-		case COL_PARCEL_ID:	return new Integer(pts.getParcel_id());
-		case COL_PERIMETER:	return new Double(pts.getPerimeter());
-		case COL_AREA:		return new Double(pts.getArea());
+		case COL_YEAR:		return Integer.valueOf(pts.getCal_year());
+		case COL_DIV:		return Integer.valueOf(pts.getDiv());
+		case COL_PARCEL_ID:	return Integer.valueOf(pts.getParcel_id());
+		case COL_PERIMETER:	return Double.valueOf(pts.getPerimeter());
+		case COL_AREA:		return Double.valueOf(pts.getArea());
 		case COL_CROP_TYPE:	return pts.getLand_use();
 		case COL_IRRIG_TYPE:	return pts.getIrrig_type();
 		case COL_PERCENT_IRRIG:
-			return new Double(pts.getPercent_irrig() * 100);
+			return Double.valueOf(pts.getPercent_irrig() * 100);
 		case COL_STRUCTURE_AREA:
-			return new Double(pts.getArea()*pts.getPercent_irrig());
+			return Double.valueOf(pts.getArea()*pts.getPercent_irrig());
 		case COL_STRUCTURE_AREA_SUM:
 			// For the current instance's year, add all records to
 			// get a total.  The sum will be the same for all records.
@@ -260,7 +237,7 @@ public Object getValueAt(int row, int col) {
 				area = pts2.getArea()*pts2.getPercent_irrig();
 				sum += area;
 			}
-			return new Double ( sum );
+			return Double.valueOf ( sum );
 		default: return "";
 	}
 }

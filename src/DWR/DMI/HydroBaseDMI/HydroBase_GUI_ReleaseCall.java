@@ -4,52 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_ReleaseCall - GUI to assist in releasing a call.
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History: 
-//
-// 22 Apr 1998	DLG, RTi		Created initial class description
-// 04 Apr 1999	Steven A. Malers, RTi	Add HBDMI to queries.
-// 21 May 1999	SAM, RTi		Remove HBData.TIME_ZONE_DATUM reference
-//					and clean up code some.
-// 2001-11-12	SAM, RTi		Change GUI to GUIUtil.  Don't use static
-//					for private strings.
-// 2002-03-02	SAM, RTi		Add more call information to the dialog
-//					so it is easier to see what is being
-//					released.  Set the date textfield to
-//					lightgray.  Change the "Archive" button
-//					to OK.
-//------------------------------------------------------------------------------
-// 2003-03-31	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2003-04-04	JTS, RTi		Changed GUIUtil to JGUIUtil.
-// 2004-07-13	JTS, RTi		Date time precision for the release
-//					date is now to minutes, not seconds.
-// 2005-02-14	JTS, RTi		Converted all queries to use stored
-//					procedures.
-// 2005-02-23	JTS, RTi		readCallsListForCall_num() was changed
-//					to readCallsForCall_num().
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -196,21 +166,7 @@ private void closeClicked() {
 }
 
 /**
-Cleans up.
-*/
-public void finalize() 
-throws Throwable {
-	__call = null;
-	__releaseCommentJTextField = null;
-	__releaseDateJTextField = null;
-	__statusJTextField = null;
-	__dateProps = null;
-	super.finalize();
-}
-
-/**
-Responds to the __releaseDate_Button ACTION_EVENT and instantiates a 
-DateTimeBuilderJDialog object
+Responds to the __releaseDate_Button ACTION_EVENT and instantiates a DateTimeBuilderJDialog object
 */
 private void releaseDateClicked() {
 	String 	routine = "HydroBase_GUI_ReleaseCall.releaseDateClicked()";
@@ -225,13 +181,11 @@ private void releaseDateClicked() {
 			"Exception parsing date.");
 		from = new DateTime(DateTime.PRECISION_MINUTE);
 	}
-	new DateTimeBuilderJDialog(this, __releaseDateJTextField, 
-			from, __dateProps);
+	new DateTimeBuilderJDialog(this, __releaseDateJTextField, from, __dateProps);
 }
 
 /**
-Responds to the __release_Button ACTION_EVENT and updates a record in the calls 
-table by releasing the call
+Responds to the __release_Button ACTION_EVENT and updates a record in the calls table by releasing the call
 */
 private void releaseCallClicked() {
 	String routine = "HydroBase_GUI_ReleaseCall.releaseCallClicked";
@@ -260,7 +214,7 @@ private void releaseCallClicked() {
 
 	DateTime setDate = new DateTime(__call.getDate_time_set());
 	if (releaseDate.lessThan(setDate)) {
-		new ResponseJDialog(this, 
+		new ResponseJDialog(this,
 			"Release Date too Early",
 			"Release date cannot be less"
 			+ " than the set date.", ResponseJDialog.OK).response();
@@ -274,7 +228,7 @@ private void releaseCallClicked() {
 				ResponseJDialog.OK);
 		return;
 	}
-	 
+
 	JGUIUtil.setWaitCursor(this, true);
 	__statusJTextField.setText("Please Wait...Releasing Call");
 	
@@ -355,7 +309,7 @@ private void setupGUI() {
 	northJPanel.add("West", releaseJPanel);
 	
 	int y = 0;
-	JGUIUtil.addComponent(releaseJPanel, 
+	JGUIUtil.addComponent(releaseJPanel,
 		new JLabel("Structure: " + __call.getStrname()),
 		0, y, 3, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
@@ -371,14 +325,14 @@ private void setupGUI() {
 				+ "dateString.");
 		}
 	}
-	JGUIUtil.addComponent(releaseJPanel, 
+	JGUIUtil.addComponent(releaseJPanel,
 		new JLabel("Calling Right: " +
 		StringUtil.formatString(
 		__call.getAdminno(),"%11.5f")+
 		", Appropriation Date=" + dateString),
 		0, ++y, 3, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
-	JGUIUtil.addComponent(releaseJPanel, 
+	JGUIUtil.addComponent(releaseJPanel,
 		new JLabel("Set Comments: " + __call.getSet_comments()),
 		0, ++y, 3, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
@@ -394,11 +348,11 @@ private void setupGUI() {
 				+ "dateString.");
 		}
 	}
-	JGUIUtil.addComponent(releaseJPanel, 
+	JGUIUtil.addComponent(releaseJPanel,
 		new JLabel("Set Date/Time: " + dateString),
 		0, ++y, 3, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.WEST);
 
-	JGUIUtil.addComponent(releaseJPanel, 
+	JGUIUtil.addComponent(releaseJPanel,
 		new JLabel("Release Date/Time:"),
 		0, ++y, 1, 1, 0, 0, insetsTLNN, GridBagConstraints.NONE, GridBagConstraints.EAST);
 

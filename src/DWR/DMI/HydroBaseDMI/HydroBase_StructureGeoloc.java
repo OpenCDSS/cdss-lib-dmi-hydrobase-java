@@ -4,59 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//------------------------------------------------------------------------------
-// HydroBase_StructureGeoloc - data structure to hold data from 
-//	the HydroBase structure table
-//------------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//------------------------------------------------------------------------------
-// Notes:	(1)	This class has no knowledge of the database itself
-//			(aside from its own data members), and there is no
-//			knowledge of the connection with the database.
-//		(2)	This class only holds information from the structure
-//			table.  It does not hold data for the Headgate and
-//			other tables.
-//------------------------------------------------------------------------------
-// History:
-// 
-// 2002-09-19	J. Thomas Sapienza, RTi	Initial version from DWR.DMI.HB.
-//					HBStructure.java
-// 2002-11-07	Steven A. Malers, RTi	Rework code to be a base class for all
-//					Structure-related objects (like
-//					HydroBase_StructureGeolocGeoloc) and 
-//					name
-//					methods consistent with other DMI work.
-// 2003-01-05	SAM, RTi		Update based on changes to the DMI
-//					package.
-// 2003-02-14	JTS, RTi		Added xtia back in to satisfy an HBDMI
-//					query 
-// 2003-02-19	JTS, RTi		Added some fields to support older 
-//					versions of the database.
-// 2004-01-13	SAM, RTi		Added "common_id" as a data member to
-//					use in a work-around for the well data
-//					storage problems.
-// 2004-02-29	JTS, RTi		Class now stores Geoloc data and extends
-//					Structure data.
-// 2005-03-01	JTS, RTi		Added view copy constructor.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//------------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -273,39 +236,6 @@ public HydroBase_StructureGeoloc(HydroBase_StructureView view, boolean full) {
 		_rolodex_num = view._rolodex_num;
 		_full_name = view._full_name;
 	}
-}
-
-/**
-Finalize before garbage collection.
-@exception Throwable if an error occurs.
-*/
-protected void finalize ()
-throws Throwable
-{	
-	_pm = null;
-	_tdir = null;
-	_tsa = null;
-	_rdir = null;
-	_rnga = null;
-	_seca = null;
-	_q160 = null;
-	_q40 = null;
-	_q10 = null;
-	_coordsns_dir = null;
-	_coordsew_dir = null;
-	_county = null;
-	_topomap = null;
-	_loc_type = null;
-	_feature_type = null;
-	_st = null;
-	_loc_description = null;
-	_spotter_version = null;
-	_modified = null;
-	_huc = null;
-	_strname = null;
-	_full_name = null;
-
-	super.finalize();
 }
 
 /**

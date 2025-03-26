@@ -5,19 +5,19 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
@@ -31,7 +31,7 @@ import RTi.DMI.DMIUtil;
 Class to store data for HydroBase DSS structure types as returned by
 usp_CDSS_refStructureType_Sel stored procedure.
 */
-public class HydroBase_DssStructureType 
+public class HydroBase_DssStructureType
 extends DMIDataObject {
 
 protected String _str_type = DMIUtil.MISSING_STRING;
@@ -43,20 +43,6 @@ Constructor.
 */
 public HydroBase_DssStructureType() {
 	super();
-}
-
-/**
-cleans up variables when the class is disposed of.  Sets all the member
-variables (that aren't primitives) to null
-@exception Throwable if an error occurs.
-*/
-protected void finalize()
-throws Throwable {
-	_str_type = null;
-	_str_type_desc = null;
-	_rpt_code = null;
-	
-	finalize();
 }
 
 /**
@@ -107,13 +93,13 @@ public void setStr_type_desc(String str_type_desc) {
 	_str_type_desc = str_type_desc;
 }
 
-/** 
+/**
 returns a string representation of this object
 @return a string representation of this object
 */
 public String toString() {
-	return "HydroBase_StrType {"		+ "\n" + 
-		"Str_type:      " + _str_type + "\n" + 
+	return "HydroBase_StrType {"		+ "\n" +
+		"Str_type:      " + _str_type + "\n" +
 		"Str_type_desc: " + _str_type_desc + "\n" +
 		"Rpt_code:      " + _rpt_code + "\n}\n";
 }

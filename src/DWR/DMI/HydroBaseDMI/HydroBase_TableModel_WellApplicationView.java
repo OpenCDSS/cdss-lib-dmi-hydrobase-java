@@ -4,37 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-// ----------------------------------------------------------------------------
-// HydroBase_TableModel_WellApplicationView - Table Model for a Vector of 
-//	HydroBase_WellApplicationView objects.
-// ----------------------------------------------------------------------------
-// Copyright:   See the COPYRIGHT file
-// ----------------------------------------------------------------------------
-// History:
-// 2005-02-09	J. Thomas Sapienza, RTi	Initial version.
-// 2005-04-29	JTS, RTi		Added finalize().
-// 2005-06-28	JTS, RTi		Removed unused DMI parameter.
-// 2005-07-06	Steven A. Malers, RTi	Add tool tips.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-// ----------------------------------------------------------------------------
-// EndHeader
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -664,9 +649,9 @@ public Object getValueAt(int row, int col) {
 
 	HydroBase_WellApplicationView w = _data.get(row);
 	switch (col) {
-		case COL_DIV:		return new Integer(w.getDiv());
-		case COL_WD:		return new Integer(w.getWD());
-		case COL_PERMIT_NO:	return new Integer(w.getPermitno());
+		case COL_DIV:		return Integer.valueOf(w.getDiv());
+		case COL_WD:		return Integer.valueOf(w.getWD());
+		case COL_PERMIT_NO:	return Integer.valueOf(w.getPermitno());
 		case COL_PERMIT_SUF:	return w.getPermitsuf();
 		case COL_PERMIT_RPL:	return w.getPermitrpl();
 		case COL_LOCATION:	
@@ -678,24 +663,24 @@ public Object getValueAt(int row, int col) {
 		case COL_RECEIPT:	return w.getReceipt();
 		case COL_WELL_NAME:	return w.getWell_name();
 		case COL_STRUCTURE_NUM:	
-			return new Integer(w.getStructure_num());
-		case COL_SUBDIV_NUM:	return new Integer(w.getSubdiv_num());
-		case COL_PYIELD:	return new Double(w.getPyield());
-		case COL_PDEPTH:	return new Integer(w.getPdepth());
-		case COL_PACREFT:	return new Double(w.getPacreft());
+			return Integer.valueOf(w.getStructure_num());
+		case COL_SUBDIV_NUM:	return Integer.valueOf(w.getSubdiv_num());
+		case COL_PYIELD:	return Double.valueOf(w.getPyield());
+		case COL_PDEPTH:	return Integer.valueOf(w.getPdepth());
+		case COL_PACREFT:	return Double.valueOf(w.getPacreft());
 		case COL_CASE_NO:	return w.getCase_no();
-		case COL_ELEV:		return new Double(w.getElev());
-		case COL_AREA_IRR:	return new Double(w.getArea_irr());
+		case COL_ELEV:		return Double.valueOf(w.getElev());
+		case COL_AREA_IRR:	return Double.valueOf(w.getArea_irr());
 		case COL_IRR_MEAS:	return w.getIrr_meas();
 		case COL_COMMENT:	return w.getComment();
-		case COL_WELL_X_NO:	return new Integer(w.getWellxno());
+		case COL_WELL_X_NO:	return Integer.valueOf(w.getWellxno());
 		case COL_WELL_X_SUF:	return w.getWellxsuf();
 		case COL_WELL_X_RPL:	return w.getWellxrpl();
 		case COL_SUBDIV_NAME:	return w.getSubdiv_name();
 		case COL_FILING:	return w.getFiling();
 		case COL_LOT:		return w.getLot();
 		case COL_BLOCK:		return w.getBlock();
-		case COL_PARCEL_SIZE:	return new Double(w.getParcel_size());
+		case COL_PARCEL_SIZE:	return Double.valueOf(w.getParcel_size());
 		case COL_PARCEL_NO:	return w.getParcel_no();
 		case COL_AQUIFER1:	return w.getAquifer1();
 		case COL_AQUIFER2:	return w.getAquifer2();
@@ -711,27 +696,27 @@ public Object getValueAt(int row, int col) {
 		case COL_TRAN_CODE:	return w.getTrancode();
 		case COL_TRAN_DATE:	return parseDate(w.getTrandate());
 		case COL_PERMIT_TYPE_NUM:	
-			return new Integer(w.getPermit_type_num());
+			return Integer.valueOf(w.getPermit_type_num());
 		case COL_ENGINEER:	return w.getEngineer();
 		case COL_STATUTE:	return w.getStatute();
-		case COL_TPERF:		return new Integer(w.getTperf());
-		case COL_BPERF:		return new Integer(w.getBperf());
-		case COL_ABREQ:		return new Integer(w.getAbreq());
-		case COL_METER:		return new Integer(w.getMeter());
-		case COL_LOG:		return new Integer(w.getLog());
+		case COL_TPERF:		return Integer.valueOf(w.getTperf());
+		case COL_BPERF:		return Integer.valueOf(w.getBperf());
+		case COL_ABREQ:		return Integer.valueOf(w.getAbreq());
+		case COL_METER:		return Integer.valueOf(w.getMeter());
+		case COL_LOG:		return Integer.valueOf(w.getLog());
 		case COL_MD:		return w.getMD();
 		case COL_BASIN:		return w.getBasin();
-		case COL_VALID_PERMIT:	return new Integer(w.getValid_permit());
+		case COL_VALID_PERMIT:	return Integer.valueOf(w.getValid_permit());
 		case COL_NPDATE:	return parseDate(w.getNpdate());
 		case COL_EXDATE:	return parseDate(w.getExdate());
 		case COL_NOTICE_DATE:	return parseDate(w.getNoticedate());
-		case COL_YIELD:		return new Double(w.getYield());
-		case COL_ACREFT:	return new Double(w.getAcreft());
-		case COL_DEPTH:		return new Integer(w.getDepth());
-		case COL_LEVEL:		return new Integer(w.getLevel());
-		case COL_QUAL:		return new Integer(w.getQual());
+		case COL_YIELD:		return Double.valueOf(w.getYield());
+		case COL_ACREFT:	return Double.valueOf(w.getAcreft());
+		case COL_DEPTH:		return Integer.valueOf(w.getDepth());
+		case COL_LEVEL:		return Integer.valueOf(w.getLevel());
+		case COL_QUAL:		return Integer.valueOf(w.getQual());
 		case COL_WELL_TYPE:	return w.getWell_type();
-		case COL_VALID_STRUC:	return new Integer(w.getValid_struc());
+		case COL_VALID_STRUC:	return Integer.valueOf(w.getValid_struc());
 		case COL_PIDATE:	return parseDate(w.getPidate());
 		case COL_WADATE:	return parseDate(w.getWadate());
 		case COL_SADATE:	return parseDate(w.getSadate());
@@ -743,11 +728,11 @@ public Object getValueAt(int row, int col) {
 		case COL_WCDATE:	return parseDate(w.getWcdate());
 		case COL_PCDATE:	return parseDate(w.getPcdate());
 		case COL_GW_CONTROLLER_NUM:	
-			return new Integer(w.getGw_controller_num());
-		case COL_UTM_X:		return new Double(w.getUtm_x());
-		case COL_UTM_Y:		return new Double(w.getUtm_y());
-		case COL_LONG_DEC_DEG:	return new Double(w.getLongdecdeg());
-		case COL_LAT_DEC_DEG:	return new Double(w.getLatdecdeg());
+			return Integer.valueOf(w.getGw_controller_num());
+		case COL_UTM_X:		return Double.valueOf(w.getUtm_x());
+		case COL_UTM_Y:		return Double.valueOf(w.getUtm_y());
+		case COL_LONG_DEC_DEG:	return Double.valueOf(w.getLongdecdeg());
+		case COL_LAT_DEC_DEG:	return Double.valueOf(w.getLatdecdeg());
 		default:		return "";
 	}
 }

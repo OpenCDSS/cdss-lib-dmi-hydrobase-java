@@ -4,64 +4,22 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2019 Colorado Department of Natural Resources
+Copyright (C) 2018-2025 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
-
-//-----------------------------------------------------------------------------
-// HydroBase_GUI_OwnerContact - Owner/Contact Information GUI
-//-----------------------------------------------------------------------------
-// Copyright:	See the COPYRIGHT file.
-//-----------------------------------------------------------------------------
-// History:
-// 21 Aug 1997 DLG, RTi 		Created initial version.
-// 22 Aug 1997 DLG, RTi 		Modified GUI layout
-// 02 Dec 1997 SAM, RTi			Implement working export and print.
-// 29 Apr 1998 DLG, RTi			Updated to 1.1 event model, added
-//					javadoc comments.
-// 31 Mar 1999 CEN, RTi			Modified zip code handling since
-//					zip code extension has been removed
-//					and zip is now a character string
-// 02 Sep 1999	SAM, RTi		Change so set visible after query
-//					because of Java refresh problem.
-//					Remove import *.  Add join to rolodex
-//					and contact query so structure number
-//					is used.  Otherwise, structures with
-//					no contact information return a huge
-//					number of records. 
-// 2001-11-12	SAM, RTi		Change GUI to JGUIUtil. Don't use static
-//					data for internal strings.
-// 2002-02-25	SAM, RTi		Make ID field wider.
-//-----------------------------------------------------------------------------
-// 2003-10-01	J. Thomas Sapienza, RTi	Initial Swing version.
-// 2003-10-02	JTS, RTi		* Javadoc'd.
-//					* Added finalize().
-// 2004-01-20	JTS, RTi		Changed to use the new JWorksheet method
-//					of displaying a row count column.
-// 2004-07-26	JTS, RTi		Address information is displayed again
-//					in the text fields.
-// 2005-02-14	JTS, RTi		Checked all dmi calls to make sure they
-//					use stored procedures.
-// 2005-06-22	JTS, RTi		* Column widths now come from the 
-//					  table model, not the cell renderer.
-//					* The table-specific cell renderers 
-//					  were removed and replaced with a 
-//					  single generic one.
-// 2007-02-26	SAM, RTi		Clean up code based on Eclipse feedback.
-//-----------------------------------------------------------------------------
 
 package DWR.DMI.HydroBaseDMI;
 
@@ -75,7 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -187,27 +145,22 @@ int structureNum) {
 	submitAndDisplayContactQuery();
 
 	if (!__wdJTextField.getText().equals("")) {
-		int wd = (new Integer(__wdJTextField.getText().trim()))
-			.intValue();
-		int id = (new Integer(__idJTextField.getText().trim()))
-			.intValue();
+		int wd = Integer.valueOf(__wdJTextField.getText().trim()).intValue();
+		int id = Integer.valueOf(__idJTextField.getText().trim()).intValue();
 		String name = __structureJTextField.getText().trim();
 	
 		String rest = "Structure Data - Owner/Contact Data - "
 			+ HydroBase_WaterDistrict.formWDID(wd, id)
 			+ " (" + name + ")";
-		if ((JGUIUtil.getAppNameForWindows() == null) 
-		    || JGUIUtil.getAppNameForWindows().equals("")) {
+		if ((JGUIUtil.getAppNameForWindows() == null) || JGUIUtil.getAppNameForWindows().equals("")) {
 			setTitle(rest);
 		}
 		else {	
-			setTitle(JGUIUtil.getAppNameForWindows() 
-				+ " - " + rest);
+			setTitle(JGUIUtil.getAppNameForWindows() + " - " + rest);
 		}					
 	}
 	else {
-		setTitle(JGUIUtil.getAppNameForWindows() 
-			+ "Structure Data - Owner/Contact Data");
+		setTitle(JGUIUtil.getAppNameForWindows() + "Structure Data - Owner/Contact Data");
 	}	
 }
 
@@ -233,7 +186,7 @@ public void actionPerformed(ActionEvent evt) {
 				return ;
 			}
 
-			int format = new Integer(eff[1]).intValue();
+			int format = Integer.valueOf(eff[1]).intValue();
 	 		// First format the output...
 			List<String> outputStrings = formatOutput(format);
  			// Now export, letting the user decide the file...
@@ -275,44 +228,11 @@ private void closeClicked() {
 }
 
 /**
-Cleans up member variables.
-*/
-public void finalize() 
-throws Throwable {
-	__dmi = null;
-	__address1JTextField = null;
-	__address2JTextField = null;
-	__bondingJTextField = null;
-	__cityJTextField = null;
-	__divJTextField = null;
-	__firstJTextField = null;
-	__idJTextField = null;
-	__lastJTextField = null;
-	__licenseJTextField = null;
-	__middleJTextField = null;
-	__nameJTextField = null;
-	__noteJTextField = null;
-	__orgJTextField = null;
-	__prefixJTextField = null;
-	__stateJTextField = null;
-	__statusJTextField = null;
-	__structureJTextField = null;
-	__suffixJTextField = null;
-	__titleJTextField = null;
-	__typeJTextField = null;
-	__wdJTextField = null;
-	__zipCodeJTextField = null;
-	__worksheet = null;
-	__structureName = null;
-	super.finalize();
-}
-
-/**
 Formats output for export or printing.
 @param format the format in which to format the output.
 */
 public List<String> formatOutput(int format) {
-	List<String> v = new Vector<String>(10, 5);
+	List<String> v = new ArrayList<>(10);
 
 	int size = __worksheet.getRowCount();
 	String s0 = null;
@@ -321,8 +241,7 @@ public List<String> formatOutput(int format) {
 	String s3 = null;
 
 	if (format == HydroBase_GUI_Util.SCREEN_VIEW) {
-		// For now only show the owner type that is shown on the
-		// screen.  Multiple listing is an enhancement...
+		// For now only show the owner type that is shown on the screen.  Multiple listing is an enhancement.
 		v.add(HydroBase_GUI_Util.formatStructureHeader(
 			HydroBase_GUI_Util.trimText(__structureJTextField),
 			HydroBase_GUI_Util.trimText(__divJTextField),
