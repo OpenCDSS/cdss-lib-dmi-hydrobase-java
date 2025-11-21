@@ -239,9 +239,14 @@ The status bar text field.
 private JTextField __statusJTextField = null;
 
 /**
-The properties read from \cdss\system\CDSS.cfg
+The properties read from application system\CDSS.cfg
 */
-private PropList __configurationProps = null;
+private PropList appCdssCfgProps = null;
+
+/**
+The properties read from the user system\CDSS.cfg
+*/
+private PropList userCdssCfgProps = null;
 
 /**
 GUI buttons.
@@ -351,7 +356,7 @@ public SelectHydroBaseJDialog(JFrame parent, HydroBaseDMI hbdmi, PropList props)
 
 	JGUIUtil.setWaitCursor(this, true);
 	JGUIUtil.setWaitCursor(parent, true);
-	readConfigurationFile();
+	readCdssCfgFile();
 
 	__databaseNames = new Hashtable<>();
 
@@ -473,14 +478,16 @@ private void checkServerForDatabaseNames(String server) {
 	GenericDMI dmi = null;
 
 	for ( int i = 0; i < ports.length; i++) {
-		Message.printStatus(2, routine, "Checking for databases on server \"" +
-			server + "\" using port " + ports[i] );
+		Message.printStatus(2, routine, "Checking for databases on server \"" + server + "\" using port " + ports[i] );
 		try {
 			dmi = new GenericDMI("SQLServer", server, "master", ports[i], usernames[i], passwords[i]);
+			// Needed after Java 11 update.
+			dmi.setAdditionalConnectionProperties(";trustServerCertificate=true");
 			dmi.open();
 		}
 		catch (Exception e) {
 			// If there is an exception then the DMI was not opened, so there is no need to close it here.
+			Message.printWarning(3, routine, e);
 			dmi = null;
 		}
 
@@ -1566,21 +1573,22 @@ throws Exception {
 }
 
 /**
-Reads the configuration file.
+Read the CDSS configuration file.
+This provides data to populate the SelectHydroBase dialog.
+The application configuration file is read.
 */
-private void readConfigurationFile() {
-	__configurationProps = new PropList("Config");
-	__configurationProps.setPersistentName(	IOUtil.getApplicationHomeDir() +
-		File.separator + "system" + File.separator + "CDSS.cfg");
+private void readCdssCfgFile() {
+	this.appCdssCfgProps = new PropList("Config");
+	this.appCdssCfgProps.setPersistentName(	IOUtil.getApplicationHomeDir() + File.separator + "system" + File.separator + "CDSS.cfg");
 	try {
-		__configurationProps.readPersistent();
+		this.appCdssCfgProps.readPersistent();
 	}
 	catch (Exception e) {
 		// Ignore - probably a file not found error,
-		// in which case the result is the same as an empty file: an empty proplist.
+		// in which case the result is the same as an empty file (an empty PropList).
 	}
 
-	String serverNames = __configurationProps.getValue( "HydroBase.ServerNames");
+	String serverNames = this.appCdssCfgProps.getValue( "HydroBase.ServerNames");
 	if (serverNames == null) {
 		__serverNames = new ArrayList<>();
 		if (IOUtil.testing()) {
@@ -1613,7 +1621,7 @@ private void readConfigurationFile() {
 
 	__serverNames = StringUtil.sortStringList(__serverNames);
 
-	String defaultServerName = __configurationProps.getValue( "HydroBase.DefaultServerName");
+	String defaultServerName = this.appCdssCfgProps.getValue( "HydroBase.DefaultServerName");
 	if (defaultServerName == null) {
 		if (IOUtil.testing()) {
 			__defaultServerName = "hbserver";
@@ -1626,7 +1634,7 @@ private void readConfigurationFile() {
 		__defaultServerName = defaultServerName;
 	}
 
-	String defaultDatabaseName = __configurationProps.getValue( "HydroBase.DefaultDatabaseName");
+	String defaultDatabaseName = this.appCdssCfgProps.getValue( "HydroBase.DefaultDatabaseName");
 	if (defaultDatabaseName == null) {
 		__defaultDatabaseName = __HYDROBASE;
 	}
