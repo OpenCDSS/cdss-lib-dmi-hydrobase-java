@@ -2201,7 +2201,7 @@ throws Exception {
 		__reportList.add(noRecords);
 	}
 	else {
-		Integer I = new Integer(__rolodexNum);
+		Integer I = Integer.valueOf(__rolodexNum);
 	        HydroBase_Rolodex r = __dmi.readRolodexForRolodex_num(
 			I.intValue());
 			

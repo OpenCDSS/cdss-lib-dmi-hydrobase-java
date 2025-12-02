@@ -2250,8 +2250,7 @@ public boolean parseAreaPrecip(String string0) {
 			theOperator = string.charAt(i);
 			nfields = 2;
 			// Set to a space so that we can parse later.
-			string = string.substring(0,i)
-				+ " " + string.substring((i + 1));
+			string = string.substring(0,i) + " " + string.substring((i + 1));
 			if (Message.isDebugOn) {
 				Message.printDebug(10, routine, "String=\"" + string + "\"");
 			}
@@ -2281,26 +2280,22 @@ public boolean parseAreaPrecip(String string0) {
 		else if ((theOperator == '/')
 			|| (theOperator == '+')
 			|| (theOperator == '-')) {
-			Message.printWarning(1, routine,
-				"Operator " + theOperator
-				+ " not allowed - use * for proration");
+			Message.printWarning(1, routine, "Operator " + theOperator + " not allowed - use * for proration");
 			return false;
 			//water = a/p;
 			//water = a + p;
 			//water = a - p;
 		}
 		else {
-			Message.printWarning(1, routine,
-				"String \"" + string0
-				+ "\" cannot be converted to proration");
+			Message.printWarning(1, routine, "String \"" + string0 + "\" cannot be converted to proration.");
 			return false;
 		}
 		// Now save values in the node in both string and floating point form.
 		setAreaString(area);
 		setPrecipString(precip);
 		setWaterString(StringUtil.formatString(water, "%12.2f"));
-		setArea((new Double(area)).doubleValue());
-		setPrecip((new Double(precip)).doubleValue());
+		setArea((Double.valueOf(area)).doubleValue());
+		setPrecip((Double.valueOf(precip)).doubleValue());
 		setWater(water);
 		if (getWater() > 0.0) {
 			// This is a baseflow node.

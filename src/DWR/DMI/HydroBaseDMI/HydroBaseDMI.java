@@ -5972,6 +5972,7 @@ This doesn't used stored procedures.
 @throws Exception if an error occurs.
 @deprecated don't use this!
 */
+@Deprecated
 private int deleteWISSheetNameForWis_num(int wis_num)
 throws Exception {
 	String table = "wis_sheet_name";
@@ -13598,6 +13599,7 @@ This is called by:<ul>
 @throws Exception if an error occurs.
 @deprecated readStationViewForStation_id should be used instead.
 */
+@Deprecated
 public HydroBase_StationGeoloc readStationGeolocForStation_id(String station_id)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -13779,6 +13781,7 @@ This method uses the following views:<p><ul>
 @deprecated (JTS - 2006-05-25) I don't believe this method is used anymore.
 If anything compiles and sees this deprecation, mark this method as used.
 */
+@Deprecated
 public List<HydroBase_StationView> readStationGeolocMeasTypeListForWD(int wd, String meas_type,
 String time_step, String vax_field, String data_source, boolean distinct)
 throws Exception {
@@ -14575,6 +14578,7 @@ This method uses now views.  Use instead readStructureViewForWDID().
 @throws Exception if an error occurs.
 @deprecated use readStructureViewForWDID().
 */
+@Deprecated
 public HydroBase_StructureIrrigSummary readStructureIrrigSummaryForWDID(int wd,int id)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -14865,6 +14869,7 @@ This method is used by:<ul>
 @throws Exception if an error occurs.
 @deprecated use readStructureViewForStructure_num
 */
+@Deprecated
 public HydroBase_Structure readStructureForStructure_num(int structure_num)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -14893,6 +14898,7 @@ This method is used by:<ul>
 @throws Exception if an error occurs.
 @deprecated use readStructureViewForWDID
 */
+@Deprecated
 public HydroBase_Structure readStructureForWDID(int wd, int id)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -15199,6 +15205,7 @@ This method uses the following view:<p><ul>
 @throws Exception if there is an error running the query.
 @deprecated rename!
 */
+@Deprecated
 public List<HydroBase_GroundWaterWellsView> readUnpermittedWellStructMeasTypeList(InputFilter_JPanel panel, String[] districtWhere)
 throws Exception {
 	if (__useSP) {
@@ -15381,6 +15388,7 @@ public List<HydroBase_StructureGeolocStructMeasType> readStructureGeolocStructMe
 /**
 @deprecated use readStructureViewListForWDStream_numStr_type instead.
 */
+@Deprecated
 public List<HydroBase_StructureView> readStructureGeolocListForWDStream_numStr_type(int wd, long stream_num, String str_type)
 throws Exception {
 	return readStructureViewListForWDStream_numStr_type(wd, stream_num,str_type);
@@ -15957,7 +15965,7 @@ throws Exception, NoDataFoundException {
 			}
 		}
 		catch ( Exception e) {
-			message = "Cannot parse \"" + tsident.getLocation() + "\" into WD and ID - can't look up structure.";
+			message = "Cannot parse \"" + wdid + "\" into WD and ID - can't look up structure.";
 			Message.printWarning ( 3, routine, message);
 			throw new Exception ( message);
 		}
@@ -39276,6 +39284,7 @@ Writes a HydroBase_TSProductProps object to the database.<p>
 @throws Exception if an error occurs.
 @deprecated because it's old
 */
+@Deprecated
 public void writeTSProductProps(HydroBase_TSProductProps tspp)
 throws Exception {
 	DMIWriteStatement w = new DMIWriteStatement(this);
@@ -39737,6 +39746,7 @@ protected final int _S_STATION_GEOLOC = 1641;
 /**
 @deprecated use readStationGeolocForStation_id().
 */
+@Deprecated
 public List<HydroBase_StationGeoloc> readStationGeolocListForStationIDs ( List<String> stationid_Vector )
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -39765,6 +39775,7 @@ throws Exception {
 /**
 @deprecated use the other readParcelUseTSListForParcelList
 */
+@Deprecated
 public List<HydroBase_ParcelUseTS> readParcelUseTSListForParcelList(List<String> where_clauses,
 List<String> orderby_clauses, int div, int [] parcel_id, String land_use,
 String irrig_type, DateTime req_date1, DateTime req_date2)
@@ -39819,6 +39830,7 @@ throws Exception {
 @deprecated  use the other version:
 readNetAmtsList(int structure_num, int wd, int id, boolean positiveNetRateAbs, Vector orderBys)
 */
+@Deprecated
 public List<HydroBase_NetAmts> readNetAmtsList(int wd, int id )
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -39835,6 +39847,7 @@ throws Exception {
 /**
 @deprecated use readStructureReservoirForWDID().
 */
+@Deprecated
 public List<HydroBase_StructureReservoir> readStructureReservoirListForWDIDList(List<String> ids)
 throws Exception {
 	DMISelectStatement q = new DMISelectStatement(this);
@@ -39877,6 +39890,7 @@ throws Exception {
 readParcelUseTSList(int cal_year, int div, int parcel_id,
 String land_use, String irrig_type, DateTime req_date1, DateTime req_date2)
 */
+@Deprecated
 public List<HydroBase_ParcelUseTS> readParcelUseTSList(List<String> where_clauses,
 List<String> orderby_clauses, int cal_year, int div, int parcel_id, String land_use,
 String irrig_type, DateTime req_date1, DateTime req_date2)
@@ -39927,6 +39941,7 @@ public List readStructureIrrigSummaryTSList(InputFilter_JPanel panel,
 Vector orderby_clauses, int structure_num, int wd, int id, String str_name,
 String land_use, DateTime req_date1, DateTime req_date2, boolean distinct )
 */
+@Deprecated
 public List<HydroBase_StructureIrrigSummaryTS> readStructureIrrigSummaryTSListForWDIDListLand_usePeriod (
 					Vector<String> wdidList, String landuse,
 					DateTime req_date1, DateTime req_date2)

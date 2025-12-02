@@ -145,8 +145,8 @@ protected static String
 	_NASS_TABLE_NAME, _ALL_DIVISIONS, _DIVISION_8;
 
 /**
-Assigns string values to variables.  This is not done statically so that
-strings can be versioned and assigned based on the proper version at run-time.
+Assigns string values to variables.
+This is not done statically so that strings can be versioned and assigned based on the proper version at run-time.
 */
 static {
 //	if (getDatabaseVersion()) {
@@ -1288,6 +1288,7 @@ therefore return the Division number precede by -99.
 @deprecated Use HydroBase_WaterDistrict.parseWD() or HydroBase_WaterDistrict.parseWDID().
 2005-04-19 still deprecated
 */
+@Deprecated
 public static String parseWD (String districtNumber_name) {
 	String parsedValue;
 	String wd = districtNumber_name.trim();
@@ -1386,6 +1387,7 @@ public static void setText(JTextField t, String s) {
 /**
 @deprecated use the new one
 */
+@Deprecated
 public static String setWaterDistrictJComboBox(SimpleJComboBox comboBox,
 boolean removeAll, String wd, HydroBaseDMI dmi)
 throws Exception {

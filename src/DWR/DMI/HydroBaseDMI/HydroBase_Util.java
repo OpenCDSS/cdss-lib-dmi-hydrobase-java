@@ -2617,11 +2617,12 @@ either from the TSTool time step choice, or a simple string "Day", "Month", etc.
 @return a list of objects for the data type.
 @exception if there is an error reading the data.
 */
+@Deprecated
 public static List readTimeSeriesHeaderObjects ( HydroBaseDMI hbdmi, String data_type, String time_step,
 	InputFilter_JPanel ifp, GRLimits grlimits )
 throws Exception {
 	String routine = HydroBase_Util.class.getSimpleName() + ".readTimeSeriesHeaderObjects";
-	List tslist = null; // This can contain different classes
+	List tslist = null; // This can contain different classes.
 	String [] hb_mt = HydroBase_Util.convertToHydroBaseMeasType ( data_type, time_step );
 	String meas_type = hb_mt[0];
 	//String vax_field = hb_mt[1];
