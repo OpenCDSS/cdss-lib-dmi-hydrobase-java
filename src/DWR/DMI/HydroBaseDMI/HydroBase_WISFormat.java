@@ -357,7 +357,7 @@ Sets a column as an entry cell.
 @param b whether to set it as an entry cell or not.
 */
 public void setIsEntryCell(int col, boolean b) {
-	_isEntryCell.set(col,new Boolean(b));
+	_isEntryCell.set(col,Boolean.valueOf(b));
 }
 
 /** 

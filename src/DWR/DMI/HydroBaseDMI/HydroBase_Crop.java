@@ -50,6 +50,7 @@ public HydroBase_Crop() {
 /**
 @deprecated use getAcres_total().
 */
+@Deprecated
 public double getacres_total() {
 	return _acres_total;
 }
@@ -65,6 +66,7 @@ public String getID() {
 /**
 @deprecated use getLanduse().
 */
+@Deprecated
 public String getlanduse() {
 	return _landuse;
 }
@@ -76,6 +78,7 @@ public String getLanduse() {
 /**
 @deprecated use getStructure_num().
 */
+@Deprecated
 public int getstructure_num() {
 	return _structure_num;
 }
@@ -87,6 +90,7 @@ public int getStructure_num() {
 /**
 @deprecated use getYear().
 */
+@Deprecated
 public int getyear() {
 	return _year;
 }
@@ -98,6 +102,7 @@ public int getYear() {
 /**
 @deprecated use setAcres_total().
 */
+@Deprecated
 public void setacres_total(double acres_total) {
 	_acres_total = acres_total;
 }
@@ -113,6 +118,7 @@ public void setID(String id) {
 /**
 @deprecated use setLanduse().
 */
+@Deprecated
 public void setlanduse(String landuse) {
 	_landuse = landuse;
 }
@@ -124,6 +130,7 @@ public void setLanduse(String landuse) {
 /**
 @deprecated use setStructure_num().
 */
+@Deprecated
 public void setstructure_num(int structure_num) {
 	_structure_num = structure_num;
 }
@@ -135,6 +142,7 @@ public void setStructure_num(int structure_num) {
 /**
 @deprecated use setYear().
 */
+@Deprecated
 public void setyear(int year) {
 	_year = year;
 }
