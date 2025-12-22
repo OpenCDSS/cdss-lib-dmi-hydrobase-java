@@ -15721,9 +15721,13 @@ This property will only be applied to the DivTotal and DivClass data types for m
 currently only used when a structure "struct_meas_type" record is not found,
 and therefore the time series header information cannot be initialized.
 */
-public TS readTimeSeries (String tsident_string, DateTime req_date1, DateTime req_date2, String req_units,
-			  boolean read_data, PropList props )
-throws Exception, NoDataFoundException {
+public TS readTimeSeries (
+	String tsident_string,
+	DateTime req_date1, DateTime req_date2,
+	String req_units,
+	boolean read_data,
+	PropList props )
+	throws Exception, NoDataFoundException {
 	// Read a time series from the database.
 	// IMPORTANT - BECAUSE WE CAN'T GET THE LAST RECORD FROM A ResultSet FOR TIME SERIES DATA RECORDS,
 	// CANNOT GET THE END DATES FOR MEMORY ALLOCATION UP FRONT.
@@ -18881,21 +18885,37 @@ throws Exception, NoDataFoundException {
 	// Fill daily diversion data by carrying forward within irrigation years:
 	// - default is true consistent with legacy code but may change
 
-	if ( (interval_base == TimeInterval.DAY) &&
+	if ( ((interval_base == TimeInterval.DAY) || (interval_base == TimeInterval.MONTH)) && 
 		(data_type.equalsIgnoreCase("DivTotal") || data_type.equalsIgnoreCase("DivClass") ||
 		data_type.equalsIgnoreCase("RelTotal") || data_type.equalsIgnoreCase("RelClass"))) {
 		String FillDivRecordsCarryForward = props.getValue ( "FillDivRecordsCarryForward" );
 		if ( (FillDivRecordsCarryForward == null) || FillDivRecordsCarryForward.equals("") ) {
-			FillDivRecordsCarryForward = "true"; // Default is to fill, consistent with CDSS approach.
+			// Default is to fill, consistent with CDSS approach:
+			// - have to set in the properties that were originally passed in
+			//   (should default correctly in the read command but not generic TSID command)
+			FillDivRecordsCarryForward = "true";
+			props.set("FillDivRecordsCarryForward", FillDivRecordsCarryForward);
 		}
 		if ( FillDivRecordsCarryForward.equalsIgnoreCase("true") ) {
 			String FillDivRecordsCarryForwardFlag = props.getValue ( "FillDivRecordsCarryForwardFlag" );
 			if ( (FillDivRecordsCarryForwardFlag == null) || FillDivRecordsCarryForwardFlag.equals("") ) {
-			    // Default is "c".
+				// Default flag to use for fill carry forward values.
 			    FillDivRecordsCarryForwardFlag = "c";
+			    props.set("FillDivRecordsCarryForwardFlag", FillDivRecordsCarryForwardFlag);
 			}
 			// TODO SAM 2006-04-25 This throws an Exception.  Leave it for now but need to evaluate how to handle errors.
-			HydroBase_Util.fillTSIrrigationYearCarryForward ( (DayTS)ts, FillDivRecordsCarryForwardFlag );
+			HydroBase_Util.fillTSIrrigationYearCarryForward (
+				this,
+				ts,
+			    FillDivRecordsCarryForwardFlag,
+				// Original time series identifier:
+				// - used when reading daily time series to fill monthly
+				// - use what was originally passed in to 'readTimeSeries'
+				tsident_string,
+				readStartIrrig, readEndIrrig, 
+				// Properties that are used if reading a daily time series:
+				// - use what was originally passed in to 'readTimeSeries'
+				props );
 		}
 	}
 
