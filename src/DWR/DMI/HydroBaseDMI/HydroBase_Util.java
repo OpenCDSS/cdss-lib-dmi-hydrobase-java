@@ -1129,12 +1129,12 @@ public static void fillTSIrrigationYearCarryForward (
 	if ( messages.size() > 0 ) {
 		if ( doDay ) {
 			ts.addToGenesis("Filled " + ts.getDate1() + " to " +
-			ts.getDate2() + " using carry forward within irrigation year because HydroBase daily data omit empty months." );
+			ts.getDate2() + " using carry forward within irrigation year because HydroBase daily data omit missing months." );
 		}
 		else {
 			// Should only be called for web services.
 			ts.addToGenesis("Filled " + ts.getDate1() + " to " +
-			ts.getDate2() + " using carry forward within irrigation year because HydroBase web service monthly data omit empty months." );
+			ts.getDate2() + " using carry forward within irrigation year because HydroBase monthly data has nulls for missing months." );
 		}
 		if ( Message.isDebugOn ) {
 			// TODO SAM 2006-04-27 Evaluate whether this should always be saved in the genesis.
@@ -1147,12 +1147,12 @@ public static void fillTSIrrigationYearCarryForward (
 			if ( doDay ) {
 				ts.addDataFlagMetadata(
 					new TSDataFlagMetadata(fillDailyDivFlag,
-						"Filled within irrigation year using DWR carry-forward approach because HydroBase daily data omit empty months."));
+						"Filled within irrigation year using DWR carry-forward approach because HydroBase daily data omit missing months."));
 			}
 			else {
 				ts.addDataFlagMetadata(
 					new TSDataFlagMetadata(fillDailyDivFlag,
-						"Filled within irrigation year using DWR carry-forward approach because HydroBase web service monthly data omit empty months."));
+						"Filled within irrigation year using DWR carry-forward approach because HydroBase monthly data has nulls missing months."));
 			}
 		}
 	}
