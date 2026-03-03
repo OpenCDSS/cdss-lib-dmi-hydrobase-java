@@ -4,7 +4,7 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2018-2025 Colorado Department of Natural Resources
+Copyright (C) 2018-2026 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,8 +29,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import RTi.DMI.DMI;
@@ -1197,98 +1199,97 @@ crdss3nt (if not using stored procedures)</td></tr>
 (previously 5758 was used for SQL Server Express and MSDE and before that the default of 1433).</td></tr>
 </table>
 */
-public HydroBaseDMI(PropList props)
+public HydroBaseDMI ( PropList props )
 throws Exception {
 	// Use the default system login and password.
 	super();
 
 	// Turn off printing of the Stored Procedure or SQL string to Debug 30, for the sake of security.
-	__printQueryStrings = false;
+	this.__printQueryStrings = false;
 
-	String database_engine = null;
-	String database_server = null;
-	String database_name = null;
-	String system_login = null;
-	String system_password = null;
-	String portS = null;
-	String useStoredProceduresS = null;
+	String databaseEngine = null;
+	String databaseServer = null;
+	String databaseName = null;
+	String systemLogin = null;
+	String systemPassword = null;
+	String portString = null;
+	String useStoredProceduresString = null;
 
-	String defaultDatabase_name = null;
-	String defaultServer_name = null;
+	String defaultDatabaseName = null;
+	String defaultServerName = null;
 
-	if (props != null) {
-		database_engine = props.getValue("HydroBase.DatabaseEngine");
-		database_server = props.getValue("HydroBase.DatabaseServer");
-		database_name = props.getValue("HydroBase.DatabaseName");
-		useStoredProceduresS = props.getValue("HydroBase.UseStoredProcedures");
-		system_login = props.getValue("HydroBase.SystemLogin");
-		system_password = props.getValue("HydroBase.SystemPassword");
-		portS = props.getValue("HydroBase.Port");
+	if ( props != null ) {
+		databaseEngine = props.getValue("HydroBase.DatabaseEngine");
+		databaseServer = props.getValue("HydroBase.DatabaseServer");
+		databaseName = props.getValue("HydroBase.DatabaseName");
+		useStoredProceduresString = props.getValue("HydroBase.UseStoredProcedures");
+		systemLogin = props.getValue("HydroBase.SystemLogin");
+		systemPassword = props.getValue("HydroBase.SystemPassword");
+		portString = props.getValue("HydroBase.Port");
 
-		defaultDatabase_name = props.getValue("HydroBase.DefaultDatabaseName");
-		defaultServer_name = props.getValue("HydroBase.DefaultServerName");
+		defaultDatabaseName = props.getValue("HydroBase.DefaultDatabaseName");
+		defaultServerName = props.getValue("HydroBase.DefaultServerName");
 	}
 
-	if (database_engine == null) {
-		database_engine = "SQLServer";
+	if ( databaseEngine == null ) {
+		databaseEngine = "SQLServer";
 	}
 
-	if (database_server == null) {
-		if (defaultServer_name == null) {
-			throw new Exception("No HydroBase.DefaultServerName or "
-				+ "HydroBase.DatabaseServer property set in configuration file.");
+	if ( databaseServer == null ) {
+		if ( defaultServerName == null ) {
+			throw new Exception("No HydroBase.DefaultServerName or HydroBase.DatabaseServer property set in configuration file.");
 		}
 		else {
-			database_server = defaultServer_name;
+			databaseServer = defaultServerName;
 		}
 	}
 
-	if (database_name == null) {
-		if (defaultDatabase_name == null) {
-			database_name = "HydroBase";
+	if ( databaseName == null ) {
+		if (defaultDatabaseName == null) {
+			databaseName = "HydroBase";
 		}
 		else {
-			database_name = defaultDatabase_name;
+			databaseName = defaultDatabaseName;
 		}
 	}
 
 	boolean useStoredProcedures = true;
-	if (useStoredProceduresS != null) {
-		if (useStoredProceduresS.equalsIgnoreCase("false")) {
+	if ( useStoredProceduresString != null) {
+		if (useStoredProceduresString.equalsIgnoreCase("false")) {
 			useStoredProcedures = false;
 		}
 	}
 
-	if (useStoredProcedures) {
-		if (system_login == null) {
-			system_login = "cdss";
+	if ( useStoredProcedures ) {
+		if (systemLogin == null) {
+			systemLogin = "cdss";
 		}
 
-		if (system_password == null) {
-			system_password = "cdss%tools";
+		if ( systemPassword == null ) {
+			systemPassword = "cdss%tools";
 		}
 	}
 	else {
-		if (system_login == null) {
-			system_login = "crdss";
+		if ( systemLogin == null ) {
+			systemLogin = "crdss";
 		}
 
-		if (system_password == null) {
-			system_password = "crdss3nt";
+		if ( systemPassword == null ) {
+			systemPassword = "crdss3nt";
 		}
 	}
 
 	int port = -1;
-	if (portS != null) {
-		port = StringUtil.atoi(portS);
+	if ( portString != null ) {
+		port = StringUtil.atoi ( portString );
 	}
 	else {
-		if (database_server.equalsIgnoreCase(HydroBase_Util.LOCAL)
-		    || IOUtil.getProgramHost().equalsIgnoreCase( database_server)) {
+		if ( databaseServer.equalsIgnoreCase(HydroBase_Util.LOCAL )
+		    || IOUtil.getProgramHost().equalsIgnoreCase( databaseServer) ) {
 		    // Connecting to the local machine.
 			// Try the SQL Server Express/MSDE port first and full SQL Server port second.
 			// Also get the specific machine name instead of "local".
-			database_server = IOUtil.getProgramHost();
+			databaseServer = IOUtil.getProgramHost();
 			// SAM 2015-08-06 Doug Stenzel says only port 21784 is used but keep 1433
 			// in case someone manually sets up HydroBase on the default SQL Server port.
 			//__localPorts = new int[3];
@@ -1315,16 +1316,20 @@ throws Exception {
 		}
 	}
 
-	initialize(database_engine, database_server, database_name, port, system_login, system_password, null, true);
+	// Call the DMI base class method.
+	String odbcName = null;
+	boolean isJdbc = true;
+	Map<String,Object> propertiesMap = new HashMap<>();
+	initialize ( databaseEngine, databaseServer, databaseName, port, systemLogin, systemPassword, odbcName, isJdbc, propertiesMap );
 
-	setUseStoredProcedures(useStoredProcedures);
+	setUseStoredProcedures ( useStoredProcedures );
 
 	// Turn back on printing of Stored Procedure or SQL strings to Debug 30.
-	__printQueryStrings = true;
+	this.__printQueryStrings = true;
 
 	// Set the additional connection string:
 	// - trust the certificate (means don't require a certificate), needed for Java 11+ JDBC driver
-	setAdditionalConnectionProperties(";trustServerCertificate=true");
+	setAdditionalConnectionProperties ( ";trustServerCertificate=true" );
 }
 
 // TODO SAM 2008-05-29 Evaluate using for all constructors.
@@ -6763,7 +6768,7 @@ throws Exception {
 	String [] v = new String[9];
 	v[0] = "";
 	v[1] = "-----------------------------------------------------------------------------";
-	if (getJDBCODBC()) {
+	if ( getIsJdbc() ) {
 		// Database server.
 		v[2] = "HydroBase database is: " + getDatabaseName() + " on " + getDatabaseServer();
 	}
