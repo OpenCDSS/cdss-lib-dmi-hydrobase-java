@@ -4,19 +4,19 @@
 
 CDSS HydroBase Database Java Library
 CDSS HydroBase Database Java Library is a part of Colorado's Decision Support Systems (CDSS)
-Copyright (C) 2002-2023 Colorado Department of Natural Resources
+Copyright (C) 2002-2026 Colorado Department of Natural Resources
 
 CDSS HydroBase Database Java Library is free software:  you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
+CDSS HydroBase Database Java Library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU General Public License
     along with CDSS HydroBase Database Java Library.  If not, see <https://www.gnu.org/licenses/>.
 
 NoticeEnd */
@@ -87,8 +87,7 @@ implements ActionListener, KeyListener, ItemListener, WindowListener {
 
 /**
 The default ODBC DSN that has been set.
-If this is not null, then when the dialog opens the dialog will be set to make a local connection with this
-DSN as the default value.
+If this is not null, then when the dialog opens the dialog will be set to make a local connection with this DSN as the default value.
 */
 private static String __defaultOdbcDsn = null;
 
@@ -1233,22 +1232,12 @@ private void initialize(JFrame parent, HydroBaseDMI hbdmi, PropList props) {
 			0, ++y, 2, 1, 0, 0, LTB_insets, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST);
 	}
 
-	// Hide the database choice if running an applet (default to remote).
-
-	if (IOUtil.isApplet()) {
-		dataBaseJLabel.setVisible(false);
-		__odbcDSNJComboBox.setVisible(false);
-		__odbcDSNsJLabel.setVisible(false);
-		hostname_JLabel.setVisible(false);
-		__hostnameJComboBox.setVisible(false);
-	}
-
-	// South JPanel
+	// South JPanel.
 	JPanel southJPanel = new JPanel();
 	southJPanel.setLayout(new BorderLayout());
 	getContentPane().add("South", southJPanel);
 
-	// South North JPanel
+	// South North JPanel.
 	JPanel southNJPanel = new JPanel();
 	southNJPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 	southJPanel.add("North", southNJPanel);
