@@ -540,11 +540,11 @@ public void mouseExited(MouseEvent event) {}
 Handle mouse pressed event.
 */
 public void mousePressed(MouseEvent event) {
-	int mods = event.getModifiers();
+	int mods = event.getModifiersEx();
 	Component c = event.getComponent();
 	
 	if (c.equals(__structureJList) && (__structureJList.getItemCount() > 0)
-	    && ((mods & MouseEvent.BUTTON3_MASK) != 0)) {
+	    && ((mods & MouseEvent.BUTTON3_DOWN_MASK) != 0)) {
 		__structureJPopupMenu.show(
 			event.getComponent(), event.getX(), event.getY());
 	}
