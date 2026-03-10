@@ -862,13 +862,15 @@ public static void fillTSIrrigationYearCarryForward (
 		return;
 	}
 
-	// DayTS is used when filing monthly data:
+	// DayTS is used when filling monthly data:
 	// - only use when missing values are encountered that don't have previous zero month
 	// - read by substituting Day for the interval in the monthly TSID
 	// - didDayQuery is set to true if a daily time series was queried for monthly filling,
 	//   and will be set to true even if the query failed
 	TS dayts = null;
 	boolean didDayQuery = false;
+	// If reading the daily time series results in an error.
+	boolean didDayQueryError = false;
 	
 	// Only daily and monthly time series can be filled.
 	boolean doDay = false;
@@ -1004,38 +1006,47 @@ public static void fillTSIrrigationYearCarryForward (
 						// Monthly time series and fill value (from start of year or previous value) is not zero:
 						// - previous month was non-zero
 						// - a zero value may be embedded at the end of the previous month in the daily time series
-						//   so have to query the daily time series to
-						if ( !didDayQuery ) {
-							// Get the daily time series:
-							// - query will be done once
-							boolean readData = true;
-							// Replace Month with Day in the time series identifier and then read the time series.
-							TSIdent tsident = TSIdent.parseIdentifier(tsidentString);
-							tsident.setInterval("day");
-							// Make a copy of the start and end and set the days.
-							DateTime readStartDaily = null;
-							DateTime readEndDaily = null;
-							if ( readStart != null ) {
-								readStartDaily = new DateTime(readStart);
-								readStartDaily.setDay(1);
+						//   so have to query the daily time series too
+						if ( !didDayQuery && !didDayQueryError ) {
+							try {
+								// Get the daily time series:
+								// - query will be done once
+								boolean readData = true;
+								// Replace Month with Day in the time series identifier and then read the time series.
+								TSIdent tsident = TSIdent.parseIdentifier(tsidentString);
+								tsident.setInterval("day");
+								// Make a copy of the start and end and set the days.
+								DateTime readStartDaily = null;
+								DateTime readEndDaily = null;
+								if ( readStart != null ) {
+									readStartDaily = new DateTime(readStart);
+									readStartDaily.setDay(1);
+								}
+								if ( readEnd != null ) {
+									readEndDaily = new DateTime(readEnd);
+									readEndDaily.setDay(TimeUtil.numDaysInMonth(readEnd.getMonth(), readEnd.getYear()));
+								}
+								// Set this to true before the read because if it is left as false many service calls may result.
+								didDayQuery = true;
+								if ( Message.isDebugOn ) {
+									Message.printStatus(2, routine, "Reading daily time series for period " + readStartDaily + " to " + readEndDaily );
+								}
+								String units = ""; // Units to output - just leave the original.
+								dayts = dmi.readTimeSeries (
+									tsident.toString(),
+									readStartDaily,
+									readEndDaily,
+									units,
+									readData,
+									props );
 							}
-							if ( readEnd != null ) {
-								readEndDaily = new DateTime(readEnd);
-								readEndDaily.setDay(TimeUtil.numDaysInMonth(readEnd.getMonth(), readEnd.getYear()));
+							catch ( Exception e ) {
+								// No daily time series is in the database corresponding to the monthly time series structure.
+								Message.printStatus(2, routine, "No daily time series - not using daily data to check for starting zero value.");
+								// Set the following to prevent an attempt to reread daily time series in the loop.
+								didDayQueryError = true;
+								dayts = null;
 							}
-							// Set this to true before the read because if it is left as false many service calls may result.
-							didDayQuery = true;
-							if ( Message.isDebugOn ) {
-								Message.printStatus(2, routine, "Reading daily time series for period " + readStartDaily + " to " + readEndDaily );
-							}
-							String units = ""; // Units to output - just leave the original.
-							dayts = dmi.readTimeSeries (
-								tsident.toString(),
-								readStartDaily,
-								readEndDaily,
-								units,
-								readData,
-								props );
 						}
 						if ( dayts != null ) {
 							// Have a daily time series to examine:
