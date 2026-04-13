@@ -32,7 +32,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -3851,9 +3850,8 @@ so that the data can be graphed from the popup menu.
 @param event MouseEvent object.
 */
 public void mousePressed(MouseEvent event) {
-	int mods = event.getModifiersEx();
 	Component c = event.getComponent();
-	if ((c == __worksheet) && ((mods & InputEvent.BUTTON3_DOWN_MASK) != 0)) {
+	if ( (c == __worksheet) && JGUIUtil.isRightMouseEvent(event) ) {
 		c = null;
 		// If a diversion row, display the diversion JPopupMenu.
 		// Otherwise show the general popup.

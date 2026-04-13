@@ -31,7 +31,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -1102,11 +1101,9 @@ public void mouseExited(MouseEvent event) {}
 Handle mouse pressed event.
 */
 public void mousePressed(MouseEvent event) {
-	int mods = event.getModifiersEx();
 	Component c = event.getComponent();
 	
-	if (c.equals(__structureList) && (__structureList.getItemCount() > 0)
-	    && ((mods & InputEvent.BUTTON3_DOWN_MASK) != 0)) {
+	if (c.equals(__structureList) && (__structureList.getItemCount() > 0) && JGUIUtil.isRightMouseEvent(event) ) {
 		__structureJPopupMenu.show( event.getComponent(), event.getX(), event.getY());
 	}
 }
