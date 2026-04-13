@@ -33,7 +33,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -3603,11 +3602,10 @@ formulas if in formula-building mode.
 @param event MouseEvent object.
 */
 public void mousePressed(MouseEvent event) {
-	int mods = event.getModifiersEx(); 
 	Component c = event.getComponent();
 	
 	// Show the cell popup menu if right-clicking on the worksheet.
-	if (c.equals(__worksheet) && ((mods & InputEvent.BUTTON3_DOWN_MASK)!= 0)) {
+	if (c.equals(__worksheet) && JGUIUtil.isRightMouseEvent(event) ) {
 		__cellJPopupMenu.show(c, event.getX(), event.getY());
 	}
 	else if (c.equals(__worksheet)) {

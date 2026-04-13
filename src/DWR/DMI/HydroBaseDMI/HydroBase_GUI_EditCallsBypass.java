@@ -540,13 +540,10 @@ public void mouseExited(MouseEvent event) {}
 Handle mouse pressed event.
 */
 public void mousePressed(MouseEvent event) {
-	int mods = event.getModifiersEx();
 	Component c = event.getComponent();
 	
-	if (c.equals(__structureJList) && (__structureJList.getItemCount() > 0)
-	    && ((mods & MouseEvent.BUTTON3_DOWN_MASK) != 0)) {
-		__structureJPopupMenu.show(
-			event.getComponent(), event.getX(), event.getY());
+	if (c.equals(__structureJList) && (__structureJList.getItemCount() > 0) && JGUIUtil.isRightMouseEvent(event) ) {
+		__structureJPopupMenu.show( event.getComponent(), event.getX(), event.getY());
 	}
 }
 
@@ -557,8 +554,7 @@ Handle mouse released event; does nothing.
 public void mouseReleased(MouseEvent event) {}
 
 /**
-Responds to the ok button being clicked.  Information set with this GUI is
-posted in the appropriate objects in the parent JFrame.
+Responds to the ok button being clicked.  Information set with this GUI is posted in the appropriate objects in the parent JFrame.
 */
 private void okClicked() {
 	String routine = "HydroBase_GUI_EditCallsBypass.okClicked()";
